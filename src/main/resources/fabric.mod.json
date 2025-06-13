@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "devonian",
+	"version": "${version}",
+	"name": "Devonian",
+	"description": "something about skyblock i think",
+	"authors": ["DocilElm"],
+	"contact": {
+		"homepage": "https://github.com/Synnerz/",
+		"sources": "https://github.com/Synnerz/"
+	},
+	"license": "GPL-3.0",
+	"icon": "assets/devonian/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			{
+				"value": "com.github.synnerz.devonian.Devonian",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": ["devonian.mixins.json"],
+	"depends": {
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.21.5",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"required": true,
+	"package": "com.github.synnerz.devonian.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ClientConnectionMixin",
+		"ClientPlayerEntityMixin",
+		"YggdrasilMinecraftSessionServiceMixin",
+		"EntityRenderDispatcherMixin",
+		"FallingBlockEntityRendererMixin",
+		"InputUtilMixin",
+		"MinecraftClientMixin",
+		"ParticleManagerMixin",
+		"InGameOverlayRendererMixin",
+		"ChatHudAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
