@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.commands
 
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.arguments.BoolArgumentType

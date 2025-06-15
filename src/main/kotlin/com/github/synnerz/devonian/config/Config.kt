@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.config
 
 import com.github.synnerz.devonian.Devonian.features
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.BaseCommand
+import com.github.synnerz.devonian.commands.BaseCommand
 import com.github.synnerz.devonian.utils.ChatUtils
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.MutableText

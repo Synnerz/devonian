@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.commands
 
 import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
