@@ -6,11 +6,12 @@ import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexRendering
 import net.minecraft.entity.decoration.ArmorStandEntity
 
-object BoxStarMob : Feature() {
+object BoxStarMob : Feature("boxStarMob") {
     val starMobEntities = mutableListOf<Int>()
 
     override fun initialize() {
         Events.onEntityAdd { entity, _ ->
+            if (!isEnabled()) return@onEntityAdd
             if (entity !is ArmorStandEntity) return@onEntityAdd
 
             Events.scheduleStandName(entity, {
@@ -30,6 +31,7 @@ object BoxStarMob : Feature() {
         }
 
         Events.onPreRenderEntity { entity, matrixStack, vertexConsumerProvider, _, _ ->
+            if (!isEnabled()) return@onPreRenderEntity
             if (!starMobEntities.contains(entity.id)) return@onPreRenderEntity
 
             val cam = minecraft.gameRenderer.camera.pos.negate()

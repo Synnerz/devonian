@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
 
-object NoCursorReset : Feature() {
+object NoCursorReset : Feature("noCursorReset") {
     var windowOpened: Long? = null
     var windowClosed: Long? = null
 
@@ -26,6 +26,7 @@ object NoCursorReset : Feature() {
     }
 
     fun shouldReset(): Boolean {
+        if (!isEnabled()) return true
         if (windowClosed == null || windowOpened == null) return true
 
         val state = windowOpened!! - windowClosed!! > 50

@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.features.misc.RemoveFireOverlay;
 import net.minecraft.client.gui.hud.InGameOverlayRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -16,6 +17,7 @@ public class InGameOverlayRendererMixin {
             cancellable = true
     )
     private static void devonian$renderFireOverlay(MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo ci) {
+        if (!RemoveFireOverlay.INSTANCE.isEnabled()) return;
         ci.cancel();
     }
 }

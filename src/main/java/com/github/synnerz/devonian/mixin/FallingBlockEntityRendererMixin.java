@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.features.misc.RemoveFallingBlocks;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.FallingBlockEntityRenderer;
 import net.minecraft.client.render.entity.state.FallingBlockEntityRenderState;
@@ -17,6 +18,7 @@ public class FallingBlockEntityRendererMixin {
             cancellable = true
     )
     private void devonian$removeFallingBlocks(FallingBlockEntityRenderState fallingBlockEntityRenderState, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
+        if (!RemoveFallingBlocks.INSTANCE.isEnabled()) return;
         ci.cancel();
     }
 }

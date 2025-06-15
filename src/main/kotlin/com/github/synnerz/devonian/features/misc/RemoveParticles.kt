@@ -5,9 +5,10 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.client.particle.BlockDustParticle
 import net.minecraft.client.particle.ExplosionLargeParticle
 
-object RemoveParticles : Feature() {
+object RemoveParticles : Feature("removeParticles") {
     override fun initialize() {
         Events.onParticleSpawn { particle, callbackInfo ->
+            if (!isEnabled()) return@onParticleSpawn
             when (particle) {
                 is BlockDustParticle -> callbackInfo.cancel()
                 is ExplosionLargeParticle -> callbackInfo.cancel()
