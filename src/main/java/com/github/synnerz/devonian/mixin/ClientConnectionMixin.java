@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.Events;
+import com.github.synnerz.devonian.events.EventBus;
+import com.github.synnerz.devonian.events.PacketReceivedEvent;
+import com.github.synnerz.devonian.events.PacketSentEvent;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
@@ -27,8 +29,9 @@ public abstract class ClientConnectionMixin {
             cancellable = true
     )
     private void devonian$handlePacket(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo ci) {
-        if (getSide() == NetworkSide.CLIENTBOUND)
-            Events.PACKET_RECEIVED.invoker().receive(packet, ci);
+        if (getSide() == NetworkSide.CLIENTBOUND) {
+            EventBus.INSTANCE.post(new PacketReceivedEvent(packet, ci));
+        }
     }
 
     @Inject(
@@ -37,6 +40,6 @@ public abstract class ClientConnectionMixin {
             cancellable = true
     )
     private void devonian$sendPacket(Packet<?> packet, PacketCallbacks callbacks, boolean flush, CallbackInfo ci) {
-        Events.PACKET_SENT.invoker().receive(packet, ci);
+        EventBus.INSTANCE.post(new PacketSentEvent(packet, ci));
     }
 }

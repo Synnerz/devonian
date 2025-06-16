@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.Events;
+import com.github.synnerz.devonian.events.EventBus;
+import com.github.synnerz.devonian.events.RenderEntityEvent;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
@@ -18,6 +19,6 @@ public class EntityRenderDispatcherMixin {
             cancellable = true
     )
     private <E extends Entity> void devonian$preEntityRender(E entity, double x, double y, double z, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
-        Events.PRE_ENTITY_RENDER.invoker().onRender(entity, matrices, vertexConsumers, light, ci);
+        EventBus.INSTANCE.post(new RenderEntityEvent(entity, matrices, vertexConsumers, light, ci));
     }
 }

@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.events.Events
+import com.github.synnerz.devonian.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
@@ -10,10 +10,12 @@ object NoCursorReset : Feature("noCursorReset") {
     var windowClosed: Long? = null
 
     override fun initialize() {
-        Events.onPacketReceived { packet, _ ->
+        on<PacketReceivedEvent> { event ->
+            val packet = event.packet
+
             when (packet) {
                 is OpenScreenS2CPacket -> {
-                    if (windowClosed == null) return@onPacketReceived
+                    if (windowClosed == null) return@on
 
                     windowOpened = System.currentTimeMillis()
                 }

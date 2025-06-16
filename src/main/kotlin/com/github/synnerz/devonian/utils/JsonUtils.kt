@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.utils
 
-import com.github.synnerz.devonian.events.Events
+import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.events.EventBus
+import com.github.synnerz.devonian.events.GameUnloadEvent
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -20,7 +22,7 @@ object JsonUtils {
     var json = JsonObject()
 
     init {
-        Events.onGameUnload { save() }
+        EventBus.on<GameUnloadEvent> { save() }
     }
 
     /**
@@ -47,7 +49,17 @@ object JsonUtils {
                 val savedData = JsonParser.parseReader(it).asJsonObject
                 if (savedData.isEmpty) return
                 for ((k, v) in savedData.entrySet()) {
+                    val feat = Devonian.features.find { it.configName == k }
+                    val prev = get(k)
                     json.add(k, v)
+
+                    if (feat !== null && prev !== null) {
+                        // Since every feature starts at `false` this does not really matter
+                        // future note: if any feature changes to `true` as default, make this account
+                        // for that specific scenario and actually trigger the `Feature`
+                        if (prev == get(k)) continue
+                        feat.onToggle(!prev)
+                    }
                 }
             }
             return

@@ -3,10 +3,7 @@ package com.github.synnerz.devonian
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.dungeons.BoxStarMob
-import com.github.synnerz.devonian.features.misc.NoCursorReset
-import com.github.synnerz.devonian.features.misc.RemoveFallingBlocks
-import com.github.synnerz.devonian.features.misc.RemoveFireOverlay
-import com.github.synnerz.devonian.features.misc.RemoveParticles
+import com.github.synnerz.devonian.features.misc.*
 import com.github.synnerz.devonian.utils.JsonUtils
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.MinecraftClient
@@ -20,7 +17,8 @@ object Devonian : ClientModInitializer {
 	override fun onInitializeClient() {
 		NoCursorReset.initialize()
 		BoxStarMob.initialize()
-		RemoveParticles.initialize()
+		RemoveBlockBreakParticle.initialize()
+		RemoveExplosionParticle.initialize()
 		RemoveFallingBlocks.initialize()
 		RemoveFireOverlay.initialize()
 		JsonUtils.load()

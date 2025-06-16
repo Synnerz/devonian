@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.Events;
+import com.github.synnerz.devonian.events.EventBus;
+import com.github.synnerz.devonian.events.GuiCloseEvent;
+import com.github.synnerz.devonian.events.GuiOpenEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,10 +19,10 @@ public class MinecraftClientMixin {
     )
     private void devonian$setScreen(Screen screen, CallbackInfo ci) {
         if (screen == null) {
-            Events.GUI_CLOSE.invoker().trigger(null, ci);
+            EventBus.INSTANCE.post(new GuiCloseEvent(ci));
             return;
         }
 
-        Events.GUI_OPEN.invoker().trigger(screen, ci);
+        EventBus.INSTANCE.post(new GuiOpenEvent(screen, ci));
     }
 }
