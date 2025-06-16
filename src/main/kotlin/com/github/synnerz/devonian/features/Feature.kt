@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.features
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.events.Event
+import com.github.synnerz.devonian.events.EventBus
 import com.github.synnerz.devonian.utils.ChatUtils
 import com.github.synnerz.devonian.utils.JsonUtils
 import net.minecraft.text.ClickEvent
@@ -15,6 +17,7 @@ open class Feature(val configName: String) {
     val id = 256652 + Devonian.features.size
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
     private var displayed = false
+    val events = mutableListOf<EventBus.Dcall>()
 
     init {
         Devonian.features.add(this)
@@ -69,7 +72,20 @@ open class Feature(val configName: String) {
         displayed = false
     }
 
-    open fun onToggle(state: Boolean) {}
+    open fun onToggle(state: Boolean) {
+        if (!state) {
+            for (event in events)
+                event.remove()
+            return
+        }
+
+        for (event in events)
+            event.add()
+    }
+
+    inline fun <reified T : Event> on(noinline cb: (T) -> Unit) {
+        events.add(EventBus.on<T>(cb, false))
+    }
 
     fun sendMessage(msg: String) {
         minecraft.player?.sendMessage(Text.literal(msg), false)
