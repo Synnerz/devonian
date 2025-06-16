@@ -82,4 +82,12 @@ class WorldChangeEvent(
     val world: ClientWorld
 ) : Event()
 
+class AreaEvent(
+    val area: String?
+) : Event()
+
+class SubAreaEvent(
+    val subarea: String?
+) : Event()
+
 // TODO: make chat events
