@@ -7,7 +7,7 @@ import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexRendering
 import net.minecraft.entity.decoration.ArmorStandEntity
 
-object BoxStarMob : Feature("boxStarMob") {
+object BoxStarMob : Feature("boxStarMob", "catacombs") {
     val starMobEntities = mutableListOf<Int>()
 
     override fun initialize() {
