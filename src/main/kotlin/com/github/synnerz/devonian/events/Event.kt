@@ -106,4 +106,12 @@ class BlockInteractEvent(
     val pos: BlockPos
 ) : CancellableEvent()
 
+class GuiClickEvent(
+    val mx: Double,
+    val my: Double,
+    val mbtn: Int,
+    val state: Boolean,
+    val screen: Screen
+) : CancellableEvent()
+
 // TODO: make chat events

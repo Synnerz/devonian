@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
+import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 
 object EventBus {
     val events = hashMapOf<String, MutableList<Any>>()
@@ -21,6 +23,19 @@ object EventBus {
         ClientLifecycleEvents.CLIENT_STARTED.register { post(GameLoadEvent(it)) }
         ClientLifecycleEvents.CLIENT_STOPPING.register { post(GameUnloadEvent(it)) }
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world -> post(WorldChangeEvent(mc, world)) }
+        ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
+            ScreenMouseEvents.allowMouseClick(screen).register { _, mx, my, mbtn ->
+                val event = GuiClickEvent(mx, my, mbtn, true, screen)
+                post(event)
+                !event.isCancelled()
+            }
+
+            ScreenMouseEvents.allowMouseRelease(screen).register { _, mx, my, mbtn ->
+                val event = GuiClickEvent(mx, my, mbtn, false, screen)
+                post(event)
+                !event.isCancelled()
+            }
+        }
     }
 
     inline fun <reified T : Event> on(noinline cb: (T) -> Unit): Dcall {
