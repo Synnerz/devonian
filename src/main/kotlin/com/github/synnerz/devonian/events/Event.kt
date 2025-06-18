@@ -10,10 +10,21 @@ import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
 import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.Packet
+import net.minecraft.util.math.BlockPos
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
 open class Event
+
+open class CancellableEvent : Event() {
+    private var shouldCancel = false
+
+    fun cancel() {
+        shouldCancel = true
+    }
+
+    fun isCancelled() = shouldCancel
+}
 
 class PacketSentEvent(
     val packet: Packet<*>,
@@ -89,5 +100,10 @@ class AreaEvent(
 class SubAreaEvent(
     val subarea: String?
 ) : Event()
+
+class BlockInteractEvent(
+    val itemStack: ItemStack,
+    val pos: BlockPos
+) : CancellableEvent()
 
 // TODO: make chat events
