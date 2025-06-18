@@ -14,6 +14,7 @@ public class InputUtilMixin {
             at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwSetCursorPos(JDD)V", remap = false)
     )
     private static void devonian$setCursorPos(long window, double xpos, double ypos) {
+        // TODO: find better injection point
         if (NoCursorReset.INSTANCE.shouldReset()) {
             GLFW.glfwSetCursorPos(window, xpos, ypos);
         }

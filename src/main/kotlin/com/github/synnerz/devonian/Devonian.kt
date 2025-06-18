@@ -26,6 +26,7 @@ object Devonian : ClientModInitializer {
 		RemoveFallingBlocks.initialize()
 		RemoveFireOverlay.initialize()
 		PreventPlacingWeapons.initialize()
+		MiddleClickGui.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()
