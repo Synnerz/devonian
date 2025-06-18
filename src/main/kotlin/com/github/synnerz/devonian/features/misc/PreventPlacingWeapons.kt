@@ -21,7 +21,7 @@ object PreventPlacingWeapons : Feature("preventPlacingWeapons") {
         on<BlockInteractEvent> { event ->
             if (minecraft.world?.getBlockState(event.pos) == null) return@on
             val itemId = ItemUtils.skyblockId(event.itemStack) ?: return@on
-            if (weaponIds.find { it == itemId } == null) return@on
+            if (!weaponIds.any { it == itemId }) return@on
 
             event.cancel()
         }
