@@ -10,6 +10,8 @@ import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
 import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.Packet
+import net.minecraft.screen.slot.Slot
+import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.math.BlockPos
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
@@ -113,5 +115,13 @@ class GuiClickEvent(
     val state: Boolean,
     val screen: Screen
 ) : CancellableEvent()
+
+class GuiSlotClickEvent(
+    val slot: Slot?,
+    val slotId: Int,
+    val mbtn: Int,
+    val actionType: SlotActionType,
+    val ci: CallbackInfo
+) : Event()
 
 // TODO: make chat events
