@@ -12,8 +12,10 @@
 		"MinecraftClientMixin",
 		"ParticleManagerMixin",
 		"InGameOverlayRendererMixin",
-		"ChatHudAccessor",
-		"HandledScreenMixin"
+      	"accessor.ChatHudAccessor",
+		"HandledScreenMixin",
+		"ScreenHandlerMixin",
+		"PlayerScreenHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

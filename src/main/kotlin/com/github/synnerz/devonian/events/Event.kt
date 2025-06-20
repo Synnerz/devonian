@@ -46,11 +46,10 @@ class EntityLeaveEvent(
     val entity: Entity
 ) : Event()
 
-class DropHandItemEvent(
+class DropItemEvent(
     val itemStack: ItemStack,
-    val entireStack: Boolean,
-    val cr: CallbackInfoReturnable<Boolean>
-) : Event()
+    val entireStack: Boolean
+) : CancellableEvent()
 
 class TickEvent(
     val minecraft: MinecraftClient

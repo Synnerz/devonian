@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.mixin;
+package com.github.synnerz.devonian.mixin.accessor;
 
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;

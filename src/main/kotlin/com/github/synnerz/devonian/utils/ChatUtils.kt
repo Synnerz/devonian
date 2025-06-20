@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.utils
 
-import com.github.synnerz.devonian.mixin.ChatHudAccessor
+import com.github.synnerz.devonian.mixin.accessor.ChatHudAccessor
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.hud.ChatHudLine
 import net.minecraft.client.gui.hud.MessageIndicator

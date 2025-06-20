@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.DropHandItemEvent;
+import com.github.synnerz.devonian.events.DropItemEvent;
 import com.github.synnerz.devonian.events.EventBus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -17,7 +17,9 @@ public class ClientPlayerEntityMixin {
     private void devonian$dropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
         ItemStack stack = MinecraftClient.getInstance().player.getStackInHand(Hand.MAIN_HAND);
         if (stack != null && !stack.isEmpty()) {
-            EventBus.INSTANCE.post(new DropHandItemEvent(stack, entireStack, cir));
+            DropItemEvent event = new DropItemEvent(stack, entireStack);
+            EventBus.INSTANCE.post(event);
+            if (event.isCancelled()) cir.setReturnValue(false);
         }
     }
 }
