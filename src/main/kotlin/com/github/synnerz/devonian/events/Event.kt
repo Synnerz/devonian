@@ -14,7 +14,6 @@ import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.math.BlockPos
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
 open class Event
 
@@ -122,5 +121,12 @@ class GuiSlotClickEvent(
     val actionType: SlotActionType,
     val ci: CallbackInfo
 ) : Event()
+
+class GuiKeyEvent(
+    val keyName: String?,
+    val key: Int,
+    val scanCode: Int,
+    val screen: Screen
+) : CancellableEvent()
 
 // TODO: make chat events

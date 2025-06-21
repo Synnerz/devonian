@@ -6,7 +6,9 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
+import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
+import org.lwjgl.glfw.GLFW
 
 object EventBus {
     val events = hashMapOf<String, MutableList<Any>>()
@@ -32,6 +34,17 @@ object EventBus {
 
             ScreenMouseEvents.allowMouseRelease(screen).register { _, mx, my, mbtn ->
                 val event = GuiClickEvent(mx, my, mbtn, false, screen)
+                post(event)
+                !event.isCancelled()
+            }
+
+            ScreenKeyboardEvents.allowKeyPress(screen).register { _, key, scancode, _ ->
+                val event = GuiKeyEvent(
+                    GLFW.glfwGetKeyName(key, scancode),
+                    key,
+                    scancode,
+                    screen
+                )
                 post(event)
                 !event.isCancelled()
             }
