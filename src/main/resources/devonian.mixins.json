@@ -15,7 +15,8 @@
       	"accessor.ChatHudAccessor",
 		"HandledScreenMixin",
 		"ScreenHandlerMixin",
-		"PlayerScreenHandlerMixin"
+		"PlayerScreenHandlerMixin",
+		"accessor.HandledScreenAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
