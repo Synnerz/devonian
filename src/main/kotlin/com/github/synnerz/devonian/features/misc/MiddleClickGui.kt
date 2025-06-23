@@ -29,7 +29,7 @@ object MiddleClickGui : Feature("middleClickGui") {
             if (avoidGuis.any { screenName.startsWith(it) }) return@on
             if (stack.name.string == "Reforge Item" || stack.name.string == "Salvage Item") return@on
 
-            event.ci.cancel()
+            event.cancel()
             ScreenUtils.click(event.slotId, false, "MIDDLE")
         }
     }
