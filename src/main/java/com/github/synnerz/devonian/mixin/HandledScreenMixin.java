@@ -27,7 +27,9 @@ public class HandledScreenMixin {
             cancellable = true
     )
     private void devonian$onSlotClick(Slot slot, int slotId, int button, SlotActionType actionType, CallbackInfo ci) {
-        EventBus.INSTANCE.post(new GuiSlotClickEvent(slot, slotId, button, actionType, ci));
+        GuiSlotClickEvent event = new GuiSlotClickEvent(slot, slotId, button, actionType, handler);
+        EventBus.INSTANCE.post(event);
+        if (event.isCancelled()) ci.cancel();
     }
 
     @Inject(

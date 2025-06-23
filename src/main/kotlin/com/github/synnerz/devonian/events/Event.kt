@@ -10,6 +10,7 @@ import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
 import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.Packet
+import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.math.BlockPos
@@ -119,8 +120,8 @@ class GuiSlotClickEvent(
     val slotId: Int,
     val mbtn: Int,
     val actionType: SlotActionType,
-    val ci: CallbackInfo
-) : Event()
+    val handler: ScreenHandler
+) : CancellableEvent()
 
 class GuiKeyEvent(
     val keyName: String?,
