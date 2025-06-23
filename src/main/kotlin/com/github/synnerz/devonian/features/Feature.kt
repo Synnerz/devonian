@@ -23,22 +23,22 @@ open class Feature @JvmOverloads constructor(
 
     init {
         Devonian.features.add(this)
-        JsonUtils.set(configName, false)
+        JsonUtils.setConfig(configName, false)
     }
 
     open fun initialize() {}
 
     fun isEnabled(): Boolean {
-        return JsonUtils.get(configName) ?: false
+        return JsonUtils.getConfig(configName) ?: false
     }
 
     fun setEnabled() {
-        JsonUtils.set(configName, true)
+        JsonUtils.setConfig(configName, true)
         onToggle(true)
     }
 
     fun setDisabled() {
-        JsonUtils.set(configName, false)
+        JsonUtils.setConfig(configName, false)
         onToggle(false)
     }
 
