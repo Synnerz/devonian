@@ -16,7 +16,8 @@
 		"HandledScreenMixin",
 		"ScreenHandlerMixin",
 		"PlayerScreenHandlerMixin",
-		"accessor.HandledScreenAccessor"
+		"accessor.HandledScreenAccessor",
+		"GameRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
