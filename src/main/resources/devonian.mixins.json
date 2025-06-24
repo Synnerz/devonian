@@ -17,7 +17,8 @@
 		"ScreenHandlerMixin",
 		"PlayerScreenHandlerMixin",
 		"accessor.HandledScreenAccessor",
-		"GameRendererMixin"
+		"GameRendererMixin",
+		"LightningEntityRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

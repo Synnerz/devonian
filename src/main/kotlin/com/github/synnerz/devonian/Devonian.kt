@@ -29,6 +29,7 @@ object Devonian : ClientModInitializer {
 		MiddleClickGui.initialize()
 		ProtectItem.initialize()
 		NoHurtCamera.initialize()
+		RemoveLightning.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()
