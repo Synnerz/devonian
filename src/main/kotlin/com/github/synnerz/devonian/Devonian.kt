@@ -30,6 +30,7 @@ object Devonian : ClientModInitializer {
 		ProtectItem.initialize()
 		NoHurtCamera.initialize()
 		RemoveLightning.initialize()
+		HideInventoryEffects.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()

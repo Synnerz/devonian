@@ -18,7 +18,8 @@
 		"PlayerScreenHandlerMixin",
 		"accessor.HandledScreenAccessor",
 		"GameRendererMixin",
-		"LightningEntityRendererMixin"
+		"LightningEntityRendererMixin",
+		"StatusEffectsDisplayMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

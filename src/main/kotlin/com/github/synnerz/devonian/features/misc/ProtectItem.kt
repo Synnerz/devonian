@@ -39,6 +39,8 @@ object ProtectItem : Feature("protectItem") {
         }
 
         on<DropItemEvent> { event ->
+            // TODO: fix me. this currently doesn't allow to cancel the drop motion from
+            //  clicking and dragging it out of the container (the item)
             if (Location.area == "catacombs") return@on
             val stack = event.itemStack
             val uuid = ItemUtils.uuid(stack) ?: return@on
