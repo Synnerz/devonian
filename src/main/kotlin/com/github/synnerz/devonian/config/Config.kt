@@ -36,12 +36,12 @@ object Config {
             val id = args.first() as Int
 
             if (id < 256652) {
-                if (id > maxPage - 1 || id < minPage) return@subcommand 1
+                if (id > maxPage || id < minPage) return@subcommand 1
                 for (feature in currentFeatures())
                     feature.deleteChat()
 
                 if (id < currentPage) currentPage--.coerceAtLeast(minPage)
-                else if (id != currentPage) currentPage++.coerceAtMost(maxPage - 1)
+                else if (id != currentPage) currentPage++.coerceAtMost(maxPage)
 
                 for (feature in currentFeatures())
                     feature.displayChat()
@@ -80,7 +80,7 @@ object Config {
         val nextPage = ChatUtils.literal("&b${maxPage + 1}  &f>>")
             .setStyle(
                 Style.EMPTY.withClickEvent(
-                    ClickEvent.RunCommand("devonian config ${(currentPage + 1).coerceAtMost(maxPage - 1)}"))
+                    ClickEvent.RunCommand("devonian config ${(currentPage + 1).coerceAtMost(maxPage)}"))
             )
 
         return ChatUtils.literal("   ").append(previousPage).append(nextPage)
