@@ -19,7 +19,8 @@
 		"accessor.HandledScreenAccessor",
 		"GameRendererMixin",
 		"LightningEntityRendererMixin",
-		"StatusEffectsDisplayMixin"
+		"StatusEffectsDisplayMixin",
+		"InGameHudMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
