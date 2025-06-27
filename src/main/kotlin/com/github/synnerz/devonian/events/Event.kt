@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.events
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext.BlockOutlineContext
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.particle.Particle
@@ -16,7 +17,12 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.math.BlockPos
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
-open class Event
+open class Event {
+    open fun post(): Boolean {
+        EventBus.post(this)
+        return false
+    }
+}
 
 open class CancellableEvent : Event() {
     private var shouldCancel = false
@@ -26,6 +32,11 @@ open class CancellableEvent : Event() {
     }
 
     fun isCancelled() = shouldCancel
+
+    override fun post(): Boolean {
+        EventBus.post(this)
+        return isCancelled()
+    }
 }
 
 class PacketSentEvent(
@@ -130,4 +141,7 @@ class GuiKeyEvent(
     val screen: Screen
 ) : CancellableEvent()
 
-// TODO: make chat events
+class BlockOutlineEvent(
+    val renderContext: WorldRenderContext,
+    val blockContext: BlockOutlineContext
+) : CancellableEvent()

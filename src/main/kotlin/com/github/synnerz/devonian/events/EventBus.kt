@@ -49,6 +49,9 @@ object EventBus {
                 !event.isCancelled()
             }
         }
+        WorldRenderEvents.BLOCK_OUTLINE.register { worldContext, blockContext ->
+            !BlockOutlineEvent(worldContext, blockContext).post()
+        }
     }
 
     inline fun <reified T : Event> on(noinline cb: (T) -> Unit): Dcall {

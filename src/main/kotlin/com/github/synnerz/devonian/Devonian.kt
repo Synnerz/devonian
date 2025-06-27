@@ -31,6 +31,7 @@ object Devonian : ClientModInitializer {
 		NoHurtCamera.initialize()
 		RemoveLightning.initialize()
 		HideInventoryEffects.initialize()
+		BlockOverlay.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()
