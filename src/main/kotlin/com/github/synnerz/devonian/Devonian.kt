@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian
 
+import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.events.AreaEvent
 import com.github.synnerz.devonian.events.EventBus
@@ -36,6 +37,7 @@ object Devonian : ClientModInitializer {
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()
+		DevonianCommand.initialize()
 
 		EventBus.on<AreaEvent> {
 			for (feat in features)
