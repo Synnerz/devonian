@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.config
 import com.github.synnerz.devonian.Devonian.features
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.commands.BaseCommand
+import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.ChatUtils
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.MutableText
@@ -15,7 +16,7 @@ object Config {
     private var currentPage = 0
 
     fun initialize() {
-        val baseCommand = BaseCommand("devonian") {
+        DevonianCommand.onRun {
             ChatUtils.sendMessage("&7Settings", true)
             for (feature in currentFeatures()) {
                 feature.displayChat()
@@ -24,7 +25,7 @@ object Config {
             1
         }
 
-        baseCommand.subcommand("config", true) { _, args ->
+        DevonianCommand.command.subcommand("config", true) { _, args ->
             if (args.isEmpty()) {
                 ChatUtils.sendMessage("&7Settings", true)
                 for (feature in currentFeatures()) {
@@ -56,8 +57,6 @@ object Config {
             }
             1
         }.integer("\$configid")
-
-        baseCommand.register()
     }
 
     private fun currentFeatures(): MutableList<Feature> {
