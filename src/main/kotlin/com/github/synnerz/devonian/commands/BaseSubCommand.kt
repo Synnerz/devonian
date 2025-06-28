@@ -15,7 +15,8 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 
 class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientCommandSource>, List<Any>) -> Int) {
-    val commandArgs = mutableListOf<Pair<String, ArgumentType<*>>>()
+    private val commandArgs = mutableListOf<Pair<String, ArgumentType<*>>>()
+    private val commandSuggestions = mutableMapOf<String, MutableList<String>>()
     var isOptional = false
 
     /**
@@ -31,6 +32,15 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
 
         for ((argName, argType) in commandArgs.asReversed()) {
             val argBuilder = argument(argName, argType)
+            val suggestions = commandSuggestions[argName]
+            if (suggestions != null) {
+                argBuilder.suggests { _, builder ->
+                    for (str in suggestions) {
+                        builder.suggest(str)
+                    }
+                    builder.buildFuture()
+                }
+            }
 
             if (current == null) {
                 argBuilder.executes { ctx ->
@@ -125,6 +135,15 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
     @JvmOverloads
     fun long(name: String, min: Long = Long.MIN_VALUE, max: Long = Long.MAX_VALUE) = apply {
         add(name, LongArgumentType.longArg(min, max))
+    }
+
+    /**
+     * - Sets a suggestion for the specified argument
+     * @param name The name of the argument
+     * @param args The suggestion list
+     */
+    fun suggest(name: String, vararg args: String) = apply {
+        commandSuggestions[name] = args.toMutableList()
     }
 
     private fun getArgument(ctx: CommandContext<FabricClientCommandSource>, name: String, type: ArgumentType<*>): Any {
