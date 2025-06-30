@@ -34,6 +34,7 @@ object Devonian : ClientModInitializer {
 		HideInventoryEffects.initialize()
 		BlockOverlay.initialize()
 		HidePotionEffectOverlay.initialize()
+		EtherwarpOverlay.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()
