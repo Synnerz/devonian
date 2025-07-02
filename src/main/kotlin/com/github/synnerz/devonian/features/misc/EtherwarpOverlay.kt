@@ -40,8 +40,11 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
 
             if (requireSneak && !player.isSneaking) return@on
             if (!validWeapons.any { it == itemId }) return@on
-            // TODO: add check for actual etherwarp merger
-            val tunedTransmission = ItemUtils.extraAttributes(heldItem)!!.get("tuned_transmission")
+
+            val extraAttributes = ItemUtils.extraAttributes(heldItem) ?: return@on
+            if (requireSneak && !extraAttributes.contains("ethermerge")) return@on
+
+            val tunedTransmission = extraAttributes.get("tuned_transmission")
             val tunedInt = tunedTransmission?.asInt()
             val tuners = if (tunedInt == null || tunedInt.isEmpty) 0 else tunedInt.get()
 
