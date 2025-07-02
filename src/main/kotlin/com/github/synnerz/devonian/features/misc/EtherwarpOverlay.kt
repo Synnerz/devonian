@@ -1,8 +1,12 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.ChatUtils
+import com.github.synnerz.devonian.utils.ColorEnum
 import com.github.synnerz.devonian.utils.ItemUtils
+import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.render.Render3D
 import net.minecraft.block.AbstractRailBlock
 import net.minecraft.block.AbstractSkullBlock
@@ -22,8 +26,26 @@ import java.awt.Color
 
 object EtherwarpOverlay : Feature("etherwarpOverlay") {
     private val validWeapons = mutableListOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
+    private var color = ColorEnum.WHITE.color
+    private var secondary = Color(color.red, color.green, color.blue, 80)
 
     override fun initialize() {
+        JsonUtils.set("etherwarpOverlayColor", -1)
+
+        DevonianCommand.command.subcommand("etherwarpoverlay") { _, args ->
+            if (args.isEmpty()) return@subcommand 0
+            color = ColorEnum.valueOf(args.first() as String).color
+            secondary = Color(color.red, color.green, color.blue, 80)
+            JsonUtils.set("etherwarpOverlayColor", color.rgb)
+            ChatUtils.sendMessage("&aSuccessfully set etherwarp overlay color to &6${args.first()}", true)
+            1
+        }.string("color").suggest("color", *ColorEnum.entries.map { it.name }.toTypedArray())
+
+        JsonUtils.afterLoad {
+            color = Color(JsonUtils.get<Int>("etherwarpOverlayColor") ?: -1, true)
+            secondary = Color(color.red, color.green, color.blue, 80)
+        }
+
         on<RenderWorldEvent> { event ->
             val player = minecraft.player
             if (minecraft.world == null || player == null) return@on
@@ -69,14 +91,13 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
                 ShapeContext.of(camera.focusedEntity)
             )
 
-            // TODO: make color customizable
             Render3D.renderOutline(
                 ctx,
                 outlineShape,
                 blockPos.x - cam.x,
                 blockPos.y - cam.y,
                 blockPos.z - cam.z,
-                Color(0, 255, 255, 255),
+                color,
                 true
             )
 
@@ -86,7 +107,7 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
                 blockPos.x - cam.x,
                 blockPos.y - cam.y,
                 blockPos.z - cam.z,
-                Color(0, 255, 255, 80),
+                secondary,
                 true
             )
         }
