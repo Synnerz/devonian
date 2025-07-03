@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.mixin.accessor.ChatHudAccessor
+import net.fabricmc.fabric.impl.command.client.ClientCommandInternals
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.hud.ChatHudLine
 import net.minecraft.client.gui.hud.MessageIndicator
@@ -102,4 +103,12 @@ object ChatUtils {
 
         return paddingBuilder.toString()
     }
+
+    @JvmOverloads
+    fun command(command: String, clientSide: Boolean = false) {
+        if (!clientSide) return MinecraftClient.getInstance().networkHandler!!.sendChatCommand(command)
+        ClientCommandInternals.executeCommand(command)
+    }
+
+    fun say(message: String) = MinecraftClient.getInstance().networkHandler?.sendChatMessage(message)
 }
