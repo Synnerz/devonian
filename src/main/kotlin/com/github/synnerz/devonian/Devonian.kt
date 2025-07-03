@@ -41,6 +41,7 @@ object Devonian : ClientModInitializer {
 		AutoRequeueDungeons.initialize()
 		ExtraStats.initialize()
 		NoDeathAnimation.initialize()
+		RemoveFrontView.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()

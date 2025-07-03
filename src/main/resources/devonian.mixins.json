@@ -21,7 +21,8 @@
 		"LightningEntityRendererMixin",
 		"StatusEffectsDisplayMixin",
 		"InGameHudMixin",
-		"LivingEntityMixin"
+		"LivingEntityMixin",
+		"PerspectiveMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
