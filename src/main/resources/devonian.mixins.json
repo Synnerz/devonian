@@ -20,7 +20,8 @@
 		"GameRendererMixin",
 		"LightningEntityRendererMixin",
 		"StatusEffectsDisplayMixin",
-		"InGameHudMixin"
+		"InGameHudMixin",
+		"LivingEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -154,3 +154,8 @@ class ChatEvent(
         return matches.groupValues.drop(1)
     }
 }
+
+class EntityDeathEvent(
+    val entity: Entity,
+    val world: ClientWorld
+) : Event()
