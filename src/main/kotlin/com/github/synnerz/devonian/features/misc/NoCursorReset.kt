@@ -27,12 +27,13 @@ object NoCursorReset : Feature("noCursorReset") {
         }
     }
 
-    fun shouldReset(): Boolean {
+    @JvmOverloads
+    fun shouldReset(y: Boolean = false): Boolean {
         if (!isEnabled()) return true
         if (windowClosed == null || windowOpened == null) return true
 
-        val state = windowOpened!! - windowClosed!! > 50
-        if (!state) {
+        val state = windowOpened!! - windowClosed!! > 100
+        if (!state && y) {
             windowOpened = null
             windowClosed = null
         }

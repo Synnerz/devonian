@@ -8,7 +8,6 @@
 		"YggdrasilMinecraftSessionServiceMixin",
 		"EntityRenderDispatcherMixin",
 		"FallingBlockEntityRendererMixin",
-		"InputUtilMixin",
 		"MinecraftClientMixin",
 		"ParticleManagerMixin",
 		"InGameOverlayRendererMixin",
@@ -22,7 +21,8 @@
 		"StatusEffectsDisplayMixin",
 		"InGameHudMixin",
 		"LivingEntityMixin",
-		"PerspectiveMixin"
+		"PerspectiveMixin",
+		"MouseMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
