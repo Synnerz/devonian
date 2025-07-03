@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.events.SubAreaEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.dungeons.AutoRequeueDungeons
 import com.github.synnerz.devonian.features.dungeons.BoxStarMob
+import com.github.synnerz.devonian.features.dungeons.ExtraStats
 import com.github.synnerz.devonian.features.misc.*
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
@@ -38,6 +39,7 @@ object Devonian : ClientModInitializer {
 		EtherwarpOverlay.initialize()
 		PreventPlacingPlayerHeads.initialize()
 		AutoRequeueDungeons.initialize()
+		ExtraStats.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()
