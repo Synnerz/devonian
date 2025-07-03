@@ -20,7 +20,7 @@ object MiddleClickGui : Feature("middleClickGui") {
 
     override fun initialize() {
         on<GuiSlotClickEvent> { event ->
-            if (event.slot == null) return@on
+            if (event.slot == null || event.mbtn != 0) return@on
             val stack = event.slot.stack
             if (event.slot.inventory == minecraft.player?.inventory) return@on
             val screen = minecraft.currentScreen ?: return@on
