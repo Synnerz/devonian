@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.events
 
+import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
@@ -8,6 +9,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket
 import org.lwjgl.glfw.GLFW
 
 object EventBus {
@@ -51,6 +53,18 @@ object EventBus {
         }
         WorldRenderEvents.BLOCK_OUTLINE.register { worldContext, blockContext ->
             !BlockOutlineEvent(worldContext, blockContext).post()
+        }
+
+        on<PacketReceivedEvent> { event ->
+            val packet = event.packet
+            if (packet !is GameMessageS2CPacket) return@on
+            if (packet.overlay) return@on
+
+            val content = packet.content ?: return@on
+            val message = content.string.clearCodes()
+
+            if (!ChatEvent(message).post()) return@on
+            event.ci.cancel()
         }
     }
 

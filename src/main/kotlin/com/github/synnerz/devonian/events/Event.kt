@@ -145,3 +145,12 @@ class BlockOutlineEvent(
     val renderContext: WorldRenderContext,
     val blockContext: BlockOutlineContext
 ) : CancellableEvent()
+
+class ChatEvent(
+    val message: String
+) : CancellableEvent() {
+    fun matches(criteria: Regex): List<String>? {
+        val matches = criteria.matchEntire(message) ?: return null
+        return matches.groupValues.drop(1)
+    }
+}
