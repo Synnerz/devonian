@@ -40,6 +40,7 @@ object Devonian : ClientModInitializer {
 		PreventPlacingPlayerHeads.initialize()
 		AutoRequeueDungeons.initialize()
 		ExtraStats.initialize()
+		NoDeathAnimation.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()
