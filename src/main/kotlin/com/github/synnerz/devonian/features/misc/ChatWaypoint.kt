@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.events.ChatEvent
 import com.github.synnerz.devonian.events.RenderWorldEvent
 import com.github.synnerz.devonian.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.ChatUtils
 import com.github.synnerz.devonian.utils.render.Render3D
 import kotlin.math.sqrt
 
@@ -24,6 +25,7 @@ object ChatWaypoint : Feature("chatWaypoint") {
             val z = z1.toDouble()
 
             waypoints.add(TimedWaypoint(System.currentTimeMillis(), username, x, y, z))
+            ChatUtils.sendMessage("&aSet waypoint at &b$x, $y, $z", true)
         }
 
         on<WorldChangeEvent> { waypoints.clear() }

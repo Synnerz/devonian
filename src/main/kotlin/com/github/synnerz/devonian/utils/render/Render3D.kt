@@ -228,18 +228,14 @@ object Render3D {
         var toScale = scale
         val matrices = Matrix4f()
         val textRenderer = Devonian.minecraft.textRenderer
-        val dx = x - camera.pos.x
-        val dy = y - camera.pos.y
-        val dz = z - camera.pos.z
+        val dx = (x - camera.pos.x).toFloat()
+        val dy = (y - camera.pos.y).toFloat()
+        val dz = (z - camera.pos.z).toFloat()
 
-        toScale *= if (increase) sqrt(dx * dx + dy * dy + dz * dz).toFloat() / 120f else 0.025f
+        toScale *= if (increase) sqrt(dx * dx + dy * dy + dz * dz) / 120f else 0.025f
 
         matrices
-            .translate(
-                dx.toFloat(),
-                dy.toFloat(),
-                dz.toFloat()
-            )
+            .translate(dx, dy, dz)
             .rotate(camera.rotation)
             .scale(toScale, -toScale, toScale)
 
