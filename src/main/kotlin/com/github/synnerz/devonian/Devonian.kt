@@ -43,6 +43,7 @@ object Devonian : ClientModInitializer {
 		NoDeathAnimation.initialize()
 		RemoveFrontView.initialize()
 		ChatWaypoint.initialize()
+		RemoveChatLimit.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()

@@ -22,7 +22,8 @@
 		"InGameHudMixin",
 		"LivingEntityMixin",
 		"PerspectiveMixin",
-		"MouseMixin"
+		"MouseMixin",
+		"ChatHudMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
