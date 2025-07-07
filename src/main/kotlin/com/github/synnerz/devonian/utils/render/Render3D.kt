@@ -191,6 +191,8 @@ object Render3D {
         y: Double,
         z: Double,
         color: Color = Color.CYAN,
+        title: String? = null,
+        increase: Boolean = false,
         phase: Boolean = false
     ) {
         val pos = Devonian.minecraft.player ?: return
@@ -202,11 +204,12 @@ object Render3D {
         renderBox(ctx, x, y, z, 1.0, 1.0, color, phase)
         renderBeam(ctx, x, y, z, color, phase)
         renderString(
-            "${String.format("%.2f", sqrt(dx * dx + dy * dy + dz * dz))}m",
+            title ?: "%.2fm".format(sqrt(dx * dx + dy * dy + dz * dz)),
             x + 0.5,
             y + 5.0,
             z + 0.5,
             bgBox = true,
+            increase = increase,
             phase = phase
         )
     }
@@ -219,19 +222,23 @@ object Render3D {
         z: Double,
         scale: Float = 1f,
         bgBox: Boolean = false,
+        increase: Boolean = false,
         phase: Boolean = false
     ) {
         var toScale = scale
         val matrices = Matrix4f()
         val textRenderer = Devonian.minecraft.textRenderer
+        val dx = x - camera.pos.x
+        val dy = y - camera.pos.y
+        val dz = z - camera.pos.z
 
-        toScale *= 0.025f
+        toScale *= if (increase) sqrt(dx * dx + dy * dy + dz * dz).toFloat() / 120f else 0.025f
 
         matrices
             .translate(
-                (x - camera.pos.x).toFloat(),
-                (y - camera.pos.y).toFloat(),
-                (z - camera.pos.z).toFloat()
+                dx.toFloat(),
+                dy.toFloat(),
+                dz.toFloat()
             )
             .rotate(camera.rotation)
             .scale(toScale, -toScale, toScale)
