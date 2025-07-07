@@ -3,15 +3,20 @@ package com.github.synnerz.devonian.utils.render
 import com.github.synnerz.devonian.Devonian
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.*
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.ColorHelper
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.RotationAxis
 import net.minecraft.util.shape.VoxelShape
+import org.joml.Matrix4f
 import java.awt.Color
+import kotlin.math.sqrt
 
 object Render3D {
+    val camera = Devonian.minecraft.gameRenderer.camera
+
     /**
      * - Draws a filled shape
      * @param ctx The WorldRenderContext
@@ -111,6 +116,158 @@ object Render3D {
         )
 
         matrices.pop()
+    }
+
+    @JvmOverloads
+    fun renderBox(
+        ctx: WorldRenderContext,
+        x: Double,
+        y: Double,
+        z: Double,
+        width: Double,
+        height: Double,
+        color: Color = Color.CYAN,
+        phase: Boolean = false
+    ) {
+        val consumers = ctx.consumers() ?: return
+        val matrices = ctx.matrixStack() ?: return
+        val cam = camera.pos.negate()
+        val layer = if (phase) DLayers.LINES_ESP else DLayers.LINES
+        val cx = x + 0.5
+        val cz = z + 0.5
+        val halfWidth = width / 2
+
+        matrices.push()
+        matrices.translate(cam.x, cam.y, cam.z)
+
+        VertexRendering.drawBox(
+            matrices,
+            consumers.getBuffer(layer),
+            cx - halfWidth, y, cz - halfWidth,
+            cx + halfWidth, y + height, cz + halfWidth,
+            color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f
+        )
+
+        matrices.pop()
+    }
+
+    @JvmOverloads
+    fun renderFilledBox(
+        ctx: WorldRenderContext,
+        x: Double,
+        y: Double,
+        z: Double,
+        width: Double,
+        height: Double,
+        color: Color = Color.CYAN,
+        phase: Boolean = false
+    ) {
+        val consumers = ctx.consumers() ?: return
+        val matrices = ctx.matrixStack() ?: return
+        val cam = camera.pos.negate()
+        val layer = if (phase) DLayers.TRIANGLE_STRIP_ESP else DLayers.TRIANGLE_STRIP
+        val cx = x + 0.5
+        val cz = z + 0.5
+        val halfWidth = width / 2
+
+        matrices.push()
+        matrices.translate(cam.x, cam.y, cam.z)
+
+        VertexRendering.drawFilledBox(
+            matrices,
+            consumers.getBuffer(layer),
+            cx - halfWidth, y, cz - halfWidth,
+            cx + halfWidth, y + height, cz + halfWidth,
+            color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f
+        )
+
+        matrices.pop()
+    }
+
+    @JvmOverloads
+    fun renderWaypoint(
+        ctx: WorldRenderContext,
+        x: Double,
+        y: Double,
+        z: Double,
+        color: Color = Color.CYAN,
+        phase: Boolean = false
+    ) {
+        val pos = Devonian.minecraft.player ?: return
+        val dx = x - pos.x
+        val dy = y + 5 - pos.y
+        val dz = z - pos.z
+
+        renderFilledBox(ctx, x, y, z, 1.0, 1.0, Color(color.red, color.green, color.blue, 80), phase)
+        renderBox(ctx, x, y, z, 1.0, 1.0, color, phase)
+        renderBeam(ctx, x, y, z, color, phase)
+        renderString(
+            "${String.format("%.2f", sqrt(dx * dx + dy * dy + dz * dz))}m",
+            x + 0.5,
+            y + 5.0,
+            z + 0.5,
+            bgBox = true,
+            phase = phase
+        )
+    }
+
+    @JvmOverloads
+    fun renderString(
+        text: String,
+        x: Double,
+        y: Double,
+        z: Double,
+        scale: Float = 1f,
+        bgBox: Boolean = false,
+        phase: Boolean = false
+    ) {
+        var toScale = scale
+        val matrices = Matrix4f()
+        val textRenderer = Devonian.minecraft.textRenderer
+
+        toScale *= 0.025f
+
+        matrices
+            .translate(
+                (x - camera.pos.x).toFloat(),
+                (y - camera.pos.y).toFloat(),
+                (z - camera.pos.z).toFloat()
+            )
+            .rotate(camera.rotation)
+            .scale(toScale, -toScale, toScale)
+
+        val consumer = Devonian.minecraft.bufferBuilders.entityVertexConsumers
+        val offset = -textRenderer.getWidth(text) / 2f
+        val textLayer = if (phase) TextRenderer.TextLayerType.SEE_THROUGH else TextRenderer.TextLayerType.NORMAL
+
+        if (bgBox) {
+            textRenderer.draw(
+                text,
+                offset,
+                0f,
+                0x20FFFFFF,
+                true,
+                matrices,
+                consumer,
+                textLayer,
+                (Devonian.minecraft.options.getTextBackgroundOpacity(0.25f) * 255).toInt() shl 24,
+                LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE
+            )
+        }
+
+        textRenderer.draw(
+            text,
+            offset,
+            0f,
+            0xFFFFFFFF.toInt(),
+            true,
+            matrices,
+            consumer,
+            textLayer,
+            0,
+            LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE
+        )
+        consumer.draw()
     }
 
     /**
