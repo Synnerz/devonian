@@ -20,30 +20,33 @@ object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")
 	val minecraft = MinecraftClient.getInstance()
 	val features = mutableListOf<Feature>()
+	private val featureInstances = mutableListOf(
+		NoCursorReset,
+		BoxStarMob,
+		RemoveBlockBreakParticle,
+		RemoveExplosionParticle,
+		RemoveFallingBlocks,
+		RemoveFireOverlay,
+		PreventPlacingWeapons,
+		MiddleClickGui,
+		ProtectItem,
+		NoHurtCamera,
+		RemoveLightning,
+		HideInventoryEffects,
+		BlockOverlay,
+		HidePotionEffectOverlay,
+		EtherwarpOverlay,
+		PreventPlacingPlayerHeads,
+		AutoRequeueDungeons,
+		ExtraStats,
+		NoDeathAnimation,
+		RemoveFrontView,
+		ChatWaypoint,
+		RemoveChatLimit
+	)
 
 	override fun onInitializeClient() {
-		NoCursorReset.initialize()
-		BoxStarMob.initialize()
-		RemoveBlockBreakParticle.initialize()
-		RemoveExplosionParticle.initialize()
-		RemoveFallingBlocks.initialize()
-		RemoveFireOverlay.initialize()
-		PreventPlacingWeapons.initialize()
-		MiddleClickGui.initialize()
-		ProtectItem.initialize()
-		NoHurtCamera.initialize()
-		RemoveLightning.initialize()
-		HideInventoryEffects.initialize()
-		BlockOverlay.initialize()
-		HidePotionEffectOverlay.initialize()
-		EtherwarpOverlay.initialize()
-		PreventPlacingPlayerHeads.initialize()
-		AutoRequeueDungeons.initialize()
-		ExtraStats.initialize()
-		NoDeathAnimation.initialize()
-		RemoveFrontView.initialize()
-		ChatWaypoint.initialize()
-		RemoveChatLimit.initialize()
+		featureInstances.forEach(Feature::initialize)
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()
