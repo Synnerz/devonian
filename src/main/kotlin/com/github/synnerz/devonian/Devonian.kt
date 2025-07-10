@@ -42,7 +42,8 @@ object Devonian : ClientModInitializer {
 		NoDeathAnimation,
 		RemoveFrontView,
 		ChatWaypoint,
-		RemoveChatLimit
+		RemoveChatLimit,
+		CopyChat
 	)
 
 	override fun onInitializeClient() {

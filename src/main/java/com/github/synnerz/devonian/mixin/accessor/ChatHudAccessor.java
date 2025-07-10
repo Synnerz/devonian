@@ -13,6 +13,18 @@ public interface ChatHudAccessor {
     @Accessor
     List<ChatHudLine> getMessages();
 
+    @Accessor
+    List<ChatHudLine.Visible> getVisibleMessages();
+
+    @Invoker("toChatLineX")
+    double toChatLineMX(double x);
+
+    @Invoker("toChatLineY")
+    double toChatLineMY(double y);
+
+    @Invoker("getMessageLineIndex")
+    int getMessageLineIdx(double chatLineX, double chatLineY);
+
     @Invoker
     void invokeRefresh();
 }
