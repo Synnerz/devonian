@@ -3,8 +3,10 @@ package com.github.synnerz.devonian.events
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext.BlockOutlineContext
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.particle.Particle
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.world.ClientWorld
@@ -158,4 +160,9 @@ class ChatEvent(
 class EntityDeathEvent(
     val entity: Entity,
     val world: ClientWorld
+) : Event()
+
+class RenderOverlayEvent(
+    val ctx: DrawContext,
+    val tickCounter: RenderTickCounter
 ) : Event()

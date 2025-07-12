@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.events.RenderOverlayEvent;
 import com.github.synnerz.devonian.features.misc.HidePotionEffectOverlay;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -19,5 +20,13 @@ public class InGameHudMixin {
     private void devonian$renderStatusOverlay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         if (!HidePotionEffectOverlay.INSTANCE.isEnabled()) return;
         ci.cancel();
+    }
+
+    @Inject(
+            method = "render",
+            at = @At("TAIL")
+    )
+    private void devonian$onRenderOverlay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+        new RenderOverlayEvent(context, tickCounter).post();
     }
 }
