@@ -68,13 +68,13 @@ object EventBus {
         }
     }
 
-    inline fun <reified T : Event> on(noinline cb: (T) -> Unit): Dcall {
+    inline fun <reified T : Event> on(noinline cb: (T) -> Unit): EventListener {
         return on<T>(cb, true)
     }
 
-    inline fun <reified T : Event> on(noinline cb: (T) -> Unit, add: Boolean = true): Dcall {
+    inline fun <reified T : Event> on(noinline cb: (T) -> Unit, add: Boolean = true): EventListener {
         if (add) events.getOrPut(T::class.java.name) { mutableListOf() }.add(cb)
-        return object : Dcall {
+        return object : EventListener {
             override fun remove() = remove<T>(cb)
             override fun add() = events.getOrPut(T::class.java.name) { mutableListOf() }.add(cb)
         }
@@ -93,7 +93,7 @@ object EventBus {
         }
     }
 
-    interface Dcall {
+    interface EventListener {
         fun remove(): Boolean?
         fun add(): Boolean
     }
