@@ -21,14 +21,19 @@ object JsonUtils {
     ).resolve("devonianConfig.json")
     val gson = GsonBuilder().setPrettyPrinting().create()
     var json = JsonObject()
-    val listeners = mutableListOf<() -> Unit>()
+    private val afterLoadListeners = mutableListOf<() -> Unit>()
+    private val preSaveListener = mutableListOf<() -> Unit>()
 
     init {
         EventBus.on<GameUnloadEvent> { save() }
     }
 
     fun afterLoad(cb: () -> Unit) {
-        listeners.add(cb)
+        afterLoadListeners.add(cb)
+    }
+
+    fun preSave(cb: () -> Unit) {
+        preSaveListener.add(cb)
     }
 
     /**
@@ -56,6 +61,24 @@ object JsonUtils {
         return this
     }
 
+    fun setHud(name: String, x: Int? = null, y: Int? = null, scale: Float? = null): JsonUtils {
+        if (json.get("huds") == null) {
+            json.add("huds", JsonObject())
+        }
+        val huds = json.get("huds").asJsonObject
+        if (huds.get(name) == null) {
+            huds.add(name, JsonObject())
+        }
+
+        val currentHud = huds.get(name).asJsonObject
+
+        if (x != null) currentHud.addProperty("x", x)
+        if (y != null) currentHud.addProperty("y", y)
+        if (scale != null) currentHud.addProperty("scale", scale)
+
+        return this
+    }
+
     /**
      * - Gets a value from the specified name key
      */
@@ -78,6 +101,8 @@ object JsonUtils {
      * - Gets a boolean value from the specified name key
      */
     fun getConfig(name: String): Boolean? = json.get("config")?.asJsonObject?.get(name)?.asBoolean
+
+    fun getHud(name: String): JsonObject? = json.get("huds")?.asJsonObject?.get(name)?.asJsonObject
 
     /**
      * - Loads the data from the saved file if it exists
@@ -109,14 +134,14 @@ object JsonUtils {
                     json.add(k, v)
                 }
 
-                for (cb in listeners)
+                for (cb in afterLoadListeners)
                     cb()
             }
             return
         }
 
         json = JsonObject()
-        for (cb in listeners)
+        for (cb in afterLoadListeners)
             cb()
     }
 
@@ -126,6 +151,8 @@ object JsonUtils {
      */
     fun save() {
         if (!configFile.parentFile.exists()) configFile.parentFile?.mkdirs()
+        for (cb in preSaveListener)
+            cb()
         FileWriter(configFile).use { gson.toJson(json, it) }
     }
 }

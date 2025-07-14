@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.features.dungeons.AutoRequeueDungeons
 import com.github.synnerz.devonian.features.dungeons.BoxStarMob
 import com.github.synnerz.devonian.features.dungeons.ExtraStats
 import com.github.synnerz.devonian.features.misc.*
+import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
 import net.fabricmc.api.ClientModInitializer
@@ -48,6 +49,7 @@ object Devonian : ClientModInitializer {
 
 	override fun onInitializeClient() {
 		featureInstances.forEach(Feature::initialize)
+		HudManager.initialize()
 		JsonUtils.load()
 		Config.initialize()
 		Location.initialize()
