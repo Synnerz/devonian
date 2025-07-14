@@ -166,3 +166,5 @@ class RenderOverlayEvent(
     val ctx: DrawContext,
     val tickCounter: RenderTickCounter
 ) : Event()
+
+class RenderTickEvent : Event()

@@ -1,9 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.BlockInteractEvent;
-import com.github.synnerz.devonian.events.EventBus;
-import com.github.synnerz.devonian.events.GuiCloseEvent;
-import com.github.synnerz.devonian.events.GuiOpenEvent;
+import com.github.synnerz.devonian.events.*;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
@@ -50,5 +47,16 @@ public class MinecraftClientMixin {
         if (!event.isCancelled()) return original.call(instance, player, hand, hitResult);
 
         return ActionResult.PASS;
+    }
+
+    @Inject(
+            method = "render",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/render/RenderTickCounter$Dynamic;beginRenderTick(JZ)I"
+            )
+    )
+    private void devonian$onRenderTick(boolean tick, CallbackInfo ci) {
+        new RenderTickEvent().post();
     }
 }
