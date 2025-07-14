@@ -44,7 +44,8 @@ object Devonian : ClientModInitializer {
 		RemoveFrontView,
 		ChatWaypoint,
 		RemoveChatLimit,
-		CopyChat
+		CopyChat,
+		WorldAge
 	)
 
 	override fun onInitializeClient() {
