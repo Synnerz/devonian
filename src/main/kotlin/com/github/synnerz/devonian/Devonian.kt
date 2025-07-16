@@ -45,7 +45,8 @@ object Devonian : ClientModInitializer {
 		CopyChat,
 		WorldAge,
 		MimicKilled,
-		CryptsDisplay
+		CryptsDisplay,
+		DeathsDisplay
 	)
 
 	override fun onInitializeClient() {
