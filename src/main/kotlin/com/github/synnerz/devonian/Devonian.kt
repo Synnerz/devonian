@@ -46,7 +46,8 @@ object Devonian : ClientModInitializer {
 		WorldAge,
 		MimicKilled,
 		CryptsDisplay,
-		DeathsDisplay
+		DeathsDisplay,
+		MilestoneDisplay
 	)
 
 	override fun onInitializeClient() {
