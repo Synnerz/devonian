@@ -48,6 +48,15 @@ open class Hud(val name: String, val string: String) {
     }
 
     open fun sampleDraw(ctx: DrawContext) {
+        if (string.contains("\n")) {
+            Render2D.drawStringNW(
+                ctx,
+                string,
+                x, y, scale
+            )
+            return
+        }
+
         Render2D.drawString(
             ctx,
             string,
