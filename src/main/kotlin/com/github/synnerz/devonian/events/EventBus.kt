@@ -67,6 +67,7 @@ object EventBus {
                     }
                     return@on
                 }
+                if (action !== PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME) return@on
 
                 packet.entries.forEach {
                     val name = it.displayName ?: return@forEach
