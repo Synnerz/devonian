@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket
+import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import org.lwjgl.glfw.GLFW
 
 object EventBus {
@@ -57,6 +58,23 @@ object EventBus {
 
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
+            if (packet is PlayerListS2CPacket) {
+                val action = packet.actions.firstOrNull() ?: return@on
+                if (action === PlayerListS2CPacket.Action.ADD_PLAYER) {
+                    packet.entries.forEach {
+                        val name = it.displayName ?: return@forEach
+                        TabAddEvent(name.string.clearCodes()).post()
+                    }
+                    return@on
+                }
+
+                packet.entries.forEach {
+                    val name = it.displayName ?: return@forEach
+                    TabUpdateEvent(name.string.clearCodes()).post()
+                }
+                return@on
+            }
+
             if (packet !is GameMessageS2CPacket) return@on
             if (packet.overlay) return@on
 

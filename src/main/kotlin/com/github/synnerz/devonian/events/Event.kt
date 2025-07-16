@@ -168,3 +168,21 @@ class RenderOverlayEvent(
 ) : Event()
 
 class RenderTickEvent : Event()
+
+class TabAddEvent(
+    val message: String
+) : Event() {
+    fun matches(criteria: Regex): List<String>? {
+        val matches = criteria.matchEntire(message) ?: return null
+        return matches.groupValues.drop(1)
+    }
+}
+
+class TabUpdateEvent(
+    val message: String
+) : Event() {
+    fun matches(criteria: Regex): List<String>? {
+        val matches = criteria.matchEntire(message) ?: return null
+        return matches.groupValues.drop(1)
+    }
+}
