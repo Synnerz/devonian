@@ -35,6 +35,15 @@ object Render2D {
         if (scale != 1f) matrices.pop()
     }
 
+    @JvmOverloads
+    fun drawStringNW(ctx: DrawContext, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
+        var yy = y
+        str.split("\n").forEach {
+            drawString(ctx, it, x, yy, scale, shadow)
+            yy += 10
+        }
+    }
+
     fun String.width(): Int = textRenderer.getWidth(this)
 
     fun String.height(): Int {
