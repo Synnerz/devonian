@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.dungeons.AutoRequeueDungeons
 import com.github.synnerz.devonian.features.dungeons.BoxStarMob
 import com.github.synnerz.devonian.features.dungeons.ExtraStats
+import com.github.synnerz.devonian.features.dungeons.MimicKilled
 import com.github.synnerz.devonian.features.misc.*
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.utils.JsonUtils
@@ -45,7 +46,8 @@ object Devonian : ClientModInitializer {
 		ChatWaypoint,
 		RemoveChatLimit,
 		CopyChat,
-		WorldAge
+		WorldAge,
+		MimicKilled
 	)
 
 	override fun onInitializeClient() {
