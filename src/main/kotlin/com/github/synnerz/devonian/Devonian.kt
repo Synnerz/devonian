@@ -49,7 +49,8 @@ object Devonian : ClientModInitializer {
 		DeathsDisplay,
 		MilestoneDisplay,
 		PuzzlesDisplay,
-		RemoveTabPing
+		RemoveTabPing,
+		RemoveDamageTag
 	)
 
 	override fun onInitializeClient() {

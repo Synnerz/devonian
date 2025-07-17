@@ -6,6 +6,8 @@ import com.github.synnerz.devonian.utils.ItemUtils
 import com.github.synnerz.devonian.utils.ScreenUtils
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 
+// FIXME: whenever left clicking an item into a chest it does not register
+//  due to it being changed to middle click
 object MiddleClickGui : Feature("middleClickGui") {
     val avoidGuis = mutableListOf(
         "Wardrobe",

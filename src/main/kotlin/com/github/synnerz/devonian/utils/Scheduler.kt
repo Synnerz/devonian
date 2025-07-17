@@ -22,7 +22,8 @@ object Scheduler {
         }
     }
 
-    fun scheduleTask(delay: Int, cb: () -> Unit) {
+    @JvmOverloads
+    fun scheduleTask(delay: Int = 1, cb: () -> Unit) {
         synchronized(tasks) {
             tasks.add(Task(delay, cb))
         }
