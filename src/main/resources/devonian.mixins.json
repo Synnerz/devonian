@@ -23,7 +23,8 @@
 		"LivingEntityMixin",
 		"PerspectiveMixin",
 		"MouseMixin",
-		"ChatHudMixin"
+		"ChatHudMixin",
+		"PlayerListHudMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

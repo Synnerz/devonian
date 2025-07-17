@@ -48,7 +48,8 @@ object Devonian : ClientModInitializer {
 		CryptsDisplay,
 		DeathsDisplay,
 		MilestoneDisplay,
-		PuzzlesDisplay
+		PuzzlesDisplay,
+		RemoveTabPing
 	)
 
 	override fun onInitializeClient() {
