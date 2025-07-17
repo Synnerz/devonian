@@ -60,7 +60,11 @@ object ChatUtils {
 
         if (!removedLine) return
 
-        chatHudAccessor.invokeRefresh()
+        try {
+            chatHudAccessor.invokeRefresh()
+        } catch (e: ConcurrentModificationException) {
+            e.printStackTrace()
+        }
     }
 
     fun editLines(cb: (ChatHudLine) -> Boolean, replaceWith: TextComponent) {
