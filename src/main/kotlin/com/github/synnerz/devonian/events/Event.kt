@@ -16,6 +16,7 @@ import net.minecraft.network.packet.Packet
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
+import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
@@ -149,7 +150,8 @@ class BlockOutlineEvent(
 ) : CancellableEvent()
 
 class ChatEvent(
-    val message: String
+    val message: String,
+    val text: Text
 ) : CancellableEvent() {
     fun matches(criteria: Regex): List<String>? {
         val matches = criteria.matchEntire(message) ?: return null

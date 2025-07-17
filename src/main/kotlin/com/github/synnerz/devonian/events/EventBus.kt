@@ -82,7 +82,7 @@ object EventBus {
             val content = packet.content ?: return@on
             val message = content.string.clearCodes()
 
-            if (!ChatEvent(message).post()) return@on
+            if (!ChatEvent(message, content).post()) return@on
             event.ci.cancel()
         }
     }
