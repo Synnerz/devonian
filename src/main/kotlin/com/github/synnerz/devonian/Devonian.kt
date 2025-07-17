@@ -51,7 +51,8 @@ object Devonian : ClientModInitializer {
 		PuzzlesDisplay,
 		RemoveTabPing,
 		RemoveDamageTag,
-		HideNoStarTag
+		HideNoStarTag,
+		CompactChat
 	)
 
 	override fun onInitializeClient() {
