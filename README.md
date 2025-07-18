@@ -13,6 +13,8 @@ Devonian is a minecraft mod for hypixel skyblock aimed towards enhancing your ga
 * PuzzlesDisplay
 * RemoveDamageTag
 * HideNoStarTag
+## Garden
+* GardenDisplay
 ## Misc
 * RemoveFallingBlocks
 * RemoveFireOverlay

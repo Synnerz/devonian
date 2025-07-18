@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.events.EventBus
 import com.github.synnerz.devonian.events.SubAreaEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.dungeons.*
+import com.github.synnerz.devonian.features.garden.GardenDisplay
 import com.github.synnerz.devonian.features.misc.*
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.utils.JsonUtils
@@ -52,7 +53,8 @@ object Devonian : ClientModInitializer {
 		RemoveTabPing,
 		RemoveDamageTag,
 		HideNoStarTag,
-		CompactChat
+		CompactChat,
+		GardenDisplay
 	)
 
 	override fun onInitializeClient() {
