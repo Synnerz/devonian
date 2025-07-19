@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.Render2D.height
 import com.github.synnerz.devonian.utils.render.Render2D.width
 import net.minecraft.client.gui.DrawContext
+import java.awt.Color
 
 // TODO: make this its own class and add TextHud separately
 open class Hud(val name: String, val string: String) {
@@ -47,7 +48,16 @@ open class Hud(val name: String, val string: String) {
         y += dy.toInt()
     }
 
-    open fun sampleDraw(ctx: DrawContext) {
+    open fun sampleDraw(ctx: DrawContext, mx: Int, my: Int) {
+        ctx.drawBorder(
+            x - 2,
+            y - 2,
+            string.width() + 4,
+            string.height() + 4,
+            if (!inBounds(mx.toDouble(), my.toDouble())) Color.GRAY.rgb
+            else Color.WHITE.rgb
+        )
+
         if (string.contains("\n")) {
             Render2D.drawStringNW(
                 ctx,

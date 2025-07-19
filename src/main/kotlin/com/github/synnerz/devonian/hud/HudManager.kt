@@ -62,7 +62,7 @@ object HudManager : Screen(Text.literal("Devonian.HudManager")) {
             10, 10
         )
 
-        for (hud in huds) hud.sampleDraw(context)
+        for (hud in huds) hud.sampleDraw(context, mouseX, mouseY)
     }
 
     fun onMouseScroll(delta: Double) {
