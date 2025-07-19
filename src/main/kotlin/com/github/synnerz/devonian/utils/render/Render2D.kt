@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.utils.render
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.Formatting
 import kotlin.math.max
@@ -44,13 +45,23 @@ object Render2D {
         }
     }
 
-    fun String.width(): Int = textRenderer.getWidth(this)
+    fun String.width(): Int {
+        val newlines = this.split("\n")
+        if (newlines.size <= 1) return textRenderer.getWidth(this.clearCodes())
+
+        var maxWidth = 0
+
+        for (line in newlines)
+            maxWidth = max(maxWidth, textRenderer.getWidth(line.clearCodes()))
+
+        return maxWidth
+    }
 
     fun String.height(): Int {
         val newlines = this.split("\n")
         if (newlines.size <= 1) return textRenderer.fontHeight
 
-        return textRenderer.fontHeight * newlines.size
+        return textRenderer.fontHeight * (newlines.size + 1)
     }
 
     object Mouse {
