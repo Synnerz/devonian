@@ -4,64 +4,33 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.events.BlockOutlineEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.ChatUtils
+import com.github.synnerz.devonian.utils.ColorEnum
 import com.github.synnerz.devonian.utils.JsonUtils
+import com.github.synnerz.devonian.utils.render.Render3D
 import net.minecraft.block.ShapeContext
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.VertexRendering
 import net.minecraft.world.EmptyBlockView
+import java.awt.Color
 
 object BlockOverlay : Feature("blockOverlay") {
-    private val colors = mutableMapOf(
-        "WHITE" to -1,
-        "BLACK" to -16777216,
-        "GRAY" to -8355712,
-        "LIGHT_GRAY" to -6250336,
-        "ALTERNATE_WHITE" to -4539718,
-        "RED" to -65536,
-        "LIGHT_RED" to -2142128,
-        "GREEN" to -16711936,
-        "BLUE" to -16776961,
-        "YELLOW" to -256,
-        "LIGHT_YELLOW" to -171,
-        "PURPLE" to -11534256,
-        "CYAN" to -11010079,
-    )
-    private var color: Int = -1
+    private var color: Color = Color.WHITE
 
     override fun initialize() {
         JsonUtils.set("blockOverlayColor", -1)
 
         DevonianCommand.command.subcommand("blockoverlay") { _, args ->
             if (args.isEmpty()) return@subcommand 0
-            color = colors[args.first()] ?: -1
-            JsonUtils.set("blockOverlayColor", color)
+            color = ColorEnum.valueOf(args.first() as String).color
+            JsonUtils.set("blockOverlayColor", color.rgb)
             ChatUtils.sendMessage("&aSuccessfully set block overlay color to &6${args.first()}", true)
             1
-        }.string("color").suggest("color",
-            "WHITE",
-            "BLACK",
-            "GRAY",
-            "LIGHT_GRAY",
-            "ALTERNATE_WHITE",
-            "RED",
-            "LIGHT_RED",
-            "GREEN",
-            "BLUE",
-            "YELLOW",
-            "LIGHT_YELLOW",
-            "PURPLE",
-            "CYAN"
-        )
+        }.string("color").suggest("color", *ColorEnum.entries.map { it.name }.toTypedArray())
 
         JsonUtils.afterLoad {
-            color = JsonUtils.get<Int>("blockOverlayColor") ?: -1
+            color = Color(JsonUtils.get<Int>("blockOverlayColor") ?: -1, true)
         }
 
         on<BlockOutlineEvent> { event ->
             val blockPos = event.blockContext.blockPos()
-            val context = event.renderContext
-            val matrices = context.matrixStack() ?: return@on
-            val consumers = context.consumers() ?: return@on
             val camera = minecraft.gameRenderer.camera
             val cam = camera.pos
 
@@ -74,14 +43,14 @@ object BlockOverlay : Feature("blockOverlay") {
                 )
 
             event.cancel()
-            VertexRendering.drawOutline(
-                matrices,
-                consumers.getBuffer(RenderLayer.getLines()),
+            Render3D.renderOutline(
+                event.renderContext,
                 blockShape,
                 blockPos.x - cam.x,
                 blockPos.y - cam.y,
                 blockPos.z - cam.z,
-                color
+                color,
+                true
             )
         }
     }
