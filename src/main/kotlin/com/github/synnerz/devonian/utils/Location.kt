@@ -33,7 +33,7 @@ object Location {
                     val team = packet.team?.get() ?: return@on
                     val teamPrefix = team.prefix.string
                     val teamSuffix = team.suffix.string
-                    if (teamPrefix.isEmpty() || teamSuffix.isEmpty()) return@on
+                    if (teamPrefix.isEmpty()) return@on
                     val teamName = packet.teamName
                     if (!teamName.matches(teamRegex)) return@on
 
