@@ -9,11 +9,15 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
+import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
+import net.minecraft.network.packet.s2c.play.TeamS2CPacket
 import org.lwjgl.glfw.GLFW
 
 object EventBus {
+    private var totalTicks = 0
+    private val teamRegex = "^team_(\\d+)$".toRegex()
     val events = hashMapOf<String, MutableList<Any>>()
 
     init {
@@ -27,7 +31,10 @@ object EventBus {
         WorldRenderEvents.LAST.register { post(RenderWorldEvent(it)) }
         ClientLifecycleEvents.CLIENT_STARTED.register { post(GameLoadEvent(it)) }
         ClientLifecycleEvents.CLIENT_STOPPING.register { post(GameUnloadEvent(it)) }
-        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world -> post(WorldChangeEvent(mc, world)) }
+        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world ->
+            WorldChangeEvent(mc, world).post()
+            totalTicks = 0
+        }
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
             ScreenMouseEvents.allowMouseClick(screen).register { _, mx, my, mbtn ->
                 val event = GuiClickEvent(mx, my, mbtn, true, screen)
@@ -73,6 +80,23 @@ object EventBus {
                     val name = it.displayName ?: return@forEach
                     TabUpdateEvent(name.string.clearCodes()).post()
                 }
+                return@on
+            }
+
+            if (packet is CommonPingS2CPacket) {
+                totalTicks++
+                ServerTickEvent(totalTicks).post()
+                return@on
+            }
+
+            if (packet is TeamS2CPacket) {
+                if (packet.team.isEmpty) return@on
+                val team = packet.team?.get() ?: return@on
+                val teamPrefix = team.prefix.string
+                val teamSuffix = team.suffix.string
+                if (teamPrefix.isEmpty()) return@on
+                if (!packet.teamName.matches(teamRegex)) return@on
+                ScoreboardEvent("${teamPrefix}${teamSuffix.trim()}").post()
                 return@on
             }
 

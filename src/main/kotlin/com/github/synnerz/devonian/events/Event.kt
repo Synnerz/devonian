@@ -149,15 +149,14 @@ class BlockOutlineEvent(
     val blockContext: BlockOutlineContext
 ) : CancellableEvent()
 
-class ChatEvent(
-    val message: String,
-    val text: Text
-) : CancellableEvent() {
+open class CriteriaEvent(val message: String): CancellableEvent() {
     fun matches(criteria: Regex): List<String>? {
         val matches = criteria.matchEntire(message) ?: return null
         return matches.groupValues.drop(1)
     }
 }
+
+class ChatEvent(message: String, val text: Text) : CriteriaEvent(message)
 
 class EntityDeathEvent(
     val entity: Entity,
@@ -171,20 +170,9 @@ class RenderOverlayEvent(
 
 class RenderTickEvent : Event()
 
-class TabAddEvent(
-    val message: String
-) : Event() {
-    fun matches(criteria: Regex): List<String>? {
-        val matches = criteria.matchEntire(message) ?: return null
-        return matches.groupValues.drop(1)
-    }
-}
+class TabAddEvent(message: String) : CriteriaEvent(message)
+class TabUpdateEvent(message: String) : CriteriaEvent(message)
 
-class TabUpdateEvent(
-    val message: String
-) : Event() {
-    fun matches(criteria: Regex): List<String>? {
-        val matches = criteria.matchEntire(message) ?: return null
-        return matches.groupValues.drop(1)
-    }
-}
+class ServerTickEvent(val ticks: Int) : Event()
+
+class ScoreboardEvent(message: String) : CriteriaEvent(message)
