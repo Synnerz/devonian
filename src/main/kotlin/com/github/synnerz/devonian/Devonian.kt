@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
 import com.github.synnerz.devonian.features.garden.PestsDisplay
 import com.github.synnerz.devonian.features.misc.*
+import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
@@ -56,7 +57,8 @@ object Devonian : ClientModInitializer {
 		HideNoStarTag,
 		CompactChat,
 		GardenDisplay,
-		PestsDisplay
+		PestsDisplay,
+		BossSlainTime
 	)
 
 	override fun onInitializeClient() {
