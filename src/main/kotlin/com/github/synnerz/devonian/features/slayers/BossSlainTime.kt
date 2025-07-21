@@ -44,7 +44,7 @@ object BossSlainTime : Feature("bossSlainTime") {
             val serverTime = (killedAtTicks - spawnedAtTicks) * 0.05
 
             // TODO: making this onDeath based might be better for accuracy
-            ChatUtils.sendMessage("&aBoss Took&f: &b${"%.2f".format(realTime.toFloat())}s &7- &b${"%.2f".format(serverTime.toFloat())}s", true)
+            ChatUtils.sendMessage("&aBoss Took&f: &b${"%.2fs".format(realTime.toFloat())} &7- &b${"%.2fs".format(serverTime.toFloat())}", true)
             reset()
         }
 
