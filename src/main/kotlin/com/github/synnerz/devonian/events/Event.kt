@@ -176,3 +176,5 @@ class TabUpdateEvent(message: String) : CriteriaEvent(message)
 class ServerTickEvent(val ticks: Int) : Event()
 
 class ScoreboardEvent(message: String) : CriteriaEvent(message)
+
+class RenderSlotEvent(val slot: Slot, val ctx: DrawContext) : CancellableEvent()

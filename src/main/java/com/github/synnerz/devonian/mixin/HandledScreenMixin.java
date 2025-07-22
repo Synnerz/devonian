@@ -3,6 +3,8 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.events.DropItemEvent;
 import com.github.synnerz.devonian.events.EventBus;
 import com.github.synnerz.devonian.events.GuiSlotClickEvent;
+import com.github.synnerz.devonian.events.RenderSlotEvent;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
@@ -13,13 +15,16 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HandledScreen.class)
-public class HandledScreenMixin {
+public abstract class HandledScreenMixin {
     @Shadow
     @Final
     protected ScreenHandler handler;
+
+    @Shadow protected abstract void drawSlot(DrawContext context, Slot slot);
 
     @Inject(
             method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V",
@@ -56,5 +61,15 @@ public class HandledScreenMixin {
                 }
             }
         }
+    }
+
+    @Redirect(
+            method = "drawSlots",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V")
+    )
+    private void devonian$drawSlots(HandledScreen instance, DrawContext context, Slot slot) {
+        if (new RenderSlotEvent(slot, context).post()) return;
+
+        drawSlot(context, slot);
     }
 }
