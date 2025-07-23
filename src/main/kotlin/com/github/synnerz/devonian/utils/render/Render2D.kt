@@ -3,7 +3,9 @@ package com.github.synnerz.devonian.utils.render
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.util.Formatting
+import java.awt.Color
 import kotlin.math.max
 
 object Render2D {
@@ -43,6 +45,11 @@ object Render2D {
             drawString(ctx, it, x, yy, scale, shadow)
             yy += 10
         }
+    }
+
+    @JvmOverloads
+    fun drawRect(ctx: DrawContext, x: Int, y: Int, width: Int, height: Int, color: Color = Color.WHITE) {
+        ctx.fill(RenderLayer.getGui(), x, y, x + width, y + height, color.rgb)
     }
 
     fun String.width(): Int {
