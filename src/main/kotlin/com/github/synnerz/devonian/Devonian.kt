@@ -60,7 +60,8 @@ object Devonian : ClientModInitializer {
 		GardenDisplay,
 		PestsDisplay,
 		BossSlainTime,
-		BossSpawnTime
+		BossSpawnTime,
+		FactoryHelper
 	)
 
 	override fun onInitializeClient() {
