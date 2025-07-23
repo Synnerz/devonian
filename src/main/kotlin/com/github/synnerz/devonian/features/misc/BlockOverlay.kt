@@ -50,7 +50,7 @@ object BlockOverlay : Feature("blockOverlay") {
                 blockPos.y - cam.y,
                 blockPos.z - cam.z,
                 color,
-                true
+                minecraft.options.perspective.isFirstPerson
             )
         }
     }
