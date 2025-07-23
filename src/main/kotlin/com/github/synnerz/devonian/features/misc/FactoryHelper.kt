@@ -101,6 +101,7 @@ object FactoryHelper : Feature("factoryHelper") {
         }
 
         on<RenderSlotEvent> { event ->
+            if (!inFactory) return@on
             if (bestSlot == -1) return@on
             val ctx = event.ctx
             val slot = event.slot
