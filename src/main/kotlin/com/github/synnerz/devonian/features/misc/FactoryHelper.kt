@@ -155,7 +155,9 @@ object FactoryHelper : Feature("factoryHelper") {
         }
         if (cost == 0.0) return
 
-        stats[slot] = RabbitStat(cost.toInt() / (nextCps - currentCps), cost)
+        val div = (nextCps - currentCps)
+
+        stats[slot] = RabbitStat(cost.toInt() / if (div > 0) div else 1, cost)
         findBest()
     }
 }
