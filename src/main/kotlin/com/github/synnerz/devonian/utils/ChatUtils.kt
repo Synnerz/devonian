@@ -47,20 +47,23 @@ object ChatUtils {
 
     fun removeLines(cb: (ChatHudLine) -> Boolean) {
         var removedLine = false
-        val messageList = chatHudAccessor.messages?.listIterator() ?: return
+        val messages = chatHudAccessor.messages ?: return
+        val messageList = synchronized(messages) { messages.toList() }
+        val filtered = messageList.filter(cb)
 
-        while (messageList.hasNext()) {
-            val msg = messageList.next()
-            if (!cb(msg)) continue
-
-            messageList.remove()
-            chatLineIds.remove(msg)
-            removedLine = true
+        synchronized(messages) {
+            for (msg in filtered) {
+                messages.remove(msg)
+                chatLineIds.remove(msg)
+                removedLine = true
+            }
         }
 
         if (!removedLine) return
 
-        chatHudAccessor.invokeRefresh()
+        Scheduler.scheduleTask(0) {
+            chatHudAccessor.invokeRefresh()
+        }
     }
 
     fun editLines(cb: (ChatHudLine) -> Boolean, replaceWith: TextComponent) {

@@ -3,8 +3,8 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.events.ChatEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.ChatUtils
-import com.github.synnerz.devonian.utils.Scheduler
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
+import kotlin.concurrent.thread
 
 object CompactChat : Feature("compactChat") {
     private val chatList = mutableMapOf<String, Pair<Int, Long>>()
@@ -19,17 +19,17 @@ object CompactChat : Feature("compactChat") {
 
             if (lastTime != null && System.currentTimeMillis() - lastTime < 60_000) {
                 val count = data.first + 1
-                Scheduler.scheduleTask(0) {
+                thread {
                     ChatUtils.removeLines {
                         it.content?.string?.clearCodes() == msg || ChatUtils.chatLineIds[it] == msg.hashCode()
                     }
-                    event.cancel()
-                    ChatUtils.sendMessageWithId(
-                        event.text.copy().append(ChatUtils.literal(" &7($count)")),
-                        msg.hashCode()
-                    )
-                    chatList[msg] = Pair(count, System.currentTimeMillis())
                 }
+                event.cancel()
+                ChatUtils.sendMessageWithId(
+                    event.text.copy().append(ChatUtils.literal(" &7($count)")),
+                    msg.hashCode()
+                )
+                chatList[msg] = Pair(count, System.currentTimeMillis())
                 return@on
             }
 
