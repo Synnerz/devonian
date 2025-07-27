@@ -12,8 +12,8 @@ import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
 import java.awt.Color
 
 object FactoryHelper : Feature("factoryHelper") {
-    private val nextCPSRegex = "^  \\+([\\d.]+)x? Chocolate per second$".toRegex()
-    private val currentCPSRegex = "\\+([\\d.]+)x? Chocolate per".toRegex()
+    private val nextCPSRegex = "^  \\+([\\d.,]+)x? Chocolate per second$".toRegex()
+    private val currentCPSRegex = "\\+([\\d.,]+)x? Chocolate per".toRegex()
     private val chocolateCostRegex = "^([\\d,]+) Chocolate$".toRegex()
     private val baseChocoRegex = "^Base Chocolate: ([\\d,.]+) per second$".toRegex()
     private val totalMultiplierRegex = "^Total Multiplier: ([\\d,.]+)x$".toRegex()
@@ -153,7 +153,11 @@ object FactoryHelper : Feature("factoryHelper") {
             val match = currentCPSRegex.find(line) ?: continue
             currentCps = match.groupValues[1].replace(",", "").toInt()
         }
-        if (cost == 0.0) return
+        if (cost == 0.0) {
+            stats.remove(slot)
+            findBest()
+            return
+        }
 
         val div = (nextCps - currentCps)
 
