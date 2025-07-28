@@ -6,6 +6,9 @@ import com.github.synnerz.devonian.utils.ChatUtils
 import com.github.synnerz.devonian.utils.Scheduler
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 
+// FIXME: whenever using `removeLines` it will always be worse in performance
+//  due to it being O(n), find some way to make this functionality work without it being too annoying to code
+//  in order for it to not be as performance intensive in the future.
 object CompactChat : Feature("compactChat") {
     private val chatList = mutableMapOf<String, Pair<Int, Long>>()
 
