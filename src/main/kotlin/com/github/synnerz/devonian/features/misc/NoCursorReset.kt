@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket

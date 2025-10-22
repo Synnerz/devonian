@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.events
+package com.github.synnerz.devonian.api.events
 
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents

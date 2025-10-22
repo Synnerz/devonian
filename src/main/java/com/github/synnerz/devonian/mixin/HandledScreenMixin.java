@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.DropItemEvent;
-import com.github.synnerz.devonian.events.EventBus;
-import com.github.synnerz.devonian.events.GuiSlotClickEvent;
-import com.github.synnerz.devonian.events.RenderSlotEvent;
+import com.github.synnerz.devonian.api.events.DropItemEvent;
+import com.github.synnerz.devonian.api.events.EventBus;
+import com.github.synnerz.devonian.api.events.GuiSlotClickEvent;
+import com.github.synnerz.devonian.api.events.RenderSlotEvent;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.ItemStack;

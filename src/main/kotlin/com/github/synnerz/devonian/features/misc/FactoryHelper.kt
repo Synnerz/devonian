@@ -1,10 +1,10 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.events.GuiCloseEvent
-import com.github.synnerz.devonian.events.PacketReceivedEvent
-import com.github.synnerz.devonian.events.RenderSlotEvent
+import com.github.synnerz.devonian.api.events.GuiCloseEvent
+import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.ItemUtils
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.utils.render.Render2D
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket

@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.EventBus;
-import com.github.synnerz.devonian.events.RenderEntityEvent;
+import com.github.synnerz.devonian.api.events.EventBus;
+import com.github.synnerz.devonian.api.events.RenderEntityEvent;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;

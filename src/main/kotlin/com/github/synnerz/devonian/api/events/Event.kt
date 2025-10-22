@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.events
+package com.github.synnerz.devonian.api.events
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext.BlockOutlineContext

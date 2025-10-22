@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.ChatUtils
 import com.github.synnerz.devonian.utils.ColorEnum
-import com.github.synnerz.devonian.utils.ItemUtils
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.render.Render3D
 import net.minecraft.block.AbstractRailBlock

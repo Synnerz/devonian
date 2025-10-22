@@ -1,8 +1,10 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.events.*
+import com.github.synnerz.devonian.api.events.EntityJoinEvent
+import com.github.synnerz.devonian.api.events.RenderEntityEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.Scheduler
+import com.github.synnerz.devonian.api.Scheduler
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexRendering
 import net.minecraft.entity.decoration.ArmorStandEntity

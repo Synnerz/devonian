@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.events.EntityDeathEvent
+import com.github.synnerz.devonian.api.events.EntityDeathEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.entity.Entity
 

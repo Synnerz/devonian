@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.DropItemEvent;
-import com.github.synnerz.devonian.events.EventBus;
+import com.github.synnerz.devonian.api.events.DropItemEvent;
+import com.github.synnerz.devonian.api.events.EventBus;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;

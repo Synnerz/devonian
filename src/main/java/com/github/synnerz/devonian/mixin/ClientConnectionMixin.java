@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.EventBus;
-import com.github.synnerz.devonian.events.PacketReceivedEvent;
-import com.github.synnerz.devonian.events.PacketSentEvent;
+import com.github.synnerz.devonian.api.events.EventBus;
+import com.github.synnerz.devonian.api.events.PacketReceivedEvent;
+import com.github.synnerz.devonian.api.events.PacketSentEvent;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;

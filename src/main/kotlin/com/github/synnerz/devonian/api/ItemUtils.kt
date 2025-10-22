@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.api
 
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack

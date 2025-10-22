@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.features.garden
 
-import com.github.synnerz.devonian.events.RenderOverlayEvent
-import com.github.synnerz.devonian.events.TabUpdateEvent
-import com.github.synnerz.devonian.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.utils.render.Render2D

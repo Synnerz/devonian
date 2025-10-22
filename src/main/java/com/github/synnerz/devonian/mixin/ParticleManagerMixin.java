@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.EventBus;
-import com.github.synnerz.devonian.events.ParticleSpawnEvent;
+import com.github.synnerz.devonian.api.events.EventBus;
+import com.github.synnerz.devonian.api.events.ParticleSpawnEvent;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
 import org.spongepowered.asm.mixin.Mixin;

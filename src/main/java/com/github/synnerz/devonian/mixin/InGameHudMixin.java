@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.events.RenderOverlayEvent;
+import com.github.synnerz.devonian.api.events.RenderOverlayEvent;
 import com.github.synnerz.devonian.features.misc.HidePotionEffectOverlay;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;

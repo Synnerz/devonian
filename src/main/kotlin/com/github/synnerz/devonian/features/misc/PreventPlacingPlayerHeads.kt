@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.events.BlockInteractEvent
+import com.github.synnerz.devonian.api.events.BlockInteractEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.ItemUtils
+import com.github.synnerz.devonian.api.ItemUtils
 import net.minecraft.item.Items
 
 object PreventPlacingPlayerHeads : Feature("preventPlacingPlayerHeads") {

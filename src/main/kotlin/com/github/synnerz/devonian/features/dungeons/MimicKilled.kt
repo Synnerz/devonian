@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.events.EntityDeathEvent
-import com.github.synnerz.devonian.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.EntityDeathEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.ChatUtils
 import net.minecraft.entity.EquipmentSlot

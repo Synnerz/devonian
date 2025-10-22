@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.events.BlockOutlineEvent
+import com.github.synnerz.devonian.api.events.BlockOutlineEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.ChatUtils
 import com.github.synnerz.devonian.utils.ColorEnum

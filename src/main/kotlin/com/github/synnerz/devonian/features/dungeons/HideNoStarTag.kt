@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.Scheduler
+import com.github.synnerz.devonian.api.Scheduler
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket

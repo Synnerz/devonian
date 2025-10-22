@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.utils
 
-import com.github.synnerz.devonian.events.*
+import com.github.synnerz.devonian.api.events.*
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket
 

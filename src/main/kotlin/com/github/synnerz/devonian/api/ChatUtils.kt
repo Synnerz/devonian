@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.mixin.accessor.ChatHudAccessor
 import net.fabricmc.fabric.impl.command.client.ClientCommandInternals

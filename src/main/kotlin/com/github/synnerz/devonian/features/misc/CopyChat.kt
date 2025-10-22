@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.events.GuiClickEvent
+import com.github.synnerz.devonian.api.events.GuiClickEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.ChatHudAccessor
 import com.github.synnerz.devonian.utils.ChatUtils

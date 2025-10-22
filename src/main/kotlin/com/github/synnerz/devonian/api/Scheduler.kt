@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.api
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
@@ -31,6 +31,8 @@ object Scheduler {
 
     @JvmOverloads
     fun scheduleStandName(entity: Entity, cb: () -> Unit, depth: Int = 0) {
+        // TODO: this entire method shouldn't even be needed
+        //  just listen for the name change packet.
         if (depth > 10) return
         scheduleTask(2) {
             if (entity.name.string !== "Armor Stand") {

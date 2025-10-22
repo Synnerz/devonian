@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.events.EventBus
-import com.github.synnerz.devonian.events.GameUnloadEvent
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.GameUnloadEvent
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject

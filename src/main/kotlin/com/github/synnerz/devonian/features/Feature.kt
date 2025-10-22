@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.features
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.events.Event
-import com.github.synnerz.devonian.events.EventBus
+import com.github.synnerz.devonian.api.events.Event
+import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.utils.ChatUtils
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
