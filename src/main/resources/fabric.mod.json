@@ -22,7 +22,7 @@
 	},
 	"mixins": ["devonian.mixins.json"],
 	"depends": {
-		"fabricloader": ">=0.16.14",
+		"fabricloader": ">=0.17.3",
 		"minecraft": "~1.21.5",
 		"java": ">=21",
 		"fabric-api": "*",
