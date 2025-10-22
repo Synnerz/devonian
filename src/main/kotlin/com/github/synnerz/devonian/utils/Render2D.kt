@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils.render
+package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes

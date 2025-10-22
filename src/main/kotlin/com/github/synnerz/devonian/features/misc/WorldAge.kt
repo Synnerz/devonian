@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.HudManager
-import com.github.synnerz.devonian.utils.render.Render2D
+import com.github.synnerz.devonian.utils.Render2D
 
 object WorldAge : Feature("worldAge") {
     private val hud = HudManager.createHud("WorldAge", "&bDay&f: &610")

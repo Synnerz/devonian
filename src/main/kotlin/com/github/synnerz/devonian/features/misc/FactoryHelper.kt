@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.utils.render.Render2D
+import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket

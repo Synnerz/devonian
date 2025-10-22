@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.HudManager
-import com.github.synnerz.devonian.utils.render.Render2D
+import com.github.synnerz.devonian.utils.Render2D
 
 object DeathsDisplay : Feature("deathsDisplay", "catacombs") {
     private val deathsRegex = "^Team Deaths: (\\d+)$".toRegex()

@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.hud
 
 import com.github.synnerz.devonian.utils.JsonUtils
-import com.github.synnerz.devonian.utils.render.Render2D
-import com.github.synnerz.devonian.utils.render.Render2D.height
-import com.github.synnerz.devonian.utils.render.Render2D.width
+import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.utils.Render2D.height
+import com.github.synnerz.devonian.utils.Render2D.width
 import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
