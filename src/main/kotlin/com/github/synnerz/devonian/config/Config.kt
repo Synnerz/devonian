@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.config
 
 import com.github.synnerz.devonian.Devonian.features
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.ChatUtils
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.MutableText
 import net.minecraft.text.Style

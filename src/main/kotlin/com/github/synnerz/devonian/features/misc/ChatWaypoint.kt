@@ -1,12 +1,12 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.ChatUtils
-import com.github.synnerz.devonian.utils.render.Render3D
 import kotlin.math.sqrt
 
 object ChatWaypoint : Feature("chatWaypoint") {
@@ -30,7 +30,7 @@ object ChatWaypoint : Feature("chatWaypoint") {
 
         on<WorldChangeEvent> { waypoints.clear() }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             waypoints.removeIf {
                 val pos = Devonian.minecraft.player ?: return@removeIf false
                 val dx = it.x - pos.x
@@ -39,7 +39,7 @@ object ChatWaypoint : Feature("chatWaypoint") {
                 val distance = sqrt(dx * dx + dy * dy + dz * dz)
                 if (distance < 5) return@removeIf true
 
-                Render3D.renderWaypoint(event.ctx, it.x, it.y, it.z, title = "%.2fm".format(distance), increase = true, phase = true)
+                Context.Immediate?.renderWaypoint(it.x, it.y, it.z, title = "%.2fm".format(distance), increase = true, phase = true)
                 System.currentTimeMillis() - it.created > 60000
             }
         }

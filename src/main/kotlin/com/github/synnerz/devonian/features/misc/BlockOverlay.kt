@@ -1,12 +1,12 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.api.events.BlockOutlineEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.ChatUtils
 import com.github.synnerz.devonian.utils.ColorEnum
 import com.github.synnerz.devonian.utils.JsonUtils
-import com.github.synnerz.devonian.utils.render.Render3D
 import net.minecraft.block.ShapeContext
 import net.minecraft.world.EmptyBlockView
 import java.awt.Color
@@ -43,8 +43,7 @@ object BlockOverlay : Feature("blockOverlay") {
                 )
 
             event.cancel()
-            Render3D.renderOutline(
-                event.renderContext,
+            Context.Immediate?.renderBoxShape(
                 blockShape,
                 blockPos.x - cam.x,
                 blockPos.y - cam.y,

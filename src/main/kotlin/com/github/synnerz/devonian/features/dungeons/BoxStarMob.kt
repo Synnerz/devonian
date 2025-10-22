@@ -1,15 +1,16 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.events.EntityJoinEvent
 import com.github.synnerz.devonian.api.events.RenderEntityEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.api.Scheduler
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.VertexRendering
 import net.minecraft.entity.decoration.ArmorStandEntity
+import java.awt.Color
 
 object BoxStarMob : Feature("boxStarMob", "catacombs") {
+    val boxColor = Color(0f, 1f, 1f, 1f)
     val starMobEntities = mutableListOf<Int>()
 
     override fun initialize() {
@@ -36,24 +37,18 @@ object BoxStarMob : Feature("boxStarMob", "catacombs") {
         on<RenderEntityEvent> { event ->
             val entity = event.entity
             val matrixStack = event.matrixStack
-            val consumer = event.consumer
             if (!starMobEntities.contains(entity.id)) return@on
 
             val cam = minecraft.gameRenderer.camera.pos.negate()
-            val width = entity.width + 0.2
-            val height = entity.height
-            val halfWidth = width / 2
 
             matrixStack.push()
             matrixStack.translate(cam.x, cam.y, cam.z)
 
-            VertexRendering.drawBox(
-                matrixStack,
-                consumer.getBuffer(RenderLayer.getLines()),
-                entity.x - halfWidth, entity.y, entity.z - halfWidth,
-                entity.x + halfWidth, entity.y + height, entity.z + halfWidth,
-                0f, 1f, 1f, 1f
+            Context.Immediate?.renderBox(
+                entity.x, entity.y, entity.z,
+                boxColor, translate = false
             )
+
             matrixStack.pop()
         }
     }

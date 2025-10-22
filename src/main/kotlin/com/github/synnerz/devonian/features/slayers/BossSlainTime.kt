@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.slayers
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ScoreboardEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.ChatUtils
 
 object BossSlainTime : Feature("bossSlainTime") {
     private val questStartedRegex = "^Slay the boss!$".toRegex()

@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.commands
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.utils.ChatUtils
+import com.github.synnerz.devonian.api.ChatUtils
 
 object DevonianCommand {
     private val commandListeners = mutableListOf<() -> Int>()
