@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
+import java.awt.Color
 import kotlin.math.sqrt
 
 object ChatWaypoint : Feature("chatWaypoint") {
@@ -39,7 +40,7 @@ object ChatWaypoint : Feature("chatWaypoint") {
                 val distance = sqrt(dx * dx + dy * dy + dz * dz)
                 if (distance < 5) return@removeIf true
 
-                Context.Immediate?.renderWaypoint(it.x, it.y, it.z, title = "%.2fm".format(distance), increase = true, phase = true)
+                Context.Immediate?.renderWaypoint(it.x, it.y, it.z, Color.CYAN, title = "%.2fm".format(distance), increase = true, phase = true)
                 System.currentTimeMillis() - it.created > 60000
             }
         }

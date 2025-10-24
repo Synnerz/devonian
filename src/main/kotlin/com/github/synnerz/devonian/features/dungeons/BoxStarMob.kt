@@ -45,7 +45,8 @@ object BoxStarMob : Feature("boxStarMob", "catacombs") {
             matrixStack.translate(cam.x, cam.y, cam.z)
 
             Context.Immediate?.renderBox(
-                entity.x, entity.y, entity.z,
+                entity.x - 0.5, entity.y, entity.z - 0.5,
+                entity.width.toDouble(), entity.height.toDouble(),
                 boxColor, translate = false
             )
 
