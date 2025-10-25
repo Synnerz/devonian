@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.barrl.Context
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
@@ -33,7 +32,7 @@ object ChatWaypoint : Feature("chatWaypoint") {
 
         on<RenderWorldEvent> {
             waypoints.removeIf {
-                val pos = Devonian.minecraft.player ?: return@removeIf false
+                val pos = minecraft.player ?: return@removeIf false
                 val dx = it.x - pos.x
                 val dy = it.y + 5 - pos.y
                 val dz = it.z - pos.z

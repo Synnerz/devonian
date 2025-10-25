@@ -40,13 +40,15 @@ object BoxStarMob : Feature("boxStarMob", "catacombs") {
             if (!starMobEntities.contains(entity.id)) return@on
 
             val cam = minecraft.gameRenderer.camera.pos.negate()
+            val width = entity.width.toDouble()
+            val halfWidth = width / 2.0
 
             matrixStack.push()
             matrixStack.translate(cam.x, cam.y, cam.z)
 
             Context.Immediate?.renderBox(
-                entity.x - 0.5, entity.y, entity.z - 0.5,
-                entity.width.toDouble(), entity.height.toDouble(),
+                entity.x - halfWidth, entity.y, entity.z - halfWidth,
+                width, entity.height.toDouble(),
                 boxColor, translate = false
             )
 
