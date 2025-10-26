@@ -62,7 +62,8 @@ object Devonian : ClientModInitializer {
 		BossSlainTime,
 		BossSpawnTime,
 		FactoryHelper,
-		DungeonBreakerCharges
+		DungeonBreakerCharges,
+		SecretsClickedBox
 	)
 
 	override fun onInitializeClient() {
