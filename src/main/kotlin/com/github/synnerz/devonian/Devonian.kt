@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.dungeons.*
+import com.github.synnerz.devonian.features.end.GolemWaypoint
 import com.github.synnerz.devonian.features.garden.GardenDisplay
 import com.github.synnerz.devonian.features.garden.PestsDisplay
 import com.github.synnerz.devonian.features.misc.*
@@ -63,7 +64,8 @@ object Devonian : ClientModInitializer {
 		BossSpawnTime,
 		FactoryHelper,
 		DungeonBreakerCharges,
-		SecretsClickedBox
+		SecretsClickedBox,
+		GolemWaypoint
 	)
 
 	override fun onInitializeClient() {
