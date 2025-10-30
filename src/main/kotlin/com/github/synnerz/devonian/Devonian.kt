@@ -67,7 +67,8 @@ object Devonian : ClientModInitializer {
 		DungeonBreakerCharges,
 		SecretsClickedBox,
 		GolemWaypoint,
-		EyesPlacedDisplay
+		EyesPlacedDisplay,
+		PreviousLobby
 	)
 
 	override fun onInitializeClient() {
