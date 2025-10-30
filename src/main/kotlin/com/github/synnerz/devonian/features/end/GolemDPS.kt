@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.WorldFeature
+import kotlin.math.round
 
 object GolemDPS : WorldFeature("golemDps", "the end") {
     private val golemSpawnRegex = "^BEWARE - An End Stone Protector has risen!$".toRegex()
@@ -35,16 +36,15 @@ object GolemDPS : WorldFeature("golemDps", "the end") {
                 .replace(".", "")
                 .toFloat()
                 .coerceAtLeast(1f)
-            val timeToKill = killedAt - spawnAt
-            val dps = "%.2f".format(yourDamage / timeToKill)
-            val seconds = "%.2fs".format(timeToKill / 1000f)
+            val timeToKill = (killedAt - spawnAt) / 1000f
+            val seconds = "%.2fs".format(timeToKill)
 
             killedAt = -1L
             spawnAt = -1L
 
             // Delay it so it's sent after the leaderboard message
             Scheduler.scheduleTask(20) {
-                ChatUtils.sendMessage("&bYour Golem DPS was &6${dps} &bin &6${seconds}", true)
+                ChatUtils.sendMessage("&bYour Golem DPS was &6${round(yourDamage / timeToKill).toInt()} &bin &6${seconds}", true)
             }
         }
     }
