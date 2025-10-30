@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.utils.Render2D
 
-object EyesPlacedDisplay : Feature("eyesPlaced", "the end") {
+object EyesPlacedDisplay : Feature("eyesPlaced", "the end", "Dragon's Nest") {
     private val hud = HudManager.createHud("eyesPlaced", "&dEyes Placed&f: &d8&f/&d8")
     private val eyesPlacedRegex = "^ Eyes placed: (\\d+)/(\\d+)".toRegex()
     var currentEyes = 0
