@@ -30,6 +30,10 @@ Adding various QOL features for a better experience while gaming.
   - Removes the damage tags created by you or others.
 * HideNoStarTag
   - Hides name tag of mobs that do not have star in their name tag
+* DungeonBreakerDisplay
+  - Displays the amount of charges you have left
+* SecretsClickedBox
+  - Highlights the secrets you have clicked surrounding them with a box, if a chest secret for example is locked the color will change to red.
 
 </details>
 
@@ -58,6 +62,28 @@ Adding various QOL features for a better experience while gaming.
   - Displays the amount of time taken to kill a Slayer Boss.
 * BossSpawnTime
   - Displays the amount of time taken to spawn a Slayer Boss.
+
+</details>
+
+<details>
+    <summary>
+        <strong>
+            End (expand)
+        </strong>
+    </summary>
+
+* GolemWaypoint
+  - Sets a waypoint to where the golem should spawn
+* GolemDps
+  - Tells you how much DPS you did during the Golem fight
+* GolemLootQuality
+  - Shows your loot quality for the Golem and whether you could roll for a Tier Booster Core/Legendary Golem Pet/Epic Golem Pet
+* GolemSpawnTimer
+  - Displays a timer whenever the Golem has hit stage 5 of 20 seconds (according to wiki)
+* GolemStage5Sound
+  - Plays an Anvil Place sound whenever the golem hits stage 5
+* EyesPlaced
+  - Displays the amount of eyes placed whenever in the Dragon's Nest
 
 </details>
 
@@ -117,6 +143,8 @@ Adding various QOL features for a better experience while gaming.
   - Adds stacking messages, so whenever there's multiple of the same message only one is displayed.
 * FactoryHelper
   - Highlights the best (cheapest) employee or coach jackrabbit upgrade to go for next.
+* PreviousLobby
+  - Alerts you whenever you join the same server (lobby) and tells you how long its been since you were last seen in it, if the time is above 60s it will be removed (from the list) after the alert.
 
 </details>
 
