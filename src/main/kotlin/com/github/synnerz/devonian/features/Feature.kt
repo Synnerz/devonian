@@ -105,7 +105,7 @@ open class Feature @JvmOverloads constructor(
     fun inSubarea(): Boolean {
         if (subarea == null) return true
 
-        return Location.subarea?.contains(subarea.lowercase()) ?: false
+        return Location.subarea?.lowercase()?.contains(subarea.lowercase()) ?: false
     }
 
     fun inEnvironment(): Boolean {
