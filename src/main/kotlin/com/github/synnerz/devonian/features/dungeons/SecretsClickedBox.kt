@@ -36,8 +36,8 @@ object SecretsClickedBox : Feature("secretsClickedBox", "catacombs") {
                 if (entityBlock.type != BlockEntityType.SKULL) return@on
                 val skullBlock = entityBlock as SkullBlockEntity
                 val owner = skullBlock.owner ?: return@on
-                if (owner.id.isEmpty) return@on
-                val id = owner.id.get()
+                if (owner.uuid.isEmpty) return@on
+                val id = owner.uuid.get()
 
                 if (!skullIds.contains("$id")) return@on
 

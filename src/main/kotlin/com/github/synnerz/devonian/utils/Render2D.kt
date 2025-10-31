@@ -2,8 +2,8 @@ package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
+import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderLayer
 import net.minecraft.util.Formatting
 import java.awt.Color
 import kotlin.math.max
@@ -22,8 +22,8 @@ object Render2D {
     fun drawString(ctx: DrawContext, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
         val matrices = ctx.matrices
         if (scale != 1f) {
-            matrices.push()
-            matrices.scale(scale, scale, 1f)
+            matrices.pushMatrix()
+            matrices.scale(scale, scale)
         }
 
         ctx.drawText(
@@ -35,7 +35,7 @@ object Render2D {
             shadow
         )
 
-        if (scale != 1f) matrices.pop()
+        if (scale != 1f) matrices.popMatrix()
     }
 
     @JvmOverloads
@@ -49,7 +49,7 @@ object Render2D {
 
     @JvmOverloads
     fun drawRect(ctx: DrawContext, x: Int, y: Int, width: Int, height: Int, color: Color = Color.WHITE) {
-        ctx.fill(RenderLayer.getGui(), x, y, x + width, y + height, color.rgb)
+        ctx.fill(RenderPipelines.GUI, x, y, x + width, y + height, color.rgb)
     }
 
     fun String.width(): Int {
