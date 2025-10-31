@@ -39,9 +39,10 @@ object Location {
 
                     val line = "${teamPrefix}${teamSuffix}"
                     if (!line.matches(subAreaRegex)) return@on
-                    if (line !== subarea) EventBus.post(SubAreaEvent(line))
+                    val oldSubarea = subarea
 
                     subarea = line.lowercase()
+                    if (line !== oldSubarea) EventBus.post(SubAreaEvent(line))
                 }
             }
         }
