@@ -3,7 +3,8 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.PacketSentEvent
-import com.github.synnerz.devonian.features.WorldFeature
+import com.github.synnerz.devonian.api.events.SoundPlayEvent
+import com.github.synnerz.devonian.features.Feature
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.component.DataComponentTypes
@@ -13,7 +14,7 @@ import net.minecraft.network.packet.s2c.play.ItemPickupAnimationS2CPacket
 import net.minecraft.registry.Registries
 import net.minecraft.sound.SoundEvents
 
-object SecretsSound : WorldFeature("secretsSound", "catacombs") {
+object SecretsSound : Feature("secretsSound", "catacombs") {
     private val skullIds = listOf("e0f3e929-869e-3dca-9504-54c666ee6f23", "fed95410-aba1-39df-9b95-1d4f361eb66e")
     private val allowedBlocks = listOf("minecraft:chest", "minecraft:lever", "minecraft:trapped_chest")
     private val secretItems = listOf(
@@ -25,7 +26,7 @@ object SecretsSound : WorldFeature("secretsSound", "catacombs") {
     )
     private val lockedChestRegex = "^That chest is locked!$".toRegex()
     private val successSound = SoundEvents.ENTITY_BLAZE_HURT
-    private val declineSound = SoundEvents.BLOCK_ANVIL_HIT
+    private val declineSound = SoundEvents.BLOCK_ANVIL_PLACE
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
@@ -71,6 +72,14 @@ object SecretsSound : WorldFeature("secretsSound", "catacombs") {
         on<ChatEvent> { event ->
             event.matches(lockedChestRegex) ?: return@on
             playSound(true)
+        }
+
+        on<SoundPlayEvent> { event ->
+            if (event.volume != 0.1f) return@on
+            if (event.sound == "minecraft:entity.bat.death" || event.sound == "minecraft:entity.bat.hurt") {
+                event.cancel()
+                playSound()
+            }
         }
     }
 
