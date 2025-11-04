@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket
 import org.lwjgl.glfw.GLFW
@@ -65,6 +66,14 @@ object EventBus {
 
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
+
+            if (packet is PlaySoundS2CPacket) {
+                val sound = packet.sound.key.get().value
+                if (onSoundPacket("${sound.namespace}:${sound.path}", packet.pitch, packet.volume))
+                    event.ci.cancel()
+                return@on
+            }
+
             if (packet is PlayerListS2CPacket) {
                 val action = packet.actions.firstOrNull() ?: return@on
                 if (action === PlayerListS2CPacket.Action.ADD_PLAYER) {
@@ -110,6 +119,9 @@ object EventBus {
             event.ci.cancel()
         }
     }
+
+    fun onSoundPacket(soundEvent: String, pitch: Float, volume: Float): Boolean =
+        SoundPlayEvent(soundEvent, pitch, volume).post()
 
     inline fun <reified T : Event> on(noinline cb: (T) -> Unit): EventListener {
         return on<T>(cb, true)
