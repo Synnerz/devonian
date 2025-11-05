@@ -72,7 +72,8 @@ object Devonian : ClientModInitializer {
 		GolemLootQuality,
 		GolemSpawnTimer,
 		GolemStage5Sound,
-		SecretsSound
+		SecretsSound,
+		LividSolver
 	)
 
 	override fun onInitializeClient() {
