@@ -15,6 +15,7 @@ import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket
 import org.lwjgl.glfw.GLFW
+import kotlin.jvm.optionals.getOrNull
 
 object EventBus {
     private var totalTicks = 0
@@ -68,7 +69,7 @@ object EventBus {
             val packet = event.packet
 
             if (packet is PlaySoundS2CPacket) {
-                val sound = packet.sound.key.get().value
+                val sound = packet.sound.key.getOrNull()?.value ?: return@on
                 if (onSoundPacket("${sound.namespace}:${sound.path}", packet.pitch, packet.volume))
                     event.ci.cancel()
                 return@on
