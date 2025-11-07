@@ -18,7 +18,7 @@ open class Feature @JvmOverloads constructor(
     val id = 256652 + Devonian.features.size
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
     private var displayed = false
-    private var isRegistered = false
+    protected var isRegistered = false
     val events = mutableListOf<EventBus.EventListener>()
 
     init {
