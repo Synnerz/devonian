@@ -74,7 +74,8 @@ object Devonian : ClientModInitializer {
 		GolemStage5Sound,
 		SecretsSound,
 		LividSolver,
-		RunSplits
+		RunSplits,
+		BossSplits
 	)
 
 	override fun onInitializeClient() {
