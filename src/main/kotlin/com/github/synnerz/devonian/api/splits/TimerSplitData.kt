@@ -8,18 +8,36 @@ data class TimerSplitData(
     val criteria: List<Regex>,
     val sendChat: Boolean = true,
     var boundTo: TimerSplitData? = null,
-    var time: Long = 0L
+    var time: Long = 0L,
+    val children: MutableList<TimerSplitData> = mutableListOf(),
+    val chat: String? = title
 ) {
-    constructor(title: String?, criteria: Regex, sendChat: Boolean = true): this(title, listOf(criteria), sendChat)
+    constructor(title: String?, criteria: Regex, sendChat: Boolean = true, chat: String? = title)
+            : this(title, listOf(criteria), sendChat, chat = chat)
+
+    fun title(): String? {
+        if (children.isEmpty()) return title
+
+        var str = title
+
+        for (child in children)
+            if (child.title != null)
+                str += child.title.replace("$1", "${child.seconds()}s")
+
+        return str
+    }
 
     fun onChat(event: ChatEvent) {
         if (criteria.any { event.matches(it) != null } && time == 0L) {
             time = System.currentTimeMillis()
 
-            if (!sendChat || title == null) return
+            if (!sendChat || chat == null) return
 
-            ChatUtils.sendMessage(title.replace("$1", "${seconds()}s"), true)
+            ChatUtils.sendMessage(chat.replace("$1", "${seconds()}s"), true)
         }
+
+        for (child in children)
+            child.onChat(event)
     }
 
     fun boundToTime(): Long? = boundTo?.time
@@ -31,4 +49,18 @@ data class TimerSplitData(
 
         return (myTime - otherTime) / 1000
     }
+
+    fun addChild(child: TimerSplitData) = apply {
+        if (children.contains(child)) return@apply
+
+        children.add(child)
+    }
+
+    @JvmOverloads
+    fun addChild(title: String?, criteria: List<Regex>, sendChat: Boolean = true)
+            = addChild(TimerSplitData(title, criteria, sendChat))
+
+    @JvmOverloads
+    fun addChild(title: String?, criteria: Regex, sendChat: Boolean = true)
+            = addChild(title, listOf(criteria), sendChat)
 }

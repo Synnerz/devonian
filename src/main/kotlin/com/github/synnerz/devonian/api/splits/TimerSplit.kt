@@ -23,6 +23,8 @@ class TimerSplit @JvmOverloads constructor(
         for (idx in children.indices) {
             if (idx == 0) continue
             children[idx].boundTo = children[idx - 1]
+            for (child in children[idx].children)
+                child.boundTo = children[idx - 1]
         }
     }
 
@@ -31,8 +33,11 @@ class TimerSplit @JvmOverloads constructor(
     fun unregister() = event.remove()
 
     fun reset() {
-        for (child in children)
+        for (child in children) {
             child.time = 0L
+            for (subChild in child.children)
+                subChild.time = 0L
+        }
     }
 
     fun addChild(child: TimerSplitData) = apply {
@@ -54,9 +59,9 @@ class TimerSplit @JvmOverloads constructor(
         var string = ""
 
         for (child in children) {
-            if (child.title == null) continue
+            val title = child.title() ?: continue
 
-            string += "${child.title.replace("$1", "${child.seconds()}s")}\n"
+            string += "${title.replace("$1", "${child.seconds()}s")}\n"
         }
 
         return string
@@ -66,9 +71,9 @@ class TimerSplit @JvmOverloads constructor(
         var string = ""
 
         for (child in children) {
-            if (child.title == null) continue
+            val title = child.title() ?: continue
 
-            string += "${child.title.replace("$1", "15s")}\n"
+            string += "${title.replace("$1", "15s")}\n"
         }
 
         return string
