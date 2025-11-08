@@ -68,4 +68,12 @@ object SkyblockPrices {
         val auctionData = savedData.auctionData[name] ?: return 0f
         return auctionData
     }
+
+    fun buyPrice(name: String): Float {
+        if (savedData.bazaarData.products.containsKey(name))
+            return savedData.bazaarData.products[name]!!.buy_summary.last().pricePerUnit
+
+        val auctionData = savedData.auctionData[name] ?: return 0f
+        return auctionData
+    }
 }
