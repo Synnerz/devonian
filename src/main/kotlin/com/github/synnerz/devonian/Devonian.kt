@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.SubAreaEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.diana.BurrowWaypoint
 import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
@@ -76,7 +77,8 @@ object Devonian : ClientModInitializer {
 		LividSolver,
 		RunSplits,
 		BossSplits,
-		PrinceKilled
+		PrinceKilled,
+		BurrowWaypoint
 	)
 
 	override fun onInitializeClient() {
