@@ -75,7 +75,8 @@ object Devonian : ClientModInitializer {
 		SecretsSound,
 		LividSolver,
 		RunSplits,
-		BossSplits
+		BossSplits,
+		PrinceKilled
 	)
 
 	override fun onInitializeClient() {
