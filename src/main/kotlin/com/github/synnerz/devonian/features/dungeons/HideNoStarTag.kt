@@ -8,8 +8,8 @@ import net.minecraft.entity.EntityType
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket
 
 object HideNoStarTag : Feature("hideNoStarTag", "catacombs") {
-    private val blazeHealthRegex = "^\\[Lv15\\] Blaze [\\d,]+\\/([\\d,]+)❤\$".toRegex()
-    private val noStarTagRegex = "^(?:\\[Lv\\d+\\] )?[\\w ]+ [\\d,.]+\\w(?:\\/[\\d,.]+\\w)?❤\$".toRegex()
+    private val blazeHealthRegex = "^\\[Lv15] . Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
+    private val noStarTagRegex = "^(?:\\[Lv\\d+] )?(?:[༕⛏\uD83E\uDDB4☠]+)?[\\w ]+ [\\d,.]+\\w(?:/[\\d,.]+\\w)?❤$".toRegex()
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
