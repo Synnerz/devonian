@@ -12,10 +12,11 @@ import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.util.math.BlockPos
 import java.awt.Color
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.floor
 
 object BurrowWaypoint : WorldFeature("burrowWaypoint", "hub") {
-    private val waypoints = mutableListOf<Burrow>()
+    private val waypoints = CopyOnWriteArrayList<Burrow>()
 
     data class Burrow(val name: String, val x: Int, val y: Int, val z: Int, val color: Color) {
         fun eqBp(bp: BlockPos): Boolean {
@@ -72,9 +73,9 @@ object BurrowWaypoint : WorldFeature("burrowWaypoint", "hub") {
             if (action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return@on
 
             Scheduler.scheduleTask(20) {
-                waypoints.removeIf {
-                    return@removeIf it.eqBp(packet.pos)
-                }
+                for (waypoint in waypoints)
+                    if (waypoint.eqBp(packet.pos))
+                        waypoints.remove(waypoint)
             }
         }
 
