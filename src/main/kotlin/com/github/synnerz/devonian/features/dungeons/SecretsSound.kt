@@ -35,8 +35,8 @@ object SecretsSound : Feature("secretsSound", "catacombs") {
 
             val id = packet.entityId
             val entityIn = minecraft.world?.getEntityById(id) ?: return@on
-            val entity = entityIn as ItemEntity
-            val itemStack = entity.stack
+            if (entityIn !is ItemEntity) return@on
+            val itemStack = entityIn.stack
             val customName = itemStack.get(DataComponentTypes.CUSTOM_NAME)?.string
             if (!secretItems.contains(customName)) return@on
 
