@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.diana.BurrowGuesser
 import com.github.synnerz.devonian.features.diana.BurrowWaypoint
+import com.github.synnerz.devonian.features.diana.DianaDropTracker
 import com.github.synnerz.devonian.features.diana.DianaMobTracker
 import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.end.*
@@ -82,7 +83,8 @@ object Devonian : ClientModInitializer {
 		PrinceKilled,
 		BurrowWaypoint,
 		DianaMobTracker,
-		BurrowGuesser
+		BurrowGuesser,
+		DianaDropTracker
 	)
 
 	override fun onInitializeClient() {
