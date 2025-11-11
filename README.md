@@ -34,6 +34,17 @@ Adding various QOL features for a better experience while gaming.
   - Displays the amount of charges you have left
 * SecretsClickedBox
   - Highlights the secrets you have clicked surrounding them with a box, if a chest secret for example is locked the color will change to red.
+* SecretsSounds
+  - Plays a sound whenever you click, pick up (a secret) or kill a bat
+  - This also plays an anvil sound whenever the chest is locked
+* LividSolver
+  - Highlights the correct livid in F5/M5
+* RunSplits
+  - Displays how long your party has take to complete Blood Rush, Blood Open & Boss Enter
+* BossSplits
+  - Similar to RunSplits but inside boss room
+* Prince Killed
+  - Announced whenever you killed a prince
 
 </details>
 
@@ -84,6 +95,24 @@ Adding various QOL features for a better experience while gaming.
   - Plays an Anvil Place sound whenever the golem hits stage 5
 * EyesPlaced
   - Displays the amount of eyes placed whenever in the Dragon's Nest
+
+</details>
+
+<details>
+    <summary>
+        <strong>
+            Diana (expand)
+        </strong>
+    </summary>
+
+* BurrowWaypoint
+  - Adds a waypoint with the type of burrow whenever the particles are detected
+* BurrowGuesser
+  - Whenever right clicking on a spade, it will attempt to guess where the location will be at (This scanner was taken from [SkyHanni](https://github.com/hannibal002/SkyHanni))
+* DianMobTracker
+  - Tells you how many kills you have on a specific mob
+* DianaDropTracker
+  - Tells you how many drops you got
 
 </details>
 
@@ -145,6 +174,8 @@ Adding various QOL features for a better experience while gaming.
   - Highlights the best (cheapest) employee or coach jackrabbit upgrade to go for next.
 * PreviousLobby
   - Alerts you whenever you join the same server (lobby) and tells you how long its been since you were last seen in it, if the time is above 60s it will be removed (from the list) after the alert.
+* EtherwarpSound
+  - Changes the sound the etherwarp makes whenever you have etherwarped successfully, customize it via `/devonian etherwarpsound`
 
 </details>
 
