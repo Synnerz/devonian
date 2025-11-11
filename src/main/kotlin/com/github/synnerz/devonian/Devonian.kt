@@ -6,6 +6,10 @@ import com.github.synnerz.devonian.api.events.SubAreaEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.diana.BurrowGuesser
+import com.github.synnerz.devonian.features.diana.BurrowWaypoint
+import com.github.synnerz.devonian.features.diana.DianaDropTracker
+import com.github.synnerz.devonian.features.diana.DianaMobTracker
 import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
@@ -71,7 +75,17 @@ object Devonian : ClientModInitializer {
 		GolemDPS,
 		GolemLootQuality,
 		GolemSpawnTimer,
-		GolemStage5Sound
+		GolemStage5Sound,
+		SecretsSound,
+		LividSolver,
+		RunSplits,
+		BossSplits,
+		PrinceKilled,
+		BurrowWaypoint,
+		DianaMobTracker,
+		BurrowGuesser,
+		DianaDropTracker,
+		EtherwarpSound
 	)
 
 	override fun onInitializeClient() {
