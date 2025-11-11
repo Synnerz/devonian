@@ -81,7 +81,6 @@ object Devonian : ClientModInitializer {
 		BossSplits,
 		PrinceKilled,
 		BurrowWaypoint,
-		DianaMobTracker
 		DianaMobTracker,
 		BurrowGuesser
 	)
