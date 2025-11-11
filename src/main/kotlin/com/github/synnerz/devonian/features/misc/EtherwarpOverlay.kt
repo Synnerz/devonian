@@ -70,7 +70,6 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
             val tunedInt = tunedTransmission?.asInt()
             val tuners = if (tunedInt == null || tunedInt.isEmpty) 0 else tunedInt.get()
 
-            val ctx = event.ctx
             val hitResult = raycast(57 + tuners) ?: return@on
             val camera = minecraft.gameRenderer.camera ?: return@on
             val cam = camera.pos
@@ -83,7 +82,7 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
             if (!blockFoot.isValid() || !blockHead.isValid()) return@on
 
             val blockState = minecraft.world!!.getBlockState(blockPos)
-            if (blockState.isValid()) return@on
+            if (blockState.isValid(true)) return@on
 
             val outlineShape = blockState.getOutlineShape(
                 EmptyBlockView.INSTANCE,
@@ -134,7 +133,7 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
         return hitResult
     }
 
-    private fun BlockState.isValid(): Boolean {
+    private fun BlockState.isValid(isTarget: Boolean = false): Boolean {
         return when (block) {
             // TODO: missing snow_layer, double_plant, piston_extension
             Blocks.AIR,
@@ -172,7 +171,7 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
             is AbstractRailBlock -> true
             is ButtonBlock -> true
             is AbstractSkullBlock -> true
-            is DyedCarpetBlock -> true
+            is DyedCarpetBlock -> !isTarget
             else -> false
         }
     }
