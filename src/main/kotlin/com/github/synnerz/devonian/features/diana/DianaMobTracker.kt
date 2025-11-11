@@ -72,7 +72,7 @@ object DianaMobTracker : Feature("dianaMobTracker", "hub") {
             FileWriter(statsFile).use { JsonUtils.gson.toJson(currentStats, it) }
         }
 
-        DevonianCommand.command.subcommand("rsdianatracker") { _, args ->
+        DevonianCommand.command.subcommand("rsdianamobtracker") { _, args ->
             currentStats.minosHunter = 0
             currentStats.gaiaConstruct = 0
             currentStats.strandedNymph = 0
