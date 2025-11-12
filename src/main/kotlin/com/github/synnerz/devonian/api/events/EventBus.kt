@@ -131,6 +131,8 @@ object EventBus {
     fun onSoundPacket(soundEvent: String, pitch: Float, volume: Float): Boolean =
         SoundPlayEvent(soundEvent, pitch, volume).post()
 
+    fun serverTicks(): Int = totalTicks
+
     inline fun <reified T : Event> on(noinline cb: (T) -> Unit): EventListener {
         return on<T>(cb, true)
     }
