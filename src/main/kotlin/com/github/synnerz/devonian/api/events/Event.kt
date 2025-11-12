@@ -149,14 +149,101 @@ class BlockOutlineEvent(
     val blockContext: BlockOutlineContext
 ) : CancellableEvent()
 
-open class CriteriaEvent(val message: String): CancellableEvent() {
+open class CriteriaEvent(val message: String) : CancellableEvent() {
     fun matches(criteria: Regex): List<String>? {
         val matches = criteria.matchEntire(message) ?: return null
         return matches.groupValues.drop(1)
     }
 }
 
-class ChatEvent(message: String, val text: Text) : CriteriaEvent(message)
+open class ChatEvent(message: String, val text: Text) : CriteriaEvent(message)
+
+abstract class ChatChannelEvent(message: String, text: Text, val name: String, val userMessage: String) :
+    ChatEvent(message, text) {
+    class AllChatEvent(message: String, text: Text, name: String, userMessage: String, val level: Int) :
+        ChatChannelEvent(message, text, name, userMessage)
+
+    class PartyChatEvent(message: String, text: Text, name: String, userMessage: String) :
+        ChatChannelEvent(message, text, name, userMessage)
+
+    class CoopChatEvent(message: String, text: Text, name: String, userMessage: String) :
+        ChatChannelEvent(message, text, name, userMessage)
+
+    class GuildChatEvent(message: String, text: Text, name: String, userMessage: String) :
+        ChatChannelEvent(message, text, name, userMessage)
+
+    abstract class PrivateChatEvent(message: String, text: Text, name: String, userMessage: String) :
+        ChatChannelEvent(message, text, name, userMessage) {
+        class IncomingPrivateChatEvent(message: String, text: Text, name: String, userMessage: String) :
+            PrivateChatEvent(message, text, name, userMessage)
+
+        class OutgoingPrivateChatEvent(message: String, text: Text, name: String, userMessage: String) :
+            PrivateChatEvent(message, text, name, userMessage)
+    }
+
+    companion object {
+        private val allChatRegex =
+            "^(?:\\[(?<level>\\d+)] .? ?)?(?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
+        private val partyChatRegex = "^Party > (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
+        private val coopChatRegex = "^Co-op > (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
+        private val guildChatRegex = "^Guild > (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
+        private val incomingPMRegex = "^From (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
+        private val outgoingPMRegex = "^To (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
+
+        fun from(message: String, text: Text): ChatChannelEvent? {
+            allChatRegex.matchEntire(message)?.let {
+                return AllChatEvent(
+                    message, text,
+                    it.groups["name"]?.value ?: "",
+                    it.groups["msg"]?.value ?: "",
+                    (it.groups["level"]?.value?.toInt()) ?: 0,
+                )
+            }
+
+            partyChatRegex.matchEntire(message)?.let {
+                return PartyChatEvent(
+                    message, text,
+                    it.groups["name"]?.value ?: "",
+                    it.groups["msg"]?.value ?: "",
+                )
+            }
+
+            coopChatRegex.matchEntire(message)?.let {
+                return CoopChatEvent(
+                    message, text,
+                    it.groups["name"]?.value ?: "",
+                    it.groups["msg"]?.value ?: "",
+                )
+            }
+
+            guildChatRegex.matchEntire(message)?.let {
+                return GuildChatEvent(
+                    message, text,
+                    it.groups["name"]?.value ?: "",
+                    it.groups["msg"]?.value ?: "",
+                )
+            }
+
+            incomingPMRegex.matchEntire(message)?.let {
+                return PrivateChatEvent.IncomingPrivateChatEvent(
+                    message, text,
+                    it.groups["name"]?.value ?: "",
+                    it.groups["msg"]?.value ?: "",
+                )
+            }
+
+            outgoingPMRegex.matchEntire(message)?.let {
+                return PrivateChatEvent.OutgoingPrivateChatEvent(
+                    message, text,
+                    it.groups["name"]?.value ?: "",
+                    it.groups["msg"]?.value ?: "",
+                )
+            }
+
+            return null
+        }
+    }
+}
 
 class EntityDeathEvent(
     val entity: Entity,

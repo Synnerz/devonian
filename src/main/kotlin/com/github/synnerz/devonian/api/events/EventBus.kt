@@ -116,8 +116,11 @@ object EventBus {
             val content = packet.content ?: return@on
             val message = content.string.clearCodes()
 
-            if (!ChatEvent(message, content).post()) return@on
-            event.ci.cancel()
+            val specialized = ChatChannelEvent.from(message, content)
+            val b1 = ChatEvent(message, content).post()
+            val b2 = specialized?.post() ?: false
+
+            if (b1 || b2) event.ci.cancel()
         }
     }
 
