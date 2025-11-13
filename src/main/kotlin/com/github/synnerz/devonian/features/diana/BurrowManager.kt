@@ -56,7 +56,7 @@ object BurrowManager {
 
     fun digBurrow(pos: BlockPos) {
         burrows.removeIf { it.type.empirical && it.sameBlockPos(pos) }
-        recentDugBurrows.add(DugBurrow(System.currentTimeMillis() + 10_000L, pos.x, pos.y, pos.z))
+        recentDugBurrows.add(DugBurrow(System.currentTimeMillis() + 1_000L, pos.x, pos.y, pos.z))
         if (recentDugBurrows.size > 10) recentDugBurrows.remove()
     }
 

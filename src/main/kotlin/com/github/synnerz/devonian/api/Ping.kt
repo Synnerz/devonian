@@ -64,7 +64,10 @@ object Ping {
                     if (packet.mode != ClientStatusC2SPacket.Mode.REQUEST_STATS) return@on
                     val t = getTimeMS()
                     if (!didBeat && lastBeat + 10_000.0 > t) event.ci.cancel()
-                    else lastBeat = t
+                    else {
+                        lastBeat = t
+                        didBeat = false
+                    }
                 }
 
                 is PlayerInteractBlockC2SPacket -> {

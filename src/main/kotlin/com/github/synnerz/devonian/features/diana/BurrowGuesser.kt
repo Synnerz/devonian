@@ -44,6 +44,7 @@ object BurrowGuesser : WorldFeature("burrowGuesser", "hub") {
     fun resetGuess() {
         splinePoly.value = null
         particlePath.value = doubleArrayOf()
+        knownChain.clear()
 
         if (SETTING_REMEMBER_PREVIOUS_GUESSES) {
             val guess = guessPos.value
@@ -155,19 +156,20 @@ object BurrowGuesser : WorldFeature("burrowGuesser", "hub") {
         for (i in 0 until min(comb, RANSAC_ITERS_PER)) {
             shuffleUntil(rand, MIN_CHAIN_LENGTH - 1)
             start = Random.nextInt(0, L1)
-            var hash = MathUtils.FIRST_100_PRIMES[start]
-            for (j in 0 until MIN_CHAIN_LENGTH - 1) {
-                hash *= MathUtils.FIRST_100_PRIMES[if (j > start) j + 1 else j]
-            }
-            if (!tried.add(hash)) continue
-
-            val possInliers = Array(MIN_CHAIN_LENGTH) {
-                if (it == 0) possibleStartingParticles[start]
+            val possInliersI = IntArray(MIN_CHAIN_LENGTH) {
+                if (it == 0) start
                 else {
                     var idx = rand[it - 1]
                     if (idx >= start) idx++
-                    if (idx < L1) possibleStartingParticles[idx] else unclaimedParticles[idx - L1]
+                    idx
                 }
+            }
+            val hash = possInliersI.reduce { a, v -> a * v }
+            if (!tried.add(hash)) continue
+
+            val possInliers = Array(MIN_CHAIN_LENGTH) {
+                val idx = possInliersI[it]
+                if (idx < L1) possibleStartingParticles[idx] else unclaimedParticles[idx - L1]
             }
             var minT = possInliers.minOf { it.t }
             var time = DoubleArray(MIN_CHAIN_LENGTH) { (possInliers[it].t - minT).toDouble() }
@@ -248,7 +250,7 @@ object BurrowGuesser : WorldFeature("burrowGuesser", "hub") {
                     val predX = spline[0](knownChain.size.toDouble())
                     val predY = spline[1](knownChain.size.toDouble())
                     val predZ = spline[2](knownChain.size.toDouble())
-                    if ((predX - x) + (predY - y) + (predZ - z) < MAX_CHAIN_DISTANCE_ERROR) {
+                    if (abs(predX - x) + abs(predY - y) + abs(predZ - z) < MAX_CHAIN_DISTANCE_ERROR) {
                         knownChain.add(part)
                         updateGuess()
                         return@on
@@ -257,11 +259,11 @@ object BurrowGuesser : WorldFeature("burrowGuesser", "hub") {
             }
 
             if (spadeUsePositions.any {
-                    t < it.t &&
-                    (x - it.x).pow(2) +
-                    (y - it.y).pow(2) +
-                    (z - it.z).pow(2) < 4
-                }) possibleStartingParticles.add(part)
+                t < it.t &&
+                (x - it.x).pow(2) +
+                (y - it.y).pow(2) +
+                (z - it.z).pow(2) < 4
+            }) possibleStartingParticles.add(part)
             else unclaimedParticles.add(part)
 
             ransac()
@@ -284,30 +286,33 @@ object BurrowGuesser : WorldFeature("burrowGuesser", "hub") {
                 PositionTime(
                     EventBus.totalTicks + (Ping.getMedianPing() / 50.0 + 10.0).toInt(),
                     player.lastXClient,
-                    player.lastYClient,
+                    player.lastYClient + minecraft.player!!.standingEyeHeight,
                     player.lastZClient
                 )
             )
         }
 
         on<PacketSentEvent> { event ->
-            val pos = when (val packet = event.packet) {
+            val (pos, itemStack) = when (val packet = event.packet) {
                 is PlayerActionC2SPacket -> {
                     if (packet.action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return@on
-                    packet.pos
+                    val itemStack = minecraft.player?.mainHandStack ?: return@on
+
+                    Pair(packet.pos, itemStack)
                 }
 
                 is PlayerInteractBlockC2SPacket -> {
                     val hand = packet.hand
                     val itemStack = minecraft.player?.getStackInHand(hand) ?: return@on
 
-                    val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
-                    if (!isSpade(sbId)) return@on
-                    packet.blockHitResult.blockPos
+                    Pair(packet.blockHitResult.blockPos, itemStack)
                 }
 
                 else -> return@on
             }
+
+            val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
+            if (!isSpade(sbId)) return@on
 
             BurrowManager.digBurrow(pos)
         }
