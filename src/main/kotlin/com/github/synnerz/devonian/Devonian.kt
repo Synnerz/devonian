@@ -86,7 +86,8 @@ object Devonian : ClientModInitializer {
 		DianaMobTracker,
 		BurrowGuesser,
 		DianaDropTracker,
-		EtherwarpSound
+		EtherwarpSound,
+		InventoryLogGui
 	)
 
 	override fun onInitializeClient() {
