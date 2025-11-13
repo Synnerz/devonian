@@ -22,7 +22,7 @@ object InventoryHistoryLog : Feature("inventoryHistoryLog") {
             ttl = SETTING_ITEM_DISPLAY_TIME
         }
 
-        override fun toString(): String = "${if (quantity < 0) "&c-" else "&a+"} ${"%,d".format(abs(quantity))}x&r $name"
+        override fun toString(): String = "${if (quantity < 0) "&c-" else "&a+"}${"%,d".format(abs(quantity))}x&r $name"
 
         data class Key(val name: String, val increase: Boolean)
     }
