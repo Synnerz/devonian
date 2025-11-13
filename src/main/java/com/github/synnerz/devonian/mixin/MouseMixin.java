@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.features.misc.NoCursorReset;
+import com.github.synnerz.devonian.features.inventory.NoCursorReset;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.client.Mouse;
 import org.objectweb.asm.Opcodes;

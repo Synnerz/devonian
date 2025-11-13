@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.misc
+package com.github.synnerz.devonian.features.inventory
 
 import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
 import com.github.synnerz.devonian.features.Feature
