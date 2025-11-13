@@ -18,7 +18,7 @@ import org.lwjgl.glfw.GLFW
 import kotlin.jvm.optionals.getOrNull
 
 object EventBus {
-    private var totalTicks = 0
+    var totalTicks = 0
     private val teamRegex = "^team_(\\d+)$".toRegex()
     val events = hashMapOf<String, MutableList<Any>>()
 
