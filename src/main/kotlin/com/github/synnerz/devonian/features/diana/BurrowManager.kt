@@ -2,9 +2,7 @@ package com.github.synnerz.devonian.features.diana
 
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import net.minecraft.util.math.BlockPos
-import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.floor
@@ -58,11 +56,6 @@ object BurrowManager {
         EventBus.on<ChatEvent> { event ->
             if (event.message != "Poof! You have cleared your griffin burrows!") return@on
             burrows.clear()
-            currentGuess.set(null)
-        }
-
-        EventBus.on<RenderWorldEvent> {
-
         }
     }
 }
