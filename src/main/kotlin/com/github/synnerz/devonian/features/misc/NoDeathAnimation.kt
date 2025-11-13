@@ -1,21 +1,23 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.api.events.EntityDeathEvent
+import com.github.synnerz.devonian.api.events.RenderEntityEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.entity.Entity
+import net.minecraft.entity.LivingEntity
 
 object NoDeathAnimation : Feature("noDeathAnimation") {
     private val lividNameRegex = "^\\w+ Livid\$".toRegex()
 
     override fun initialize() {
-        // TODO: this might be heavy UAYOR (?)
-        on<EntityDeathEvent> { event ->
+        on<RenderEntityEvent> { event ->
+            if (event.entity !is LivingEntity) return@on
             val entity = event.entity
-            val world = event.world
-            val name = entity.name?.string
-            if (name !== null && lividNameRegex.matches(name)) return@on
 
-            world.removeEntity(entity.id, Entity.RemovalReason.DISCARDED)
+            if (!entity.isDead && entity.health > 0f) return@on
+
+            val name = entity.name?.string
+            if (name != null && lividNameRegex.matches(name)) return@on
+
+            event.ci.cancel()
         }
     }
 }
