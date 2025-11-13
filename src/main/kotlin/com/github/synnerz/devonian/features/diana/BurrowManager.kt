@@ -1,0 +1,68 @@
+package com.github.synnerz.devonian.features.diana
+
+import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import net.minecraft.util.math.BlockPos
+import java.awt.Color
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.floor
+
+object BurrowManager {
+    val burrows = CopyOnWriteArrayList<Burrow>()
+    private val recentDugBurrows = ConcurrentLinkedQueue<DugBurrow>()
+
+    data class Burrow(val type: BurrowType, val x: Double, val y: Double, val z: Double) {
+        fun sameBlockPos(bp: BlockPos): Boolean {
+            return bp.x == x.toInt() && bp.y == y.toInt() - 1 && bp.z == z.toInt()
+        }
+
+        fun sameBlockPos(x: Double, y: Double, z: Double) =
+            floor(this.x) == floor(x) &&
+            floor(this.y) == floor(y) &&
+            floor(this.z) == floor(z)
+    }
+
+    enum class BurrowType(val displayName: String, val empirical: Boolean) {
+        START("§aStart", true),
+        MOB("§cMob", true),
+        TREASURE("§eTreasure", true),
+        OLD_GUESS("§5Guess", false),
+        GUESS("§3Guess", false),
+    }
+
+    data class DugBurrow(val t: Long, val x: Int, val y: Int, val z: Int)
+
+    fun addBurrow(type: BurrowType, x: Double, y: Double, z: Double) {
+        val t = System.currentTimeMillis()
+        if (burrows.any {
+            it.type == type && it.sameBlockPos(x, y, z) ||
+            type.empirical && recentDugBurrows.any {
+                it.t > t &&
+                it.x == x.toInt() &&
+                it.y == y.toInt() &&
+                it.z == z.toInt()
+            }
+        }) return
+        burrows.add(Burrow(type, x, y, z))
+    }
+
+    fun digBurrow(pos: BlockPos) {
+        burrows.removeIf { it.type.empirical && it.sameBlockPos(pos) }
+        recentDugBurrows.add(DugBurrow(System.currentTimeMillis() + 10_000L, pos.x, pos.y, pos.z))
+        if (recentDugBurrows.size > 10) recentDugBurrows.remove()
+    }
+
+    init {
+        EventBus.on<ChatEvent> { event ->
+            if (event.message != "Poof! You have cleared your griffin burrows!") return@on
+            burrows.clear()
+            currentGuess.set(null)
+        }
+
+        EventBus.on<RenderWorldEvent> {
+
+        }
+    }
+}
