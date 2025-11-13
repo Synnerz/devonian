@@ -12,6 +12,10 @@ import java.awt.Color
 import kotlin.math.floor
 
 object BurrowWaypoint : WorldFeature("burrowWaypoint", "hub") {
+    private val SETTING_START_COLOR = Color.GREEN
+    private val SETTING_MOB_COLOR = Color.RED
+    private val SETTING_TREAURE_COLOR = Color.YELLOW
+
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
@@ -61,9 +65,9 @@ object BurrowWaypoint : WorldFeature("burrowWaypoint", "hub") {
                 Context.Immediate?.renderWaypoint(
                     it.x, it.y, it.z,
                     when (it.type) {
-                        BurrowManager.BurrowType.START -> Color.GREEN
-                        BurrowManager.BurrowType.MOB -> Color.RED
-                        BurrowManager.BurrowType.TREASURE -> Color.YELLOW
+                        BurrowManager.BurrowType.START -> SETTING_START_COLOR
+                        BurrowManager.BurrowType.MOB -> SETTING_MOB_COLOR
+                        BurrowManager.BurrowType.TREASURE -> SETTING_TREAURE_COLOR
                         else -> Color(0)
                     },
                     it.type.name,
