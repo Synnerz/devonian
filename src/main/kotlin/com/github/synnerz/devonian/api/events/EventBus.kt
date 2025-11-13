@@ -139,8 +139,7 @@ object EventBus {
         }
     }
 
-    inline fun <reified T: Event> remove(noinline cb: (T) -> Unit)
-        = events[T::class.java.name]?.remove(cb)
+    inline fun <reified T : Event> remove(noinline cb: (T) -> Unit) = events[T::class.java.name]?.remove(cb)
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Event> post(event: T) {
