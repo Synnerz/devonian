@@ -8,9 +8,9 @@ import kotlin.math.sqrt
 
 class DDA(x: Double, y: Double, z: Double, dx: Double, dy: Double, dz: Double) :
     Enumeration<BlockPos> {
-    private var x = floor(x) as Int
-    private var y = floor(y) as Int
-    private var z = floor(z) as Int
+    private var x = floor(x).toInt()
+    private var y = floor(y).toInt()
+    private var z = floor(z).toInt()
     private val mag = sqrt(dx * dx + dy * dy + dz * dz)
     private val sx: Int
     private val sy: Int
@@ -28,9 +28,9 @@ class DDA(x: Double, y: Double, z: Double, dx: Double, dy: Double, dz: Double) :
         val dx1 = dx / mag
         val dy1 = dy / mag
         val dz1 = dz / mag
-        sx = sign(dx1) as Int
-        sy = sign(dy1) as Int
-        sz = sign(dz1) as Int
+        sx = sign(dx1).toInt()
+        sy = sign(dy1).toInt()
+        sz = sign(dz1).toInt()
         tdx = sx / dx1
         tdy = sy / dy1
         tdz = sz / dz1
