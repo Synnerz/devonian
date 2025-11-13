@@ -24,7 +24,8 @@
 		"PerspectiveMixin",
 		"MouseMixin",
 		"ChatHudMixin",
-		"PlayerListHudMixin"
+		"PlayerListHudMixin",
+		"accessor.ClientPlayerEntityAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
