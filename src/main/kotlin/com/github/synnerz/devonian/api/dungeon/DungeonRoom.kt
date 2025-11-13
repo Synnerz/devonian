@@ -55,7 +55,7 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
     }
 
     internal fun update() {
-        comps = comps.sortedBy { it[1] }.sortedBy { it[0] }.toMutableList()
+        comps.sortWith(compareBy({ it[1] }, { it[0] }))
         realComps = comps.map { DungeonScanner.toPos(it[0], it[1]) }
         scan()
 

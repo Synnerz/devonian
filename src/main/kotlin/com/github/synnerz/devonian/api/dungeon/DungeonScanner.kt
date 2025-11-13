@@ -5,10 +5,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
-import com.github.synnerz.devonian.api.events.AreaEvent
-import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.SubAreaEvent
-import com.github.synnerz.devonian.api.events.TickEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.Gson
@@ -59,7 +56,7 @@ object DungeonScanner {
         listOf(0.0, halfCombinedSize, 0.0, 1.0),
         listOf(0.0, -halfCombinedSize, 0.0, -1.0)
     )
-    private val defaultMapSize = listOf(125, 125)
+    val defaultMapSize = listOf(125, 125)
 
     var lastIdx: Int? = null
     var currentRoom: DungeonRoom? = null
@@ -197,6 +194,7 @@ object DungeonScanner {
             scan()
             checkRoomState()
             checkDoorState()
+            DungeonMapScanner.checkPlayerState()
 
             if (jdx > 35) return@on
 
