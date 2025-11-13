@@ -45,6 +45,11 @@ object BurrowManager {
         }) return
 
         burrows.add(Burrow(type, x, y, z, ttl))
+
+        if (type.empirical) burrows.removeIf {
+            !it.type.empirical &&
+            (it.x - x).pow(2) + (it.y - y).pow(2) + (it.z - z).pow(2) < 100
+        }
     }
 
     fun digBurrow(pos: BlockPos) {
