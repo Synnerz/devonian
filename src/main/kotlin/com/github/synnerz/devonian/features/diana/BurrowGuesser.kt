@@ -167,7 +167,8 @@ object BurrowGuesser : WorldFeature("burrowGuesser", "hub") {
             val possInliers = Array(MIN_CHAIN_LENGTH) {
                 if (it == 0) possibleStartingParticles[start]
                 else {
-                    val idx = if (it > start) it + 1 else it
+                    var idx = rand[it - 1]
+                    if (idx >= start) idx++
                     if (idx < L1) possibleStartingParticles[idx] else unclaimedParticles[idx - L1]
                 }
             }
