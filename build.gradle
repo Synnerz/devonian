@@ -9,6 +9,11 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
+configurations {
+	embed
+	implementation.extendsFrom(embed)
+}
+
 base {
 	archivesName = project.archives_base_name
 }
@@ -28,7 +33,7 @@ dependencies {
 
 	modImplementation "maven.modrinth:barrl:1.3.0-1.21.5"
 
-	implementation "org.ejml:ejml-all:0.44.0"
+	embed "org.ejml:ejml-all:0.44.0"
 }
 
 processResources {
@@ -58,6 +63,10 @@ java {
 
 jar {
 	inputs.property "archivesName", project.base.archivesName
+
+	from {
+		configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+	}
 
 	from("LICENSE") {
 		rename { "${it}_${inputs.properties.archivesName}"}
