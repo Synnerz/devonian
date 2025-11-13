@@ -104,14 +104,15 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
             val lookVec: Vec3d
             if (SETTING_USE_SMOOTH_POSITION) {
                 val posVec = player.getLerpedPos(event.ctx.tickCounter().getTickProgress(false))
+                val camVec = player.getCameraPosVec(event.ctx.tickCounter().getTickProgress(false))
                 px = posVec.x
-                py = posVec.y
+                py = camVec.y
                 pz = posVec.z
                 lookVec = player.getRotationVec(event.ctx.tickCounter().getTickProgress(false))
             } else {
                 val playerAccessor = player as ClientPlayerEntityAccessor
                 px = playerAccessor.lastXClient
-                py = playerAccessor.lastYClient
+                py = playerAccessor.lastYClient + if (player.isSneaking) 1.54f else 1.64f
                 pz = playerAccessor.lastZClient
                 lookVec = player.getRotationVector(playerAccessor.lastPitchClient, playerAccessor.lastYawClient)
             }
@@ -171,7 +172,7 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
                 hitResult.y - cameraPos.y,
                 hitResult.z - cameraPos.z,
                 if (failReason.isEmpty()) SETTING_ETHER_FILL_COLOR else SETTING_ETHER_FAIL_FILL_COLOR,
-                false
+                true
             )
         }
 
