@@ -3,15 +3,15 @@ package com.github.synnerz.devonian.features.diana
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import net.minecraft.util.math.BlockPos
-import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.floor
 
 object BurrowManager {
     val burrows = CopyOnWriteArrayList<Burrow>()
-    private val recentDugBurrows = ConcurrentLinkedQueue<DugBurrow>()
+    private val recentDugBurrows = LinkedList<DugBurrow>()
 
-    data class Burrow(val type: BurrowType, val x: Double, val y: Double, val z: Double) {
+    data class Burrow(val type: BurrowType, val x: Double, val y: Double, val z: Double, var ttl: Int) {
         fun sameBlockPos(bp: BlockPos): Boolean {
             return bp.x == x.toInt() && bp.y == y.toInt() - 1 && bp.z == z.toInt()
         }
@@ -32,7 +32,7 @@ object BurrowManager {
 
     data class DugBurrow(val t: Long, val x: Int, val y: Int, val z: Int)
 
-    fun addBurrow(type: BurrowType, x: Double, y: Double, z: Double) {
+    fun addBurrow(type: BurrowType, x: Double, y: Double, z: Double, ttl: Int = 5 * 60 * 20) {
         val t = System.currentTimeMillis()
         if (burrows.any {
             it.type == type && it.sameBlockPos(x, y, z) ||
@@ -43,7 +43,8 @@ object BurrowManager {
                 it.z == z.toInt()
             }
         }) return
-        burrows.add(Burrow(type, x, y, z))
+
+        burrows.add(Burrow(type, x, y, z, ttl))
     }
 
     fun digBurrow(pos: BlockPos) {
@@ -56,6 +57,10 @@ object BurrowManager {
         EventBus.on<ChatEvent> { event ->
             if (event.message != "Poof! You have cleared your griffin burrows!") return@on
             burrows.clear()
+        }
+
+        EventBus.on<TickEvent> {
+            burrows.removeIf { --it.ttl <= 0 }
         }
     }
 }
