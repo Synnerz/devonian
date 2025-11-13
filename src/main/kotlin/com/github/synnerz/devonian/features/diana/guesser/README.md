@@ -1,2 +1,0 @@
-The code seen here was taken from [SkyHanni Mod](https://github.com/hannibal002/SkyHanni/)
-all the credits goes to it as well as it being licensed under their own [License](https://github.com/hannibal002/SkyHanni/blob/beta/LICENSE)
