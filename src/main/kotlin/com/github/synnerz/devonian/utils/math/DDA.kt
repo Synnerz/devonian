@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.utils.math
 
 import net.minecraft.util.math.BlockPos
 import java.util.*
