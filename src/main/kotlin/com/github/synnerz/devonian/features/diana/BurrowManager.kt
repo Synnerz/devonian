@@ -2,10 +2,12 @@ package com.github.synnerz.devonian.features.diana
 
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.TickEvent
 import net.minecraft.util.math.BlockPos
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.floor
+import kotlin.math.pow
 
 object BurrowManager {
     val burrows = CopyOnWriteArrayList<Burrow>()
@@ -26,8 +28,8 @@ object BurrowManager {
         START("§aStart", true),
         MOB("§cMob", true),
         TREASURE("§eTreasure", true),
-        OLD_GUESS("§5Guess", false),
         GUESS("§3Guess", false),
+        OLD_GUESS("§5Guess", false),
     }
 
     data class DugBurrow(val t: Long, val x: Int, val y: Int, val z: Int)
@@ -61,6 +63,7 @@ object BurrowManager {
     init {
         EventBus.on<ChatEvent> { event ->
             if (event.message != "Poof! You have cleared your griffin burrows!") return@on
+            BurrowGuesser.fullReset()
             burrows.clear()
         }
 
