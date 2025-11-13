@@ -9,10 +9,10 @@ import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.entity.player.PlayerInventory
 import kotlin.math.abs
 
-object InventoryLogGui : Feature("inventoryLogGui") {
+object InventoryHistoryLog : Feature("inventoryHistoryLog") {
     private const val SETTING_ITEM_DISPLAY_TIME = 100
 
-    val hud = HudManager.createHud("inventoryLogGui", "&c-100&r &eSocial Credit")
+    val hud = HudManager.createHud("InventoryHistoryLog", "&c-100&r &eSocial Credit")
 
     data class ItemizedDifference(val name: String, var quantity: Int) {
         var ttl = SETTING_ITEM_DISPLAY_TIME
