@@ -8,7 +8,6 @@ import com.github.synnerz.devonian.features.WorldFeature
 import com.github.synnerz.devonian.mixin.accessor.ClientPlayerEntityAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
 import kotlinx.atomicfu.atomic
-import kotlinx.coroutines.processNextEventInCurrentThread
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket
@@ -16,10 +15,8 @@ import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes
 import java.awt.Color
 import java.util.*
-import java.util.stream.Collector
 import kotlin.math.*
 import kotlin.random.Random
-
 
 // Credits to https://github.com/hannibal002/SkyHanni/blob/beta/src/main/java/at/hannibal2/skyhanni/features/event/diana/PreciseGuessBurrow.kt
 // & https://github.com/PerseusPotter/chicktils/blob/master/modules/diana.js
@@ -338,7 +335,7 @@ object BurrowGuesser : WorldFeature("burrowGuesser", "hub") {
                         BurrowManager.BurrowType.OLD_GUESS -> SETTING_OLD_GUESS_COLOR
                         else -> Color(0)
                     },
-                    it.type.name,
+                    it.type.displayName,
                     increase = true,
                     phase = true
                 )
@@ -348,7 +345,7 @@ object BurrowGuesser : WorldFeature("burrowGuesser", "hub") {
             if (guess != null) Context.Immediate?.renderWaypoint(
                 guess.x, guess.y, guess.z,
                 SETTING_GUESS_COLOR,
-                BurrowManager.BurrowType.GUESS.name,
+                BurrowManager.BurrowType.GUESS.displayName,
                 increase = true,
                 phase = true
             )

@@ -70,7 +70,7 @@ object BurrowWaypoint : WorldFeature("burrowWaypoint", "hub") {
                         BurrowManager.BurrowType.TREASURE -> SETTING_TREAURE_COLOR
                         else -> Color(0)
                     },
-                    it.type.name,
+                    it.type.displayName,
                     increase = true,
                     phase = true
                 )
