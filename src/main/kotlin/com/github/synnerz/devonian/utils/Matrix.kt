@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.diana.guesser
+package com.github.synnerz.devonian.utils
 
 import kotlin.math.absoluteValue
 

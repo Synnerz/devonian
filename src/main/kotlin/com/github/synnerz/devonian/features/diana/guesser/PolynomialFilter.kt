@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.diana.guesser
 
 import com.github.synnerz.devonian.features.diana.guesser.LorenzVec.Companion.toLorenzVec
+import com.github.synnerz.devonian.utils.Matrix
 import kotlin.math.pow
 import kotlin.math.*
 
