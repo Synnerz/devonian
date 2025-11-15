@@ -21,7 +21,7 @@ object Render2D {
     @JvmOverloads
     fun drawString(ctx: DrawContext, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
         val matrices = ctx.matrices
-            matrices.push()
+        matrices.push()
         matrices.translate(x.toFloat(), y.toFloat(), 0f)
         if (scale != 1f) matrices.scale(scale, scale, 1f)
 
@@ -49,6 +49,27 @@ object Render2D {
     @JvmOverloads
     fun drawRect(ctx: DrawContext, x: Int, y: Int, width: Int, height: Int, color: Color = Color.WHITE) {
         ctx.fill(RenderLayer.getGui(), x, y, x + width, y + height, color.rgb)
+    }
+
+    fun drawCircle(ctx: DrawContext, cx: Int, cy: Int, radius: Int, color: Color = Color.WHITE) {
+        var x = 0
+        var y = radius
+        var d = 3 - 2 * radius
+
+        while (x <= y) {
+            ctx.drawHorizontalLine(cx - x, cx + x, cy + y, color.rgb)
+            ctx.drawHorizontalLine(cx - x, cx + x, cy - y, color.rgb)
+            ctx.drawHorizontalLine(cx - y, cx + y, cy + x, color.rgb)
+            ctx.drawHorizontalLine(cx - y, cx + y, cy - x, color.rgb)
+
+            if (d < 0) {
+                d += 4 * x + 6
+            } else {
+                d += 4 * (x - y) + 10
+                y--
+            }
+            x++
+        }
     }
 
     fun String.width(): Int {
