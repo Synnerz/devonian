@@ -759,7 +759,7 @@
     ],
     "roomID": 49,
     "clear": "mob",
-    "crypts": null,
+    "crypts": 0,
     "clearScore": 5,
     "secretScore": 8,
     "shape": "1x1",

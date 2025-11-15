@@ -22,11 +22,11 @@ object DungeonScanner {
         val type: String,
         val secrets: Int,
         val cores: List<Int>,
-        val roomId: Int,
-        val clear: String,
+        val roomID: Int,
+        val clear: String?,
         val crypts: Int,
-        val clearScore: Int,
-        val secretScore: Int,
+        val clearScore: Int?,
+        val secretScore: Int?,
         val shape: String
     ) {
         override fun toString(): String {

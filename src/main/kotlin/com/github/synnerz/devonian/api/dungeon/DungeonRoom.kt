@@ -2,7 +2,9 @@ package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
+import com.github.synnerz.devonian.api.dungeon.mapEnums.ClearTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
+import com.github.synnerz.devonian.api.dungeon.mapEnums.ShapeTypes
 import net.minecraft.block.Blocks
 
 class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Double) {
@@ -20,7 +22,9 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
     var rotation = -1
     var type = RoomTypes.UNKNOWN
     var checkmark = CheckmarkTypes.UNEXPLORED
-    var shape = "1x1"
+    var shape = ShapeTypes.Shape1x1
+    var secretsCompleted = 0
+    var clear = ClearTypes.MOB
 
     init {
         addComponents(comps)
@@ -41,6 +45,11 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
         cores = data.cores
         name = data.name
         type = RoomTypes.byName(data.type) ?: RoomTypes.NORMAL
+        clear = when (data.clear) {
+            "mob" -> ClearTypes.MOB
+            "miniboss" -> ClearTypes.MINIBOSS
+            else -> ClearTypes.OTHER
+        }
     }
 
     private fun loadFromCore(core: Int): Boolean {
@@ -139,12 +148,12 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
         val distCompB = comps.map { it[1] }.distinct().size
 
         shape = when {
-            comps.isEmpty() || comps.size > 4 -> "Unknown"
-            comps.size == 1 -> "1x1"
-            comps.size == 2 -> "1x2"
-            comps.size == 4 -> if (distCompA == 1 || distCompB == 1) "1x4" else "2x2"
-            distCompA == comps.size || distCompB == comps.size -> "1x3"
-            else -> "L"
+            comps.isEmpty() || comps.size > 4 -> ShapeTypes.Unknown
+            comps.size == 1 -> ShapeTypes.Shape1x1
+            comps.size == 2 -> ShapeTypes.Shape1x2
+            comps.size == 4 -> if (distCompA == 1 || distCompB == 1) ShapeTypes.Shape1x4 else ShapeTypes.Shape2x2
+            distCompA == comps.size || distCompB == comps.size -> ShapeTypes.Shape1x3
+            else -> ShapeTypes.ShapeL
         }
     }
 }
