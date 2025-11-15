@@ -21,6 +21,7 @@ base {
 repositories {
 	mavenCentral()
 	maven { url = "https://api.modrinth.com/maven" }
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -31,7 +32,9 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	modImplementation "maven.modrinth:barrl:1.3.0-1.21.5"
+	include modImplementation("maven.modrinth:barrl:1.3.0-1.21.5")
+	// TODO: upload to modrinth
+	include modImplementation("com.github.Synnerz:talium:afae06c1cc")
 
 	embed "org.ejml:ejml-all:0.44.0"
 }
