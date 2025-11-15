@@ -7,7 +7,6 @@ import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object DeathsDisplay : TextHudFeature("deathsDisplay", "catacombs") {
     private val deathsRegex = "^Team Deaths: (\\d+)$".toRegex()
-    private val hud = HudManager.createHud("DeathsDisplay", "&8&lDeaths&f: &43")
     private var deathCount = 0
 
     override fun initialize() {
