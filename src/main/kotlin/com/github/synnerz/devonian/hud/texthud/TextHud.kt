@@ -11,13 +11,12 @@ import java.awt.Graphics2D
 import java.awt.GraphicsEnvironment
 import java.awt.RenderingHints
 import java.util.*
-import kotlin.collections.forEach
 import kotlin.math.ceil
 import kotlin.math.max
 
-class TextHud(val name: String, private val data: DataProvider) : ITextHud, DataProvider by data {
+class TextHud(val name: String, private val data: DataProvider) : ITextHud, DataProvider by data, FontListener {
     init {
-        Instances.add(this)
+        registerFontListener(this)
     }
 
     private var lines = mutableListOf<Line>()
@@ -35,6 +34,10 @@ class TextHud(val name: String, private val data: DataProvider) : ITextHud, Data
 
     private fun markFont() {
         fontsDirty = true
+    }
+
+    override fun onFontChange(f: Font) {
+        markFont()
     }
 
     override var shadow: Boolean = data.shadow
@@ -265,7 +268,11 @@ class TextHud(val name: String, private val data: DataProvider) : ITextHud, Data
             GraphicsEnvironment.getLocalGraphicsEnvironment().allFonts[0]
         }
         val Fonts = mutableMapOf<String, Font>()
-        private val Instances = mutableListOf<TextHud>()
+        private val Instances = mutableListOf<FontListener>()
+
+        fun registerFontListener(listener: FontListener) {
+            Instances.add(listener)
+        }
 
         private var fontMainBase: Font = MOJANGLES
         private var fontMainName = "Mojangles"
@@ -274,7 +281,7 @@ class TextHud(val name: String, private val data: DataProvider) : ITextHud, Data
             val font = Fonts[fontName] ?: return
             fontMainName = fontName
             fontMainBase = font
-            Instances.forEach { it.markFont() }
+            Instances.forEach { it.onFontChange(font) }
         }
 
         init {
