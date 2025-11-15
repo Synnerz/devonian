@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.hud.texthud
 
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
+import com.github.synnerz.devonian.hud.texthud.TextHud.Align
+import com.github.synnerz.devonian.hud.texthud.TextHud.Backdrop
 import net.minecraft.util.TriState
 import java.awt.Color
 import java.awt.Font
@@ -16,7 +18,7 @@ class TextRenderer(name: String) : BufferedImageRenderer<TextRenderer.TextRender
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         g.paint = Color(-1)
 
-        if (param.backdrop == TextHudFeature.Backdrop.Full) {
+        if (param.backdrop == Backdrop.Full) {
             g.paint = Color(0, 0, 0, 64)
             g.fillRect(
                 0,
@@ -29,13 +31,13 @@ class TextRenderer(name: String) : BufferedImageRenderer<TextRenderer.TextRender
         param.lines.forEachIndexed { i, v ->
             val y = i * param.fontSize + ascent
             val x = when (param.align) {
-                TextHudFeature.Align.Left -> 0f
-                TextHudFeature.Align.Right -> param.lineVW - v.visualWidth
-                TextHudFeature.Align.Center,
-                TextHudFeature.Align.CenterIgnoreAnchor
+                Align.Left -> 0f
+                Align.Right -> param.lineVW - v.visualWidth
+                Align.Center,
+                Align.CenterIgnoreAnchor
                     -> (param.lineVW - v.visualWidth) * 0.5f
             }
-            if (param.backdrop == TextHudFeature.Backdrop.Line) {
+            if (param.backdrop == Backdrop.Line) {
                 g.paint = Color(0, 0, 0, 64)
                 g.fillRect(
                     x.toInt(),
@@ -57,9 +59,9 @@ class TextRenderer(name: String) : BufferedImageRenderer<TextRenderer.TextRender
     }
 
     data class TextRenderParams(
-        val align: TextHudFeature.Align,
+        val align: Align,
         val shadow: Boolean,
-        val backdrop: TextHudFeature.Backdrop,
+        val backdrop: Backdrop,
         val fontSize: Float,
         val font: Font,
         val lines: List<StringParser.LineData>,
