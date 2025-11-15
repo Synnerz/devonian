@@ -113,9 +113,9 @@ abstract class HudFeature(
             Render2D.drawString(
                 ctx,
                 msg,
-                textBounds.x.toInt(),
-                textBounds.y.toInt(),
-                textBounds.w.toFloat() / msgBounds.w.toFloat()
+                textBounds.second.x.toInt(),
+                textBounds.second.y.toInt(),
+                textBounds.first.toFloat()
             )
         }
 
