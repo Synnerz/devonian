@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.features.inventory
 
-import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
-import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.ScreenUtils
+import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
+import com.github.synnerz.devonian.features.Feature
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 
 object MiddleClickGui : Feature("middleClickGui") {

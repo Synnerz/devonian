@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EntityJoinEvent
 import com.github.synnerz.devonian.api.events.RenderEntityEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.api.Scheduler
 import net.minecraft.entity.decoration.ArmorStandEntity
 import java.awt.Color
 

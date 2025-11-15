@@ -14,7 +14,10 @@ import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
 import com.github.synnerz.devonian.features.garden.PestsDisplay
-import com.github.synnerz.devonian.features.inventory.*
+import com.github.synnerz.devonian.features.inventory.InventoryHistoryLog
+import com.github.synnerz.devonian.features.inventory.MiddleClickGui
+import com.github.synnerz.devonian.features.inventory.NoCursorReset
+import com.github.synnerz.devonian.features.inventory.ProtectItem
 import com.github.synnerz.devonian.features.misc.*
 import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
