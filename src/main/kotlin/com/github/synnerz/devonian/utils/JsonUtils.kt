@@ -61,7 +61,15 @@ object JsonUtils {
         return this
     }
 
-    fun setHud(name: String, x: Int? = null, y: Int? = null, scale: Float? = null): JsonUtils {
+    fun setHud(
+        name: String,
+        x: Double? = null, y: Double? = null,
+        scale: Float? = null,
+        anchor: Int? = null,
+        align: Int? = null,
+        shadow: Boolean? = null,
+        backdrop: Int? = null
+    ): JsonUtils {
         if (json.get("huds") == null) {
             json.add("huds", JsonObject())
         }
@@ -75,6 +83,10 @@ object JsonUtils {
         if (x != null) currentHud.addProperty("x", x)
         if (y != null) currentHud.addProperty("y", y)
         if (scale != null) currentHud.addProperty("scale", scale)
+        if (anchor != null) currentHud.addProperty("anchor", anchor)
+        if (align != null) currentHud.addProperty("align", align)
+        if (shadow != null) currentHud.addProperty("shadow", shadow)
+        if (backdrop != null) currentHud.addProperty("backdrop", backdrop)
 
         return this
     }

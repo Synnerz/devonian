@@ -3,13 +3,10 @@ package com.github.synnerz.devonian.features.end
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.Location
-import com.github.synnerz.devonian.utils.Render2D
 
-object EyesPlacedDisplay : Feature("eyesPlaced", "the end") {
-    private val hud = HudManager.createHud("EyesPlacedDisplay", "&dEyes Placed&f: &d8&f/&d8")
+object EyesPlacedDisplay : TextHudFeature("eyesPlaced", "the end") {
     private val eyesPlacedRegex = "^ Eyes placed: (\\d+)/(\\d+)".toRegex()
     private val dragonSpawnedRegex = "^ Dragon spawned!$".toRegex()
     private val eggRespawningRegex = "^ Egg respawning!$".toRegex()
@@ -36,19 +33,18 @@ object EyesPlacedDisplay : Feature("eyesPlaced", "the end") {
             displayStr = "&dEyes Placed&f: ${colorFormat}${currentEyes}&f/&d8"
         }
 
-        on<RenderOverlayEvent> {
+        on<RenderOverlayEvent> { event ->
             if (Location.subarea == null) return@on
             if (!Location.subarea!!.contains("dragon's nest")) return@on
 
-            Render2D.drawString(
-                it.ctx,
-                displayStr ?: "&dEyes Placed&f: &e0&f/&d8",
-                hud.x, hud.y, hud.scale
-            )
+            setLine(displayStr ?: "&dEyes Placed&f: &e0&f/&d8")
+            draw(event.ctx)
         }
 
         on<WorldChangeEvent> {
             displayStr = null
         }
     }
+
+    override fun getEditText(): List<String> = listOf("&dEyes Placed&f: &d8&f/&d8")
 }

@@ -4,12 +4,10 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ScoreboardEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimerSplit
-import com.github.synnerz.devonian.features.WorldFeature
-import com.github.synnerz.devonian.hud.HudManager
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object BossSplits : WorldFeature("bossSplits", "catacombs") {
+object BossSplits : TextHudFeature("bossSplits", "catacombs") {
     private val floorRegex = "^ +⏣ The Catacombs \\((\\w)(\\d+)\\)\$".toRegex()
-    private val hud = HudManager.createHud("BossSplits", BossSplitTypes.F6.ins.defaultStr())
     var currentSplit: TimerSplit? = null
 
     override fun initialize() {
@@ -26,11 +24,16 @@ object BossSplits : WorldFeature("bossSplits", "catacombs") {
         }
 
         on<RenderOverlayEvent> { event ->
-            if (currentSplit == null) return@on
+            val split = currentSplit ?: return@on
 
-            currentSplit?.draw(event.ctx, hud.x, hud.y, hud.scale)
+            if (split.children.first().time == 0L) return@on
+
+            setLines(split.str())
+            draw(event.ctx)
         }
     }
+
+    override fun getEditText(): List<String> = BossSplitTypes.F6.ins.defaultStr()
 
     override fun onWorldChange(event: WorldChangeEvent) {
         val split = currentSplit ?: return

@@ -3,13 +3,10 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object MilestoneDisplay : Feature("milestoneDisplay", "catacombs") {
+object MilestoneDisplay : TextHudFeature("milestoneDisplay", "catacombs") {
     private val milestoneRegex = "^ Your Milestone: .(.)\$".toRegex()
-    private val hud = HudManager.createHud("MilestoneDisplay", "&bMilestone&f: &69")
     private val milestonSymbols = mutableListOf("⓿", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾")
     private var milestoneCount = 0
 
@@ -27,11 +24,10 @@ object MilestoneDisplay : Feature("milestoneDisplay", "catacombs") {
 
         on<RenderOverlayEvent> { event ->
             val format = if (milestoneCount > 2) "&6" else "&c"
-            Render2D.drawString(
-                event.ctx,
-                "&bMilestone&f: ${format}$milestoneCount",
-                hud.x, hud.y, hud.scale
-            )
+            setLine("&bMilestone&f: ${format}$milestoneCount")
+            draw(event.ctx)
         }
     }
+
+    override fun getEditText(): List<String> = listOf("&bMilestone&f: &69")
 }

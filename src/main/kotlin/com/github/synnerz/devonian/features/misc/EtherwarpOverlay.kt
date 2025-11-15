@@ -6,10 +6,11 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.mixin.accessor.ClientPlayerEntityAccessor
-import com.github.synnerz.devonian.utils.*
+import com.github.synnerz.devonian.utils.BlockTypes
+import com.github.synnerz.devonian.utils.ColorEnum
+import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.math.DDA
 import net.minecraft.block.ShapeContext
 import net.minecraft.item.Items
@@ -22,7 +23,7 @@ import net.minecraft.world.EmptyBlockView
 import java.awt.Color
 import kotlin.math.hypot
 
-object EtherwarpOverlay : Feature("etherwarpOverlay") {
+object EtherwarpOverlay : TextHudFeature("etherwarpOverlay", hudConfigName = "EtherwarpFailReasonDisplay") {
     private var SETTING_ETHER_WIRE_COLOR = ColorEnum.WHITE.color
     private var SETTING_ETHER_FILL_COLOR =
         Color(SETTING_ETHER_WIRE_COLOR.red, SETTING_ETHER_WIRE_COLOR.green, SETTING_ETHER_WIRE_COLOR.blue, 80)
@@ -40,8 +41,6 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
 
     private val validWeapons = mutableListOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
     private var failReason = ""
-
-    private val failReasonHud = HudManager.createHud("EtherwarpFailReasonDisplay", "&4Can't TP: No air above!")
 
     override fun initialize() {
         JsonUtils.set("etherwarpOverlayColor", -1)
@@ -179,13 +178,13 @@ object EtherwarpOverlay : Feature("etherwarpOverlay") {
         on<RenderOverlayEvent> { event ->
             if (!SETTING_ETHER_SHOW_FAIL_REASON) return@on
             if (failReason.isEmpty()) return@on
-            Render2D.drawString(
-                event.ctx,
-                failReason,
-                failReasonHud.x, failReasonHud.y, failReasonHud.scale
-            )
+
+            setLine(failReason)
+            draw(event.ctx)
         }
     }
+
+    override fun getEditText(): List<String> = listOf("&4Can't TP: No air above!")
 
     private fun raycast(
         x: Double, y: Double, z: Double,

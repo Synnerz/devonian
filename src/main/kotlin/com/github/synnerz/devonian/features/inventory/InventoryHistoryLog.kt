@@ -3,16 +3,12 @@ package com.github.synnerz.devonian.features.inventory
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import net.minecraft.entity.player.PlayerInventory
 import kotlin.math.abs
 
-object InventoryHistoryLog : Feature("inventoryHistoryLog") {
+object InventoryHistoryLog : TextHudFeature("inventoryHistoryLog") {
     private const val SETTING_ITEM_DISPLAY_TIME = 100
-
-    val hud = HudManager.createHud("InventoryHistoryLog", "&c-100&r &eSocial Credit")
 
     data class ItemizedDifference(val name: String, var quantity: Int) {
         var ttl = SETTING_ITEM_DISPLAY_TIME
@@ -60,10 +56,12 @@ object InventoryHistoryLog : Feature("inventoryHistoryLog") {
         }
 
         on<RenderOverlayEvent> { event ->
-            val text = receipt.map { it.value.toString() }
-            Render2D.drawStringNW(event.ctx, text.joinToString("\n"), hud.x, hud.y, hud.scale)
+            setLines(receipt.map { it.value.toString() })
+            draw(event.ctx)
         }
 
         on<WorldChangeEvent> { inventory = null }
     }
+
+    override fun getEditText(): List<String> = listOf("&c-100&r &eSocial Credit")
 }

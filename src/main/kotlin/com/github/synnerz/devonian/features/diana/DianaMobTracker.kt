@@ -3,15 +3,13 @@ package com.github.synnerz.devonian.features.diana
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.JsonUtils
-import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.client.MinecraftClient
 import java.io.File
 import java.io.FileWriter
 
-object DianaMobTracker : Feature("dianaMobTracker", "hub") {
+object DianaMobTracker : TextHudFeature("dianaMobTracker", "hub") {
     private val mobCriteria = "^(?:Woah|Yikes|Oi|Danger|Good Grief|Uh oh|Oh)! You dug out a? ?([\\w ]+)!$".toRegex()
     private val mobNames = listOf(
         "Minos Hunter",
@@ -26,17 +24,6 @@ object DianaMobTracker : Feature("dianaMobTracker", "hub") {
         "Sphinx",
         "King Minos"
     )
-    private val hud = HudManager.createHud("DianaMobTracker", "&aMinos Hunters&f: &b0" +
-            "\n&aGaia Construct&f: &b0" +
-            "\n&aStranded Nymph&f: &b0" +
-            "\n&aSiamese Lynxes&f: &b0" +
-            "\n&aCretan Bull&f: &b0" +
-            "\n&aHarpy&f: &b0" +
-            "\n&6Minotaur&f: &b0" +
-            "\n&5Minos Champion&f: &b0" +
-            "\n&6Minos Inquisitor&f: &b0" +
-            "\n&6Sphinx&f: &b0" +
-            "\n&6King Minos&f: &b0")
     private val statsFile = File(
         MinecraftClient.getInstance().runDirectory,
         "config"
@@ -110,21 +97,36 @@ object DianaMobTracker : Feature("dianaMobTracker", "hub") {
         }
 
         on<RenderOverlayEvent> { event ->
-            Render2D.drawStringNW(
-                event.ctx,
-                "&aMinos Hunters&f: &b${currentStats.minosHunter}" +
-                    "\n&aGaia Construct&f: &b${currentStats.gaiaConstruct}" +
-                    "\n&aStranded Nymph&f: &b${currentStats.strandedNymph}" +
-                    "\n&aSiamese Lynxes&f: &b${currentStats.lynxes}" +
-                    "\n&aCretan Bull&f: &b${currentStats.cretanBull}" +
-                    "\n&aHarpy&f: &b${currentStats.harpy}" +
-                    "\n&6Minotaur&f: &b${currentStats.minotaur}" +
-                    "\n&5Minos Champion&f: &b${currentStats.champion}" +
-                    "\n&6Minos Inquisitor&f: &b${currentStats.inquisitor}" +
-                    "\n&6Sphinx&f: &b${currentStats.sphinx}" +
-                    "\n&6King Minos&f: &b${currentStats.kingMinos}",
-                hud.x, hud.y, hud.scale
+            setLines(
+                listOf(
+                    "&aMinos Hunters&f: &b${currentStats.minosHunter}",
+                    "&aGaia Construct&f: &b${currentStats.gaiaConstruct}",
+                    "&aStranded Nymph&f: &b${currentStats.strandedNymph}",
+                    "&aSiamese Lynxes&f: &b${currentStats.lynxes}",
+                    "&aCretan Bull&f: &b${currentStats.cretanBull}",
+                    "&aHarpy&f: &b${currentStats.harpy}",
+                    "&6Minotaur&f: &b${currentStats.minotaur}",
+                    "&5Minos Champion&f: &b${currentStats.champion}",
+                    "&6Minos Inquisitor&f: &b${currentStats.inquisitor}",
+                    "&6Sphinx&f: &b${currentStats.sphinx}",
+                    "&6King Minos&f: &b${currentStats.kingMinos}",
+                )
             )
+            draw(event.ctx)
         }
     }
+
+    override fun getEditText(): List<String> = listOf(
+        "&aMinos Hunters&f: &b0",
+        "&aGaia Construct&f: &b0",
+        "&aStranded Nymph&f: &b0",
+        "&aSiamese Lynxes&f: &b0",
+        "&aCretan Bull&f: &b0",
+        "&aHarpy&f: &b0",
+        "&6Minotaur&f: &b0",
+        "&5Minos Champion&f: &b0",
+        "&6Minos Inquisitor&f: &b0",
+        "&6Sphinx&f: &b0",
+        "&6King Minos&f: &b0",
+    )
 }

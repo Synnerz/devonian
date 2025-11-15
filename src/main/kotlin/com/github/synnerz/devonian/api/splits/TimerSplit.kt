@@ -2,8 +2,6 @@ package com.github.synnerz.devonian.api.splits
 
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.utils.Render2D
-import net.minecraft.client.gui.DrawContext
 
 class TimerSplit @JvmOverloads constructor(
     val children: MutableList<TimerSplitData> = mutableListOf()
@@ -55,35 +53,7 @@ class TimerSplit @JvmOverloads constructor(
     fun addChild(title: String?, criteria: Regex, sendChat: Boolean = true)
         = addChild(title, listOf(criteria), sendChat)
 
-    fun str(): String {
-        var string = ""
+    fun str(): List<String> = children.mapNotNull { c -> c.title()?.replace("$1", "${c.seconds()}s") }
 
-        for (child in children) {
-            val title = child.title() ?: continue
-
-            string += "${title.replace("$1", "${child.seconds()}s")}\n"
-        }
-
-        return string
-    }
-
-    fun defaultStr(): String {
-        var string = ""
-
-        for (child in children) {
-            val title = child.title() ?: continue
-
-            string += "${title.replace("$1", "15s")}\n"
-        }
-
-        return string
-    }
-
-    fun draw(ctx: DrawContext, x: Int, y: Int, scale: Float) {
-        // If the first child timer is zero we return since we should not be
-        // displaying anything at this current time
-        if (children.first().time == 0L) return
-
-        Render2D.drawStringNW(ctx, str(), x, y, scale)
-    }
+    fun defaultStr(): List<String> = children.mapNotNull { c -> c.title()?.replace("$1", "${c.seconds()}s") }
 }

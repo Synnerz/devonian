@@ -3,12 +3,9 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object CryptsDisplay : Feature("cryptsDisplay", "catacombs") {
-    private val hud = HudManager.createHud("CryptsDisplay", "&aCrypts&f: &65")
+object CryptsDisplay : TextHudFeature("cryptsDisplay", "catacombs") {
     private val cryptsRegex = "^ Crypts: (\\d+)$".toRegex()
     private var cryptsCount = 0
 
@@ -26,11 +23,10 @@ object CryptsDisplay : Feature("cryptsDisplay", "catacombs") {
 
         on<RenderOverlayEvent> { event ->
             val format = if (cryptsCount > 4) "&6" else "&c"
-            Render2D.drawString(
-                event.ctx,
-                "&aCrypts&f: ${format}$cryptsCount",
-                hud.x, hud.y, hud.scale
-            )
+            setLine("&aCrypts&f: ${format}$cryptsCount")
+            draw(event.ctx)
         }
     }
+
+    override fun getEditText(): List<String> = listOf("&aCrypts&f: &65")
 }

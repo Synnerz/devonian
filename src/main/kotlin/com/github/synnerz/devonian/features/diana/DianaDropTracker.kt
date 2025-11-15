@@ -3,34 +3,16 @@ package com.github.synnerz.devonian.features.diana
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.JsonUtils
-import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.client.MinecraftClient
 import java.io.File
 import java.io.FileWriter
 
-object DianaDropTracker : Feature("dianaDropTracker", "hub") {
-    private val rareDropCriteria = "^RARE DROP! (?:You dug out a )?([-() \\w]+)(?: \\(\\+\\d+ . Magic Find\\))?!?$".toRegex()
+object DianaDropTracker : TextHudFeature("dianaDropTracker", "hub") {
+    private val rareDropCriteria =
+        "^RARE DROP! (?:You dug out a )?([-() \\w]+)(?: \\(\\+\\d+ . Magic Find\\))?!?$".toRegex()
     private val coinsDropCriteria = "^Wow! You dug out ([\\d,.]+) coins!$".toRegex()
-    private val hud = HudManager.createHud("DianaDropTracker", "&9Griffin Feather&f: &b0" +
-            "\n&9Hilt Of Revelations&f: &b0" +
-            "\n&9Mythos Fragment&f: &b0" +
-            "\n&9Dwarf Turtle Shelmet&f: &b0" +
-            "\n&5Cretan Urn&f: &b0" +
-            "\n&5Antique Remedies&f: &b0" +
-            "\n&5Crochet Tiger Plushie&f: &b0" +
-            "\n&5Braided Griffin Feather&f: &b0" +
-            "\n&5Brain Food&f: &b0" +
-            "\n&5Minos Relic&f: &b0" +
-            "\n&6Washed-up Souvenir&f: &b0" +
-            "\n&6Daedalus Stick&f: &b0" +
-            "\n&6Crown of Greed&f: &b0" +
-            "\n&6Fateful Stinger&f: &b0" +
-            "\n&6Chimera&f: &b0" +
-            "\n&6Shimmering Wool&f: &b0" +
-            "\n&6Coins&f: &b0")
     private val statsFile = File(
         MinecraftClient.getInstance().runDirectory,
         "config"
@@ -124,27 +106,48 @@ object DianaDropTracker : Feature("dianaDropTracker", "hub") {
         }
 
         on<RenderOverlayEvent> { event ->
-            Render2D.drawStringNW(
-                event.ctx,
-                "&9Griffin Feather&f: &b${currentStats.griffinFeather}" +
-                    "\n&9Hilt Of Revelations&f: &b${currentStats.hiltOfRevelations}" +
-                    "\n&9Mythos Fragment&f: &b${currentStats.mythosFragment}" +
-                    "\n&9Dwarf Turtle Shelmet&f: &b${currentStats.dwarfTurtleShelmet}" +
-                    "\n&5Cretan Urn&f: &b${currentStats.cretanUrn}" +
-                    "\n&5Antique Remedies&f: &b${currentStats.antiqueRemedies}" +
-                    "\n&5Crochet Tiger Plushie&f: &b${currentStats.crochetTigerPlushie}" +
-                    "\n&5Braided Griffin Feather&f: &b${currentStats.braidedGriffinFeather}" +
-                    "\n&5Brain Food&f: &b${currentStats.brainFood}" +
-                    "\n&5Minos Relic&f: &b${currentStats.minosRelic}" +
-                    "\n&6Washed-up Souvenir&f: &b${currentStats.washedUpSouvenir}" +
-                    "\n&6Daedalus Stick&f: &b${currentStats.daedalusStick}" +
-                    "\n&6Crown of Greed&f: &b${currentStats.crownOfGreed}" +
-                    "\n&6Fateful Stinger&f: &b${currentStats.fatefulStinger}" +
-                    "\n&6Chimera&f: &b${currentStats.chimeraBook}" +
-                    "\n&6Shimmering Wool&f: &b${currentStats.shimmeringWool}" +
-                    "\n&6Coins&f: &b${currentStats.coins}",
-                hud.x, hud.y, hud.scale
+            setLines(
+                listOf(
+                    "&9Griffin Feather&f: &b${currentStats.griffinFeather}",
+                    "&9Hilt Of Revelations&f: &b${currentStats.hiltOfRevelations}",
+                    "&9Mythos Fragment&f: &b${currentStats.mythosFragment}",
+                    "&9Dwarf Turtle Shelmet&f: &b${currentStats.dwarfTurtleShelmet}",
+                    "&5Cretan Urn&f: &b${currentStats.cretanUrn}",
+                    "&5Antique Remedies&f: &b${currentStats.antiqueRemedies}",
+                    "&5Crochet Tiger Plushie&f: &b${currentStats.crochetTigerPlushie}",
+                    "&5Braided Griffin Feather&f: &b${currentStats.braidedGriffinFeather}",
+                    "&5Brain Food&f: &b${currentStats.brainFood}",
+                    "&5Minos Relic&f: &b${currentStats.minosRelic}",
+                    "&6Washed-up Souvenir&f: &b${currentStats.washedUpSouvenir}",
+                    "&6Daedalus Stick&f: &b${currentStats.daedalusStick}",
+                    "&6Crown of Greed&f: &b${currentStats.crownOfGreed}",
+                    "&6Fateful Stinger&f: &b${currentStats.fatefulStinger}",
+                    "&6Chimera&f: &b${currentStats.chimeraBook}",
+                    "&6Shimmering Wool&f: &b${currentStats.shimmeringWool}",
+                    "&6Coins&f: &b${currentStats.coins}",
+                )
             )
+            draw(event.ctx)
         }
     }
+
+    override fun getEditText(): List<String> = listOf(
+        "&9Griffin Feather&f: &b0",
+        "&9Hilt Of Revelations&f: &b0",
+        "&9Mythos Fragment&f: &b0",
+        "&9Dwarf Turtle Shelmet&f: &b0",
+        "&5Cretan Urn&f: &b0",
+        "&5Antique Remedies&f: &b0",
+        "&5Crochet Tiger Plushie&f: &b0",
+        "&5Braided Griffin Feather&f: &b0",
+        "&5Brain Food&f: &b0",
+        "&5Minos Relic&f: &b0",
+        "&6Washed-up Souvenir&f: &b0",
+        "&6Daedalus Stick&f: &b0",
+        "&6Crown of Greed&f: &b0",
+        "&6Fateful Stinger&f: &b0",
+        "&6Chimera&f: &b0",
+        "&6Shimmering Wool&f: &b0",
+        "&6Coins&f: &b0",
+    )
 }

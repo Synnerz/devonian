@@ -3,11 +3,9 @@ package com.github.synnerz.devonian.features.garden
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object GardenDisplay : Feature("gardenDisplay", "garden") {
+object GardenDisplay : TextHudFeature("gardenDisplay", "garden") {
     private val nextVisitorRegex = "^ Next Visitor: ([\\w !]+)$".toRegex()
     private val totalVisitorsRegex = "^Visitors: \\((\\d+)\\)$".toRegex()
     private val jacobContestCdRegex = "^Jacob's Contest:(?: ([\\w ]+) left)?$".toRegex()
@@ -16,7 +14,6 @@ object GardenDisplay : Feature("gardenDisplay", "garden") {
     private val fuelRegex = "^ Fuel: ([\\w,.]+)$".toRegex()
     private val timeLeftRegex = "^ Time Left: ([\\w ]+)$".toRegex()
     private val storedCompostRegex = "^ Stored Compost: ([\\w,. ]+)$".toRegex()
-    private val hud = HudManager.createHud("GardenDisplay", "&a&lGarden Display\n&aVisitor in&f: &b1m 10s\n&aJacob's contest in&f: &69m\n&eOrganic matter&f: &6100k\n&9Fuel&f: &6100k\n&aTime Left&f: &b1m 10s\n&aStored Compost&f: &6100")
     private var nextVisitor = "unknown"
     private var totalVisitors = "0"
     private var jacobContest = "unknown"
@@ -87,11 +84,28 @@ object GardenDisplay : Feature("gardenDisplay", "garden") {
         }
 
         on<RenderOverlayEvent> { event ->
-            Render2D.drawStringNW(
-                event.ctx,
-                "&a&lGarden Display\n&aVisitor in&f: &b$nextVisitor &f(&b$totalVisitors&f)\n&aJacob's contest in&f: &6$jacobContest &7($jacobContestCd)\n&eOrganic matter&f: &6$organicMatter\n&9Fuel&f: &6$fuel\n&aTime Left&f: &b$timeLeft\n&aStored Compost&f: &6$storedCompost",
-                hud.x, hud.y, hud.scale
+            setLines(
+                listOf(
+                    "&a&lGarden Display",
+                    "&aVisitor in&f: &b$nextVisitor &f(&b$totalVisitors&f)",
+                    "&aJacob's contest in&f: &6$jacobContest &7($jacobContestCd)",
+                    "&eOrganic matter&f: &6$organicMatter",
+                    "&9Fuel&f: &6$fuel",
+                    "&aTime Left&f: &b$timeLeft",
+                    "&aStored Compost&f: &6$storedCompost",
+                )
             )
+            draw(event.ctx)
         }
     }
+
+    override fun getEditText(): List<String> = listOf(
+        "&a&lGarden Display",
+        "&aVisitor in&f: &b1m 10s",
+        "&aJacob's contest in&f: &69m",
+        "&eOrganic matter&f: &6100k",
+        "&9Fuel&f: &6100k",
+        "&aTime Left&f: &b1m 10s",
+        "&aStored Compost&f: &6100",
+    )
 }

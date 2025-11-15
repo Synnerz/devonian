@@ -3,16 +3,13 @@ package com.github.synnerz.devonian.features.garden
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object PestsDisplay : Feature("pestsDisplay", "garden") {
+object PestsDisplay : TextHudFeature("pestsDisplay", "garden") {
     private val pestsAliveRegex = "^ Alive: ([\\d,.]+)$".toRegex()
     private val infestedPlotsRegex = "^ Plots: ([\\d, ]+)$".toRegex()
     private val bonusFortuneRegex = "^ Bonus: ([\\w+☘]+) ?([\\dms ]+)?$".toRegex()
     private val currentSprayRegex = "^ Spray: (\\w+) ?\\(?([\\d,.ms ]+)?\\)?$".toRegex()
-    private val hud = HudManager.createHud("PestsDisplay", "&4&lPests Display\n&cAlive&f: &c&l0\n&cInfested Plots&f: &c&lNone\n&eSpray&f: &bNone\n&aBonus&f: &6INACTIVE")
     private var pestsAlive = "0"
     private var infestedPlots = "None"
     private var bonusFortune = "INACTIVE"
@@ -51,11 +48,24 @@ object PestsDisplay : Feature("pestsDisplay", "garden") {
         }
 
         on<RenderOverlayEvent> { event ->
-            Render2D.drawStringNW(
-                event.ctx,
-                "&4&lPests Display\n&cAlive&f: &c&l$pestsAlive\n&cInfested Plots&f: &c&l$infestedPlots\n&eSpray&f: &b$currentSpray\n&aBonus&f: &6$bonusFortune",
-                hud.x, hud.y, hud.scale
+            setLines(
+                listOf(
+                    "&4&lPests Display",
+                    "&cAlive&f: &c&l$pestsAlive",
+                    "&cInfested Plots&f: &c&l$infestedPlots",
+                    "&eSpray&f: &b$currentSpray",
+                    "&aBonus&f: &6$bonusFortune",
+                )
             )
+            draw(event.ctx)
         }
     }
+
+    override fun getEditText(): List<String> = listOf(
+        "&4&lPests Display",
+        "&cAlive&f: &c&l0",
+        "&cInfested Plots&f: &c&lNone",
+        "&eSpray&f: &bNone",
+        "&aBonus&f: &6INACTIVE"
+    )
 }

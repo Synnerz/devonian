@@ -4,10 +4,9 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimerSplit
 import com.github.synnerz.devonian.api.splits.TimerSplitData
-import com.github.synnerz.devonian.features.WorldFeature
-import com.github.synnerz.devonian.hud.HudManager
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object RunSplits : WorldFeature("runSplits", "catacombs") {
+object RunSplits : TextHudFeature("runSplits", "catacombs") {
     private val mortStartRegex = "^\\[NPC] Mort: Here, I found this map when I first entered the dungeon\\.\$".toRegex()
     private val bloodOpenedRegex = "^\\[BOSS] The Watcher: (.+)\$".toRegex()
     private val bloodDoneRegex = "^\\[BOSS] The Watcher: You have proven yourself\\. You may pass\\.$".toRegex()
@@ -34,13 +33,15 @@ object RunSplits : WorldFeature("runSplits", "catacombs") {
             ),
         TimerSplitData("&bBoss Entry&f: &a$1", bossDialogs)
     )
-    private val hud = HudManager.createHud("runSplits", timerSplit.defaultStr())
 
     override fun initialize() {
         on<RenderOverlayEvent> { event ->
-            timerSplit.draw(event.ctx, hud.x, hud.y, hud.scale)
+            setLines(timerSplit.str())
+            draw(event.ctx)
         }
     }
+
+    override fun getEditText(): List<String> = timerSplit.defaultStr()
 
     override fun onToggle(state: Boolean) {
         super.onToggle(state)

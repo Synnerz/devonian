@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.SubAreaEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.HudManagerInstructions
 import com.github.synnerz.devonian.features.diana.BurrowGuesser
 import com.github.synnerz.devonian.features.diana.BurrowWaypoint
 import com.github.synnerz.devonian.features.diana.DianaDropTracker
@@ -30,85 +31,86 @@ import org.slf4j.LoggerFactory
 
 object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")
-	val minecraft = MinecraftClient.getInstance()
-	val features = mutableListOf<Feature>()
+    val minecraft = MinecraftClient.getInstance()
+    val features = mutableListOf<Feature>()
     private val featureInstances = listOf(
-		NoCursorReset,
-		BoxStarMob,
-		RemoveBlockBreakParticle,
-		RemoveExplosionParticle,
-		RemoveFallingBlocks,
-		RemoveFireOverlay,
-		PreventPlacingWeapons,
-		MiddleClickGui,
-		ProtectItem,
-		NoHurtCamera,
-		RemoveLightning,
-		HideInventoryEffects,
-		BlockOverlay,
-		HidePotionEffectOverlay,
-		EtherwarpOverlay,
-		PreventPlacingPlayerHeads,
-		AutoRequeueDungeons,
-		ExtraStats,
-		NoDeathAnimation,
-		RemoveFrontView,
-		ChatWaypoint,
-		RemoveChatLimit,
-		CopyChat,
-		WorldAge,
-		MimicKilled,
-		CryptsDisplay,
-		DeathsDisplay,
-		MilestoneDisplay,
-		PuzzlesDisplay,
-		RemoveTabPing,
-		RemoveDamageTag,
-		HideNoStarTag,
-		CompactChat,
-		GardenDisplay,
-		PestsDisplay,
-		BossSlainTime,
-		BossSpawnTime,
-		FactoryHelper,
-		DungeonBreakerCharges,
-		SecretsClickedBox,
-		GolemWaypoint,
-		EyesPlacedDisplay,
-		PreviousLobby,
-		GolemDPS,
-		GolemLootQuality,
-		GolemSpawnTimer,
-		GolemStage5Sound,
-		SecretsSound,
-		LividSolver,
-		RunSplits,
-		BossSplits,
-		PrinceKilled,
-		BurrowWaypoint,
-		DianaMobTracker,
-		BurrowGuesser,
-		DianaDropTracker,
-		EtherwarpSound,
-		InventoryHistoryLog
-	)
+        NoCursorReset,
+        BoxStarMob,
+        RemoveBlockBreakParticle,
+        RemoveExplosionParticle,
+        RemoveFallingBlocks,
+        RemoveFireOverlay,
+        PreventPlacingWeapons,
+        MiddleClickGui,
+        ProtectItem,
+        NoHurtCamera,
+        RemoveLightning,
+        HideInventoryEffects,
+        BlockOverlay,
+        HidePotionEffectOverlay,
+        EtherwarpOverlay,
+        PreventPlacingPlayerHeads,
+        AutoRequeueDungeons,
+        ExtraStats,
+        NoDeathAnimation,
+        RemoveFrontView,
+        ChatWaypoint,
+        RemoveChatLimit,
+        CopyChat,
+        WorldAge,
+        MimicKilled,
+        CryptsDisplay,
+        DeathsDisplay,
+        MilestoneDisplay,
+        PuzzlesDisplay,
+        RemoveTabPing,
+        RemoveDamageTag,
+        HideNoStarTag,
+        CompactChat,
+        GardenDisplay,
+        PestsDisplay,
+        BossSlainTime,
+        BossSpawnTime,
+        FactoryHelper,
+        DungeonBreakerCharges,
+        SecretsClickedBox,
+        GolemWaypoint,
+        EyesPlacedDisplay,
+        PreviousLobby,
+        GolemDPS,
+        GolemLootQuality,
+        GolemSpawnTimer,
+        GolemStage5Sound,
+        SecretsSound,
+        LividSolver,
+        RunSplits,
+        BossSplits,
+        PrinceKilled,
+        BurrowWaypoint,
+        DianaMobTracker,
+        BurrowGuesser,
+        DianaDropTracker,
+        EtherwarpSound,
+        InventoryHistoryLog,
+        HudManagerInstructions
+    )
 
-	override fun onInitializeClient() {
-		featureInstances.forEach(Feature::initialize)
-		HudManager.initialize()
-		JsonUtils.load()
-		Config.initialize()
-		Location.initialize()
-		DevonianCommand.initialize()
+    override fun onInitializeClient() {
+        featureInstances.forEach(Feature::initialize)
+        HudManager.initialize()
+        JsonUtils.load()
+        Config.initialize()
+        Location.initialize()
+        DevonianCommand.initialize()
 
-		EventBus.on<AreaEvent> {
-			for (feat in features)
-				feat.onToggle(feat.isEnabled())
-		}
+        EventBus.on<AreaEvent> {
+            for (feat in features)
+                feat.onToggle(feat.isEnabled())
+        }
 
-		EventBus.on<SubAreaEvent> {
-			for (feat in features)
-				feat.onToggle(feat.isEnabled())
-		}
-	}
+        EventBus.on<SubAreaEvent> {
+            for (feat in features)
+                feat.onToggle(feat.isEnabled())
+        }
+    }
 }

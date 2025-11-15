@@ -4,14 +4,11 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.HudManager
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
 
-object DungeonBreakerCharges : Feature("dungeonBreakerDisplay", "catacombs") {
-    private val hud = HudManager.createHud("DungeonBreakerDisplay", "&aCharges&f: &620")
+object DungeonBreakerCharges : TextHudFeature("dungeonBreakerDisplay", "catacombs") {
     var colorCode = "&6"
     var charges = 20
     var displayStr = "&aCharges&f: ${colorCode}${charges}"
@@ -33,12 +30,9 @@ object DungeonBreakerCharges : Feature("dungeonBreakerDisplay", "catacombs") {
             displayStr = "&aCharges&f: ${colorCode}${charges}"
         }
 
-        on<RenderOverlayEvent> {
-            Render2D.drawString(
-                it.ctx,
-                displayStr,
-                hud.x, hud.y, hud.scale
-            )
+        on<RenderOverlayEvent> { event ->
+            setLine(displayStr)
+            draw(event.ctx)
         }
 
         on<WorldChangeEvent> {
@@ -47,4 +41,6 @@ object DungeonBreakerCharges : Feature("dungeonBreakerDisplay", "catacombs") {
             displayStr = "&aCharges&f: ${colorCode}${charges}"
         }
     }
+
+    override fun getEditText(): List<String> = listOf("&aCharges&f: &620")
 }
