@@ -1,33 +1,34 @@
 {
-	"required": true,
-	"package": "com.github.synnerz.devonian.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"client": [
-		"ClientConnectionMixin",
-		"ClientPlayerEntityMixin",
-		"YggdrasilMinecraftSessionServiceMixin",
-		"EntityRenderDispatcherMixin",
-		"FallingBlockEntityRendererMixin",
-		"MinecraftClientMixin",
-		"ParticleManagerMixin",
-		"InGameOverlayRendererMixin",
-      	"accessor.ChatHudAccessor",
-		"HandledScreenMixin",
-		"ScreenHandlerMixin",
-		"PlayerScreenHandlerMixin",
-		"accessor.HandledScreenAccessor",
-		"GameRendererMixin",
-		"LightningEntityRendererMixin",
-		"StatusEffectsDisplayMixin",
-		"InGameHudMixin",
-		"LivingEntityMixin",
-		"PerspectiveMixin",
-		"MouseMixin",
-		"ChatHudMixin",
-		"PlayerListHudMixin",
-		"accessor.ClientPlayerEntityAccessor"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "com.github.synnerz.devonian.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ChatHudMixin",
+    "ClientConnectionMixin",
+    "ClientPlayerEntityMixin",
+    "EntityRenderDispatcherMixin",
+    "FallingBlockEntityRendererMixin",
+    "GameRendererMixin",
+    "HandledScreenMixin",
+    "InGameHudMixin",
+    "InGameOverlayRendererMixin",
+    "LightningEntityRendererMixin",
+    "LivingEntityMixin",
+    "MinecraftClientMixin",
+    "MouseMixin",
+    "ParticleManagerMixin",
+    "PerspectiveMixin",
+    "PlayerListHudMixin",
+    "PlayerScreenHandlerMixin",
+    "ScreenHandlerMixin",
+    "StatusEffectsDisplayMixin",
+    "YggdrasilMinecraftSessionServiceMixin",
+    "accessor.ChatHudAccessor",
+    "accessor.ClientPlayerEntityAccessor",
+    "accessor.DrawContextAccessor",
+    "accessor.HandledScreenAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
