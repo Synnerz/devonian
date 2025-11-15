@@ -4,7 +4,7 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.events.*
-import com.github.synnerz.devonian.features.WorldFeature
+import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.ClientPlayerEntityAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
 import kotlinx.atomicfu.atomic
@@ -20,7 +20,7 @@ import kotlin.random.Random
 
 // Credits to https://github.com/hannibal002/SkyHanni/blob/beta/src/main/java/at/hannibal2/skyhanni/features/event/diana/PreciseGuessBurrow.kt
 // & https://github.com/PerseusPotter/chicktils/blob/master/modules/diana.js
-object BurrowGuesser : WorldFeature("burrowGuesser", "hub") {
+object BurrowGuesser : Feature("burrowGuesser", "hub") {
     private val SETTING_GUESS_COLOR = Color.BLUE
     private val SETTING_OLD_GUESS_COLOR = Color(82, 14, 125)
     private const val SETTING_REMEMBER_PREVIOUS_GUESSES = true

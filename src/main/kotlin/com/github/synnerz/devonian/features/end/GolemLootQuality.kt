@@ -4,10 +4,10 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.features.WorldFeature
+import com.github.synnerz.devonian.features.Feature
 import kotlin.math.min
 
-object GolemLootQuality : WorldFeature("golemLootQuality", "the end") {
+object GolemLootQuality : Feature("golemLootQuality", "the end") {
     private val positionQuality = listOf(
         200,
         175,

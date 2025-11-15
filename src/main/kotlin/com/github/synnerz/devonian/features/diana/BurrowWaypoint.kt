@@ -4,14 +4,14 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.features.WorldFeature
+import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
 import net.minecraft.particle.ParticleTypes
 import java.awt.Color
 import kotlin.math.floor
 
-object BurrowWaypoint : WorldFeature("burrowWaypoint", "hub") {
+object BurrowWaypoint : Feature("burrowWaypoint", "hub") {
     private val SETTING_START_COLOR = Color.GREEN
     private val SETTING_MOB_COLOR = Color.RED
     private val SETTING_TREAURE_COLOR = Color.YELLOW

@@ -3,12 +3,12 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
-import com.github.synnerz.devonian.features.WorldFeature
+import com.github.synnerz.devonian.features.Feature
 import net.minecraft.block.Blocks
 import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket
 import java.awt.Color
 
-object LividSolver : WorldFeature("lividSolver", "catacombs") {
+object LividSolver : Feature("lividSolver", "catacombs") {
     private val lividStartRegex = "^\\[BOSS] Livid: Welcome, you've arrived right on time\\. I am Livid, the Master of Shadows\\.$".toRegex()
     private val lividSpawnedRegex = "^\\[BOSS] Livid: I respect you for making it to here, but I'll be your undoing\\.$".toRegex()
     private val mapBlocks = mapOf(

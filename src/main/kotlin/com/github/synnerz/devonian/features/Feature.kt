@@ -2,8 +2,7 @@ package com.github.synnerz.devonian.features
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.events.Event
-import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
 import net.minecraft.text.ClickEvent
@@ -118,4 +117,16 @@ open class Feature @JvmOverloads constructor(
     inline fun <reified T : Event> on(noinline cb: (T) -> Unit) {
         events.add(EventBus.on<T>(cb, false))
     }
+
+    init {
+        on<AreaEvent>(::onAreaChange)
+        on<SubAreaEvent>(::onSubAreaChange)
+        on<WorldChangeEvent>(::onWorldChange)
+    }
+
+    open fun onAreaChange(event: AreaEvent) {}
+
+    open fun onSubAreaChange(event: SubAreaEvent) {}
+
+    open fun onWorldChange(event: WorldChangeEvent) {}
 }

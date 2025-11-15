@@ -3,9 +3,9 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.features.WorldFeature
+import com.github.synnerz.devonian.features.Feature
 
-object PrinceKilled : WorldFeature("princeKilled", "catacombs") {
+object PrinceKilled : Feature("princeKilled", "catacombs") {
     private val princeRegex = "^A Prince falls\\. \\+1 Bonus Score$".toRegex()
     private var messageSent = false
 
