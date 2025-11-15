@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.SubAreaEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ui.ConfigGui
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.HudManagerInstructions
 import com.github.synnerz.devonian.features.diana.BurrowGuesser
@@ -98,6 +99,7 @@ object Devonian : ClientModInitializer {
 
     override fun onInitializeClient() {
         featureInstances.forEach(Feature::initialize)
+        ConfigGui.initialize()
         HudManager.initialize()
         JsonUtils.load()
         Config.initialize()
