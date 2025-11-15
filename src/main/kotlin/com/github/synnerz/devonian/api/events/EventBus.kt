@@ -122,6 +122,10 @@ object EventBus {
 
             if (b1 || b2) event.ci.cancel()
         }
+
+        ClientLifecycleEvents.CLIENT_STARTED.register { client ->
+            PostClientInit(client).post()
+        }
     }
 
     fun onSoundPacket(soundEvent: String, pitch: Float, volume: Float): Boolean =

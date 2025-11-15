@@ -267,3 +267,5 @@ class ScoreboardEvent(message: String) : CriteriaEvent(message)
 class RenderSlotEvent(val slot: Slot, val ctx: DrawContext) : CancellableEvent()
 
 class SoundPlayEvent(val sound: String, val pitch: Float, val volume: Float) : CancellableEvent()
+
+class PostClientInit(val minecraft: MinecraftClient) : Event()

@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.utils.math
 
 import org.ejml.simple.SimpleMatrix
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.pow
 
 object MathUtils {
@@ -93,4 +94,9 @@ object MathUtils {
             419, 421, 431, 433, 439, 443, 449, 457, 461, 463,
             467, 479, 487, 491, 499, 503, 509, 521, 523, 541
         )
+
+    fun ceilPow2(num: Int, bits: Int): Int {
+        val mask = (1 shl max(0, 31 - Integer.numberOfLeadingZeros(num) - bits)) - 1
+        return (num + mask) and mask.inv()
+    }
 }
