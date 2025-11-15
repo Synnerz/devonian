@@ -243,22 +243,25 @@ object DungeonScanner {
         }.string("name")
     }
 
-    fun getRoomIdx(cx: Double, cz: Double): Int {
-        return (6 * cz + cx).toInt()
+    fun getRoomIdx(cx: Int, cz: Int): Int {
+        return 6 * cz + cx
     }
+
+    fun getRoomIdx(cx: Double, cz: Double) = getRoomIdx(cx.toInt(), cz.toInt())
 
     fun mergeRooms(room1: DungeonRoom, room2: DungeonRoom) {
         for (comp in room2.comps) {
             if (!room1.hasComponent(comp[0], comp[1]))
                 room1.addComponent(comp, false)
 
-            rooms[getRoomIdx(comp[0], comp[1])] = room1
+            addRoom(getRoomIdx(comp[0], comp[1]), room1)
         }
 
         room1.update()
     }
 
     fun getDoorIdx(x: Int, z: Int): Int {
+        if (x !in 0..10 || z !in 0..10) return -1
         val idx = ((x - 1) shr 1) + 6 * z
         return idx - (idx / 12)
     }
@@ -266,16 +269,60 @@ object DungeonScanner {
     fun getDoorIdx(x: Double, z: Double) = getDoorIdx(x.toInt(), z.toInt())
 
     fun addDoor(door: DungeonDoor) {
-        val idx = getDoorIdx(door.comps[2], door.comps[3])
-        if (idx < 0 || idx > 59) return
+        val cx = door.comps[2].toInt()
+        val cz = door.comps[3].toInt()
+        val idx = getDoorIdx(cx, cz)
+        if (idx !in 0 .. 59) return
 
         doors[idx] = door
+        if (cx and 1 == 0) {
+            rooms.getOrNull(getRoomIdx(cx shr 1, (cz - 1) shr 1))?.also {
+                it.doors.add(door)
+                door.rooms.add(it)
+            }
+            rooms.getOrNull(getRoomIdx(cx shr 1, (cz + 1) shr 1))?.also {
+                it.doors.add(door)
+                door.rooms.add(it)
+            }
+        } else {
+            rooms.getOrNull(getRoomIdx((cx - 1) shr 1, cz shr 1))?.also {
+                it.doors.add(door)
+                door.rooms.add(it)
+            }
+            rooms.getOrNull(getRoomIdx((cx + 1) shr 1, cz shr 1))?.also {
+                it.doors.add(door)
+                door.rooms.add(it)
+            }
+        }
+    }
+
+    fun addRoom(idx: Int, room: DungeonRoom) {
+        rooms[idx] = room
+
+        val cx = (idx % 6) shl 1
+        val cz = (idx / 6) shl 1
+        doors.getOrNull(getDoorIdx(cx + 0, cz - 1))?.also {
+            it.rooms.add(room)
+            room.doors.add(it)
+        }
+        doors.getOrNull(getDoorIdx(cx + 0, cz + 1))?.also {
+            it.rooms.add(room)
+            room.doors.add(it)
+        }
+        doors.getOrNull(getDoorIdx(cx - 1, cz + 0))?.also {
+            it.rooms.add(room)
+            room.doors.add(it)
+        }
+        doors.getOrNull(getDoorIdx(cx + 1, cz + 0))?.also {
+            it.rooms.add(room)
+            room.doors.add(it)
+        }
     }
 
     fun getRoomAt(x: Double, z: Double): DungeonRoom? {
         val ( dx, dz ) = toComponent(x, z)
         val idx = getRoomIdx(dx, dz)
-        if (idx < 0 || idx > 35) return null
+        if (idx !in 0 .. 35) return null
 
         return rooms[idx]
     }
@@ -315,7 +362,7 @@ object DungeonScanner {
 
             val cdx = getRoomIdx(x, z)
             val room = DungeonRoom(mutableListOf(mutableListOf(x, z)), roofHeight).scan()
-            rooms[cdx] = room
+            addRoom(cdx, room)
 
             for (dir in directions) {
                 val ( dx0, dz0, dx1, dz1 ) = dir
@@ -344,12 +391,12 @@ object DungeonScanner {
 
                 val ( newX, newZ ) = listOf(x + dx1, z + dz1)
                 val ndx = getRoomIdx(newX, newZ)
-                if (ndx < 0 || ndx > 35) continue
+                if (ndx !in 0 .. 35) continue
 
                 val nroom = rooms[ndx]
                 if (nroom == null) {
                     room.addComponent(newX, newZ)
-                    rooms[ndx] = room
+                    addRoom(ndx, room)
                     continue
                 }
 

@@ -25,6 +25,7 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
     var shape = ShapeTypes.Shape1x1
     var secretsCompleted = 0
     var clear = ClearTypes.MOB
+    val doors = mutableListOf<DungeonDoor>()
 
     init {
         addComponents(comps)
