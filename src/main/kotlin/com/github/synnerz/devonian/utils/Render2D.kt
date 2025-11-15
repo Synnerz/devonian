@@ -21,21 +21,20 @@ object Render2D {
     @JvmOverloads
     fun drawString(ctx: DrawContext, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
         val matrices = ctx.matrices
-        if (scale != 1f) {
             matrices.push()
-            matrices.scale(scale, scale, 1f)
-        }
+        matrices.translate(x.toFloat(), y.toFloat(), 0f)
+        if (scale != 1f) matrices.scale(scale, scale, 1f)
 
         ctx.drawText(
             textRenderer,
             str.replace(formattingRegex, "${Formatting.FORMATTING_CODE_PREFIX}"),
-            x,
-            y,
+            0,
+            0,
             -1,
             shadow
         )
 
-        if (scale != 1f) matrices.pop()
+        matrices.pop()
     }
 
     @JvmOverloads
