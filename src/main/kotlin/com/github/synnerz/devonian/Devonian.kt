@@ -32,7 +32,7 @@ object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")
 	val minecraft = MinecraftClient.getInstance()
 	val features = mutableListOf<Feature>()
-	private val featureInstances = mutableListOf(
+    private val featureInstances = listOf(
 		NoCursorReset,
 		BoxStarMob,
 		RemoveBlockBreakParticle,

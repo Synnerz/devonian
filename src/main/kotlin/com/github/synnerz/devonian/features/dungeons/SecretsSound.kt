@@ -17,7 +17,7 @@ import net.minecraft.sound.SoundEvents
 object SecretsSound : Feature("secretsSound", "catacombs") {
     private val skullIds = listOf("e0f3e929-869e-3dca-9504-54c666ee6f23", "fed95410-aba1-39df-9b95-1d4f361eb66e")
     private val allowedBlocks = listOf("minecraft:chest", "minecraft:lever", "minecraft:trapped_chest")
-    private val secretItems = listOf(
+    private val secretItems = setOf(
         "Healing VIII Splash Potion", "Healing Potion 8 Splash Potion", "Decoy",
         "Inflatable Jerry", "Spirit Leap", "Trap",
         "Training Weights", "Defuse Kit", "Dungeon Chest Key",

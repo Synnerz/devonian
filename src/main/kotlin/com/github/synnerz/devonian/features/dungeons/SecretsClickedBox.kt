@@ -42,8 +42,9 @@ object SecretsClickedBox : Feature("secretsClickedBox", "catacombs") {
                 if (!skullIds.contains("$id")) return@on
 
                 clickedBlock = entityBlock.pos
+                val thisClickedBlock = clickedBlock
                 Scheduler.scheduleTask(20) {
-                    clickedBlock = null
+                    if (clickedBlock == thisClickedBlock) clickedBlock = null
                 }
                 return@on
             }
@@ -51,7 +52,9 @@ object SecretsClickedBox : Feature("secretsClickedBox", "catacombs") {
             if (!allowedBlocks.contains("${registryName.namespace}:${registryName.path}")) return@on
 
             clickedBlock = result.blockPos
+            val thisClickedBlock = clickedBlock
             Scheduler.scheduleTask(20) {
+                if (clickedBlock != thisClickedBlock) return@scheduleTask
                 clickedBlock = null
                 wasLocked = false
             }

@@ -33,8 +33,9 @@ object BossSplits : WorldFeature("bossSplits", "catacombs") {
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        currentSplit?.reset()
-        currentSplit?.unregister()
+        val split = currentSplit ?: return
+        split.reset()
+        split.unregister()
         currentSplit = null
     }
 }

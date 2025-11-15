@@ -40,7 +40,7 @@ object InventoryHistoryLog : Feature("inventoryHistoryLog") {
 
             val newInv = mutableMapOf<String, Int>()
             inv.forEachIndexed { i, v ->
-                if (i == PlayerInventory.OFF_HAND_SLOT) return@forEachIndexed
+                // if (i == PlayerInventory.OFF_HAND_SLOT) return@forEachIndexed
                 if (v.isEmpty) return@forEachIndexed
 
                 val name = v.name.string
