@@ -200,7 +200,7 @@ object DungeonScanner {
             checkDoorState()
             DungeonMapScanner.checkPlayerState()
 
-            if (jdx > 35) return@on
+            if (jdx !in 0 .. 35) return@on
 
             if (lastIdx == jdx) return@on
             lastIdx = jdx
