@@ -16,17 +16,20 @@ import java.util.*
 import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.min
 
 class DungeonMapBaseRenderer :
     BufferedImageRenderer<DungeonMapRenderData>("dungeonMapBaseRenderer", TriState.FALSE), FontListener {
     val cachedStrings = Collections.synchronizedMap(
-        object : LinkedHashMap<String, CachedRenderedString>(30) {
-            // max 36 rooms + secret counts, then round down to funny number for funny
-            override fun removeEldestEntry(eldest: Map.Entry<String?, CachedRenderedString?>?): Boolean = size > 69
+        object : LinkedHashMap<CachedStringKey, CachedRenderedString>(30) {
+            override fun removeEldestEntry(eldest: Map.Entry<CachedStringKey?, CachedRenderedString?>?): Boolean = size > 36
         }
     )
     var cachedW = 0
     var cachedH = 0
+    var cachedFontSize = 0f
+
+    data class CachedStringKey(val str: String, val size: Int)
 
     data class CachedRenderedString(
         val img: BufferedImage,
@@ -38,6 +41,8 @@ class DungeonMapBaseRenderer :
     override fun onFontChange(f: Font) {
         cachedStrings.clear()
     }
+
+    data class TextRenderParam(val box: BoundingBox, val key: CachedStringKey, val text: List<String>)
 
     override fun drawImage(img: BufferedImage, param: DungeonMapRenderData): BufferedImage {
         val g = img.createGraphics()
@@ -127,9 +132,10 @@ class DungeonMapBaseRenderer :
             g.fillRect(0, 0, w, h)
         }
 
+        val textToRender = mutableListOf<TextRenderParam>()
         rooms.forEach { room ->
             if (room == null) return@forEach
-            if (room.doors.size == 0) return@forEach
+            if (room.doors.isEmpty()) return@forEach
             val color = colorForRoom(room) ?: colors[DungeonMapColors.RoomNormal] ?: Color(0)
             var shape = room.shape
             if (shape == ShapeTypes.Unknown) return@forEach
@@ -219,7 +225,7 @@ class DungeonMapBaseRenderer :
                         CheckmarkTypes.UNEXPLORED -> "&f"
                         CheckmarkTypes.NONE -> "&7"
                     }
-                    name.split(" ").forEach { text.add("$colorCode$it")}
+                    name.replace("\u200B", "- ").split(" ").forEach { text.add("$colorCode$it")}
                 } else text.add(name)
             }
             if (options.secretCount && room.totalSecrets > 0) {
@@ -275,40 +281,51 @@ class DungeonMapBaseRenderer :
                 cachedH = bh
             }
 
-            g.paint = Color(-1)
             if (decoration != null) g.drawImage(decoration, bx, by, bw, bh, null)
 
             if (text.isNotEmpty()) {
                 val str = text.joinToString("\n")
-                val rendered = cachedStrings.getOrPut(str) {
-                    var fontSize = TextHud.MC_FONT_SIZE
-                    var font = TextHud.fontMainBase.deriveFont(Font.PLAIN, fontSize)
-                    g.font = font
 
-                    var lines = text.map { StringParser.processString(
+                var fontSize = TextHud.MC_FONT_SIZE
+                val font = TextHud.fontMainBase.deriveFont(Font.PLAIN, fontSize)
+                g.font = font
+
+                val lines = text.map { StringParser.processString(
+                    it,
+                    options.stringShadow,
+                    g,
+                    font, font, font,
+                    fontSize
+                ) }
+                val visualWidth = lines.maxOf { it.visualWidth }
+                val (fontScale, _) = BoundingBox(
+                    0.0, 0.0,
+                    visualWidth.toDouble(), fontSize.toDouble() * lines.size
+                ).fitInside(decBox)
+
+                fontSize = ceil(fontSize * (fontScale * compToBImgF).toFloat())
+
+                val key = CachedStringKey(str, fontSize.toInt())
+                textToRender.add(TextRenderParam(decBox, key, text))
+            }
+        }
+
+        if (textToRender.isNotEmpty()) {
+            val fontSize = textToRender.minOf { it.key.size }.toFloat()
+            val font = TextHud.fontMainBase.deriveFont(Font.PLAIN, fontSize)
+            g.font = font
+            g.paint = Color(-1)
+
+            textToRender.forEach { (decBox, key, text) ->
+                val rendered = cachedStrings.getOrPut(key) {
+                    val lines = text.map { StringParser.processString(
                         it,
                         options.stringShadow,
                         g,
                         font, font, font,
                         fontSize
                     ) }
-                    var visualWidth = lines.maxOf { it.visualWidth }
-                    val (scale, _) = BoundingBox(
-                        0.0, 0.0,
-                        visualWidth.toDouble(), fontSize.toDouble() * lines.size
-                    ).fitInside(decBox)
-
-                    fontSize *= (scale * compToBImgF).toFloat()
-                    font = TextHud.fontMainBase.deriveFont(Font.PLAIN, fontSize)
-                    g.font = font
-                    lines = text.map { StringParser.processString(
-                        it,
-                        options.stringShadow,
-                        g,
-                        font, font, font,
-                        fontSize
-                    ) }
-                    visualWidth = lines.maxOf { it.visualWidth }
+                    val visualWidth = lines.maxOf { it.visualWidth }
 
                     val w = visualWidth + (if (options.stringShadow) 0.1 * fontSize else 0.0) + 5.0
                     val h = (fontSize * lines.size + g.fontMetrics.ascent).toDouble()
@@ -334,16 +351,15 @@ class DungeonMapBaseRenderer :
                     )
                 }
 
-                val (scale, box) = BoundingBox(
+                val box = BoundingBox(
                     0.0, 0.0,
                     rendered.w, rendered.h
-                ).fitInside(BoundingBox(
+                ).centerInside(BoundingBox(
                     decBox.x * compToBImgF,
                     decBox.y * compToBImgF,
                     decBox.w * compToBImgF,
                     decBox.h * compToBImgF
                 ))
-                if (abs(1.0 - scale) > 0.1) cachedStrings.remove(str)
 
                 val bx = (box.x + rendered.xo).toInt()
                 val bz = (box.y + rendered.yo).toInt()

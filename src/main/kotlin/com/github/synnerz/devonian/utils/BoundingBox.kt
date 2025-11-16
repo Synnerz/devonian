@@ -13,4 +13,10 @@ data class BoundingBox(val x: Double, val y: Double, val w: Double, val h: Doubl
         val h1 = h * f
         return Pair(f, BoundingBox(box.x + (box.w - w1) * 0.5, box.y + (box.h - h1) * 0.5, w1, h1))
     }
+
+    fun centerInside(box: BoundingBox) = BoundingBox(
+        box.x + 0.5 * (box.w - w),
+        box.y + 0.5 * (box.h - h),
+        w, h
+    )
 }

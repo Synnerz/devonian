@@ -565,7 +565,7 @@
     "shape": "L"
   },
   {
-    "name": "Deathmite",
+    "name": "Death\u200Bmite",
     "type": "normal",
     "secrets": 6,
     "cores": [
@@ -1145,7 +1145,7 @@
     "doors": "1011"
   },
   {
-    "name": "Withermancer",
+    "name": "Wither\u200Bmancer",
     "type": "normal",
     "secrets": 4,
     "cores": [
@@ -1302,7 +1302,7 @@
     "shape": "1x2"
   },
   {
-    "name": "Scaffolding",
+    "name": "Scaff\u200Bolding",
     "type": "normal",
     "secrets": 2,
     "cores": [
@@ -1456,7 +1456,7 @@
     "doors": "0011"
   },
   {
-    "name": "Sarcophagus",
+    "name": "Sarco\u200Bphagus",
     "type": "normal",
     "secrets": 3,
     "cores": [
@@ -1548,7 +1548,7 @@
     "doors": "0011"
   },
   {
-    "name": "Multicolored",
+    "name": "Multi\u200Bcolored",
     "type": "normal",
     "secrets": 1,
     "cores": [
