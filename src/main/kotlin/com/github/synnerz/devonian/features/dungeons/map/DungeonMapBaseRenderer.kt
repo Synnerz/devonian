@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.map
 
-import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.mapEnums.*
@@ -229,7 +228,7 @@ class DungeonMapBaseRenderer :
                     CheckmarkTypes.UNEXPLORED -> "&f"
                     CheckmarkTypes.NONE -> "&7"
                 }
-                text.add("$colorCode${room.secretsCompleted}/${room.totalSecrets}")
+                text.add("$colorCode${if (room.checkmark == CheckmarkTypes.GREEN) room.totalSecrets else room.secretsCompleted}/${room.totalSecrets}")
             }
 
             if (decoration == null && text.isEmpty()) return@forEach
