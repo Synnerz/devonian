@@ -31,7 +31,7 @@ object DungeonScanner {
     ) {
         override fun toString(): String {
             return "RoomData[name=\"$name\", type=\"$type\", secrets=\"$secrets\"," +
-                    " cores=\"$cores\", roomId=\"$roomId\"" +
+                    " cores=\"$cores\", roomId=\"$roomID\"" +
                     ", clear=\"$clear\", crypts=\"$crypts\", clearScore=\"$clearScore\"," +
                     " secretScore=\"$secretScore\", shape=\"$shape\"]"
         }
