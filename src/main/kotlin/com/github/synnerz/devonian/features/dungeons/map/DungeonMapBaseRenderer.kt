@@ -268,6 +268,7 @@ class DungeonMapBaseRenderer :
             g.paint = Color(-1)
             if (decoration != null) g.drawImage(decoration, bx, by, bw, bh, null)
 
+            var yo = 0.0
             text.forEach { str ->
                 val rendered = cachedStrings.getOrPut(str) {
                     var fontSize = TextHud.MC_FONT_SIZE
@@ -314,11 +315,12 @@ class DungeonMapBaseRenderer :
                 g.drawImage(
                     rendered.img,
                     (box.x + rendered.xo + 0.5).toInt(),
-                    (box.y + rendered.yo + 0.5).toInt(),
+                    (box.y + rendered.yo + yo + 0.5).toInt(),
                     (box.w * rendered.wf + 0.5).toInt(),
                     (box.h * rendered.hf + 0.5).toInt(),
                     null
                 )
+                yo += rendered.h
             }
         }
 
