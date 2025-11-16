@@ -63,13 +63,13 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
     }
 
     fun draw(ctx: DrawContext, x: Float, y: Float, scale: Float = 1f) {
-        uploadImage()
         draw(ctx, x, y, uploader.w * scale, uploader.h * scale)
+        uploadImage()
     }
 
     fun drawStretched(ctx: DrawContext, x: Float, y: Float, w: Float, h: Float) {
-        uploadImage()
         draw(ctx, x, y, w, h)
+        uploadImage()
     }
 
     private fun draw(ctx: DrawContext, x: Float, y: Float, w: Float, h: Float) {
