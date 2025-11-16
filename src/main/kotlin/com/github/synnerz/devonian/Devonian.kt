@@ -96,7 +96,8 @@ object Devonian : ClientModInitializer {
         EtherwarpSound,
         InventoryHistoryLog,
         HudManagerInstructions,
-        DungeonMap
+        DungeonMap,
+        SpeedDisplay
     )
 
     override fun onInitializeClient() {
