@@ -4,7 +4,6 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import net.minecraft.entity.player.PlayerInventory
 import kotlin.math.abs
 
 object InventoryHistoryLog : TextHudFeature("inventoryHistoryLog") {
