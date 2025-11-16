@@ -6,15 +6,8 @@ import java.awt.image.*
 import java.util.*
 
 class BufferedImageFactoryImpl : BufferedImageFactory {
-    private var lastW = -1
-    private var lastH = -1
-    private var raster: WritableRaster? = null
-
     override fun create(w: Int, h: Int): BufferedImage {
-        if (raster != null && w == lastW && h == lastH) {
-            val bytes = (raster!!.dataBuffer as DataBufferByte).data
-            Arrays.fill(bytes, 0)
-        } else raster = Raster.createInterleavedRaster(
+        val raster = Raster.createInterleavedRaster(
             DataBufferByte.TYPE_BYTE,
             w, h, w * 4,
             4, intArrayOf(0, 1, 2, 3),
