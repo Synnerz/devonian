@@ -16,7 +16,6 @@ import java.util.*
 import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.math.ceil
-import kotlin.math.min
 
 class DungeonMapBaseRenderer :
     BufferedImageRenderer<DungeonMapRenderData>("dungeonMapBaseRenderer", TriState.FALSE), FontListener {
@@ -27,7 +26,6 @@ class DungeonMapBaseRenderer :
     )
     var cachedW = 0
     var cachedH = 0
-    var cachedFontSize = 0f
 
     data class CachedStringKey(val str: String, val size: Int)
 
