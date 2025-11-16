@@ -23,6 +23,7 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
     var type = RoomTypes.UNKNOWN
     var checkmark = CheckmarkTypes.UNEXPLORED
     var shape = ShapeTypes.Shape1x1
+    var totalSecrets = 0
     var secretsCompleted = 0
     var clear = ClearTypes.MOB
     val doors = mutableSetOf<DungeonDoor>()
@@ -51,6 +52,7 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
             "miniboss" -> ClearTypes.MINIBOSS
             else -> ClearTypes.OTHER
         }
+        totalSecrets = data.secrets
     }
 
     private fun loadFromCore(core: Int): Boolean {
