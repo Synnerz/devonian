@@ -3,13 +3,19 @@ package com.github.synnerz.devonian.features
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.ui.Category
+import com.github.synnerz.devonian.config.ui.ConfigGui
+import com.github.synnerz.devonian.config.ui.ConfigType
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.talium.components.UISwitch
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.Style
 
 open class Feature @JvmOverloads constructor(
     val configName: String,
+    description: String = "",
+    category: String = "Misc",
     val area: String? = null,
     val subarea: String? = null
 ) {
@@ -18,10 +24,15 @@ open class Feature @JvmOverloads constructor(
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
     private var displayed = false
     protected var isRegistered = false
+    private lateinit var _category: Category
+    private var configComp: UISwitch? = null
     val events = mutableListOf<EventBus.EventListener>()
 
     init {
         Devonian.features.add(this)
+        if (configName != "hudManagerInstructions") {
+            _category = ConfigGui.category(category).addConfig(configName, description, ConfigType.SWITCH)
+        }
         JsonUtils.setConfig(configName, false)
     }
 
@@ -74,6 +85,10 @@ open class Feature @JvmOverloads constructor(
     }
 
     open fun onToggle(state: Boolean) {
+        if (configComp == null) configComp = _category.elements[configName] as UISwitch?
+
+        configComp?.state = state
+
         if (!state) {
             for (event in events)
                 event.remove()
