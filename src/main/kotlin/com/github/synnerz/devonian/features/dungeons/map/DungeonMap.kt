@@ -48,7 +48,8 @@ object DungeonMap : HudFeature(
                     ),
                     0.8, 0.4, 6,
                     true, true, true,
-                    DungeonMapRoomInfoAlignment.Center,
+                    0.8, DungeonMapRoomInfoAlignment.TopLeft,
+                    0.6, DungeonMapRoomInfoAlignment.Center,
                     true, true, true,
                     0.7, true, false, true
                 )

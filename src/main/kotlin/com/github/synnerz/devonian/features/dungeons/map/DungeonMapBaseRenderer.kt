@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.map
 
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
+import com.github.synnerz.devonian.api.dungeon.WorldComponentPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.*
 import com.github.synnerz.devonian.hud.texthud.FontListener
 import com.github.synnerz.devonian.hud.texthud.StringParser
@@ -125,6 +126,34 @@ class DungeonMapBaseRenderer :
             g.fillRect(bx, bz, bw, bh)
         }
 
+        fun getCenterOf(
+            cells: List<WorldComponentPosition>,
+            shape: ShapeTypes,
+            alignment: DungeonMapRoomInfoAlignment
+        ) = when (alignment) {
+            DungeonMapRoomInfoAlignment.TopLeft
+                -> cells.minBy { +it.cx + it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
+            DungeonMapRoomInfoAlignment.TopRight
+                -> cells.minBy { -it.cx + it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
+            DungeonMapRoomInfoAlignment.BottomLeft
+                -> cells.minBy { +it.cx - it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
+            DungeonMapRoomInfoAlignment.BottomRight
+                -> cells.minBy { -it.cx - it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
+            DungeonMapRoomInfoAlignment.Center -> {
+                if (shape == ShapeTypes.ShapeL) {
+                    val sorted = cells.sortedBy { it.cx + it.cz * 11 }
+                    val idx =
+                        if (sorted[0].cx > sorted[1].cx) 2
+                        else if (sorted[0].cx == sorted[2].cx) 0
+                        else 1
+                    Pair(sorted[idx].cx / 2 + 0.5, sorted[idx].cz / 2 + 0.5)
+                } else Pair(
+                    cells.sumOf { it.cx / 2.0 } / cells.size + 0.5,
+                    cells.sumOf { it.cz / 2.0 } / cells.size + 0.5
+                )
+            }
+        }
+
         if ((colors[DungeonMapColors.Background]?.alpha ?: 0) > 0) {
             g.paint = colors[DungeonMapColors.Background]
             g.fillRect(0, 0, w, h)
@@ -246,49 +275,38 @@ class DungeonMapBaseRenderer :
 
             if (decoration == null && text.isEmpty()) return@forEach
 
-            val center = when (options.roomInfoAlignment) {
-                DungeonMapRoomInfoAlignment.TopLeft
-                    -> cells.minBy { +it.cx + it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
-                DungeonMapRoomInfoAlignment.TopRight
-                    -> cells.minBy { -it.cx + it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
-                DungeonMapRoomInfoAlignment.BottomLeft
-                    -> cells.minBy { +it.cx - it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
-                DungeonMapRoomInfoAlignment.BottomRight
-                    -> cells.minBy { -it.cx - it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
-                DungeonMapRoomInfoAlignment.Center -> {
-                    if (shape == ShapeTypes.ShapeL) {
-                        val sorted = cells.sortedBy { it.cx + it.cz * 11 }
-                        val idx =
-                            if (sorted[0].cx > sorted[1].cx) 2
-                            else if (sorted[0].cx == sorted[2].cx) 0
-                            else 1
-                        Pair(sorted[idx].cx / 2 + 0.5, sorted[idx].cz / 2 + 0.5)
-                    } else Pair(
-                        cells.sumOf { it.cx / 2.0 } / cells.size + 0.5,
-                        cells.sumOf { it.cz / 2.0 } / cells.size + 0.5
-                    )
-                }
+            if (decoration != null) {
+                val decW = options.iconSize * options.roomWidth
+                val center = getCenterOf(cells, shape, options.iconAlignment)
+                val decBox = BoundingBox(
+                    center.first - decW * 0.5,
+                    center.second - decW * 0.5,
+                    decW, decW
+                )
+                val bx = (decBox.x * compToBImgF).toInt()
+                val by = (decBox.y * compToBImgF).toInt()
+                val bw = ceil(decBox.w * compToBImgF).toInt()
+                val bh = ceil(decBox.h * compToBImgF).toInt()
+                g.drawImage(decoration, bx, by, bw, bh, null)
             }
-
-            val decW = 0.8 * options.roomWidth
-            val decBox = BoundingBox(
-                center.first - decW * 0.5,
-                center.second - decW * 0.5,
-                decW, decW
-            )
-            val bx = (decBox.x * compToBImgF).toInt()
-            val by = (decBox.y * compToBImgF).toInt()
-            val bw = ceil(decBox.w * compToBImgF).toInt()
-            val bh = ceil(decBox.h * compToBImgF).toInt()
-            if (bw != cachedW || bh != cachedH) {
-                cachedStrings.clear()
-                cachedW = bw
-                cachedH = bh
-            }
-
-            if (decoration != null) g.drawImage(decoration, bx, by, bw, bh, null)
 
             if (text.isNotEmpty()) {
+                val decW = options.textSize * options.roomWidth
+                val center = getCenterOf(cells, shape, options.textAlignment)
+                val decBox = BoundingBox(
+                    center.first - decW * 0.5,
+                    center.second - decW * 0.5,
+                    decW, decW
+                )
+                val bw = ceil(decBox.w * compToBImgF).toInt()
+                val bh = ceil(decBox.h * compToBImgF).toInt()
+
+                if (bw != cachedW || bh != cachedH) {
+                    cachedStrings.clear()
+                    cachedW = bw
+                    cachedH = bh
+                }
+
                 val str = text.joinToString("\n")
 
                 var fontSize = TextHud.MC_FONT_SIZE

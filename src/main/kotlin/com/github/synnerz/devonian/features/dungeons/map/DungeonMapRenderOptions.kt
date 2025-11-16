@@ -10,7 +10,10 @@ data class DungeonMapRenderOptions(
     val roomName: Boolean,
     val checkMark: Boolean,
     val secretCount: Boolean,
-    val roomInfoAlignment: DungeonMapRoomInfoAlignment,
+    val textSize: Double, // [0, 1]
+    val textAlignment: DungeonMapRoomInfoAlignment,
+    val iconSize: Double, // [0, 1]
+    val iconAlignment: DungeonMapRoomInfoAlignment,
     val colorRoomName: Boolean,
     val renderUnknownRooms: Boolean,
     val dungeonStarted: Boolean,
