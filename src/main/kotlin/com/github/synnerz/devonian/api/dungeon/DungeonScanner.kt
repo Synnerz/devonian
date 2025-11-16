@@ -263,6 +263,7 @@ object DungeonScanner {
 
         room1.update()
 
+        rooms.removeIf { it == room2 }
         room2.doors.forEach { it.rooms.remove(room2) }
     }
 
