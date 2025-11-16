@@ -133,7 +133,7 @@ class DungeonMapBaseRenderer :
         val textToRender = mutableListOf<TextRenderParam>()
         rooms.forEach { room ->
             if (room == null) return@forEach
-            if (room.doors.isEmpty()) return@forEach
+            if (room.doors.isEmpty() && room.name == null) return@forEach
             val color = colorForRoom(room) ?: colors[DungeonMapColors.RoomNormal] ?: Color(0)
             var shape = room.shape
             if (shape == ShapeTypes.Unknown) return@forEach
