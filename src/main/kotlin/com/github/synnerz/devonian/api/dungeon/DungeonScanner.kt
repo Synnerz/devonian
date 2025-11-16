@@ -263,7 +263,6 @@ object DungeonScanner {
 
         room1.update()
 
-        rooms.removeIf { it == room2 }
         room2.doors.forEach { it.rooms.remove(room2) }
     }
 
@@ -360,7 +359,7 @@ object DungeonScanner {
             z /= 2.0
 
             val cdx = getRoomIdx(x, z)
-            val room = DungeonRoom(mutableListOf(mutableListOf(x, z)), roofHeight).scan()
+            var room = DungeonRoom(mutableListOf(mutableListOf(x, z)), roofHeight).scan()
             if (room.type == RoomTypes.ENTRANCE) room.explored = true
             addRoom(cdx, room)
 
@@ -403,6 +402,7 @@ object DungeonScanner {
                 if (nroom.type == RoomTypes.ENTRANCE || nroom == room) continue
 
                 mergeRooms(nroom, room)
+                room = nroom
             }
         }
 
