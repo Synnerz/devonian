@@ -13,9 +13,6 @@ class DungeonDoor(var comps: MutableList<Double>) {
     val roomComp2: Pair<Int, Int>
 
     init {
-        if (comps[0] != 0.0 && comps[1] != 0.0)
-            checkType()
-
         val cx = comps[2].toInt()
         val cz = comps[3].toInt()
         if ((cx and 1) == 1) {
@@ -32,28 +29,29 @@ class DungeonDoor(var comps: MutableList<Double>) {
     }
 
     fun check() {
+        if (opened) return
         val x = comps[0]
         val z = comps[1]
         if (!WorldUtils.isChunkLoaded(x, z)) return
 
         val blockId = WorldUtils.getBlockState(x, 69.0, z) ?: return
 
-        opened = blockId.isAir
-    }
+        opened = blockId.isAir || blockId.block == Blocks.BARRIER
 
-    private fun checkType() {
-        val x = comps[0]
-        val z = comps[1]
-        if (!WorldUtils.isChunkLoaded(x, z)) return
+        type = when (blockId.block) {
+            // idk anything infested probably just to be safe
+            Blocks.INFESTED_COBBLESTONE,
+            Blocks.INFESTED_CHISELED_STONE_BRICKS,
+            Blocks.INFESTED_CRACKED_STONE_BRICKS,
+            Blocks.INFESTED_DEEPSLATE,
+            Blocks.INFESTED_MOSSY_STONE_BRICKS,
+            Blocks.INFESTED_STONE,
+            Blocks.INFESTED_STONE_BRICKS
+                -> DoorTypes.ENTRANCE
 
-        val blockId = WorldUtils.getBlockState(x, 69.0, z) ?: return
-
-        if (blockId.isAir || blockId == Blocks.BARRIER) return
-
-        if (blockId == Blocks.INFESTED_COBBLESTONE) type = DoorTypes.ENTRANCE
-        if (blockId == Blocks.COAL_BLOCK) type = DoorTypes.WITHER
-        if (blockId == Blocks.RED_TERRACOTTA) type = DoorTypes.BLOOD
-
-        opened = false
+            Blocks.COAL_BLOCK -> DoorTypes.WITHER
+            Blocks.RED_TERRACOTTA -> DoorTypes.BLOOD
+            else -> DoorTypes.NORMAL
+        }
     }
 }
