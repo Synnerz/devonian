@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.map
 
+import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.mapEnums.*
@@ -15,6 +16,7 @@ import java.awt.image.BufferedImage
 import java.util.*
 import javax.imageio.ImageIO
 import kotlin.math.abs
+import kotlin.math.ceil
 
 class DungeonMapBaseRenderer :
     BufferedImageRenderer<DungeonMapRenderData>("dungeonMapBaseRenderer", TriState.FALSE), FontListener {
@@ -30,7 +32,7 @@ class DungeonMapBaseRenderer :
     data class CachedRenderedString(
         val img: BufferedImage,
         val xo: Double, val yo: Double,
-        val wf: Double, val hf: Double,
+        val wr: Double, val hr: Double,
         val w: Double, val h: Double
     )
 
@@ -49,23 +51,34 @@ class DungeonMapBaseRenderer :
         val options = param.options
         val colors = options.colors
 
-        fun colorForRoom(room: DungeonRoom) = when (room.type) {
-            RoomTypes.ENTRANCE -> colors[DungeonMapColors.RoomEntrance]
-            RoomTypes.NORMAL -> when (room.clear) {
-                ClearTypes.MOB,
-                ClearTypes.OTHER
-                    -> colors[DungeonMapColors.RoomNormal]
+        fun colorForRoom(room: DungeonRoom): Color? {
+            var col = when (room.type) {
+                RoomTypes.ENTRANCE -> colors[DungeonMapColors.RoomEntrance]
+                RoomTypes.NORMAL -> when (room.clear) {
+                    ClearTypes.MOB,
+                    ClearTypes.OTHER
+                        -> colors[DungeonMapColors.RoomNormal]
 
-                ClearTypes.MINIBOSS -> colors[DungeonMapColors.RoomMiniboss]
+                    ClearTypes.MINIBOSS -> colors[DungeonMapColors.RoomMiniboss]
+                }
+
+                RoomTypes.FAIRY -> colors[DungeonMapColors.RoomFairy]
+                RoomTypes.BLOOD -> colors[DungeonMapColors.RoomBlood]
+                RoomTypes.PUZZLE -> colors[DungeonMapColors.RoomPuzzle]
+                RoomTypes.TRAP -> colors[DungeonMapColors.RoomTrap]
+                RoomTypes.YELLOW -> colors[DungeonMapColors.RoomYellow]
+                RoomTypes.RARE -> colors[DungeonMapColors.RoomRare]
+                RoomTypes.UNKNOWN -> colors[DungeonMapColors.RoomUnknown]
             }
 
-            RoomTypes.FAIRY -> colors[DungeonMapColors.RoomFairy]
-            RoomTypes.BLOOD -> colors[DungeonMapColors.RoomBlood]
-            RoomTypes.PUZZLE -> colors[DungeonMapColors.RoomPuzzle]
-            RoomTypes.TRAP -> colors[DungeonMapColors.RoomTrap]
-            RoomTypes.YELLOW -> colors[DungeonMapColors.RoomYellow]
-            RoomTypes.RARE -> colors[DungeonMapColors.RoomRare]
-            RoomTypes.UNKNOWN -> colors[DungeonMapColors.RoomUnknown]
+            if (col != null && options.dungeonStarted && !room.explored) col = Color(
+                (col.red * options.unknownRoomsDarkenFactor + 0.5).toInt(),
+                (col.green * options.unknownRoomsDarkenFactor + 0.5).toInt(),
+                (col.blue * options.unknownRoomsDarkenFactor + 0.5).toInt(),
+                col.alpha
+            )
+
+            return col
         }
 
         val roomRectOffset = (1.0 - options.roomWidth) * 0.5
@@ -76,10 +89,10 @@ class DungeonMapBaseRenderer :
             val cz = z + roomRectOffset
             val cw = options.roomWidth + w - 1
             val ch = options.roomWidth + h - 1
-            val bx = (compToBImgF * cx + 0.5).toInt()
-            val bz = (compToBImgF * cz + 0.5).toInt()
-            val bw = (compToBImgF * cw + 0.5).toInt()
-            val bh = (compToBImgF * ch + 0.5).toInt()
+            val bx = (compToBImgF * cx).toInt()
+            val bz = (compToBImgF * cz).toInt()
+            val bw = ceil(compToBImgF * cw).toInt()
+            val bh = ceil(compToBImgF * ch).toInt()
 
             g.fillRect(bx, bz, bw, bh)
         }
@@ -101,10 +114,10 @@ class DungeonMapBaseRenderer :
                 cw = roomRectOffset * 2.0
                 ch = options.roomWidth
             }
-            val bx = (compToBImgF * cx + 0.5).toInt()
-            val bz = (compToBImgF * cz + 0.5).toInt()
-            val bw = (compToBImgF * cw + 0.5).toInt()
-            val bh = (compToBImgF * ch + 0.5).toInt()
+            val bx = (compToBImgF * cx).toInt()
+            val bz = (compToBImgF * cz).toInt()
+            val bw = ceil(compToBImgF * cw).toInt()
+            val bh = ceil(compToBImgF * ch).toInt()
 
             g.fillRect(bx, bz, bw, bh)
         }
@@ -116,32 +129,23 @@ class DungeonMapBaseRenderer :
 
         rooms.forEach { room ->
             if (room == null) return@forEach
-            var color = colorForRoom(room) ?: colors[DungeonMapColors.RoomNormal] ?: Color(0)
+            val color = colorForRoom(room) ?: colors[DungeonMapColors.RoomNormal] ?: Color(0)
             var shape = room.shape
             if (shape == ShapeTypes.Unknown) return@forEach
             var cells = room.comps.toList()
             var renderRoomInfo = true
 
-            if (!room.explored) {
-                if (options.renderUnknownRooms) {
-                    if (options.dungeonStarted) color = Color(
-                        (color.red * options.unknownRoomsDarkenFactor + 0.5).toInt(),
-                        (color.green * options.unknownRoomsDarkenFactor + 0.5).toInt(),
-                        (color.blue * options.unknownRoomsDarkenFactor + 0.5).toInt(),
-                        color.alpha
-                    )
-                } else {
-                    shape = ShapeTypes.Shape1x1
-                    cells = room.comps.filter {
-                        val cx = it[2] * 2
-                        val cz = it[3] * 2
-                        room.doors.any {
-                            abs(cx - it.comps[2]) + abs(cz - it.comps[3]) == 1.0 &&
-                            it.rooms.any { it.explored }
-                        }
+            if (!room.explored && !options.renderUnknownRooms) {
+                shape = ShapeTypes.Shape1x1
+                cells = room.comps.filter {
+                    val cx = it[0] * 2
+                    val cz = it[1] * 2
+                    room.doors.any {
+                        abs(cx - it.comps[2]) + abs(cz - it.comps[3]) == 1.0 &&
+                        it.rooms.any { it.explored }
                     }
-                    renderRoomInfo = false
                 }
+                renderRoomInfo = false
             }
 
             if (cells.isEmpty()) return@forEach
@@ -160,42 +164,45 @@ class DungeonMapBaseRenderer :
                 ShapeTypes.Unknown -> return@forEach
                 ShapeTypes.ShapeL -> {
                     for (i in cells.indices) {
-                        val cx = cells[i][2].toInt()
-                        val cz = cells[i][3].toInt()
+                        val cx = cells[i][0].toInt()
+                        val cz = cells[i][1].toInt()
                         drawRoom(cx, cz, 1, 1)
                         for (j in i until cells.size) {
-                            val cx2 = cells[j][2].toInt()
-                            val cz2 = cells[j][3].toInt()
+                            val cx2 = cells[j][0].toInt()
+                            val cz2 = cells[j][1].toInt()
                             if (abs(cx - cx2) + abs(cz - cz2) == 1) drawRoomJoined(cx, cz, cx2, cz2)
                         }
                     }
                 }
 
-                ShapeTypes.Shape1x1 -> drawRoom(cells[0][2].toInt(), cells[0][3].toInt(), 1, 1)
+                ShapeTypes.Shape1x1 -> drawRoom(cells[0][0].toInt(), cells[0][1].toInt(), 1, 1)
                 ShapeTypes.Shape1x2,
                 ShapeTypes.Shape1x3,
                 ShapeTypes.Shape1x4
                     -> {
-                    val roomCorner = cells.minBy { it[2] + it[3] }
-                    val cx1 = cells[0][2].toInt()
-                    val cx2 = cells[1][2].toInt()
+                    val roomCorner = cells.minBy { it[0] + it[1] }
+                    val cx1 = cells[0][0].toInt()
+                    val cx2 = cells[1][0].toInt()
                     drawRoom(
-                        roomCorner[2].toInt(), roomCorner[3].toInt(),
+                        roomCorner[0].toInt(), roomCorner[1].toInt(),
                         if (cx1 == cx2) 1 else cells.size,
                         if (cx1 == cx2) cells.size else 1
                     )
                 }
 
                 ShapeTypes.Shape2x2 -> {
-                    val roomCorner = cells.minBy { it[2] + it[3] }
-                    drawRoom(roomCorner[2].toInt(), roomCorner[3].toInt(), 2, 2)
+                    val roomCorner = cells.minBy { it[0] + it[1] }
+                    drawRoom(roomCorner[0].toInt(), roomCorner[1].toInt(), 2, 2)
                 }
             }
 
             if (!renderRoomInfo) return@forEach
 
             val decoration =
-                (if (options.checkMark) CHECKMARK[room.checkmark] else null) ?:
+                (if (options.checkMark) {
+                    if (options.renderUnknownRooms && room.checkmark == CheckmarkTypes.UNEXPLORED) null
+                    else CHECKMARK[room.checkmark]
+                } else null) ?:
                 (if (options.puzzleIcon) SPECIAL_ROOMS[room.name] else null)
             val text = mutableListOf<String>()
 
@@ -211,16 +218,16 @@ class DungeonMapBaseRenderer :
                         CheckmarkTypes.UNEXPLORED -> "&f"
                         CheckmarkTypes.NONE -> "&7"
                     }
-                    text.add("$colorCode$name")
+                    name.split(" ").forEach { text.add("$colorCode$it")}
                 } else text.add(name)
             }
             if (options.secretCount && room.totalSecrets > 0) {
                 val colorCode = when (room.checkmark) {
+                    CheckmarkTypes.FAILED -> "&c"
                     CheckmarkTypes.GREEN -> "&a"
-                    CheckmarkTypes.FAILED,
-                    CheckmarkTypes.NONE,
                     CheckmarkTypes.WHITE,
                     CheckmarkTypes.UNEXPLORED -> "&f"
+                    CheckmarkTypes.NONE -> "&7"
                 }
                 text.add("$colorCode${room.secretsCompleted}/${room.totalSecrets}")
             }
@@ -229,37 +236,38 @@ class DungeonMapBaseRenderer :
 
             val center = when (options.roomInfoAlignment) {
                 DungeonMapRoomInfoAlignment.TopLeft
-                    -> cells.minBy { +it[2] + it[3] }.let { Pair(it[2] + 0.5, it[3] + 0.5) }
+                    -> cells.minBy { +it[0] + it[1] }.let { Pair(it[0] + 0.5, it[1] + 0.5) }
                 DungeonMapRoomInfoAlignment.TopRight
-                    -> cells.minBy { -it[2] + it[3] }.let { Pair(it[2] + 0.5, it[3] + 0.5) }
+                    -> cells.minBy { -it[0] + it[1] }.let { Pair(it[0] + 0.5, it[1] + 0.5) }
                 DungeonMapRoomInfoAlignment.BottomLeft
-                    -> cells.minBy { +it[2] - it[3] }.let { Pair(it[2] + 0.5, it[3] + 0.5) }
+                    -> cells.minBy { +it[0] - it[1] }.let { Pair(it[0] + 0.5, it[1] + 0.5) }
                 DungeonMapRoomInfoAlignment.BottomRight
-                    -> cells.minBy { -it[2] - it[3] }.let { Pair(it[2] + 0.5, it[3] + 0.5) }
+                    -> cells.minBy { -it[0] - it[1] }.let { Pair(it[0] + 0.5, it[1] + 0.5) }
                 DungeonMapRoomInfoAlignment.Center -> {
                     if (shape == ShapeTypes.ShapeL) {
-                        val sorted = cells.sortedBy { it[2] + it[3] * 10.0 }
+                        val sorted = cells.sortedBy { it[0] + it[1] * 10.0 }
                         val idx =
-                            if (sorted[0][2] < sorted[1][2]) 2
-                            else if (sorted[0][2] == sorted[2][2]) 0
+                            if (sorted[0][0] > sorted[1][0]) 2
+                            else if (sorted[0][0] == sorted[2][0]) 0
                             else 1
-                        Pair(sorted[idx][2] + 0.5, sorted[idx][3] + 0.5)
+                        Pair(sorted[idx][0] + 0.5, sorted[idx][1] + 0.5)
                     } else Pair(
-                        cells.sumOf { it[2] } / cells.size + 0.5,
-                        cells.sumOf { it[3] } / cells.size + 0.5
+                        cells.sumOf { it[0] } / cells.size + 0.5,
+                        cells.sumOf { it[1] } / cells.size + 0.5
                     )
                 }
             }
 
+            val decW = 0.8 * options.roomWidth
             val decBox = BoundingBox(
-                center.first - 0.4,
-                center.second - 0.4,
-                0.8, 0.8
+                center.first - decW * 0.5,
+                center.second - decW * 0.5,
+                decW, decW
             )
-            val bx = (decBox.x * compToBImgF + 0.5).toInt()
-            val by = (decBox.x * compToBImgF + 0.5).toInt()
-            val bw = (decBox.w * compToBImgF + 0.5).toInt()
-            val bh = (decBox.h * compToBImgF + 0.5).toInt()
+            val bx = (decBox.x * compToBImgF).toInt()
+            val by = (decBox.y * compToBImgF).toInt()
+            val bw = ceil(decBox.w * compToBImgF).toInt()
+            val bh = ceil(decBox.h * compToBImgF).toInt()
             if (bw != cachedW || bh != cachedH) {
                 cachedStrings.clear()
                 cachedW = bw
@@ -269,66 +277,83 @@ class DungeonMapBaseRenderer :
             g.paint = Color(-1)
             if (decoration != null) g.drawImage(decoration, bx, by, bw, bh, null)
 
-            var yo = 0.0
-            text.forEach { str ->
+            if (text.isNotEmpty()) {
+                val str = text.joinToString("\n")
                 val rendered = cachedStrings.getOrPut(str) {
                     var fontSize = TextHud.MC_FONT_SIZE
                     var font = TextHud.fontMainBase.deriveFont(Font.PLAIN, fontSize)
                     g.font = font
 
-                    var line = StringParser.processString(str, options.stringShadow, g, font, font, font, fontSize)
-                    val (scale, _) = BoundingBox(0.0, 0.0, line.visualWidth.toDouble(), fontSize.toDouble())
+                    var lines = text.map { StringParser.processString(
+                        it,
+                        options.stringShadow,
+                        g,
+                        font, font, font,
+                        fontSize
+                    ) }
+                    var visualWidth = lines.maxOf { it.visualWidth }
+                    val (scale, _) = BoundingBox(
+                        0.0, 0.0,
+                        visualWidth.toDouble(), fontSize.toDouble() * lines.size
+                    ).fitInside(decBox)
 
-                    fontSize *= scale.toFloat()
+                    fontSize *= (scale * compToBImgF).toFloat()
                     font = TextHud.fontMainBase.deriveFont(Font.PLAIN, fontSize)
                     g.font = font
-                    line = StringParser.processString(str, options.stringShadow, g, font, font, font, fontSize)
+                    lines = text.map { StringParser.processString(
+                        it,
+                        options.stringShadow,
+                        g,
+                        font, font, font,
+                        fontSize
+                    ) }
+                    visualWidth = lines.maxOf { it.visualWidth }
 
-                    val w = line.visualWidth + (if (options.stringShadow) 0.1 * fontSize else 0.0) + 5.0
-                    val h = (fontSize + g.fontMetrics.ascent).toDouble()
+                    val w = visualWidth + (if (options.stringShadow) 0.1 * fontSize else 0.0) + 5.0
+                    val h = (fontSize * lines.size + g.fontMetrics.ascent).toDouble()
                     val img = bimgProvider.create(w.toInt(), h.toInt())
 
                     TextRendererImpl.drawImage(img, TextRendererImpl.TextRenderParams(
-                        TextHud.Align.Left,
+                        TextHud.Align.Center,
                         options.stringShadow,
                         TextHud.Backdrop.None,
                         fontSize,
                         font,
-                        listOf(line),
-                        line.visualWidth
+                        lines,
+                        visualWidth
                     ))
 
                     CachedRenderedString(
                         img,
                         0.0, 0.0,
-                        w * line.visualWidth,
-                        h * fontSize,
-                        line.visualWidth.toDouble(), fontSize.toDouble()
+                        w,
+                        h,
+                        visualWidth.toDouble(),
+                        fontSize * lines.size.toDouble()
                     )
                 }
 
                 val (scale, box) = BoundingBox(
                     0.0, 0.0,
                     rendered.w, rendered.h
-                ).fitInside(decBox)
+                ).fitInside(BoundingBox(
+                    decBox.x * compToBImgF,
+                    decBox.y * compToBImgF,
+                    decBox.w * compToBImgF,
+                    decBox.h * compToBImgF
+                ))
                 if (abs(1.0 - scale) > 0.1) cachedStrings.remove(str)
 
-
-                val cx = box.x + rendered.xo + 0.5
-                val cz = box.y + rendered.yo + yo + 0.5
-                val cw = box.w * rendered.wf + 0.5
-                val ch = box.h * rendered.hf + 0.5
-                val bx = (compToBImgF * cx + 0.5).toInt()
-                val bz = (compToBImgF * cz + 0.5).toInt()
-                val bw = (compToBImgF * cw + 0.5).toInt()
-                val bh = (compToBImgF * ch + 0.5).toInt()
+                val bx = (box.x + rendered.xo).toInt()
+                val bz = (box.y + rendered.yo).toInt()
+                val bw = ceil(rendered.wr).toInt()
+                val bh = ceil(rendered.hr).toInt()
                 g.drawImage(
                     rendered.img,
                     bx, bz,
                     bw, bh,
                     null
                 )
-                yo += rendered.h
             }
         }
 
@@ -351,10 +376,10 @@ class DungeonMapBaseRenderer :
                 cw = roomRectOffset * 2.0
                 ch = options.doorWidth
             }
-            val bx = (compToBImgF * cx + 0.5).toInt()
-            val bz = (compToBImgF * cz + 0.5).toInt()
-            val bw = (compToBImgF * cw + 0.5).toInt()
-            val bh = (compToBImgF * ch + 0.5).toInt()
+            val bx = (compToBImgF * cx).toInt()
+            val bz = (compToBImgF * cz).toInt()
+            val bw = ceil(compToBImgF * cw).toInt()
+            val bh = ceil(compToBImgF * ch).toInt()
 
             g.fillRect(bx, bz, bw, bh)
         }
@@ -366,6 +391,7 @@ class DungeonMapBaseRenderer :
                 DoorTypes.WITHER -> colors[DungeonMapColors.DoorWither]
                 DoorTypes.BLOOD -> colors[DungeonMapColors.DoorBlood]
                 DoorTypes.NORMAL -> {
+                    if (!door.opened) return@forEach
                     val room = door.rooms.minByOrNull { it.type.prio } ?: return@forEach
                     colorForRoom(room)
                 }
