@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.api.dungeon
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
+import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.AreaEvent
@@ -360,7 +361,10 @@ object DungeonScanner {
 
             val cdx = getRoomIdx(x, z)
             var room = DungeonRoom(mutableListOf(mutableListOf(x, z)), roofHeight).scan()
-            if (room.type == RoomTypes.ENTRANCE) room.explored = true
+            if (room.type == RoomTypes.ENTRANCE) {
+                room.explored = true
+                room.checkmark = CheckmarkTypes.NONE
+            }
             addRoom(cdx, room)
 
             for (dir in directions) {
