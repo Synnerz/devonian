@@ -353,6 +353,7 @@ object DungeonScanner {
                 }
                 return@forEachIndexed
             }
+            if (roofHeight <= 0.0) return@forEachIndexed
 
             x /= 2.0
             z /= 2.0
