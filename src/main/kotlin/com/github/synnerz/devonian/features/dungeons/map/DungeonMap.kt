@@ -30,25 +30,26 @@ object DungeonMap : HudFeature(
                 rooms, doors,
                 DungeonMapRenderOptions(
                     mapOf(
-                        DungeonMapColors.RoomEntrance to Color(20, 133, 0, 255),
-                        DungeonMapColors.RoomNormal to Color(107, 58, 17, 255),
-                        DungeonMapColors.RoomMiniboss to Color(254, 223, 0, 255),
-                        DungeonMapColors.RoomFairy to Color(224, 0, 255, 255),
+                        DungeonMapColors.RoomEntrance to Color(0, 123, 0, 255),
+                        DungeonMapColors.RoomNormal to Color(114, 67, 27, 255),
+                        DungeonMapColors.RoomMiniboss to Color(57, 67, 27, 255),
+                        DungeonMapColors.RoomFairy to Color(239, 126, 163, 255),
                         DungeonMapColors.RoomBlood to Color(255, 0, 0, 255),
-                        DungeonMapColors.RoomPuzzle to Color(117, 0, 133, 255),
-                        DungeonMapColors.RoomTrap to Color(216, 127, 51, 255),
-                        DungeonMapColors.RoomYellow to Color(254, 223, 0, 255),
-                        DungeonMapColors.RoomRare to Color(255, 203, 89, 255),
-                        DungeonMapColors.RoomUnknown to Color(255, 176, 31, 255),
-                        DungeonMapColors.DoorWither to Color.BLACK,
-                        DungeonMapColors.DoorBlood to Color.RED,
-                        DungeonMapColors.DoorEntrance to Color.GREEN
+                        DungeonMapColors.RoomPuzzle to Color(176, 75, 213, 255),
+                        DungeonMapColors.RoomTrap to Color(213, 126, 50, 255),
+                        DungeonMapColors.RoomYellow to Color(226, 226, 50, 255),
+                        DungeonMapColors.RoomRare to Color(0, 67, 27, 255),
+                        DungeonMapColors.RoomUnknown to Color(64, 64, 64, 255),
+
+                        DungeonMapColors.DoorWither to Color(0, 0, 0, 255),
+                        DungeonMapColors.DoorBlood to Color(255, 0, 0, 255),
+                        DungeonMapColors.DoorEntrance to Color(0, 123, 0, 255)
                     ),
-                    0.9, 0.6, 6,
+                    0.8, 0.4, 6,
                     true, true, true,
-                    DungeonMapRoomInfoAlignment.TopLeft,
+                    DungeonMapRoomInfoAlignment.Center,
                     true, true, true,
-                    1.0, true, true, true
+                    0.7, true, false, true
                 )
             )
         )
