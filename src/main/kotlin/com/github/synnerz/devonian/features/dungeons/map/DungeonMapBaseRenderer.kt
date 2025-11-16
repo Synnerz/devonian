@@ -312,12 +312,19 @@ class DungeonMapBaseRenderer :
                 ).fitInside(decBox)
                 if (abs(1.0 - scale) > 0.1) cachedStrings.remove(str)
 
+
+                val cx = box.x + rendered.xo + 0.5
+                val cz = box.y + rendered.yo + yo + 0.5
+                val cw = box.w * rendered.wf + 0.5
+                val ch = box.h * rendered.hf + 0.5
+                val bx = (compToBImgF * cx + 0.5).toInt()
+                val bz = (compToBImgF * cz + 0.5).toInt()
+                val bw = (compToBImgF * cw + 0.5).toInt()
+                val bh = (compToBImgF * ch + 0.5).toInt()
                 g.drawImage(
                     rendered.img,
-                    (box.x + rendered.xo + 0.5).toInt(),
-                    (box.y + rendered.yo + yo + 0.5).toInt(),
-                    (box.w * rendered.wf + 0.5).toInt(),
-                    (box.h * rendered.hf + 0.5).toInt(),
+                    bx, bz,
+                    bw, bh,
                     null
                 )
                 yo += rendered.h
