@@ -6,7 +6,12 @@ import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.utils.BoundingBox
 import net.minecraft.client.gui.DrawContext
 
-object DungeonMap : HudFeature("dungeonMap") {
+object DungeonMap : HudFeature(
+    "dungeonMap",
+    "Dungeon Map",
+    "Dungeons",
+    "catacombs"
+) {
     private val mapRenderer = DungeonMapBaseRenderer()
 
     override fun getBounds(): BoundingBox = BoundingBox(
