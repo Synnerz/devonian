@@ -333,6 +333,7 @@ object DungeonScanner {
     internal fun scan() {
         if (availablePos.isEmpty()) return
 
+        val startLen = availablePos.size
         availablePos.reversed().forEachIndexed { idx, pos ->
             var ( x, z, rx, rz ) = pos
             if (!WorldUtils.isChunkLoaded(rx, rz)) return@forEachIndexed
@@ -357,6 +358,7 @@ object DungeonScanner {
 
             val cdx = getRoomIdx(x, z)
             val room = DungeonRoom(mutableListOf(mutableListOf(x, z)), roofHeight).scan()
+            if (room.type == RoomTypes.ENTRANCE) room.explored = true
             addRoom(cdx, room)
 
             for (dir in directions) {
@@ -400,6 +402,7 @@ object DungeonScanner {
                 mergeRooms(nroom, room)
             }
         }
-        DungeonMap.redrawMap(rooms.toList(), doors.toList())
+
+        if (availablePos.size != startLen) DungeonMap.redrawMap(rooms.toList(), doors.toList())
     }
 }
