@@ -7,18 +7,17 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.ShapeTypes
 import net.minecraft.block.Blocks
 
-class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Double) {
+class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: Int) {
     val roomOffset = listOf(
-        listOf(-DungeonScanner.halfRoomSize, -DungeonScanner.halfRoomSize),
-        listOf(DungeonScanner.halfRoomSize, -DungeonScanner.halfRoomSize),
-        listOf(DungeonScanner.halfRoomSize, DungeonScanner.halfRoomSize),
-        listOf(-DungeonScanner.halfRoomSize, DungeonScanner.halfRoomSize)
+        WorldPosition(-halfRoomSize, -halfRoomSize),
+        WorldPosition(halfRoomSize, -halfRoomSize),
+        WorldPosition(halfRoomSize, halfRoomSize),
+        WorldPosition(-halfRoomSize, halfRoomSize)
     )
-    var realComps = listOf<List<Double>>()
     var cores = listOf<Int>()
     var explored = false
     var name: String? = null
-    var corner = listOf<Double>()
+    var corner = WorldPosition.EMPTY
     var rotation = -1
     var type = RoomTypes.UNKNOWN
     var checkmark = CheckmarkTypes.UNEXPLORED
@@ -29,7 +28,7 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
     val doors = mutableSetOf<DungeonDoor>()
 
     init {
-        addComponents(comps)
+        addComponents(comps.map { it.toComponent() })
     }
 
     override fun toString(): String {
@@ -66,73 +65,64 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
         return false
     }
 
-    internal fun update() {
-        comps.sortWith(compareBy({ it[1] }, { it[0] }))
-        realComps = comps.map { DungeonScanner.toPos(it[0], it[1]) }
-        scan()
+    fun update() {
+        comps.sortBy { it.cz * 11 + it.cx }
 
+        scan()
         shape()
 
-        corner = listOf()
+        corner = WorldPosition.EMPTY
         rotation = -1
     }
 
     fun scan() = apply {
         checkmark = CheckmarkTypes.UNEXPLORED
-        for (comp in realComps) {
-            val ( x, z ) = comp
+        for (comp in comps) {
+            val x = comp.wx
+            val z = comp.wz
             if (!WorldUtils.isChunkLoaded(x, z)) continue
-            if (height == 0.0)
-                height = DungeonScanner.getHighestY(x, z)!!
+            if (height == 0) height = DungeonScanner.getHighestY(x, z)
 
             loadFromCore(DungeonScanner.hashCeil(x, z))
         }
     }
 
-    internal fun hasComponent(x: Double, z: Double): Boolean {
-        for (comp in comps) {
-            val ( x1, z1 ) = comp
-            if (x == x1 && z == z1) return true
-        }
+    fun addComponent(comp: ComponentPosition, update: Boolean = true) = apply {
+        if (comps.any { it.toComponent() == comp }) return@apply
 
-        return false
-    }
-
-    internal fun addComponent(x: Double, z: Double, update: Boolean = true) = apply {
-        if (hasComponent(x, z)) return@apply
-
-        comps.add(mutableListOf(x, z))
+        comps.add(comp.withWorld())
 
         if (update) update()
     }
 
-    internal fun addComponent(comps: List<Double>, update: Boolean = true) = addComponent(comps[0], comps[1], update)
-
-    internal fun addComponents(comps: List<List<Double>>) = apply {
+    fun addComponents(comps: List<ComponentPosition>) = apply {
         for (comp in comps) addComponent(comp, false)
         update()
     }
 
-    internal fun findRotation() {
-        if (height == 0.0) return
+    fun findRotation() {
+        if (height == 0) return
 
         if (type == RoomTypes.FAIRY) {
-            val ( x, z ) = realComps[0]
+            val x = comps[0].wx
+            val z = comps[0].wz
             rotation = 0
-            corner = listOf(
-                x - DungeonScanner.halfRoomSize + 0.5,
-                height,
-                z - DungeonScanner.halfRoomSize + 0.5
+            corner = WorldPosition(
+                x - halfRoomSize,
+                z - halfRoomSize
             )
             return
         }
 
-        for (comp in realComps) {
-            val ( x, z ) = comp
+        for (comp in comps) {
+            val x = comps[0].wx
+            val z = comps[0].wz
 
             for (idx in roomOffset.indices) {
                 val ( dx, dz ) = roomOffset[idx]
-                val ( nx, nz ) = listOf(x + dx, z + dz)
+                val pos = WorldPosition(x + dx, z + dz)
+                val nx = pos.x
+                val nz = pos.z
                 if (!WorldUtils.isChunkLoaded(nx, nz)) continue
 
                 val blockState = WorldUtils.getBlockState(nx, height, nz) ?: continue
@@ -140,15 +130,15 @@ class DungeonRoom(var comps: MutableList<MutableList<Double>>, var height: Doubl
                 if (block != Blocks.BLUE_TERRACOTTA) continue
 
                 rotation = idx * 90
-                corner = listOf(nx + 0.5, height, nz + 0.5)
+                corner = pos
                 break
             }
         }
     }
 
     private fun shape() {
-        val distCompA = comps.map { it[0] }.distinct().size
-        val distCompB = comps.map { it[1] }.distinct().size
+        val distCompA = comps.map { it.cx }.distinct().size
+        val distCompB = comps.map { it.cz }.distinct().size
 
         shape = when {
             comps.isEmpty() || comps.size > 4 -> ShapeTypes.Unknown

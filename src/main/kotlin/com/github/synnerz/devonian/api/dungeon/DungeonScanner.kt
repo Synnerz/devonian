@@ -18,7 +18,6 @@ import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.block.SlabBlock
 import net.minecraft.registry.tag.FluidTags
-import kotlin.math.floor
 
 @Suppress("MemberVisibilityCanBePrivate")
 object DungeonScanner {
@@ -36,9 +35,9 @@ object DungeonScanner {
     ) {
         override fun toString(): String {
             return "RoomData[name=\"$name\", type=\"$type\", secrets=\"$secrets\"," +
-                    " cores=\"$cores\", roomId=\"$roomID\"" +
-                    ", clear=\"$clear\", crypts=\"$crypts\", clearScore=\"$clearScore\"," +
-                    " secretScore=\"$secretScore\", shape=\"$shape\"]"
+            " cores=\"$cores\", roomId=\"$roomID\"" +
+            ", clear=\"$clear\", crypts=\"$crypts\", clearScore=\"$clearScore\"," +
+            " secretScore=\"$secretScore\", shape=\"$shape\"]"
         }
     }
 
@@ -48,20 +47,7 @@ object DungeonScanner {
             .use { it?.readText() },
         Array<RoomData>::class.java
     ).toList()
-    private val cornerStart = listOf(-200, -200)
-    private val cornerEnd = listOf(-10, -10)
-    private const val dungeonRoomSize = 31
-    private const val dungeonDoorSize = 1
-    private const val roomDoorCombinedSize = dungeonRoomSize + dungeonDoorSize
-    internal val halfRoomSize = floor(dungeonRoomSize / 2.0)
-    internal val halfCombinedSize = floor(roomDoorCombinedSize / 2.0)
-    private val directions: List<List<Double>> = listOf(
-        listOf(halfCombinedSize, 0.0, 1.0, 0.0),
-        listOf(-halfCombinedSize, 0.0, -1.0, 0.0),
-        listOf(0.0, halfCombinedSize, 0.0, 1.0),
-        listOf(0.0, -halfCombinedSize, 0.0, -1.0)
-    )
-    val defaultMapSize = listOf(125, 125)
+    val defaultMapSize = WorldPosition(125, 125)
 
     var lastIdx: Int? = null
     var currentRoom: DungeonRoom? = null
@@ -69,59 +55,31 @@ object DungeonScanner {
     var doors = MutableList<DungeonDoor?>(60) { null }
     var availablePos = findAvailablePos()
 
-    @JvmOverloads
-    internal fun toPos(x: Double, z: Double, doors: Boolean = false): List<Double> {
-        val ( x0, z0 ) = cornerStart
-        if (doors) return listOf(
-            x0 + halfRoomSize + halfCombinedSize * x,
-            z0 + halfRoomSize + halfCombinedSize * z
-        )
+    private fun findAvailablePos(): MutableList<WorldComponentPosition> {
+        val pos = mutableListOf<WorldComponentPosition>()
 
-        return listOf(
-            x0 + halfRoomSize + roomDoorCombinedSize * x,
-            z0 + halfRoomSize + roomDoorCombinedSize * z
-        )
-    }
-
-    @JvmOverloads
-    internal fun toComponent(x: Double, z: Double, doors: Boolean = false): List<Double> {
-        val ( x0, z0 ) = cornerStart
-        val size = if (doors) halfCombinedSize else roomDoorCombinedSize.toDouble()
-
-        return listOf(
-            floor((x - x0 + 0.5) / size),
-            floor((z - z0 + 0.5) / size),
-        )
-    }
-
-    private fun findAvailablePos(): MutableList<List<Double>> {
-        val pos = mutableListOf<List<Double>>()
-
-        for (z in 0..10) {
-            for (x in 0..10) {
+        for (z in 0 .. 10) {
+            for (x in 0 .. 10) {
                 if (x % 2 != 0 && z % 2 != 0) continue
 
-                val rx = cornerStart[0] + halfRoomSize + x * halfCombinedSize
-                val rz = cornerStart[0] + halfRoomSize + z * halfCombinedSize
-
-                pos.add(listOf(x.toDouble(), z.toDouble(), rx, rz))
+                pos.add(ComponentPosition(x, z).withWorld())
             }
         }
 
         return pos
     }
 
-    internal fun getHighestY(x: Double, z: Double): Double? {
-        WorldUtils.world ?: return null
-        var height = 0.0
+    fun getHighestY(x: Int, z: Int): Int {
+        WorldUtils.world ?: return -1
+        var height = 0
 
         for (idx in 256 downTo 0) {
-            val blockState = WorldUtils.getBlockState(x, idx.toDouble(), z)
+            val blockState = WorldUtils.getBlockState(x, idx, z)
             val block = blockState?.block ?: continue
 
             if (blockState.isAir || block == Blocks.GOLD_BLOCK) continue
 
-            height = idx.toDouble()
+            height = idx
             break
         }
 
@@ -151,11 +109,11 @@ object DungeonScanner {
     }
 
     @JvmOverloads
-    internal fun hashCeil(x: Double, z: Double, debug: Boolean = false): Int {
+    fun hashCeil(x: Int, z: Int, debug: Boolean = false): Int {
         var str = ""
 
         for (idx in 140 downTo 12) {
-            val blockState = WorldUtils.getBlockState(x, idx.toDouble(), z) ?: continue
+            val blockState = WorldUtils.getBlockState(x, idx, z) ?: continue
             val block = blockState.block ?: continue
             val blockId = getLegacyId(blockState, debug) ?: continue
             if (block == Blocks.IRON_BARS || block == Blocks.CHEST) {
@@ -189,12 +147,12 @@ object DungeonScanner {
         rooms.fill(null)
         doors.fill(null)
 
-        val tickEvent = EventBus.on<TickEvent> ({
+        val tickEvent = EventBus.on<TickEvent>({
             if (Location.area != "catacombs") return@on
             val player = Devonian.minecraft.player ?: return@on
             if (!WorldUtils.isChunkLoaded(player.x, player.z)) return@on
-            val ( x, z ) = toComponent(player.x, player.z)
-            val jdx = (6 * z + x).toInt()
+            val comp = WorldPosition(player.x.toInt(), player.z.toInt()).toComponent()
+            val jdx = comp.getRoomIdx()
 
             scan()
             checkRoomState()
@@ -223,9 +181,12 @@ object DungeonScanner {
         // TODO: remove this whenever finished (or impl in debug tools)
 
         DevonianCommand.command.subcommand("getcore") { _, _ ->
-            val room = getRoomAt(Devonian.minecraft.player!!.x, Devonian.minecraft.player!!.z) ?: return@subcommand 0
-            for (comp in room.realComps) {
-                val ( x, z ) = comp
+            val player = Devonian.minecraft.player ?: return@subcommand 0
+            val comp = WorldPosition(player.x.toInt(), player.z.toInt()).toComponent()
+            val room = rooms.getOrNull(comp.getRoomIdx()) ?: return@subcommand 0
+            for (comp in room.comps) {
+                val x = comp.wx
+                val z = comp.wz
                 ChatUtils.sendMessage("hash: ${hashCeil(x, z, true)}")
             }
             1
@@ -248,18 +209,12 @@ object DungeonScanner {
         }.string("name")
     }
 
-    fun getRoomIdx(cx: Int, cz: Int): Int {
-        return 6 * cz + cx
-    }
-
-    fun getRoomIdx(cx: Double, cz: Double) = getRoomIdx(cx.toInt(), cz.toInt())
-
     fun mergeRooms(room1: DungeonRoom, room2: DungeonRoom) {
         for (comp in room2.comps) {
-            if (!room1.hasComponent(comp[0], comp[1]))
-                room1.addComponent(comp, false)
+            val c = comp.toComponent()
+            room1.addComponent(c, false)
 
-            addRoom(getRoomIdx(comp[0], comp[1]), room1)
+            addRoom(c, room1)
         }
 
         room1.update()
@@ -267,64 +222,34 @@ object DungeonScanner {
         room2.doors.forEach { it.rooms.remove(room2) }
     }
 
-    fun getDoorIdx(x: Int, z: Int): Int {
-        if (x !in 0..10 || z !in 0..10) return -1
-        val idx = ((x - 1) shr 1) + 6 * z
-        return idx - (idx / 12)
-    }
-
-    fun getDoorIdx(x: Double, z: Double) = getDoorIdx(x.toInt(), z.toInt())
-
     fun addDoor(door: DungeonDoor) {
-        val cx = door.comps[2].toInt()
-        val cz = door.comps[3].toInt()
-        val idx = getDoorIdx(cx, cz)
+        val comp = door.comp.toComponent()
+        val idx = comp.getDoorIdx()
         if (idx !in 0 .. 59) return
 
         doors[idx] = door
-        rooms.getOrNull(getRoomIdx(door.roomComp1.first, door.roomComp1.second))?.also {
-            it.doors.add(door)
-            door.rooms.add(it)
-        }
-        rooms.getOrNull(getRoomIdx(door.roomComp2.first, door.roomComp2.second))?.also {
-            it.doors.add(door)
-            door.rooms.add(it)
+        comp.getNeighboringRooms().forEach {
+            rooms.getOrNull(it.getRoomIdx())?.also {
+                it.doors.add(door)
+                door.rooms.add(it)
+            }
         }
     }
 
-    fun addRoom(idx: Int, room: DungeonRoom) {
-        if (idx >= rooms.size) return
+    fun addRoom(comp: ComponentPosition, room: DungeonRoom) {
+        val idx = comp.getRoomIdx()
+        if (idx !in 0 .. 35) return
         rooms[idx] = room
 
-        val cx = (idx % 6) shl 1
-        val cz = (idx / 6) shl 1
-        doors.getOrNull(getDoorIdx(cx + 0, cz - 1))?.also {
-            it.rooms.add(room)
-            room.doors.add(it)
-        }
-        doors.getOrNull(getDoorIdx(cx + 0, cz + 1))?.also {
-            it.rooms.add(room)
-            room.doors.add(it)
-        }
-        doors.getOrNull(getDoorIdx(cx - 1, cz + 0))?.also {
-            it.rooms.add(room)
-            room.doors.add(it)
-        }
-        doors.getOrNull(getDoorIdx(cx + 1, cz + 0))?.also {
-            it.rooms.add(room)
-            room.doors.add(it)
+        comp.getNeighboringDoors().forEach {
+            doors.getOrNull(it.getDoorIdx())?.also {
+                it.rooms.add(room)
+                room.doors.add(it)
+            }
         }
     }
 
-    fun getRoomAt(x: Double, z: Double): DungeonRoom? {
-        val ( dx, dz ) = toComponent(x, z)
-        val idx = getRoomIdx(dx, dz)
-        if (idx !in 0 .. 35) return null
-
-        return rooms[idx]
-    }
-
-    internal fun reset() {
+    fun reset() {
         rooms.fill(null)
         doors.fill(null)
         lastIdx = null
@@ -332,78 +257,74 @@ object DungeonScanner {
         availablePos = findAvailablePos()
     }
 
-    internal fun scan() {
+    fun scan() {
         if (availablePos.isEmpty()) return
 
         val startLen = availablePos.size
         availablePos.reversed().forEachIndexed { idx, pos ->
-            var ( x, z, rx, rz ) = pos
-            if (!WorldUtils.isChunkLoaded(rx, rz)) return@forEachIndexed
+            val (wx, wz, cx, cz) = pos
+            val comp = pos.toComponent()
+            if (!WorldUtils.isChunkLoaded(wx, wz)) return@forEachIndexed
 
             availablePos.remove(pos)
 
-            val roofHeight = getHighestY(rx, rz) ?: return@forEachIndexed
+            val roofHeight = getHighestY(wx, wz)
+            if (roofHeight < 0) return@forEachIndexed
 
             // Door scan
-            if (x % 2 == 1.0 || z % 2 == 1.0) {
-                if (roofHeight != 0.0 && roofHeight < 85) {
-                    val door = DungeonDoor(mutableListOf(rx, rz, x, z))
-                    if (z % 2 == 1.0) door.rotation = 0
+            if (comp.isValidDoor()) {
+                if (roofHeight != 0 && roofHeight < 85) {
+                    val door = DungeonDoor(pos)
+                    if (cz % 2 == 1) door.rotation = 0
 
                     addDoor(door)
                 }
                 return@forEachIndexed
             }
-            if (roofHeight <= 0.0) return@forEachIndexed
+            if (roofHeight <= 0) return@forEachIndexed
 
-            x /= 2.0
-            z /= 2.0
-
-            val cdx = getRoomIdx(x, z)
-            var room = DungeonRoom(mutableListOf(mutableListOf(x, z)), roofHeight).scan()
+            var room = DungeonRoom(mutableListOf(pos), roofHeight).scan()
             if (room.type == RoomTypes.ENTRANCE) {
                 room.explored = true
                 room.checkmark = CheckmarkTypes.NONE
             }
-            addRoom(cdx, room)
+            addRoom(comp, room)
 
-            for (dir in directions) {
-                val ( dx0, dz0, dx1, dz1 ) = dir
-                val nx0 = rx + dx0
-                val nz0 = rz + dz0
+            comp.getNeighbors().forEach { (posRoom, posDoor) ->
+                val worldPos = posDoor.withWorld()
+                val nx0 = worldPos.wx
+                val nz0 = worldPos.wz
 
-                val heightBlock = WorldUtils.getBlockState(nx0, roofHeight, nz0) ?: continue
-                val aboveHeightBlock = WorldUtils.getBlockState(nx0, roofHeight + 1.0, nz0) ?: continue
+                val heightBlock = WorldUtils.getBlockState(nx0, roofHeight, nz0) ?: return@forEach
+                val aboveHeightBlock = WorldUtils.getBlockState(nx0, roofHeight + 1, nz0) ?: return@forEach
                 val heightBlockId = WorldUtils.getBlockId(heightBlock.block)
                 val aboveHeightId = WorldUtils.getBlockId(aboveHeightBlock.block)
 
                 if (room.type == RoomTypes.ENTRANCE && heightBlockId != 0) {
-                    val block1Id = WorldUtils.getBlockState(nx0, 76.0, nz0) ?: continue
-                    if (block1Id.isAir) continue
-                    val ( doorx, doorz ) = listOf(x * 2 + dx1, z * 2 + dz1)
-                    val doorIdx = getDoorIdx(doorx, doorz)
-                    if (doorIdx in 0..60) {
-                        val door = DungeonDoor(mutableListOf(nx0, nz0, doorx, doorz))
+                    val block1Id = WorldUtils.getBlockState(nx0, 76, nz0) ?: return@forEach
+                    if (block1Id.isAir) return@forEach
+                    val doorIdx = posDoor.getDoorIdx()
+                    if (doorIdx in 0 .. 60) {
+                        val door = DungeonDoor(worldPos)
                         door.type = DoorTypes.ENTRANCE
                         addDoor(door)
                     }
-                    continue
+                    return@forEach
                 }
 
-                if (heightBlockId == 0 || aboveHeightId != 0) continue
+                if (heightBlockId == 0 || aboveHeightId != 0) return@forEach
 
-                val ( newX, newZ ) = listOf(x + dx1, z + dz1)
-                val ndx = getRoomIdx(newX, newZ)
-                if (ndx !in 0 .. 35) continue
+                val ndx = posRoom.getRoomIdx()
+                if (ndx !in 0 .. 35) return@forEach
 
                 val nroom = rooms[ndx]
                 if (nroom == null) {
-                    room.addComponent(newX, newZ)
-                    addRoom(ndx, room)
-                    continue
+                    room.addComponent(posRoom)
+                    addRoom(posRoom, room)
+                    return@forEach
                 }
 
-                if (nroom.type == RoomTypes.ENTRANCE || nroom == room) continue
+                if (nroom.type == RoomTypes.ENTRANCE || nroom == room) return@forEach
 
                 mergeRooms(nroom, room)
                 room = nroom

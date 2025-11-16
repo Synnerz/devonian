@@ -143,10 +143,10 @@ class DungeonMapBaseRenderer :
             if (!room.explored && !options.renderUnknownRooms) {
                 shape = ShapeTypes.Shape1x1
                 cells = room.comps.filter {
-                    val cx = it[0] * 2
-                    val cz = it[1] * 2
+                    val cx = it.cx
+                    val cz = it.cz
                     room.doors.any {
-                        abs(cx - it.comps[2]) + abs(cz - it.comps[3]) == 1.0 &&
+                        abs(cx - it.comp.cx) + abs(cz - it.comp.cz) == 1 &&
                         it.rooms.any { it.explored }
                     }
                 }
@@ -169,35 +169,35 @@ class DungeonMapBaseRenderer :
                 ShapeTypes.Unknown -> return@forEach
                 ShapeTypes.ShapeL -> {
                     for (i in cells.indices) {
-                        val cx = cells[i][0].toInt()
-                        val cz = cells[i][1].toInt()
+                        val cx = cells[i].cx / 2
+                        val cz = cells[i].cz / 2
                         drawRoom(cx, cz, 1, 1)
                         for (j in i until cells.size) {
-                            val cx2 = cells[j][0].toInt()
-                            val cz2 = cells[j][1].toInt()
+                            val cx2 = cells[j].cx / 2
+                            val cz2 = cells[j].cz / 2
                             if (abs(cx - cx2) + abs(cz - cz2) == 1) drawRoomJoined(cx, cz, cx2, cz2)
                         }
                     }
                 }
 
-                ShapeTypes.Shape1x1 -> drawRoom(cells[0][0].toInt(), cells[0][1].toInt(), 1, 1)
+                ShapeTypes.Shape1x1 -> drawRoom(cells[0].cx / 2, cells[0].cz / 2, 1, 1)
                 ShapeTypes.Shape1x2,
                 ShapeTypes.Shape1x3,
                 ShapeTypes.Shape1x4
                     -> {
-                    val roomCorner = cells.minBy { it[0] + it[1] }
-                    val cx1 = cells[0][0].toInt()
-                    val cx2 = cells[1][0].toInt()
+                    val roomCorner = cells.minBy { it.cx + it.cz }
+                    val cx1 = cells[0].cx
+                    val cx2 = cells[1].cx
                     drawRoom(
-                        roomCorner[0].toInt(), roomCorner[1].toInt(),
+                        roomCorner.cx / 2, roomCorner.cz / 2,
                         if (cx1 == cx2) 1 else cells.size,
                         if (cx1 == cx2) cells.size else 1
                     )
                 }
 
                 ShapeTypes.Shape2x2 -> {
-                    val roomCorner = cells.minBy { it[0] + it[1] }
-                    drawRoom(roomCorner[0].toInt(), roomCorner[1].toInt(), 2, 2)
+                    val roomCorner = cells.minBy { it.cx + it.cz }
+                    drawRoom(roomCorner.cx / 2, roomCorner.cz / 2, 2, 2)
                 }
             }
 
@@ -248,24 +248,24 @@ class DungeonMapBaseRenderer :
 
             val center = when (options.roomInfoAlignment) {
                 DungeonMapRoomInfoAlignment.TopLeft
-                    -> cells.minBy { +it[0] + it[1] }.let { Pair(it[0] + 0.5, it[1] + 0.5) }
+                    -> cells.minBy { +it.cx + it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
                 DungeonMapRoomInfoAlignment.TopRight
-                    -> cells.minBy { -it[0] + it[1] }.let { Pair(it[0] + 0.5, it[1] + 0.5) }
+                    -> cells.minBy { -it.cx + it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
                 DungeonMapRoomInfoAlignment.BottomLeft
-                    -> cells.minBy { +it[0] - it[1] }.let { Pair(it[0] + 0.5, it[1] + 0.5) }
+                    -> cells.minBy { +it.cx - it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
                 DungeonMapRoomInfoAlignment.BottomRight
-                    -> cells.minBy { -it[0] - it[1] }.let { Pair(it[0] + 0.5, it[1] + 0.5) }
+                    -> cells.minBy { -it.cx - it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
                 DungeonMapRoomInfoAlignment.Center -> {
                     if (shape == ShapeTypes.ShapeL) {
-                        val sorted = cells.sortedBy { it[0] + it[1] * 10.0 }
+                        val sorted = cells.sortedBy { it.cx + it.cz * 11 }
                         val idx =
-                            if (sorted[0][0] > sorted[1][0]) 2
-                            else if (sorted[0][0] == sorted[2][0]) 0
+                            if (sorted[0].cx > sorted[1].cx) 2
+                            else if (sorted[0].cx == sorted[2].cx) 0
                             else 1
-                        Pair(sorted[idx][0] + 0.5, sorted[idx][1] + 0.5)
+                        Pair(sorted[idx].cx / 2 + 0.5, sorted[idx].cz / 2 + 0.5)
                     } else Pair(
-                        cells.sumOf { it[0] } / cells.size + 0.5,
-                        cells.sumOf { it[1] } / cells.size + 0.5
+                        cells.sumOf { it.cx / 2.0 } / cells.size + 0.5,
+                        cells.sumOf { it.cz / 2.0 } / cells.size + 0.5
                     )
                 }
             }
@@ -426,10 +426,10 @@ class DungeonMapBaseRenderer :
 
             g.paint = color
             drawDoor(
-                door.roomComp1.first,
-                door.roomComp1.second,
-                door.roomComp2.first,
-                door.roomComp2.second
+                door.roomComp1.x,
+                door.roomComp1.z,
+                door.roomComp2.x,
+                door.roomComp2.z,
             )
         }
 

@@ -89,8 +89,8 @@ object DungeonMapScanner {
     private fun updatePlayerData() {
         playerIcons.forEach { (k, v) ->
             val worldData = playersInWorld.find { it.name == k } ?: return@forEach
-            worldData.iconX = clamp(v.x / 2 - corners[0], 0, roomSize * 6 + 20, 0, DungeonScanner.defaultMapSize[0])
-            worldData.iconZ = clamp(v.z / 2 - corners[1], 0, roomSize * 6 + 20, 0, DungeonScanner.defaultMapSize[1])
+            worldData.iconX = clamp(v.x / 2 - corners[0], 0, roomSize * 6 + 20, 0, DungeonScanner.defaultMapSize.x)
+            worldData.iconZ = clamp(v.z / 2 - corners[1], 0, roomSize * 6 + 20, 0, DungeonScanner.defaultMapSize.z)
             worldData.worldX = clamp(worldData.iconX, 0, 125, -200, -10)
             worldData.worldZ = clamp(worldData.iconZ, 0, 125, -200, -10)
             worldData.rotation = v.rotation
@@ -101,8 +101,8 @@ object DungeonMapScanner {
         if (x !in -200..-10 || z !in -200..-10) return
 
         data.inRender = true
-        data.iconX = clamp(x, -200, -10, 0, DungeonScanner.defaultMapSize[0])
-        data.iconZ = clamp(z, -200, -10, 0, DungeonScanner.defaultMapSize[1])
+        data.iconX = clamp(x, -200, -10, 0, DungeonScanner.defaultMapSize.x)
+        data.iconZ = clamp(z, -200, -10, 0, DungeonScanner.defaultMapSize.z)
         data.worldX = x
         data.worldZ = z
         data.rotation = (yaw + 180f).toInt()
@@ -151,11 +151,11 @@ object DungeonMapScanner {
             for (room in DungeonScanner.rooms) {
                 if (room == null || room.comps.isEmpty()) continue
                 val leftMost = room.comps.firstOrNull() ?: continue
-                val x = leftMost[0]
-                val z = leftMost[1]
+                val x = leftMost.cx / 2
+                val z = leftMost.cz / 2
 
-                val mapX = corners[0] + roomSize / 2 + gapSize * x.toInt()
-                val mapZ = corners[1] + roomSize / 2 + 1 + gapSize * z.toInt()
+                val mapX = corners[0] + roomSize / 2 + gapSize * x
+                val mapZ = corners[1] + roomSize / 2 + 1 + gapSize * z
                 val idx = mapX + mapZ * 128
                 if (idx - 1 > COLOR_SIZE) continue
 

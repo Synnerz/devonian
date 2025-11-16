@@ -4,23 +4,23 @@ import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import net.minecraft.block.Blocks
 
-class DungeonDoor(var comps: MutableList<Double>) {
+class DungeonDoor(val comp: WorldComponentPosition) {
     var rotation: Int = -1
     var opened = false
     var type: DoorTypes = DoorTypes.NORMAL
     val rooms = mutableSetOf<DungeonRoom>()
-    val roomComp1: Pair<Int, Int>
-    val roomComp2: Pair<Int, Int>
+    val roomComp1: ComponentPosition
+    val roomComp2: ComponentPosition
 
     init {
-        val cx = comps[2].toInt()
-        val cz = comps[3].toInt()
+        val cx = comp.cx
+        val cz = comp.cz
         if ((cx and 1) == 1) {
-            roomComp1 = Pair((cx - 1) shr 1, cz shr 1)
-            roomComp2 = Pair((cx + 1) shr 1, cz shr 1)
+            roomComp1 = ComponentPosition((cx - 1) shr 1, cz shr 1)
+            roomComp2 = ComponentPosition((cx + 1) shr 1, cz shr 1)
         } else {
-            roomComp1 = Pair(cx shr 1, (cz - 1) shr 1)
-            roomComp2 = Pair(cx shr 1, (cz + 1) shr 1)
+            roomComp1 = ComponentPosition(cx shr 1, (cz - 1) shr 1)
+            roomComp2 = ComponentPosition(cx shr 1, (cz + 1) shr 1)
         }
     }
 
@@ -30,11 +30,11 @@ class DungeonDoor(var comps: MutableList<Double>) {
 
     fun check() {
         if (opened) return
-        val x = comps[0]
-        val z = comps[1]
+        val x = comp.wx
+        val z = comp.wz
         if (!WorldUtils.isChunkLoaded(x, z)) return
 
-        val blockId = WorldUtils.getBlockState(x, 69.0, z) ?: return
+        val blockId = WorldUtils.getBlockState(x, 69, z) ?: return
 
         opened = blockId.isAir || blockId.block == Blocks.BARRIER
 
