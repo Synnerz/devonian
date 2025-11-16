@@ -52,8 +52,13 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
     fun update(w: Int, h: Int, param: T) {
         lastFuture?.cancel(false)
         lastFuture = pool.submit {
-            val img = bimgProvider.create(w, h)
-            dirtyImage.value = drawImage(img, param)
+            try {
+                val img = bimgProvider.create(w, h)
+                dirtyImage.value = drawImage(img, param)
+            } catch (e: Exception) {
+                println("error trying to render BufferedImage in $name")
+                e.printStackTrace()
+            }
         }
     }
 
