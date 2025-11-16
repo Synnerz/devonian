@@ -65,6 +65,7 @@ object LegacyRegistry {
         "minecraft:rail" to 66,
         "minecraft:cobblestone_stairs" to 67,
         "minecraft:stone_button" to 77,
+        "minecraft:ice" to 79,
         "minecraft:oak_fence" to 85,
         "minecraft:glowstone" to 89,
         "minecraft:black_stained_glass" to 95,
