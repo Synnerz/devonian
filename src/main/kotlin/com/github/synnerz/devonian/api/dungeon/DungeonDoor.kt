@@ -8,7 +8,7 @@ class DungeonDoor(var comps: MutableList<Double>) {
     var rotation: Int = -1
     var opened = false
     var type: DoorTypes = DoorTypes.NORMAL
-    val rooms = mutableListOf<DungeonRoom>()
+    val rooms = mutableSetOf<DungeonRoom>()
 
     init {
         if (comps[0] != 0.0 && comps[1] != 0.0)
