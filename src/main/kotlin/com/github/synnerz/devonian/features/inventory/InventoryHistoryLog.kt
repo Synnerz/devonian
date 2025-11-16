@@ -4,6 +4,11 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import net.minecraft.text.Style
+import net.minecraft.text.Text
+import net.minecraft.text.TextColor
+import net.minecraft.util.Formatting
+import java.util.Optional
 import kotlin.math.abs
 
 object InventoryHistoryLog : TextHudFeature(
@@ -41,7 +46,7 @@ object InventoryHistoryLog : TextHudFeature(
                 // if (i == PlayerInventory.OFF_HAND_SLOT) return@forEachIndexed
                 if (v.isEmpty) return@forEachIndexed
 
-                val name = v.name.string
+                val name = v.customName?.format() ?: v.name.string
                 val count = v.count
                 newInv.merge(name, count, Int::plus)
                 inventory?.merge(name, -count, Int::plus)
@@ -66,4 +71,42 @@ object InventoryHistoryLog : TextHudFeature(
     }
 
     override fun getEditText(): List<String> = listOf("&c-100&r &eSocial Credit")
+
+    private val colorToFormat = Formatting.entries.mapNotNull { format ->
+        TextColor.fromFormatting(format)?.let { it to format }
+    }.toMap()
+
+    private fun parseStyle(style: Style): String = buildString {
+        append("§r")
+
+        style.color?.let(colorToFormat::get)?.run(::append)
+
+        when {
+            style.isBold -> append("§l")
+            style.isItalic -> append("§o")
+            style.isUnderlined -> append("§n")
+            style.isStrikethrough -> append("§m")
+            style.isObfuscated -> append("§k")
+        }
+    }
+
+    private fun parseFormat(_text: Text): String {
+        var str = ""
+
+        _text.content.visit({ style, text ->
+            val styleFormat = parseStyle(style)
+            str += "${styleFormat}$text"
+            Optional.empty<Any>()
+        }, _text.style)
+
+        return str
+    }
+
+    private fun Text.format(): String {
+        var str = parseFormat(this)
+
+        str += this.siblings.joinToString("", transform = ::parseFormat)
+
+        return str
+    }
 }
