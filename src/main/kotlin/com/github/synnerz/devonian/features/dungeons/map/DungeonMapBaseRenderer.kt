@@ -216,12 +216,20 @@ class DungeonMapBaseRenderer :
                 (options.puzzleName || room.type != RoomTypes.PUZZLE)
             ) room.name?.also { name ->
                 if (options.colorRoomName) {
-                    val colorCode = when (room.checkmark) {
-                        CheckmarkTypes.FAILED -> "&c"
-                        CheckmarkTypes.GREEN -> "&a"
-                        CheckmarkTypes.WHITE,
-                        CheckmarkTypes.UNEXPLORED -> "&f"
-                        CheckmarkTypes.NONE -> "&7"
+                    val colorCode = when (room.type) {
+                        RoomTypes.ENTRANCE,
+                        RoomTypes.FAIRY,
+                        RoomTypes.BLOOD
+                            -> "&f"
+
+                        else -> when (room.checkmark) {
+                            CheckmarkTypes.FAILED -> "&c"
+                            CheckmarkTypes.GREEN -> "&a"
+                            CheckmarkTypes.WHITE,
+                            CheckmarkTypes.UNEXPLORED -> "&f"
+
+                            CheckmarkTypes.NONE -> "&7"
+                        }
                     }
                     name.replace("\u200B", "- ").split(" ").forEach { text.add("$colorCode$it")}
                 } else text.add(name)
