@@ -262,6 +262,8 @@ object DungeonScanner {
         }
 
         room1.update()
+
+        room2.doors.forEach { it.rooms.remove(room2) }
     }
 
     fun getDoorIdx(x: Int, z: Int): Int {
@@ -341,7 +343,7 @@ object DungeonScanner {
 
             // Door scan
             if (x % 2 == 1.0 || z % 2 == 1.0) {
-                if (roofHeight < 85) {
+                if (roofHeight != 0.0 && roofHeight < 85) {
                     val door = DungeonDoor(mutableListOf(rx, rz, x, z))
                     if (z % 2 == 1.0) door.rotation = 0
 
