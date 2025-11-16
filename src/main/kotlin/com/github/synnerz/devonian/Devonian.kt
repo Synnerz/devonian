@@ -14,6 +14,7 @@ import com.github.synnerz.devonian.features.diana.BurrowWaypoint
 import com.github.synnerz.devonian.features.diana.DianaDropTracker
 import com.github.synnerz.devonian.features.diana.DianaMobTracker
 import com.github.synnerz.devonian.features.dungeons.*
+import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
 import com.github.synnerz.devonian.features.garden.PestsDisplay
@@ -94,7 +95,8 @@ object Devonian : ClientModInitializer {
         DianaDropTracker,
         EtherwarpSound,
         InventoryHistoryLog,
-        HudManagerInstructions
+        HudManagerInstructions,
+        DungeonMap
     )
 
     override fun onInitializeClient() {
