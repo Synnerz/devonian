@@ -51,7 +51,8 @@ class DungeonMapBaseRenderer :
         val colors = options.colors
 
         fun colorForRoom(room: DungeonRoom): Color? {
-            var col = when (room.type) {
+            var col = if (!options.renderUnknownRooms && !room.explored) colors[DungeonMapColors.RoomUnknown]
+            else when (room.type) {
                 RoomTypes.ENTRANCE -> colors[DungeonMapColors.RoomEntrance]
                 RoomTypes.NORMAL -> when (room.clear) {
                     ClearTypes.MOB,
@@ -385,13 +386,16 @@ class DungeonMapBaseRenderer :
 
         doors.forEach { door ->
             if (door == null) return@forEach
+            if (!options.renderUnknownRooms && door.rooms.all { !it.explored }) return@forEach
             val color = when (door.type) {
                 DoorTypes.ENTRANCE -> colors[DungeonMapColors.DoorEntrance]
                 DoorTypes.WITHER -> colors[DungeonMapColors.DoorWither]
                 DoorTypes.BLOOD -> colors[DungeonMapColors.DoorBlood]
                 DoorTypes.NORMAL -> {
                     if (!door.opened) return@forEach
-                    val room = door.rooms.minByOrNull { it.type.prio } ?: return@forEach
+                    val room = door.rooms.minByOrNull {
+                        it.type.prio - (if (!it.explored && !options.renderUnknownRooms) 100 else 0)
+                    } ?: return@forEach
                     colorForRoom(room)
                 }
             } ?: colors[DungeonMapColors.RoomNormal] ?: return@forEach
