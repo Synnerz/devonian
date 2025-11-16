@@ -274,8 +274,11 @@ class TextHud(val name: String, private val data: DataProvider) : ITextHud, Data
             Instances.add(listener)
         }
 
-        private var fontMainBase: Font = MOJANGLES
-        private var fontMainName = "Mojangles"
+        var fontMainBase: Font = MOJANGLES
+            private set
+        var fontMainName = "Mojangles"
+            private set
+
         fun setActiveFont(fontName: String) {
             if (fontName == fontMainName) return
             val font = Fonts[fontName] ?: return
