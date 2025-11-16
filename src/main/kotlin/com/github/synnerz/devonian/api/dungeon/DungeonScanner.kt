@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.SubAreaEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.Gson
 import net.minecraft.block.BlockState
@@ -397,5 +398,6 @@ object DungeonScanner {
                 mergeRooms(nroom, room)
             }
         }
+        DungeonMap.redrawMap(rooms.toList(), doors.toList())
     }
 }
