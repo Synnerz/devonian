@@ -204,7 +204,7 @@ object DungeonScanner {
 
             if (lastIdx == jdx) return@on
             lastIdx = jdx
-            currentRoom = rooms[jdx]
+            currentRoom = rooms.getOrNull(jdx)
             // TODO: remove whenever done debugging
             ChatUtils.sendMessage("$currentRoom")
         }, false)
@@ -292,6 +292,7 @@ object DungeonScanner {
     }
 
     fun addRoom(idx: Int, room: DungeonRoom) {
+        if (idx >= rooms.size) return
         rooms[idx] = room
 
         val cx = (idx % 6) shl 1
