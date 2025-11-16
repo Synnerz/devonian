@@ -85,7 +85,8 @@ open class Feature @JvmOverloads constructor(
     }
 
     open fun onToggle(state: Boolean) {
-        if (configComp == null) configComp = _category.elements[configName] as UISwitch?
+        if (configComp == null && ::_category.isInitialized)
+            configComp = _category.elements[configName] as UISwitch?
 
         configComp?.state = state
 
