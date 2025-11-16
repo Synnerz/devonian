@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.inventory
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -32,6 +33,7 @@ object InventoryHistoryLog : TextHudFeature(
 
     val receipt = linkedMapOf<ItemizedDifference.Key, ItemizedDifference>()
     var inventory: MutableMap<String, Int>? = null
+    var worldSwap = false
 
     override fun initialize() {
         on<TickEvent> {
@@ -40,10 +42,10 @@ object InventoryHistoryLog : TextHudFeature(
             if (minecraft.currentScreen != null) return@on
 
             val inv = minecraft.player?.inventory ?: return@on
+            if (worldSwap) return@on
 
             val newInv = mutableMapOf<String, Int>()
             inv.forEachIndexed { i, v ->
-                // if (i == PlayerInventory.OFF_HAND_SLOT) return@forEachIndexed
                 if (v.isEmpty) return@forEachIndexed
 
                 val name = v.customName?.format() ?: v.name.string
@@ -67,7 +69,10 @@ object InventoryHistoryLog : TextHudFeature(
             draw(event.ctx)
         }
 
-        on<WorldChangeEvent> { inventory = null }
+        on<WorldChangeEvent> {
+            worldSwap = true
+            Scheduler.scheduleTask(20) { worldSwap = false }
+        }
     }
 
     override fun getEditText(): List<String> = listOf("&c-100&r &eSocial Credit")
