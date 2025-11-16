@@ -129,6 +129,7 @@ class DungeonMapBaseRenderer :
 
         rooms.forEach { room ->
             if (room == null) return@forEach
+            if (room.doors.size == 0) return@forEach
             val color = colorForRoom(room) ?: colors[DungeonMapColors.RoomNormal] ?: Color(0)
             var shape = room.shape
             if (shape == ShapeTypes.Unknown) return@forEach
