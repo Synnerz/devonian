@@ -46,6 +46,7 @@ object InventoryHistoryLog : TextHudFeature(
 
             val newInv = mutableMapOf<String, Int>()
             inv.forEachIndexed { i, v ->
+                if (i == 8) return@forEachIndexed
                 if (v.isEmpty) return@forEachIndexed
 
                 val name = v.customName?.format() ?: v.name.string
