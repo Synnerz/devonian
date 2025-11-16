@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.JsonUtils
+import com.github.synnerz.devonian.utils.TextRendererImpl.TextRenderParams
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.client.gui.DrawContext
 import java.awt.Font
@@ -77,7 +78,7 @@ class TextHud(val name: String, private val data: DataProvider) : ITextHud, Data
     private var fontMono: Font? = null
     private var fontBack: Font? = null
     private var lastImageParams =
-        TextRenderer.TextRenderParams(
+        TextRenderParams(
             align, shadow, backdrop, fontSize,
             fontMainBase, emptyList(), 0f
         )
@@ -126,7 +127,7 @@ class TextHud(val name: String, private val data: DataProvider) : ITextHud, Data
 
         g?.dispose()
 
-        val currentParams = TextRenderer.TextRenderParams(
+        val currentParams = TextRenderParams(
             align,
             shadow,
             backdrop,
