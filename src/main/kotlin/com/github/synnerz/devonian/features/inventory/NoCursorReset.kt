@@ -5,7 +5,10 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
 
-object NoCursorReset : Feature("noCursorReset") {
+object NoCursorReset : Feature(
+    "noCursorReset",
+    "Avoids resetting your cursor whenever entering certain guis"
+) {
     var windowOpened: Long? = null
     var windowClosed: Long? = null
 

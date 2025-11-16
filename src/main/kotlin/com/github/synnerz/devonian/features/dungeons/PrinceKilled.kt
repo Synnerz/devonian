@@ -5,7 +5,12 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 
-object PrinceKilled : Feature("princeKilled", "catacombs") {
+object PrinceKilled : Feature(
+    "princeKilled",
+    "Announces whenever you killed a prince",
+    "Dungeons",
+    "catacombs"
+) {
     private val princeRegex = "^A Prince falls\\. \\+1 Bonus Score$".toRegex()
     private var messageSent = false
 

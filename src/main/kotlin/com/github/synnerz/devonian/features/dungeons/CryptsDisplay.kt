@@ -5,7 +5,12 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object CryptsDisplay : TextHudFeature("cryptsDisplay", "catacombs") {
+object CryptsDisplay : TextHudFeature(
+    "cryptsDisplay",
+    "Displays the current amount of Crypts killed.",
+    "Dungeons",
+    "catacombs"
+) {
     private val cryptsRegex = "^ Crypts: (\\d+)$".toRegex()
     private var cryptsCount = 0
 

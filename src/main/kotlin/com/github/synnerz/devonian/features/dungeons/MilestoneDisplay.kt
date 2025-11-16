@@ -5,7 +5,12 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object MilestoneDisplay : TextHudFeature("milestoneDisplay", "catacombs") {
+object MilestoneDisplay : TextHudFeature(
+    "milestoneDisplay",
+    "Displays your current Milestone.",
+    "Dungeons",
+    "catacombs"
+) {
     private val milestoneRegex = "^ Your Milestone: .(.)\$".toRegex()
     private val milestonSymbols = mutableListOf("⓿", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾")
     private var milestoneCount = 0

@@ -15,10 +15,12 @@ import kotlin.math.withSign
 
 abstract class HudFeature(
     configName: String,
+    description: String,
+    category: String,
     area: String? = null,
     subarea: String? = null,
     protected val legacyName: String = configName[0].uppercase() + configName.substring(1)
-) : Feature(configName, area, subarea) {
+) : Feature(configName, description, category, area, subarea) {
     var x = 10.0
     var y = 10.0
     var scale = 1f

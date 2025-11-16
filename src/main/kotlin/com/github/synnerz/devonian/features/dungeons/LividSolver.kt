@@ -8,7 +8,12 @@ import net.minecraft.block.Blocks
 import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket
 import java.awt.Color
 
-object LividSolver : Feature("lividSolver", "catacombs") {
+object LividSolver : Feature(
+    "lividSolver",
+    "Highlights the correct livid in F5/M5",
+    "Dungeons",
+    "catacombs"
+) {
     private val lividStartRegex = "^\\[BOSS] Livid: Welcome, you've arrived right on time\\. I am Livid, the Master of Shadows\\.$".toRegex()
     private val lividSpawnedRegex = "^\\[BOSS] Livid: I respect you for making it to here, but I'll be your undoing\\.$".toRegex()
     private val mapBlocks = mapOf(

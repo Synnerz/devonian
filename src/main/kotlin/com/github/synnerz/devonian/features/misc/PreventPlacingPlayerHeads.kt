@@ -5,7 +5,10 @@ import com.github.synnerz.devonian.api.events.BlockInteractEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.item.Items
 
-object PreventPlacingPlayerHeads : Feature("preventPlacingPlayerHeads") {
+object PreventPlacingPlayerHeads : Feature(
+    "preventPlacingPlayerHeads",
+    "Stops Player Heads from being placeable."
+) {
     override fun initialize() {
         on<BlockInteractEvent> { event ->
             if (minecraft.world?.getBlockState(event.pos) == null) return@on

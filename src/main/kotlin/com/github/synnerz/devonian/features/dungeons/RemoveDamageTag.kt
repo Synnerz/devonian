@@ -7,7 +7,12 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket
 
-object RemoveDamageTag : Feature("removeDamageTag", "catacombs") {
+object RemoveDamageTag : Feature(
+    "removeDamageTag",
+    "Removes the damage tags created by you or others.",
+    "Dungeons",
+    "catacombs"
+) {
     private var damageTagRegex = "^.?\\d[\\d,.]+.*?\$".toRegex()
 
     override fun initialize() {

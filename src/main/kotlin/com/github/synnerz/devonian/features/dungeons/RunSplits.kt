@@ -6,7 +6,12 @@ import com.github.synnerz.devonian.api.splits.TimerSplit
 import com.github.synnerz.devonian.api.splits.TimerSplitData
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object RunSplits : TextHudFeature("runSplits", "catacombs") {
+object RunSplits : TextHudFeature(
+    "runSplits",
+    "Displays how long your party has take to complete Blood Rush, Blood Open & Boss Enter",
+    "Dungeons",
+    "catacombs"
+) {
     private val mortStartRegex = "^\\[NPC] Mort: Here, I found this map when I first entered the dungeon\\.\$".toRegex()
     private val bloodOpenedRegex = "^\\[BOSS] The Watcher: (.+)\$".toRegex()
     private val bloodDoneRegex = "^\\[BOSS] The Watcher: You have proven yourself\\. You may pass\\.$".toRegex()

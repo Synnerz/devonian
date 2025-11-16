@@ -8,7 +8,12 @@ import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
 
-object DungeonBreakerCharges : TextHudFeature("dungeonBreakerDisplay", "catacombs") {
+object DungeonBreakerCharges : TextHudFeature(
+    "dungeonBreakerDisplay",
+    "Displays the amount of charges left",
+    "Dungeons",
+    "catacombs"
+) {
     var colorCode = "&6"
     var charges = 20
     var displayStr = "&aCharges&f: ${colorCode}${charges}"

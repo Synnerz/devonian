@@ -14,7 +14,12 @@ import net.minecraft.registry.Registries
 import net.minecraft.util.math.BlockPos
 import java.awt.Color
 
-object SecretsClickedBox : Feature("secretsClickedBox", "catacombs") {
+object SecretsClickedBox : Feature(
+    "secretsClickedBox",
+    "Highlights the secrets you have clicked surrounding them with a box, if a chest secret for example is locked the color will change to red.",
+    "Dungeons",
+    "catacombs"
+) {
     private val skullIds = listOf("e0f3e929-869e-3dca-9504-54c666ee6f23", "fed95410-aba1-39df-9b95-1d4f361eb66e")
     private val allowedBlocks = listOf("minecraft:chest", "minecraft:lever", "minecraft:trapped_chest")
     private val lockedChestRegex = "^That chest is locked!$".toRegex()

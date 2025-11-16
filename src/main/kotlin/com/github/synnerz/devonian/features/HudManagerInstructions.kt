@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features
 
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object HudManagerInstructions : TextHudFeature("hudManagerInstructions") {
+object HudManagerInstructions : TextHudFeature("hudManagerInstructions", "", "") {
     override fun getEditText(): List<String> = listOf(
         "&lLeft Click&r to select an element.",
         "&lRight Click&r to toggle an element.",

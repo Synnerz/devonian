@@ -5,7 +5,12 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object PestsDisplay : TextHudFeature("pestsDisplay", "garden") {
+object PestsDisplay : TextHudFeature(
+    "pestsDisplay",
+    "Displays all your Garden's current Pests stats.",
+    "Garden",
+    "garden"
+) {
     private val pestsAliveRegex = "^ Alive: ([\\d,.]+)$".toRegex()
     private val infestedPlotsRegex = "^ Plots: ([\\d, ]+)$".toRegex()
     private val bonusFortuneRegex = "^ Bonus: ([\\w+☘]+) ?([\\dms ]+)?$".toRegex()

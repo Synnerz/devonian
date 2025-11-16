@@ -7,7 +7,12 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import kotlin.math.min
 
-object GolemLootQuality : Feature("golemLootQuality", "the end") {
+object GolemLootQuality : Feature(
+    "golemLootQuality",
+    "Shows your loot quality for the Golem and whether you could roll for a Tier Booster Core/Legendary Golem Pet/Epic Golem Pet",
+    "end",
+    "the end"
+) {
     private val positionQuality = listOf(
         200,
         175,

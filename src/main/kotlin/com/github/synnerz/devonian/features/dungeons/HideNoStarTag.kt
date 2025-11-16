@@ -7,7 +7,12 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket
 
-object HideNoStarTag : Feature("hideNoStarTag", "catacombs") {
+object HideNoStarTag : Feature(
+    "hideNoStarTag",
+    "Hides name tag of mobs that do not have star in their name tag",
+    "Dungeons",
+    "catacombs"
+) {
     private val blazeHealthRegex = "^\\[Lv15] . Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
     private val noStarTagRegex = "^(?:\\[Lv\\d+] )?(?:[༕⛏\uD83E\uDDB4☠]+)?[\\w ]+ [\\d,.]+\\w(?:/[\\d,.]+\\w)?❤$".toRegex()
 

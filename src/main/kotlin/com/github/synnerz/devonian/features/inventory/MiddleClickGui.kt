@@ -6,7 +6,10 @@ import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 
-object MiddleClickGui : Feature("middleClickGui") {
+object MiddleClickGui : Feature(
+    "middleClickGui",
+    "Cancels your left clicks and turns it into a middle clicks on certain guis"
+) {
     val avoidGuis = mutableListOf(
         "Wardrobe",
         "Drill Anvil",

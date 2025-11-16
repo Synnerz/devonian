@@ -6,7 +6,12 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.Location
 
-object EyesPlacedDisplay : TextHudFeature("eyesPlaced", "the end") {
+object EyesPlacedDisplay : TextHudFeature(
+    "eyesPlaced",
+    "Displays the amount of eyes placed whenever in the Dragon's Nest",
+    "End",
+    "the end"
+) {
     private val eyesPlacedRegex = "^ Eyes placed: (\\d+)/(\\d+)".toRegex()
     private val dragonSpawnedRegex = "^ Dragon spawned!$".toRegex()
     private val eggRespawningRegex = "^ Egg respawning!$".toRegex()

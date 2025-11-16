@@ -9,7 +9,10 @@ import net.minecraft.registry.Registries
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.Identifier
 
-object EtherwarpSound : Feature("etherwarpSound") {
+object EtherwarpSound : Feature(
+    "etherwarpSound",
+    "Changes the sound the etherwarp makes whenever you have etherwarped successfully, customize it via /devonian etherwarpsound"
+) {
     private const val KEY = "etherwarpSound"
     private var soundEvent = SoundEvents.ENTITY_ENDER_DRAGON_HURT
 

@@ -14,7 +14,12 @@ import java.awt.Color
 
 // FIXME: whenever the server lags the scanner lags behind and does not scan properly
 //  change this to be packet based instead later on.
-object GolemWaypoint : Feature("golemWaypoint", "the end") {
+object GolemWaypoint : Feature(
+    "golemWaypoint",
+    "Sets a waypoint to where the golem should spawn",
+    "end",
+    "the end"
+) {
     private var protectorRegex = "^ Protector: (\\w+)$".toRegex()
     private val golemStages = listOf("Resting", "Dormant", "Agitated", "Disturbed", "Awakening", "Summoned")
     // Y level is always 4

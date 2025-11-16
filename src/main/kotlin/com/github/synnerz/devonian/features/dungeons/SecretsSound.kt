@@ -14,7 +14,12 @@ import net.minecraft.network.packet.s2c.play.ItemPickupAnimationS2CPacket
 import net.minecraft.registry.Registries
 import net.minecraft.sound.SoundEvents
 
-object SecretsSound : Feature("secretsSound", "catacombs") {
+object SecretsSound : Feature(
+    "secretsSound",
+    "Plays a sound whenever you click, pick up (a secret) or kill a bat (This also plays an anvil sound whenever the chest is locked)",
+    "Dungeons",
+    "catacombs"
+) {
     private val skullIds = listOf("e0f3e929-869e-3dca-9504-54c666ee6f23", "fed95410-aba1-39df-9b95-1d4f361eb66e")
     private val allowedBlocks = listOf("minecraft:chest", "minecraft:lever", "minecraft:trapped_chest")
     private val secretItems = setOf(

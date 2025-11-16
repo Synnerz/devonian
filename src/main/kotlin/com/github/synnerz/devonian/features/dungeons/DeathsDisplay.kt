@@ -5,7 +5,12 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object DeathsDisplay : TextHudFeature("deathsDisplay", "catacombs") {
+object DeathsDisplay : TextHudFeature(
+    "deathsDisplay",
+    "Displays the current amount of Team Deaths.",
+    "Dungeons",
+    "catacombs"
+) {
     private val deathsRegex = "^Team Deaths: (\\d+)$".toRegex()
     private var deathCount = 0
 

@@ -11,7 +11,12 @@ import net.minecraft.particle.ParticleTypes
 import java.awt.Color
 import kotlin.math.floor
 
-object BurrowWaypoint : Feature("burrowWaypoint", "hub") {
+object BurrowWaypoint : Feature(
+    "burrowWaypoint",
+    "Adds a waypoint with the type of burrow whenever the particles are detected",
+    "Diana",
+    "hub"
+) {
     private val SETTING_START_COLOR = Color.GREEN
     private val SETTING_MOB_COLOR = Color.RED
     private val SETTING_TREAURE_COLOR = Color.YELLOW

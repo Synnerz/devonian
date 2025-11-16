@@ -7,7 +7,12 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import kotlin.math.round
 
-object GolemDPS : Feature("golemDps", "the end") {
+object GolemDPS : Feature(
+    "golemDps",
+    "Tells you how much DPS you did during the Golem fight",
+    "end",
+    "the end"
+) {
     private val golemSpawnRegex = "^BEWARE - An End Stone Protector has risen!$".toRegex()
     private val golemKilledRegex = "^ *END STONE PROTECTOR DOWN!$".toRegex()
     private val yourDamageRegex = "^ *Your Damage: ([\\d,]+)(?: \\(NEW RECORD!\\))? \\(Position #\\d+\\)\$".toRegex()

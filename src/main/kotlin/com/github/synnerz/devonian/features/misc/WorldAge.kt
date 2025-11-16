@@ -3,7 +3,10 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object WorldAge : TextHudFeature("worldAge") {
+object WorldAge : TextHudFeature(
+    "worldAge",
+    "Displays the current World's age."
+) {
     override fun initialize() {
         on<RenderOverlayEvent> { event ->
             if (minecraft.world == null) return@on

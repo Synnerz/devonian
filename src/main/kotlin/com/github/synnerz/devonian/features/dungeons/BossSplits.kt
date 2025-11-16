@@ -6,7 +6,12 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimerSplit
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object BossSplits : TextHudFeature("bossSplits", "catacombs") {
+object BossSplits : TextHudFeature(
+    "bossSplits",
+    "Displays your current dungeon's boss splits, how long each section took to complete.",
+    "Dungeons",
+    "catacombs"
+) {
     private val floorRegex = "^ +⏣ The Catacombs \\((\\w)(\\d+)\\)\$".toRegex()
     var currentSplit: TimerSplit? = null
 

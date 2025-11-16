@@ -5,7 +5,12 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object GardenDisplay : TextHudFeature("gardenDisplay", "garden") {
+object GardenDisplay : TextHudFeature(
+    "gardenDisplay",
+    "Displays all your Garden's current stats from tab. (for example current composter Fuel)",
+    "garden",
+    "garden"
+) {
     private val nextVisitorRegex = "^ Next Visitor: ([\\w !]+)$".toRegex()
     private val totalVisitorsRegex = "^Visitors: \\((\\d+)\\)$".toRegex()
     private val jacobContestCdRegex = "^Jacob's Contest:(?: ([\\w ]+) left)?$".toRegex()

@@ -4,10 +4,12 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import net.minecraft.entity.player.PlayerInventory
 import kotlin.math.abs
 
-object InventoryHistoryLog : TextHudFeature("inventoryHistoryLog") {
+object InventoryHistoryLog : TextHudFeature(
+    "inventoryHistoryLog",
+    "Displays the items changed, removed or added to your inventory"
+) {
     private const val SETTING_ITEM_DISPLAY_TIME = 100
 
     data class ItemizedDifference(val name: String, var quantity: Int) {

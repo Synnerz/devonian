@@ -9,7 +9,10 @@ import com.github.synnerz.devonian.features.Feature
 import java.awt.Color
 import kotlin.math.sqrt
 
-object ChatWaypoint : Feature("chatWaypoint") {
+object ChatWaypoint : Feature(
+    "chatWaypoint",
+    "Renders a waypoint at the location where a player sent in Party/Coop chat. (You can send coordinates for other people by doing /devonian sendcoords)"
+) {
     private const val SETTING_ALL_CHAT = true
     private const val SETTING_OWN_WAYPOINTS = true
     private const val SETTING_CLEAR_WAYPOINTS_SWAP_SERVER = true

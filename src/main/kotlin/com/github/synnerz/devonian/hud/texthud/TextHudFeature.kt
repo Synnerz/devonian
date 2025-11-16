@@ -10,9 +10,13 @@ import org.lwjgl.glfw.GLFW
 import java.awt.Color
 
 abstract class TextHudFeature(
-    configName: String, area: String? = null, subarea: String? = null,
+    configName: String,
+    description: String = "",
+    category: String = "Misc",
+    area: String? = null,
+    subarea: String? = null,
     hudConfigName: String = configName[0].uppercase() + configName.substring(1),
-) : HudFeature(configName, area, subarea, hudConfigName), DataProvider, ITextHud {
+) : HudFeature(configName, description, category, area, subarea, hudConfigName), DataProvider, ITextHud {
     abstract fun getEditText(): List<String>
 
     private var isEditing = false

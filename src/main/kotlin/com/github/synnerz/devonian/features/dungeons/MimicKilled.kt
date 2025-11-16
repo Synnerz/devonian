@@ -8,7 +8,12 @@ import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.mob.ZombieEntity
 
-object MimicKilled : Feature("mimicKilled", "catacombs") {
+object MimicKilled : Feature(
+    "mimicKilled",
+    "Whenever a mimic is killed it will send a party message.",
+    "Dungeons",
+    "catacombs"
+) {
     private var messageSent = false
 
     override fun initialize() {

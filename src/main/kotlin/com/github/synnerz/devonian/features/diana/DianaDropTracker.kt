@@ -9,7 +9,12 @@ import net.minecraft.client.MinecraftClient
 import java.io.File
 import java.io.FileWriter
 
-object DianaDropTracker : TextHudFeature("dianaDropTracker", "hub") {
+object DianaDropTracker : TextHudFeature(
+    "dianaDropTracker",
+    "Tracks the drops you got during the diana event",
+    "diana",
+    "hub"
+) {
     private val rareDropCriteria =
         "^RARE DROP! (?:You dug out a )?([-() \\w]+)(?: \\(\\+\\d+ . Magic Find\\))?!?$".toRegex()
     private val coinsDropCriteria = "^Wow! You dug out ([\\d,.]+) coins!$".toRegex()

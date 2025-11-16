@@ -9,7 +9,12 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.entity.decoration.ArmorStandEntity
 import java.awt.Color
 
-object BoxStarMob : Feature("boxStarMob", "catacombs") {
+object BoxStarMob : Feature(
+    "boxStarMob",
+    "Renders a box surrounding the star mobs in dungeons to complete a room.",
+    "Dungeons",
+    "catacombs"
+) {
     val boxColor = Color(0f, 1f, 1f, 1f)
     val starMobEntities = mutableListOf<Int>()
 

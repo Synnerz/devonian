@@ -24,7 +24,10 @@ import net.minecraft.sound.SoundEvent
 import net.minecraft.util.Identifier
 import org.lwjgl.glfw.GLFW
 
-object ProtectItem : Feature("protectItem") {
+object ProtectItem : Feature(
+    "protectItem",
+    "Protects an item, so you can no longer accidentally throw it away or sell it."
+) {
     private var lockedList = mutableListOf<String>()
     private val hopperItem = Blocks.HOPPER.asItem()
     private val keybind = KeyBindingHelper.registerKeyBinding(

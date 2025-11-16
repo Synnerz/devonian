@@ -11,7 +11,10 @@ import net.minecraft.block.ShapeContext
 import net.minecraft.world.EmptyBlockView
 import java.awt.Color
 
-object BlockOverlay : Feature("blockOverlay") {
+object BlockOverlay : Feature(
+    "blockOverlay",
+    "Adds a more customizable Block Overlay."
+) {
     private const val SETTING_BOX_ENTITY = false;
     private var SETTING_WIRE_COLOR = Color.WHITE;
     private val SETTING_FILL_COLOR = Color(0)

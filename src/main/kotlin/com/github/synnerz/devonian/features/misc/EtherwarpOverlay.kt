@@ -23,7 +23,11 @@ import net.minecraft.world.EmptyBlockView
 import java.awt.Color
 import kotlin.math.hypot
 
-object EtherwarpOverlay : TextHudFeature("etherwarpOverlay", hudConfigName = "EtherwarpFailReasonDisplay") {
+object EtherwarpOverlay : TextHudFeature(
+    "etherwarpOverlay",
+    "Renders a box at the location where the etherwarp is going to be at.",
+    hudConfigName = "EtherwarpFailReasonDisplay"
+) {
     private var SETTING_ETHER_WIRE_COLOR = ColorEnum.WHITE.color
     private var SETTING_ETHER_FILL_COLOR =
         Color(SETTING_ETHER_WIRE_COLOR.red, SETTING_ETHER_WIRE_COLOR.green, SETTING_ETHER_WIRE_COLOR.blue, 80)

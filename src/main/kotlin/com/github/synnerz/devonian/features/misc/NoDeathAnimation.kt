@@ -4,7 +4,10 @@ import com.github.synnerz.devonian.api.events.RenderEntityEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.entity.LivingEntity
 
-object NoDeathAnimation : Feature("noDeathAnimation") {
+object NoDeathAnimation : Feature(
+    "noDeathAnimation",
+    "Removes the Death Animation from entities that die."
+) {
     private val lividNameRegex = "^\\w+ Livid\$".toRegex()
 
     override fun initialize() {

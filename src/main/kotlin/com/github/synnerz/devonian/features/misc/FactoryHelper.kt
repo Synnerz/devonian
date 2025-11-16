@@ -11,7 +11,10 @@ import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
 import java.awt.Color
 
-object FactoryHelper : Feature("factoryHelper") {
+object FactoryHelper : Feature(
+    "factoryHelper",
+    "Highlights the best (cheapest) employee or coach jackrabbit upgrade to go for next."
+) {
     private val nextCPSRegex = "^  \\+([\\d.,]+)x? Chocolate per second$".toRegex()
     private val currentCPSRegex = "\\+([\\d.,]+)x? Chocolate per".toRegex()
     private val chocolateCostRegex = "^([\\d,]+) Chocolate$".toRegex()

@@ -20,7 +20,12 @@ import kotlin.random.Random
 
 // Credits to https://github.com/hannibal002/SkyHanni/blob/beta/src/main/java/at/hannibal2/skyhanni/features/event/diana/PreciseGuessBurrow.kt
 // & https://github.com/PerseusPotter/chicktils/blob/master/modules/diana.js
-object BurrowGuesser : Feature("burrowGuesser", "hub") {
+object BurrowGuesser : Feature(
+    "burrowGuesser",
+    "Whenever right clicking on a spade, it will attempt to guess where the location will be a",
+    "Diana",
+    "hub"
+) {
     private val SETTING_GUESS_COLOR = Color.BLUE
     private val SETTING_OLD_GUESS_COLOR = Color(82, 14, 125)
     private const val SETTING_REMEMBER_PREVIOUS_GUESSES = true

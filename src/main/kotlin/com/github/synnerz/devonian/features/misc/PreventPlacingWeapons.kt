@@ -4,7 +4,10 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.BlockInteractEvent
 import com.github.synnerz.devonian.features.Feature
 
-object PreventPlacingWeapons : Feature("preventPlacingWeapons") {
+object PreventPlacingWeapons : Feature(
+    "preventPlacingWeapons",
+    "Prevents placing weapons that are placeable."
+) {
     val weaponIds = mutableListOf(
         "FLOWER_OF_TRUTH",
         "BOUQUET_OF_LIES",

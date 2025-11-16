@@ -6,7 +6,11 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.Location
 
-object AutoRequeueDungeons : Feature("autoRequeueDungeons") {
+object AutoRequeueDungeons : Feature(
+    "autoRequeueDungeons",
+    "Automatically calls the /instancerequeue command at the end of a run.",
+    "Dungeons"
+) {
     private val extraStatsRegex = "^ *> EXTRA STATS <\$".toRegex()
     private val partyChatRegex = "^Party > (?:\\[\\d+] .? ?)?(?:\\[[^]]+] )?(\\w{1,16}): !(\\w{1,2})(?: [\\w ]+)?$".toRegex()
     private var needsDowntime: String? = null

@@ -9,7 +9,12 @@ import net.minecraft.client.MinecraftClient
 import java.io.File
 import java.io.FileWriter
 
-object DianaMobTracker : TextHudFeature("dianaMobTracker", "hub") {
+object DianaMobTracker : TextHudFeature(
+    "dianaMobTracker",
+    "Tracks the mobs you killed during the diana event",
+    "Diana",
+    "hub"
+) {
     private val mobCriteria = "^(?:Woah|Yikes|Oi|Danger|Good Grief|Uh oh|Oh)! You dug out a? ?([\\w ]+)!$".toRegex()
     private val mobNames = listOf(
         "Minos Hunter",

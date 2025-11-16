@@ -7,7 +7,11 @@ import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 
-object BossSlainTime : Feature("bossSlainTime") {
+object BossSlainTime : Feature(
+    "bossSlainTime",
+    "Displays the amount of time taken to kill a Slayer Boss.",
+    "Slayers"
+) {
     private val questStartedRegex = "^Slay the boss!$".toRegex()
     private val questCompletedRegex = "^Boss slain!$".toRegex()
     private val questCompletedChatRegex = "^  SLAYER QUEST COMPLETE!$".toRegex()
