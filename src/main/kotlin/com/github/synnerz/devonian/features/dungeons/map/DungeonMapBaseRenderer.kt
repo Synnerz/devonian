@@ -418,7 +418,9 @@ class DungeonMapBaseRenderer :
                     val room = door.rooms.minByOrNull {
                         it.type.prio - (if (!it.explored && !options.renderUnknownRooms) 100 else 0)
                     } ?: return@forEach
-                    colorForRoom(room)
+
+                    if (room.type == RoomTypes.FAIRY && !room.explored) colors[DungeonMapColors.DoorWither]
+                    else colorForRoom(room)
                 }
             } ?: colors[DungeonMapColors.RoomNormal] ?: return@forEach
 
