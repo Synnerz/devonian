@@ -9,10 +9,22 @@ class DungeonDoor(var comps: MutableList<Double>) {
     var opened = false
     var type: DoorTypes = DoorTypes.NORMAL
     val rooms = mutableSetOf<DungeonRoom>()
+    val roomComp1: Pair<Int, Int>
+    val roomComp2: Pair<Int, Int>
 
     init {
         if (comps[0] != 0.0 && comps[1] != 0.0)
             checkType()
+
+        val cx = comps[2].toInt()
+        val cz = comps[3].toInt()
+        if ((cx and 1) == 1) {
+            roomComp1 = Pair((cx - 1) shr 1, cz shr 1)
+            roomComp2 = Pair((cx + 1) shr 1, cz shr 1)
+        } else {
+            roomComp1 = Pair(cx shr 1, (cz - 1) shr 1)
+            roomComp2 = Pair(cx shr 1, (cz + 1) shr 1)
+        }
     }
 
     override fun toString(): String {

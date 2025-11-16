@@ -5,7 +5,10 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
-import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.api.events.AreaEvent
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.SubAreaEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.Gson
@@ -275,24 +278,13 @@ object DungeonScanner {
         if (idx !in 0 .. 59) return
 
         doors[idx] = door
-        if (cx and 1 == 0) {
-            rooms.getOrNull(getRoomIdx(cx shr 1, (cz - 1) shr 1))?.also {
-                it.doors.add(door)
-                door.rooms.add(it)
-            }
-            rooms.getOrNull(getRoomIdx(cx shr 1, (cz + 1) shr 1))?.also {
-                it.doors.add(door)
-                door.rooms.add(it)
-            }
-        } else {
-            rooms.getOrNull(getRoomIdx((cx - 1) shr 1, cz shr 1))?.also {
-                it.doors.add(door)
-                door.rooms.add(it)
-            }
-            rooms.getOrNull(getRoomIdx((cx + 1) shr 1, cz shr 1))?.also {
-                it.doors.add(door)
-                door.rooms.add(it)
-            }
+        rooms.getOrNull(getRoomIdx(door.roomComp1.first, door.roomComp1.second))?.also {
+            it.doors.add(door)
+            door.rooms.add(it)
+        }
+        rooms.getOrNull(getRoomIdx(door.roomComp2.first, door.roomComp2.second))?.also {
+            it.doors.add(door)
+            door.rooms.add(it)
         }
     }
 
