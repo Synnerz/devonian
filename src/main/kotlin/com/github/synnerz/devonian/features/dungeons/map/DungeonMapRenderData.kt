@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.dungeon.DungeonDoor
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 
 data class DungeonMapRenderData(
-    val rooms: List<DungeonRoom>,
-    val doors: List<DungeonDoor>,
+    val rooms: List<DungeonRoom?>,
+    val doors: List<DungeonDoor?>,
     val options: DungeonMapRenderOptions
 )

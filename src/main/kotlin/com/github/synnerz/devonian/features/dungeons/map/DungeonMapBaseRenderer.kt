@@ -115,6 +115,7 @@ class DungeonMapBaseRenderer :
         }
 
         rooms.forEach { room ->
+            if (room == null) return@forEach
             var color = colorForRoom(room) ?: colors[DungeonMapColors.RoomNormal] ?: Color(0)
             var shape = room.shape
             if (shape == ShapeTypes.Unknown) return@forEach
@@ -359,6 +360,7 @@ class DungeonMapBaseRenderer :
         }
 
         doors.forEach { door ->
+            if (door == null) return@forEach
             val color = when (door.type) {
                 DoorTypes.ENTRANCE -> colors[DungeonMapColors.DoorEntrance]
                 DoorTypes.WITHER -> colors[DungeonMapColors.DoorWither]

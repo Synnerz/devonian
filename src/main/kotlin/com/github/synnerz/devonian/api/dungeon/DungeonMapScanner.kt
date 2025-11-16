@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import net.minecraft.item.FilledMapItem
 import net.minecraft.item.map.MapState
 import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket
@@ -180,6 +181,11 @@ object DungeonMapScanner {
 
                 room.checkmark = check
             }
+
+            DungeonMap.redrawMap(
+                DungeonScanner.rooms.toList(),
+                DungeonScanner.doors.toList()
+            )
         }
     }
 }
