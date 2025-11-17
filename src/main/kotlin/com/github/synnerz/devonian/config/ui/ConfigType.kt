@@ -1,9 +1,11 @@
 package com.github.synnerz.devonian.config.ui
 
+// TODO: percent slider, decimal slider
 enum class ConfigType {
     BUTTON,
     SWITCH,
     COLORPICKER,
-    DROPDOWN,
-    SLIDER
+    SLIDER,
+    TEXTINPUT,
+    SELECTION
 }

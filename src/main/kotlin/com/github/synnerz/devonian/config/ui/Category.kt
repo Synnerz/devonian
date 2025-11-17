@@ -5,7 +5,7 @@ import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.effects.OutlineEffect
 
 open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase) {
-    private val configs = mutableListOf<CategoryData>()
+    private val configs = mutableListOf<CategoryData<*>>()
     private val components = mutableListOf<UIRect>()
     val elements = mutableMapOf<String, UIBase>() // <ConfigName>: <UISwitch/Etc>
     private var currentPage = 0
@@ -32,7 +32,12 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         setColor(ColorPalette.TEXT_COLOR)
     }
 
-    data class CategoryData(val name: String, val description: String, val type: ConfigType)
+    data class CategoryData<T>(
+        val name: String,
+        val description: String,
+        val type: ConfigType,
+        val configData: ConfigData<T>
+    )
 
     init {
         update()
@@ -49,12 +54,71 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         hide()
     }
 
-    fun addConfig(
+    fun addSwitch(
         name: String,
         description: String,
-        type: ConfigType
+        configData: ConfigData.Switch<Boolean>
+    ): ConfigData.Switch<Boolean> {
+        configs.add(CategoryData(name, description, ConfigType.SWITCH, configData))
+        return configData
+    }
+
+    fun <T> addSlider(
+        name: String,
+        description: String,
+        configData: ConfigData.Slider<T>
+    ): ConfigData.Slider<T> {
+        configs.add(
+            CategoryData(
+                name,
+                description,
+                ConfigType.SLIDER,
+                configData
+            )
+        )
+        return configData
+    }
+
+    @JvmOverloads
+    fun addButton(
+        name: String,
+        description: String,
+        btnTitle: String = "Click!",
+        onClick: () -> Unit
     ) = apply {
-        configs.add(CategoryData(name, description, type))
+        configs.add(CategoryData(
+            name, description,
+            ConfigType.BUTTON,
+            ConfigData.Button(btnTitle, onClick)
+        ))
+    }
+
+    fun addTextInput(
+        name: String,
+        description: String,
+        configData: ConfigData.TextInput
+    ): ConfigData.TextInput {
+        configs.add(CategoryData(
+            name, description,
+            ConfigType.TEXTINPUT,
+            configData
+        ))
+        return configData
+    }
+
+    fun addSelection(
+        name: String,
+        description: String,
+        configData: ConfigData.Selection
+    ): ConfigData.Selection {
+        configs.add(
+            CategoryData(
+            name, description,
+            ConfigType.SELECTION,
+            configData
+        )
+        )
+        return configData
     }
 
     fun update() {
@@ -88,6 +152,7 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         }
     }
 
+    @Suppress("unchecked_cast")
     private fun create() {
         var i = 0
 
@@ -100,6 +165,10 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
                 addChild(
                     when (data.type) {
                         ConfigType.SWITCH -> createSwitch(configName = data.name)
+                        ConfigType.SLIDER -> createSlider(data.configData as ConfigData.Slider<Double>)
+                        ConfigType.BUTTON -> createButton(data.configData as ConfigData.Button)
+                        ConfigType.TEXTINPUT -> createTextInput(data.configData as ConfigData.TextInput)
+                        ConfigType.SELECTION -> createSelection(data.configData as ConfigData.Selection)
                         else -> TODO()
                     }
                 )
@@ -140,7 +209,21 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
             textScale = 0.9f
         }
 
+    private fun createButton(
+        configData: ConfigData.Button,
+        parent: UIRect? = null
+    ): UIRect = UIRect(80.0, 25.0, 15.0, 50.0, parent = parent).apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+        addChild(UIText(0.0, 0.0, 100.0, 100.0, configData.btnTitle, true).apply {
+            setColor(ColorPalette.TEXT_COLOR)
+        })
+        onMouseRelease {
+            configData.onClick()
+        }
+    }
+
     private fun createSwitch(configName: String, parent: UIRect? = null): UISwitch {
+        // TODO: rewrite backend to actually migrate this to the new ConfigData system
         val feature = Devonian.features.find { it.configName == configName }!!
 
         return UISwitch(80.0, 25.0, 15.0, 50.0, feature.isEnabled(), parent = parent).apply {
@@ -153,6 +236,55 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
                 else feature.setDisabled()
             }
             elements[configName] = this
+        }
+    }
+
+    private fun createSlider(
+        configData: ConfigData.Slider<Double>,
+        parent: UIRect? = null
+    ): UISlider = object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
+        override fun setCurrentX(x: Double) {
+            super.setCurrentX(x)
+            configData.set(this.value)
+        }
+
+        override fun setCurrentValue(value: Double) {
+            super.setCurrentValue(value)
+            configData.set(this.value)
+        }
+    }.apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+        configData.onChange {
+            value = configData.get()
+        }
+    }
+
+    private fun createTextInput(
+        configData: ConfigData.TextInput,
+        parent: UIRect? = null
+    ): UITextInput = UITextInput(80.0, 25.0, 15.0, 50.0, configData.get(), parent = parent).apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+        onKeyType {
+            configData.set(text)
+        }
+        configData.onChange {
+            text = configData.get()
+        }
+    }
+
+    private fun createSelection(
+        configData: ConfigData.Selection,
+        parent: UIRect? = null
+    ): UISelection = object : UISelection(80.0, 25.0, 15.0, 50.0, configData.get(), configData.options, parent = parent) {
+        override fun setOption(idx: Int) {
+            super.setOption(idx)
+            configData.set(value)
+        }
+    }.apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+        configData.onChange {
+            value = configData.get().coerceIn(0, options.lastIndex)
+            centerText.text = options[value]
         }
     }
 }
