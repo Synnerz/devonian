@@ -50,6 +50,37 @@ object JsonUtils {
         return this
     }
 
+    fun <T> setConfig(name: String, value: T): JsonUtils {
+        if (json.get("config") == null)
+            json.add("config", JsonObject())
+
+        when (value) {
+            is Boolean -> json.get("config").asJsonObject.addProperty(name, value)
+            is String -> json.get("config").asJsonObject.addProperty(name, value)
+            is Char -> json.get("config").asJsonObject.addProperty(name, value)
+            is Number -> json.get("config").asJsonObject.addProperty(name, value)
+            is JsonArray -> json.get("config").asJsonObject.add(name, value)
+        }
+        return this
+    }
+
+    @Suppress("unchecked_cast")
+    fun <T> fromConfig(name: String): T? {
+        val obj = json["config"]?.asJsonObject ?: return null
+        val prop = obj[name] ?: return null
+
+        if (!prop.isJsonPrimitive) return null
+
+        val p = prop.asJsonPrimitive
+        return when {
+            p.isBoolean -> p.asBoolean as T
+            p.isNumber -> p.asNumber as T
+            p.isString -> p.asString as T
+            else -> null
+        }
+    }
+
+
     /**
      * - Sets a boolean value to the specified name key
      */
