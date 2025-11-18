@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.events.RenderEntityEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.entity.LivingEntity
+import net.minecraft.world.entity.LivingEntity
 
 object NoDeathAnimation : Feature(
     "noDeathAnimation",
@@ -15,7 +15,7 @@ object NoDeathAnimation : Feature(
             if (event.entity !is LivingEntity) return@on
             val entity = event.entity
 
-            if (!entity.isDead && entity.health > 0f) return@on
+            if (!entity.isAlive && entity.health > 0f) return@on
 
             val name = entity.name?.string
             if (name != null && lividNameRegex.matches(name)) return@on
