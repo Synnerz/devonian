@@ -1,21 +1,21 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.api.events.DropItemEvent;
 import com.github.synnerz.devonian.api.events.EventBus;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ClientPlayerEntity.class)
-public class ClientPlayerEntityMixin {
-    @Inject(method = "dropSelectedItem", at = @At("HEAD"), cancellable = true)
+@Mixin(LocalPlayer.class)
+public class LocalPlayerMixin {
+    @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
     private void devonian$dropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
-        ItemStack stack = MinecraftClient.getInstance().player.getStackInHand(Hand.MAIN_HAND);
+        ItemStack stack = Devonian.INSTANCE.getMinecraft().player.getItemInHand(InteractionHand.MAIN_HAND);
         if (stack != null && !stack.isEmpty()) {
             DropItemEvent event = new DropItemEvent(stack, entireStack);
             EventBus.INSTANCE.post(event);

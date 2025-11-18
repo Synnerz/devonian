@@ -5,7 +5,7 @@
   "client": [
     "ChatComponentMixin",
     "ConnectionMixin",
-    "ClientPlayerEntityMixin",
+    "LocalPlayerMixin",
     "EntityRenderDispatcherMixin",
     "FallingBlockEntityRendererMixin",
     "GameRendererMixin",
