@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.mixin.accessor.ClientPlayerEntityAccessor
+import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
 import kotlinx.atomicfu.atomic
 import net.minecraft.core.particles.ParticleTypes
@@ -286,7 +286,7 @@ object BurrowGuesser : Feature(
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             if (!isSpade(sbId)) return@on
 
-            val player = minecraft.player as ClientPlayerEntityAccessor? ?: return@on
+            val player = minecraft.player as LocalPlayerAccessor? ?: return@on
 
             spadeUsePositions.add(
                 PositionTime(

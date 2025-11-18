@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import com.github.synnerz.devonian.mixin.accessor.ClientPlayerEntityAccessor
+import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
 import com.github.synnerz.devonian.utils.ColorEnum
 import com.github.synnerz.devonian.utils.JsonUtils
@@ -113,7 +113,7 @@ object EtherwarpOverlay : TextHudFeature(
                 pz = posVec.z
                 lookVec = player.getViewVector(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
             } else {
-                val playerAccessor = player as ClientPlayerEntityAccessor
+                val playerAccessor = player as LocalPlayerAccessor
                 px = playerAccessor.lastXClient
                 py = playerAccessor.lastYClient + if (player.isSteppingCarefully) 1.54f else 1.64f
                 pz = playerAccessor.lastZClient

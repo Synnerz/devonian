@@ -1,23 +1,23 @@
 package com.github.synnerz.devonian.mixin.accessor;
 
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ClientPlayerEntity.class)
-public interface ClientPlayerEntityAccessor {
-    @Accessor("lastXClient")
+@Mixin(LocalPlayer.class)
+public interface LocalPlayerAccessor {
+    @Accessor("xLast")
     double getLastXClient();
 
-    @Accessor("lastYClient")
+    @Accessor("yLast")
     double getLastYClient();
 
-    @Accessor("lastZClient")
+    @Accessor("zLast")
     double getLastZClient();
 
-    @Accessor("lastYawClient")
+    @Accessor("yRotLast")
     float getLastYawClient();
 
-    @Accessor("lastPitchClient")
+    @Accessor("xRotLast")
     float getLastPitchClient();
 }

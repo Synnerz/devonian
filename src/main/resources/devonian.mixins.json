@@ -24,7 +24,7 @@
     "StatusEffectsDisplayMixin",
     "YggdrasilMinecraftSessionServiceMixin",
     "accessor.ChatComponentAccessor",
-    "accessor.ClientPlayerEntityAccessor",
+    "accessor.LocalPlayerAccessor",
     "accessor.GuiGraphicsAccessor",
     "accessor.AbstractContainerScreenAccessor"
   ],
