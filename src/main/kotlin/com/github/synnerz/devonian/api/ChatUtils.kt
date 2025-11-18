@@ -1,41 +1,41 @@
 package com.github.synnerz.devonian.api
 
-import com.github.synnerz.devonian.mixin.accessor.ChatHudAccessor
+import com.github.synnerz.devonian.mixin.accessor.ChatComponentAccessor
 import net.fabricmc.fabric.impl.command.client.ClientCommandInternals
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.hud.ChatHudLine
-import net.minecraft.client.gui.hud.MessageIndicator
-import net.minecraft.text.MutableText
-import net.minecraft.text.Text
+import net.minecraft.client.GuiMessage
+import net.minecraft.client.GuiMessageTag
+import net.minecraft.client.Minecraft
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import kotlin.math.roundToInt
 
 object ChatUtils {
     const val prefix = "&7[&cDevonian&7]"
-    val chatLineIds = mutableMapOf<ChatHudLine, Int>()
-    val chatHudAccessor get() = MinecraftClient.getInstance().inGameHud?.chatHud as ChatHudAccessor
-    val chatGui get() = MinecraftClient.getInstance().inGameHud?.chatHud
+    val chatLineIds = mutableMapOf<GuiMessage, Int>()
+    val chatComponentAccessor get() = Minecraft.getInstance().gui?.chat as ChatComponentAccessor
+    val chatGui get() = Minecraft.getInstance().gui?.chat
 
-    data class TextComponent(var text: Text, var id: Int = 0)
+    data class TextComponent(var text: Component, var id: Int = 0)
 
-    fun literal(string: String): MutableText {
-        return Text.literal(string.replace("&", "§"))
+    fun literal(string: String): MutableComponent {
+        return Component.literal(string.replace("&", "§"))
     }
 
     @JvmOverloads
-    fun fromText(text: Text, id: Int = 0): TextComponent {
+    fun fromText(text: Component, id: Int = 0): TextComponent {
         return TextComponent(text, id)
     }
 
-    fun sendMessageWithId(message: Text, id: Int) {
+    fun sendMessageWithId(message: Component, id: Int) {
         val gui = chatGui ?: return
 
         gui.addMessage(message)
 
-        chatLineIds[chatHudAccessor.messages[0]] = id
+        chatLineIds[chatComponentAccessor.messages[0]] = id
     }
 
-    fun sendMessage(message: Text) {
-        MinecraftClient.getInstance().player?.sendMessage(message, false)
+    fun sendMessage(message: Component) {
+        Minecraft.getInstance().player?.displayClientMessage(message, false)
     }
 
     @JvmOverloads
@@ -45,9 +45,9 @@ object ChatUtils {
         sendMessage(literal("${toAdd}$message"))
     }
 
-    fun removeLines(cb: (ChatHudLine) -> Boolean) {
+    fun removeLines(cb: (GuiMessage) -> Boolean) {
         var removedLine = false
-        val messageList = chatHudAccessor.messages?.listIterator() ?: return
+        val messageList = chatComponentAccessor.messages?.listIterator() ?: return
 
         while (messageList.hasNext()) {
             val msg = messageList.next()
@@ -60,15 +60,15 @@ object ChatUtils {
 
         if (!removedLine) return
 
-        chatHudAccessor.invokeRefresh()
+        chatComponentAccessor.invokeRefresh()
     }
 
-    fun editLines(cb: (ChatHudLine) -> Boolean, replaceWith: TextComponent) {
+    fun editLines(cb: (GuiMessage) -> Boolean, replaceWith: TextComponent) {
         var editedLine = false
         val indicator =
-            if (MinecraftClient.getInstance().isConnectedToLocalServer) MessageIndicator.singlePlayer()
-            else MessageIndicator.system()
-        val messageList = chatHudAccessor.messages?.listIterator() ?: return
+            if (Minecraft.getInstance().isSingleplayer) GuiMessageTag.systemSinglePlayer()
+            else GuiMessageTag.system()
+        val messageList = chatComponentAccessor.messages?.listIterator() ?: return
 
         while (messageList.hasNext()) {
             val msg = messageList.next()
@@ -78,25 +78,25 @@ object ChatUtils {
             messageList.remove()
             chatLineIds.remove(msg)
 
-            val line = ChatHudLine(msg.creationTick, replaceWith.text, null, indicator)
+            val line = GuiMessage(msg.addedTime, replaceWith.text, null, indicator)
             chatLineIds[line] = replaceWith.id
             messageList.add(line)
         }
 
         if (!editedLine) return
 
-        chatHudAccessor.invokeRefresh()
+        chatComponentAccessor.invokeRefresh()
     }
 
     fun centerTextPadding(text: String): String {
-        val textRenderer = MinecraftClient.getInstance().textRenderer
+        val textRenderer = Minecraft.getInstance().font
         val chatWidth = chatGui?.width ?: 0
-        val textWidth = textRenderer.getWidth(text)
+        val textWidth = textRenderer.width(text)
         if (textWidth >= chatWidth) return text
 
         val padding = (chatWidth - textWidth) / 2f
         val paddingBuilder = StringBuilder().apply {
-            repeat((padding / textRenderer.getWidth(" ")).roundToInt()) {
+            repeat((padding / textRenderer.width(" ")).roundToInt()) {
                 append(' ')
             }
         }
@@ -106,9 +106,9 @@ object ChatUtils {
 
     @JvmOverloads
     fun command(command: String, clientSide: Boolean = false) {
-        if (!clientSide) return MinecraftClient.getInstance().networkHandler!!.sendChatCommand(command)
+        if (!clientSide) return Minecraft.getInstance().connection!!.sendCommand(command)
         ClientCommandInternals.executeCommand(command)
     }
 
-    fun say(message: String) = MinecraftClient.getInstance().networkHandler?.sendChatMessage(message)
+    fun say(message: String) = Minecraft.getInstance().connection?.sendChat(message)
 }

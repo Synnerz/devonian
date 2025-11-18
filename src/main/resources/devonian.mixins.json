@@ -23,7 +23,7 @@
     "ScreenHandlerMixin",
     "StatusEffectsDisplayMixin",
     "YggdrasilMinecraftSessionServiceMixin",
-    "accessor.ChatHudAccessor",
+    "accessor.ChatComponentAccessor",
     "accessor.ClientPlayerEntityAccessor",
     "accessor.DrawContextAccessor",
     "accessor.HandledScreenAccessor"
