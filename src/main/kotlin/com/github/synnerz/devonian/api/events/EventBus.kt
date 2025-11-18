@@ -70,7 +70,7 @@ object EventBus {
             val packet = event.packet
 
             if (packet is ClientboundSoundPacket) {
-                val sound = packet.sound.unwrapKey().getOrNull()?.registry() ?: return@on
+                val sound = packet.sound.unwrapKey().getOrNull()?.location() ?: return@on
                 if (onSoundPacket(
                         "${sound.namespace}:${sound.path}",
                         packet.pitch,
