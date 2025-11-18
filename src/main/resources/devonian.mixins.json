@@ -11,7 +11,7 @@
     "GameRendererMixin",
     "AbstractContainerScreenMixin",
     "GuiMixin",
-    "InGameOverlayRendererMixin",
+    "ScreenEffectRendererMixin",
     "LightningEntityRendererMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
