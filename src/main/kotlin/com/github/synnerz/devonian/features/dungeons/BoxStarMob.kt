@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.api.events.EntityJoinEvent
 import com.github.synnerz.devonian.api.events.RenderEntityEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.entity.decoration.ArmorStandEntity
+import net.minecraft.world.entity.decoration.ArmorStand
 import java.awt.Color
 
 object BoxStarMob : Feature(
@@ -21,7 +21,7 @@ object BoxStarMob : Feature(
     override fun initialize() {
         on<EntityJoinEvent> { event ->
             val entity = event.entity
-            if (entity !is ArmorStandEntity) return@on
+            if (entity !is ArmorStand) return@on
 
             Scheduler.scheduleStandName(entity, {
                 val entityName = entity.name.string
@@ -29,7 +29,7 @@ object BoxStarMob : Feature(
                 if (!entityName.contains("✯ ")) return@scheduleStandName
 
                 val previousId = if (entityName.contains("Withermancer")) 3 else 1
-                val entityBelow = minecraft.world?.getEntityById(entityId - previousId) ?: return@scheduleStandName
+                val entityBelow = minecraft.level?.getEntity(entityId - previousId) ?: return@scheduleStandName
 
                 starMobEntities.add(entityBelow.id)
             })
@@ -44,20 +44,20 @@ object BoxStarMob : Feature(
             val matrixStack = event.matrixStack
             if (!starMobEntities.contains(entity.id)) return@on
 
-            val cam = minecraft.gameRenderer.camera.pos.negate()
-            val width = entity.width.toDouble()
+            val cam = minecraft.gameRenderer.mainCamera.position.reverse()
+            val width = entity.bbWidth.toDouble()
             val halfWidth = width / 2.0
 
-            matrixStack.push()
+            matrixStack.pushPose()
             matrixStack.translate(cam.x, cam.y, cam.z)
 
             Context.Immediate?.renderBox(
                 entity.x - halfWidth, entity.y, entity.z - halfWidth,
-                width, entity.height.toDouble(),
+                width, entity.bbHeight.toDouble(),
                 boxColor, translate = false
             )
 
-            matrixStack.pop()
+            matrixStack.popPose()
         }
     }
 }
