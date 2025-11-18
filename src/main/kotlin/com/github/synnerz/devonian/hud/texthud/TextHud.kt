@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.TextRendererImpl.TextRenderParams
 import com.github.synnerz.devonian.utils.math.MathUtils
-import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.GuiGraphics
 import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.GraphicsEnvironment
@@ -80,7 +80,7 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
 
     private fun update() {
         val window = Devonian.minecraft.window
-        val renderSize = MC_FONT_SIZE * window.scaleFactor.toFloat() * scale
+        val renderSize = MC_FONT_SIZE * window.guiScale.toFloat() * scale
         if (renderSize != fontSize) markFont()
         if (fontsDirty) {
             fontsDirty = false
@@ -91,7 +91,7 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             fontBack = Font(Font.SANS_SERIF, Font.PLAIN, (fontSize + 0.5f).toInt())
         }
 
-        renderScale = 1f / window.scaleFactor.toFloat()
+        renderScale = 1f / window.guiScale.toFloat()
 
         if (lastImageParams.shadow != shadow) markText()
 
@@ -105,10 +105,10 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
                 if (g == null) {
                     g = BufferedImageFactoryImpl.BLANK_IMAGE.createGraphics()
                     g!!.font = fontMain
-                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+                    g!!.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
                 }
 
-                it.data = StringParser.processString(it.str, shadow, g, fontMain!!, fontMono!!, fontBack!!, fontSize)
+                it.data = StringParser.processString(it.str, shadow, g!!, fontMain!!, fontMono!!, fontBack!!, fontSize)
                 it.dirty = false
                 markImage()
             }
@@ -136,7 +136,7 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
         lastImageParams = currentParams
     }
 
-    private fun drawImage(ctx: DrawContext) {
+    private fun drawImage(ctx: GuiGraphics) {
         if (lines.isEmpty()) return
 
         if (imageDirty) {
@@ -150,7 +150,7 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
         renderer.draw(ctx, pos.x.toFloat(), pos.y.toFloat(), renderScale)
     }
 
-    override fun draw(ctx: DrawContext) {
+    override fun draw(ctx: GuiGraphics) {
         update()
         drawImage(ctx)
     }
