@@ -9,12 +9,12 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
-import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
-import net.minecraft.network.packet.s2c.play.TeamS2CPacket
-import net.minecraft.sound.SoundCategory
+import net.minecraft.network.protocol.common.ClientboundPingPacket
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
+import net.minecraft.network.protocol.game.ClientboundSoundPacket
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket
+import net.minecraft.sounds.SoundSource
 import org.lwjgl.glfw.GLFW
 import kotlin.jvm.optionals.getOrNull
 
@@ -69,13 +69,13 @@ object EventBus {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
 
-            if (packet is PlaySoundS2CPacket) {
-                val sound = packet.sound.key.getOrNull()?.value ?: return@on
+            if (packet is ClientboundSoundPacket) {
+                val sound = packet.sound.unwrapKey().getOrNull()?.registry() ?: return@on
                 if (onSoundPacket(
                         "${sound.namespace}:${sound.path}",
                         packet.pitch,
                         packet.volume,
-                        packet.category,
+                        packet.source,
                         packet.x, packet.y, packet.z,
                         packet.seed
                 ))
@@ -83,42 +83,42 @@ object EventBus {
                 return@on
             }
 
-            if (packet is PlayerListS2CPacket) {
-                val action = packet.actions.firstOrNull() ?: return@on
-                if (action === PlayerListS2CPacket.Action.ADD_PLAYER) {
-                    packet.entries.forEach {
+            if (packet is ClientboundPlayerInfoUpdatePacket) {
+                val action = packet.actions().firstOrNull() ?: return@on
+                if (action === ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER) {
+                    packet.entries().forEach {
                         val name = it.displayName ?: return@forEach
                         TabAddEvent(name.string.clearCodes()).post()
                     }
                     return@on
                 }
-                if (action !== PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME) return@on
+                if (action !== ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME) return@on
 
-                packet.entries.forEach {
+                packet.entries().forEach {
                     val name = it.displayName ?: return@forEach
                     TabUpdateEvent(name.string.clearCodes()).post()
                 }
                 return@on
             }
 
-            if (packet is CommonPingS2CPacket) {
+            if (packet is ClientboundPingPacket) {
                 totalTicks++
                 ServerTickEvent(totalTicks).post()
                 return@on
             }
 
-            if (packet is TeamS2CPacket) {
-                if (packet.team.isEmpty) return@on
-                val team = packet.team?.get() ?: return@on
-                val teamPrefix = team.prefix.string
-                val teamSuffix = team.suffix.string
+            if (packet is ClientboundSetPlayerTeamPacket) {
+                if (packet.parameters.isEmpty) return@on
+                val team = packet.parameters?.get() ?: return@on
+                val teamPrefix = team.playerPrefix.string
+                val teamSuffix = team.playerSuffix.string
                 if (teamPrefix.isEmpty()) return@on
-                if (!packet.teamName.matches(teamRegex)) return@on
+                if (!packet.name.matches(teamRegex)) return@on
                 ScoreboardEvent("${teamPrefix}${teamSuffix.trim()}").post()
                 return@on
             }
 
-            if (packet !is GameMessageS2CPacket) return@on
+            if (packet !is ClientboundSystemChatPacket) return@on
             if (packet.overlay) return@on
 
             val content = packet.content ?: return@on
@@ -140,7 +140,7 @@ object EventBus {
         soundEvent: String,
         pitch: Float,
         volume: Float,
-        category: SoundCategory,
+        category: SoundSource,
         x: Double, y: Double, z: Double,
         seed: Long
     ): Boolean =
