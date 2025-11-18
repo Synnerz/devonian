@@ -1,24 +1,24 @@
 package com.github.synnerz.devonian.api.events
 
+import com.mojang.blaze3d.vertex.PoseStack
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext.BlockOutlineContext
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.DeltaTracker
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.particle.Particle
-import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.client.render.VertexConsumerProvider
-import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.entity.Entity
-import net.minecraft.item.ItemStack
-import net.minecraft.network.packet.Packet
-import net.minecraft.screen.ScreenHandler
-import net.minecraft.screen.slot.Slot
-import net.minecraft.screen.slot.SlotActionType
-import net.minecraft.sound.SoundCategory
-import net.minecraft.text.Text
-import net.minecraft.util.math.BlockPos
+import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.core.BlockPos
+import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.Packet
+import net.minecraft.sounds.SoundSource
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.ItemStack
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 open class Event {
@@ -67,7 +67,7 @@ class DropItemEvent(
 ) : CancellableEvent()
 
 class TickEvent(
-    val minecraft: MinecraftClient
+    val minecraft: Minecraft
 ) : Event()
 
 class RenderWorldEvent(
@@ -76,8 +76,8 @@ class RenderWorldEvent(
 
 class RenderEntityEvent(
     val entity: Entity,
-    val matrixStack: MatrixStack,
-    val consumer: VertexConsumerProvider,
+    val matrixStack: PoseStack,
+    val consumer: MultiBufferSource,
     val light: Int,
     val ci: CallbackInfo
 ) : Event()
@@ -97,16 +97,16 @@ class ParticleSpawnEvent(
 ) : Event()
 
 class GameLoadEvent(
-    val minecraft: MinecraftClient
+    val minecraft: Minecraft
 ) : Event()
 
 class GameUnloadEvent(
-    val minecraft: MinecraftClient
+    val minecraft: Minecraft
 ) : Event()
 
 class WorldChangeEvent(
-    val minecraft: MinecraftClient,
-    val world: ClientWorld
+    val minecraft: Minecraft,
+    val world: ClientLevel
 ) : Event()
 
 class AreaEvent(
@@ -134,8 +134,8 @@ class GuiSlotClickEvent(
     val slot: Slot?,
     val slotId: Int,
     val mbtn: Int,
-    val actionType: SlotActionType,
-    val handler: ScreenHandler
+    val actionType: ClickType,
+    val handler: AbstractContainerMenu
 ) : CancellableEvent()
 
 class GuiKeyEvent(
@@ -157,28 +157,28 @@ open class CriteriaEvent(val message: String) : CancellableEvent() {
     }
 }
 
-open class ChatEvent(message: String, val text: Text) : CriteriaEvent(message)
+open class ChatEvent(message: String, val text: Component) : CriteriaEvent(message)
 
-abstract class ChatChannelEvent(message: String, text: Text, val name: String, val userMessage: String) :
+abstract class ChatChannelEvent(message: String, text: Component, val name: String, val userMessage: String) :
     ChatEvent(message, text) {
-    class AllChatEvent(message: String, text: Text, name: String, userMessage: String, val level: Int) :
+    class AllChatEvent(message: String, text: Component, name: String, userMessage: String, val level: Int) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    class PartyChatEvent(message: String, text: Text, name: String, userMessage: String) :
+    class PartyChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    class CoopChatEvent(message: String, text: Text, name: String, userMessage: String) :
+    class CoopChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    class GuildChatEvent(message: String, text: Text, name: String, userMessage: String) :
+    class GuildChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    abstract class PrivateChatEvent(message: String, text: Text, name: String, userMessage: String) :
+    abstract class PrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage) {
-        class IncomingPrivateChatEvent(message: String, text: Text, name: String, userMessage: String) :
+        class IncomingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
             PrivateChatEvent(message, text, name, userMessage)
 
-        class OutgoingPrivateChatEvent(message: String, text: Text, name: String, userMessage: String) :
+        class OutgoingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
             PrivateChatEvent(message, text, name, userMessage)
     }
 
@@ -191,7 +191,7 @@ abstract class ChatChannelEvent(message: String, text: Text, val name: String, v
         private val incomingPMRegex = "^From (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
         private val outgoingPMRegex = "^To (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
 
-        fun from(message: String, text: Text): ChatChannelEvent? {
+        fun from(message: String, text: Component): ChatChannelEvent? {
             allChatRegex.matchEntire(message)?.let {
                 return AllChatEvent(
                     message, text,
@@ -248,12 +248,12 @@ abstract class ChatChannelEvent(message: String, text: Text, val name: String, v
 
 class EntityDeathEvent(
     val entity: Entity,
-    val world: ClientWorld
+    val world: ClientLevel
 ) : Event()
 
 class RenderOverlayEvent(
-    val ctx: DrawContext,
-    val tickCounter: RenderTickCounter
+    val ctx: GuiGraphics,
+    val tickCounter: DeltaTracker
 ) : Event()
 
 class RenderTickEvent : Event()
@@ -265,17 +265,17 @@ class ServerTickEvent(val ticks: Int) : Event()
 
 class ScoreboardEvent(message: String) : CriteriaEvent(message)
 
-class RenderSlotEvent(val slot: Slot, val ctx: DrawContext) : CancellableEvent()
+class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics) : CancellableEvent()
 
 class SoundPlayEvent(
     val sound: String,
     val pitch: Float,
     val volume: Float,
-    val category: SoundCategory,
+    val category: SoundSource,
     val x: Double,
     val y: Double,
     val z: Double,
     val seed: Long
 ) : CancellableEvent()
 
-class PostClientInit(val minecraft: MinecraftClient) : Event()
+class PostClientInit(val minecraft: Minecraft) : Event()
