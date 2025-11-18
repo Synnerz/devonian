@@ -5,10 +5,10 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import net.minecraft.text.Style
-import net.minecraft.text.Text
-import net.minecraft.text.TextColor
-import net.minecraft.util.Formatting
+import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.Style
+import net.minecraft.network.chat.TextColor
 import java.util.Optional
 import kotlin.math.abs
 
@@ -39,7 +39,7 @@ object InventoryHistoryLog : TextHudFeature(
         on<TickEvent> {
             receipt.entries.removeIf { --it.value.ttl <= 0 }
 
-            if (minecraft.currentScreen != null) return@on
+            if (minecraft.screen != null) return@on
 
             val inv = minecraft.player?.inventory ?: return@on
             if (worldSwap) return@on
@@ -49,7 +49,7 @@ object InventoryHistoryLog : TextHudFeature(
                 if (i == 8) return@forEachIndexed
                 if (v.isEmpty) return@forEachIndexed
 
-                val name = v.customName?.format() ?: v.name.string
+                val name = v.customName?.format() ?: v.itemName.string
                 val count = v.count
                 newInv.merge(name, count, Int::plus)
                 inventory?.merge(name, -count, Int::plus)
@@ -78,8 +78,8 @@ object InventoryHistoryLog : TextHudFeature(
 
     override fun getEditText(): List<String> = listOf("&c-100&r &eSocial Credit")
 
-    private val colorToFormat = Formatting.entries.mapNotNull { format ->
-        TextColor.fromFormatting(format)?.let { it to format }
+    private val colorToFormat = ChatFormatting.entries.mapNotNull { format ->
+        TextColor.fromLegacyFormat(format)?.let { it to format }
     }.toMap()
 
     private fun parseStyle(style: Style): String = buildString {
@@ -96,10 +96,10 @@ object InventoryHistoryLog : TextHudFeature(
         }
     }
 
-    private fun parseFormat(_text: Text): String {
+    private fun parseFormat(_text: Component): String {
         var str = ""
 
-        _text.content.visit({ style, text ->
+        _text.contents.visit({ style, text ->
             val styleFormat = parseStyle(style)
             str += "${styleFormat}$text"
             Optional.empty<Any>()
@@ -108,7 +108,7 @@ object InventoryHistoryLog : TextHudFeature(
         return str
     }
 
-    private fun Text.format(): String {
+    private fun Component.format(): String {
         var str = parseFormat(this)
 
         str += this.siblings.joinToString("", transform = ::parseFormat)
