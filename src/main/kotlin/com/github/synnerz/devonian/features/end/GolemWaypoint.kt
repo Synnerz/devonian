@@ -8,8 +8,8 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.Location
-import net.minecraft.block.SkullBlock
-import net.minecraft.util.math.BlockPos
+import net.minecraft.core.BlockPos
+import net.minecraft.world.level.block.SkullBlock
 import java.awt.Color
 
 // FIXME: whenever the server lags the scanner lags behind and does not scan properly
@@ -85,7 +85,7 @@ object GolemWaypoint : Feature(
         for (coord in golemCoords) {
             val ( x, z ) = coord
             val bp = BlockPos(x, 4 + currentStage, z)
-            val state = minecraft.world?.getBlockState(bp) ?: continue
+            val state = minecraft.level?.getBlockState(bp) ?: continue
             if (state.block is SkullBlock) {
                 pos = bp
                 break
