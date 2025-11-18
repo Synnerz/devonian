@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.hud.texthud.TextHud.*
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Render2D
-import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 
@@ -54,12 +54,12 @@ abstract class TextHudFeature(
     override fun getHeight() = hud.getHeight()
     override fun getBounds(): BoundingBox = hud.getBounds()
 
-    override fun drawImpl(ctx: DrawContext) {
+    override fun drawImpl(ctx: GuiGraphics) {
         isEditing = false
         hud.draw(ctx)
     }
 
-    override fun sampleDraw(ctx: DrawContext, mx: Int, my: Int, selected: Boolean) {
+    override fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
         isEditing = true
         hud.setLines(getEditText())
         hud.draw(ctx)
