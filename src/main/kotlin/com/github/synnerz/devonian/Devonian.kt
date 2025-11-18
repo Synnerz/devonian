@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian
 
-import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.AreaEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.SubAreaEvent
@@ -107,7 +107,7 @@ object Devonian : ClientModInitializer {
         JsonUtils.load()
         Config.initialize()
         Location.initialize()
-		DungeonScanner.init()
+        Dungeons.initialize()
         DevonianCommand.initialize()
 
         EventBus.on<AreaEvent> {

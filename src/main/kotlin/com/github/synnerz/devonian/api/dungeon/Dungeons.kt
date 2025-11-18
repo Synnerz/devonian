@@ -9,17 +9,21 @@ object Dungeons {
     private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([IVXLCDM]+)?\\)$".toRegex()
     val partyMembers = mutableListOf<String>()
 
-//    data class PlayerInfoData(val name: String, val className: String, val classLevel: Int)
+    fun initialize() {
+        DungeonScanner.init()
+    }
 
     init {
         EventBus.on<TabUpdateEvent> { event ->
             if (Location.area != "catacombs") return@on
             val match = event.matches(playerInfoRegex) ?: return@on
-            val name = match[0]
-
-            if (partyMembers.contains(name)) return@on
-
-            partyMembers.add(name)
+        EventBus.on<AreaEvent> { event ->
+            val area = event.area
+            if (area == null || area != "Catacombs") {
+                players.clear()
+                DungeonScanner.reset()
+                DungeonMapScanner.reset()
+            }
         }
     }
 }

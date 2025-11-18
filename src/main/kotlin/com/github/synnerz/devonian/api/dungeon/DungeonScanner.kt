@@ -147,7 +147,7 @@ object DungeonScanner {
         rooms.fill(null)
         doors.fill(null)
 
-        val tickEvent = EventBus.on<TickEvent>({
+        EventBus.on<TickEvent>({
             if (Location.area != "catacombs") return@on
             val player = Devonian.minecraft.player ?: return@on
             if (!WorldUtils.isChunkLoaded(player.x, player.z)) return@on
@@ -157,7 +157,6 @@ object DungeonScanner {
             scan()
             checkRoomState()
             checkDoorState()
-            DungeonMapScanner.checkPlayerState()
 
             if (jdx !in 0 .. 35) return@on
 
@@ -166,15 +165,7 @@ object DungeonScanner {
             currentRoom = rooms.getOrNull(jdx)
             // TODO: remove whenever done debugging
             ChatUtils.sendMessage("$currentRoom")
-        }, false)
-
-        EventBus.on<AreaEvent> { event ->
-            val area = event.area
-            if (area == null || area != "Catacombs")
-                return@on reset()
-
-            tickEvent.add()
-        }
+        })
     }
 
     fun init() {
