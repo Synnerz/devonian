@@ -17,7 +17,7 @@
     "MinecraftMixin",
     "MouseHandlerMixin",
     "ParticleEngineMixin",
-    "PerspectiveMixin",
+    "CameraTypeMixin",
     "PlayerListHudMixin",
     "PlayerScreenHandlerMixin",
     "ScreenHandlerMixin",
