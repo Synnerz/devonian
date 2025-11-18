@@ -21,7 +21,7 @@
     "PlayerTabOverlayMixin",
     "InventoryMenuMixin",
     "AbstractContainerMenuMixin",
-    "StatusEffectsDisplayMixin",
+    "EffectsInInventoryMixin",
     "YggdrasilMinecraftSessionServiceMixin",
     "accessor.ChatComponentAccessor",
     "accessor.LocalPlayerAccessor",
