@@ -7,7 +7,6 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import net.minecraft.client.MinecraftClient
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -16,7 +15,7 @@ import java.io.FileWriter
 
 object JsonUtils {
     val configFile = File(
-        MinecraftClient.getInstance().runDirectory,
+        Devonian.minecraft.gameDirectory,
         "config"
     ).resolve("devonianConfig.json")
     val gson = GsonBuilder().setPrettyPrinting().create()
