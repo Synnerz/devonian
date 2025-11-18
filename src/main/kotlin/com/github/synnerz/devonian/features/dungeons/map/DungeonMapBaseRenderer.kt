@@ -338,6 +338,7 @@ class DungeonMapBaseRenderer :
             val font = TextHud.fontMainBase.deriveFont(Font.PLAIN, fontSize)
             g.font = font
             g.paint = Color(-1)
+            val ascent = g.fontMetrics.ascent
 
             textToRender.forEach { (decBox, key, text) ->
                 val rendered = cachedStrings.getOrPut(key) {
@@ -351,7 +352,7 @@ class DungeonMapBaseRenderer :
                     val visualWidth = lines.maxOf { it.visualWidth }
 
                     val w = visualWidth + (if (options.stringShadow) 0.1 * fontSize else 0.0) + 5.0
-                    val h = (fontSize * lines.size + g.fontMetrics.ascent).toDouble()
+                    val h = (fontSize * lines.size + ascent).toDouble()
                     val img = bimgProvider.create(w.toInt(), h.toInt())
 
                     TextRendererImpl.drawImage(img, TextRendererImpl.TextRenderParams(
@@ -366,7 +367,7 @@ class DungeonMapBaseRenderer :
 
                     CachedRenderedString(
                         img,
-                        0.0, 0.0,
+                        0.0, -ascent / 2.0,
                         w,
                         h,
                         visualWidth.toDouble(),
