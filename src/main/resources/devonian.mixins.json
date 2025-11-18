@@ -14,7 +14,7 @@
     "ScreenEffectRendererMixin",
     "LightningBoltRendererMixin",
     "LivingEntityMixin",
-    "MinecraftClientMixin",
+    "MinecraftMixin",
     "MouseMixin",
     "ParticleManagerMixin",
     "PerspectiveMixin",
