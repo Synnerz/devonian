@@ -4,9 +4,9 @@ import com.github.synnerz.devonian.Devonian.features
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.text.ClickEvent
-import net.minecraft.text.MutableText
-import net.minecraft.text.Style
+import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.chat.Style
 
 object Config {
     private val featuresSize get() = features.size
@@ -70,9 +70,10 @@ object Config {
         return list
     }
 
-    private fun pageLiteral(): MutableText {
+    private fun pageLiteral(): MutableComponent {
         val previousPage = ChatUtils.literal("&7<<  &f${currentPage + 1}&f/")
-            .setStyle(Style.EMPTY.withClickEvent(
+            .setStyle(
+                Style.EMPTY.withClickEvent(
                 ClickEvent.RunCommand("devonian config ${(currentPage - 1).coerceAtLeast(minPage)}"))
             )
         val nextPage = ChatUtils.literal("&b${maxPage + 1}  &f>>")
