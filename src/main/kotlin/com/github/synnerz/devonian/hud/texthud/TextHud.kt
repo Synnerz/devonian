@@ -15,7 +15,7 @@ import java.util.*
 import kotlin.math.ceil
 import kotlin.math.max
 
-class TextHud(val name: String, private val data: DataProvider) : ITextHud, DataProvider by data, FontListener {
+open class TextHud(val name: String, private val data: DataProvider) : ITextHud, DataProvider by data, FontListener {
     init {
         registerFontListener(this)
     }
@@ -39,7 +39,7 @@ class TextHud(val name: String, private val data: DataProvider) : ITextHud, Data
 
     override fun onFontChange(f: Font) {
         markFont()
-        }
+    }
 
     private var lineWidth = 0f
     private var lineVisualWidth = 0f
