@@ -4,9 +4,9 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.EntityDeathEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.entity.EquipmentSlot
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.mob.ZombieEntity
+import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.monster.Zombie
 
 object MimicKilled : Feature(
     "mimicKilled",
@@ -20,8 +20,8 @@ object MimicKilled : Feature(
         on<EntityDeathEvent> { event ->
             if (messageSent) return@on
             val entity = event.entity as LivingEntity
-            if (entity !is ZombieEntity) return@on
-            if (!entity.isBaby || entity.hasStackEquipped(EquipmentSlot.HEAD)) return@on
+            if (entity !is Zombie) return@on
+            if (!entity.isBaby || entity.hasItemInSlot(EquipmentSlot.HEAD)) return@on
 
             ChatUtils.command("pc Mimic Killed!")
             messageSent = true
