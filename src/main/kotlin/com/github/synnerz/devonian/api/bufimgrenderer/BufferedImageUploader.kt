@@ -4,16 +4,15 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PostClientInit
 import com.mojang.blaze3d.opengl.GlStateManager
+import com.mojang.blaze3d.opengl.GlTexture
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.TextureFormat
-import net.minecraft.client.texture.AbstractTexture
-import net.minecraft.client.texture.GlTexture
-import net.minecraft.util.Identifier
+import net.minecraft.client.renderer.texture.AbstractTexture
+import net.minecraft.resources.ResourceLocation
 import org.lwjgl.opengl.*
 import java.awt.image.*
 import java.nio.IntBuffer
 import javax.imageio.ImageIO
-
 
 class BufferedImageUploader(val name: String) : AbstractTexture() {
     var w: Int = 0
@@ -26,8 +25,8 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
     private fun create(img: BufferedImage) {
         w = img.width
         h = img.height
-        glTexture = RenderSystem.getDevice().createTexture(name, TextureFormat.RGBA8, w, h, 1)
-        texId = (glTexture as GlTexture).glId
+        texture = RenderSystem.getDevice().createTexture(name, TextureFormat.RGBA8, w, h, 1)
+        texId = (texture as GlTexture).glId()
         GlStateManager._bindTexture(texId)
         GlStateManager._texImage2D(
             GL11.GL_TEXTURE_2D,
@@ -101,11 +100,11 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
         else uploadImpl(img)
     }
 
-    fun register(mcid: Identifier) = apply {
+    fun register(mcid: ResourceLocation) = apply {
         val texMng = Devonian.minecraft?.textureManager
-        if (texMng != null) texMng.registerTexture(mcid, this)
+        if (texMng != null) texMng.register(mcid, this)
         else EventBus.on<PostClientInit> { event ->
-            event.minecraft.textureManager.registerTexture(mcid, this)
+            event.minecraft.textureManager.register(mcid, this)
         }
     }
 
