@@ -10,7 +10,7 @@
     "FallingBlockRendererMixin",
     "GameRendererMixin",
     "AbstractContainerScreenMixin",
-    "InGameHudMixin",
+    "GuiMixin",
     "InGameOverlayRendererMixin",
     "LightningEntityRendererMixin",
     "LivingEntityMixin",
