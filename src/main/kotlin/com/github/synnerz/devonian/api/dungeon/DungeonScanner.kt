@@ -14,10 +14,10 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.Gson
-import net.minecraft.block.BlockState
-import net.minecraft.block.Blocks
-import net.minecraft.block.SlabBlock
-import net.minecraft.registry.tag.FluidTags
+import net.minecraft.tags.FluidTags
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.SlabBlock
+import net.minecraft.world.level.block.state.BlockState
 
 @Suppress("MemberVisibilityCanBePrivate")
 object DungeonScanner {
@@ -91,14 +91,14 @@ object DungeonScanner {
         var registryName = WorldUtils.registryName(block)
         val fluidState = blockState.fluidState
         if (!fluidState.isEmpty) {
-            if (fluidState.isIn(FluidTags.WATER))
-                return if (fluidState.isStill) 9 else 8
-            if (fluidState.isIn(FluidTags.LAVA))
-                return if (fluidState.isStill) 11 else 10
+            if (fluidState.`is`(FluidTags.WATER))
+                return if (fluidState.isSource) 9 else 8
+            if (fluidState.`is`(FluidTags.LAVA))
+                return if (fluidState.isSource) 11 else 10
         }
 
         if (block is SlabBlock)
-            registryName += "[type=${blockState.get(SlabBlock.TYPE).name.lowercase()}]"
+            registryName += "[type=${blockState.getValue(SlabBlock.TYPE).name.lowercase()}]"
         val result = LegacyRegistry.BLOCKS[registryName]
 
         // TODO: either remove or make it part of debug tools
