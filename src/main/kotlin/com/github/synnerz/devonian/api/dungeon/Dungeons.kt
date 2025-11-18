@@ -47,8 +47,8 @@ object Dungeons {
 
             players.forEach { it.value.tick() }
 
-            mc.world?.players?.forEach {
-                val ping = mc.networkHandler?.getPlayerListEntry(it.uuid)?.latency ?: return@forEach
+            mc.level?.players()?.forEach {
+                val ping = mc.connection?.getPlayerInfo(it.uuid)?.latency ?: return@forEach
                 if (ping == -1) return@forEach
 
                 val player = players[it.name.string] ?: return@forEach
