@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.api
 
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.JsonUtils
 import kotlinx.coroutines.*
-import net.minecraft.client.MinecraftClient
 import java.io.File
 import java.io.FileWriter
 
@@ -13,7 +13,7 @@ object SkyblockPrices {
         val lastSave: Long
     )
     private val pricesFile = File(
-        MinecraftClient.getInstance().runDirectory,
+        Devonian.minecraft.gameDirectory,
         "config"
     )
         .resolve("devonian")
