@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.utils.math
 
-import net.minecraft.util.math.BlockPos
+import net.minecraft.core.BlockPos
 import java.util.*
 import kotlin.math.floor
 import kotlin.math.sign
