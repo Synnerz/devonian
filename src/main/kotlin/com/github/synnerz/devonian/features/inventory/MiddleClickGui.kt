@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 
 object MiddleClickGui : Feature(
     "middleClickGui",
@@ -25,14 +25,14 @@ object MiddleClickGui : Feature(
 
     override fun initialize() {
         on<GuiSlotClickEvent> { event ->
-            if (event.slot == null || event.mbtn != 0 || !event.slot.hasStack()) return@on
-            val stack = event.slot.stack
-            if (event.slot.inventory == minecraft.player?.inventory) return@on
-            val screen = minecraft.currentScreen ?: return@on
-            val screenName = (screen as HandledScreen<*>).title?.string ?: return@on
+            if (event.slot == null || event.mbtn != 0 || !event.slot.hasItem()) return@on
+            val stack = event.slot.item
+            if (event.slot.container == minecraft.player?.inventory) return@on
+            val screen = minecraft.screen ?: return@on
+            val screenName = (screen as AbstractContainerScreen<*>).title?.string ?: return@on
             if (ItemUtils.skyblockId(stack) != null) return@on
             if (avoidGuis.any { screenName.startsWith(it) }) return@on
-            if (stack.name.string == "Reforge Item" || stack.name.string == "Salvage Item") return@on
+            if (stack.itemName.string == "Reforge Item" || stack.itemName.string == "Salvage Item") return@on
 
             event.cancel()
             ScreenUtils.click(event.slotId, false, "MIDDLE")
