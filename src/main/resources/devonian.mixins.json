@@ -15,7 +15,7 @@
     "LightningBoltRendererMixin",
     "LivingEntityMixin",
     "MinecraftMixin",
-    "MouseMixin",
+    "MouseHandlerMixin",
     "ParticleManagerMixin",
     "PerspectiveMixin",
     "PlayerListHudMixin",
