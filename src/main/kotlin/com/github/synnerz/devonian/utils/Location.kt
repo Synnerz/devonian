@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.api.events.*
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
-import net.minecraft.network.packet.s2c.play.TeamS2CPacket
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 
 object Location {
     val teamRegex = "^team_(\\d+)$".toRegex()
@@ -16,8 +16,8 @@ object Location {
         EventBus.on<PacketReceivedEvent> { event ->
             when (val packet = event.packet) {
                 // TabList
-                is PlayerListS2CPacket -> {
-                    packet.entries.forEach {
+                is ClientboundPlayerInfoUpdatePacket -> {
+                    packet.entries().forEach {
                         val name = it.displayName ?: return@forEach
                         val line = name.string.replace(emoteRegex, "")
                         if (!line.matches(areaRegex)) return@forEach
@@ -28,13 +28,13 @@ object Location {
                     }
                 }
                 // Scoreboard
-                is TeamS2CPacket -> {
-                    if (packet.team.isEmpty) return@on
-                    val team = packet.team?.get() ?: return@on
-                    val teamPrefix = team.prefix.string
-                    val teamSuffix = team.suffix.string
+                is ClientboundSetPlayerTeamPacket -> {
+                    if (packet.parameters.isEmpty) return@on
+                    val team = packet.parameters?.get() ?: return@on
+                    val teamPrefix = team.playerPrefix.string
+                    val teamSuffix = team.playerSuffix.string
                     if (teamPrefix.isEmpty()) return@on
-                    val teamName = packet.teamName
+                    val teamName = packet.name
                     if (!teamName.matches(teamRegex)) return@on
 
                     val line = "${teamPrefix}${teamSuffix}"
