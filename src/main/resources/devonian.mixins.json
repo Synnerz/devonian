@@ -20,7 +20,7 @@
     "CameraTypeMixin",
     "PlayerTabOverlayMixin",
     "InventoryMenuMixin",
-    "ScreenHandlerMixin",
+    "AbstractContainerMenuMixin",
     "StatusEffectsDisplayMixin",
     "YggdrasilMinecraftSessionServiceMixin",
     "accessor.ChatComponentAccessor",
