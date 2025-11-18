@@ -8,8 +8,8 @@ import com.github.synnerz.devonian.config.ui.ConfigData
 import com.github.synnerz.devonian.config.ui.ConfigGui
 import com.github.synnerz.devonian.utils.Location
 import com.github.synnerz.talium.components.UISwitch
-import net.minecraft.text.ClickEvent
-import net.minecraft.text.Style
+import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.Style
 
 open class Feature @JvmOverloads constructor(
     val configName: String,
