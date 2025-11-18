@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.diana
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.TickEvent
-import net.minecraft.util.math.BlockPos
+import net.minecraft.core.BlockPos
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.floor
