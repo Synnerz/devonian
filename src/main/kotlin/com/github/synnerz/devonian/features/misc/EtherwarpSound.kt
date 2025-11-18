@@ -50,7 +50,12 @@ object EtherwarpSound : Feature(
             ) return@on
 
             event.cancel()
-            minecraft.player?.playSound(soundEvent, 1f, 1f)
+            minecraft.world?.playSoundClient(
+                event.x, event.y, event.z,
+                soundEvent, event.category,
+                1f, 1f,
+                false
+            )
         }
     }
 }
