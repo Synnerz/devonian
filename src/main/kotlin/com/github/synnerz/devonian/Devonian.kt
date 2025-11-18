@@ -29,12 +29,12 @@ import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
 import net.fabricmc.api.ClientModInitializer
-import net.minecraft.client.MinecraftClient
+import net.minecraft.client.Minecraft
 import org.slf4j.LoggerFactory
 
 object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")
-    val minecraft = MinecraftClient.getInstance()
+    val minecraft = Minecraft.getInstance()
     val features = mutableListOf<Feature>()
     private val featureInstances = listOf(
         NoCursorReset,
