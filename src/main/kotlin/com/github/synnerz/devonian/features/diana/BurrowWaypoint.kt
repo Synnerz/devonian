@@ -5,9 +5,9 @@ import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
-import net.minecraft.particle.ParticleTypes
+import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket
 import java.awt.Color
 import kotlin.math.floor
 
@@ -24,23 +24,23 @@ object BurrowWaypoint : Feature(
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
-            if (packet !is ParticleS2CPacket || packet.offsetY != 0.1f) return@on
-            val particle = packet.parameters.type
+            if (packet !is ClientboundLevelParticlesPacket || packet.yDist != 0.1f) return@on
+            val particle = packet.particle.type
             val waypointType = when {
                 particle == ParticleTypes.ENCHANTED_HIT &&
                 packet.count == 4 &&
-                packet.offsetX == 0.5f &&
-                packet.offsetZ == 0.5f -> BurrowManager.BurrowType.START
+                packet.xDist == 0.5f &&
+                packet.zDist == 0.5f -> BurrowManager.BurrowType.START
 
                 particle == ParticleTypes.CRIT &&
                 packet.count == 3 &&
-                packet.offsetX == 0.5f &&
-                packet.offsetZ == 0.5f -> BurrowManager.BurrowType.MOB
+                packet.xDist == 0.5f &&
+                packet.zDist == 0.5f -> BurrowManager.BurrowType.MOB
 
                 particle == ParticleTypes.DRIPPING_LAVA &&
                 packet.count == 2 &&
-                packet.offsetX == 0.35f &&
-                packet.offsetZ == 0.35f -> BurrowManager.BurrowType.TREASURE
+                packet.xDist == 0.35f &&
+                packet.zDist == 0.35f -> BurrowManager.BurrowType.TREASURE
 
                 else -> null
             }
@@ -56,9 +56,9 @@ object BurrowWaypoint : Feature(
 
         on<PacketSentEvent> { event ->
             val packet = event.packet
-            if (packet !is PlayerActionC2SPacket) return@on
+            if (packet !is ServerboundPlayerActionPacket) return@on
             val action = packet.action
-            if (action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return@on
+            if (action != ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK) return@on
 
             BurrowManager.digBurrow(packet.pos)
         }
