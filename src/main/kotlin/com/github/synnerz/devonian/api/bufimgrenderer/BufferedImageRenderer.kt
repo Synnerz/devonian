@@ -1,7 +1,5 @@
 package com.github.synnerz.devonian.api.bufimgrenderer
 
-import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.PostClientInit
 import com.github.synnerz.devonian.mixin.accessor.DrawContextAccessor
 import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.RenderPipeline
@@ -42,9 +40,7 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
     )
 
     init {
-        EventBus.on<PostClientInit> { event ->
-            event.minecraft.textureManager.registerTexture(mcid, uploader)
-        }
+        uploader.register(mcid)
     }
 
     protected abstract fun drawImage(img: BufferedImage, param: T): BufferedImage

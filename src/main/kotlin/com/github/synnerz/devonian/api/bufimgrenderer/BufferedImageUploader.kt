@@ -1,14 +1,18 @@
 package com.github.synnerz.devonian.api.bufimgrenderer
 
+import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.PostClientInit
 import com.mojang.blaze3d.opengl.GlStateManager
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.TextureFormat
 import net.minecraft.client.texture.AbstractTexture
 import net.minecraft.client.texture.GlTexture
+import net.minecraft.util.Identifier
 import org.lwjgl.opengl.*
-import java.awt.image.BufferedImage
-import java.awt.image.DataBufferByte
+import java.awt.image.*
 import java.nio.IntBuffer
+import javax.imageio.ImageIO
 
 
 class BufferedImageUploader(val name: String) : AbstractTexture() {
@@ -16,6 +20,8 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
     var h: Int = 0
     var texId: Int = -1
     var pboId: Int = -1
+
+    private val bimgFactory by lazy { BufferedImageFactoryImpl() }
 
     private fun create(img: BufferedImage) {
         w = img.width
@@ -49,9 +55,19 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
         GlStateManager._glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0)
     }
 
-    fun upload(img: BufferedImage) {
+    private fun uploadImpl(img: BufferedImage) {
         val w = img.width
         val h = img.height
+
+        var img = img
+
+        if (!isRGBAByteInterleaved(img)) {
+            val newImg = bimgFactory.create(w, h)
+            val g = newImg.createGraphics()
+            g.drawImage(img, 0, 0, null)
+            g.dispose()
+            img = newImg
+        }
 
         if (texId == -1) create(img)
         else if (w != this.w || h != this.h) {
@@ -80,11 +96,50 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
         GlStateManager._glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0)
     }
 
+    fun upload(img: BufferedImage) {
+        if (RenderSystem.tryGetDevice() == null) EventBus.on<PostClientInit> { uploadImpl(img) }
+        else uploadImpl(img)
+    }
+
+    fun register(mcid: Identifier) = apply {
+        val texMng = Devonian.minecraft?.textureManager
+        if (texMng != null) texMng.registerTexture(mcid, this)
+        else EventBus.on<PostClientInit> { event ->
+            event.minecraft.textureManager.registerTexture(mcid, this)
+        }
+    }
+
     private fun destroy() {
         if (texId == -1) return
         GlStateManager._deleteTexture(texId)
         if (pboId != -1) GlStateManager._glDeleteBuffers(pboId)
         pboId = -1
         texId = pboId
+    }
+
+    companion object {
+        private fun getImg(path: String): BufferedImage? {
+            val stream = this::class.java.getResourceAsStream(path) ?: return null
+            val img = ImageIO.read(stream)
+            return img
+        }
+
+        fun fromResource(path: String) = getImg(path)?.let { img ->
+            BufferedImageUploader(path).also {
+                it.upload(img)
+            }
+        }
+
+        private fun isRGBAByteInterleaved(img: BufferedImage): Boolean {
+            val raster = img.raster
+
+            val buf = raster.dataBuffer
+            if (buf !is DataBufferByte) return false
+
+            val sm = raster.sampleModel
+            if (sm !is PixelInterleavedSampleModel) return false
+
+            return sm.bandOffsets.withIndex().all { it.index == it.value }
+        }
     }
 }
