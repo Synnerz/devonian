@@ -9,9 +9,9 @@ object WorldAge : TextHudFeature(
 ) {
     override fun initialize() {
         on<RenderOverlayEvent> { event ->
-            if (minecraft.world == null) return@on
+            if (minecraft.level == null) return@on
 
-            setLine("&bDay&f: &6${minecraft.world!!.timeOfDay / 24000}")
+            setLine("&bDay&f: &6${minecraft.level!!.dayTime / 24000}")
             draw(event.ctx)
         }
     }
