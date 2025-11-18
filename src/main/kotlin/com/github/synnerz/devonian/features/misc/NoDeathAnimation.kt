@@ -15,7 +15,7 @@ object NoDeathAnimation : Feature(
             if (event.entity !is LivingEntity) return@on
             val entity = event.entity
 
-            if (!entity.isAlive && entity.health > 0f) return@on
+            if (entity.isAlive && entity.health > 0f) return@on
 
             val name = entity.name?.string
             if (name != null && lividNameRegex.matches(name)) return@on
