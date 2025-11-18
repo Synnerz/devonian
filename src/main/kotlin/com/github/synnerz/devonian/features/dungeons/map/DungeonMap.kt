@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.SimpleTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHud
-import com.github.synnerz.devonian.mixin.accessor.DrawContextAccessor
+import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsAccessor
 import com.github.synnerz.devonian.utils.BoundingBox
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderLayer
@@ -132,7 +132,7 @@ object DungeonMap : HudFeature(
             val dyr = sin(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE
 
             val mat = ctx.matrices.peek().positionMatrix
-            val consumer = (ctx as DrawContextAccessor).vertexConsumers
+            val consumer = (ctx as GuiGraphicsAccessor).vertexConsumers
             val buf = consumer.getBuffer(if (i == 0) layerSelf else layerOther)
             buf.vertex(mat, px + dxf - dxr, py + dyf - dyr, 0f).texture(0f, 0f).color(-1)
             buf.vertex(mat, px - dxf - dxr, py - dyf - dyr, 0f).texture(0f, 1f).color(-1)
