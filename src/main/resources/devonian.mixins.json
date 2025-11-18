@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ChatComponentMixin",
-    "ClientConnectionMixin",
+    "ConnectionMixin",
     "ClientPlayerEntityMixin",
     "EntityRenderDispatcherMixin",
     "FallingBlockEntityRendererMixin",
