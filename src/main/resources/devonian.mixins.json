@@ -9,7 +9,7 @@
     "EntityRenderDispatcherMixin",
     "FallingBlockRendererMixin",
     "GameRendererMixin",
-    "HandledScreenMixin",
+    "AbstractContainerScreenMixin",
     "InGameHudMixin",
     "InGameOverlayRendererMixin",
     "LightningEntityRendererMixin",
