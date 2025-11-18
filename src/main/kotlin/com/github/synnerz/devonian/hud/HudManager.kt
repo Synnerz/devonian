@@ -5,12 +5,12 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Render2D
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.Text
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
 
-object HudManager : Screen(Text.literal("Devonian.HudManager")) {
+object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     private var selectedHud: HudFeature? = null
     val huds = mutableListOf<HudFeature>()
     var isEditing = false
@@ -39,8 +39,8 @@ object HudManager : Screen(Text.literal("Devonian.HudManager")) {
         isEditing = true
     }
 
-    override fun close() {
-        super.close()
+    override fun onClose() {
+        super.onClose()
 
         selectedHud = null
         isEditing = false
@@ -102,10 +102,10 @@ object HudManager : Screen(Text.literal("Devonian.HudManager")) {
         return false
     }
 
-    override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.render(context, mouseX, mouseY, deltaTicks)
         Render2D.drawString(
-            context!!,
+            context,
             "Hud Manager",
             10, 10
         )
