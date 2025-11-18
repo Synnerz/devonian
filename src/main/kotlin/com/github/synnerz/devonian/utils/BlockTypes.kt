@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.utils
 
-import net.minecraft.block.Blocks
+import net.minecraft.world.level.block.Blocks
 
 object BlockTypes {
     val Interactable = setOf(
@@ -386,8 +386,8 @@ object BlockTypes {
         Blocks.LEAF_LITTER,
         Blocks.BIG_DRIPLEAF_STEM,
         Blocks.HANGING_ROOTS,
-        Blocks.POTTED_AZALEA_BUSH,
-        Blocks.POTTED_FLOWERING_AZALEA_BUSH,
+        Blocks.POTTED_AZALEA,
+        Blocks.POTTED_FLOWERING_AZALEA,
         Blocks.DECORATED_POT,
         Blocks.HEAVY_CORE,
         Blocks.PALE_MOSS_CARPET,
