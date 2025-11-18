@@ -1,20 +1,20 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
-import net.minecraft.block.Block
-import net.minecraft.block.BlockState
-import net.minecraft.client.world.ClientChunkManager
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.registry.Registries
-import net.minecraft.util.math.BlockPos
+import net.minecraft.client.multiplayer.ClientChunkCache
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.core.BlockPos
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockState
 
 object WorldUtils {
-    val world: ClientWorld? get() = Devonian.minecraft.world
-    val chunkManager: ClientChunkManager? get() = world?.chunkManager
+    val world: ClientLevel? get() = Devonian.minecraft.level
+    val chunkManager: ClientChunkCache? get() = world?.chunkSource
 
     fun isChunkLoaded(x: Double, z: Double): Boolean = isChunkLoaded(x.toInt(), z.toInt())
 
-    fun isChunkLoaded(x: Int, z: Int): Boolean = chunkManager?.isChunkLoaded(x shr 4, z shr 4) ?: false
+    fun isChunkLoaded(x: Int, z: Int): Boolean = chunkManager?.hasChunk(x shr 4, z shr 4) ?: false
 
     fun getBlockState(x: Double, y: Double, z: Double): BlockState? =
         getBlockState(x.toInt(), y.toInt(), z.toInt())
@@ -22,7 +22,7 @@ object WorldUtils {
     fun getBlockState(x: Int, y: Int, z: Int): BlockState? =
         world?.getBlockState(BlockPos(x, y, z))
 
-    fun getBlockId(block: Block): Int = Registries.BLOCK.indexOf(block)
+    fun getBlockId(block: Block): Int = BuiltInRegistries.BLOCK.indexOf(block)
 
     fun getBlockIdAt(x: Double, y: Double, z: Double): Int? {
         val blockState = getBlockState(x, y, z) ?: return null
@@ -32,7 +32,7 @@ object WorldUtils {
     }
 
     fun registryName(block: Block): String {
-        val registry = Registries.BLOCK.getId(block)
+        val registry = BuiltInRegistries.BLOCK.getKey(block)
         return "${registry.namespace}:${registry.path}"
     }
 }
