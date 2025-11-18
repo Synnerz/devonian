@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.diana
 
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.JsonUtils
-import net.minecraft.client.MinecraftClient
 import java.io.File
 import java.io.FileWriter
 
@@ -19,7 +19,7 @@ object DianaDropTracker : TextHudFeature(
         "^RARE DROP! (?:You dug out a )?([-() \\w]+)(?: \\(\\+\\d+ . Magic Find\\))?!?$".toRegex()
     private val coinsDropCriteria = "^Wow! You dug out ([\\d,.]+) coins!$".toRegex()
     private val statsFile = File(
-        MinecraftClient.getInstance().runDirectory,
+        Devonian.minecraft.gameDirectory,
         "config"
     )
         .resolve("devonian")
