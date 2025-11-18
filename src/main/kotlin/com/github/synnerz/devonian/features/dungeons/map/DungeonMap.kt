@@ -13,10 +13,10 @@ import com.github.synnerz.devonian.hud.texthud.SimpleTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHud
 import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsAccessor
 import com.github.synnerz.devonian.utils.BoundingBox
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderPhase
-import net.minecraft.util.Identifier
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.renderer.RenderStateShard
+import net.minecraft.client.renderer.RenderType
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.TriState
 import java.awt.Color
 import kotlin.math.PI
@@ -47,8 +47,8 @@ object DungeonMap : HudFeature(
         val bounds = getBounds()
         val window = minecraft.window
         mapRenderer.update(
-            (bounds.w * window.scaleFactor + 0.5).toInt(),
-            (bounds.h * window.scaleFactor + 0.5).toInt(),
+            (bounds.w * window.guiScale + 0.5).toInt(),
+            (bounds.h * window.guiScale + 0.5).toInt(),
             DungeonMapRenderData(
                 rooms, doors,
                 DungeonMapRenderOptions(
@@ -93,13 +93,13 @@ object DungeonMap : HudFeature(
         }
     }
 
-    override fun drawImpl(ctx: DrawContext) {
-        mapRenderer.draw(ctx, x.toFloat(), y.toFloat(), (1.0 / minecraft.window.scaleFactor).toFloat())
+    override fun drawImpl(ctx: GuiGraphics) {
+        mapRenderer.draw(ctx, x.toFloat(), y.toFloat(), (1.0 / minecraft.window.guiScale).toFloat())
 
         val bounds = getBounds()
 
         val renderNames = SETTING_RENDER_NAMES && (if (SETTING_RENDER_NAMES_ONLY_LEAP) {
-            val held = minecraft.player?.activeItem
+            val held = minecraft.player?.useItem
             if (held != null) listOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP").contains(ItemUtils.skyblockId(held))
             else false
         } else true)
@@ -131,13 +131,13 @@ object DungeonMap : HudFeature(
             val dxr = cos(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE
             val dyr = sin(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE
 
-            val mat = ctx.matrices.peek().positionMatrix
+            val mat = ctx.pose().last().pose()
             val consumer = (ctx as GuiGraphicsAccessor).vertexConsumers
             val buf = consumer.getBuffer(if (i == 0) layerSelf else layerOther)
-            buf.vertex(mat, px + dxf - dxr, py + dyf - dyr, 0f).texture(0f, 0f).color(-1)
-            buf.vertex(mat, px - dxf - dxr, py - dyf - dyr, 0f).texture(0f, 1f).color(-1)
-            buf.vertex(mat, px + dxf + dxr, py + dyf + dyr, 0f).texture(1f, 0f).color(-1)
-            buf.vertex(mat, px - dxf + dxr, py - dyf + dyr, 0f).texture(1f, 1f).color(-1)
+            buf.addVertex(mat, px + dxf - dxr, py + dyf - dyr, 0f).setUv(0f, 0f).setColor(-1)
+            buf.addVertex(mat, px - dxf - dxr, py - dyf - dyr, 0f).setUv(0f, 1f).setColor(-1)
+            buf.addVertex(mat, px + dxf + dxr, py + dyf + dyr, 0f).setUv(1f, 0f).setColor(-1)
+            buf.addVertex(mat, px - dxf + dxr, py - dyf + dyr, 0f).setUv(1f, 1f).setColor(-1)
         }
     }
 
@@ -147,29 +147,29 @@ object DungeonMap : HudFeature(
         }
     }
 
-    val mcidMarkerSelf = Identifier.of("devonian", "dungeon_map_marker_self")
-    val layerSelf = RenderLayer.of(
+    val mcidMarkerSelf = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_self")
+    val layerSelf = RenderType.create(
         "devonian/dungeon_map_marker_self",
         1536,
         false,
         true,
         pipeline,
-        RenderLayer.MultiPhaseParameters
+        RenderType.CompositeState
             .builder()
-            .texture(RenderPhase.Texture(mcidMarkerSelf, TriState.TRUE, false))
-            .build(false)
+            .setTextureState(RenderStateShard.TextureStateShard(mcidMarkerSelf, TriState.TRUE, false))
+            .createCompositeState(false)
     )
-    val mcidMarkerOther = Identifier.of("devonian", "dungeon_map_marker_other")
-    val layerOther = RenderLayer.of(
+    val mcidMarkerOther = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_other")
+    val layerOther = RenderType.create(
         "devonian/dungeon_map_marker_other",
         1536,
         false,
         true,
         pipeline,
-        RenderLayer.MultiPhaseParameters
+        RenderType.CompositeState
             .builder()
-            .texture(RenderPhase.Texture(mcidMarkerOther, TriState.TRUE, false))
-            .build(false)
+            .setTextureState(RenderStateShard.TextureStateShard(mcidMarkerOther, TriState.TRUE, false))
+            .createCompositeState(false)
     )
 
     init {
