@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.ClearTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.ShapeTypes
-import net.minecraft.block.Blocks
+import net.minecraft.world.level.block.Blocks
 
 class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: Int) {
     val roomOffset = listOf(
