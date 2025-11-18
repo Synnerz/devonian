@@ -2,43 +2,43 @@ package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.util.Formatting
+import net.minecraft.ChatFormatting
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.renderer.RenderType
 import java.awt.Color
 import kotlin.math.max
 
 object Render2D {
     private val formattingRegex = "(?<!\\\\\\\\)&(?=[0-9a-fk-or])".toRegex()
-    val textRenderer = Devonian.minecraft.textRenderer
+    val textRenderer = Devonian.minecraft.font
     val window get() = Devonian.minecraft.window
-    val mouse = Devonian.minecraft.mouse
+    val mouse = Devonian.minecraft.mouseHandler
     val screenWidth get() = window.width
     val screenHeight get() = window.height
-    val scaledWidth get() = window.scaledWidth
-    val scaledHeight get() = window.scaledHeight
+    val scaledWidth get() = window.guiScaledWidth
+    val scaledHeight get() = window.guiScaledHeight
 
     @JvmOverloads
-    fun drawString(ctx: DrawContext, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
-        val matrices = ctx.matrices
-        matrices.push()
+    fun drawString(ctx: GuiGraphics, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
+        val matrices = ctx.pose()
+        matrices.pushPose()
         matrices.translate(x.toFloat(), y.toFloat(), 0f)
         if (scale != 1f) matrices.scale(scale, scale, 1f)
 
-        ctx.drawText(
+        ctx.drawString(
             textRenderer,
-            str.replace(formattingRegex, "${Formatting.FORMATTING_CODE_PREFIX}"),
+            str.replace(formattingRegex, "${ChatFormatting.PREFIX_CODE}"),
             0,
             0,
             -1,
             shadow
         )
 
-        matrices.pop()
+        matrices.popPose()
     }
 
     @JvmOverloads
-    fun drawStringNW(ctx: DrawContext, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
+    fun drawStringNW(ctx: GuiGraphics, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
         var yy = y
         str.split("\n").forEach {
             drawString(ctx, it, x, yy, scale, shadow)
@@ -47,20 +47,20 @@ object Render2D {
     }
 
     @JvmOverloads
-    fun drawRect(ctx: DrawContext, x: Int, y: Int, width: Int, height: Int, color: Color = Color.WHITE) {
-        ctx.fill(RenderLayer.getGui(), x, y, x + width, y + height, color.rgb)
+    fun drawRect(ctx: GuiGraphics, x: Int, y: Int, width: Int, height: Int, color: Color = Color.WHITE) {
+        ctx.fill(RenderType.gui(), x, y, x + width, y + height, color.rgb)
     }
 
-    fun drawCircle(ctx: DrawContext, cx: Int, cy: Int, radius: Int, color: Color = Color.WHITE) {
+    fun drawCircle(ctx: GuiGraphics, cx: Int, cy: Int, radius: Int, color: Color = Color.WHITE) {
         var x = 0
         var y = radius
         var d = 3 - 2 * radius
 
         while (x <= y) {
-            ctx.drawHorizontalLine(cx - x, cx + x, cy + y, color.rgb)
-            ctx.drawHorizontalLine(cx - x, cx + x, cy - y, color.rgb)
-            ctx.drawHorizontalLine(cx - y, cx + y, cy + x, color.rgb)
-            ctx.drawHorizontalLine(cx - y, cx + y, cy - x, color.rgb)
+            ctx.hLine(cx - x, cx + x, cy + y, color.rgb)
+            ctx.hLine(cx - x, cx + x, cy - y, color.rgb)
+            ctx.hLine(cx - y, cx + y, cy + x, color.rgb)
+            ctx.hLine(cx - y, cx + y, cy - x, color.rgb)
 
             if (d < 0) {
                 d += 4 * x + 6
@@ -74,25 +74,25 @@ object Render2D {
 
     fun String.width(): Int {
         val newlines = this.split("\n")
-        if (newlines.size <= 1) return textRenderer.getWidth(this.clearCodes())
+        if (newlines.size <= 1) return textRenderer.width(this.clearCodes())
 
         var maxWidth = 0
 
         for (line in newlines)
-            maxWidth = max(maxWidth, textRenderer.getWidth(line.clearCodes()))
+            maxWidth = max(maxWidth, textRenderer.width(line.clearCodes()))
 
         return maxWidth
     }
 
     fun String.height(): Int {
         val newlines = this.split("\n")
-        if (newlines.size <= 1) return textRenderer.fontHeight
+        if (newlines.size <= 1) return textRenderer.lineHeight
 
-        return textRenderer.fontHeight * (newlines.size + 1)
+        return textRenderer.lineHeight * (newlines.size + 1)
     }
 
     object Mouse {
-        val x get() = mouse.x * scaledWidth / max(1, screenWidth)
-        val y get() = mouse.y * scaledHeight / max(1, screenHeight)
+        val x get() = mouse.xpos() * scaledWidth / max(1, screenWidth)
+        val y get() = mouse.ypos() * scaledHeight / max(1, screenHeight)
     }
 }
