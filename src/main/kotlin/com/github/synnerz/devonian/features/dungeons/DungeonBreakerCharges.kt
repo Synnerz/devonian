@@ -5,8 +5,8 @@ import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
+import net.minecraft.core.component.DataComponents
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 
 object DungeonBreakerCharges : TextHudFeature(
     "dungeonBreakerDisplay",
@@ -21,10 +21,10 @@ object DungeonBreakerCharges : TextHudFeature(
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
-            if (packet !is ScreenHandlerSlotUpdateS2CPacket) return@on
-            val itemStack = packet.stack ?: return@on
+            if (packet !is ClientboundContainerSetSlotPacket) return@on
+            val itemStack = packet.item ?: return@on
             if (ItemUtils.skyblockId(itemStack) != "DUNGEONBREAKER") return@on
-            val usedCharge = itemStack.get(DataComponentTypes.DAMAGE) ?: 1
+            val usedCharge = itemStack.get(DataComponents.DAMAGE) ?: 1
 
             charges = 20 - (usedCharge / 78)
 
