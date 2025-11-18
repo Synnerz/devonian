@@ -12,7 +12,7 @@
     "AbstractContainerScreenMixin",
     "GuiMixin",
     "ScreenEffectRendererMixin",
-    "LightningEntityRendererMixin",
+    "LightningBoltRendererMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseMixin",
