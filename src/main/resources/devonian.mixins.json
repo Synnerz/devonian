@@ -7,7 +7,7 @@
     "ConnectionMixin",
     "LocalPlayerMixin",
     "EntityRenderDispatcherMixin",
-    "FallingBlockEntityRendererMixin",
+    "FallingBlockRendererMixin",
     "GameRendererMixin",
     "HandledScreenMixin",
     "InGameHudMixin",
