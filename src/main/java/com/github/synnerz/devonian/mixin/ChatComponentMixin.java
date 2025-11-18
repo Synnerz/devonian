@@ -1,17 +1,17 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.features.misc.RemoveChatLimit;
-import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.gui.components.ChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 
-@Mixin(ChatHud.class)
-public class ChatHudMixin {
+@Mixin(ChatComponent.class)
+public class ChatComponentMixin {
     @Redirect(
-            method = "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V",
+            method = "addMessageToQueue",
             at = @At(value = "INVOKE", target = "Ljava/util/List;size()I")
     )
     private int devonian$onMessageSize(List instance) {
@@ -20,7 +20,7 @@ public class ChatHudMixin {
     }
 
     @Redirect(
-            method = "addVisibleMessage",
+            method = "addMessageToDisplayQueue",
             at = @At(value = "INVOKE", target = "Ljava/util/List;size()I")
     )
     private int devonian$onMessageVisibleSize(List instance) {
