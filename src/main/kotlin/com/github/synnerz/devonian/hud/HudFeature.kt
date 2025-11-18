@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Render2D
 import com.github.synnerz.devonian.utils.Render2D.height
 import com.github.synnerz.devonian.utils.Render2D.width
-import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import kotlin.math.ceil
@@ -58,8 +58,8 @@ abstract class HudFeature(
         val MARGIN = 10
         val bounds = getBounds()
         val window = Devonian.minecraft.window
-        x = (x + dx).coerceIn(-bounds.w + MARGIN..window.width / window.scaleFactor - MARGIN)
-        y = (y + dy).coerceIn(-bounds.h + MARGIN..window.height / window.scaleFactor - MARGIN)
+        x = (x + dx).coerceIn(-bounds.w + MARGIN..window.width / window.guiScale - MARGIN)
+        y = (y + dy).coerceIn(-bounds.h + MARGIN..window.height / window.guiScale - MARGIN)
     }
 
     open fun onMouseClick(mx: Double, my: Double, mbtn: Int) {
@@ -79,19 +79,19 @@ abstract class HudFeature(
         }
         val bounds = getBounds()
         val window = Devonian.minecraft.window
-        x = (x + dx).coerceIn(-bounds.w + MARGIN..window.width / window.scaleFactor - MARGIN)
-        y = (y + dy).coerceIn(-bounds.h + MARGIN..window.height / window.scaleFactor - MARGIN)
+        x = (x + dx).coerceIn(-bounds.w + MARGIN..window.width / window.guiScale - MARGIN)
+        y = (y + dy).coerceIn(-bounds.h + MARGIN..window.height / window.guiScale - MARGIN)
     }
 
-    abstract fun drawImpl(ctx: DrawContext)
+    abstract fun drawImpl(ctx: GuiGraphics)
 
-    open fun draw(ctx: DrawContext) {
+    open fun draw(ctx: GuiGraphics) {
         if (HudManager.isEditing) return
 
         drawImpl(ctx)
     }
 
-    open fun sampleDraw(ctx: DrawContext, mx: Int, my: Int, selected: Boolean) {
+    open fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
         val bounds = getBounds()
 
         if (!isEnabled()) {
@@ -121,7 +121,7 @@ abstract class HudFeature(
             )
         }
 
-        ctx.drawBorder(
+        ctx.renderOutline(
             bounds.x.toInt(),
             bounds.y.toInt(),
             ceil(bounds.w).toInt(),
