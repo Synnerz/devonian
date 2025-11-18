@@ -3,9 +3,9 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityType
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
 
 object HideNoStarTag : Feature(
     "hideNoStarTag",
@@ -19,13 +19,13 @@ object HideNoStarTag : Feature(
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
-            if (packet !is EntitySpawnS2CPacket) return@on
-            if (packet.entityType !== EntityType.ARMOR_STAND) return@on
+            if (packet !is ClientboundAddEntityPacket) return@on
+            if (packet.type !== EntityType.ARMOR_STAND) return@on
 
             Scheduler.scheduleTask {
-                val world = minecraft.world ?: return@scheduleTask
-                val entityId = packet.entityId
-                val entity = world.getEntityById(entityId) ?: return@scheduleTask
+                val world = minecraft.level ?: return@scheduleTask
+                val entityId = packet.id
+                val entity = world.getEntity(entityId) ?: return@scheduleTask
                 val name = entity.customName?.string ?: return@scheduleTask
                 if (name.matches(blazeHealthRegex) || !name.matches(noStarTagRegex)) return@scheduleTask
 
