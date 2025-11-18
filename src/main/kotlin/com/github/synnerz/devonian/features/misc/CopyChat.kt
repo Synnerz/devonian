@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.GuiClickEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.ChatComponentAccessor
-import net.minecraft.client.gui.screen.ChatScreen
+import net.minecraft.client.gui.screens.ChatScreen
 
 object CopyChat : Feature(
     "copyChat",
@@ -18,7 +18,7 @@ object CopyChat : Feature(
 
             val screen = event.screen
             if (screen !is ChatScreen) return@on
-            val chatHud = Devonian.minecraft.inGameHud.chatHud as ChatComponentAccessor
+            val chatHud = Devonian.minecraft.gui.chat as ChatComponentAccessor
             val dx = chatHud.toChatLineMX(event.mx)
             val dy = chatHud.toChatLineMY(event.my)
             val idx = chatHud.getMessageLineIdx(dx, dy).coerceIn(0..<chatHud.visibleMessages.size)
@@ -30,7 +30,7 @@ object CopyChat : Feature(
                 true
             }
 
-            minecraft.keyboard.clipboard = "$str"
+            minecraft.keyboardHandler.clipboard = "$str"
             ChatUtils.sendMessage("&aCopied message to clipboard", true)
         }
     }
