@@ -5,14 +5,14 @@ import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.block.entity.SkullBlockEntity
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.entity.ItemEntity
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
-import net.minecraft.network.packet.s2c.play.ItemPickupAnimationS2CPacket
-import net.minecraft.registry.Registries
-import net.minecraft.sound.SoundEvents
+import net.minecraft.core.component.DataComponents
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.world.entity.item.ItemEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.entity.SkullBlockEntity
 
 object SecretsSound : Feature(
     "secretsSound",
@@ -30,19 +30,19 @@ object SecretsSound : Feature(
         "Candycomb"
     )
     private val lockedChestRegex = "^That chest is locked!$".toRegex()
-    private val successSound = SoundEvents.ENTITY_BLAZE_HURT
-    private val declineSound = SoundEvents.BLOCK_ANVIL_PLACE
+    private val successSound = SoundEvents.BLAZE_HURT
+    private val declineSound = SoundEvents.ANVIL_PLACE
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
-            if (packet !is ItemPickupAnimationS2CPacket) return@on
+            if (packet !is ClientboundTakeItemEntityPacket) return@on
 
-            val id = packet.entityId
-            val entityIn = minecraft.world?.getEntityById(id) ?: return@on
+            val id = packet.itemId
+            val entityIn = minecraft.level?.getEntity(id) ?: return@on
             if (entityIn !is ItemEntity) return@on
-            val itemStack = entityIn.stack
-            val customName = itemStack.get(DataComponentTypes.CUSTOM_NAME)?.string
+            val itemStack = entityIn.item
+            val customName = itemStack.get(DataComponents.CUSTOM_NAME)?.string
             if (!secretItems.contains(customName)) return@on
 
             playSound()
@@ -50,16 +50,16 @@ object SecretsSound : Feature(
 
         on<PacketSentEvent> { event ->
             val packet = event.packet
-            if (packet !is PlayerInteractBlockC2SPacket) return@on
-            val result = packet.blockHitResult
-            val blockState = minecraft.world?.getBlockState(result.blockPos) ?: return@on
-            val registryName = Registries.BLOCK.getId(blockState.block)
+            if (packet !is ServerboundUseItemOnPacket) return@on
+            val result = packet.hitResult
+            val blockState = minecraft.level?.getBlockState(result.blockPos) ?: return@on
+            val registryName = BuiltInRegistries.BLOCK.getKey(blockState.block)
 
             if (registryName.path == "player_head" && blockState.hasBlockEntity()) {
-                val entityBlock = minecraft.world?.getBlockEntity(result.blockPos) ?: return@on
+                val entityBlock = minecraft.level?.getBlockEntity(result.blockPos) ?: return@on
                 if (entityBlock.type != BlockEntityType.SKULL) return@on
                 val skullBlock = entityBlock as SkullBlockEntity
-                val owner = skullBlock.owner ?: return@on
+                val owner = skullBlock.ownerProfile ?: return@on
                 if (owner.id.isEmpty) return@on
                 val id = owner.id.get()
 
