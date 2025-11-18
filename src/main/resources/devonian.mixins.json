@@ -19,7 +19,7 @@
     "ParticleEngineMixin",
     "CameraTypeMixin",
     "PlayerTabOverlayMixin",
-    "PlayerScreenHandlerMixin",
+    "InventoryMenuMixin",
     "ScreenHandlerMixin",
     "StatusEffectsDisplayMixin",
     "YggdrasilMinecraftSessionServiceMixin",
