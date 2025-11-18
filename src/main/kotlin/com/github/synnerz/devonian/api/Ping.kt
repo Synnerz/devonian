@@ -4,11 +4,11 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.*
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
-import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
-import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket
-import net.minecraft.network.packet.s2c.play.StatisticsS2CPacket
-import net.minecraft.util.math.BlockPos
+import net.minecraft.core.BlockPos
+import net.minecraft.network.protocol.game.ClientboundAwardStatsPacket
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
+import net.minecraft.network.protocol.game.ServerboundClientCommandPacket
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
 
@@ -60,8 +60,8 @@ object Ping {
     init {
         EventBus.on<PacketSentEvent> { event ->
             when (val packet = event.packet) {
-                is ClientStatusC2SPacket -> {
-                    if (packet.mode != ClientStatusC2SPacket.Mode.REQUEST_STATS) return@on
+                is ServerboundClientCommandPacket -> {
+                    if (packet.mode != ServerboundClientCommandPacket.Action.REQUEST_STATS) return@on
                     val t = getTimeMS()
                     if (!didBeat && lastBeat + 10_000.0 > t) event.ci.cancel()
                     else {
@@ -70,7 +70,7 @@ object Ping {
                     }
                 }
 
-                is PlayerInteractBlockC2SPacket -> {
+                is ServerboundUseItemOnPacket -> {
                     awaitingBlockUpdate[packet.blockHitResult.blockPos] = getTimeMS()
                 }
             }
@@ -78,7 +78,7 @@ object Ping {
 
         EventBus.on<PacketReceivedEvent> { event ->
             when (val packet = event.packet) {
-                is StatisticsS2CPacket -> {
+                is ClientboundAwardStatsPacket -> {
                     if (didBeat) return@on
                     if (lastBeat == 0.0) return@on
 
@@ -86,7 +86,7 @@ object Ping {
                     didBeat = true
                 }
 
-                is BlockUpdateS2CPacket -> {
+                is ClientboundBlockUpdatePacket -> {
                     val t = awaitingBlockUpdate.remove(packet.pos)
                     if (t != null) addSample(t, 1)
                 }
@@ -116,7 +116,7 @@ object Ping {
 
             if (
                 t - lastBeat > (if (didBeat) 5_000.0 else 10_000.0)
-            ) Devonian.minecraft.networkHandler?.sendPacket(ClientStatusC2SPacket(ClientStatusC2SPacket.Mode.REQUEST_STATS))
+            ) Devonian.minecraft.connection?.send(ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.REQUEST_STATS))
         }
 
         EventBus.on<WorldChangeEvent> {
