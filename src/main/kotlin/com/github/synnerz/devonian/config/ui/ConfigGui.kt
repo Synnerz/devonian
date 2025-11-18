@@ -5,11 +5,11 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.talium.components.*
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.Text
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
 
-object ConfigGui : Screen(Text.literal("Devonian.ConfigGui")) {
+object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
     private val main = UIRect(20.0, 15.0, 60.0, 60.0, parent = background).apply {
         setColor(ColorPalette.PRIMARY_COLOR)
@@ -68,12 +68,12 @@ object ConfigGui : Screen(Text.literal("Devonian.ConfigGui")) {
         }
     }
 
-    override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.render(context, mouseX, mouseY, deltaTicks)
         background.draw()
     }
 
-    override fun renderBackground(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         // no background here bud
     }
 
@@ -82,7 +82,7 @@ object ConfigGui : Screen(Text.literal("Devonian.ConfigGui")) {
         return super.keyPressed(keyCode, scanCode, modifiers)
     }
 
-    override fun shouldPause(): Boolean {
+    override fun shouldCloseOnEsc(): Boolean {
         return false
     }
 }
