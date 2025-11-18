@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.utils.math
 
 import org.ejml.simple.SimpleMatrix
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.pow
@@ -52,7 +53,7 @@ object MathUtils {
     }
 
     fun rescale(v: Double, oldMin: Double, oldMax: Double, newMin: Double, newMax: Double) =
-        (v - oldMin) / (oldMax - oldMax) * (newMax - newMin) + newMin
+        (v - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin
 
     // https://stackoverflow.com/a/37716142
     private val binomLookup = mutableListOf(
@@ -98,5 +99,17 @@ object MathUtils {
     fun ceilPow2(num: Int, bits: Int): Int {
         val mask = (1 shl max(0, 31 - Integer.numberOfLeadingZeros(num) - bits)) - 1
         return (num + mask) and mask.inv()
+    }
+
+    fun lerp(f: Double, o: Double, n: Double) = (n - o) * f.coerceIn(0.0 .. 1.0) + o
+
+    fun lerpAngle(f: Double, ao: Double, an: Double): Double {
+        var o = ao % (2.0 * PI)
+        var n = an % (2.0 * PI)
+        if (o < 0.0) o += 2.0 * PI
+        if (n < 0.0) n += 2.0 * PI
+        if (n - o > PI) n -= 2.0 * PI
+        if (o - n > PI) o -= 2.0 * PI
+        return lerp(f, o, n)
     }
 }

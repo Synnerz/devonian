@@ -169,7 +169,8 @@ object BurrowGuesser : Feature(
                     idx
                 }
             }
-            val hash = possInliersI.reduce { a, v -> a * v }
+            var hash = 1
+            possInliersI.forEach { hash *= MathUtils.FIRST_100_PRIMES[it] }
             if (!tried.add(hash)) continue
 
             val possInliers = Array(MIN_CHAIN_LENGTH) {

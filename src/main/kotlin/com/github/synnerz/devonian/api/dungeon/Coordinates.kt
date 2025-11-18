@@ -115,4 +115,12 @@ data class PlayerComponentPosition(val x: Double, val z: Double, val r: Double) 
     override fun toString(): String = "PlayerPosition(%.3f, %.3f, %.3f)".format(x, z, r)
 
     fun toComponent() = ComponentPosition(x.toInt(), z.toInt())
+
+    companion object {
+        fun fromWorld(wx: Double, wz: Double, r: Double) = PlayerComponentPosition(
+            (wx - cornerStart.x) / halfCombinedSize,
+            (wz - cornerStart.z) / halfCombinedSize,
+            r
+        )
+    }
 }

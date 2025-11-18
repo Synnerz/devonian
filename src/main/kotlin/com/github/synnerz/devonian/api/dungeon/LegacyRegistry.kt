@@ -108,6 +108,7 @@ object LegacyRegistry {
         "minecraft:black_terracotta" to 159,
         "minecraft:magenta_terracotta" to 159,
         "minecraft:purple_terracotta" to 159,
+        "minecraft:red_terracotta" to 159,
         "minecraft:magenta_stained_glass_pane" to 160,
         "minecraft:dark_oak_stairs" to 164,
         "minecraft:barrier" to 166,

@@ -1344,6 +1344,7 @@
     ],
     "trappedChests": 1,
     "roomID": 88,
+    "clear": "miniboss",
     "crypts": 21,
     "clearScore": 4,
     "secretScore": 7,
