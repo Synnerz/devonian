@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
-import net.minecraft.block.Blocks
+import net.minecraft.world.level.block.Blocks
 
 class DungeonDoor(val comp: WorldComponentPosition) {
     var rotation: Int = -1
