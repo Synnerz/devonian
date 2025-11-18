@@ -6,128 +6,118 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
+import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.item.FilledMapItem
 import net.minecraft.item.map.MapState
 import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket
+import kotlin.math.PI
+import kotlin.math.min
 
 object DungeonMapScanner {
     private const val COLOR_SIZE = 16384
+    private const val SCAN = 128
+    private const val ROOM_SPACING = 4
     var roomSize = -1
-    var gapSize = -1
-    var corners = mutableListOf<Int>()
-    val playerIcons = mutableMapOf<String, PlayerMapData>()
-    val playersInWorld = mutableListOf<PlayerWorldData>()
+    var roomGap = -1
+    var roomCount = -1
+    var mapOffsetX = -1
+    var mapOffsetZ = -1
+    var mapSize = -1
+    var mapWidth = -1
 
-    data class PlayerMapData(val x: Int, val z: Int, val rotation: Int, val name: String)
-    data class PlayerWorldData(
-        var iconX: Int,
-        var iconZ: Int,
-        var worldX: Int,
-        var worldZ: Int,
-        var rotation: Int,
-        val name: String,
-        var inRender: Boolean = false
-        // add current room probably ?
-    )
+    fun reset() {
+        roomSize = -1
+        roomGap = -1
+        roomCount = -1
+        mapOffsetX - 1
+        mapOffsetZ - 1
+        mapSize = -1
+        mapWidth = -1
+    }
 
-    private fun findCorner(colors: ByteArray) {
-        var pixelIdx = -1
+    private enum class MapColors(val color: Byte) {
+        EMPTY(0),
 
-        colors.forEachIndexed { index, byte ->
-            if (
-                byte == 30.toByte() &&
-                index + 15 < colors.size &&
-                colors[index + 15] == 30.toByte() &&
-                index + 128 * 15 < colors.size &&
-                colors[index + 15 * 128] == 30.toByte()
-            ) {
-                pixelIdx = index
-                return@forEachIndexed
-            }
+        CHECK_WHITE(34),
+        CHECK_GREEN(30),
+        CHECK_FAIL(18),
+
+        ROOM_ENTRANCE(30),
+        ROOM_NORMAL(63),
+        ROOM_UNOPENED(85),
+        ROOM_TRAP(62),
+        ROOM_BOSS(74),
+        ROOM_PUZZLE(66),
+        ROOM_FAIRY(82),
+        ROOM_BLOOD(18),
+
+        DOOR_WITHER(119),
+        DOOR_BLOOD(18);
+    }
+
+    private fun scanMapDimensions(colors: ByteArray): Boolean {
+        var entranceIdx = 0
+        var i = 0
+        while (entranceIdx < colors.size && colors[entranceIdx] != MapColors.ROOM_ENTRANCE.color) {
+            i++
+            entranceIdx = ((i and 7) shl 4) + ((i shr 3) shl 11)
         }
 
-        if (pixelIdx == -1) return
+        if (entranceIdx >= colors.size) return false
 
-        var idx = 0
+        var l = entranceIdx
+        var r = entranceIdx
+        while (colors[l - 1] == MapColors.ROOM_ENTRANCE.color) l--
+        while (colors[r + 1] == MapColors.ROOM_ENTRANCE.color) r++
 
-        while (colors[pixelIdx + idx] == 30.toByte()) idx++
+        var t = entranceIdx
+        var b = entranceIdx
+        while (colors[t - SCAN] == MapColors.ROOM_ENTRANCE.color) t -= SCAN
+        while (colors[b + SCAN] == MapColors.ROOM_ENTRANCE.color) b += SCAN
 
-        roomSize = idx
-        gapSize = idx + 4
-        corners = mutableListOf((pixelIdx % 128) % gapSize, (pixelIdx / 128) % gapSize)
+        l = l and 127
+        r = r and 127
+        t = t shr 7
+        b = b shr 7
+        if (r - l + 1 != b - t + 1) println("map scanner: found non-square room?")
+        roomSize = r - l + 1
+        roomGap = roomSize + ROOM_SPACING
+
+        mapOffsetX = l % roomGap
+        mapOffsetZ = t % roomGap
+        mapSize = ((SCAN - mapOffsetX * 2 - roomSize) / roomGap + 0.5).toInt() + 1
+
+        mapWidth = roomGap * (mapSize - 1) + roomSize
+
+        return true
     }
 
     private fun updatePlayerIcons(mapState: MapState) {
-        val decorations = mapState.decorations
-        decorations.forEachIndexed { index, mapDecoration ->
-            if (index > Dungeons.partyMembers.size - 1) return@forEachIndexed
-            // TODO: filter out dead players as well as the (current) client player
-            val name = Dungeons.partyMembers[index]
-            val x = mapDecoration.x + 128
-            val z = mapDecoration.z + 128
-            val rotation = (mapDecoration.rotation * 360) / 16 + 180
+        if (Dungeons.players.isEmpty()) return
 
-            playerIcons[name] = PlayerMapData(x, z, rotation, name)
-        }
+        val decorations = mapState.decorations.toList()
+        if (Dungeons.players.filter { !it.value.isDead }.size != decorations.size) return
 
-        updatePlayerData()
-    }
+        val playerIter = Dungeons.players.iterator()
+        playerIter.next()
+        decorations.forEachIndexed { idx, dec ->
+            if (idx == 0) return@forEachIndexed
 
-    private fun clamp(
-        n: Int,
-        inMin: Int,
-        inMax: Int,
-        outMin: Int,
-        outMax: Int
-    ): Int {
-        if (n <= inMin) return outMin
-        if (n >= inMax) return outMax
+            val player = playerIter.next().value
 
-        return (n - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
-    }
-
-    private fun updatePlayerData() {
-        playerIcons.forEach { (k, v) ->
-            val worldData = playersInWorld.find { it.name == k } ?: return@forEach
-            worldData.iconX = clamp(v.x / 2 - corners[0], 0, roomSize * 6 + 20, 0, DungeonScanner.defaultMapSize.x)
-            worldData.iconZ = clamp(v.z / 2 - corners[1], 0, roomSize * 6 + 20, 0, DungeonScanner.defaultMapSize.z)
-            worldData.worldX = clamp(worldData.iconX, 0, 125, -200, -10)
-            worldData.worldZ = clamp(worldData.iconZ, 0, 125, -200, -10)
-            worldData.rotation = v.rotation
-        }
-    }
-
-    private fun onPlayerMove(data: PlayerWorldData, x: Int, z: Int, yaw: Float) {
-        if (x !in -200..-10 || z !in -200..-10) return
-
-        data.inRender = true
-        data.iconX = clamp(x, -200, -10, 0, DungeonScanner.defaultMapSize.x)
-        data.iconZ = clamp(z, -200, -10, 0, DungeonScanner.defaultMapSize.z)
-        data.worldX = x
-        data.worldZ = z
-        data.rotation = (yaw + 180f).toInt()
-    }
-
-    fun checkPlayerState() {
-        if (playersInWorld.size == Dungeons.partyMembers.size) {
-            for (player in playersInWorld) {
-                val entity = Devonian.minecraft.world?.players?.find { it.name?.string == player.name } ?: continue
-                val ping = Devonian.minecraft.networkHandler?.getPlayerListEntry(entity.uuid)?.latency ?: -1
-                if (ping != -1) onPlayerMove(player, entity.x.toInt(), entity.z.toInt(), entity.yaw)
-                else player.inRender = false
-            }
-            return
-        }
-
-        for (player in Dungeons.partyMembers) {
-            if (playersInWorld.find { it.name == player } != null) continue
-            val entity = Devonian.minecraft.world?.players?.find { it.name?.string == player } ?: continue
-            val ping = Devonian.minecraft.networkHandler?.getPlayerListEntry(entity.uuid)?.latency ?: continue
-            if (ping == -1) continue
-
-            playersInWorld.add(
-                PlayerWorldData(-1, -1, -1, -1, -1, player)
+            val x = MathUtils.rescale(
+                (dec.x + 127.5) * 0.5,
+                mapOffsetX.toDouble(), (mapOffsetX + mapWidth + ROOM_SPACING).toDouble(),
+                0.0, 12.0
             )
+            val z = MathUtils.rescale(
+                (dec.z + 127.5) * 0.5,
+                mapOffsetZ.toDouble(), (mapOffsetZ + mapWidth + ROOM_SPACING).toDouble(),
+                0.0, 12.0
+            )
+            val r = -(dec.rotation / 16.0 * 360.0 + 90.0) / 180.0 * PI
+
+            player.updatePosition(PlayerComponentPosition(x, z, r))
         }
     }
 
@@ -141,7 +131,7 @@ object DungeonMapScanner {
             val mapState = FilledMapItem.getMapState(mapId, Devonian.minecraft.world) ?: return@on
             val colors = mapState.colors ?: return@on
 
-            if (corners.isEmpty()) findCorner(colors)
+            if (roomSize == -1 && !scanMapDimensions(colors)) return@on
             Scheduler.scheduleTask {
                 updatePlayerIcons(mapState)
 
@@ -159,17 +149,17 @@ object DungeonMapScanner {
                 val x = leftMost.cx / 2
                 val z = leftMost.cz / 2
 
-                val mapX = corners[0] + roomSize / 2 + gapSize * x
-                val mapZ = corners[1] + roomSize / 2 + 1 + gapSize * z
-                val idx = mapX + mapZ * 128
+                val mapX = mapOffsetX + roomSize / 2 + roomGap * x
+                val mapZ = mapOffsetZ + roomSize / 2 + 1 + roomGap * z
+                val idx = mapX + mapZ * SCAN
                 if (idx - 1 > COLOR_SIZE) continue
 
                 val centerColor = colors[idx - 1]
-                val roomIdx = idx + 5 + 128 * 4
+                val roomIdx = idx + 5 + SCAN * 4
                 if (roomIdx > COLOR_SIZE) continue
                 val roomColor = colors[roomIdx]
 
-                if (roomColor == 0.toByte() || roomColor == 85.toByte()) {
+                if (roomColor == MapColors.EMPTY.color || roomColor == MapColors.ROOM_UNOPENED.color) {
                     room.explored = false
                     continue
                 }
@@ -177,9 +167,13 @@ object DungeonMapScanner {
                 room.explored = true
 
                 val check = when {
-                    centerColor == 30.toByte() && roomColor != 30.toByte() -> CheckmarkTypes.GREEN
-                    centerColor == 34.toByte() -> CheckmarkTypes.WHITE
-                    centerColor == 18.toByte() && roomColor != 18.toByte() -> CheckmarkTypes.FAILED
+                    centerColor == MapColors.CHECK_GREEN.color && roomColor != MapColors.ROOM_ENTRANCE.color
+                        -> CheckmarkTypes.GREEN
+
+                    centerColor == MapColors.CHECK_WHITE.color -> CheckmarkTypes.WHITE
+                    centerColor == MapColors.CHECK_FAIL.color && roomColor != MapColors.ROOM_BLOOD.color
+                        -> CheckmarkTypes.FAILED
+
                     room.checkmark == CheckmarkTypes.UNEXPLORED -> CheckmarkTypes.NONE
                     else -> null
                 } ?: continue
