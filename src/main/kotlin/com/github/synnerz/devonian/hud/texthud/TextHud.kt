@@ -39,12 +39,6 @@ class TextHud(val name: String, private val data: DataProvider) : ITextHud, Data
 
     override fun onFontChange(f: Font) {
         markFont()
-    }
-
-    override var shadow: Boolean = data.shadow
-        set(value) {
-            if (field != value) markText()
-            field = value
         }
 
     private var lineWidth = 0f
@@ -98,6 +92,8 @@ class TextHud(val name: String, private val data: DataProvider) : ITextHud, Data
         }
 
         renderScale = 1f / window.scaleFactor.toFloat()
+
+        if (lastImageParams.shadow != shadow) markText()
 
         var g: Graphics2D? = null
         lineWidth = 0f

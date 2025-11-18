@@ -23,11 +23,6 @@ abstract class TextHudFeature(
     override var anchor = Anchor.NW
     override var align = Align.Left
     override var shadow = true
-        get() = field
-        set(value) {
-            hud.shadow = value
-            field = value
-        }
     override var backdrop = Backdrop.None
 
     private val hud = TextHud(configName, this)
