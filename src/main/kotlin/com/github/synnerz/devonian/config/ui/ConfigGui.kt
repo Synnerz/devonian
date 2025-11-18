@@ -82,7 +82,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         return super.keyPressed(keyCode, scanCode, modifiers)
     }
 
-    override fun shouldCloseOnEsc(): Boolean {
+    override fun isPauseScreen(): Boolean {
         return false
     }
 }
