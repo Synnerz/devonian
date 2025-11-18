@@ -7,11 +7,10 @@ import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.utils.math.MathUtils
-import net.minecraft.item.FilledMapItem
-import net.minecraft.item.map.MapState
-import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket
+import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket
+import net.minecraft.world.item.MapItem
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData
 import kotlin.math.PI
-import kotlin.math.min
 
 object DungeonMapScanner {
     private const val COLOR_SIZE = 16384
@@ -92,7 +91,7 @@ object DungeonMapScanner {
         return true
     }
 
-    private fun updatePlayerIcons(mapState: MapState) {
+    private fun updatePlayerIcons(mapState: MapItemSavedData) {
         if (Dungeons.players.isEmpty()) return
 
         val decorations = mapState.decorations.toList()
@@ -111,11 +110,11 @@ object DungeonMapScanner {
                 0.0, 12.0
             )
             val z = MathUtils.rescale(
-                (dec.z + 127.5) * 0.5,
+                (dec.y + 127.5) * 0.5,
                 mapOffsetZ.toDouble(), (mapOffsetZ + mapWidth + ROOM_SPACING).toDouble(),
                 0.0, 12.0
             )
-            val r = -(dec.rotation / 16.0 * 360.0 + 90.0) / 180.0 * PI
+            val r = -(dec.rot / 16.0 * 360.0 + 90.0) / 180.0 * PI
 
             player.updatePosition(PlayerComponentPosition(x, z, r))
         }
@@ -124,11 +123,11 @@ object DungeonMapScanner {
     init {
         EventBus.on<PacketReceivedEvent> { event ->
             val packet = event.packet
-            if (packet !is MapUpdateS2CPacket) return@on
+            if (packet !is ClientboundMapItemDataPacket) return@on
             val mapId = packet.mapId
             if (mapId.id and 1000 != 0) return@on
 
-            val mapState = FilledMapItem.getMapState(mapId, Devonian.minecraft.world) ?: return@on
+            val mapState = MapItem.getSavedData(mapId, Devonian.minecraft.level) ?: return@on
             val colors = mapState.colors ?: return@on
 
             if (roomSize == -1 && !scanMapDimensions(colors)) return@on
