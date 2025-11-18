@@ -22,7 +22,7 @@ object PreventPlacingWeapons : Feature(
 
     override fun initialize() {
         on<BlockInteractEvent> { event ->
-            if (minecraft.world?.getBlockState(event.pos) == null) return@on
+            if (minecraft.level?.getBlockState(event.pos) == null) return@on
             val itemId = ItemUtils.skyblockId(event.itemStack) ?: return@on
             if (!weaponIds.any { it == itemId }) return@on
 
