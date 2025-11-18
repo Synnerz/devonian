@@ -144,6 +144,11 @@ object DungeonMapScanner {
             if (corners.isEmpty()) findCorner(colors)
             Scheduler.scheduleTask {
                 updatePlayerIcons(mapState)
+
+                DungeonMap.redrawMap(
+                    DungeonScanner.rooms.toList(),
+                    DungeonScanner.doors.toList()
+                )
             }
 
             if (colors.size < COLOR_SIZE) return@on
@@ -181,11 +186,6 @@ object DungeonMapScanner {
 
                 room.checkmark = check
             }
-
-            DungeonMap.redrawMap(
-                DungeonScanner.rooms.toList(),
-                DungeonScanner.doors.toList()
-            )
         }
     }
 }

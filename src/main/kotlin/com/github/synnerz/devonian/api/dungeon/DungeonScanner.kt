@@ -26,6 +26,7 @@ object DungeonScanner {
         val type: String,
         val secrets: Int,
         val cores: List<Int>,
+        val trappedChests: Int,
         val roomID: Int,
         val clear: String?,
         val crypts: Int,
@@ -47,7 +48,6 @@ object DungeonScanner {
             .use { it?.readText() },
         Array<RoomData>::class.java
     ).toList()
-    val defaultMapSize = WorldPosition(125, 125)
 
     var lastIdx: Int? = null
     var currentRoom: DungeonRoom? = null
