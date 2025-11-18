@@ -61,7 +61,7 @@ object Ping {
         EventBus.on<PacketSentEvent> { event ->
             when (val packet = event.packet) {
                 is ServerboundClientCommandPacket -> {
-                    if (packet.mode != ServerboundClientCommandPacket.Action.REQUEST_STATS) return@on
+                    if (packet.action != ServerboundClientCommandPacket.Action.REQUEST_STATS) return@on
                     val t = getTimeMS()
                     if (!didBeat && lastBeat + 10_000.0 > t) event.ci.cancel()
                     else {
@@ -71,7 +71,7 @@ object Ping {
                 }
 
                 is ServerboundUseItemOnPacket -> {
-                    awaitingBlockUpdate[packet.blockHitResult.blockPos] = getTimeMS()
+                    awaitingBlockUpdate[packet.hitResult.blockPos] = getTimeMS()
                 }
             }
         }
