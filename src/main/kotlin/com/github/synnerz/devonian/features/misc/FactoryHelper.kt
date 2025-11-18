@@ -6,9 +6,9 @@ import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.Render2D
-import net.minecraft.item.Items
-import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import net.minecraft.world.item.Items
 import java.awt.Color
 
 object FactoryHelper : Feature(
@@ -32,16 +32,16 @@ object FactoryHelper : Feature(
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
-            if (packet is OpenScreenS2CPacket) {
-                inFactory = packet.name?.string == "Chocolate Factory"
+            if (packet is ClientboundOpenScreenPacket) {
+                inFactory = packet.title?.string == "Chocolate Factory"
                 return@on
             }
 
-            if (!inFactory || packet !is ScreenHandlerSlotUpdateS2CPacket) return@on
+            if (!inFactory || packet !is ClientboundContainerSetSlotPacket) return@on
             val slot = packet.slot
             if (slot > 54) return@on
 
-            val itemStack = packet.stack
+            val itemStack = packet.item
             if (itemStack.item != Items.PLAYER_HEAD && itemStack.item !== Items.COCOA_BEANS) return@on
             val name = itemStack.customName?.string ?: return@on
             val lore = ItemUtils.lore(itemStack) ?: return@on
@@ -69,7 +69,7 @@ object FactoryHelper : Feature(
             val ctx = event.ctx
             val slot = event.slot
 
-            if (slot.index == bestSlot && slot.inventory !== minecraft.player?.inventory) {
+            if (slot.index == bestSlot && slot.container !== minecraft.player?.inventory) {
                 Render2D.drawRect(
                     ctx,
                     event.slot.x, event.slot.y,
