@@ -8,11 +8,11 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.ClientPlayerEntityAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
 import kotlinx.atomicfu.atomic
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
-import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
-import net.minecraft.particle.ParticleTypes
+import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
+import net.minecraft.network.protocol.game.ServerboundUseItemPacket
 import java.awt.Color
 import java.util.*
 import kotlin.math.*
@@ -235,14 +235,14 @@ object BurrowGuesser : Feature(
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (
-                packet !is ParticleS2CPacket ||
-                packet.parameters.type != ParticleTypes.DRIPPING_LAVA ||
+                packet !is ClientboundLevelParticlesPacket ||
+                packet.particle.type != ParticleTypes.DRIPPING_LAVA ||
                 packet.count != 2 ||
-                packet.speed != -0.5f ||
-                !packet.isImportant ||
-                packet.offsetX != 0f ||
-                packet.offsetY != 0f ||
-                packet.offsetZ != 0f
+                packet.maxSpeed != -0.5f ||
+                !packet.alwaysShow() ||
+                packet.xDist != 0f ||
+                packet.yDist != 0f ||
+                packet.zDist != 0f
             ) return@on
 
             val t = EventBus.totalTicks
@@ -277,11 +277,11 @@ object BurrowGuesser : Feature(
 
         on<PacketSentEvent> { event ->
             val hand = when (val packet = event.packet) {
-                is PlayerInteractItemC2SPacket -> packet.hand
-                is PlayerInteractBlockC2SPacket -> packet.hand
+                is ServerboundUseItemPacket -> packet.hand
+                is ServerboundUseItemOnPacket -> packet.hand
                 else -> null
             } ?: return@on
-            val itemStack = minecraft.player?.getStackInHand(hand) ?: return@on
+            val itemStack = minecraft.player?.getItemInHand(hand) ?: return@on
 
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             if (!isSpade(sbId)) return@on
@@ -292,7 +292,7 @@ object BurrowGuesser : Feature(
                 PositionTime(
                     EventBus.totalTicks + (Ping.getMedianPing() / 50.0 + 10.0).toInt(),
                     player.lastXClient,
-                    player.lastYClient + minecraft.player!!.standingEyeHeight,
+                    player.lastYClient + minecraft.player!!.eyeHeight,
                     player.lastZClient
                 )
             )
@@ -300,18 +300,18 @@ object BurrowGuesser : Feature(
 
         on<PacketSentEvent> { event ->
             val (pos, itemStack) = when (val packet = event.packet) {
-                is PlayerActionC2SPacket -> {
-                    if (packet.action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return@on
-                    val itemStack = minecraft.player?.mainHandStack ?: return@on
+                is ServerboundPlayerActionPacket -> {
+                    if (packet.action != ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK) return@on
+                    val itemStack = minecraft.player?.mainHandItem ?: return@on
 
                     Pair(packet.pos, itemStack)
                 }
 
-                is PlayerInteractBlockC2SPacket -> {
+                is ServerboundUseItemOnPacket -> {
                     val hand = packet.hand
-                    val itemStack = minecraft.player?.getStackInHand(hand) ?: return@on
+                    val itemStack = minecraft.player?.getItemInHand(hand) ?: return@on
 
-                    Pair(packet.blockHitResult.blockPos, itemStack)
+                    Pair(packet.hitResult.blockPos, itemStack)
                 }
 
                 else -> return@on
@@ -324,7 +324,7 @@ object BurrowGuesser : Feature(
         }
 
         on<TickEvent> {
-            val itemStack = minecraft.player?.mainHandStack ?: return@on
+            val itemStack = minecraft.player?.mainHandItem ?: return@on
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             if (!isSpade(sbId)) return@on
 
