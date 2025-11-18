@@ -8,20 +8,20 @@ import com.github.synnerz.devonian.api.events.DropItemEvent
 import com.github.synnerz.devonian.api.events.GuiKeyEvent
 import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.mixin.accessor.HandledScreenAccessor
+import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.JsonArray
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
-import net.minecraft.block.Blocks
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
-import net.minecraft.client.gui.screen.ingame.HandledScreen
-import net.minecraft.client.gui.screen.ingame.InventoryScreen
-import net.minecraft.client.option.KeyBinding
-import net.minecraft.item.ItemStack
-import net.minecraft.sound.SoundEvent
-import net.minecraft.util.Identifier
+import net.minecraft.client.KeyMapping
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
+import net.minecraft.client.gui.screens.inventory.InventoryScreen
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.Blocks
 import org.lwjgl.glfw.GLFW
 
 object ProtectItem : Feature(
@@ -31,7 +31,7 @@ object ProtectItem : Feature(
     private var lockedList = mutableListOf<String>()
     private val hopperItem = Blocks.HOPPER.asItem()
     private val keybind = KeyBindingHelper.registerKeyBinding(
-        KeyBinding(
+        KeyMapping(
             "key.devonian.protectItem",
             GLFW.GLFW_KEY_UNKNOWN,
             "devonian"
@@ -46,7 +46,7 @@ object ProtectItem : Feature(
         }
 
         on<DropItemEvent> { event ->
-            if (Location.area == "catacombs" && minecraft.currentScreen == null) return@on
+            if (Location.area == "catacombs" && minecraft.screen == null) return@on
             val stack = event.itemStack
             val uuid = ItemUtils.uuid(stack) ?: return@on
             if (!lockedList.contains(uuid)) return@on
@@ -55,26 +55,26 @@ object ProtectItem : Feature(
 
         on<GuiSlotClickEvent> { event ->
             if (event.slot == null) return@on
-            if (event.slot.inventory !== minecraft.player?.inventory) return@on
-            val screen = minecraft.currentScreen ?: return@on
-            if (screen !is GenericContainerScreen) return@on
-            val possibleHopper = event.handler.getSlot(49)?.stack
-            if (possibleHopper != null && event.slotId != 49 && isLocked(event.slot.stack)) {
+            if (event.slot.container !== minecraft.player?.inventory) return@on
+            val screen = minecraft.screen ?: return@on
+            if (screen !is ContainerScreen) return@on
+            val possibleHopper = event.handler.getSlot(49)?.item
+            if (possibleHopper != null && event.slotId != 49 && isLocked(event.slot.item)) {
                 val lore = ItemUtils.lore(possibleHopper)
                 if (possibleHopper.item == hopperItem && possibleHopper.customName?.string == "Sell Item")
-                    cancelEvent(event, event.slot.stack)
+                    cancelEvent(event, event.slot.item)
                 else if (lore != null && lore.any { it.contains("buyback") })
-                    cancelEvent(event, event.slot.stack)
+                    cancelEvent(event, event.slot.item)
             }
-            if (!screen.title.string.contains("Auction") || !isLocked(event.slot.stack)) return@on
+            if (!screen.title.string.contains("Auction") || !isLocked(event.slot.item)) return@on
 
-            cancelEvent(event, event.slot.stack)
+            cancelEvent(event, event.slot.item)
         }
 
         on<GuiKeyEvent> { event ->
             val key = event.key
             val scancode = event.scanCode
-            if (!keybind.matchesKey(key, scancode)) return@on
+            if (!keybind.matches(key, scancode)) return@on
             val screen = event.screen
             val stack = cursorStack(screen) ?: return@on
             val uuid = ItemUtils.uuid(stack) ?: return@on
@@ -84,21 +84,21 @@ object ProtectItem : Feature(
             else lockedList.add(uuid)
             updateCache()
 
-            ChatUtils.sendMessage("&bProtect item $msg &b${stack.name.string}", true)
+            ChatUtils.sendMessage("&bProtect item $msg &b${stack.itemName.string}", true)
         }
     }
 
     // TODO: make this its own utils file (Looking at you ScreenUtils)
     private fun cursorStack(screen: Screen): ItemStack? {
-        if (!(screen is InventoryScreen || screen is GenericContainerScreen)) return null
-        val handled = screen as HandledScreen<*>
-        val accessor = handled as HandledScreenAccessor
+        if (!(screen is InventoryScreen || screen is ContainerScreen)) return null
+        val handled = screen as AbstractContainerScreen<*>
+        val accessor = handled as AbstractContainerScreenAccessor
         val window = minecraft.window ?: return null
 
         return accessor.getSlotAtPos(
-            minecraft.mouse.getScaledX(window),
-            minecraft.mouse.getScaledY(window)
-        )?.stack
+            minecraft.mouseHandler.getScaledXPos(window),
+            minecraft.mouseHandler.getScaledYPos(window)
+        )?.item
     }
 
     private fun isLocked(itemStack: ItemStack?): Boolean {
@@ -118,7 +118,7 @@ object ProtectItem : Feature(
     private fun cancelEvent(event: CancellableEvent, stack: ItemStack) {
         Scheduler.scheduleTask(1) {
             minecraft.player?.playSound(
-                SoundEvent.of(Identifier.ofVanilla("block.note_block.bass")),
+                SoundEvent.createVariableRangeEvent(ResourceLocation.withDefaultNamespace("block.note_block.bass")),
                 1f,
                 1f
             )
