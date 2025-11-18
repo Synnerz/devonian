@@ -7,11 +7,11 @@ import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.block.entity.SkullBlockEntity
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
-import net.minecraft.registry.Registries
-import net.minecraft.util.math.BlockPos
+import net.minecraft.core.BlockPos
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.entity.SkullBlockEntity
 import java.awt.Color
 
 object SecretsClickedBox : Feature(
@@ -31,22 +31,22 @@ object SecretsClickedBox : Feature(
     override fun initialize() {
         on<PacketSentEvent> { event ->
             val packet = event.packet
-            if (packet !is PlayerInteractBlockC2SPacket) return@on
-            val result = packet.blockHitResult
-            val blockState = minecraft.world?.getBlockState(result.blockPos) ?: return@on
-            val registryName = Registries.BLOCK.getId(blockState.block)
+            if (packet !is ServerboundUseItemOnPacket) return@on
+            val result = packet.hitResult
+            val blockState = minecraft.level?.getBlockState(result.blockPos) ?: return@on
+            val registryName = BuiltInRegistries.BLOCK.getKey(blockState.block)
 
             if (registryName.path == "player_head" && blockState.hasBlockEntity()) {
-                val entityBlock = minecraft.world?.getBlockEntity(result.blockPos) ?: return@on
+                val entityBlock = minecraft.level?.getBlockEntity(result.blockPos) ?: return@on
                 if (entityBlock.type != BlockEntityType.SKULL) return@on
                 val skullBlock = entityBlock as SkullBlockEntity
-                val owner = skullBlock.owner ?: return@on
+                val owner = skullBlock.ownerProfile ?: return@on
                 if (owner.id.isEmpty) return@on
                 val id = owner.id.get()
 
                 if (!skullIds.contains("$id")) return@on
 
-                clickedBlock = entityBlock.pos
+                clickedBlock = entityBlock.blockPos
                 val thisClickedBlock = clickedBlock
                 Scheduler.scheduleTask(20) {
                     if (clickedBlock == thisClickedBlock) clickedBlock = null
