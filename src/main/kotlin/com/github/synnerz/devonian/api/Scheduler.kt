@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.api
 
+import com.github.synnerz.devonian.Devonian
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.entity.Entity
+import net.minecraft.world.entity.Entity
 
 object Scheduler {
     private val tasks = mutableListOf<Task>()
@@ -14,7 +14,7 @@ object Scheduler {
                 tasks.removeAll {
                     if (it.delay-- > 0) return@removeAll false
 
-                    MinecraftClient.getInstance().submit(it.cb)
+                    Devonian.minecraft.submit(it.cb)
 
                     return@removeAll true
                 }
