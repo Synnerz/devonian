@@ -16,7 +16,7 @@
     "LivingEntityMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
-    "ParticleManagerMixin",
+    "ParticleEngineMixin",
     "PerspectiveMixin",
     "PlayerListHudMixin",
     "PlayerScreenHandlerMixin",
