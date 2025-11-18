@@ -12,14 +12,14 @@ import com.github.synnerz.devonian.utils.BlockTypes
 import com.github.synnerz.devonian.utils.ColorEnum
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.math.DDA
-import net.minecraft.block.ShapeContext
-import net.minecraft.item.Items
-import net.minecraft.util.Hand
-import net.minecraft.util.hit.BlockHitResult
-import net.minecraft.util.hit.HitResult
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
-import net.minecraft.world.EmptyBlockView
+import net.minecraft.core.BlockPos
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.item.Items
+import net.minecraft.world.level.EmptyBlockGetter
+import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.HitResult
+import net.minecraft.world.phys.Vec3
+import net.minecraft.world.phys.shapes.CollisionContext
 import java.awt.Color
 import kotlin.math.hypot
 
@@ -67,12 +67,12 @@ object EtherwarpOverlay : TextHudFeature(
 
         on<RenderWorldEvent> { event ->
             val player = minecraft.player
-            if (minecraft.world == null || player == null) return@on
-            val world = minecraft.world!!
+            if (minecraft.level == null || player == null) return@on
+            val world = minecraft.level!!
 
             failReason = ""
 
-            val heldItem = player.getStackInHand(Hand.MAIN_HAND)
+            val heldItem = player.getItemInHand(InteractionHand.MAIN_HAND)
             if (
                 heldItem.item != Items.DIAMOND_SHOVEL &&
                 heldItem.item != Items.DIAMOND_SWORD &&
@@ -82,14 +82,14 @@ object EtherwarpOverlay : TextHudFeature(
             val itemId = ItemUtils.skyblockId(heldItem) ?: return@on
             val requireSneak = heldItem.item == Items.DIAMOND_SHOVEL || heldItem.item == Items.DIAMOND_SWORD
 
-            if (requireSneak && !player.isSneaking) return@on
+            if (requireSneak && !player.isSteppingCarefully) return@on
             if (!validWeapons.contains(itemId)) return@on
 
             val extraAttributes = ItemUtils.extraAttributes(heldItem) ?: return@on
             if (requireSneak && !extraAttributes.contains("ethermerge")) return@on
 
             if (!SETTING_ETHER_USING_CANCEL_INTERACT) {
-                val target = minecraft.crosshairTarget
+                val target = minecraft.hitResult
                 if (target != null && target.type == HitResult.Type.BLOCK) {
                     val blockTarget = target as BlockHitResult
                     if (BlockTypes.Interactable.contains(world.getBlockState(blockTarget.blockPos).block)) return@on
@@ -104,20 +104,20 @@ object EtherwarpOverlay : TextHudFeature(
             val px: Double
             val py: Double
             val pz: Double
-            val lookVec: Vec3d
+            val lookVec: Vec3
             if (SETTING_USE_SMOOTH_POSITION) {
-                val posVec = player.getLerpedPos(event.ctx.tickCounter().getTickProgress(false))
-                val camVec = player.getCameraPosVec(event.ctx.tickCounter().getTickProgress(false))
+                val posVec = player.getPosition(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
+                val camVec = player.getEyePosition(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
                 px = posVec.x
                 py = camVec.y
                 pz = posVec.z
-                lookVec = player.getRotationVec(event.ctx.tickCounter().getTickProgress(false))
+                lookVec = player.getViewVector(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
             } else {
                 val playerAccessor = player as ClientPlayerEntityAccessor
                 px = playerAccessor.lastXClient
-                py = playerAccessor.lastYClient + if (player.isSneaking) 1.54f else 1.64f
+                py = playerAccessor.lastYClient + if (player.isSteppingCarefully) 1.54f else 1.64f
                 pz = playerAccessor.lastZClient
-                lookVec = player.getRotationVector(playerAccessor.lastPitchClient, playerAccessor.lastYawClient)
+                lookVec = player.calculateViewVector(playerAccessor.lastPitchClient, playerAccessor.lastYawClient)
             }
 
             var hitResult = raycast(
@@ -129,7 +129,7 @@ object EtherwarpOverlay : TextHudFeature(
 
             if (hitResult == null) {
                 failReason = "&4Can't TP: Too far!"
-                val maxDist = hypot(256.0, 16.0 * minecraft.options.clampedViewDistance)
+                val maxDist = hypot(256.0, 16.0 * minecraft.options.effectiveRenderDistance)
                 hitResult = raycast(
                     px + lookVec.x * dist,
                     py + lookVec.y * dist,
@@ -140,8 +140,8 @@ object EtherwarpOverlay : TextHudFeature(
                 )
                 if (hitResult == null) return@on
             } else {
-                val bpFoot = hitResult.up(1)
-                val bpHead = hitResult.up(2)
+                val bpFoot = hitResult.above(1)
+                val bpHead = hitResult.above(2)
 
                 val bsFoot = world.getBlockState(bpFoot)
                 val bsHead = world.getBlockState(bpHead)
@@ -152,12 +152,12 @@ object EtherwarpOverlay : TextHudFeature(
             }
 
             val camera = event.ctx.camera()
-            val cameraPos = camera.pos
+            val cameraPos = camera.position
 
-            val outlineShape = world.getBlockState(hitResult).getOutlineShape(
-                EmptyBlockView.INSTANCE,
+            val outlineShape = world.getBlockState(hitResult).getShape(
+                EmptyBlockGetter.INSTANCE,
                 hitResult,
-                ShapeContext.of(camera.focusedEntity)
+                CollisionContext.of(camera.entity)
             )
 
             Context.Immediate?.renderBoxShape(
@@ -194,7 +194,7 @@ object EtherwarpOverlay : TextHudFeature(
         x: Double, y: Double, z: Double,
         dx: Double, dy: Double, dz: Double
     ): BlockPos? {
-        val w = minecraft.world ?: return null
+        val w = minecraft.level ?: return null
 
         for (bp in DDA(x, y, z, dx, dy, dz)) {
             val bs = w.getBlockState(bp)
