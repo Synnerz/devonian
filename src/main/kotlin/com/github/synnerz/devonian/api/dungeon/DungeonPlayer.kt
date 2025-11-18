@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.utils.math.MathUtils
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.world.entity.player.Player
 import kotlin.math.PI
 
 data class DungeonPlayer(
@@ -9,19 +9,19 @@ data class DungeonPlayer(
     var role: DungeonClass,
     var classLevel: Int,
     var isDead: Boolean,
-    var entity: PlayerEntity? = null,
+    var entity: Player? = null,
     var position: PlayerComponentPosition? = null,
     var updateTime: Double? = null,
     var lastPosition: PlayerComponentPosition? = null,
     var lastUpdateTime: Double? = null,
 ) {
     fun tick() {
-        if (entity?.isDead ?: true) entity = null
+        if (entity?.isAlive ?: true) entity = null
         val ent = entity ?: return
         updatePosition(PlayerComponentPosition.fromWorld(
             ent.x,
             ent.z,
-            -(ent.yaw.toDouble() + 90) * PI / 180.0
+            -(ent.yRot.toDouble() + 90) * PI / 180.0
         ))
     }
 
