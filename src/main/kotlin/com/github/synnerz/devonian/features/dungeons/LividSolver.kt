@@ -4,8 +4,8 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.block.Blocks
-import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket
+import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
+import net.minecraft.world.level.block.Blocks
 import java.awt.Color
 
 object LividSolver : Feature(
@@ -49,10 +49,10 @@ object LividSolver : Feature(
         on<PacketReceivedEvent> { event ->
             if (!inBoss) return@on
             val packet = event.packet
-            if (packet !is ChunkDeltaUpdateS2CPacket) return@on
+            if (packet !is ClientboundSectionBlocksUpdatePacket) return@on
 
-            packet.visitUpdates { t, u ->
-                if (t.x != 5 || t.y != 108 || t.z != 43) return@visitUpdates
+            packet.runUpdates { t, u ->
+                if (t.x != 5 || t.y != 108 || t.z != 43) return@runUpdates
                 if (mapBlocks[u.block] != null) currentLivid = mapBlocks[u.block]
             }
         }
@@ -72,20 +72,20 @@ object LividSolver : Feature(
             val matrixStack = event.matrixStack
             if (entity.id != lividId) return@on
 
-            val cam = minecraft.gameRenderer.camera.pos.negate()
-            val width = entity.width.toDouble()
+            val cam = minecraft.gameRenderer.mainCamera.position.reverse()
+            val width = entity.bbWidth.toDouble()
             val halfWidth = width / 2.0
 
-            matrixStack.push()
+            matrixStack.pushPose()
             matrixStack.translate(cam.x, cam.y, cam.z)
 
             Context.Immediate?.renderBox(
                 entity.x - halfWidth, entity.y, entity.z - halfWidth,
-                width, entity.height.toDouble(),
+                width, entity.bbHeight.toDouble(),
                 boxColor, translate = false
             )
 
-            matrixStack.pop()
+            matrixStack.popPose()
         }
     }
 
