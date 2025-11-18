@@ -14,6 +14,7 @@ import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket
+import net.minecraft.sound.SoundCategory
 import org.lwjgl.glfw.GLFW
 import kotlin.jvm.optionals.getOrNull
 
@@ -70,7 +71,14 @@ object EventBus {
 
             if (packet is PlaySoundS2CPacket) {
                 val sound = packet.sound.key.getOrNull()?.value ?: return@on
-                if (onSoundPacket("${sound.namespace}:${sound.path}", packet.pitch, packet.volume))
+                if (onSoundPacket(
+                        "${sound.namespace}:${sound.path}",
+                        packet.pitch,
+                        packet.volume,
+                        packet.category,
+                        packet.x, packet.y, packet.z,
+                        packet.seed
+                ))
                     event.ci.cancel()
                 return@on
             }
@@ -128,8 +136,15 @@ object EventBus {
         }
     }
 
-    fun onSoundPacket(soundEvent: String, pitch: Float, volume: Float): Boolean =
-        SoundPlayEvent(soundEvent, pitch, volume).post()
+    fun onSoundPacket(
+        soundEvent: String,
+        pitch: Float,
+        volume: Float,
+        category: SoundCategory,
+        x: Double, y: Double, z: Double,
+        seed: Long
+    ): Boolean =
+        SoundPlayEvent(soundEvent, pitch, volume, category, x, y, z, seed).post()
 
     fun serverTicks(): Int = totalTicks
 

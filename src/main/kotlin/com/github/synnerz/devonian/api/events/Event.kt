@@ -16,6 +16,7 @@ import net.minecraft.network.packet.Packet
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
+import net.minecraft.sound.SoundCategory
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
@@ -266,6 +267,15 @@ class ScoreboardEvent(message: String) : CriteriaEvent(message)
 
 class RenderSlotEvent(val slot: Slot, val ctx: DrawContext) : CancellableEvent()
 
-class SoundPlayEvent(val sound: String, val pitch: Float, val volume: Float) : CancellableEvent()
+class SoundPlayEvent(
+    val sound: String,
+    val pitch: Float,
+    val volume: Float,
+    val category: SoundCategory,
+    val x: Double,
+    val y: Double,
+    val z: Double,
+    val seed: Long
+) : CancellableEvent()
 
 class PostClientInit(val minecraft: MinecraftClient) : Event()
