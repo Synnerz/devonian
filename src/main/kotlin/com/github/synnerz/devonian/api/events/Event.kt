@@ -2,7 +2,6 @@ package com.github.synnerz.devonian.api.events
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext.BlockOutlineContext
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
@@ -20,6 +19,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.phys.HitResult
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 open class Event {
@@ -146,9 +146,9 @@ class GuiKeyEvent(
     val screen: Screen
 ) : CancellableEvent()
 
-class BlockOutlineEvent(
+class BeforeBlockOutlineEvent(
     val renderContext: WorldRenderContext,
-    val blockContext: BlockOutlineContext
+    val hitResult: HitResult?
 ) : CancellableEvent()
 
 open class CriteriaEvent(val message: String) : CancellableEvent() {

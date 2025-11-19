@@ -2,12 +2,15 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.events.BlockOutlineEvent
+import com.github.synnerz.devonian.api.events.BeforeBlockOutlineEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.ColorEnum
 import com.github.synnerz.devonian.utils.JsonUtils
 import net.minecraft.world.level.EmptyBlockGetter
+import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.EntityHitResult
+import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import java.awt.Color
 
@@ -15,8 +18,8 @@ object BlockOverlay : Feature(
     "blockOverlay",
     "Adds a more customizable Block Overlay."
 ) {
-    private const val SETTING_BOX_ENTITY = false;
-    private var SETTING_WIRE_COLOR = Color.WHITE;
+    private const val SETTING_BOX_ENTITY = false
+    private var SETTING_WIRE_COLOR = Color.WHITE
     private val SETTING_FILL_COLOR = Color(0)
 
     override fun initialize() {
@@ -34,12 +37,16 @@ object BlockOverlay : Feature(
             SETTING_WIRE_COLOR = Color(JsonUtils.get<Int>("blockOverlayColor") ?: -1, true)
         }
 
-        on<BlockOutlineEvent> { event ->
+        on<BeforeBlockOutlineEvent> { event ->
+            val hit = event.hitResult ?: return@on
             event.cancel()
 
-            val entity = event.blockContext.entity()
-            if (entity != null) {
-                if (SETTING_BOX_ENTITY) {
+            when (hit.type) {
+                HitResult.Type.MISS -> return@on
+
+                HitResult.Type.ENTITY -> {
+                    if (!SETTING_BOX_ENTITY) return@on
+                    val entity = (hit as? EntityHitResult)?.entity ?: return@on
                     val pos = entity.getPosition(event.renderContext.tickCounter().getGameTimeDeltaPartialTick(false))
                     Context.Immediate?.renderBox(
                         pos.x - entity.bbWidth * 0.5f,
@@ -62,37 +69,38 @@ object BlockOverlay : Feature(
                         translate = true
                     )
                 }
-                return@on
+
+                HitResult.Type.BLOCK -> {
+                    val world = minecraft.level ?: return@on
+                    val blockPos = (event.hitResult as? BlockHitResult)?.blockPos ?: return@on
+                    val camera = minecraft.gameRenderer.mainCamera
+                    val cam = camera.position
+                    // accurate bounding box
+                    val blockShape = world.getBlockState(blockPos)
+                        .getShape(
+                            EmptyBlockGetter.INSTANCE,
+                            blockPos,
+                            CollisionContext.of(camera.entity)
+                        )
+
+                    Context.Immediate?.renderBoxShape(
+                        blockShape,
+                        blockPos.x - cam.x,
+                        blockPos.y - cam.y,
+                        blockPos.z - cam.z,
+                        SETTING_WIRE_COLOR,
+                        minecraft.options.cameraType.isFirstPerson
+                    )
+                    Context.Immediate?.renderFilledShape(
+                        blockShape,
+                        blockPos.x - cam.x,
+                        blockPos.y - cam.y,
+                        blockPos.z - cam.z,
+                        SETTING_FILL_COLOR,
+                        minecraft.options.cameraType.isFirstPerson
+                    )
+                }
             }
-
-            val blockPos = event.blockContext.blockPos()
-            val camera = minecraft.gameRenderer.mainCamera
-            val cam = camera.position
-
-            // accurate bounding box
-            val blockShape = event.blockContext.blockState()
-                .getShape(
-                    EmptyBlockGetter.INSTANCE,
-                    blockPos,
-                    CollisionContext.of(camera.entity)
-                )
-
-            Context.Immediate?.renderBoxShape(
-                blockShape,
-                blockPos.x - cam.x,
-                blockPos.y - cam.y,
-                blockPos.z - cam.z,
-                SETTING_WIRE_COLOR,
-                minecraft.options.cameraType.isFirstPerson
-            )
-            Context.Immediate?.renderFilledShape(
-                blockShape,
-                blockPos.x - cam.x,
-                blockPos.y - cam.y,
-                blockPos.z - cam.z,
-                SETTING_FILL_COLOR,
-                minecraft.options.cameraType.isFirstPerson
-            )
         }
     }
 }

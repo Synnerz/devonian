@@ -70,8 +70,8 @@ object EventBus {
                 !event.isCancelled()
             }
         }
-        WorldRenderEvents.BLOCK_OUTLINE.register { worldContext, blockContext ->
-            !BlockOutlineEvent(worldContext, blockContext).post()
+        WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register { worldContext, hitResult ->
+            !BeforeBlockOutlineEvent(worldContext, hitResult).post()
         }
 
         on<PacketReceivedEvent> { event ->
