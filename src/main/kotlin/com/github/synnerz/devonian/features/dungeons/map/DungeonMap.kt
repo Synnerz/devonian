@@ -3,10 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.map
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer.Companion.pipeline
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
-import com.github.synnerz.devonian.api.dungeon.DungeonClass
-import com.github.synnerz.devonian.api.dungeon.DungeonDoor
-import com.github.synnerz.devonian.api.dungeon.DungeonRoom
-import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.*
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.SimpleTextHud
@@ -44,6 +41,7 @@ object DungeonMap : HudFeature(
     )
 
     fun redrawMap(rooms: List<DungeonRoom?>, doors: List<DungeonDoor?>) {
+        if (Dungeons.floor == FloorType.None) return
         val bounds = getBounds()
         val window = minecraft.window
         mapRenderer.update(
