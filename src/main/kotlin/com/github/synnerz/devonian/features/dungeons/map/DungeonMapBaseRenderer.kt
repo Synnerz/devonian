@@ -166,7 +166,7 @@ class DungeonMapBaseRenderer :
         rooms.forEach { room ->
             if (room == null) return@forEach
             if (room.doors.isEmpty() && room.name == null) return@forEach
-            val color = colorForRoom(room) ?: colors[DungeonMapColors.RoomNormal] ?: Color(0)
+            val color = colorForRoom(room) ?: colors[DungeonMapColors.RoomNormal] ?: Color(0, true)
             var shape = room.shape
             if (shape == ShapeTypes.Unknown) return@forEach
             var cells = room.comps.toList()

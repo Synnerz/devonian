@@ -73,7 +73,7 @@ object BurrowWaypoint : Feature(
                         BurrowManager.BurrowType.START -> SETTING_START_COLOR
                         BurrowManager.BurrowType.MOB -> SETTING_MOB_COLOR
                         BurrowManager.BurrowType.TREASURE -> SETTING_TREAURE_COLOR
-                        else -> Color(0)
+                        else -> Color(0, true)
                     },
                     it.type.displayName,
                     increase = true,

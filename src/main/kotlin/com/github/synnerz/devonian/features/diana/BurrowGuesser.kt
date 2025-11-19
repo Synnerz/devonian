@@ -344,7 +344,7 @@ object BurrowGuesser : Feature(
                     when (it.type) {
                         BurrowManager.BurrowType.GUESS -> SETTING_GUESS_COLOR
                         BurrowManager.BurrowType.OLD_GUESS -> SETTING_OLD_GUESS_COLOR
-                        else -> Color(0)
+                        else -> Color(0, true)
                     },
                     it.type.displayName,
                     increase = true,
