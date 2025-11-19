@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.config.ui
 
+import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.JsonUtils
 
 open class ConfigData<T>(
@@ -31,10 +32,21 @@ open class ConfigData<T>(
         onChangeHook = cb
     }
 
-    class Switch<T>(
+    open class Switch(
         configName: String,
-        value: T
-    ) : ConfigData<T>(configName, value)
+        value: Boolean
+    ) : ConfigData<Boolean>(configName, value)
+
+    class FeatureSwitch(
+        configName: String,
+        value: Boolean,
+        val feature: Feature
+    ) : Switch(configName, value) {
+        override fun set(newVal: Boolean) {
+            super.set(newVal)
+            feature.onToggle(newVal)
+        }
+    }
 
     class Slider<T>(
         configName: String,
