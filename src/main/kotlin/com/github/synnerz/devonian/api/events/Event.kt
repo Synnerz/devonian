@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.inventory.Slot
@@ -279,3 +280,9 @@ class SoundPlayEvent(
 ) : CancellableEvent()
 
 class PostClientInit(val minecraft: Minecraft) : Event()
+
+class PacketNameChangeEvent(
+    val entityId: Int,
+    val type: EntityType<*>,
+    val name: Component
+) : Event()

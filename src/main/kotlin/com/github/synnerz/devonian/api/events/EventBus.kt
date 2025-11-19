@@ -9,19 +9,26 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
+import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.common.ClientboundPingPacket
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket
+import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.sounds.SoundSource
+import net.minecraft.world.entity.EntityType
 import org.lwjgl.glfw.GLFW
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 object EventBus {
     var totalTicks = 0
     private val teamRegex = "^team_(\\d+)$".toRegex()
     val events = hashMapOf<String, MutableList<Any>>()
+    private val entityTypes = mutableMapOf<Int, EntityType<*>>()
 
     init {
         ClientEntityEvents.ENTITY_LOAD.register { entity, _ ->
@@ -37,6 +44,7 @@ object EventBus {
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world ->
             WorldChangeEvent(mc, world).post()
             totalTicks = 0
+            entityTypes.clear()
         }
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
             ScreenMouseEvents.allowMouseClick(screen).register { _, mx, my, mbtn ->
@@ -67,68 +75,75 @@ object EventBus {
         }
 
         on<PacketReceivedEvent> { event ->
-            val packet = event.packet
-
-            if (packet is ClientboundSoundPacket) {
-                val sound = packet.sound.unwrapKey().getOrNull()?.location() ?: return@on
-                if (onSoundPacket(
+            when (val packet = event.packet) {
+                is ClientboundSoundPacket -> {
+                    val sound = packet.sound.unwrapKey().getOrNull()?.location() ?: return@on
+                    if (onSoundPacket(
                         "${sound.namespace}:${sound.path}",
                         packet.pitch,
                         packet.volume,
                         packet.source,
                         packet.x, packet.y, packet.z,
                         packet.seed
-                ))
-                    event.ci.cancel()
-                return@on
-            }
+                    )) event.ci.cancel()
+                }
+                is ClientboundPlayerInfoUpdatePacket -> {
+                    val action = packet.actions().firstOrNull() ?: return@on
+                    if (action === ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER) {
+                        packet.entries().forEach {
+                            val name = it.displayName ?: return@forEach
+                            TabAddEvent(name.string.clearCodes()).post()
+                        }
+                        return@on
+                    }
+                    if (action !== ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME) return@on
 
-            if (packet is ClientboundPlayerInfoUpdatePacket) {
-                val action = packet.actions().firstOrNull() ?: return@on
-                if (action === ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER) {
                     packet.entries().forEach {
                         val name = it.displayName ?: return@forEach
-                        TabAddEvent(name.string.clearCodes()).post()
+                        TabUpdateEvent(name.string.clearCodes()).post()
                     }
                     return@on
                 }
-                if (action !== ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME) return@on
-
-                packet.entries().forEach {
-                    val name = it.displayName ?: return@forEach
-                    TabUpdateEvent(name.string.clearCodes()).post()
+                is ClientboundPingPacket -> {
+                    totalTicks++
+                    ServerTickEvent(totalTicks).post()
                 }
-                return@on
+                is ClientboundSetPlayerTeamPacket -> {
+                    if (packet.parameters.isEmpty) return@on
+                    val team = packet.parameters?.get() ?: return@on
+                    val teamPrefix = team.playerPrefix.string
+                    val teamSuffix = team.playerSuffix.string
+                    if (teamPrefix.isEmpty()) return@on
+                    if (!packet.name.matches(teamRegex)) return@on
+                    ScoreboardEvent("${teamPrefix}${teamSuffix.trim()}").post()
+                    return@on
+                }
+                is ClientboundSystemChatPacket -> {
+                    if (packet.overlay) return@on
+
+                    val content = packet.content ?: return@on
+                    val message = content.string.clearCodes()
+
+                    val specialized = ChatChannelEvent.from(message, content)
+                    val b1 = ChatEvent(message, content).post()
+                    val b2 = specialized?.post() ?: false
+
+                    if (b1 || b2) event.ci.cancel()
+                }
+                is ClientboundAddEntityPacket -> {
+                    val id = packet.id
+                    val type = packet.type
+                    entityTypes[id] = type
+                }
+                is ClientboundSetEntityDataPacket -> {
+                    val id = packet.id
+                    if (id !in entityTypes) println("unknown entity id $id, ${getNameFromData(packet.packedItems)?.string}")
+                    val type = entityTypes[id] ?: return@on
+                    val data = packet.packedItems
+                    val text = getNameFromData(data)
+                    if (text != null) PacketNameChangeEvent(id, type, text).post()
+                }
             }
-
-            if (packet is ClientboundPingPacket) {
-                totalTicks++
-                ServerTickEvent(totalTicks).post()
-                return@on
-            }
-
-            if (packet is ClientboundSetPlayerTeamPacket) {
-                if (packet.parameters.isEmpty) return@on
-                val team = packet.parameters?.get() ?: return@on
-                val teamPrefix = team.playerPrefix.string
-                val teamSuffix = team.playerSuffix.string
-                if (teamPrefix.isEmpty()) return@on
-                if (!packet.name.matches(teamRegex)) return@on
-                ScoreboardEvent("${teamPrefix}${teamSuffix.trim()}").post()
-                return@on
-            }
-
-            if (packet !is ClientboundSystemChatPacket) return@on
-            if (packet.overlay) return@on
-
-            val content = packet.content ?: return@on
-            val message = content.string.clearCodes()
-
-            val specialized = ChatChannelEvent.from(message, content)
-            val b1 = ChatEvent(message, content).post()
-            val b2 = specialized?.post() ?: false
-
-            if (b1 || b2) event.ci.cancel()
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
@@ -143,10 +158,28 @@ object EventBus {
         category: SoundSource,
         x: Double, y: Double, z: Double,
         seed: Long
-    ): Boolean =
-        SoundPlayEvent(soundEvent, pitch, volume, category, x, y, z, seed).post()
+    ): Boolean = SoundPlayEvent(soundEvent, pitch, volume, category, x, y, z, seed).post()
 
     fun serverTicks(): Int = totalTicks
+
+    private fun getNameFromData(list: List<SynchedEntityData.DataValue<*>>): Component? {
+        val idx = when (list.size) {
+            8 -> 7
+            9 -> 8
+            16 -> 10
+            17 -> 10
+            19 -> 11
+            22 -> 11
+            else -> -1
+        }
+
+        val entry: SynchedEntityData.DataValue<*>?
+        if (idx >= 0 && list[idx].id == 2) entry = list[idx]
+        else entry = list.find { it.id == 2 }
+
+        val v = entry?.value ?: return null
+        return (v as? Optional<*>)?.getOrNull() as? Component
+    }
 
     inline fun <reified T : Event> on(noinline cb: (T) -> Unit): EventListener {
         return on<T>(cb, true)
