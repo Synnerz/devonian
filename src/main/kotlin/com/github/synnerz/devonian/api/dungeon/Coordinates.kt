@@ -51,13 +51,6 @@ data class ComponentPosition(val x: Int, val z: Int) {
             )
         ).filter { it.isValid() }
 
-        if (isValidRoom()) return listOf(
-            ComponentPosition(x, z - 2),
-            ComponentPosition(x, z + 2),
-            ComponentPosition(x - 2, z),
-            ComponentPosition(x + 2, z),
-        ).filter { it.isValid() }
-
         return emptyList()
     }
 
@@ -85,7 +78,7 @@ data class ComponentPosition(val x: Int, val z: Int) {
     data class Neighbor(val room: ComponentPosition, val door: ComponentPosition)
 
     fun getRoomIdx() = (z / 2) * 6 + x / 2
-    fun getDoorIdx() = ((x - 1) / 2 + 6 * z).let { it - it / 12 }
+    fun getDoorIdx() = (((x - 1) shr 1) + 6 * z).let { it - it / 12 }
 
     companion object {
         val EMPTY = ComponentPosition(Int.MIN_VALUE, Int.MIN_VALUE)
