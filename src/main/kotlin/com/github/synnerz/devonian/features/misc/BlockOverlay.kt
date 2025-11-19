@@ -20,7 +20,7 @@ object BlockOverlay : Feature(
 ) {
     private const val SETTING_BOX_ENTITY = false
     private var SETTING_WIRE_COLOR = Color.WHITE
-    private val SETTING_FILL_COLOR = Color(0)
+    private val SETTING_FILL_COLOR = Color(0, 0, 0, 0)
 
     override fun initialize() {
         JsonUtils.set("blockOverlayColor", -1)
