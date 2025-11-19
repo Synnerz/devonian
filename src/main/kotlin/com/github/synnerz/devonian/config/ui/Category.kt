@@ -1,13 +1,11 @@
 package com.github.synnerz.devonian.config.ui
 
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.effects.OutlineEffect
 
 open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase) {
     private val configs = mutableListOf<CategoryData<*>>()
     private val components = mutableListOf<UIRect>()
-    val elements = mutableMapOf<String, UIBase>() // <ConfigName>: <UISwitch/Etc>
     private var currentPage = 0
         set(value) {
             field = value.coerceIn(0, components.size / 5)
@@ -57,8 +55,8 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
     fun addSwitch(
         name: String,
         description: String,
-        configData: ConfigData.Switch<Boolean>
-    ): ConfigData.Switch<Boolean> {
+        configData: ConfigData.Switch
+    ): ConfigData.Switch {
         configs.add(CategoryData(name, description, ConfigType.SWITCH, configData))
         return configData
     }
@@ -164,7 +162,7 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
                 addChild(createDescription(data.description))
                 addChild(
                     when (data.type) {
-                        ConfigType.SWITCH -> createSwitch(configName = data.name)
+                        ConfigType.SWITCH -> createSwitch(data.configData as ConfigData.Switch)
                         ConfigType.SLIDER -> createSlider(data.configData as ConfigData.Slider<Double>)
                         ConfigType.BUTTON -> createButton(data.configData as ConfigData.Button)
                         ConfigType.TEXTINPUT -> createTextInput(data.configData as ConfigData.TextInput)
@@ -222,20 +220,17 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         }
     }
 
-    private fun createSwitch(configName: String, parent: UIRect? = null): UISwitch {
-        // TODO: rewrite backend to actually migrate this to the new ConfigData system
-        val feature = Devonian.features.find { it.configName == configName }!!
-
-        return UISwitch(80.0, 25.0, 15.0, 50.0, feature.isEnabled(), parent = parent).apply {
+    private fun createSwitch(configData: ConfigData.Switch, parent: UIRect? = null): UISwitch {
+        return UISwitch(80.0, 25.0, 15.0, 50.0, configData.get(), parent = parent).apply {
             setColor(ColorPalette.TERTIARY_COLOR)
             knob = UIKnobSwitch(85.0)
             knob.enabledColor = ColorPalette.ENABLED_COLOR
             knob.disabledColor = ColorPalette.DISABLED_COLOR
             onMouseRelease {
-                if (state) feature.setEnabled()
-                else feature.setDisabled()
+                configData.set(state)
             }
-            elements[configName] = this
+
+            configData.onChange { state = configData.get() }
         }
     }
 

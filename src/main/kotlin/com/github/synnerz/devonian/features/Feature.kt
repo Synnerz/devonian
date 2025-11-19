@@ -27,7 +27,7 @@ open class Feature @JvmOverloads constructor(
     protected var isRegistered = false
     protected var _category: Category
     private var configComp: UISwitch? = null
-    private val configData = ConfigData.Switch(configName, false)
+    private val configData = ConfigData.FeatureSwitch(configName, false, this)
     val events = mutableListOf<EventBus.EventListener>()
 
     init {
@@ -54,7 +54,7 @@ open class Feature @JvmOverloads constructor(
         onToggle(false)
     }
 
-    fun config(): ConfigData.Switch<Boolean> = configData
+    fun config(): ConfigData.Switch = configData
 
     fun toggle() {
         if (!isEnabled()) return setEnabled()
@@ -66,7 +66,7 @@ open class Feature @JvmOverloads constructor(
         configName: String,
         description: String,
         displayName: String = configName
-    ): ConfigData.Switch<Boolean> {
+    ): ConfigData.Switch {
         return _category.addSwitch(
             displayName,
             description,
@@ -152,11 +152,6 @@ open class Feature @JvmOverloads constructor(
     }
 
     open fun onToggle(state: Boolean) {
-        if (configComp == null)
-            configComp = _category.elements[configName] as UISwitch?
-
-        configComp?.state = state
-
         if (!state) {
             for (event in events)
                 event.remove()
