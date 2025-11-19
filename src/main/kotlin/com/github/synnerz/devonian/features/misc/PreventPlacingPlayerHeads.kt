@@ -12,9 +12,12 @@ object PreventPlacingPlayerHeads : Feature(
     override fun initialize() {
         on<BlockInteractEvent> { event ->
             if (minecraft.level?.getBlockState(event.pos) == null) return@on
-            if (ItemUtils.skyblockId(event.itemStack) == null || event.itemStack.item != Items.PLAYER_HEAD) return@on
+            val itemStack = event.itemStack
+            if (ItemUtils.skyblockId(itemStack) == null || itemStack.item != Items.PLAYER_HEAD) return@on
+            val lore = ItemUtils.lore(itemStack) ?: return@on
 
-            event.cancel()
+            if (lore.any { it.contains("RIGHT CLICK") || it.contains("Right-click") })
+                event.cancel()
         }
     }
 }
