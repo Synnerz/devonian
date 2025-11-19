@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.api.dungeon
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.AreaEvent
 import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.SubAreaEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.utils.Location
@@ -10,7 +11,9 @@ import com.github.synnerz.devonian.utils.StringUtils
 
 object Dungeons {
     private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([IVXLCDM]+)?\\)$".toRegex()
+    private val dungeonFloorRegex = "The Catacombs \\((\\w+)\\)$".toRegex()
     val players = linkedMapOf<String, DungeonPlayer>()
+    var floor = FloorType.None
 
     fun initialize() {
         DungeonScanner.init()
@@ -63,6 +66,14 @@ object Dungeons {
                 DungeonScanner.reset()
                 DungeonMapScanner.reset()
             }
+        }
+
+        EventBus.on<SubAreaEvent> { event ->
+            val subarea = event.subarea ?: return@on
+            val match = dungeonFloorRegex.matchEntire(subarea) ?: return@on
+            val name = match.groups[1]?.value ?: return@on
+
+            floor = FloorType.from(name)
         }
     }
 }

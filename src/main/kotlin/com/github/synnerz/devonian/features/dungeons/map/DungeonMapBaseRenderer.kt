@@ -17,6 +17,7 @@ import java.util.*
 import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.min
 
 class DungeonMapBaseRenderer :
     BufferedImageRenderer<DungeonMapRenderData>("dungeonMapBaseRenderer", TriState.FALSE), FontListener {
@@ -86,7 +87,9 @@ class DungeonMapBaseRenderer :
         }
 
         val roomRectOffset = (1.0 - options.roomWidth) * 0.5
-        val compToBImgF = 1.0 / options.dungeonSize * w
+        val compToBImgFW = 1.0 / options.dungeonWidth * w
+        val compToBImgFH = 1.0 / options.dungeonHeight * w
+        val compToBImgF = min(compToBImgFW, compToBImgFH)
 
         fun drawRoom(x: Int, z: Int, w: Int, h: Int) {
             val cx = x + roomRectOffset

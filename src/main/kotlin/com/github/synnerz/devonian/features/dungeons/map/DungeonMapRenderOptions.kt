@@ -6,7 +6,8 @@ data class DungeonMapRenderOptions(
     val colors: Map<DungeonMapColors, Color>,
     val roomWidth: Double, // [0, 1]
     val doorWidth: Double, // [0, 1]
-    val dungeonSize: Int, // number of rooms
+    val dungeonWidth: Int, // number of rooms
+    val dungeonHeight: Int, // number of rooms
     val roomName: Boolean,
     val checkMark: Boolean,
     val secretCount: Boolean,

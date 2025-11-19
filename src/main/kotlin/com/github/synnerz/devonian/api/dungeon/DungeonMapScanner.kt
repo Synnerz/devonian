@@ -21,8 +21,8 @@ object DungeonMapScanner {
     var roomCount = -1
     var mapOffsetX = -1
     var mapOffsetZ = -1
-    var mapSize = -1
     var mapWidth = -1
+    var mapHeight = -1
 
     fun reset() {
         roomSize = -1
@@ -30,8 +30,8 @@ object DungeonMapScanner {
         roomCount = -1
         mapOffsetX - 1
         mapOffsetZ - 1
-        mapSize = -1
         mapWidth = -1
+        mapHeight = -1
     }
 
     private enum class MapColors(val color: Byte) {
@@ -55,6 +55,9 @@ object DungeonMapScanner {
     }
 
     private fun scanMapDimensions(colors: ByteArray): Boolean {
+        val floor = Dungeons.floor
+        if (floor == FloorType.None) return false
+
         var entranceIdx = 0
         var i = 0
         while (entranceIdx < colors.size && colors[entranceIdx] != MapColors.ROOM_ENTRANCE.color) {
@@ -84,9 +87,11 @@ object DungeonMapScanner {
 
         mapOffsetX = l % roomGap
         mapOffsetZ = t % roomGap
-        mapSize = ((SCAN - mapOffsetX * 2 - roomSize) / roomGap + 0.5).toInt() + 1
+        if (SCAN - roomGap * floor.roomsW > roomGap * 2) mapOffsetX += roomGap
+        if (SCAN - roomGap * floor.roomsH > roomGap * 2) mapOffsetZ += roomGap
 
-        mapWidth = roomGap * (mapSize - 1) + roomSize
+        mapWidth = roomGap * (floor.roomsW - 1) + roomSize
+        mapHeight = roomGap * (floor.roomsH - 1) + roomSize
 
         return true
     }
@@ -111,7 +116,7 @@ object DungeonMapScanner {
             )
             val z = MathUtils.rescale(
                 (dec.y + 127.5) * 0.5,
-                mapOffsetZ.toDouble(), (mapOffsetZ + mapWidth + ROOM_SPACING).toDouble(),
+                mapOffsetZ.toDouble(), (mapOffsetZ + mapHeight + ROOM_SPACING).toDouble(),
                 0.0, 12.0
             )
             val r = -(dec.rot / 16.0 * 360.0 + 90.0) / 180.0 * PI

@@ -68,7 +68,8 @@ object DungeonMap : HudFeature(
                         DungeonMapColors.DoorBlood to Color(255, 0, 0, 255),
                         DungeonMapColors.DoorEntrance to Color(0, 123, 0, 255)
                     ),
-                    0.8, 0.4, 6,
+                    0.8, 0.4,
+                    Dungeons.floor.roomsW, Dungeons.floor.roomsH,
                     true, true, true,
                     0.8, DungeonMapRoomInfoAlignment.TopLeft,
                     0.6, DungeonMapRoomInfoAlignment.Center,
