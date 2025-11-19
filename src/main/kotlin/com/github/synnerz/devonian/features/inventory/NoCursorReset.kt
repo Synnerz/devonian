@@ -1,46 +1,41 @@
 package com.github.synnerz.devonian.features.inventory
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.Feature
+import kotlinx.atomicfu.atomic
+import net.minecraft.network.protocol.common.ClientboundPingPacket
 import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 
 object NoCursorReset : Feature(
     "noCursorReset",
-    "Avoids resetting your cursor whenever entering certain guis"
+    "Avoids resetting your cursor whenever navigating guis"
 ) {
-    var windowOpened: Long? = null
-    var windowClosed: Long? = null
+    var closedGui = false
+    var resetCursor = atomic(true)
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
 
             when (packet) {
-                is ClientboundOpenScreenPacket -> {
-                    if (windowClosed == null) return@on
-
-                    windowOpened = System.currentTimeMillis()
-                }
                 is ClientboundContainerClosePacket -> {
-                    windowOpened = null
-                    windowClosed = System.currentTimeMillis()
+                    closedGui = true
+                }
+                is ClientboundOpenScreenPacket -> {
+                    if (closedGui) resetCursor.value = false
+                }
+                is ClientboundPingPacket -> {
+                    if (closedGui) Scheduler.scheduleTask { resetCursor.value = true }
+                    closedGui = false
                 }
             }
         }
     }
 
-    @JvmOverloads
-    fun shouldReset(y: Boolean = false): Boolean {
+    fun shouldReset(): Boolean {
         if (!isEnabled()) return true
-        if (windowClosed == null || windowOpened == null) return true
-
-        val state = windowOpened!! - windowClosed!! > 100
-        if (!state && y) {
-            windowOpened = null
-            windowClosed = null
-        }
-
-        return state
+        return resetCursor.value
     }
 }

@@ -30,6 +30,6 @@ public class MouseHandlerMixin {
             )
     )
     private boolean devonian$setYCursor(MouseHandler instance, double value) {
-        return NoCursorReset.INSTANCE.shouldReset(true);
+        return NoCursorReset.INSTANCE.shouldReset();
     }
 }
