@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.api.dungeon
 import kotlin.math.max
 
 enum class FloorType(
-    val floor: Int,
+    val floorNum: Int,
     val masterMode: Boolean,
     val shortName: String,
     val roomsW: Int,
