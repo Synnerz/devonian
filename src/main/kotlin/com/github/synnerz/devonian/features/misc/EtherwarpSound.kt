@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.Feature
@@ -50,12 +51,14 @@ object EtherwarpSound : Feature(
             ) return@on
 
             event.cancel()
-            minecraft.level?.playLocalSound(
-                event.x, event.y, event.z,
-                soundEvent, event.category,
-                1f, 1f,
-                false
-            )
+            Scheduler.scheduleTask(0) {
+                minecraft.level?.playLocalSound(
+                    event.x, event.y, event.z,
+                    soundEvent, event.category,
+                    1f, 1f,
+                    false
+                )
+            }
         }
     }
 }
