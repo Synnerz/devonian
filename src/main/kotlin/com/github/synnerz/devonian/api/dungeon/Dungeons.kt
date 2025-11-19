@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.utils.StringUtils
 
 object Dungeons {
     private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([IVXLCDM]+)?\\)$".toRegex()
-    private val dungeonFloorRegex = "The Catacombs \\((\\w+)\\)$".toRegex()
+    private val dungeonFloorRegex = "^ * ⏣ The Catacombs \\((\\w+)\\)$".toRegex()
     val players = linkedMapOf<String, DungeonPlayer>()
     var floor = FloorType.None
 
