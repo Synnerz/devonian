@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.PacketSentEvent
@@ -90,9 +91,9 @@ object SecretsSound : Feature(
 
     private fun playSound(declined: Boolean = false) {
         if (declined) {
-            minecraft.player?.playSound(declineSound, 1f, 1f)
+            Scheduler.scheduleTask { minecraft.player?.playSound(declineSound, 1f, 1f) }
             return
         }
-        minecraft.player?.playSound(successSound, 1f, 2f)
+        Scheduler.scheduleTask { minecraft.player?.playSound(successSound, 1f, 2f) }
     }
 }
