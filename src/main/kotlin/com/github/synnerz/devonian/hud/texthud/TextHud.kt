@@ -255,10 +255,10 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
 
     companion object {
         const val MC_FONT_SIZE = 10f
-        val MOJANGLES: Font = try {
+        val MAIN_FONT: Font = try {
             Font.createFont(
                 Font.TRUETYPE_FONT, Objects.requireNonNull(
-                    this::class.java.getResourceAsStream("/assets/devonian/Mojangles.ttf")
+                    this::class.java.getResourceAsStream("/assets/devonian/CherryBombOne-Regular.ttf")
                 )
             )
         } catch (_: Exception) {
@@ -271,9 +271,9 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             Instances.add(listener)
         }
 
-        var fontMainBase: Font = MOJANGLES
+        var fontMainBase: Font = MAIN_FONT
             private set
-        var fontMainName = "Mojangles"
+        var fontMainName = "CherryBombOne"
             private set
 
         fun setActiveFont(fontName: String) {
@@ -288,7 +288,7 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             for (f in GraphicsEnvironment.getLocalGraphicsEnvironment().allFonts) {
                 Fonts[f.family.replace(" ", "")] = f
             }
-            Fonts["Mojangles"] = MOJANGLES
+            Fonts["CherryBombOne"] = MAIN_FONT
 
             JsonUtils.afterLoad {
                 val fontName = JsonUtils.get<String?>("textHudFont")
