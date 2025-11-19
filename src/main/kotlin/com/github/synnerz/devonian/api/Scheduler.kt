@@ -1,32 +1,29 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
+import kotlinx.atomicfu.atomic
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.world.entity.Entity
+import java.util.concurrent.PriorityBlockingQueue
 
 object Scheduler {
-    private val tasks = mutableListOf<Task>()
+    private val tasks = PriorityBlockingQueue<Task>(10, Comparator.comparingInt { it.delay })
+    private var tick = atomic(0)
     data class Task(var delay: Int, val cb: () -> Unit)
 
     init {
         ClientTickEvents.START_CLIENT_TICK.register {
-            synchronized(tasks) {
-                tasks.removeAll {
-                    if (it.delay-- > 0) return@removeAll false
-
-                    Devonian.minecraft.submit(it.cb)
-
-                    return@removeAll true
-                }
+            val curr = tick.incrementAndGet()
+            while (tasks.isNotEmpty() && tasks.peek().delay <= curr) {
+                val task = tasks.poll() ?: return@register
+                Devonian.minecraft.execute(task.cb)
             }
         }
     }
 
     @JvmOverloads
     fun scheduleTask(delay: Int = 1, cb: () -> Unit) {
-        synchronized(tasks) {
-            tasks.add(Task(delay, cb))
-        }
+        tasks.add(Task(tick.value + delay, cb))
     }
 
     @JvmOverloads
