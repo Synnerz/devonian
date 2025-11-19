@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
@@ -21,6 +22,7 @@ object PrinceKilled : Feature(
 
             ChatUtils.command("pc Prince Killed!")
             messageSent = true
+            Dungeons.princeKilled.value = true
         }
     }
 

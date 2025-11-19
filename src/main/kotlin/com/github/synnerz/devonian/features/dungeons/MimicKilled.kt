@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.EntityDeathEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
@@ -25,6 +26,7 @@ object MimicKilled : Feature(
 
             ChatUtils.command("pc Mimic Killed!")
             messageSent = true
+            Dungeons.mimicKilled.value = true
         }
 
         on<WorldChangeEvent> {
