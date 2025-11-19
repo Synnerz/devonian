@@ -187,7 +187,7 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             else -> {
                 if (s.size < lines.size) {
                     markImage()
-                    lines.dropLast(lines.size - s.size)
+                    lines.subList(s.size, lines.size).clear()
                 }
                 s.forEachIndexed { i, v ->
                     if (i < lines.size && lines[i].str == v) return@forEachIndexed
