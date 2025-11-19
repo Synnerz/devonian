@@ -97,7 +97,8 @@ object Devonian : ClientModInitializer {
         InventoryHistoryLog,
         HudManagerInstructions,
         DungeonMap,
-        SpeedDisplay
+        SpeedDisplay,
+        BoxDoors,
     )
 
     override fun onInitializeClient() {
