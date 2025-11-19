@@ -74,7 +74,7 @@ object InventoryHistoryLog : TextHudFeature(
 
         on<WorldChangeEvent> {
             worldSwap = true
-            Scheduler.scheduleTask(20) { worldSwap = false }
+            Scheduler.scheduleServerTask(20) { worldSwap = false }
         }
     }
 

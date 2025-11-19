@@ -48,7 +48,7 @@ object GolemDPS : Feature(
             spawnAt = -1L
 
             // Delay it so it's sent after the leaderboard message
-            Scheduler.scheduleTask(20) {
+            Scheduler.scheduleServerTask(20) {
                 ChatUtils.sendMessage("&bYour Golem DPS was &6${round(yourDamage / timeToKill).toInt()} &bin &6${seconds}", true)
             }
         }

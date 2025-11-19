@@ -21,12 +21,12 @@ object RemoveDamageTag : Feature(
             if (packet !is ClientboundAddEntityPacket) return@on
             if (packet.type !== EntityType.ARMOR_STAND) return@on
 
-            Scheduler.scheduleTask {
-                val world = minecraft.level ?: return@scheduleTask
+            Scheduler.scheduleServerTask {
+                val world = minecraft.level ?: return@scheduleServerTask
                 val entityId = packet.id
-                val entity = world.getEntity(entityId) ?: return@scheduleTask
-                val name = entity.customName?.string ?: return@scheduleTask
-                if (!name.matches(damageTagRegex)) return@scheduleTask
+                val entity = world.getEntity(entityId) ?: return@scheduleServerTask
+                val name = entity.customName?.string ?: return@scheduleServerTask
+                if (!name.matches(damageTagRegex)) return@scheduleServerTask
 
                 world.removeEntity(entityId, Entity.RemovalReason.DISCARDED)
             }

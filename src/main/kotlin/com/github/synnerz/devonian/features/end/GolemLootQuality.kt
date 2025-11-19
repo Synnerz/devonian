@@ -74,7 +74,7 @@ object GolemLootQuality : Feature(
             val legPet = if (quality >= 235) "&a\uD83D\uDDF8" else "&cx"
             val epicPet = if (quality >= 220) "&a\uD83D\uDDF8" else "&cx"
 
-            Scheduler.scheduleTask(20) {
+            Scheduler.scheduleServerTask(20) {
                 ChatUtils.sendMessage("&bGolem loot quality &6$quality &cTBC &b[$tbc&b] | &6LegPet &b[$legPet&b] | &5EpicPet &b[$epicPet&b]", true)
             }
 

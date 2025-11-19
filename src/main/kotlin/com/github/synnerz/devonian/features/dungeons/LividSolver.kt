@@ -36,8 +36,8 @@ object LividSolver : Feature(
         on<ChatEvent> { event ->
             if (event.matches(lividSpawnedRegex) != null) {
                 // Fallback to red if there's no block update packet found
-                Scheduler.scheduleTask(2) {
-                    if (lividId != -1) return@scheduleTask
+                Scheduler.scheduleServerTask(2) {
+                    if (lividId != -1) return@scheduleServerTask
                     currentLivid = "Hockey"
                 }
                 return@on
@@ -58,10 +58,10 @@ object LividSolver : Feature(
         }
 
         on<EntityJoinEvent> { event ->
-            Scheduler.scheduleTask {
+            Scheduler.scheduleServerTask {
                 val entity = event.entity
-                val name = entity.name.string ?: return@scheduleTask
-                if (!name.contains("$currentLivid Livid")) return@scheduleTask
+                val name = entity.name.string ?: return@scheduleServerTask
+                if (!name.contains("$currentLivid Livid")) return@scheduleServerTask
 
                 lividId = entity.id
             }
