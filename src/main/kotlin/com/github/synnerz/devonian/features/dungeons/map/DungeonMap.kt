@@ -116,8 +116,8 @@ object DungeonMap : HudFeature(
 
             if (renderNames) {
                 val text =
-                    (if (SETTING_COLOR_NAME_BY_CLASS && player.role != DungeonClass.Unknown) player.role.colorCode else "") +
-                    if (SETTING_USE_CLASS_NAME) player.role.shortName else player.name
+                    (if (SETTING_COLOR_NAME_BY_CLASS) player.role.colorCode else "") +
+                    if (SETTING_USE_CLASS_NAME && player.role != DungeonClass.Unknown) player.role.shortName else player.name
 
                 val hud = textHuds[i]
                 hud.x = px.toDouble()
