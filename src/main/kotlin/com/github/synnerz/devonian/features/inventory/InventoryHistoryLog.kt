@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.Location
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
@@ -37,6 +38,7 @@ object InventoryHistoryLog : TextHudFeature(
 
     override fun initialize() {
         on<TickEvent> {
+            if (Location.area == null) return@on
             receipt.entries.removeIf { --it.value.ttl <= 0 }
 
             if (minecraft.screen != null) return@on
