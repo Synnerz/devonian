@@ -93,6 +93,7 @@ object DungeonMap : HudFeature(
     }
 
     override fun drawImpl(ctx: GuiGraphics) {
+        if (Dungeons.floor == FloorType.None) return
         mapRenderer.draw(ctx, x.toFloat(), y.toFloat(), (1.0 / minecraft.window.guiScale).toFloat())
 
         val bounds = getBounds()
@@ -109,8 +110,8 @@ object DungeonMap : HudFeature(
             val i = idx++
             val pos = player.getLerpedPosition() ?: return@forEach
 
-            val px = (bounds.x + pos.x / 12.0 * bounds.w).toFloat()
-            val py = (bounds.y + pos.z / 12.0 * bounds.h).toFloat()
+            val px = (bounds.x + pos.x / (Dungeons.floor.maxDim * 2.0) * bounds.w).toFloat()
+            val py = (bounds.y + pos.z / (Dungeons.floor.maxDim * 2.0) * bounds.h).toFloat()
 
             if (renderNames) {
                 val text =

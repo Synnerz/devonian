@@ -87,11 +87,12 @@ object DungeonMapScanner {
 
         mapOffsetX = l % roomGap
         mapOffsetZ = t % roomGap
-        if (SCAN - roomGap * floor.roomsW > roomGap * 2) mapOffsetX += roomGap
-        if (SCAN - roomGap * floor.roomsH > roomGap * 2) mapOffsetZ += roomGap
 
         mapWidth = roomGap * (floor.roomsW - 1) + roomSize
         mapHeight = roomGap * (floor.roomsH - 1) + roomSize
+
+        if (SCAN - mapWidth >= roomGap * 2) mapOffsetX += roomGap
+        if (SCAN - mapHeight >= roomGap * 2) mapOffsetZ += roomGap
 
         return true
     }
@@ -101,6 +102,9 @@ object DungeonMapScanner {
 
         val decorations = mapState.decorations.toList()
         if (Dungeons.players.filter { !it.value.isDead }.size != decorations.size) return
+
+        val floor = Dungeons.floor
+        if (floor == FloorType.None) return
 
         val playerIter = Dungeons.players.iterator()
         playerIter.next()
@@ -112,12 +116,12 @@ object DungeonMapScanner {
             val x = MathUtils.rescale(
                 (dec.x + 127.5) * 0.5,
                 mapOffsetX.toDouble(), (mapOffsetX + mapWidth + ROOM_SPACING).toDouble(),
-                0.0, 12.0
+                0.0, floor.maxDim * 2.0
             )
             val z = MathUtils.rescale(
                 (dec.y + 127.5) * 0.5,
                 mapOffsetZ.toDouble(), (mapOffsetZ + mapHeight + ROOM_SPACING).toDouble(),
-                0.0, 12.0
+                0.0, floor.maxDim * 2.0
             )
             val r = -(dec.rot / 16.0 * 360.0 + 90.0) / 180.0 * PI
 

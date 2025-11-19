@@ -1,5 +1,7 @@
 package com.github.synnerz.devonian.api.dungeon
 
+import kotlin.math.max
+
 enum class FloorType(
     val floor: Int,
     val masterMode: Boolean,
@@ -10,23 +12,25 @@ enum class FloorType(
 ) {
     None(0, false, "", 0, 0, ""),
 
-    Entrance(0, false, "E", 3, 3, "Entrance"),
+    Entrance(0, false, "E", 4, 4, "Entrance"),
 
-    F1(1, false, "F1", 3, 4),
-    F2(2, false, "F2", 4, 4),
-    F3(3, false, "F3", 4, 4),
-    F4(4, false, "F4", 5, 4),
-    F5(5, false, "F5", 5, 5),
-    F6(6, false, "F6", 6, 5),
+    F1(1, false, "F1", 4, 5),
+    F2(2, false, "F2", 5, 5),
+    F3(3, false, "F3", 5, 5),
+    F4(4, false, "F4", 6, 5),
+    F5(5, false, "F5", 6, 6),
+    F6(6, false, "F6", 6, 6),
     F7(7, false, "F7", 6, 6),
 
-    M1(1, true, "M1", 3, 4),
-    M2(2, true, "M2", 4, 4),
-    M3(3, true, "M3", 4, 4),
-    M4(4, true, "M4", 5, 4),
-    M5(5, true, "M5", 5, 5),
-    M6(6, true, "M6", 6, 5),
+    M1(1, true, "M1", 4, 5),
+    M2(2, true, "M2", 5, 5),
+    M3(3, true, "M3", 5, 5),
+    M4(4, true, "M4", 6, 5),
+    M5(5, true, "M5", 6, 6),
+    M6(6, true, "M6", 6, 6),
     M7(7, true, "M7", 6, 6);
+
+    val maxDim = max(roomsW, roomsH)
 
     companion object {
         fun from(name: String): FloorType = entries.find { it.shortName == name } ?: None
