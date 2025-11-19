@@ -22,8 +22,16 @@ object BoxDoors : Feature(
     private val SETTING_DOOR_LOCKED_FILL_COLOR = Color(255, 0, 0, 64)
     private val SETTING_DOOR_KEY_WIRE_COLOR = Color(0, 255, 0, 255)
     private val SETTING_DOOR_KEY_FILL_COLOR = Color(0, 255, 0, 64)
-    private const val SETTING_RENDER_UNKNOWN_DOORS = false
-    private const val SETTING_RENDER_NORMAL_DOORS = true
+    private val settingRenderNormalDoors = addSwitch(
+        "renderNormalDoors",
+        "Highlights normal door ways not only the wither/blood ones",
+        "Highlight Normal Doors"
+    )
+    private val settingRenderUnknownDoors = addSwitch(
+        "renderUnknownDoors",
+        "Whether to highlight the doors that are in rooms that have not been explored yet",
+        "Highlight Unknown Doors"
+    )
 
     private val witherKeys = atomic(0)
     private val bloodKey = atomic(false)
@@ -63,7 +71,7 @@ object BoxDoors : Feature(
                     DoorTypes.NORMAL,
                     DoorTypes.ENTRANCE
                         -> {
-                        if (!SETTING_RENDER_NORMAL_DOORS) return@forEach
+                        if (!settingRenderNormalDoors.get()) return@forEach
                         0
                     }
 
@@ -73,7 +81,7 @@ object BoxDoors : Feature(
 
                 if (type > 0 && it.opened) return@forEach
 
-                if (!SETTING_RENDER_UNKNOWN_DOORS && it.rooms.all { !it.explored }) return@forEach
+                if (!settingRenderUnknownDoors.get() && it.rooms.all { !it.explored }) return@forEach
 
                 val colorWire: Color
                 val colorFill: Color
