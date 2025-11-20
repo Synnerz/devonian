@@ -81,7 +81,7 @@ open class Feature @JvmOverloads constructor(
         description: String,
         min: Double = 0.0, max: Double = 100.0,
         displayName: String = configName,
-        value: Double = 0.0
+        value: Double = min
     ): ConfigData.Slider<Double> {
         return _category.addSlider(
             displayName,
