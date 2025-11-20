@@ -156,8 +156,8 @@ object DungeonMapScanner {
             val mridx = mrx + mrz * SCAN
             val mcidx = mcx + mcz * SCAN
 
-            val roomCol = colors[mridx]
-            val centerCol = colors[mcidx]
+            val roomCol = colors.getOrNull(mridx) ?: return@forEachIndexed
+            val centerCol = colors.getOrNull(mcidx) ?: return@forEachIndexed
 
             if (roomCol == MapColors.EMPTY.color) return@forEachIndexed
 
@@ -202,8 +202,8 @@ object DungeonMapScanner {
             val mjidx = mjx + mjz * SCAN
             val mdidx = mdx + mdz * SCAN
 
-            val joinedCol = colors[mjidx]
-            val doorCol = colors[mdidx]
+            val joinedCol = colors.getOrNull(mjidx) ?: return@removeIf false
+            val doorCol = colors.getOrNull(mdidx) ?: return@removeIf false
 
             if (doorCol == MapColors.EMPTY.color) return@removeIf false
 
