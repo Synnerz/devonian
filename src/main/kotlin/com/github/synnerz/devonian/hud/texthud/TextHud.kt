@@ -43,14 +43,17 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
 
     private var lineWidth = 0f
     private var lineVisualWidth = 0f
+    private var fontAscent = 0f
+    private var fontDescent = 0f
     private var hasObfuText = false
     private var renderScale = 1f
 
     override fun getWidth() = lineWidth.toDouble() * renderScale
 
-    override fun getLineHeight() = MC_FONT_SIZE * scale.toDouble()
+    override fun getLineHeight() = fontSize.toDouble() * renderScale
 
-    override fun getHeight() = lines.size * getLineHeight()
+    override fun getHeight() =
+        if (lines.isEmpty()) 0.0 else (lines.size - 1) * getLineHeight() + (fontAscent + fontDescent) * renderScale
 
     override fun getBounds(): BoundingBox =
         BoundingBox(
@@ -98,6 +101,8 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
         var g: Graphics2D? = null
         lineWidth = 0f
         lineVisualWidth = 0f
+        fontAscent = 0f
+        fontDescent = 0f
         hasObfuText = false
 
         lines.forEach {
@@ -105,16 +110,18 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
                 if (g == null) {
                     g = BufferedImageFactoryImpl.BLANK_IMAGE.createGraphics()
                     g!!.font = fontMain
-                    g!!.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
                 }
 
-                it.data = StringParser.processString(it.str, shadow, g!!, fontMain!!, fontMono!!, fontBack!!, fontSize)
+                it.data = StringParser.processString(it.str, shadow, g, fontMain!!, fontMono!!, fontBack!!, fontSize)
                 it.dirty = false
                 markImage()
             }
 
             lineWidth = max(lineWidth, it.data!!.width)
             lineVisualWidth = max(lineVisualWidth, it.data!!.width)
+            fontAscent = max(fontAscent, it.data!!.ascent)
+            fontDescent = max(fontDescent, it.data!!.descent)
             if (it.data!!.obfData.isNotEmpty()) {
                 hasObfuText = true
                 it.dirty = true

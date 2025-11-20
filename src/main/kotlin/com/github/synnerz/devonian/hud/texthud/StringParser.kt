@@ -224,8 +224,10 @@ object StringParser {
             o.toTypedArray<ObfData>(),
             tylA.advance,
             tylA.visibleAdvance,
+            tylA.ascent,
+            tylA.descent,
             tylA,
-            tylB
+            tylB,
         )
     }
 
@@ -233,8 +235,10 @@ object StringParser {
         val obfData: Array<ObfData>,
         val width: Float,
         val visualWidth: Float,
+        val ascent: Float,
+        val descent: Float,
         val layout: TextLayout,
-        val layoutShadow: TextLayout?
+        val layoutShadow: TextLayout?,
     )
 
     internal class AttrData(val t: Char, val s: Int, val e: Int)
