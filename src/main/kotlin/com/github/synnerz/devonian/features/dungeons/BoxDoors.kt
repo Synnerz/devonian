@@ -24,13 +24,19 @@ object BoxDoors : Feature(
     private val SETTING_DOOR_KEY_FILL_COLOR = Color(0, 255, 0, 64)
     private val settingRenderNormalDoors = addSwitch(
         "renderNormalDoors",
-        "Highlights normal door ways not only the wither/blood ones",
+        "Highlights normal doorways not only the wither/blood ones",
         "Highlight Normal Doors"
     )
     private val settingRenderUnknownDoors = addSwitch(
         "renderUnknownDoors",
         "Whether to highlight the doors that are in rooms that have not been explored yet",
         "Highlight Unknown Doors"
+    )
+    private val settingDoorLineWidth = addSlider(
+        "doorLineWidth",
+        "Line width of the box outline of the door",
+        1.0, 10.0,
+        "Door Line Width"
     )
 
     private val witherKeys = atomic(0)
@@ -39,10 +45,18 @@ object BoxDoors : Feature(
     private val witherKeyRegex = "^.+?(\\w+) has obtained Wither Key!$".toRegex()
     private val bloodKeyRegex = "^.+?(\\w+) has obtained Blood Key!$".toRegex()
     private val witherDoorRegex = "^(\\w+) opened a WITHER door!$".toRegex()
-    private val bloodDoorRegex = "^The BLOOD DOOR has been opened!$".toRegex()
 
     override fun initialize() {
         on<ChatEvent> { event ->
+            var b = true
+            when (event.message) {
+                "A Wither Key was picked up!" -> witherKeys.incrementAndGet()
+                "A Blood Key was picked up!" -> bloodKey.value = true
+                "The BLOOD DOOR has been opened!" -> bloodKey.value = false
+                else -> b = false
+            }
+            if (b) return@on
+
             var match = event.matches(witherKeyRegex)
             if (match != null) {
                 witherKeys.incrementAndGet()
@@ -57,10 +71,6 @@ object BoxDoors : Feature(
             if (match != null) {
                 witherKeys.decrementAndGet()
                 return@on
-            }
-            match = event.matches(bloodDoorRegex)
-            if (match != null) {
-                bloodKey.value = false
             }
         }
 
@@ -107,7 +117,8 @@ object BoxDoors : Feature(
                     comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,
                     3.0, 4.0,
                     colorWire,
-                    true, true
+                    true, true,
+                    settingDoorLineWidth.get()
                 )
                 Context.Immediate?.renderFilledBox(
                     comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,
