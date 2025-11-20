@@ -237,6 +237,14 @@ object Dungeons {
             } else needReset = true
         }
 
+        EventBus.on<WorldChangeEvent> {
+            players.clear()
+            DungeonScanner.reset()
+            DungeonMapScanner.reset()
+            reset()
+            needReset = false
+        }
+
         EventBus.on<SubAreaEvent> { event ->
             val subarea = event.subarea ?: return@on
             val match = dungeonFloorRegex.matchEntire(subarea) ?: return@on

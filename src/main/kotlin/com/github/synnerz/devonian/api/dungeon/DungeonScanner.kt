@@ -147,7 +147,7 @@ object DungeonScanner {
         rooms.fill(null)
         doors.fill(null)
 
-        EventBus.on<TickEvent>({
+        EventBus.on<TickEvent> {
             if (Location.area != "catacombs") return@on
             if (Dungeons.inBoss.value) return@on
             val player = Devonian.minecraft.player ?: return@on
@@ -159,14 +159,14 @@ object DungeonScanner {
             checkRoomState()
             checkDoorState()
 
-            if (jdx !in 0 .. 35) return@on
+            if (jdx !in 0..35) return@on
 
             if (lastIdx == jdx) return@on
             lastIdx = jdx
             currentRoom = rooms.getOrNull(jdx)
             // TODO: remove whenever done debugging
             ChatUtils.sendMessage("$currentRoom")
-        })
+        }
     }
 
     fun init() {
