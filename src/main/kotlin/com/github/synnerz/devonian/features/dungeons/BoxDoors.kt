@@ -27,7 +27,7 @@ object BoxDoors : Feature(
         "lockedFillColor",
         "",
         "Locked Door Fill Color",
-        Color(255, 0, 0).rgb
+        Color(255, 0, 0, 64).rgb
     )
     private val SETTING_DOOR_KEY_WIRE_COLOR = addColorPicker(
         "keyWireColor",
@@ -39,7 +39,7 @@ object BoxDoors : Feature(
         "keyFillColor",
         "",
         "Unlocked Door Fill Color",
-        Color(0, 255, 0).rgb
+        Color(0, 255, 0, 64).rgb
     )
     private val settingRenderNormalDoors = addSwitch(
         "renderNormalDoors",
@@ -57,7 +57,7 @@ object BoxDoors : Feature(
         "normalFillColor",
         "",
         "Normal Door Fill Color",
-        Color(0, 128, 128).rgb
+        Color(0, 128, 128, 0).rgb
     )
     private val SETTING_DOOR_LINE_WIDTH = addSlider(
         "doorLineWidth",
