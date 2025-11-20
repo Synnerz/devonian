@@ -65,12 +65,13 @@ open class Feature @JvmOverloads constructor(
     fun addSwitch(
         configName: String,
         description: String,
-        displayName: String = configName
+        displayName: String = configName,
+        value: Boolean = false
     ): ConfigData.Switch {
         return _category.addSwitch(
             displayName,
             description,
-            ConfigData.Switch("${this.configName}$${configName}", false)
+            ConfigData.Switch("${this.configName}$${configName}", value)
         )
     }
 
@@ -79,12 +80,13 @@ open class Feature @JvmOverloads constructor(
         configName: String,
         description: String,
         min: Double = 0.0, max: Double = 100.0,
-        displayName: String = configName
+        displayName: String = configName,
+        value: Double = 0.0
     ): ConfigData.Slider<Double> {
         return _category.addSlider(
             displayName,
             description,
-            ConfigData.Slider("${this.configName}$${configName}", 0.0, min, max)
+            ConfigData.Slider("${this.configName}$${configName}", value, min, max)
         )
     }
 
@@ -102,12 +104,13 @@ open class Feature @JvmOverloads constructor(
     fun addTextInput(
         configName: String,
         description: String,
-        displayName: String = configName
+        displayName: String = configName,
+        value: String = ""
     ): ConfigData.TextInput {
         return _category.addTextInput(
             displayName,
             description,
-            ConfigData.TextInput("${this.configName}$${configName}", "")
+            ConfigData.TextInput("${this.configName}$${configName}", value)
         )
     }
 
@@ -115,24 +118,26 @@ open class Feature @JvmOverloads constructor(
         configName: String,
         description: String,
         options: List<String>,
-        displayName: String = configName
+        displayName: String = configName,
+        value: Int = 0
     ): ConfigData.Selection {
         return _category.addSelection(
             displayName,
             description,
-            ConfigData.Selection("${this.configName}$${configName}", 0, options)
+            ConfigData.Selection("${this.configName}$${configName}", value, options)
         )
     }
 
     fun addColorPicker(
         configName: String,
         description: String,
-        displayName: String = configName
+        displayName: String = configName,
+        value: Int = -1 // argb
     ): ConfigData.ColorPicker {
         return _category.addColorPicker(
             displayName,
             description,
-            ConfigData.ColorPicker(configName, -1)
+            ConfigData.ColorPicker(configName, value)
         )
     }
 
