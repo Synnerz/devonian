@@ -9,6 +9,8 @@ import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket
 import net.minecraft.world.item.MapItem
+import net.minecraft.world.level.saveddata.maps.MapDecorationType
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData
 import kotlin.math.PI
 
@@ -108,20 +110,20 @@ object DungeonMapScanner {
 
         val playerIter = Dungeons.players.iterator()
         playerIter.next()
-        decorations.forEachIndexed { idx, dec ->
-            if (idx == 0) return@forEachIndexed
+        decorations.forEach { dec ->
+            if (dec.type == MapDecorationTypes.FRAME) return@forEach
 
             val player = playerIter.next().value
 
             val x = MathUtils.rescale(
-                (dec.x + 127.5) * 0.5,
-                mapOffsetX.toDouble(), (mapOffsetX + mapWidth + ROOM_SPACING).toDouble(),
-                0.0, floor.maxDim * 2.0
+                (dec.x + 126.0) * 0.5,
+                mapOffsetX.toDouble(), (mapOffsetX + roomGap * floor.roomsW).toDouble(),
+                0.0, floor.roomsW * 2.0
             )
             val z = MathUtils.rescale(
-                (dec.y + 127.5) * 0.5,
-                mapOffsetZ.toDouble(), (mapOffsetZ + mapHeight + ROOM_SPACING).toDouble(),
-                0.0, floor.maxDim * 2.0
+                (dec.y + 126.0) * 0.5,
+                mapOffsetZ.toDouble(), (mapOffsetZ + roomGap * floor.roomsH).toDouble(),
+                0.0, floor.roomsH * 2.0
             )
             val r = -(dec.rot / 16.0 * 360.0 + 90.0) / 180.0 * PI
 

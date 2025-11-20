@@ -207,7 +207,9 @@ object Dungeons {
             if (Location.area != "catacombs") return@on
             val mc = Devonian.minecraft
 
-            players.forEach { it.value.tick() }
+            // TODO: check when each player is being updated by the server
+            // players.forEach { it.value.tick() }
+            players.firstEntry()?.value?.tick()
 
             mc.level?.players()?.forEach {
                 val ping = mc.connection?.getPlayerInfo(it.uuid)?.latency ?: return@forEach
