@@ -137,7 +137,6 @@ object EventBus {
                 }
                 is ClientboundSetEntityDataPacket -> {
                     val id = packet.id
-                    if (id !in entityTypes) println("unknown entity id $id, ${getNameFromData(packet.packedItems)?.string}")
                     val type = entityTypes[id] ?: return@on
                     val data = packet.packedItems
                     val text = getNameFromData(data)
