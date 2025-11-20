@@ -124,6 +124,18 @@ open class Feature @JvmOverloads constructor(
         )
     }
 
+    fun addColorPicker(
+        configName: String,
+        description: String,
+        displayName: String = configName
+    ): ConfigData.ColorPicker {
+        return _category.addColorPicker(
+            displayName,
+            description,
+            ConfigData.ColorPicker(configName, -1)
+        )
+    }
+
     fun displayChat() {
         if (displayed) deleteChat()
         ChatUtils.sendMessageWithId(

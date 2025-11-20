@@ -66,14 +66,12 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         description: String,
         configData: ConfigData.Slider<T>
     ): ConfigData.Slider<T> {
-        configs.add(
-            CategoryData(
+        configs.add(CategoryData(
                 name,
                 description,
                 ConfigType.SLIDER,
                 configData
-            )
-        )
+        ))
         return configData
     }
 
@@ -109,13 +107,24 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         description: String,
         configData: ConfigData.Selection
     ): ConfigData.Selection {
-        configs.add(
-            CategoryData(
+        configs.add(CategoryData(
             name, description,
             ConfigType.SELECTION,
             configData
-        )
-        )
+        ))
+        return configData
+    }
+
+    fun addColorPicker(
+        name: String,
+        description: String,
+        configData: ConfigData.ColorPicker
+    ): ConfigData.ColorPicker {
+        configs.add(CategoryData(
+            name, description,
+            ConfigType.COLORPICKER,
+            configData
+        ))
         return configData
     }
 
@@ -167,6 +176,7 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
                         ConfigType.BUTTON -> createButton(data.configData as ConfigData.Button)
                         ConfigType.TEXTINPUT -> createTextInput(data.configData as ConfigData.TextInput)
                         ConfigType.SELECTION -> createSelection(data.configData as ConfigData.Selection)
+                        ConfigType.COLORPICKER -> createColorPicker(data.configData as ConfigData.ColorPicker)
                         else -> TODO()
                     }
                 )
@@ -282,4 +292,10 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
             centerText.text = options[value]
         }
     }
+
+    // TODO: impl me
+    private fun createColorPicker(
+        configData: ConfigData.ColorPicker,
+        parent: UIRect? = null
+    ): UIRect = UIRect(80.0, 25.0, 15.0, 50.0).apply { setColor(ColorPalette.TERTIARY_COLOR) }
 }

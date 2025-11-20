@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.config.ui
 
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.JsonUtils
+import java.awt.Color
 
 open class ConfigData<T>(
     val configName: String?,
@@ -71,5 +72,18 @@ open class ConfigData<T>(
         val options: List<String>
     ) : ConfigData<Int>(configName, value) {
         fun getCurrent(): String = options[get()]
+    }
+
+    class ColorPicker(
+        configName: String,
+        value: Int
+    ) : ConfigData<Int>(configName, value) {
+        private var color = Color(value)
+        fun getColor(): Color = color
+
+        override fun set(newVal: Int) {
+            super.set(newVal)
+            color = Color(newVal)
+        }
     }
 }
