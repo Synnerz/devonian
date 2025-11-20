@@ -78,7 +78,7 @@ open class ConfigData<T>(
         configName: String,
         value: Int
     ) : ConfigData<Int>(configName, value) {
-        private var color = Color(value)
+        private var color = Color(value, true)
         fun getColor(): Color = color
 
         override fun set(newVal: Int) {
