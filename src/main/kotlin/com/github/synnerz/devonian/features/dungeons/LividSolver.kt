@@ -27,7 +27,12 @@ object LividSolver : Feature(
         Blocks.BLUE_WOOL to "Scream",
         Blocks.RED_WOOL to "Hockey"
     )
-    private val boxColor = Color(0f, 1f, 1f, 1f)
+    private val SETTING_BOX_COLOR = addColorPicker(
+        "boxColor",
+        "",
+        "Livid Box Color",
+        Color(0, 255, 255).rgb
+    )
     var inBoss = false
     var currentLivid: String? = null
     var lividId = -1
@@ -82,7 +87,7 @@ object LividSolver : Feature(
             Context.Immediate?.renderBox(
                 entity.x - halfWidth, entity.y, entity.z - halfWidth,
                 width, entity.bbHeight.toDouble(),
-                boxColor, translate = false
+                SETTING_BOX_COLOR.getColor(), translate = false
             )
 
             matrixStack.popPose()

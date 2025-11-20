@@ -8,20 +8,20 @@ data class DungeonMapRenderOptions(
     val doorWidth: Double, // [0, 1]
     val dungeonWidth: Int, // number of rooms
     val dungeonHeight: Int, // number of rooms
-    val roomName: Boolean,
     val checkMark: Boolean,
+    val puzzleIcon: Boolean,
+    val roomName: Boolean,
     val secretCount: Boolean,
-    val textSize: Double, // [0, 1]
-    val textAlignment: DungeonMapRoomInfoAlignment,
+    val puzzleName: Boolean,
     val iconSize: Double, // [0, 1]
     val iconAlignment: DungeonMapRoomInfoAlignment,
+    val textSize: Double, // [0, 1]
+    val textAlignment: DungeonMapRoomInfoAlignment,
+    val stringShadow: Boolean,
     val colorRoomName: Boolean,
     val renderUnknownRooms: Boolean,
     val dungeonStarted: Boolean,
     val unknownRoomsDarkenFactor: Double, // [0, 1]
-    val puzzleIcon: Boolean,
-    val puzzleName: Boolean,
-    val stringShadow: Boolean,
 )
 
 enum class DungeonMapColors {
@@ -40,9 +40,13 @@ enum class DungeonMapColors {
     DoorBlood;
 }
 
-enum class DungeonMapRoomInfoAlignment {
+enum class DungeonMapRoomInfoAlignment(val str: String) {
     // affects which "cell", not sub-cell position
-    TopLeft, TopRight,
-    BottomLeft, BottomRight,
-    Center;
+    TopLeft("Top Left"), TopRight("Top Right"),
+    BottomLeft("Bottom Left"), BottomRight("Bottom Right"),
+    Center("Center");
+
+    companion object {
+        fun from(name: String) = entries.find { it.str == name } ?: Center
+    }
 }

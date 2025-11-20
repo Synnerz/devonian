@@ -297,6 +297,7 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             }
             Fonts["CherryBombOne"] = MAIN_FONT
 
+            // TODO: setting
             JsonUtils.afterLoad {
                 val fontName = JsonUtils.get<String?>("textHudFont")
                 if (fontName != null) setActiveFont(fontName)

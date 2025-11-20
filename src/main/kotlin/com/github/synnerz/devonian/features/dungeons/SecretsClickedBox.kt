@@ -23,8 +23,18 @@ object SecretsClickedBox : Feature(
     private val skullIds = listOf("e0f3e929-869e-3dca-9504-54c666ee6f23", "fed95410-aba1-39df-9b95-1d4f361eb66e")
     private val allowedBlocks = listOf("minecraft:chest", "minecraft:lever", "minecraft:trapped_chest")
     private val lockedChestRegex = "^That chest is locked!$".toRegex()
-    var filledBlockColor = Color(0, 255, 255, 50)
-    var filledLockedBlockColor = Color(255, 0, 0, 50)
+    private val SETTING_BLOCK_COLOR = addColorPicker(
+        "blockColor",
+        "",
+        "Clicked Block Color",
+        Color(0, 255, 255, 50).rgb
+    )
+    private val SETTING_LOCKED_BLOCK_COLOR = addColorPicker(
+        "lockedBlockColor",
+        "",
+        "Locked Block Color",
+        Color(255, 0, 0, 50).rgb
+    )
     var clickedBlock: BlockPos? = null
     var wasLocked = false
 
@@ -75,7 +85,7 @@ object SecretsClickedBox : Feature(
             val immediate = Context.Immediate ?: return@on
             immediate.renderFilledBox(
                 clickedBlock!!.x.toDouble(), clickedBlock!!.y.toDouble(), clickedBlock!!.z.toDouble(),
-                if (wasLocked) filledLockedBlockColor else filledBlockColor, true
+                if (wasLocked) SETTING_LOCKED_BLOCK_COLOR.getColor() else SETTING_BLOCK_COLOR.getColor(), true
             )
 
             immediate.renderBox(

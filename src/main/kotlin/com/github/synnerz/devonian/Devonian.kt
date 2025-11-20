@@ -100,6 +100,7 @@ object Devonian : ClientModInitializer {
         SpeedDisplay,
         BoxDoors,
         ScoreDisplay,
+        EtherwarpOverlayFailReason
     )
 
     override fun onInitializeClient() {

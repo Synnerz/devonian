@@ -26,10 +26,30 @@ object BurrowGuesser : Feature(
     "Diana",
     "hub"
 ) {
-    private val SETTING_GUESS_COLOR = Color.BLUE
-    private val SETTING_OLD_GUESS_COLOR = Color(82, 14, 125)
-    private const val SETTING_REMEMBER_PREVIOUS_GUESSES = true
-    private val SETTING_PARTICLE_PATH_COLOR = Color.CYAN
+    private val SETTING_GUESS_COLOR = addColorPicker(
+        "guessColor",
+        "Color of current guess",
+        "Guess Color",
+        Color.BLUE.rgb
+    )
+    private val SETTING_OLD_GUESS_COLOR = addColorPicker(
+        "oldGuessColor",
+        "Color of old guess",
+        "Old Guess Color",
+        Color(82, 14, 125).rgb
+    )
+    private val SETTING_REMEMBER_PREVIOUS_GUESSES = addSwitch(
+        "storeGuesses",
+        "Remember locations of previous guesses",
+        "Remember Guesses",
+        true
+    )
+    private val SETTING_PARTICLE_PATH_COLOR = addColorPicker(
+        "particlePathColor",
+        "UNUSED - Color of path of particles",
+        "Particle Path Color",
+        0
+    )
 
     private val spadeUsePositions = LinkedList<PositionTime>()
     private val unclaimedParticles = mutableListOf<PositionTime>()
@@ -51,7 +71,7 @@ object BurrowGuesser : Feature(
         particlePath.value = doubleArrayOf()
         knownChain.clear()
 
-        if (SETTING_REMEMBER_PREVIOUS_GUESSES) {
+        if (SETTING_REMEMBER_PREVIOUS_GUESSES.get()) {
             val guess = guessPos.value
             val player = minecraft.player
             if (
@@ -342,8 +362,8 @@ object BurrowGuesser : Feature(
                 Context.Immediate?.renderWaypoint(
                     it.x, it.y, it.z,
                     when (it.type) {
-                        BurrowManager.BurrowType.GUESS -> SETTING_GUESS_COLOR
-                        BurrowManager.BurrowType.OLD_GUESS -> SETTING_OLD_GUESS_COLOR
+                        BurrowManager.BurrowType.GUESS -> SETTING_GUESS_COLOR.getColor()
+                        BurrowManager.BurrowType.OLD_GUESS -> SETTING_OLD_GUESS_COLOR.getColor()
                         else -> Color(0, true)
                     },
                     it.type.displayName,
@@ -355,7 +375,7 @@ object BurrowGuesser : Feature(
             val guess = guessPos.value
             if (guess != null) Context.Immediate?.renderWaypoint(
                 guess.x, guess.y, guess.z,
-                SETTING_GUESS_COLOR,
+                SETTING_GUESS_COLOR.getColor(),
                 BurrowManager.BurrowType.GUESS.displayName,
                 increase = true,
                 phase = true

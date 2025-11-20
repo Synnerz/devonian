@@ -28,43 +28,47 @@ object EtherwarpOverlay : TextHudFeature(
     "Renders a box at the location where the etherwarp is going to be at.",
     hudConfigName = "EtherwarpFailReasonDisplay"
 ) {
-    private var SETTING_ETHER_WIRE_COLOR = ColorEnum.WHITE.color
-    private var SETTING_ETHER_FILL_COLOR =
-        Color(SETTING_ETHER_WIRE_COLOR.red, SETTING_ETHER_WIRE_COLOR.green, SETTING_ETHER_WIRE_COLOR.blue, 80)
-    private val SETTING_ETHER_FAIL_WIRE_COLOR = ColorEnum.RED.color
-    private val SETTING_ETHER_FAIL_FILL_COLOR =
-        Color(
-            SETTING_ETHER_FAIL_WIRE_COLOR.red,
-            SETTING_ETHER_FAIL_WIRE_COLOR.green,
-            SETTING_ETHER_FAIL_WIRE_COLOR.blue,
-            80
-        )
-    private const val SETTING_ETHER_SHOW_FAIL_REASON = true
-    private const val SETTING_ETHER_USING_CANCEL_INTERACT = false
-    private const val SETTING_USE_SMOOTH_POSITION = true
+    private val SETTING_ETHER_WIRE_COLOR = addColorPicker(
+        "wireColor",
+        "",
+        "Ether Outline Color",
+        Color(46, 221, 23, 160).rgb
+    )
+    private val SETTING_ETHER_FILL_COLOR = addColorPicker(
+        "fillColor",
+        "",
+        "Ether Fill Color",
+        Color(96, 222, 85, 96).rgb
+    )
+    private val SETTING_ETHER_FAIL_WIRE_COLOR = addColorPicker(
+        "failWireColor",
+        "",
+        "Ether Fail Outline Color",
+        Color(202, 34, 7, 160).rgb
+    )
+    private val SETTING_ETHER_FAIL_FILL_COLOR = addColorPicker(
+        "failFillColor",
+        "",
+        "Ether Fail Fill Color",
+        Color(186, 43, 30, 96).rgb
+    )
+    private val SETTING_ETHER_USING_CANCEL_INTERACT = addSwitch(
+        "usingCI",
+        "Enables the etherwarp overlay even when looking at an interactable block",
+        "Ether Using CI",
+        false
+    )
+    private val SETTING_USE_SMOOTH_POSITION = addSwitch(
+        "smooth",
+        "Uses your camera position/look rather than the servers position/look",
+        "Ether Use Smooth Position",
+        false
+    )
 
     private val validWeapons = mutableListOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
-    private var failReason = ""
+    var failReason = ""
 
     override fun initialize() {
-        JsonUtils.set("etherwarpOverlayColor", -1)
-
-        DevonianCommand.command.subcommand("etherwarpoverlay") { _, args ->
-            if (args.isEmpty()) return@subcommand 0
-            SETTING_ETHER_WIRE_COLOR = ColorEnum.valueOf(args.first() as String).color
-            SETTING_ETHER_FILL_COLOR =
-                Color(SETTING_ETHER_WIRE_COLOR.red, SETTING_ETHER_WIRE_COLOR.green, SETTING_ETHER_WIRE_COLOR.blue, 80)
-            JsonUtils.set("etherwarpOverlayColor", SETTING_ETHER_WIRE_COLOR.rgb)
-            ChatUtils.sendMessage("&aSuccessfully set etherwarp overlay color to &6${args.first()}", true)
-            1
-        }.string("color").suggest("color", *ColorEnum.entries.map { it.name }.toTypedArray())
-
-        JsonUtils.afterLoad {
-            SETTING_ETHER_WIRE_COLOR = Color(JsonUtils.get<Int>("etherwarpOverlayColor") ?: -1, true)
-            SETTING_ETHER_FILL_COLOR =
-                Color(SETTING_ETHER_WIRE_COLOR.red, SETTING_ETHER_WIRE_COLOR.green, SETTING_ETHER_WIRE_COLOR.blue, 80)
-        }
-
         on<RenderWorldEvent> { event ->
             val player = minecraft.player
             if (minecraft.level == null || player == null) return@on
@@ -88,7 +92,7 @@ object EtherwarpOverlay : TextHudFeature(
             val extraAttributes = ItemUtils.extraAttributes(heldItem) ?: return@on
             if (requireSneak && !extraAttributes.contains("ethermerge")) return@on
 
-            if (!SETTING_ETHER_USING_CANCEL_INTERACT) {
+            if (!SETTING_ETHER_USING_CANCEL_INTERACT.get()) {
                 val target = minecraft.hitResult
                 if (target != null && target.type == HitResult.Type.BLOCK) {
                     val blockTarget = target as BlockHitResult
@@ -105,7 +109,7 @@ object EtherwarpOverlay : TextHudFeature(
             val py: Double
             val pz: Double
             val lookVec: Vec3
-            if (SETTING_USE_SMOOTH_POSITION) {
+            if (SETTING_USE_SMOOTH_POSITION.get()) {
                 val posVec = player.getPosition(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
                 val camVec = player.getEyePosition(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
                 px = posVec.x
@@ -165,7 +169,7 @@ object EtherwarpOverlay : TextHudFeature(
                 hitResult.x - cameraPos.x,
                 hitResult.y - cameraPos.y,
                 hitResult.z - cameraPos.z,
-                if (failReason.isEmpty()) SETTING_ETHER_WIRE_COLOR else SETTING_ETHER_FAIL_WIRE_COLOR,
+                if (failReason.isEmpty()) SETTING_ETHER_WIRE_COLOR.getColor() else SETTING_ETHER_FAIL_WIRE_COLOR.getColor(),
                 true
             )
 
@@ -174,17 +178,9 @@ object EtherwarpOverlay : TextHudFeature(
                 hitResult.x - cameraPos.x,
                 hitResult.y - cameraPos.y,
                 hitResult.z - cameraPos.z,
-                if (failReason.isEmpty()) SETTING_ETHER_FILL_COLOR else SETTING_ETHER_FAIL_FILL_COLOR,
+                if (failReason.isEmpty()) SETTING_ETHER_FILL_COLOR.getColor() else SETTING_ETHER_FAIL_FILL_COLOR.getColor(),
                 true
             )
-        }
-
-        on<RenderOverlayEvent> { event ->
-            if (!SETTING_ETHER_SHOW_FAIL_REASON) return@on
-            if (failReason.isEmpty()) return@on
-
-            setLine(failReason)
-            draw(event.ctx)
         }
     }
 

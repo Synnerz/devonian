@@ -17,27 +17,61 @@ object BoxDoors : Feature(
     "Dungeons",
     "catacombs"
 ) {
-    private val SETTING_DOOR_NORMAL_WIRE_COLOR = Color(0, 128, 128, 255)
-    private val SETTING_DOOR_NORMAL_FILL_COLOR = Color(0, 128, 128, 0)
-    private val SETTING_DOOR_LOCKED_WIRE_COLOR = Color(255, 0, 0, 255)
-    private val SETTING_DOOR_LOCKED_FILL_COLOR = Color(255, 0, 0, 64)
-    private val SETTING_DOOR_KEY_WIRE_COLOR = Color(0, 255, 0, 255)
-    private val SETTING_DOOR_KEY_FILL_COLOR = Color(0, 255, 0, 64)
+    private val SETTING_DOOR_LOCKED_WIRE_COLOR = addColorPicker(
+        "lockedWireColor",
+        "",
+        "Locked Door Outline Color",
+        Color(255, 0, 0).rgb
+    )
+    private val SETTING_DOOR_LOCKED_FILL_COLOR = addColorPicker(
+        "lockedFillColor",
+        "",
+        "Locked Door Fill Color",
+        Color(255, 0, 0).rgb
+    )
+    private val SETTING_DOOR_KEY_WIRE_COLOR = addColorPicker(
+        "keyWireColor",
+        "",
+        "Unlocked Door Outline Color",
+        Color(0, 255, 0).rgb
+    )
+    private val SETTING_DOOR_KEY_FILL_COLOR = addColorPicker(
+        "keyFillColor",
+        "",
+        "Unlocked Door Fill Color",
+        Color(0, 255, 0).rgb
+    )
     private val settingRenderNormalDoors = addSwitch(
         "renderNormalDoors",
         "Highlights normal doorways not only the wither/blood ones",
-        "Highlight Normal Doors"
+        "Highlight Normal Doors",
+        true
     )
-    private val settingRenderUnknownDoors = addSwitch(
-        "renderUnknownDoors",
-        "Whether to highlight the doors that are in rooms that have not been explored yet",
-        "Highlight Unknown Doors"
+    private val SETTING_DOOR_NORMAL_WIRE_COLOR = addColorPicker(
+        "normalWireColor",
+        "",
+        "Normal Door Outline Color",
+        Color(0, 128, 128).rgb
     )
-    private val settingDoorLineWidth = addSlider(
+    private val SETTING_DOOR_NORMAL_FILL_COLOR = addColorPicker(
+        "normalFillColor",
+        "",
+        "Normal Door Fill Color",
+        Color(0, 128, 128).rgb
+    )
+    private val SETTING_DOOR_LINE_WIDTH = addSlider(
         "doorLineWidth",
         "Line width of the box outline of the door",
+        "Door Line Width",
         1.0, 10.0,
-        "Door Line Width"
+        3.0
+    )
+    private val SETTING_RENDER_HIDDEN_DOORS = addSwitch(
+        "renderUnknownDoors",
+        "Whether to highlight the doors that are in rooms that have not been explored yet",
+        "Highlight Unknown Doors",
+        false,
+        cheeto = true
     )
 
     private val witherKeys = atomic(0)
@@ -96,24 +130,24 @@ object BoxDoors : Feature(
 
                 if (type > 0 && it.opened && !it.holyShitFairyDoorPleaseStopFlashingSobs) return@forEach
 
-                if (!settingRenderUnknownDoors.get() && it.rooms.all { !it.explored }) return@forEach
+                if (!SETTING_RENDER_HIDDEN_DOORS.get() && it.rooms.all { !it.explored }) return@forEach
 
                 val colorWire: Color
                 val colorFill: Color
                 when (type) {
                     0 -> {
-                        colorWire = SETTING_DOOR_NORMAL_WIRE_COLOR
-                        colorFill = SETTING_DOOR_NORMAL_FILL_COLOR
+                        colorWire = SETTING_DOOR_NORMAL_WIRE_COLOR.getColor()
+                        colorFill = SETTING_DOOR_NORMAL_FILL_COLOR.getColor()
                     }
 
                     1 -> {
-                        colorWire = SETTING_DOOR_KEY_WIRE_COLOR
-                        colorFill = SETTING_DOOR_KEY_FILL_COLOR
+                        colorWire = SETTING_DOOR_KEY_WIRE_COLOR.getColor()
+                        colorFill = SETTING_DOOR_KEY_FILL_COLOR.getColor()
                     }
 
                     2 -> {
-                        colorWire = SETTING_DOOR_LOCKED_WIRE_COLOR
-                        colorFill = SETTING_DOOR_LOCKED_FILL_COLOR
+                        colorWire = SETTING_DOOR_LOCKED_WIRE_COLOR.getColor()
+                        colorFill = SETTING_DOOR_LOCKED_FILL_COLOR.getColor()
                     }
 
                     else -> return@forEach
@@ -126,7 +160,7 @@ object BoxDoors : Feature(
                     3.0, 4.0,
                     colorWire,
                     true, true,
-                    settingDoorLineWidth.get()
+                    SETTING_DOOR_LINE_WIDTH.get()
                 )
                 Context.Immediate?.renderFilledBox(
                     comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,

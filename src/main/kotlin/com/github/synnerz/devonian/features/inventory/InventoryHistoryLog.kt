@@ -17,14 +17,20 @@ object InventoryHistoryLog : TextHudFeature(
     "inventoryHistoryLog",
     "Displays the items changed, removed or added to your inventory"
 ) {
-    private const val SETTING_ITEM_DISPLAY_TIME = 100
+    private val SETTING_ITEM_DISPLAY_TIME = addSlider(
+        "itemDisplayTime",
+        "Duration (in ticks, so ÷20 for seconds) for entries to stay",
+        "Item Display Time",
+        0.0, 200.0,
+        80.0
+    )
 
     data class ItemizedDifference(val name: String, var quantity: Int) {
-        var ttl = SETTING_ITEM_DISPLAY_TIME
+        var ttl = SETTING_ITEM_DISPLAY_TIME.get().toInt()
 
         fun add(q: Int) {
             quantity += q
-            ttl = SETTING_ITEM_DISPLAY_TIME
+            ttl = SETTING_ITEM_DISPLAY_TIME.get().toInt()
         }
 
         override fun toString(): String = "${if (quantity < 0) "&c-" else "&a+"}${"%,d".format(abs(quantity))}x&r $name"

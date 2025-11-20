@@ -26,12 +26,220 @@ object DungeonMap : HudFeature(
     "Dungeons",
     "catacombs"
 ) {
-    private const val SETTING_RENDER_NAMES = true
-    private const val SETTING_RENDER_NAMES_ONLY_LEAP = false
-    private const val SETTING_USE_CLASS_NAME = true
-    private const val SETTING_COLOR_NAME_BY_CLASS = true
-    private const val SETTING_NAME_SCALE = 1f
-    private const val SETTING_MARKER_SCALE = 1f
+    private val SETTING_RENDER_NAMES = addSwitch(
+        "renderNames",
+        "Render player names above marker",
+        "Render Names",
+        true
+    )
+    private val SETTING_RENDER_NAMES_ONLY_LEAP = addSwitch(
+        "namesRequireLeap",
+        "Only render player names when holding leap",
+        "Render Names When Holding Leap",
+        false
+    )
+    private val SETTING_USE_CLASS_NAME = addSwitch(
+        "useClassName",
+        "Render the class name instead of the player name",
+        "Render Class Name",
+        true
+    )
+    private val SETTING_COLOR_NAME_BY_CLASS = addSwitch(
+        "colorNameClass",
+        "Colors the player names by their respective class",
+        "Color Player Names",
+        true
+    )
+    private val SETTING_NAME_SCALE = addSlider(
+        "nameScale",
+        "",
+        "Player Name Scale",
+        0.0, 10.0,
+        1.0
+    )
+    private val SETTING_MARKER_SCALE = addSlider(
+        "markerScale",
+        "",
+        "Marker Scale",
+        0.0, 10.0,
+        1.0
+    )
+    private val SETTING_ROOM_ENTRANCE_COLOR = addColorPicker(
+        "roomEntranceColor",
+        "",
+        "Entrance Room Color",
+        Color(0, 123, 0).rgb
+    )
+    private val SETTING_ROOM_NORMAL_COLOR = addColorPicker(
+        "roomNormalColor",
+        "",
+        "Normal Room Color",
+        Color(114, 67, 27).rgb
+    )
+    private val SETTING_ROOM_MINIBOSS_COLOR = addColorPicker(
+        "roomMinibossColor",
+        "(as in: has a miniboss, not yellow)",
+        "Miniboss Room Color",
+        Color(114, 67, 27).rgb
+    )
+    private val SETTING_ROOM_FAIRY_COLOR = addColorPicker(
+        "roomFairyColor",
+        "",
+        "Fairy Room Color",
+        Color(239, 126, 163).rgb
+    )
+    private val SETTING_ROOM_BLOOD_COLOR = addColorPicker(
+        "roomBloodColor",
+        "",
+        "Blood Room Color",
+        Color(255, 0, 0).rgb
+    )
+    private val SETTING_ROOM_PUZZLE_COLOR = addColorPicker(
+        "roomPuzzleColor",
+        "",
+        "Puzzle Room Color",
+        Color(176, 75, 213).rgb
+    )
+    private val SETTING_ROOM_TRAP_COLOR = addColorPicker(
+        "roomTrapColor",
+        "",
+        "Trap Room Color",
+        Color(213, 126, 50).rgb
+    )
+    private val SETTING_ROOM_YELLOW_COLOR = addColorPicker(
+        "roomYellowColor",
+        "",
+        "Yellow Room Color",
+        Color(226, 226, 50).rgb
+    )
+    private val SETTING_ROOM_RARE_COLOR = addColorPicker(
+        "roomRareColor",
+        "",
+        "Rare Room Color",
+        Color(0, 67, 27).rgb
+    )
+    private val SETTING_ROOM_UNKNOWN_COLOR = addColorPicker(
+        "roomUnknownColor",
+        "",
+        "Unknown Room Color",
+        Color(64, 64, 64).rgb
+    )
+    private val SETTING_DOOR_WITHER_COLOR = addColorPicker(
+        "doorWitherColor",
+        "",
+        "Wither Door Color",
+        Color(0, 0, 0).rgb
+    )
+    private val SETTING_DOOR_BLOOD_COLOR = addColorPicker(
+        "doorBloodColor",
+        "",
+        "Blood Door Color",
+        Color(255, 0, 0).rgb
+    )
+    private val SETTING_DOOR_ENTRANCE_COLOR = addColorPicker(
+        "doorEntranceColor",
+        "",
+        "Entrance Door Color",
+        Color(0, 123, 0).rgb
+    )
+    private val SETTING_ROOM_SIZE = addSlider(
+        "roomSize",
+        "",
+        "Room Size",
+        0.0, 1.0,
+        0.8
+    )
+    private val SETTING_DOOR_SIZE = addSlider(
+        "doorSize",
+        "",
+        "Door Size",
+        0.0, 1.0,
+        0.4
+    )
+    private val SETTING_RENDER_CHECKMARK = addSwitch(
+        "renderCheckmark",
+        "",
+        "Render Checkmarks",
+        true
+    )
+    private val SETTING_RENDER_PUZZLE_ICON = addSwitch(
+        "renderPuzzleIcon",
+        "",
+        "Render Puzzle Icon",
+        true
+    )
+    private val SETTING_RENDER_ROOM_NAMES = addSwitch(
+        "renderRoomNames",
+        "",
+        "Render Room Names",
+        true
+    )
+    private val SETTING_RENDER_SECRET_COUNT = addSwitch(
+        "renderSecretCount",
+        "(we dont actually track or sync secrets right now)",
+        "Render Secret Count",
+        false
+    )
+    private val SETTING_RENDER_PUZZLE_NAME = addSwitch(
+        "renderPuzzleName",
+        "",
+        "Render Puzzle Name",
+        false
+    )
+    private val SETTING_ICON_SIZE = addSlider(
+        "iconSize",
+        "Affects puzzles + checkmarks. (% of the room)",
+        "Icon Size",
+        0.0, 1.0,
+        0.6
+    )
+    private val SETTING_ICON_ALIGNMENT = addSelection(
+        "iconAlign",
+        "Alignment of the icon with respect to the room layout",
+        "Icon Alignment",
+        DungeonMapRoomInfoAlignment.entries.map { it.str },
+        DungeonMapRoomInfoAlignment.Center.ordinal
+    )
+    private val SETTING_TEXT_SIZE = addSlider(
+        "textSize",
+        "Affects room names + secret count. (% of the room)",
+        "Text Size",
+        0.0, 1.0,
+        0.8
+    )
+    private val SETTING_TEXT_ALIGNMENT = addSelection(
+        "textAlign",
+        "Alignment of the text with respect to the room layout",
+        "Text Alignment",
+        DungeonMapRoomInfoAlignment.entries.map { it.str },
+        DungeonMapRoomInfoAlignment.TopLeft.ordinal
+    )
+    private val SETTING_TEXT_SHADOW = addSwitch(
+        "textShadow",
+        "",
+        "Text Shadow",
+        true
+    )
+    private val SETTING_COLOR_ROOM_TEXT = addSwitch(
+        "colorRoomName",
+        "Change color of room name based on the room checkmark",
+        "Color Room Name",
+        true
+    )
+    private val SETTING_RENDER_HIDDEN_ROOMS = addSwitch(
+        "renderHiddenRooms",
+        "",
+        "Render Hidden Rooms",
+        false,
+        cheeto = true
+    )
+    private val SETTING_HIDDEN_ROOM_DARKEN = addSlider(
+        "hiddenRoomDarken",
+        "factor by which to darken hidden rooms",
+        "Hidden Room Darken Factor",
+        0.0, 1.0,
+        0.7
+    )
 
     private val mapRenderer = DungeonMapBaseRenderer()
 
@@ -51,28 +259,36 @@ object DungeonMap : HudFeature(
                 rooms, doors,
                 DungeonMapRenderOptions(
                     mapOf(
-                        DungeonMapColors.RoomEntrance to Color(0, 123, 0, 255),
-                        DungeonMapColors.RoomNormal to Color(114, 67, 27, 255),
-                        DungeonMapColors.RoomMiniboss to Color(57, 67, 27, 255),
-                        DungeonMapColors.RoomFairy to Color(239, 126, 163, 255),
-                        DungeonMapColors.RoomBlood to Color(255, 0, 0, 255),
-                        DungeonMapColors.RoomPuzzle to Color(176, 75, 213, 255),
-                        DungeonMapColors.RoomTrap to Color(213, 126, 50, 255),
-                        DungeonMapColors.RoomYellow to Color(226, 226, 50, 255),
-                        DungeonMapColors.RoomRare to Color(0, 67, 27, 255),
-                        DungeonMapColors.RoomUnknown to Color(64, 64, 64, 255),
+                        DungeonMapColors.RoomEntrance to SETTING_ROOM_ENTRANCE_COLOR.getColor(),
+                        DungeonMapColors.RoomNormal to SETTING_ROOM_NORMAL_COLOR.getColor(),
+                        DungeonMapColors.RoomMiniboss to SETTING_ROOM_MINIBOSS_COLOR.getColor(),
+                        DungeonMapColors.RoomFairy to SETTING_ROOM_FAIRY_COLOR.getColor(),
+                        DungeonMapColors.RoomBlood to SETTING_ROOM_BLOOD_COLOR.getColor(),
+                        DungeonMapColors.RoomPuzzle to SETTING_ROOM_PUZZLE_COLOR.getColor(),
+                        DungeonMapColors.RoomTrap to SETTING_ROOM_TRAP_COLOR.getColor(),
+                        DungeonMapColors.RoomYellow to SETTING_ROOM_YELLOW_COLOR.getColor(),
+                        DungeonMapColors.RoomRare to SETTING_ROOM_RARE_COLOR.getColor(),
+                        DungeonMapColors.RoomUnknown to SETTING_ROOM_UNKNOWN_COLOR.getColor(),
 
-                        DungeonMapColors.DoorWither to Color(0, 0, 0, 255),
-                        DungeonMapColors.DoorBlood to Color(255, 0, 0, 255),
-                        DungeonMapColors.DoorEntrance to Color(0, 123, 0, 255)
+                        DungeonMapColors.DoorWither to SETTING_DOOR_WITHER_COLOR.getColor(),
+                        DungeonMapColors.DoorBlood to SETTING_DOOR_BLOOD_COLOR.getColor(),
+                        DungeonMapColors.DoorEntrance to SETTING_DOOR_ENTRANCE_COLOR.getColor()
                     ),
-                    0.8, 0.4,
+                    SETTING_ROOM_SIZE.get(), SETTING_DOOR_SIZE.get(),
                     Dungeons.floor.roomsW, Dungeons.floor.roomsH,
-                    true, true, true,
-                    0.8, DungeonMapRoomInfoAlignment.TopLeft,
-                    0.6, DungeonMapRoomInfoAlignment.Center,
-                    true, false, true,
-                    0.7, true, false, true
+                    SETTING_RENDER_CHECKMARK.get(), SETTING_RENDER_PUZZLE_ICON.get(),
+                    SETTING_RENDER_ROOM_NAMES.get(),
+                    SETTING_RENDER_SECRET_COUNT.get(),
+                    SETTING_RENDER_PUZZLE_NAME.get(),
+                    SETTING_ICON_SIZE.get(),
+                    DungeonMapRoomInfoAlignment.from(SETTING_ICON_ALIGNMENT.getCurrent()),
+                    SETTING_TEXT_SIZE.get(),
+                    DungeonMapRoomInfoAlignment.from(SETTING_TEXT_ALIGNMENT.getCurrent()),
+                    SETTING_TEXT_SHADOW.get(),
+                    SETTING_COLOR_ROOM_TEXT.get(),
+                    SETTING_RENDER_HIDDEN_ROOMS.get(),
+                    Dungeons.started.value,
+                    SETTING_HIDDEN_ROOM_DARKEN.get()
                 )
             )
         )
@@ -99,7 +315,7 @@ object DungeonMap : HudFeature(
 
         val bounds = getBounds()
 
-        val renderNames = SETTING_RENDER_NAMES && (if (SETTING_RENDER_NAMES_ONLY_LEAP) {
+        val renderNames = SETTING_RENDER_NAMES.get() && (if (SETTING_RENDER_NAMES_ONLY_LEAP.get()) {
             val held = minecraft.player?.useItem
             if (held != null) listOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP").contains(ItemUtils.skyblockId(held))
             else false
@@ -116,21 +332,21 @@ object DungeonMap : HudFeature(
 
             if (renderNames) {
                 val text =
-                    (if (SETTING_COLOR_NAME_BY_CLASS) player.role.colorCode else "") +
-                    if (SETTING_USE_CLASS_NAME && player.role != DungeonClass.Unknown) player.role.shortName else player.name
+                    (if (SETTING_COLOR_NAME_BY_CLASS.get()) player.role.colorCode else "") +
+                    if (SETTING_USE_CLASS_NAME.get() && player.role != DungeonClass.Unknown) player.role.shortName else player.name
 
                 val hud = textHuds[i]
                 hud.x = px.toDouble()
                 hud.y = py - 5.0
                 hud.setLine(text)
-                hud.scale = scale * 0.3f * SETTING_NAME_SCALE
+                hud.scale = scale * 0.3f * SETTING_NAME_SCALE.get().toFloat()
                 hud.draw(ctx)
             }
 
-            val dxf = cos(-pos.r).toFloat() * 2.8f * SETTING_MARKER_SCALE
-            val dyf = sin(-pos.r).toFloat() * 2.8f * SETTING_MARKER_SCALE
-            val dxr = cos(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE
-            val dyr = sin(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE
+            val dxf = cos(-pos.r).toFloat() * 2.8f * SETTING_MARKER_SCALE.get().toFloat()
+            val dyf = sin(-pos.r).toFloat() * 2.8f * SETTING_MARKER_SCALE.get().toFloat()
+            val dxr = cos(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
+            val dyr = sin(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
 
             val mat = ctx.pose().last().pose()
             val consumer = (ctx as GuiGraphicsAccessor).vertexConsumers

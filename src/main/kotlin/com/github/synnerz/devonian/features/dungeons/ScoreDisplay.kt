@@ -11,8 +11,18 @@ object ScoreDisplay : TextHudFeature(
     "Dungeons",
     "catacombs"
 ) {
-    private const val SETTING_SHOW_SECRETS = true
-    private const val SETTING_SHOW_MIMIC_PRINCE = true
+    private val SETTING_SHOW_SECRETS = addSwitch(
+        "showSecrets",
+        "",
+        "Show Secrets",
+        true
+    )
+    private val SETTING_SHOW_MIMIC_PRINCE = addSwitch(
+        "showMimicPrince",
+        "",
+        "Show Mimic/Prince State",
+        true
+    )
 
     private fun getLines(
         score: Int,
@@ -40,11 +50,11 @@ object ScoreDisplay : TextHudFeature(
                 }
             }$score &7(${tier}&r&7)"
         )
-        if (SETTING_SHOW_SECRETS) arr.add(
+        if (SETTING_SHOW_SECRETS.get()) arr.add(
             "&eSecrets: ${if (secrets >= secretsRequired) "&a" else "&c"}${secrets}&7/&a${secretsRequired}" +
             (if (floor.requiredPercent == 1.0) "" else " &7(&6Total: $totalSecrets&7)")
         )
-        if (SETTING_SHOW_MIMIC_PRINCE) {
+        if (SETTING_SHOW_MIMIC_PRINCE.get()) {
             if (floor.floorNum >= 6) arr.add("&eMimic: ${if (mimic) "&a&l✔" else "&c&l✘"}")
             arr.add("&ePrince: ${if (prince) "&a&l✔" else "&c&l✘"}")
         }

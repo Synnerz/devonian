@@ -17,9 +17,24 @@ object BurrowWaypoint : Feature(
     "Diana",
     "hub"
 ) {
-    private val SETTING_START_COLOR = Color.GREEN
-    private val SETTING_MOB_COLOR = Color.RED
-    private val SETTING_TREAURE_COLOR = Color.YELLOW
+    private val SETTING_START_COLOR = addColorPicker(
+        "startColor",
+        "Color of Start burrows",
+        "Start Burrow Color",
+        Color.GREEN.rgb
+    )
+    private val SETTING_MOB_COLOR = addColorPicker(
+        "mobColor",
+        "Color of Mob burrows",
+        "Mob Burrow Color",
+        Color.RED.rgb
+    )
+    private val SETTING_TREAURE_COLOR = addColorPicker(
+        "treasureColor",
+        "Color of Treasure burrows",
+        "Treasure Burrow Color",
+        Color.YELLOW.rgb
+    )
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
@@ -70,9 +85,9 @@ object BurrowWaypoint : Feature(
                 Context.Immediate?.renderWaypoint(
                     it.x, it.y, it.z,
                     when (it.type) {
-                        BurrowManager.BurrowType.START -> SETTING_START_COLOR
-                        BurrowManager.BurrowType.MOB -> SETTING_MOB_COLOR
-                        BurrowManager.BurrowType.TREASURE -> SETTING_TREAURE_COLOR
+                        BurrowManager.BurrowType.START -> SETTING_START_COLOR.getColor()
+                        BurrowManager.BurrowType.MOB -> SETTING_MOB_COLOR.getColor()
+                        BurrowManager.BurrowType.TREASURE -> SETTING_TREAURE_COLOR.getColor()
                         else -> Color(0, true)
                     },
                     it.type.displayName,

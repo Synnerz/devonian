@@ -21,6 +21,7 @@ object EtherwarpSound : Feature(
         JsonUtils.set(KEY, "minecraft:entity.ender_dragon.hurt")
 
         // TODO: too lazy to make pitch/volume customizable, make that later on if requested
+        // TODO: too lazy to make a setting
         DevonianCommand.command.subcommand("etherwarpsound") { _, args ->
             if (args.isEmpty()) return@subcommand 0
             val soundRegistry = args.first() as String

@@ -66,11 +66,12 @@ open class Feature @JvmOverloads constructor(
         configName: String,
         description: String,
         displayName: String = configName,
-        value: Boolean = false
+        value: Boolean = false,
+        cheeto: Boolean = false
     ): ConfigData.Switch {
         return _category.addSwitch(
-            displayName,
-            description,
+            (if (cheeto) "§c" else "") + displayName,
+            (if (cheeto) "§4Warning: use at your own risk. " else "") + description,
             ConfigData.Switch("${this.configName}$${configName}", value)
         )
     }
@@ -79,8 +80,8 @@ open class Feature @JvmOverloads constructor(
     fun addSlider(
         configName: String,
         description: String,
-        min: Double = 0.0, max: Double = 100.0,
         displayName: String = configName,
+        min: Double = 0.0, max: Double = 100.0,
         value: Double = min
     ): ConfigData.Slider<Double> {
         return _category.addSlider(
@@ -117,8 +118,8 @@ open class Feature @JvmOverloads constructor(
     fun addSelection(
         configName: String,
         description: String,
-        options: List<String>,
         displayName: String = configName,
+        options: List<String>,
         value: Int = 0
     ): ConfigData.Selection {
         return _category.addSelection(
