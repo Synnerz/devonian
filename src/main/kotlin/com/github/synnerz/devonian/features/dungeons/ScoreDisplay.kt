@@ -41,12 +41,12 @@ object ScoreDisplay : TextHudFeature(
             }$score &7(${tier}&r&7)"
         )
         if (SETTING_SHOW_SECRETS) arr.add(
-            "&f• &eSecrets: ${if (secrets >= secretsRequired) "&a" else "&c"}${secrets}&7/&a${secretsRequired}" +
+            "&eSecrets: ${if (secrets >= secretsRequired) "&a" else "&c"}${secrets}&7/&a${secretsRequired}" +
             (if (floor.requiredPercent == 1.0) "" else " &7(&6Total: $totalSecrets&7)")
         )
         if (SETTING_SHOW_MIMIC_PRINCE) {
-            if (floor.floorNum >= 6) arr.add("&f• &eMimic: ${if (mimic) "&a&l✔" else "&c&l✘"}")
-            arr.add("&f• &ePrince: ${if (prince) "&a&l✔" else "&c&l✘"}")
+            if (floor.floorNum >= 6) arr.add("&eMimic: ${if (mimic) "&a&l✔" else "&c&l✘"}")
+            arr.add("&ePrince: ${if (prince) "&a&l✔" else "&c&l✘"}")
         }
         return arr
     }

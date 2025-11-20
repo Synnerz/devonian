@@ -99,6 +99,7 @@ object Devonian : ClientModInitializer {
         DungeonMap,
         SpeedDisplay,
         BoxDoors,
+        ScoreDisplay,
     )
 
     override fun onInitializeClient() {

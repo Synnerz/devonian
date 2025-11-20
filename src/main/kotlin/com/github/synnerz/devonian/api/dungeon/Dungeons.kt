@@ -2,107 +2,111 @@ package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.devonian.utils.State
 import com.github.synnerz.devonian.utils.StringUtils
-import com.github.synnerz.devonian.utils.mapState
-import com.github.synnerz.devonian.utils.zipState
-import kotlinx.coroutines.flow.*
 import kotlin.math.ceil
+import kotlin.math.max
 import kotlin.math.min
 
 object Dungeons {
     private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([IVXLCDM]+)?\\)$".toRegex()
     private val dungeonFloorRegex = "^ * ⏣ The Catacombs \\((\\w+)\\)$".toRegex()
-    private val bossMessageRegex = "^\\[BOSS\\] (.+?): (.+?)\$".toRegex()
+    private val bossMessageRegex = "^\\[BOSS] (.+?): (.+?)$".toRegex()
 
-    private val clearedPercentRegex = "^Cleared: (\\d+)% \\(\\d+\\)\$".toRegex()
-    private val timeElapsedRegex = "^Time Elapsed: (?:(\\d+)h)? ?(?:(\\d+)m)? ?(\\d+)s\$".toRegex()
+    private val clearedPercentRegex = "^Cleared: (\\d+)% \\(\\d+\\)$".toRegex()
+    private val timeElapsedRegex = "^Time Elapsed: (?:(\\d+)h)? ?(?:(\\d+)m)? ?(\\d+)s$".toRegex()
     private val teamDeathsRegex = "^Team Deaths: (\\d+)$".toRegex()
     private val cryptsRegex = "^ Crypts: (\\d+)$".toRegex()
-    private val secretsFoundPercentRegex = "^ Secrets Found: ([\\d.]+)%\$".toRegex()
-    private val secretsFoundRegex = "^ Secrets Found: (\\d+)\$".toRegex()
-    private val completedRoomsRegex = "^ Completed Rooms: (\\d+)\$".toRegex()
-    private val openedRoomsRegex = "^ Opened Rooms: (\\d+)\$".toRegex()
+    private val secretsFoundPercentRegex = "^ Secrets Found: ([\\d.]+)%$".toRegex()
+    private val secretsFoundRegex = "^ Secrets Found: (\\d+)$".toRegex()
+    private val completedRoomsRegex = "^ Completed Rooms: (\\d+)$".toRegex()
+    private val openedRoomsRegex = "^ Opened Rooms: (\\d+)$".toRegex()
     private val discoveriesRegex = "^Discoveries: (\\d+)$".toRegex()
-    private val puzzleNameRegex = "^ ([\\w ]+): \\[(✦|✔|✖)\\] ?\\(?(\\w+)?\\)?\$".toRegex()
-    private val puzzlesCountRegex = "^Puzzles: \\((\\d+)\\)\$".toRegex()
+    private val puzzleNameRegex = "^ ([\\w ]+): \\[([✦✔✖])] ?\\(?(\\w+)?\\)?$".toRegex()
+    private val puzzlesCountRegex = "^Puzzles: \\((\\d+)\\)$".toRegex()
 
     val players = linkedMapOf<String, DungeonPlayer>()
     private var needReset = true
 
     // TODO: listen to the entering dungeon message to figure out floor early?
     var floor = FloorType.None
-    val floorState = MutableStateFlow(FloorType.None)
+    val floorState = BasicState(FloorType.None)
 
     // [0, 100]
-    val clearedPercent = MutableStateFlow(0)
-    val timeElapsed = MutableStateFlow(0)
-    val deaths = MutableStateFlow(0)
-    val hasSpirit = MutableStateFlow(true)
-    val crypts = MutableStateFlow(0)
+    val clearedPercent = BasicState(0)
+    val timeElapsed = BasicState(0)
+    val deaths = BasicState(0)
+    val hasSpirit = BasicState(true)
+    val crypts = BasicState(0)
 
     // [0, 100]
-    val secretsFoundPercent = MutableStateFlow(0.0)
-    val secretsFound = MutableStateFlow(0)
-    val completedRooms = MutableStateFlow(0)
-    val openedRooms = MutableStateFlow(0)
-    val discoveries = MutableStateFlow(0)
-    val totalPuzzles = MutableStateFlow(0)
-    val completedPuzzles = MutableStateFlow(0)
-    val mimicKilled = MutableStateFlow(false)
-    val princeKilled = MutableStateFlow(false)
-    val isPaul = MutableStateFlow(false)
-    val inBoss = MutableStateFlow(false)
-    val bloodCleared = MutableStateFlow(false)
+    val secretsFoundPercent = BasicState(0.0)
+    val secretsFound = BasicState(0)
+    val completedRooms = BasicState(0)
+    val openedRooms = BasicState(0)
+    val discoveries = BasicState(0)
+    val totalPuzzles = BasicState(0)
+    val completedPuzzles = BasicState(0)
+    val mimicKilled = BasicState(false)
+    val princeKilled = BasicState(false)
+    val isPaul = BasicState(false)
+    val inBoss = BasicState(false)
+    val bloodCleared = BasicState(false)
 
-    private fun fuckEntrance(score: StateFlow<Number>) =
-        score.zipState(floorState) { score, floor -> (score.toDouble() * (if (floor == FloorType.Entrance) 0.7 else 1.0)).toInt() }
+    private fun fuckEntrance(score: State<Double>) =
+        score.zip(floorState) { score, floor -> (score * (if (floor == FloorType.Entrance) 0.7 else 1.0)).toInt() }
 
     // https://github.com/Skytils/SkytilsMod/blob/2e32484d011000f8d618401fe9675234969ab23e/mod/src/main/kotlin/gg/skytils/skytilsmod/features/impl/dungeons/ScoreCalculation.kt
     val totalRoomHisto = mutableMapOf<Int, Int>()
-    val totalRooms = clearedPercent.zipState(completedRooms) { clear, rooms ->
-        if (clear == 0 || rooms == 0) return@zipState 0
+    val totalRooms = clearedPercent.zip(completedRooms) { clear, rooms ->
+        if (clear == 0 || rooms == 0) return@zip 0
         val guess = (100.0 * rooms / clear + 0.5).toInt()
         totalRoomHisto[guess] = (totalRoomHisto[guess] ?: 0) + 1
         totalRoomHisto.toList().maxBy { it.second * 1000 + it.first }.first
     }
 
-    val totalSecrets = secretsFound.zipState(secretsFoundPercent) { found, percent ->
+    val totalSecrets = secretsFound.zip(secretsFoundPercent) { found, percent ->
         if (found == 0 || percent == 0.0) 0
         else (100.0 / percent * found + 0.5).toInt()
     }
-    val totalSecretsRequired = floorState.zipState(totalSecrets) { floor, totalSecrets ->
+    val totalSecretsRequired = floorState.zip(totalSecrets) { floor, totalSecrets ->
         ceil(floor.requiredPercent * totalSecrets).toInt()
     }
-    val secretScore = totalSecretsRequired.mapState { it * 40.0 }
+    // [0, 1]
+    val actualSecretPercent = secretsFound.zip(totalSecretsRequired) { found, total ->
+        if (total == 0) 0.0 else min(found.toDouble() / total, 1.0)
+    }
+    val secretScore = actualSecretPercent.map { it * 40.0 }
 
     val actualCompletedRooms = completedRooms
-        .zipState(inBoss) { a, b -> a + (if (b) 0 else 1) }
-        .zipState(bloodCleared) { a, b -> a + (if (b) 0 else 1) }
+        .zip(inBoss) { a, b -> a + (if (b) 0 else 1) }
+        .zip(bloodCleared) { a, b -> a + (if (b) 0 else 1) }
 
     // [0, 1]
-    val actualClearPercent = actualCompletedRooms.zipState(totalRooms) { completed, total ->
+    val actualClearPercent = actualCompletedRooms.zip(totalRooms) { completed, total ->
         if (total > 0) min(completed.toDouble() / total, 1.0) else 0.0
     }
-    val roomClearScore = actualClearPercent.mapState { it * 60.0 }
+    val roomClearScore = actualClearPercent.map { it * 60.0 }
 
-    private val discoveryScore_ = secretScore.zipState(roomClearScore) { a, b -> a + b }
+    private val discoveryScore_ = secretScore.zip(roomClearScore) { a, b -> a + b }
     val exploreScore = fuckEntrance(discoveryScore_)
 
-    val deathPenalty = deaths.zipState(hasSpirit) { deaths, spirit ->
+    val deathPenalty = deaths.zip(hasSpirit) { deaths, spirit ->
         if (deaths == 0) 0
         else -2 * deaths + (if (spirit) 1 else 0)
     }
-    val puzzlePenalty = completedPuzzles.zipState(totalPuzzles) { completed, total ->
+    val puzzlePenalty = completedPuzzles.zip(totalPuzzles) { completed, total ->
         10 * (total - completed)
     }
-    val totalPenalty = deathPenalty.zipState(puzzlePenalty) { a, b -> a + b }
-    private val skillScore_ = actualClearPercent.zipState(totalPenalty) { clear, penalty ->
-        20.0 + clear * 80.0 - penalty
+    val totalPenalty = deathPenalty.zip(puzzlePenalty) { a, b -> a + b }
+    private val skillScore_ = actualClearPercent.zip(totalPenalty) { clear, penalty ->
+        max(20.0 + clear * 80.0 - penalty, 20.0)
     }
     val skillScore = fuckEntrance(skillScore_)
 
-    private val speedScore_ = timeElapsed.zipState(floorState) { time, floor ->
+    private val speedScore_ = timeElapsed.zip(floorState) { time, floor ->
         val overtime = time - floor.requiredSpeed
         when {
             overtime < 12 -> 100.0
@@ -115,18 +119,18 @@ object Dungeons {
     }
     val speedScore = fuckEntrance(speedScore_)
 
-    private val bonusScore_ = crypts.zipState(mimicKilled) { crypts, mimic ->
+    private val bonusScore_ = crypts.zip(mimicKilled) { crypts, mimic ->
         min(crypts, 5) + (if (mimic) 2 else 0)
-    }.zipState(princeKilled) { score, prince ->
+    }.zip(princeKilled) { score, prince ->
         score + (if (prince) 1 else 0)
-    }.zipState(isPaul) { score, paul ->
-        score + (if (paul) 10 else 0)
+    }.zip(isPaul) { score, paul ->
+        score + (if (paul) 10 else 0).toDouble()
     }
     val bonusScore = fuckEntrance(bonusScore_)
 
-    val score = exploreScore.zipState(skillScore) { a, b -> a + b }
-        .zipState(speedScore) { a, b -> a + b }
-        .zipState(bonusScore) { a, b -> a + b }
+    val score = exploreScore.zip(skillScore) { a, b -> a + b }
+        .zip(speedScore) { a, b -> a + b }
+        .zip(bonusScore) { a, b -> a + b }
 
     fun initialize() {
         DungeonScanner.init()
@@ -178,7 +182,7 @@ object Dungeons {
 
             event.matches(puzzleNameRegex)?.let {
                 if (it[1].isEmpty() || it[1] != "✔") return@on
-                completedPuzzles.getAndUpdate { min(it + 1, totalPuzzles.value) }
+                completedPuzzles.value = min(completedPuzzles.value + 1, totalPuzzles.value)
                 return@on
             }
 
