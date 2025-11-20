@@ -1832,7 +1832,8 @@
     "type": "normal",
     "secrets": 3,
     "cores": [
-      153580070
+      153580070,
+      -208722341
     ],
     "roomID": 119,
     "clear": "mob",
