@@ -41,8 +41,6 @@ object InventoryHistoryLog : TextHudFeature(
             if (Location.area == null) return@on
             receipt.entries.removeIf { --it.value.ttl <= 0 }
 
-            if (minecraft.screen != null) return@on
-
             val inv = minecraft.player?.inventory ?: return@on
             if (worldSwap) return@on
 
@@ -53,8 +51,8 @@ object InventoryHistoryLog : TextHudFeature(
 
                 val name = v.customName?.format() ?: v.itemName.string
                 val count = v.count
-                newInv.merge(name, count, Int::plus)
-                inventory?.merge(name, -count, Int::plus)
+                newInv.merge(name.clearName(), count, Int::plus)
+                inventory?.merge(name.clearName(), -count, Int::plus)
             }
 
             inventory?.forEach { (k, v) ->
@@ -77,6 +75,8 @@ object InventoryHistoryLog : TextHudFeature(
             Scheduler.scheduleServerTask(20) { worldSwap = false }
         }
     }
+
+    private fun String.clearName(): String = this.replace(" ?§r§8 ?x\\d+".toRegex(), "").trim()
 
     override fun getEditText(): List<String> = listOf("&c-100&r &eSocial Credit")
 
