@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
+import com.github.synnerz.devonian.utils.Location
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket
 import net.minecraft.world.item.MapItem
@@ -253,10 +254,12 @@ object DungeonMapScanner {
 
     init {
         EventBus.on<PacketReceivedEvent> { event ->
+            if (Location.area != "catacombs") return@on
             val packet = event.packet
             if (packet !is ClientboundMapItemDataPacket) return@on
             val mapId = packet.mapId
             if (mapId.id and 1000 != 0) return@on
+            if (Dungeons.inBoss.value) return@on
 
             val mapState = MapItem.getSavedData(mapId, Devonian.minecraft.level) ?: return@on
             val colors = mapState.colors ?: return@on

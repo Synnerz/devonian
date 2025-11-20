@@ -149,6 +149,7 @@ object DungeonScanner {
 
         EventBus.on<TickEvent>({
             if (Location.area != "catacombs") return@on
+            if (Dungeons.inBoss.value) return@on
             val player = Devonian.minecraft.player ?: return@on
             if (!WorldUtils.isChunkLoaded(player.x, player.z)) return@on
             val comp = WorldPosition(player.x.toInt(), player.z.toInt()).toComponent()

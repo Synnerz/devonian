@@ -93,6 +93,7 @@ object DungeonMap : HudFeature(
     }
 
     override fun drawImpl(ctx: GuiGraphics) {
+        if (Dungeons.inBoss.value) return
         if (Dungeons.floor == FloorType.None) return
         mapRenderer.draw(ctx, x.toFloat(), y.toFloat(), (1.0 / minecraft.window.guiScale).toFloat())
 
