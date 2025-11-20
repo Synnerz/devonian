@@ -200,12 +200,40 @@ object DungeonScanner {
         }.string("name")
     }
 
+    fun mergeRooms(comp1: ComponentPosition, comp2: ComponentPosition): Boolean {
+        val i1 = comp1.getRoomIdx()
+        val i2 = comp2.getRoomIdx()
+        val r1 = rooms[comp1.getRoomIdx()]
+        val r2 = rooms[comp2.getRoomIdx()]
+
+        if (r1 != null && r2 != null) {
+            if (i1 < i2) mergeRooms(r1, r2)
+            else mergeRooms(r2, r1)
+            return true
+        }
+        if (r1 == null && r2 == null) return false
+        val r: DungeonRoom
+        val c: ComponentPosition
+        if (r1 == null) {
+            r = r2!!
+            c = comp1
+        } else {
+            r = r1
+            c = comp2
+        }
+
+        r.addComponent(c)
+        addRoom(c, r)
+        return true
+    }
+
     fun mergeRooms(room1: DungeonRoom, room2: DungeonRoom) {
+        if (room1 === room2) return
         for (comp in room2.comps) {
             val c = comp.toComponent()
             room1.addComponent(c, false)
 
-            addRoom(c, room1)
+            addRoom(c, room1, true)
         }
 
         room1.update()
@@ -227,9 +255,16 @@ object DungeonScanner {
         }
     }
 
-    fun addRoom(comp: ComponentPosition, room: DungeonRoom) {
+    fun addRoom(comp: ComponentPosition, room: DungeonRoom, force: Boolean = false) {
         val idx = comp.getRoomIdx()
         if (idx !in 0 .. 35) return
+        if (!force) {
+            rooms[idx]?.also {
+                if (room.name == null) mergeRooms(it, room)
+                else mergeRooms(room, it)
+                return
+            }
+        }
         rooms[idx] = room
 
         comp.getNeighboringDoors().forEach {

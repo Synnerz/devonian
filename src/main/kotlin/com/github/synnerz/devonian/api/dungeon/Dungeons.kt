@@ -28,6 +28,7 @@ object Dungeons {
     private val puzzlesCountRegex = "^Puzzles: \\((\\d+)\\)\$".toRegex()
 
     val players = linkedMapOf<String, DungeonPlayer>()
+    private var needReset = true
 
     // TODO: listen to the entering dungeon message to figure out floor early?
     var floor = FloorType.None
@@ -223,11 +224,13 @@ object Dungeons {
         EventBus.on<AreaEvent> { event ->
             val area = event.area
             if (area == null || area != "Catacombs") {
+                if (!needReset) return@on
                 players.clear()
                 DungeonScanner.reset()
                 DungeonMapScanner.reset()
                 reset()
-            }
+                needReset = false
+            } else needReset = true
         }
 
         EventBus.on<SubAreaEvent> { event ->

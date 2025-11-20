@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
+import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -81,15 +82,19 @@ object BoxDoors : Feature(
                     DoorTypes.NORMAL,
                     DoorTypes.ENTRANCE
                         -> {
-                        if (!settingRenderNormalDoors.get()) return@forEach
-                        0
+                        if (it.rooms.any { it.type == RoomTypes.FAIRY && !it.explored }) {
+                            if (witherKeys.value > 0) 1 else 2
+                        } else {
+                            if (!settingRenderNormalDoors.get()) return@forEach
+                            0
+                        }
                     }
 
                     DoorTypes.WITHER -> if (witherKeys.value > 0) 1 else 2
                     DoorTypes.BLOOD -> if (bloodKey.value) 1 else 2
                 }
 
-                if (type > 0 && it.opened) return@forEach
+                if (type > 0 && it.opened && !it.holyShitFairyDoorPleaseStopFlashingSobs) return@forEach
 
                 if (!settingRenderUnknownDoors.get() && it.rooms.all { !it.explored }) return@forEach
 
@@ -100,14 +105,17 @@ object BoxDoors : Feature(
                         colorWire = SETTING_DOOR_NORMAL_WIRE_COLOR
                         colorFill = SETTING_DOOR_NORMAL_FILL_COLOR
                     }
+
                     1 -> {
                         colorWire = SETTING_DOOR_KEY_WIRE_COLOR
                         colorFill = SETTING_DOOR_KEY_FILL_COLOR
                     }
+
                     2 -> {
                         colorWire = SETTING_DOOR_LOCKED_WIRE_COLOR
                         colorFill = SETTING_DOOR_LOCKED_FILL_COLOR
                     }
+
                     else -> return@forEach
                 }
 

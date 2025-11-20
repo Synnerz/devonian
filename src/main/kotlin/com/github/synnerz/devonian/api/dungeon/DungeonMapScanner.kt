@@ -3,13 +3,14 @@ package com.github.synnerz.devonian.api.dungeon
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
+import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
+import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket
 import net.minecraft.world.item.MapItem
-import net.minecraft.world.level.saveddata.maps.MapDecorationType
 import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData
 import kotlin.math.PI
@@ -25,6 +26,7 @@ object DungeonMapScanner {
     var mapOffsetZ = -1
     var mapWidth = -1
     var mapHeight = -1
+    private val unscannedDoors = mutableSetOf<ComponentPosition>()
 
     fun reset() {
         roomSize = -1
@@ -34,6 +36,12 @@ object DungeonMapScanner {
         mapOffsetZ - 1
         mapWidth = -1
         mapHeight = -1
+        unscannedDoors.clear()
+        for (x in 0 .. 10) {
+            for (z in (x and 1 xor 1) .. 10 step 2) {
+                unscannedDoors.add(ComponentPosition(x, z))
+            }
+        }
     }
 
     private enum class MapColors(val color: Byte) {
@@ -42,6 +50,7 @@ object DungeonMapScanner {
         CHECK_WHITE(34),
         CHECK_GREEN(30),
         CHECK_FAIL(18),
+        CHECK_UNKNOWN(119),
 
         ROOM_ENTRANCE(30),
         ROOM_NORMAL(63),
@@ -131,6 +140,117 @@ object DungeonMapScanner {
         }
     }
 
+    private fun updateRooms(colors: ByteArray) {
+        if (colors.size < COLOR_SIZE) return
+
+        val visited = mutableSetOf<DungeonRoom>()
+        DungeonScanner.rooms.forEachIndexed { idx, room_ ->
+            if (room_ != null && !visited.add(room_)) return@forEachIndexed
+
+            val x = idx % 6
+            val z = idx / 6
+            val mrx = mapOffsetX + x * roomGap
+            val mrz = mapOffsetZ + z * roomGap
+            val mcx = mrx + roomSize / 2 - 1
+            val mcz = mrz + roomSize / 2 - 1 + 2
+            val mridx = mrx + mrz * SCAN
+            val mcidx = mcx + mcz * SCAN
+
+            val roomCol = colors[mridx]
+            val centerCol = colors[mcidx]
+
+            if (roomCol == MapColors.EMPTY.color) return@forEachIndexed
+
+            val room: DungeonRoom
+            if (room_ == null) {
+                val comp = ComponentPosition(x, z)
+                room = DungeonRoom(mutableListOf(comp.withWorld()), 0)
+                DungeonScanner.addRoom(comp, room)
+            } else room = room_
+
+            if (room.type == RoomTypes.UNKNOWN) {
+                room.type = when (roomCol) {
+                    MapColors.ROOM_ENTRANCE.color -> RoomTypes.ENTRANCE
+                    MapColors.ROOM_BLOOD.color -> RoomTypes.BLOOD
+                    MapColors.ROOM_UNOPENED.color -> RoomTypes.NORMAL
+                    MapColors.ROOM_BOSS.color -> RoomTypes.YELLOW
+                    MapColors.ROOM_FAIRY.color -> RoomTypes.FAIRY
+                    MapColors.ROOM_NORMAL.color -> RoomTypes.NORMAL
+                    MapColors.ROOM_PUZZLE.color -> RoomTypes.PUZZLE
+                    MapColors.ROOM_TRAP.color -> RoomTypes.TRAP
+                    else -> RoomTypes.UNKNOWN
+                }
+            }
+            room.explored = roomCol != MapColors.ROOM_UNOPENED.color
+
+            room.checkmark = if (roomCol == centerCol) CheckmarkTypes.NONE
+            else when (centerCol) {
+                MapColors.CHECK_WHITE.color -> CheckmarkTypes.WHITE
+                MapColors.CHECK_GREEN.color -> CheckmarkTypes.GREEN
+                MapColors.CHECK_FAIL.color -> CheckmarkTypes.FAILED
+                MapColors.CHECK_UNKNOWN.color -> CheckmarkTypes.UNEXPLORED
+                else -> CheckmarkTypes.NONE
+            }
+        }
+
+        unscannedDoors.removeIf { comp ->
+            val idx = comp.getDoorIdx()
+            val mjx = mapOffsetX + (comp.x / 2) * roomGap + (comp.x and 1) * roomSize
+            val mjz = mapOffsetZ + (comp.z / 2) * roomGap + (comp.z and 1) * roomSize
+            val mdx = mjx + (comp.z and 1) * roomSize / 2
+            val mdz = mjz + (comp.x and 1) * roomSize / 2
+            val mjidx = mjx + mjz * SCAN
+            val mdidx = mdx + mdz * SCAN
+
+            val joinedCol = colors[mjidx]
+            val doorCol = colors[mdidx]
+
+            if (doorCol == MapColors.EMPTY.color) return@removeIf false
+
+            if (joinedCol == doorCol) {
+                DungeonScanner.doors[idx]?.also { d ->
+                    d.rooms.forEach { it.doors.remove(d) }
+                }
+                DungeonScanner.doors[idx] = null
+                val rooms = comp.getNeighboringRooms()
+                if (rooms.size != 2) return@removeIf false
+                return@removeIf DungeonScanner.mergeRooms(rooms[0], rooms[1])
+            }
+
+            val door = DungeonScanner.doors[idx] ?: let {
+                val d = DungeonDoor(comp.withWorld())
+                DungeonScanner.addDoor(d)
+                d
+            }
+
+            return@removeIf when (doorCol) {
+                MapColors.DOOR_WITHER.color -> {
+                    door.type = DoorTypes.WITHER
+                    door.opened = false
+                    if (
+                        comp.getNeighboringRooms()
+                            .mapNotNull { DungeonScanner.rooms[it.getRoomIdx()] }
+                            .any { it.type == RoomTypes.FAIRY && !it.explored }
+                    ) door.holyShitFairyDoorPleaseStopFlashingSobs = true
+                    false
+                }
+
+                MapColors.DOOR_BLOOD.color -> {
+                    door.type = DoorTypes.BLOOD
+                    // door.opened = false
+                    // false
+                    true
+                }
+
+                else -> {
+                    door.type = DoorTypes.NORMAL
+                    door.opened = true
+                    true
+                }
+            }
+        }
+    }
+
     init {
         EventBus.on<PacketReceivedEvent> { event ->
             val packet = event.packet
@@ -144,51 +264,12 @@ object DungeonMapScanner {
             if (roomSize == -1 && !scanMapDimensions(colors)) return@on
             Scheduler.scheduleTask {
                 updatePlayerIcons(mapState)
+                updateRooms(colors)
 
                 DungeonMap.redrawMap(
                     DungeonScanner.rooms.toList(),
                     DungeonScanner.doors.toList()
                 )
-            }
-
-            if (colors.size < COLOR_SIZE) return@on
-
-            for (room in DungeonScanner.rooms) {
-                if (room == null || room.comps.isEmpty()) continue
-                val leftMost = room.comps.firstOrNull() ?: continue
-                val x = leftMost.cx / 2
-                val z = leftMost.cz / 2
-
-                val mapX = mapOffsetX + roomSize / 2 + roomGap * x
-                val mapZ = mapOffsetZ + roomSize / 2 + 1 + roomGap * z
-                val idx = mapX + mapZ * SCAN
-                if (idx - 1 > COLOR_SIZE) continue
-
-                val centerColor = colors[idx - 1]
-                val roomIdx = idx + 5 + SCAN * 4
-                if (roomIdx > COLOR_SIZE) continue
-                val roomColor = colors[roomIdx]
-
-                if (roomColor == MapColors.EMPTY.color || roomColor == MapColors.ROOM_UNOPENED.color) {
-                    room.explored = false
-                    continue
-                }
-
-                room.explored = true
-
-                val check = when {
-                    centerColor == MapColors.CHECK_GREEN.color && roomColor != MapColors.ROOM_ENTRANCE.color
-                        -> CheckmarkTypes.GREEN
-
-                    centerColor == MapColors.CHECK_WHITE.color -> CheckmarkTypes.WHITE
-                    centerColor == MapColors.CHECK_FAIL.color && roomColor != MapColors.ROOM_BLOOD.color
-                        -> CheckmarkTypes.FAILED
-
-                    room.checkmark == CheckmarkTypes.UNEXPLORED -> CheckmarkTypes.NONE
-                    else -> null
-                } ?: continue
-
-                room.checkmark = check
             }
         }
     }

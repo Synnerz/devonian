@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
+import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import net.minecraft.world.level.block.Blocks
 
 class DungeonDoor(val comp: WorldComponentPosition) {
@@ -11,6 +12,7 @@ class DungeonDoor(val comp: WorldComponentPosition) {
     val rooms = mutableSetOf<DungeonRoom>()
     val roomComp1: ComponentPosition
     val roomComp2: ComponentPosition
+    var holyShitFairyDoorPleaseStopFlashingSobs = false
 
     init {
         val cx = comp.cx
@@ -53,5 +55,6 @@ class DungeonDoor(val comp: WorldComponentPosition) {
             Blocks.RED_TERRACOTTA -> DoorTypes.BLOOD
             else -> DoorTypes.NORMAL
         }
+        if (opened && holyShitFairyDoorPleaseStopFlashingSobs && !rooms.all { it.explored }) type = DoorTypes.WITHER
     }
 }
