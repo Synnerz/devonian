@@ -177,7 +177,6 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
                         ConfigType.TEXTINPUT -> createTextInput(data.configData as ConfigData.TextInput)
                         ConfigType.SELECTION -> createSelection(data.configData as ConfigData.Selection)
                         ConfigType.COLORPICKER -> createColorPicker(data.configData as ConfigData.ColorPicker)
-                        else -> TODO()
                     }
                 )
                 hide()
