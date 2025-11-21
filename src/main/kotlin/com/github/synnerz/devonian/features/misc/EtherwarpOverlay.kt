@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
@@ -18,10 +19,9 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import java.awt.Color
 import kotlin.math.hypot
 
-object EtherwarpOverlay : TextHudFeature(
+object EtherwarpOverlay : Feature(
     "etherwarpOverlay",
-    "Renders a box at the location where the etherwarp is going to be at.",
-    hudConfigName = "EtherwarpFailReasonDisplay"
+    "Renders a box at the location where the etherwarp is going to be at."
 ) {
     private val SETTING_ETHER_WIRE_COLOR = addColorPicker(
         "wireColor",
@@ -178,8 +178,6 @@ object EtherwarpOverlay : TextHudFeature(
             )
         }
     }
-
-    override fun getEditText(): List<String> = listOf("&4Can't TP: No air above!")
 
     private fun raycast(
         x: Double, y: Double, z: Double,
