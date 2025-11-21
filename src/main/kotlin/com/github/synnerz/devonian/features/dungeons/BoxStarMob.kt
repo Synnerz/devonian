@@ -183,7 +183,7 @@ object BoxStarMob : Feature(
                     pos.x - 0.4,
                     pos.y,
                     pos.z - 0.4,
-                    1.0,
+                    0.8,
                     data.height,
                     data.color,
                     phase = SETTING_PHASE.get(),
