@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.ClearTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.ShapeTypes
 import net.minecraft.world.level.block.Blocks
+import kotlin.math.roundToInt
 
 class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: Int) {
     val roomOffset = listOf(
@@ -148,5 +149,44 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
             distCompA == comps.size || distCompB == comps.size -> ShapeTypes.Shape1x3
             else -> ShapeTypes.ShapeL
         }
+    }
+
+    private fun rotatePos(x: Int, z: Int, degree: Int): Pair<Int, Int> {
+        return when (degree) {
+            0 -> x to z
+            90 -> z to -x
+            180 -> -x to -z
+            270 -> -z to x
+            else -> x to z
+        }
+    }
+
+    /**
+     * - Converts real world position coordinates into relative component position
+     * - NOTE: the Y value is always the same regardless, that never changes
+     * @param x
+     * @param z
+     */
+    fun fromPos(x: Int, z: Int): Pair<Int, Int>? {
+        if (rotation == -1 || corner == WorldPosition.EMPTY) return null
+        val x1 = x - (corner.x + 0.5).roundToInt()
+        val z1 = z - (corner.z + 0.5).roundToInt()
+
+        return rotatePos(x1, z1, rotation)
+    }
+
+    /**
+     * - Converts component positions into real world position coordinates
+     * - NOTE: the Y value is always the same regardless, that never changes
+     * @param x
+     * @param z
+     */
+    fun fromComp(x: Int, z: Int): Pair<Int, Int>? {
+        if (rotation == -1 || corner == WorldPosition.EMPTY) return null
+        val ( x1, z1 ) = rotatePos(x, z, 360 - rotation)
+        val x2 = x1 + (corner.x + 0.5).roundToInt()
+        val z2 = z1 + (corner.z + 0.5).roundToInt()
+
+        return x2 to z2
     }
 }

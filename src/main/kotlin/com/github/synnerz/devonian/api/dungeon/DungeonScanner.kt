@@ -18,6 +18,7 @@ import net.minecraft.tags.FluidTags
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.SlabBlock
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.HitResult
 
 @Suppress("MemberVisibilityCanBePrivate")
 object DungeonScanner {
@@ -181,6 +182,27 @@ object DungeonScanner {
                 val z = comp.wz
                 ChatUtils.sendMessage("hash: ${hashCeil(x, z, true)}")
             }
+            1
+        }
+
+        DevonianCommand.command.subcommand("getpuzzledata") { _, _ ->
+            rooms.forEach {
+                if (it == null || it.type != RoomTypes.PUZZLE) return@forEach
+                ChatUtils.sendMessage("&dPuzzle[name=&b\"${it.name}\"&d, rotation=&b\"${it.rotation}\"&d]")
+            }
+            1
+        }
+
+        DevonianCommand.command.subcommand("getcomp") { _, _ ->
+            Devonian.minecraft.player ?: return@subcommand 0
+            val target = Devonian.minecraft.hitResult ?: return@subcommand 0
+            if (target.type != HitResult.Type.BLOCK) return@subcommand 0
+            val x = target.location.x.toInt()
+            val z = target.location.z.toInt()
+            val comp = WorldPosition(x, z).toComponent()
+            val room = rooms.getOrNull(comp.getRoomIdx()) ?: return@subcommand 0
+
+            ChatUtils.sendMessage("looking at component \"${room.fromPos(x, z)}\" ${room.name} with rotation ${room.rotation}")
             1
         }
 
