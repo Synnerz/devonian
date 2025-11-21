@@ -35,7 +35,6 @@ object Dungeons {
     val players = linkedMapOf<String, DungeonPlayer>()
     private var needReset = true
 
-    // TODO: listen to the entering dungeon message to figure out floor early?
     var floor = FloorType.None
     val floorState = BasicState(FloorType.None)
 
@@ -251,16 +250,12 @@ object Dungeons {
             needReset = false
         }
 
-        EventBus.on<SubAreaEvent> { event ->
-            val subarea = event.subarea ?: return@on
-            val match = dungeonFloorRegex.matchEntire(subarea) ?: return@on
-            val name = match.groups[1]?.value ?: return@on
-
-            floor = FloorType.from(name)
-            floorState.value = floor
-        }
-
         EventBus.on<ScoreboardEvent> { event ->
+            event.matches(dungeonFloorRegex)?.let {
+                floor = FloorType.from(it[0])
+                floorState.value = floor
+                return@on
+            }
             if (Location.area != "catacombs") return@on
             val matchesTime = event.matches(timeElapsedRegex)
             if (matchesTime != null) {
