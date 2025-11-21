@@ -20,7 +20,7 @@ object RemoveDamageTag : Feature(
 
             val world = minecraft.level ?: return@on
 
-            if (!event.name.string.matches(damageTagRegex)) return@on
+            if (!event.name.matches(damageTagRegex)) return@on
 
             Scheduler.scheduleTask { world.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED) }
         }

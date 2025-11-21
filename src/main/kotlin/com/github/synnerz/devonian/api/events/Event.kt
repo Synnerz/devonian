@@ -284,5 +284,6 @@ class PostClientInit(val minecraft: Minecraft) : Event()
 class PacketNameChangeEvent(
     val entityId: Int,
     val type: EntityType<*>,
-    val name: Component
+    val nameText: Component,
+    val name: String
 ) : Event()

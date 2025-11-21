@@ -135,7 +135,7 @@ object EventBus {
                     val type = entityTypes[id] ?: return@on
                     val data = packet.packedItems
                     val text = getNameFromData(data)
-                    if (text != null) PacketNameChangeEvent(id, type, text).post()
+                    if (text != null) PacketNameChangeEvent(id, type, text, text.string).post()
                 }
             }
         }

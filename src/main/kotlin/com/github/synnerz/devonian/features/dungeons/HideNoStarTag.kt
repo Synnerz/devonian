@@ -21,7 +21,7 @@ object HideNoStarTag : Feature(
 
             val world = minecraft.level ?: return@on
 
-            val name = event.name.string
+            val name = event.name
             if (name.matches(blazeHealthRegex) || !name.matches(noStarTagRegex)) return@on
 
             Scheduler.scheduleTask { world.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED) }
