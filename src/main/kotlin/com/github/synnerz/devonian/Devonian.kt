@@ -16,6 +16,7 @@ import com.github.synnerz.devonian.features.diana.DianaMobTracker
 import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.features.dungeons.solvers.BoulderSolver
+import com.github.synnerz.devonian.features.dungeons.solvers.ThreeWeirdosSolver
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
 import com.github.synnerz.devonian.features.garden.PestsDisplay
@@ -109,6 +110,7 @@ object Devonian : ClientModInitializer {
         DisableWaterOverlay,
         DisableSuffocatingOverlay,
         BoulderSolver,
+        ThreeWeirdosSolver,
     )
 
     override fun onInitializeClient() {
