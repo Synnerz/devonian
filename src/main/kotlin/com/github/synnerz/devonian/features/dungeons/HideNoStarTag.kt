@@ -12,8 +12,8 @@ object HideNoStarTag : Feature(
     "Dungeons",
     "catacombs"
 ) {
-    private val blazeHealthRegex = "^\\[Lv15] . Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
-    private val noStarTagRegex = "^(?:\\[Lv\\d+] )?[༕☠♃⛏✰\uD83E\uDDB4]* ?[A-Za-z ]+ [\\dkM.,/]+❤$".toRegex()
+    private val exceptions = listOf("Blaze", "King Midas")
+    private val noStarTagRegex = "^(?:\\[Lv\\d+] )?[༕☠♃⛏✰\uD83E\uDDB4⚙]* ?[A-Za-z ]+ [\\dkM.,/]+❤$".toRegex()
 
     override fun initialize() {
         on<PacketNameChangeEvent> { event ->
@@ -22,7 +22,8 @@ object HideNoStarTag : Feature(
             val world = minecraft.level ?: return@on
 
             val name = event.name
-            if (name.matches(blazeHealthRegex) || !name.matches(noStarTagRegex)) return@on
+            if (exceptions.any { name.contains(it) }) return@on
+            if (!name.matches(noStarTagRegex)) return@on
 
             Scheduler.scheduleTask { world.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED) }
         }
