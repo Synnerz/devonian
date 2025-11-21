@@ -172,7 +172,7 @@ object DungeonScanner {
             lastIdx = jdx
             currentRoom = rooms.getOrNull(jdx)
             if (currentRoom != null)
-                DungeonEvent.RoomEnter(currentRoom!!, jdx)
+                DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
             // TODO: remove whenever done debugging
             ChatUtils.sendMessage("$currentRoom")
         }
