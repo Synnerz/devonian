@@ -1,8 +1,6 @@
 package com.github.synnerz.devonian.utils
 
 import kotlinx.atomicfu.atomic
-import kotlinx.atomicfu.getAndUpdate
-import kotlinx.atomicfu.updateAndGet
 import java.util.concurrent.CopyOnWriteArrayList
 
 interface State<T> {

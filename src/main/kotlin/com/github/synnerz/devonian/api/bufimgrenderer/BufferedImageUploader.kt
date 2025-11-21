@@ -10,7 +10,9 @@ import com.mojang.blaze3d.textures.TextureFormat
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.resources.ResourceLocation
 import org.lwjgl.opengl.*
-import java.awt.image.*
+import java.awt.image.BufferedImage
+import java.awt.image.DataBufferByte
+import java.awt.image.PixelInterleavedSampleModel
 import java.nio.IntBuffer
 import javax.imageio.ImageIO
 

@@ -4,7 +4,8 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.HudManager
-import com.github.synnerz.talium.components.*
+import com.github.synnerz.talium.components.UIRect
+import com.github.synnerz.talium.components.UIText
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component

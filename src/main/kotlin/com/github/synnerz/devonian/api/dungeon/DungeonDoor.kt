@@ -2,7 +2,6 @@ package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
-import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import net.minecraft.world.level.block.Blocks
 
 class DungeonDoor(val comp: WorldComponentPosition) {

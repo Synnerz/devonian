@@ -1,16 +1,11 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.barrl.Context
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
-import com.github.synnerz.devonian.utils.ColorEnum
-import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.math.DDA
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionHand
