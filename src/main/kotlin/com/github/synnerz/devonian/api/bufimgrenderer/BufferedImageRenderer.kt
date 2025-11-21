@@ -22,12 +22,12 @@ import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
-    val uploader = BufferedImageUploader(name)
-    val dirtyImage = atomic<BufferedImage?>(null)
-    val bimgProvider: BufferedImageFactory = BufferedImageFactoryImpl()
-    var lastFuture: Future<*>? = null
-    val mcid = ResourceLocation.fromNamespaceAndPath("devonian", "buffered_image/${name.lowercase()}")
-    val layer = RenderType.create(
+    protected val uploader = BufferedImageUploader(name)
+    protected val dirtyImage = atomic<BufferedImage?>(null)
+    protected val bimgProvider: BufferedImageFactory = BufferedImageFactoryImpl()
+    protected var lastFuture: Future<*>? = null
+    protected val mcid = ResourceLocation.fromNamespaceAndPath("devonian", "buffered_image/${name.lowercase()}")
+    protected val layer = RenderType.create(
         "devonian/buffered_image_layer/${name.lowercase()}",
         1536,
         false,
@@ -38,6 +38,7 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
             .setTextureState(RenderStateShard.TextureStateShard(mcid, bilinear, false))
             .createCompositeState(false)
     )
+    protected var valid = true
 
     init {
         uploader.register(mcid)
@@ -60,7 +61,14 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
 
     private fun uploadImage() {
         val bimg = dirtyImage.getAndSet(null)
-        if (bimg != null) uploader.upload(bimg)
+        if (bimg != null) {
+            uploader.upload(bimg)
+            valid = true
+        }
+    }
+
+    fun invalidate() {
+        valid = false
     }
 
     fun draw(ctx: GuiGraphics, x: Float, y: Float, scale: Float = 1f) {
@@ -75,6 +83,7 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
 
     private fun draw(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float) {
         if (uploader.texId == -1) return
+        if (!valid) return
 
         val mat = ctx.pose().last().pose()
         val consumer = (ctx as GuiGraphicsAccessor).vertexConsumers

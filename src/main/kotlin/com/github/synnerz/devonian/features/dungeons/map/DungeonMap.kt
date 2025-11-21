@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer.Comp
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
 import com.github.synnerz.devonian.api.dungeon.*
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.SimpleTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHud
@@ -362,6 +363,10 @@ object DungeonMap : HudFeature(
         on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        mapRenderer.invalidate()
     }
 
     val mcidMarkerSelf = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_self")
