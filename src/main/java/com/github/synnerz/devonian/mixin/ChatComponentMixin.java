@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.features.misc.CompactChat;
+import com.github.synnerz.devonian.features.misc.DisableChatAutoScroll;
 import com.github.synnerz.devonian.features.misc.RemoveChatLimit;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -45,5 +46,14 @@ public class ChatComponentMixin {
     @Inject(method = "clearMessages", at = @At("HEAD"))
     private void devonian$clearMessages(boolean bl, CallbackInfo ci) {
         CompactChat.INSTANCE.clearHistory();
+    }
+
+    @Redirect(
+            method = "addMessageToDisplayQueue",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;scrollChat(I)V")
+    )
+    private void devonian$onChatScroll(ChatComponent instance, int i) {
+        if (DisableChatAutoScroll.INSTANCE.isEnabled()) return;
+        instance.scrollChat(i);
     }
 }

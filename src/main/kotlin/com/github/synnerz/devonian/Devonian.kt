@@ -100,7 +100,8 @@ object Devonian : ClientModInitializer {
         SpeedDisplay,
         BoxDoors,
         ScoreDisplay,
-        EtherwarpOverlayFailReason
+        EtherwarpOverlayFailReason,
+        DisableChatAutoScroll
     )
 
     override fun onInitializeClient() {
