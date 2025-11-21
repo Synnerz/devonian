@@ -12,7 +12,6 @@ object CopyChat : Feature(
     "Right click to copy a message in chat."
 ) {
     override fun initialize() {
-
         on<GuiClickEvent> { event ->
             if (!event.state || event.mbtn != 1) return@on
 
@@ -21,13 +20,26 @@ object CopyChat : Feature(
             val chatHud = Devonian.minecraft.gui.chat as ChatComponentAccessor
             val dx = chatHud.toChatLineMX(event.mx)
             val dy = chatHud.toChatLineMY(event.my)
-            val idx = chatHud.getMessageLineIdx(dx, dy).coerceIn(0..<chatHud.visibleMessages.size)
+            val idx = chatHud.getMessageLineIdx(dx, dy)
+            if (idx < 0 || idx >= chatHud.visibleMessages.size) return@on
 
-            val text = chatHud.visibleMessages[idx] ?: return@on
+            val text = chatHud.visibleMessages.getOrNull(idx) ?: return@on
             val str = StringBuilder()
-            text.content.accept { _, _, codept ->
-                str.append(Character.toChars(codept))
+            text.content.accept { _, _, code ->
+                str.append(Character.toChars(code))
                 true
+            }
+            for (jdx in 1..9) {
+                val lineIdx = idx - jdx
+                val msg = chatHud.visibleMessages.getOrNull(lineIdx) ?: continue
+                val strBuilt = buildString {
+                    msg.content.accept { _, _, code ->
+                        append(Character.toChars(code))
+                        true
+                    }
+                }
+                if (!strBuilt.startsWith(" ")) break
+                str.append(strBuilt)
             }
 
             minecraft.keyboardHandler.clipboard = "$str"
