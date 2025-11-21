@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 
@@ -12,11 +13,12 @@ object MimicKilled : Feature(
 ) {
     private var messageSent = false
 
-    fun sendMessage() {
-        if (!isEnabled()) return
-        if (messageSent) return
-        ChatUtils.command("pc Mimic Killed!")
-        messageSent = true
+    override fun initialize() {
+        on<DungeonEvent.MimicKilled> {
+            if (messageSent) return@on
+            ChatUtils.command("pc Mimic Killed!")
+            messageSent = true
+        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {

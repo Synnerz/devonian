@@ -295,7 +295,6 @@ object Dungeons {
 
             if (event.message == "A Prince falls. +1 Bonus Score") {
                 princeKilled.value = true
-                PrinceKilled.sendMessage()
                 DungeonEvent.PrinceKilled().post()
                 return@on
             }
@@ -320,7 +319,6 @@ object Dungeons {
             if (!entity.isBaby || entity.hasItemInSlot(EquipmentSlot.HEAD)) return@on
 
             mimicKilled.value = true
-            MimicKilled.sendMessage()
             DungeonEvent.MimicKilled().post()
         }
     }
