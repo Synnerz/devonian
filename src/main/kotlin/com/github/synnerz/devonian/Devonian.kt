@@ -106,6 +106,7 @@ object Devonian : ClientModInitializer {
         DisableAttachedArrows,
         DisableVignette,
         DisableWaterOverlay,
+        DisableSuffocatingOverlay,
     )
 
     override fun onInitializeClient() {

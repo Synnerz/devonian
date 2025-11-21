@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.features.misc.DisableSuffocatingOverlay;
 import com.github.synnerz.devonian.features.misc.DisableWaterOverlay;
 import com.github.synnerz.devonian.features.misc.RemoveFireOverlay;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -30,6 +31,16 @@ public class ScreenEffectRendererMixin {
     )
     private static void devonian$disableWaterOverlay(Minecraft minecraft, PoseStack poseStack, MultiBufferSource multiBufferSource, CallbackInfo ci) {
         if (!DisableWaterOverlay.INSTANCE.isEnabled()) return;
+        ci.cancel();
+    }
+
+    @Inject(
+        method = "renderScreenEffect",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;getViewBlockingState(Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/level/block/state/BlockState;"),
+        cancellable = true
+    )
+    private static void devonian$disableSuffocatingOverlay(Minecraft minecraft, PoseStack poseStack, MultiBufferSource multiBufferSource, CallbackInfo ci) {
+        if (!DisableSuffocatingOverlay.INSTANCE.isEnabled()) return;
         ci.cancel();
     }
 }
