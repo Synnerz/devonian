@@ -254,6 +254,7 @@ object Dungeons {
             event.matches(dungeonFloorRegex)?.let {
                 floor = FloorType.from(it[0])
                 floorState.value = floor
+                DungeonEvent.FloorEnter(floor).post()
                 return@on
             }
             if (Location.area != "catacombs") return@on
@@ -288,12 +289,14 @@ object Dungeons {
 
             if (event.message == "[NPC] Mort: Here, I found this map when I first entered the dungeon.") {
                 started.value = true
+                DungeonEvent.RunStarted().post()
                 return@on
             }
 
             if (event.message == "A Prince falls. +1 Bonus Score") {
                 princeKilled.value = true
                 PrinceKilled.sendMessage()
+                DungeonEvent.PrinceKilled().post()
                 return@on
             }
 
@@ -306,7 +309,7 @@ object Dungeons {
                 if (message == "If I had spent more time studying and less time watching anime, maybe mother would be here with me!") return@on
             }
 
-            BossMessageEvent(boss, message).post()
+            DungeonEvent.BossMessageEvent(boss, message).post()
             if (boss != DungeonBoss.Watcher) inBoss.value = true
             else if (message == "You have proven yourself. You may pass.") bloodCleared.value = true
         }
@@ -318,6 +321,7 @@ object Dungeons {
 
             mimicKilled.value = true
             MimicKilled.sendMessage()
+            DungeonEvent.MimicKilled().post()
         }
     }
 
@@ -344,11 +348,6 @@ object Dungeons {
 
         totalRoomHisto.clear()
     }
-
-    class BossMessageEvent(
-        val boss: DungeonBoss,
-        val message: String
-    ) : Event()
 
     enum class DungeonBoss(val displayName: String) {
         Watcher("The Watcher"),

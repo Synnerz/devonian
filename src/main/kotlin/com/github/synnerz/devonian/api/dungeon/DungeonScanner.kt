@@ -160,11 +160,19 @@ object DungeonScanner {
             checkRoomState()
             checkDoorState()
 
+            // Will trigger for each component of the room
+            // perhaps hold the current room's name and match
+            // it with that, so we can be sure it's not the same room
+            if (lastIdx != null && lastIdx != jdx)
+                DungeonEvent.RoomLeave(currentRoom, lastIdx!!).post()
+
             if (jdx !in 0..35) return@on
 
             if (lastIdx == jdx) return@on
             lastIdx = jdx
             currentRoom = rooms.getOrNull(jdx)
+            if (currentRoom != null)
+                DungeonEvent.RoomEnter(currentRoom!!, jdx)
             // TODO: remove whenever done debugging
             ChatUtils.sendMessage("$currentRoom")
         }
