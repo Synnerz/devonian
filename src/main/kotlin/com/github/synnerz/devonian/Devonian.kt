@@ -103,6 +103,7 @@ object Devonian : ClientModInitializer {
         EtherwarpOverlayFailReason,
         DisableChatAutoScroll,
         DisableBlindness,
+        DisableAttachedArrows,
     )
 
     override fun onInitializeClient() {
