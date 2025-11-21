@@ -119,6 +119,7 @@ object LegacyRegistry {
         "minecraft:red_carpet" to 171,
         "minecraft:brown_carpet" to 171,
         "minecraft:magenta_carpet" to 171,
+        "minecraft:coal_block" to 173,
         "minecraft:packed_ice" to 174,
         "minecraft:sunflower" to 175,
         "minecraft:red_sandstone_slab[type=double]" to 181,
