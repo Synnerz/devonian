@@ -21,6 +21,7 @@ abstract class HudFeature(
     subarea: String? = null,
     protected val legacyName: String = configName[0].uppercase() + configName.substring(1)
 ) : Feature(configName, description, category, area, subarea) {
+    private val isInternal = configName == "hudManagerInstructions"
     var x = 10.0
     var y = 10.0
     var scale = 1f
@@ -93,6 +94,18 @@ abstract class HudFeature(
 
     open fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
         val bounds = getBounds()
+
+        if (isInternal) {
+            ctx.renderOutline(
+                bounds.x.toInt(),
+                bounds.y.toInt(),
+                ceil(bounds.w).toInt(),
+                ceil(bounds.h).toInt(),
+                if (selected) Color.WHITE.rgb
+                else Color.GRAY.rgb
+            )
+            return
+        }
 
         if (!isEnabled()) {
             ctx.fill(
