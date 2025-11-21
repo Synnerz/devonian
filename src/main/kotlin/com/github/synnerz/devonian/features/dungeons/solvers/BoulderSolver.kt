@@ -80,10 +80,10 @@ object BoulderSolver : Feature(
         on<DungeonEvent.RoomLeave> {
             currentSolution = null
         }
+    }
 
-        on<WorldChangeEvent> {
-            currentSolution = null
-        }
+    override fun onWorldChange(event: WorldChangeEvent) {
+        currentSolution = null
     }
 
     private fun getGridLayout(room: DungeonRoom): String {
