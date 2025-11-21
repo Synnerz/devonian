@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.features.Feature
 
 object RemoveFallingBlocks : Feature("removeFallingBlocks")
@@ -14,3 +13,4 @@ object RemoveChatLimit : Feature("removeChatLimit")
 object RemoveTabPing : Feature("removeTabPing")
 object DisableAttachedArrows : Feature("disableAttachedArrows")
 object DisableVignette : Feature("disableVignette")
+object DisableWaterOverlay : Feature("disableWaterOverlay")
