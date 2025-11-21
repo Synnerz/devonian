@@ -184,8 +184,8 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
     fun fromComp(x: Int, z: Int): Pair<Int, Int>? {
         if (rotation == -1 || corner == WorldPosition.EMPTY) return null
         val ( x1, z1 ) = rotatePos(x, z, 360 - rotation)
-        val x2 = x1 + (corner.x + 0.5).roundToInt()
-        val z2 = z1 + (corner.z + 0.5).roundToInt()
+        val x2 = x1 + corner.x
+        val z2 = z1 + corner.z
 
         return x2 to z2
     }
