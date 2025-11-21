@@ -184,13 +184,15 @@ object DungeonMapScanner {
             }
             room.explored = roomCol != MapColors.ROOM_UNOPENED.color
 
-            room.checkmark = if (roomCol == centerCol) CheckmarkTypes.NONE
-            else when (centerCol) {
-                MapColors.CHECK_WHITE.color -> CheckmarkTypes.WHITE
-                MapColors.CHECK_GREEN.color -> CheckmarkTypes.GREEN
-                MapColors.CHECK_FAIL.color -> CheckmarkTypes.FAILED
-                MapColors.CHECK_UNKNOWN.color -> CheckmarkTypes.UNEXPLORED
-                else -> CheckmarkTypes.NONE
+            if (room.checkmark != CheckmarkTypes.GREEN) {
+                room.checkmark = if (roomCol == centerCol) CheckmarkTypes.NONE
+                else when (centerCol) {
+                    MapColors.CHECK_WHITE.color -> CheckmarkTypes.WHITE
+                    MapColors.CHECK_GREEN.color -> CheckmarkTypes.GREEN
+                    MapColors.CHECK_FAIL.color -> CheckmarkTypes.FAILED
+                    MapColors.CHECK_UNKNOWN.color -> CheckmarkTypes.UNEXPLORED
+                    else -> CheckmarkTypes.NONE
+                }
             }
         }
 
