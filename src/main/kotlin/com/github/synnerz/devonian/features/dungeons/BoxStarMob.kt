@@ -73,8 +73,7 @@ object BoxStarMob : Feature(
 
     private val starred = mutableListOf<Pair<LivingEntity, MobData>>()
     private val starredIdQ = ConcurrentLinkedQueue<Pair<Int, MobData>>()
-    private var namedMobUUID: UUID? = null
-    private var namedMobData: MobData? = null
+    private val playerMobMap = mutableMapOf<UUID, MobData>()
     private var lastStand: Int = 0
 
     private fun getMobDataFromArmorStand(name: String): MobData {
@@ -138,13 +137,8 @@ object BoxStarMob : Feature(
 
                         EntityType.PLAYER -> {
                             val uuid = packet.uuid ?: return@on
-                            if (uuid == namedMobUUID) {
-                                // shouldn't ever happen but like
-                                val data = namedMobData ?: return@on
-                                starredIdQ.add(Pair(packet.id, data))
-                            }
-                            namedMobUUID = null
-                            namedMobData = null
+                            val data = playerMobMap[uuid] ?: return@on
+                            starredIdQ.add(Pair(packet.id, data))
                         }
                     }
                 }
@@ -156,8 +150,7 @@ object BoxStarMob : Feature(
                     val name = entry.profile?.name ?: return@on
 
                     val data = getMobDataFromName(name) ?: return@on
-                    namedMobUUID = entry.profileId
-                    namedMobData = data
+                    playerMobMap[entry.profileId] = data
                 }
             }
         }
@@ -198,8 +191,7 @@ object BoxStarMob : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         starred.clear()
         starredIdQ.clear()
-        namedMobUUID = null
-        namedMobData = null
+        playerMobMap.clear()
         lastStand = 0
     }
 }
