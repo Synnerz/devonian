@@ -209,8 +209,9 @@ object DungeonScanner {
             val z = target.location.z.toInt()
             val comp = WorldPosition(x, z).toComponent()
             val room = rooms.getOrNull(comp.getRoomIdx()) ?: return@subcommand 0
+            val relativeCoords = room.fromPos(x, z) ?: return@subcommand 0
 
-            ChatUtils.sendMessage("looking at component \"${room.fromPos(x, z)}\" ${room.name} with rotation ${room.rotation}")
+            ChatUtils.sendMessage("looking at component \"${relativeCoords.first}, ${target.location.y.toInt()}, ${relativeCoords.second}\" ${room.name} with rotation ${room.rotation}")
             1
         }
 
