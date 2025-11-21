@@ -2,10 +2,15 @@ package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.features.dungeons.MimicKilled
+import com.github.synnerz.devonian.features.dungeons.PrinceKilled
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.Location
 import com.github.synnerz.devonian.utils.State
 import com.github.synnerz.devonian.utils.StringUtils
+import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.monster.Zombie
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -291,6 +296,12 @@ object Dungeons {
                 return@on
             }
 
+            if (event.message == "A Prince falls. +1 Bonus Score") {
+                princeKilled.value = true
+                PrinceKilled.sendMessage()
+                return@on
+            }
+
             val (name, message) = event.matches(bossMessageRegex) ?: return@on
             val boss = DungeonBoss.from(name) ?: return@on
 
@@ -303,6 +314,15 @@ object Dungeons {
             BossMessageEvent(boss, message).post()
             if (boss != DungeonBoss.Watcher) inBoss.value = true
             else if (message == "You have proven yourself. You may pass.") bloodCleared.value = true
+        }
+
+        EventBus.on<EntityDeathEvent> { event ->
+            val entity = event.entity as LivingEntity
+            if (entity !is Zombie) return@on
+            if (!entity.isBaby || entity.hasItemInSlot(EquipmentSlot.HEAD)) return@on
+
+            mimicKilled.value = true
+            MimicKilled.sendMessage()
         }
     }
 
