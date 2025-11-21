@@ -104,6 +104,7 @@ object Devonian : ClientModInitializer {
         DisableChatAutoScroll,
         DisableBlindness,
         DisableAttachedArrows,
+        DisableVignette,
     )
 
     override fun onInitializeClient() {
