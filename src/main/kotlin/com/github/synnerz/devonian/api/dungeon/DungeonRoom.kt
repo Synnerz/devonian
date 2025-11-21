@@ -115,8 +115,8 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
         }
 
         for (comp in comps) {
-            val x = comps[0].wx
-            val z = comps[0].wz
+            val x = comp.wx
+            val z = comp.wz
 
             for (idx in roomOffset.indices) {
                 val ( dx, dz ) = roomOffset[idx]
