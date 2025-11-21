@@ -16,7 +16,7 @@ data class DungeonPlayer(
     var lastUpdateTime: Double? = null,
 ) {
     fun tick() {
-        if (entity?.isDeadOrDying ?: true) entity = null
+        if ((entity?.isDeadOrDying ?: true) || (entity?.isRemoved ?: true)) entity = null
         val ent = entity ?: return
         updatePosition(PlayerComponentPosition.fromWorld(
             ent.x,
