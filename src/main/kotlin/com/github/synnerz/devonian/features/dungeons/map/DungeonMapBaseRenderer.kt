@@ -250,8 +250,9 @@ class DungeonMapBaseRenderer :
                     val colorCode = when (room.type) {
                         RoomTypes.ENTRANCE,
                         RoomTypes.FAIRY,
-                        RoomTypes.BLOOD
                             -> "&f"
+
+                        RoomTypes.BLOOD -> if (room.checkmark == CheckmarkTypes.GREEN) "&a" else "&f"
 
                         else -> when (room.checkmark) {
                             CheckmarkTypes.FAILED -> "&c"
