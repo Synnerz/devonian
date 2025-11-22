@@ -156,7 +156,7 @@ object BurrowGuesser : Feature(
     }
 
     private fun ransac() {
-        val t = EventBus.totalTicks
+        val t = EventBus.serverTicks()
         possibleStartingParticles.removeIf { it.t < t - 20 }
         unclaimedParticles.removeIf { it.t < t - 20 }
 
@@ -265,7 +265,7 @@ object BurrowGuesser : Feature(
                 packet.zDist != 0f
             ) return@on
 
-            val t = EventBus.totalTicks
+            val t = EventBus.serverTicks()
             val x = packet.x
             val y = packet.y
             val z = packet.z
@@ -310,7 +310,7 @@ object BurrowGuesser : Feature(
 
             spadeUsePositions.add(
                 PositionTime(
-                    EventBus.totalTicks + (Ping.getMedianPing() / 50.0 + 10.0).toInt(),
+                    EventBus.serverTicks() + (Ping.getMedianPing() / 50.0 + 10.0).toInt(),
                     player.lastXClient,
                     player.lastYClient + minecraft.player!!.eyeHeight,
                     player.lastZClient
