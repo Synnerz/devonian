@@ -115,7 +115,8 @@ object Devonian : ClientModInitializer {
         ThreeWeirdosSolver,
         PingDisplay,
         BoxIcedMobs,
-        BlazeSolver
+        BlazeSolver,
+        DisableVanillaArmor,
     )
 
     override fun onInitializeClient() {
