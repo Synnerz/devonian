@@ -48,6 +48,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     private fun createCategories() {
         // All our categories should be created here
         categories.add(Category("Dungeons", rightPanel, leftPanel))
+        categories.add(Category("Dungeon Map", rightPanel, leftPanel))
         categories.add(Category("Garden", rightPanel, leftPanel))
         categories.add(Category("Slayers", rightPanel, leftPanel))
         categories.add(Category("End", rightPanel, leftPanel))
