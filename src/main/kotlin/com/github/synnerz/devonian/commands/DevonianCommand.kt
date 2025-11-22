@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 
 object DevonianCommand {
     private val commandListeners = mutableListOf<() -> Int>()
-    val command = BaseCommand("devonian") {
+    val command = BaseCommand("devonian", listOf("dv")) {
         for (cb in commandListeners) {
             val res = cb()
             if (res != 1) return@BaseCommand res
