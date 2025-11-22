@@ -2,8 +2,6 @@ package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.*
-import com.github.synnerz.devonian.features.dungeons.MimicKilled
-import com.github.synnerz.devonian.features.dungeons.PrinceKilled
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.Location
 import com.github.synnerz.devonian.utils.State
