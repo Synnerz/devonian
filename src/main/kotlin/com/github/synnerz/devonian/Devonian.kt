@@ -112,6 +112,7 @@ object Devonian : ClientModInitializer {
         BoulderSolver,
         ThreeWeirdosSolver,
         PingDisplay,
+        BoxIcedMobs,
     )
 
     override fun onInitializeClient() {
