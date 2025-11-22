@@ -3,8 +3,10 @@ package com.github.synnerz.devonian.utils.math
 import org.ejml.simple.SimpleMatrix
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.pow
+import kotlin.math.sin
 
 object MathUtils {
     fun toPolynomial(coeffs: DoubleArray): (x: Double) -> Double {
@@ -111,5 +113,27 @@ object MathUtils {
         if (n - o > PI) n -= 2.0 * PI
         if (o - n > PI) o -= 2.0 * PI
         return lerp(f, o, n)
+    }
+
+    fun rotate(x: Double, y: Double, z: Double, t: Double, p: Double, r: Double): Triple<Double, Double, Double> {
+        val ct = cos(t)
+        val st = sin(t)
+        val cp = cos(p)
+        val sp = sin(p)
+        val cr = cos(r)
+        val sr = sin(r)
+        return Triple(
+            x * ct * cp +
+            z * (ct * sp * sr - st * cr) +
+            y * (ct * sp * cr + st * sr),
+
+            x * -sp +
+            z * cp * sr +
+            y * cp * cr,
+
+            x * st * cp +
+            z * (st * sp * sr + ct * cr) +
+            y * (st * sp * cr - ct * sr),
+        )
     }
 }
