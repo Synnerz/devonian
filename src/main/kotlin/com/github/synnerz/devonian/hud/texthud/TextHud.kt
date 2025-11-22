@@ -79,7 +79,7 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             align, shadow, backdrop, fontSize,
             fontMainBase, emptyList(), 0f
         )
-    private val renderer = TextRenderer(name)
+    protected val renderer = TextRenderer(name)
 
     private fun update() {
         val window = Devonian.minecraft.window

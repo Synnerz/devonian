@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.hud.texthud
 
-class SimpleTextHud(name: String) : TextHud(
+open class SimpleTextHud(name: String) : TextHud(
     name,
     StaticProvider(
         0.0, 0.0, 1f,
