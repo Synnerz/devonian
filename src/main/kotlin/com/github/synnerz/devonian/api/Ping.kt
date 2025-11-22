@@ -44,17 +44,29 @@ object Ping {
         return 0.5 * (medianMax.first.v + medianMin.first.v)
     }
 
+    private fun rebalanceHeaps() {
+        while (medianMax.size - medianMin.size > 1) {
+            val s = medianMax.pollFirst() ?: break
+            medianMin.add(s)
+        }
+        while (medianMin.size - medianMax.size > 1) {
+            val s = medianMin.pollFirst() ?: break
+            medianMax.add(s)
+        }
+    }
+
     fun addSample(from: Double, weight: Int) {
         val t = getTimeMS()
         val ping = t - from
         val sample = PingSample(t, ping, weight)
 
-        pingSum.update { it + ping }
+        pingSum.update { it + ping * weight }
         weightSum.plusAssign(weight)
         samples.add(sample)
 
-        if (medianMax.size > medianMin.size) medianMin.add(sample)
+        if (ping > getMedianPing()) medianMin.add(sample)
         else medianMax.add(sample)
+        rebalanceHeaps()
     }
 
     init {
@@ -107,11 +119,9 @@ object Ping {
             }
 
             if (deltaWeight > 0) {
-                pingSum.update { it + deltaPing }
+                pingSum.update { it + deltaPing * deltaWeight }
                 weightSum.minusAssign(deltaWeight)
-
-                if (medianMax.size - medianMin.size > 1) medianMin.addAll(medianMax.take((medianMax.size - medianMin.size) / 2))
-                if (medianMin.size - medianMax.size > 1) medianMax.addAll(medianMin.take((medianMin.size - medianMax.size) / 2))
+                rebalanceHeaps()
             }
 
             if (
