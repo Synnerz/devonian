@@ -7,7 +7,11 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 
 // TODO: add args to this api (?)
 
-class BaseCommand(val name: String, val cb: (CommandContext<FabricClientCommandSource>) -> Int) {
+class BaseCommand(
+    val name: String,
+    val aliases: List<String> = emptyList(),
+    val cb: (CommandContext<FabricClientCommandSource>) -> Int,
+) {
     var subcommands = mutableListOf<BaseSubCommand>()
 
     /**
@@ -22,6 +26,17 @@ class BaseCommand(val name: String, val cb: (CommandContext<FabricClientCommandS
 
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
             dispatcher.register(command)
+        }
+
+        if (aliases.isEmpty()) return
+        aliases.forEach {
+            val aliasCommand = literal(it).executes(cb)
+            for (subcommand in subcommands)
+                aliasCommand.then(subcommand.command())
+
+            ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
+                dispatcher.register(aliasCommand)
+            }
         }
     }
 
