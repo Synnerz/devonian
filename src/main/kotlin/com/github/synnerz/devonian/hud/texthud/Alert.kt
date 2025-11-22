@@ -39,7 +39,7 @@ object Alert : SimpleTextHud("internal_devonian_alert") {
             ).fitInside(bb)
 
             x = window.guiScaledWidth * 0.5
-            y = window.guiScaledHeight * 0.5 + line.ascent * f
+            y = window.guiScaledHeight * 0.5
             scale = f.toFloat()
             setLine(str)
 
