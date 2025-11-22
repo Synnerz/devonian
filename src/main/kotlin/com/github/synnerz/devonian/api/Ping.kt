@@ -119,7 +119,7 @@ object Ping {
             }
 
             if (deltaWeight > 0) {
-                pingSum.update { it + deltaPing * deltaWeight }
+                pingSum.update { it - deltaPing * deltaWeight }
                 weightSum.minusAssign(deltaWeight)
                 rebalanceHeaps()
             }
