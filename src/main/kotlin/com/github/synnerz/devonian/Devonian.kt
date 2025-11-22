@@ -117,6 +117,7 @@ object Devonian : ClientModInitializer {
         BoxIcedMobs,
         BlazeSolver,
         DisableVanillaArmor,
+        AccurateAbsorption,
     )
 
     override fun onInitializeClient() {

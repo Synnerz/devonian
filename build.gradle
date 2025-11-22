@@ -86,3 +86,7 @@ publishing {
 
 	repositories {}
 }
+
+loom {
+    accessWidenerPath = file("src/main/resources/devonian.accesswidener")
+}

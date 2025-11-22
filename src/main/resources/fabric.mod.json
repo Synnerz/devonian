@@ -21,6 +21,7 @@
 		]
 	},
 	"mixins": ["devonian.mixins.json"],
+	"accessWidener": "devonian.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.17.3",
 		"minecraft": "~1.21.5",
