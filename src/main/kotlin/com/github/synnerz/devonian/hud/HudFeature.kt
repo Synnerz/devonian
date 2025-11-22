@@ -56,11 +56,10 @@ abstract class HudFeature(
     }
 
     open fun onMouseDrag(dx: Double, dy: Double) {
-        val MARGIN = 10
-        val bounds = getBounds()
+        val MARGIN = 2.0
         val window = Devonian.minecraft.window
-        x = (x + dx).coerceIn(-bounds.w + MARGIN..window.width / window.guiScale - MARGIN)
-        y = (y + dy).coerceIn(-bounds.h + MARGIN..window.height / window.guiScale - MARGIN)
+        x = (x + dx).coerceIn(MARGIN .. window.guiScaledWidth - MARGIN)
+        y = (y + dy).coerceIn(MARGIN .. window.guiScaledHeight - MARGIN)
     }
 
     open fun onMouseClick(mx: Double, my: Double, mbtn: Int) {
@@ -68,20 +67,19 @@ abstract class HudFeature(
     }
 
     open fun onKeyPress(keyCode: Int) {
-        val INCREMENT = 5
-        val MARGIN = 10
-        var dx = 0
-        var dy = 0
+        val INCREMENT = 5.0
+        val MARGIN = 2.0
+        var dx = 0.0
+        var dy = 0.0
         when (keyCode) {
             GLFW.GLFW_KEY_LEFT -> dx = -INCREMENT
             GLFW.GLFW_KEY_RIGHT -> dx = INCREMENT
             GLFW.GLFW_KEY_UP -> dy = -INCREMENT
             GLFW.GLFW_KEY_DOWN -> dy = INCREMENT
         }
-        val bounds = getBounds()
         val window = Devonian.minecraft.window
-        x = (x + dx).coerceIn(-bounds.w + MARGIN..window.width / window.guiScale - MARGIN)
-        y = (y + dy).coerceIn(-bounds.h + MARGIN..window.height / window.guiScale - MARGIN)
+        x = (x + dx).coerceIn(MARGIN .. window.guiScaledWidth - MARGIN)
+        y = (y + dy).coerceIn(MARGIN .. window.guiScaledHeight - MARGIN)
     }
 
     abstract fun drawImpl(ctx: GuiGraphics)

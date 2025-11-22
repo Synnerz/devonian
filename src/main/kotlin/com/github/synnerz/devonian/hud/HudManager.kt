@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
+import kotlin.math.min
 
 object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     private var selectedHud: HudFeature? = null
@@ -48,7 +49,8 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
 
     private fun updateSelected() {
         if (mouseDown) return
-        selectedHud = huds.find { it.inBounds(lastMouseX, lastMouseY) }
+        selectedHud = huds.filter { it.inBounds(lastMouseX, lastMouseY) }
+            .minByOrNull { it.getBounds().let { min(it.w, it.h) } }
     }
 
     override fun mouseMoved(mouseX: Double, mouseY: Double) {
