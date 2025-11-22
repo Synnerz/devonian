@@ -16,14 +16,20 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "<-", true).apply {
             setColor(ColorPalette.TEXT_COLOR)
         })
-        onMouseRelease { currentPage-- }
+        onMouseRelease {
+            if (it.button != 0) return@onMouseRelease
+            currentPage--
+        }
     }
     private val rightArrow = UIRect(88.0, 90.0, 10.0, 8.0, parent = rightPanel).apply {
         setColor(ColorPalette.TERTIARY_COLOR)
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "->", true).apply {
             setColor(ColorPalette.TEXT_COLOR)
         })
-        onMouseRelease { currentPage++ }
+        onMouseRelease {
+            if (it.button != 0) return@onMouseRelease
+            currentPage++
+        }
     }
     private var categoryButton: UIRect
     private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, categoryName, true).apply {
