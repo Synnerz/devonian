@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.WorldComponentPosition
+import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.ChatEvent
@@ -46,6 +47,12 @@ object BoxDoors : Feature(
         "renderNormalDoors",
         "Highlights normal doorways not only the wither/blood ones",
         "Highlight Normal Doors",
+        true
+    )
+    private val SETTING_HIDE_NORMAL_DOOR_GREEN = addSwitch(
+        "hideNormalDoorGreen",
+        "Don't box normal doors when the room it leads to already has a green checkmark",
+        "Hide Useless Doors",
         true
     )
     private val SETTING_DOOR_NORMAL_WIRE_COLOR = addColorPicker(
@@ -146,6 +153,10 @@ object BoxDoors : Feature(
                 val room = DungeonScanner.currentRoom ?: return@on
                 room.doors.forEach {
                     if (it.type != DoorTypes.NORMAL && it.type != DoorTypes.ENTRANCE) return@forEach
+                    if (
+                        SETTING_HIDE_NORMAL_DOOR_GREEN.get() &&
+                        it.rooms.any { it !== room && it.checkmark == CheckmarkTypes.GREEN }
+                    ) return@on
 
                     drawDoor(
                         it.comp,
