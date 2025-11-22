@@ -24,7 +24,7 @@ import kotlin.math.sin
 object DungeonMap : HudFeature(
     "dungeonMap",
     "Dungeon Map",
-    "Dungeons",
+    "Dungeon Map",
     "catacombs"
 ) {
     private val SETTING_RENDER_NAMES = addSwitch(
