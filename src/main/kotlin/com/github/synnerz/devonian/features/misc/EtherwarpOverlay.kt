@@ -114,7 +114,7 @@ object EtherwarpOverlay : Feature(
             } else {
                 val playerAccessor = player as LocalPlayerAccessor
                 px = playerAccessor.lastXClient
-                py = playerAccessor.lastYClient + if (player.isSteppingCarefully) 1.54f else 1.64f
+                py = playerAccessor.lastYClient + if (player.isShiftKeyDown) 1.54f else 1.62f
                 pz = playerAccessor.lastZClient
                 lookVec = player.calculateViewVector(playerAccessor.lastPitchClient, playerAccessor.lastYawClient)
             }
