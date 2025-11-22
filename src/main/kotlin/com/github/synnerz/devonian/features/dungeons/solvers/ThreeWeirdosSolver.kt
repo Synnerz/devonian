@@ -13,7 +13,8 @@ import kotlin.math.round
 object ThreeWeirdosSolver : Feature(
     "threeWeirdosSolver",
     "Highlights the correct chest in the three weirdos puzzle room as well as changing the color of the text in chat",
-    "Dungeons"
+    "Dungeons",
+    "catacombs"
 ) {
     private val npcRegex = "^\\[NPC] (\\w+): (.*)".toRegex()
     private val completedRegex = "^PUZZLE SOLVED! \\w+ wasn't fooled by \\w+! Good job!$".toRegex()

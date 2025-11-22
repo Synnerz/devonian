@@ -12,7 +12,8 @@ import java.awt.Color
 object BoulderSolver : Feature(
     "boulderSolver",
     "Highlights the blocks you should click to successfully solve the Boulder puzzle",
-    "Dungeons"
+    "Dungeons",
+    "catacombs"
 ) {
     private val OUTLINE_COLOR = Color(0, 255, 255, 255)
     private val FILLED_COLOR = Color(0, 255, 255, 80)
