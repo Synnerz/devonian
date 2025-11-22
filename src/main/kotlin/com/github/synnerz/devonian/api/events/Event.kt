@@ -287,3 +287,8 @@ class PacketNameChangeEvent(
     val nameText: Component,
     val name: String
 ) : Event()
+
+class ActionbarEvent(
+    val message: String,
+    val text: Component
+) : Event()

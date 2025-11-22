@@ -114,10 +114,13 @@ object EventBus {
                     return@on
                 }
                 is ClientboundSystemChatPacket -> {
-                    if (packet.overlay) return@on
-
                     val content = packet.content ?: return@on
                     val message = content.string.clearCodes()
+
+                    if (packet.overlay) {
+                        ActionbarEvent(message, content).post()
+                        return@on
+                    }
 
                     val specialized = ChatChannelEvent.from(message, content)
                     val b1 = ChatEvent(message, content).post()
@@ -136,6 +139,12 @@ object EventBus {
                     val data = packet.packedItems
                     val text = getNameFromData(data)
                     if (text != null) PacketNameChangeEvent(id, type, text, text.string).post()
+                }
+                is ClientboundSetActionBarTextPacket -> {
+                    val text = packet.text ?: return@on
+                    val message = text.string.clearCodes()
+
+                    ActionbarEvent(message, text).post()
                 }
             }
         }
