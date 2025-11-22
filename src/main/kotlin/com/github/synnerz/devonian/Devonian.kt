@@ -111,6 +111,7 @@ object Devonian : ClientModInitializer {
         DisableSuffocatingOverlay,
         BoulderSolver,
         ThreeWeirdosSolver,
+        PingDisplay,
     )
 
     override fun onInitializeClient() {
