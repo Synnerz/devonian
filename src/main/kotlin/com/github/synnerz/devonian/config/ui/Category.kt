@@ -58,6 +58,15 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         hide()
     }
 
+    fun onMouseScroll(delta: Int) {
+        if (delta == -1) {
+            currentPage++
+            return
+        }
+
+        currentPage--
+    }
+
     fun addSwitch(
         name: String,
         description: String,

@@ -43,6 +43,9 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         createCategories()
         selectedCategory = categories.first()
         selectedCategory.unhide()
+        background.onMouseScroll {
+            selectedCategory.onMouseScroll(it.delta)
+        }
     }
 
     private fun createCategories() {
