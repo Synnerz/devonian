@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.WorldComponentPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.ChatEvent
@@ -41,7 +42,7 @@ object BoxDoors : Feature(
         "Unlocked Door Fill Color",
         Color(0, 255, 0, 64).rgb
     )
-    private val settingRenderNormalDoors = addSwitch(
+    private val SETTING_RENDER_NORMAL_DOORS = addSwitch(
         "renderNormalDoors",
         "Highlights normal doorways not only the wither/blood ones",
         "Highlight Normal Doors",
@@ -112,64 +113,64 @@ object BoxDoors : Feature(
         on<RenderWorldEvent> {
             DungeonScanner.doors.forEach {
                 if (it == null) return@forEach
-                val type = when (it.type) {
+                val hasKey = when (it.type) {
                     DoorTypes.NORMAL,
                     DoorTypes.ENTRANCE
                         -> {
-                        if (it.rooms.any { it.type == RoomTypes.FAIRY && !it.explored }) {
-                            if (witherKeys.value > 0) 1 else 2
-                        } else {
-                            if (!settingRenderNormalDoors.get()) return@forEach
-                            0
-                        }
+                        if (it.rooms.any { it.type == RoomTypes.FAIRY && !it.explored }) witherKeys.value > 0
+                        else return@forEach
                     }
 
-                    DoorTypes.WITHER -> if (witherKeys.value > 0) 1 else 2
-                    DoorTypes.BLOOD -> if (bloodKey.value) 1 else 2
+                    DoorTypes.WITHER -> witherKeys.value > 0
+                    DoorTypes.BLOOD -> bloodKey.value
                 }
 
-                if (type > 0 && it.opened && !it.holyShitFairyDoorPleaseStopFlashingSobs) return@forEach
+                if (it.opened && !it.holyShitFairyDoorPleaseStopFlashingSobs) return@forEach
 
                 if (!SETTING_RENDER_HIDDEN_DOORS.get() && it.rooms.all { !it.explored }) return@forEach
 
                 val colorWire: Color
                 val colorFill: Color
-                when (type) {
-                    0 -> {
-                        colorWire = SETTING_DOOR_NORMAL_WIRE_COLOR.getColor()
-                        colorFill = SETTING_DOOR_NORMAL_FILL_COLOR.getColor()
-                    }
-
-                    1 -> {
-                        colorWire = SETTING_DOOR_KEY_WIRE_COLOR.getColor()
-                        colorFill = SETTING_DOOR_KEY_FILL_COLOR.getColor()
-                    }
-
-                    2 -> {
-                        colorWire = SETTING_DOOR_LOCKED_WIRE_COLOR.getColor()
-                        colorFill = SETTING_DOOR_LOCKED_FILL_COLOR.getColor()
-                    }
-
-                    else -> return@forEach
+                if (hasKey) {
+                    colorWire = SETTING_DOOR_KEY_WIRE_COLOR.getColor()
+                    colorFill = SETTING_DOOR_KEY_FILL_COLOR.getColor()
+                } else {
+                    colorWire = SETTING_DOOR_LOCKED_WIRE_COLOR.getColor()
+                    colorFill = SETTING_DOOR_LOCKED_FILL_COLOR.getColor()
                 }
 
-                val comp = it.comp
+                drawDoor(it.comp, colorWire, colorFill)
+            }
 
-                Context.Immediate?.renderBox(
-                    comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,
-                    3.0, 4.0,
-                    colorWire,
-                    true, true,
-                    SETTING_DOOR_LINE_WIDTH.get()
-                )
-                Context.Immediate?.renderFilledBox(
-                    comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,
-                    3.0, 4.0,
-                    colorFill,
-                    false, true
-                )
+            if (SETTING_RENDER_NORMAL_DOORS.get()) {
+                val room = DungeonScanner.currentRoom ?: return@on
+                room.doors.forEach {
+                    if (it.type != DoorTypes.NORMAL && it.type != DoorTypes.ENTRANCE) return@forEach
+
+                    drawDoor(
+                        it.comp,
+                        SETTING_DOOR_NORMAL_WIRE_COLOR.getColor(),
+                        SETTING_DOOR_NORMAL_FILL_COLOR.getColor()
+                    )
+                }
             }
         }
+    }
+
+    private fun drawDoor(comp: WorldComponentPosition, wire: Color, fill: Color) {
+        Context.Immediate?.renderBox(
+            comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,
+            3.0, 4.0,
+            wire,
+            true, true,
+            SETTING_DOOR_LINE_WIDTH.get()
+        )
+        Context.Immediate?.renderFilledBox(
+            comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,
+            3.0, 4.0,
+            fill,
+            false, true
+        )
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
