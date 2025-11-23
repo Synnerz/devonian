@@ -13,7 +13,7 @@ object HideNoStarTag : Feature(
     "catacombs"
 ) {
     private val exceptions = listOf("Blaze", "King Midas")
-    private val noStarTagRegex = "^(?:\\[Lv\\d+] )?[༕☠♃⛏✰\uD83E\uDDB4⚙]* ?[A-Za-z ]+ [\\dkM.,/]+❤$".toRegex()
+    private val noStarTagRegex = "^(?:\\[Lv\\d+] )?\\S* ?[A-Za-z ]+ [\\dkM.,/]+❤$".toRegex()
 
     override fun initialize() {
         on<PacketNameChangeEvent> { event ->
