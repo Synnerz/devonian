@@ -27,6 +27,8 @@ object ChangeCrouchHeight : Feature("changeCrouchHeight", "All changes are visua
         }
     }
 
+    private var wasCrouching = false
+
     fun tick(camera: Camera): Boolean {
         if (camera !is CameraAccessor) return false
 
@@ -34,13 +36,15 @@ object ChangeCrouchHeight : Feature("changeCrouchHeight", "All changes are visua
         if (camera.entity !== minecraft.player) return false
 
         val eye = if (SETTING_USE_189_HEIGHT.get()) getEyeHeight() else camera.entity.eyeHeight
-        if (SETTING_INSTANT_CROUCH.get()) {
+        val isCrouching = camera.entity.pose == Pose.CROUCHING
+        if (SETTING_INSTANT_CROUCH.get() && (isCrouching || wasCrouching)) {
             camera.eyeHeightOld = eye
             camera.eyeHeight = eye
         } else {
             camera.eyeHeightOld = camera.eyeHeight
             camera.eyeHeight += (eye - camera.eyeHeight) * 0.5f
         }
+        wasCrouching = isCrouching
         return true
     }
 }
