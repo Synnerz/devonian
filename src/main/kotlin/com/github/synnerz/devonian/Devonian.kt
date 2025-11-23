@@ -120,6 +120,7 @@ object Devonian : ClientModInitializer {
         AccurateAbsorption,
         ChangeCrouchHeight,
         DisableFog,
+        KeyPickup,
     )
 
     override fun onInitializeClient() {
