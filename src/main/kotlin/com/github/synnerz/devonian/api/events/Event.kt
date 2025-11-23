@@ -15,6 +15,7 @@ import net.minecraft.network.protocol.Packet
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.inventory.Slot
@@ -291,4 +292,10 @@ class PacketNameChangeEvent(
 class ActionbarEvent(
     val message: String,
     val text: Component
+) : Event()
+
+class PacketEquipmentEvent(
+    val entityId: Int,
+    val type: EntityType<*>,
+    val slots: List<Pair<EquipmentSlot, ItemStack>>
 ) : Event()

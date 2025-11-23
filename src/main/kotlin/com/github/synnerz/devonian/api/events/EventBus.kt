@@ -146,6 +146,15 @@ object EventBus {
 
                     ActionbarEvent(message, text).post()
                 }
+                is ClientboundSetEquipmentPacket -> {
+                    val id = packet.entity
+                    val type = entityTypes[id] ?: return@on
+                    PacketEquipmentEvent(
+                        id,
+                        type,
+                        packet.slots.map { Pair(it.first, it.second) }
+                    ).post()
+                }
             }
         }
 
