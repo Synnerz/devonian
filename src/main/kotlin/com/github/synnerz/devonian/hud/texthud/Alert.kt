@@ -21,27 +21,28 @@ object Alert : SimpleTextHud("internal_devonian_alert") {
 
             val window = mc.window
             val bb = BoundingBox(
-                window.guiScaledWidth * 0.125,
-                window.guiScaledHeight * 0.125,
-                window.guiScaledWidth * 0.75,
-                window.guiScaledHeight * 0.75
+                window.guiScaledWidth * 0.2,
+                window.guiScaledHeight * 0.2,
+                window.guiScaledWidth * 0.6,
+                window.guiScaledHeight * 0.6
             )
 
-            val str = "&c$text"
+            val lines = text.split('\n').map { "&c$it" }
 
             val font = fontMainBase.deriveFont(Font.PLAIN, MC_FONT_SIZE)
             val g = bimg.createGraphics()
             g.font = font
-            val line = StringParser.processString(str, shadow, g, font, font, font, MC_FONT_SIZE)
+            val line = StringParser.processString(lines[0], shadow, g, font, font, font, MC_FONT_SIZE)
             val (f, pos) = BoundingBox(
                 0.0, 0.0,
-                line.visualWidth.toDouble(), (line.ascent + line.descent).toDouble()
+                line.visualWidth.toDouble(), (MC_FONT_SIZE * (lines.size - 1) + line.ascent + line.descent).toDouble()
             ).fitInside(bb)
 
             x = window.guiScaledWidth * 0.5
             y = window.guiScaledHeight * 0.5
             scale = f.toFloat()
-            setLine(str)
+            clearLines()
+            setLines(lines)
 
             clearTime = System.currentTimeMillis() + durationMs
             if (playSound) mc?.player?.playSound(soundEvent, 1f, 1f)
