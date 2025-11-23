@@ -12,6 +12,7 @@
     "EffectsInInventoryMixin",
     "EntityRenderDispatcherMixin",
     "FallingBlockRendererMixin",
+    "FogRendererMixin",
     "GameRendererMixin",
     "GuiMixin",
     "InventoryMenuMixin",

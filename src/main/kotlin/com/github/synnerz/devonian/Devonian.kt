@@ -119,6 +119,7 @@ object Devonian : ClientModInitializer {
         DisableVanillaArmor,
         AccurateAbsorption,
         ChangeCrouchHeight,
+        DisableFog,
     )
 
     override fun onInitializeClient() {
