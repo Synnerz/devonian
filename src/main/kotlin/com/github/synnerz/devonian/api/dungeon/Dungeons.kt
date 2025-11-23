@@ -9,6 +9,8 @@ import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.monster.Zombie
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -31,6 +33,7 @@ object Dungeons {
     private val puzzlesCountRegex = "^Puzzles: \\((\\d+)\\)$".toRegex()
 
     val players = linkedMapOf<String, DungeonPlayer>()
+    val playerClasses = ConcurrentHashMap<String, DungeonClass>()
     private var needReset = true
 
     var floor = FloorType.None
@@ -193,6 +196,7 @@ object Dungeons {
             val (name, role) = match
 
             val player = players.getOrPut(name) {
+                playerClasses[name] = DungeonClass.Unknown
                 DungeonPlayer(
                     name,
                     DungeonClass.Unknown,
@@ -204,7 +208,9 @@ object Dungeons {
             if (role == "DEAD") player.isDead = true
             else {
                 player.isDead = false
-                player.role = DungeonClass.from(role)
+                val c = DungeonClass.from(role)
+                player.role = c
+                playerClasses[name] = c
 
                 val level = match.getOrNull(2)
                 if (level != null) player.classLevel = StringUtils.parseRoman(level)
@@ -233,6 +239,7 @@ object Dungeons {
             if (area == null || area != "Catacombs") {
                 if (!needReset) return@on
                 players.clear()
+                playerClasses.clear()
                 DungeonScanner.reset()
                 DungeonMapScanner.reset()
                 reset()
@@ -242,6 +249,7 @@ object Dungeons {
 
         EventBus.on<WorldChangeEvent> {
             players.clear()
+            playerClasses.clear()
             DungeonScanner.reset()
             DungeonMapScanner.reset()
             reset()
