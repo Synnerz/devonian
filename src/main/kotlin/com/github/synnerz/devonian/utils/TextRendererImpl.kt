@@ -31,8 +31,7 @@ object TextRendererImpl {
             val x = when (param.align) {
                 TextHud.Align.Left -> 0f
                 TextHud.Align.Right -> param.lineVW - v.visualWidth
-                TextHud.Align.Center,
-                TextHud.Align.CenterIgnoreAnchor
+                TextHud.Align.Center
                     -> (param.lineVW - v.visualWidth) * 0.5f
             }
             if (param.backdrop == TextHud.Backdrop.Line) {

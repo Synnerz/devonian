@@ -57,8 +57,8 @@ object Alert : SimpleTextHud("internal_devonian_alert") {
             else draw(event.ctx)
         }
 
-        anchor = Anchor.SW
-        align = Align.CenterIgnoreAnchor
+        anchor = Anchor.Center
+        align = Align.Center
         shadow = true
         backdrop = Backdrop.None
     }

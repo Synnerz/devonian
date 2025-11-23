@@ -301,8 +301,8 @@ object DungeonMap : HudFeature(
                 it.x = 0.0
                 it.y = -10.0
                 it.scale = 1f
-                it.anchor = TextHud.Anchor.SW
-                it.align = TextHud.Align.CenterIgnoreAnchor
+                it.anchor = TextHud.Anchor.Center
+                it.align = TextHud.Align.Center
                 it.shadow = true
                 it.backdrop = TextHud.Backdrop.None
             }

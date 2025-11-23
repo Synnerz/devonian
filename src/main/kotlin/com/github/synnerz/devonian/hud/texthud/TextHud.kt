@@ -57,14 +57,15 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
 
     override fun getBounds(): BoundingBox =
         BoundingBox(
-            if (align == Align.CenterIgnoreAnchor) x - getWidth() * 0.5
-            else when (anchor) {
+            when (anchor) {
                 Anchor.NW, Anchor.SW -> x
                 Anchor.NE, Anchor.SE -> x - getWidth()
+                Anchor.Center -> x - getWidth() * 0.5
             },
             when (anchor) {
                 Anchor.NW, Anchor.NE -> y
                 Anchor.SW, Anchor.SE -> y - getHeight()
+                Anchor.Center -> y - getHeight() * 0.5
             },
             getWidth(),
             getHeight()
@@ -217,13 +218,15 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
 
     enum class Anchor {
         NW, NE,
-        SW, SE;
+        SW, SE,
+        Center;
 
         fun cycle() = when (this) {
             NW -> NE
             NE -> SW
             SW -> SE
-            SE -> NW
+            SE -> Center
+            Center -> NW
         }
 
         companion object {
@@ -232,13 +235,12 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
     }
 
     enum class Align {
-        Left, Right, Center, CenterIgnoreAnchor;
+        Left, Right, Center;
 
         fun cycle() = when (this) {
             Left -> Right
             Right -> Center
-            Center -> CenterIgnoreAnchor
-            CenterIgnoreAnchor -> Left
+            Center -> Left
         }
 
         companion object {
