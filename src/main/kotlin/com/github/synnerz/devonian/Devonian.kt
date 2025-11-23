@@ -118,6 +118,7 @@ object Devonian : ClientModInitializer {
         BlazeSolver,
         DisableVanillaArmor,
         AccurateAbsorption,
+        ChangeCrouchHeight,
     )
 
     override fun onInitializeClient() {
