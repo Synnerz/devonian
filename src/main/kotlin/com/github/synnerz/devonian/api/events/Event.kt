@@ -297,5 +297,5 @@ class ActionbarEvent(
 class PacketEquipmentEvent(
     val entityId: Int,
     val type: EntityType<*>,
-    val slots: List<Pair<EquipmentSlot, ItemStack>>
+    val slots: List<Pair<EquipmentSlot, ItemStack?>>
 ) : Event()
