@@ -44,6 +44,8 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         selectedCategory = categories.first()
         selectedCategory.unhide()
         background.onMouseScroll {
+            if (!selectedCategory.canTrigger())
+                selectedCategory.hideColorPickers()
             selectedCategory.onMouseScroll(it.delta)
         }
     }
@@ -89,5 +91,10 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
 
     override fun isPauseScreen(): Boolean {
         return false
+    }
+
+    override fun onClose() {
+        selectedCategory.hideColorPickers()
+        super.onClose()
     }
 }

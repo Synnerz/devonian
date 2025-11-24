@@ -2,10 +2,14 @@ package com.github.synnerz.devonian.config.ui
 
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.effects.OutlineEffect
+import com.github.synnerz.talium.events.UIClickEvent
+import com.github.synnerz.talium.events.UIFocusEvent
+import com.github.synnerz.talium.events.UIKeyType
 
 open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase) {
     private val configs = mutableListOf<CategoryData<*>>()
     private val components = mutableListOf<UIRect>()
+    private val colorComponents = mutableListOf<UIColorPicker>()
     private var currentPage = 0
         set(value) {
             field = value.coerceIn(0, components.size / 5)
@@ -17,6 +21,7 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
             setColor(ColorPalette.TEXT_COLOR)
         })
         onMouseRelease {
+            if (!canTrigger()) return@onMouseRelease
             if (it.button != 0) return@onMouseRelease
             currentPage--
         }
@@ -27,6 +32,7 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
             setColor(ColorPalette.TEXT_COLOR)
         })
         onMouseRelease {
+            if (!canTrigger()) return@onMouseRelease
             if (it.button != 0) return@onMouseRelease
             currentPage++
         }
@@ -56,6 +62,19 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
             addChild(categoryTitle)
         }
         hide()
+    }
+
+    // shit workaround to prevent the player from opening
+    // other things while changing the color of the
+    // color gradient
+    fun canTrigger(): Boolean {
+        return !colorComponents.any { it.arrowToggle }
+    }
+
+    fun hideColorPickers() {
+        for (comp in colorComponents)
+            if (comp.arrowToggle)
+                comp.hideDropdown()
     }
 
     fun onMouseScroll(delta: Int) {
@@ -191,7 +210,7 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
                         ConfigType.BUTTON -> createButton(data.configData as ConfigData.Button)
                         ConfigType.TEXTINPUT -> createTextInput(data.configData as ConfigData.TextInput)
                         ConfigType.SELECTION -> createSelection(data.configData as ConfigData.Selection)
-                        ConfigType.COLORPICKER -> createColorPicker(data.configData as ConfigData.ColorPicker)
+                        ConfigType.COLORPICKER -> createColorPicker(data.configData as ConfigData.ColorPicker, this@apply)
                     }
                 )
                 hide()
@@ -240,12 +259,18 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
             setColor(ColorPalette.TEXT_COLOR)
         })
         onMouseRelease {
+            if (!canTrigger()) return@onMouseRelease
             configData.onClick()
         }
     }
 
     private fun createSwitch(configData: ConfigData.Switch, parent: UIRect? = null): UISwitch {
-        return UISwitch(80.0, 25.0, 15.0, 50.0, configData.get(), parent = parent).apply {
+        return object : UISwitch(80.0, 25.0, 15.0, 50.0, configData.get(), parent = parent) {
+            override fun onMouseRelease(event: UIClickEvent) = apply {
+                if (!canTrigger()) return@apply
+                super.onMouseRelease(event)
+            }
+        }.apply {
             setColor(ColorPalette.TERTIARY_COLOR)
             knob = UIKnobSwitch(85.0)
             knob.enabledColor = ColorPalette.ENABLED_COLOR
@@ -263,11 +288,13 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         parent: UIRect? = null
     ): UISlider = object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
         override fun setCurrentX(x: Double) {
+            if (!canTrigger()) return
             super.setCurrentX(x)
             configData.set(this.value)
         }
 
         override fun setCurrentValue(value: Double) {
+            if (!canTrigger()) return
             super.setCurrentValue(value)
             configData.set(this.value)
         }
@@ -281,7 +308,20 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
     private fun createTextInput(
         configData: ConfigData.TextInput,
         parent: UIRect? = null
-    ): UITextInput = UITextInput(80.0, 25.0, 15.0, 50.0, configData.get(), parent = parent).apply {
+    ): UITextInput = object : UITextInput(80.0, 25.0, 15.0, 50.0, configData.get(), parent = parent) {
+        override fun onFocus(event: UIFocusEvent) = apply {
+            if (!canTrigger()) {
+                focused = false
+                return@apply
+            }
+            super.onFocus(event)
+        }
+
+        override fun onKeyType(event: UIKeyType) = apply {
+            if (!canTrigger()) return@apply
+            super.onKeyType(event)
+        }
+    }.apply {
         setColor(ColorPalette.TERTIARY_COLOR)
         onKeyType {
             configData.set(text)
@@ -296,6 +336,7 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         parent: UIRect? = null
     ): UISelection = object : UISelection(80.0, 25.0, 15.0, 50.0, configData.get(), configData.options, parent = parent) {
         override fun setOption(idx: Int) {
+            if (!canTrigger()) return
             super.setOption(idx)
             configData.set(value)
         }
@@ -307,9 +348,41 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         }
     }
 
-    // TODO: impl me
     private fun createColorPicker(
         configData: ConfigData.ColorPicker,
         parent: UIRect? = null
-    ): UIRect = UIRect(80.0, 25.0, 15.0, 50.0).apply { setColor(ColorPalette.TERTIARY_COLOR) }
+    ): UIColorPicker = object : UIColorPicker(80.0, 25.0, 15.0, 50.0, configData.get(), parent) {
+        init {
+            if (rightPanel.parent?.parent != null)
+                fakeChild.setChildOf(rightPanel.parent!!.parent!!)
+            fakeChild._height = 15.0
+            fakeChild._width = 15.0
+            huePicker.parent = fakeChild
+            gradientPicker.parent = fakeChild
+
+            colorComponents.add(this)
+        }
+
+        override fun onUpdate() = apply {
+            fakeChild._x = (x / (fakeChild.parent?.width ?: 1.0)) * 100
+            fakeChild._y = 5.0 + (y / (fakeChild.parent?.height ?: 1.0)) * 100
+            fakeChild.setDirty()
+        }
+
+        override fun setValue(hue: Double) {
+            super.setValue(hue)
+            configData.set(value)
+        }
+
+        override fun unhideDropdown() {
+            if (!canTrigger()) return
+            hideColorPickers()
+            super.unhideDropdown()
+        }
+    }.apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+        configData.onChange {
+            setRgb(configData.get())
+        }
+    }
 }
