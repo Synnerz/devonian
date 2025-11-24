@@ -31,6 +31,7 @@ object BlazeSolver : Feature(
     val blazes = mutableListOf<BlazeEntity>()
     var lastBlazes = 0
     var startedAt = 0L
+    var efficientPos: Triple<Int, Int, Int>? = null
 
     data class BlazeEntity(val entity: Entity, val maxHP: Int)
 
@@ -42,6 +43,13 @@ object BlazeSolver : Feature(
             val blockState = WorldUtils.getBlockState(platformPos.first, 118, platformPos.second) ?: return@on
             inBlaze = true
             hasPlatform = blockState.block == Blocks.COBBLESTONE
+
+            val rcomp = room.fromComp(10, 19) ?: return@on
+            efficientPos = Triple(
+                rcomp.first,
+                if (hasPlatform) 94 else 44,
+                rcomp.second
+            )
         }
 
         on<DungeonEvent.RoomLeave> {
@@ -51,6 +59,7 @@ object BlazeSolver : Feature(
             hasPlatform = false
             startedAt = 0L
             lastBlazes = 0
+            efficientPos = null
         }
 
         on<TickEvent> {
@@ -75,6 +84,7 @@ object BlazeSolver : Feature(
                 hasPlatform = false
                 startedAt = 0L
                 lastBlazes = 0
+                efficientPos = null
                 return@on
             }
 
@@ -97,6 +107,19 @@ object BlazeSolver : Feature(
         }
 
         on<RenderWorldEvent> {
+            if (efficientPos != null) {
+                Context.Immediate?.renderFilledBox(
+                    efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
+                    color = Color(0, 255, 0, 80),
+                    phase = true
+                )
+
+                Context.Immediate?.renderBox(
+                    efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
+                    color = Color.GREEN,
+                    phase = true
+                )
+            }
             // yes i could make this dynamic, but why ?
             // it is pointless if we only need 3 entries
             val blaze = blazes.getOrNull(0) ?: return@on
@@ -189,6 +212,7 @@ object BlazeSolver : Feature(
         hasPlatform = false
         startedAt = 0L
         lastBlazes = 0
+        efficientPos = null
         blazes.clear()
         entityList.clear()
     }
