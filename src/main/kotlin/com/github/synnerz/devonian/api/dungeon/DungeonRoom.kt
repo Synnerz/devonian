@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.ClearTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.ShapeTypes
 import net.minecraft.world.level.block.Blocks
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: Int) {
@@ -169,8 +170,8 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
      */
     fun fromPos(x: Int, z: Int): Pair<Int, Int>? {
         if (rotation == -1 || corner == WorldPosition.EMPTY) return null
-        val x1 = x - (corner.x + 0.5).roundToInt()
-        val z1 = z - (corner.z + 0.5).roundToInt()
+        val x1 = x - floor(corner.x + 0.5).toInt()
+        val z1 = z - floor(corner.z + 0.5).toInt()
 
         return rotatePos(x1, z1, rotation)
     }
