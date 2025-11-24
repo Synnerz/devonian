@@ -18,6 +18,7 @@ import net.minecraft.tags.FluidTags
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.SlabBlock
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -202,16 +203,20 @@ object DungeonScanner {
         }
 
         DevonianCommand.command.subcommand("getcomp") { _, _ ->
-            Devonian.minecraft.player ?: return@subcommand 0
-            val target = Devonian.minecraft.hitResult ?: return@subcommand 0
-            if (target.type != HitResult.Type.BLOCK) return@subcommand 0
-            val x = target.location.x.toInt()
-            val z = target.location.z.toInt()
+            val player = Devonian.minecraft.player ?: return@subcommand 0
+            val cast = player.pick(60.0, Devonian.minecraft.deltaTracker.getGameTimeDeltaPartialTick(false), false) ?: return@subcommand 0
+            if (cast.type != HitResult.Type.BLOCK) return@subcommand 0
+            val blockPos = (cast as BlockHitResult).blockPos ?: return@subcommand 0
+            val x = blockPos.x
+            val z = blockPos.z
             val comp = WorldPosition(x, z).toComponent()
             val room = rooms.getOrNull(comp.getRoomIdx()) ?: return@subcommand 0
             val relativeCoords = room.fromPos(x, z) ?: return@subcommand 0
 
-            ChatUtils.sendMessage("looking at component \"${relativeCoords.first}, ${target.location.y.toInt()}, ${relativeCoords.second}\" ${room.name} with rotation ${room.rotation}")
+            ChatUtils.sendMessage("Component[cx=\"${relativeCoords.first}\", cy=\"${blockPos.y}\", cz=\"${relativeCoords.second}\"" +
+                    ", wx=\"${blockPos.x}\" - \"$x\", wy=\"${blockPos.y}\", wz=\"${blockPos.z}\" - \"$z\"" +
+                    ", room=\"${room.name}\"" +
+                    ", rotation=\"${room.rotation}\"]")
             1
         }
 
