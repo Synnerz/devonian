@@ -170,7 +170,7 @@ object BlazeSolver : Feature(
         )
     }
 
-    private fun renderLine(
+    fun renderLine(
         pos1: Vec3,
         pos2: Vec3,
         colorStart: Color = Color.CYAN,
