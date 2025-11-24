@@ -87,12 +87,12 @@ object KeyPickup : Feature(
 
                 witherKeyRegex.matches(event.message) ->
                     witherKeyRegex.matchEntire(event.message).let {
-                        "${shortNameFor(it?.groupValues[1] ?: "")} Picked Up\n&0Wither Key"
+                        "${shortNameFor(it?.groupValues?.getOrNull(1) ?: "")} Picked Up\n&0Wither Key"
                     }
 
                 bloodKeyRegex.matches(event.message) ->
                     bloodKeyRegex.matchEntire(event.message).let {
-                        "${shortNameFor(it?.groupValues[1] ?: "")} Picked Up\n&cBlood Key"
+                        "${shortNameFor(it?.groupValues?.getOrNull(1) ?: "")} Picked Up\n&cBlood Key"
                     }
 
                 else -> null
