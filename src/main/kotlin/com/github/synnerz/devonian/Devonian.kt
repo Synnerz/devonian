@@ -15,6 +15,7 @@ import com.github.synnerz.devonian.features.diana.DianaDropTracker
 import com.github.synnerz.devonian.features.diana.DianaMobTracker
 import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
+import com.github.synnerz.devonian.features.dungeons.solvers.ArrowAlignSolver
 import com.github.synnerz.devonian.features.dungeons.solvers.BlazeSolver
 import com.github.synnerz.devonian.features.dungeons.solvers.BoulderSolver
 import com.github.synnerz.devonian.features.dungeons.solvers.CreeperBeamsSolver
@@ -125,6 +126,7 @@ object Devonian : ClientModInitializer {
         KeyPickup,
         CreeperBeamsSolver,
         SimonSaysSolver,
+        ArrowAlignSolver,
     )
 
     override fun onInitializeClient() {
