@@ -90,7 +90,7 @@ open class ConfigData<T>(
 
         override fun set(newVal: Int) {
             super.set(newVal)
-            color = Color(newVal)
+            color = Color(newVal, true)
         }
     }
 }
