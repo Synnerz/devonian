@@ -22,7 +22,7 @@ object CurrentRoomCleared : Feature(
         "Only Show For Blood Rush",
         false
     )
-    private val SETTING_ALERT_TIME = addSlider(
+    private val SETTING_ALERT_TIME = addDecimalSlider(
         "alertTime",
         "time in seconds",
         "Alert Time",
