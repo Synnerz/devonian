@@ -19,18 +19,18 @@ object InventoryHistoryLog : TextHudFeature(
 ) {
     private val SETTING_ITEM_DISPLAY_TIME = addSlider(
         "itemDisplayTime",
-        "Duration (in ticks, so ÷20 for seconds) for entries to stay",
+        "Duration (in seconds) for entries to stay",
         "Item Display Time",
-        0.0, 200.0,
-        80.0
+        0.0, 30.0,
+        4.0
     )
 
     data class ItemizedDifference(val name: String, var quantity: Int) {
-        var ttl = SETTING_ITEM_DISPLAY_TIME.get().toInt()
+        var ttl = (SETTING_ITEM_DISPLAY_TIME.get() * 20.0).toInt()
 
         fun add(q: Int) {
             quantity += q
-            ttl = SETTING_ITEM_DISPLAY_TIME.get().toInt()
+            ttl = (SETTING_ITEM_DISPLAY_TIME.get() * 20.0).toInt()
         }
 
         override fun toString(): String = "${if (quantity < 0) "&c-" else "&a+"}${"%,d".format(abs(quantity))}x&r $name"
