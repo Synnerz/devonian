@@ -168,9 +168,11 @@ object DungeonScanner {
 
             if (jdx !in 0..35) return@on
 
+            currentRoom = rooms.getOrNull(jdx)
+            currentRoom?.explored = true
+
             if (lastIdx == jdx) return@on
             lastIdx = jdx
-            currentRoom = rooms.getOrNull(jdx)
             if (currentRoom != null)
                 DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
             // TODO: remove whenever done debugging
@@ -273,6 +275,7 @@ object DungeonScanner {
         }
 
         room1.update()
+        if (room2.explored) room1.explored = true
 
         room2.doors.forEach { it.rooms.remove(room2) }
     }
