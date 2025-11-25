@@ -9,12 +9,14 @@ import net.minecraft.world.entity.Entity
 import java.util.concurrent.PriorityBlockingQueue
 
 object Scheduler {
-    private val tasks = PriorityBlockingQueue<Task>(10, Comparator.comparingInt { it.delay })
+    private val taskComp = compareBy<Task>({ it.delay }, { it.id })
+    private val tasks = PriorityBlockingQueue<Task>(10, taskComp)
     private var tick = atomic(0)
-    private val tasksServer = PriorityBlockingQueue<Task>(10, Comparator.comparingInt { it.delay })
+    private val tasksServer = PriorityBlockingQueue<Task>(10, taskComp)
     private var tickServer = atomic(0)
+    private var taskId = atomic(0)
 
-    data class Task(var delay: Int, val cb: () -> Unit)
+    data class Task(var delay: Int, val cb: () -> Unit, val id: Int)
 
     init {
         ClientTickEvents.START_CLIENT_TICK.register {
@@ -35,26 +37,11 @@ object Scheduler {
 
     @JvmOverloads
     fun scheduleTask(delay: Int = 1, cb: () -> Unit) {
-        tasks.add(Task(tick.value + delay, cb))
-    }
-
-    @JvmOverloads
-    fun scheduleStandName(entity: Entity, cb: () -> Unit, depth: Int = 0) {
-        // TODO: this entire method shouldn't even be needed
-        //  just listen for the name change packet.
-        if (depth > 10) return
-        scheduleTask(2) {
-            if (entity.name.string !== "Armor Stand") {
-                cb()
-                return@scheduleTask
-            }
-
-            scheduleStandName(entity, cb, depth + 1)
-        }
+        tasks.add(Task(tick.value + delay, cb, taskId.incrementAndGet()))
     }
 
     @JvmOverloads
     fun scheduleServerTask(delay: Int = 1, cb: () -> Unit) {
-        tasksServer.add(Task(tickServer.value + delay, cb))
+        tasksServer.add(Task(tickServer.value + delay, cb, taskId.incrementAndGet()))
     }
 }

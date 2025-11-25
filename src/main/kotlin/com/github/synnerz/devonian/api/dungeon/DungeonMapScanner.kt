@@ -256,7 +256,6 @@ object DungeonMapScanner {
 
     init {
         EventBus.on<PacketReceivedEvent> { event ->
-            if (Location.area != "catacombs") return@on
             val packet = event.packet
             if (packet !is ClientboundMapItemDataPacket) return@on
             val mapId = packet.mapId
@@ -276,6 +275,6 @@ object DungeonMapScanner {
                     DungeonScanner.doors.toList()
                 )
             }
-        }
+        }.setEnabled(Location.stateInArea("catacombs"))
     }
 }

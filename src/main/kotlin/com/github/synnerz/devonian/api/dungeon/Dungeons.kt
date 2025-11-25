@@ -144,8 +144,6 @@ object Dungeons {
 
     init {
         EventBus.on<TabUpdateEvent> { event ->
-            if (Location.area != "catacombs") return@on
-
             event.matches(cryptsRegex)?.let {
                 crypts.value = it[0].toInt()
                 return@on
@@ -215,10 +213,9 @@ object Dungeons {
                 val level = match.getOrNull(2)
                 if (level != null) player.classLevel = StringUtils.parseRoman(level)
             }
-        }
+        }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<TickEvent> {
-            if (Location.area != "catacombs") return@on
             val mc = Devonian.minecraft
 
             // TODO: check when each player is being updated by the server
@@ -232,7 +229,7 @@ object Dungeons {
                 val player = players[it.name.string] ?: return@forEach
                 player.entity = it
             }
-        }
+        }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<AreaEvent> { event ->
             val area = event.area
@@ -278,8 +275,6 @@ object Dungeons {
         }
 
         EventBus.on<ChatChannelEvent.PartyChatEvent> { event ->
-            if (Location.area != "catacombs") return@on
-
             when (event.message) {
                 "Mimic Killed!",
                 "\$SKYTILS-DUNGEON-SCORE-MIMIC$"
@@ -288,11 +283,9 @@ object Dungeons {
                 "Prince Killed!"
                     -> princeKilled.value = true
             }
-        }
+        }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<ChatEvent> { event ->
-            if (Location.area != "catacombs") return@on
-
             if (event.message == "[NPC] Mort: Here, I found this map when I first entered the dungeon.") {
                 started.value = true
                 DungeonEvent.RunStarted().post()
@@ -317,7 +310,7 @@ object Dungeons {
             DungeonEvent.BossMessageEvent(boss, message).post()
             if (boss != DungeonBoss.Watcher) inBoss.value = true
             else if (message == "You have proven yourself. You may pass.") bloodCleared.value = true
-        }
+        }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<EntityDeathEvent> { event ->
             val entity = event.entity as LivingEntity
@@ -326,7 +319,7 @@ object Dungeons {
 
             mimicKilled.value = true
             DungeonEvent.MimicKilled().post()
-        }
+        }.setEnabled(Location.stateInArea("catacombs"))
     }
 
     private fun reset() {

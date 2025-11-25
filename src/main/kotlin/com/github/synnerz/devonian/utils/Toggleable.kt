@@ -10,13 +10,19 @@ abstract class Toggleable {
 
     fun register() = apply {
         if (isRegistered) return@apply
-        if (!isActuallyRegistered && (enabledState?.value ?: true)) add()
+        if (!isActuallyRegistered && (enabledState?.value ?: true)) {
+            add()
+            isActuallyRegistered = true
+        }
         isRegistered = true
     }
 
     fun unregister() = apply {
         if (!isRegistered) return@apply
-        if (isActuallyRegistered) remove()
+        if (isActuallyRegistered) {
+            remove()
+            isActuallyRegistered = false
+        }
         isRegistered = false
     }
 
@@ -30,9 +36,15 @@ abstract class Toggleable {
     private fun update(b: Boolean) {
         if (!isRegistered) return
         if (b) {
-            if (!isActuallyRegistered) add()
+            if (!isActuallyRegistered) {
+                add()
+                isActuallyRegistered = true
+            }
         } else {
-            if (isActuallyRegistered) remove()
+            if (isActuallyRegistered) {
+                remove()
+                isActuallyRegistered = false
+            }
         }
     }
 
@@ -40,5 +52,6 @@ abstract class Toggleable {
         if (enabledState != null) throw IllegalStateException("can only setEnabled once")
         enabledState = state
         enabledState?.listen(::update)
+        enabledState?.value?.let { update(it) }
     }
 }

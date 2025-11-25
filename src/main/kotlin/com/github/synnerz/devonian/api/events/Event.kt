@@ -26,14 +26,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 @Target(AnnotationTarget.CLASS)
 annotation class Threaded
 
-open class Event {
+abstract class Event {
     open fun post(): Boolean {
         EventBus.post(this)
         return false
     }
 }
 
-open class CancellableEvent : Event() {
+abstract class CancellableEvent : Event() {
     private var shouldCancel = false
 
     fun cancel() {
@@ -283,7 +283,8 @@ class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics) : CancellableEvent()
     val seed: Long
 ) : CancellableEvent()
 
-class PostClientInit(val minecraft: Minecraft) : Event()
+// while no, yes
+@Threaded class PostClientInit(val minecraft: Minecraft) : Event()
 
 @Threaded class NameChangeEvent(
     val entityId: Int,

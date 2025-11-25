@@ -208,13 +208,26 @@ object EventBus {
         return obj
     }
 
-    fun remove(T: KClass<*>, listener: EventListener<*>) = events[T]?.remove(listener)
+    private fun removeImpl(T: KClass<*>, listener: EventListener<*>) {
+        events[T]?.remove(listener)
+    }
 
-    fun add(T: KClass<*>, listener: EventListener<Event>) =
+    fun remove(T: KClass<*>, listener: EventListener<*>) {
+        if (T.hasAnnotation<Threaded>()) removeImpl(T, listener)
+        else Scheduler.scheduleTask { removeImpl(T, listener) }
+    }
+
+    private fun addImpl(T: KClass<*>, listener: EventListener<Event>) {
         events.getOrPut(T) {
             if (T.hasAnnotation<Threaded>()) CopyOnWriteArrayList()
             else ArrayList()
         }.add(listener)
+    }
+
+    fun add(T: KClass<*>, listener: EventListener<Event>) {
+        if (T.hasAnnotation<Threaded>()) addImpl(T, listener)
+        else Scheduler.scheduleTask { addImpl(T, listener) }
+    }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Event> post(event: T) {

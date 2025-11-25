@@ -150,7 +150,6 @@ object DungeonScanner {
         doors.fill(null)
 
         EventBus.on<TickEvent> {
-            if (Location.area != "catacombs") return@on
             if (Dungeons.inBoss.value) return@on
             val player = Devonian.minecraft.player ?: return@on
             if (!WorldUtils.isChunkLoaded(player.x, player.z)) return@on
@@ -176,7 +175,7 @@ object DungeonScanner {
                 DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
             // TODO: remove whenever done debugging
             ChatUtils.sendMessage("$currentRoom")
-        }
+        }.setEnabled(Location.stateInArea("catacombs"))
     }
 
     fun init() {
