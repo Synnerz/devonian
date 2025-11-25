@@ -1,11 +1,7 @@
 package com.github.synnerz.devonian.api.bufimgrenderer
 
 import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsAccessor
-import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.RenderPipeline
-import com.mojang.blaze3d.platform.DepthTestFunction
-import com.mojang.blaze3d.platform.DestFactor
-import com.mojang.blaze3d.platform.SourceFactor
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat.Mode
 import kotlinx.atomicfu.atomic
@@ -98,18 +94,7 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
         val pool = ThreadPoolExecutor(1, 2, 60, TimeUnit.SECONDS, LinkedBlockingQueue())
         val pipeline = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation("devonian/buffered_image_textured_triangle_strip")
-            .withCull(false)
             .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, Mode.TRIANGLE_STRIP)
-            .withDepthWrite(false)
-            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-            .withBlend(
-                BlendFunction(
-                    SourceFactor.SRC_ALPHA,
-                    DestFactor.ONE_MINUS_SRC_ALPHA,
-                    SourceFactor.ONE,
-                    DestFactor.ZERO
-                )
-            )
             .build()
     }
 }
