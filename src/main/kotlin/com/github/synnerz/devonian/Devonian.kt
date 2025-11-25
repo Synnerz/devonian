@@ -135,15 +135,5 @@ object Devonian : ClientModInitializer {
         Alert.initialize()
         Dungeons.initialize()
         DevonianCommand.initialize()
-
-        EventBus.on<AreaEvent> {
-            for (feat in features)
-                feat.onToggle(feat.isEnabled())
-        }
-
-        EventBus.on<SubAreaEvent> {
-            for (feat in features)
-                feat.onToggle(feat.isEnabled())
-        }
     }
 }

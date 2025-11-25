@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.events.PacketNameChangeEvent
+import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
@@ -16,7 +16,7 @@ object HideNoStarTag : Feature(
     private val noStarTagRegex = "^(?:\\[Lv\\d+] )?\\S* ?[A-Za-z ]+ [\\dkM.,/]+❤$".toRegex()
 
     override fun initialize() {
-        on<PacketNameChangeEvent> { event ->
+        on<NameChangeEvent> { event ->
             if (event.type !== EntityType.ARMOR_STAND) return@on
 
             val world = minecraft.level ?: return@on

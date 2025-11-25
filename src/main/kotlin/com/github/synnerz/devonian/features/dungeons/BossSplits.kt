@@ -25,7 +25,7 @@ object BossSplits : TextHudFeature(
             val currentFloor = if (floorNum == 7) "${floorType}${floorNum}" else "F${floorNum}"
 
             currentSplit = BossSplitTypes.byName(currentFloor)!!.ins
-            currentSplit!!.register()
+            currentSplit!!.event.register()
         }
 
         on<RenderOverlayEvent> { event ->
@@ -43,7 +43,7 @@ object BossSplits : TextHudFeature(
     override fun onWorldChange(event: WorldChangeEvent) {
         val split = currentSplit ?: return
         split.reset()
-        split.unregister()
+        split.event.unregister()
         currentSplit = null
     }
 }

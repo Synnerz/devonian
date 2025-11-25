@@ -26,10 +26,6 @@ class TimerSplit @JvmOverloads constructor(
         }
     }
 
-    fun register() = event.add()
-
-    fun unregister() = event.remove()
-
     fun reset() {
         for (child in children) {
             child.time = 0L

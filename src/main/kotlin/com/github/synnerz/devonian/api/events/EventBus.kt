@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api.events
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
@@ -17,12 +18,16 @@ import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EntityType
 import org.lwjgl.glfw.GLFW
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.jvm.optionals.getOrNull
+import kotlin.reflect.KClass
+import kotlin.reflect.full.hasAnnotation
 
 object EventBus {
     var totalTicks = 0
     private val teamRegex = "^team_(\\d+)$".toRegex()
-    val events = hashMapOf<String, MutableList<Any>>()
+    val events = ConcurrentHashMap<KClass<*>, MutableList<EventListener<Event>>>()
     private val entityTypes = mutableMapOf<Int, EntityType<*>>()
 
     init {
@@ -193,32 +198,31 @@ object EventBus {
         return (v as? Optional<*>)?.getOrNull() as? Component
     }
 
-    inline fun <reified T : Event> on(noinline cb: (T) -> Unit): EventListener {
+    inline fun <reified T : Event> on(noinline cb: (T) -> Unit): EventListener<T> {
         return on<T>(cb, true)
     }
 
-    inline fun <reified T : Event> on(noinline cb: (T) -> Unit, add: Boolean = true): EventListener {
-        if (add) events.getOrPut(T::class.java.name) { mutableListOf() }.add(cb)
-        return object : EventListener {
-            override fun remove() = remove<T>(cb)
-            override fun add() = events.getOrPut(T::class.java.name) { mutableListOf() }.add(cb)
-        }
+    inline fun <reified T : Event> on(noinline cb: (T) -> Unit, add: Boolean = true): EventListener<T> {
+        val obj = EventListener(cb, T::class)
+        if (add) obj.register()
+        return obj
     }
 
-    inline fun <reified T : Event> remove(noinline cb: (T) -> Unit) = events[T::class.java.name]?.remove(cb)
+    fun remove(T: KClass<*>, listener: EventListener<*>) = events[T]?.remove(listener)
+
+    fun add(T: KClass<*>, listener: EventListener<Event>) =
+        events.getOrPut(T) {
+            if (T.hasAnnotation<Threaded>()) CopyOnWriteArrayList()
+            else ArrayList()
+        }.add(listener)
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Event> post(event: T) {
-        val listeners = events[event::class.java.name] ?: return
+        val listeners = events[event::class] ?: return
         if (listeners.isEmpty()) return
 
-        for (cb in listeners.toList()) {
-            (cb as (T) -> Unit).invoke(event)
+        listeners.forEach { cb ->
+            cb.trigger(event)
         }
-    }
-
-    interface EventListener {
-        fun remove(): Boolean?
-        fun add(): Boolean
     }
 }

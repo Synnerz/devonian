@@ -39,6 +39,10 @@ object RunSplits : TextHudFeature(
         TimerSplitData("&bBoss Entry&f: &a$1", bossDialogs)
     )
 
+    init {
+        children.add(timerSplit.event)
+    }
+
     override fun initialize() {
         on<RenderOverlayEvent> { event ->
             setLines(timerSplit.str())
@@ -48,15 +52,7 @@ object RunSplits : TextHudFeature(
 
     override fun getEditText(): List<String> = timerSplit.defaultStr()
 
-    override fun onToggle(state: Boolean) {
-        super.onToggle(state)
-
-        if (isRegistered) timerSplit.register()
-        else timerSplit.unregister()
-    }
-
     override fun onWorldChange(event: WorldChangeEvent) {
         timerSplit.reset()
-        timerSplit.unregister()
     }
 }

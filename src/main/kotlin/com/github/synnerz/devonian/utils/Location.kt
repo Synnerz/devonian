@@ -11,6 +11,11 @@ object Location {
     val subAreaRegex = "^ (⏣|ф) .*".toRegex()
     var area: String? = null
     var subarea: String? = null
+    val stateArea = BasicState<String?>(null)
+    val stateSubarea = BasicState<String?>(null)
+
+    fun stateInArea(vararg area: String?) = stateArea.map { area.contains(it) }
+    fun stateInSubarea(vararg subarea: String?) = stateSubarea.map { subarea.contains(it) }
 
     fun initialize() {
         EventBus.on<PacketReceivedEvent> { event ->
@@ -22,9 +27,10 @@ object Location {
                         val line = name.string.replace(emoteRegex, "")
                         if (!line.matches(areaRegex)) return@forEach
                         val newArea = areaRegex.matchEntire(line)?.groupValues?.get(1) ?: return@forEach
-                        if (newArea !== area) EventBus.post(AreaEvent(newArea))
+                        if (newArea !== area) AreaEvent(newArea).post()
 
                         area = newArea.lowercase()
+                        stateArea.value = area
                     }
                 }
                 // Scoreboard
@@ -40,21 +46,24 @@ object Location {
                     val line = "${teamPrefix}${teamSuffix}"
                     if (!line.matches(subAreaRegex)) return@on
                     val oldSubarea = subarea
+                    if (line !== oldSubarea) SubAreaEvent(line).post()
 
                     subarea = line.lowercase()
-                    if (line !== oldSubarea) EventBus.post(SubAreaEvent(line))
+                    stateSubarea.value = subarea
                 }
             }
         }
 
         EventBus.on<WorldChangeEvent> {
             if (area !== null) {
-                EventBus.post(AreaEvent(null))
+                AreaEvent(null).post()
                 area = null
+                stateArea.value = null
             }
             if (subarea !== null) {
-                EventBus.post(SubAreaEvent(null))
+                SubAreaEvent(null).post()
                 subarea = null
+                stateSubarea.value = null
             }
         }
     }
