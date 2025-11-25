@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api.bufimgrenderer
 
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsAccessor
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
@@ -78,6 +79,7 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
     }
 
     private fun draw(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float) {
+        if (Devonian.minecraft.options.hideGui) return
         if (uploader.texId == -1) return
         if (!valid) return
 
