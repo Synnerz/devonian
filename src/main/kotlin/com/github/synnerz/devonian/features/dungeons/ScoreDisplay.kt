@@ -91,6 +91,8 @@ object ScoreDisplay : TextHudFeature(
 
     override fun initialize() {
         on<RenderOverlayEvent> { event ->
+            if (SETTING_ILLEGALMAP_FORMAT.get() && Dungeons.inBoss.value) return@on
+
             setLines(
                 getLines(
                     Dungeons.score.value,
