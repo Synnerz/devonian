@@ -21,10 +21,10 @@ object Alert : SimpleTextHud("internal_devonian_alert") {
 
             val window = mc.window
             val bb = BoundingBox(
-                window.guiScaledWidth * 0.2,
-                window.guiScaledHeight * 0.2,
-                window.guiScaledWidth * 0.6,
-                window.guiScaledHeight * 0.6
+                window.guiScaledWidth * 0.3,
+                window.guiScaledHeight * 0.3,
+                window.guiScaledWidth * 0.4,
+                window.guiScaledHeight * 0.4
             )
 
             val lines = text.split('\n').map { "&c$it" }
