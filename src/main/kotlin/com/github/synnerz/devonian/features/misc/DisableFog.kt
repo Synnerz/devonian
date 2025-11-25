@@ -1,21 +1,17 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.client.Camera
-import net.minecraft.client.renderer.FogParameters
-import net.minecraft.client.renderer.FogRenderer
-import org.joml.Vector4f
+import net.minecraft.client.renderer.fog.environment.FogEnvironment
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.level.material.FogType
 
 object DisableFog : Feature("disableFog") {
     fun setupFog(
-        camera: Camera,
-        fogMode: FogRenderer.FogMode,
-        fogColor: Vector4f,
-        renderDistance: Float,
-        foggy: Boolean,
-        pt: Float
-    ): FogParameters? = when (fogMode) {
-        FogRenderer.FogMode.FOG_SKY -> null
-        FogRenderer.FogMode.FOG_TERRAIN -> FogParameters.NO_FOG
+        instance: FogEnvironment,
+        fogType: FogType,
+        entity: Entity
+    ): Boolean? = when (fogType) {
+        FogType.ATMOSPHERIC -> false
+        else -> null
     }
 }

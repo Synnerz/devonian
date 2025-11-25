@@ -39,8 +39,8 @@ public class ScreenEffectRendererMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;getViewBlockingState(Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/level/block/state/BlockState;"),
         cancellable = true
     )
-    private static void devonian$disableSuffocatingOverlay(Minecraft minecraft, PoseStack poseStack, MultiBufferSource multiBufferSource, CallbackInfo ci) {
+    private static void devonian$disableSuffocatingOverlay(boolean bl, float f, CallbackInfo ci) {
         if (!DisableSuffocatingOverlay.INSTANCE.isEnabled()) return;
-        ci.cancel();
+        if (ci != null) ci.cancel();
     }
 }

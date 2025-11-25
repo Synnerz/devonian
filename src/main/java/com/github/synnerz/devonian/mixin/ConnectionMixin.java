@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.api.events.EventBus;
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent;
 import com.github.synnerz.devonian.api.events.PacketSentEvent;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketSendListener;
@@ -39,7 +40,7 @@ public abstract class ConnectionMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private void devonian$sendPacket(Packet<?> packet, PacketSendListener packetSendListener, boolean bl, CallbackInfo ci) {
+    private void devonian$sendPacket(Packet<?> packet, ChannelFutureListener channelFutureListener, boolean bl, CallbackInfo ci) {
         EventBus.INSTANCE.post(new PacketSentEvent(packet, ci));
     }
 }

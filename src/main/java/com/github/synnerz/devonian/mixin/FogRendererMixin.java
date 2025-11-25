@@ -1,25 +1,24 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.features.misc.DisableFog;
-import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.FogParameters;
-import net.minecraft.client.renderer.FogRenderer;
-import org.joml.Vector4f;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.renderer.fog.environment.FogEnvironment;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.material.FogType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(FogRenderer.class)
+@Mixin(net.minecraft.client.renderer.fog.FogRenderer.class)
 public class FogRendererMixin {
-    @Inject(
+    @WrapOperation(
         method = "setupFog",
-        at = @At("HEAD"),
-        cancellable = true
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/fog/environment/FogEnvironment;isApplicable(Lnet/minecraft/world/level/material/FogType;Lnet/minecraft/world/entity/Entity;)Z")
     )
-    private static void devonian$disableFog(Camera camera, FogRenderer.FogMode fogMode, Vector4f vector4f, float f, boolean bl, float g, CallbackInfoReturnable<FogParameters> cir) {
-        if (!DisableFog.INSTANCE.isEnabled()) return;
-        FogParameters val = DisableFog.INSTANCE.setupFog(camera, fogMode, vector4f, f, bl, g);
-        if (val != null) cir.setReturnValue(val);
+    private static boolean devonian$disableFog(FogEnvironment instance, FogType fogType, Entity entity, Operation<Boolean> original) {
+        if (!DisableFog.INSTANCE.isEnabled()) return false;
+        Boolean val = DisableFog.INSTANCE.setupFog(instance, fogType, entity);
+        if (val == null) return original.call(instance, fogType, entity);
+        return val;
     }
 }
