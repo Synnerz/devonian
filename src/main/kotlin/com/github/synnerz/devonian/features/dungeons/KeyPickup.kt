@@ -58,6 +58,13 @@ object KeyPickup : Feature(
         "Key Pickup Sound",
         true
     )
+    private val SETTING_KEY_PICKUP_TIME = addSlider(
+        "pickupTime",
+        "The amount of time (in seconds) the title will be in screen",
+        "Key Pickup Time",
+        0.0, 10.0,
+        1.0
+    )
 
     private val pickupSound = SoundEvents.VAULT_OPEN_SHUTTER
 
@@ -100,7 +107,7 @@ object KeyPickup : Feature(
 
             Scheduler.scheduleTask {
                 if (SETTING_KEY_PICKUP_SOUND.get()) minecraft.player?.playSound(pickupSound, 2f, 1f)
-                if (SETTING_KEY_PICKUP_TITLE.get()) Alert.show(title, 1000, playSound = false)
+                if (SETTING_KEY_PICKUP_TITLE.get()) Alert.show(title, SETTING_KEY_PICKUP_TIME.get().toInt() * 1000, playSound = false)
             }
         }
         on<EntityEquipmentEvent> { event ->
