@@ -1,9 +1,6 @@
 package com.github.synnerz.devonian
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.events.AreaEvent
-import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.SubAreaEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ui.ConfigGui
@@ -15,12 +12,7 @@ import com.github.synnerz.devonian.features.diana.DianaDropTracker
 import com.github.synnerz.devonian.features.diana.DianaMobTracker
 import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
-import com.github.synnerz.devonian.features.dungeons.solvers.ArrowAlignSolver
-import com.github.synnerz.devonian.features.dungeons.solvers.BlazeSolver
-import com.github.synnerz.devonian.features.dungeons.solvers.BoulderSolver
-import com.github.synnerz.devonian.features.dungeons.solvers.CreeperBeamsSolver
-import com.github.synnerz.devonian.features.dungeons.solvers.SimonSaysSolver
-import com.github.synnerz.devonian.features.dungeons.solvers.ThreeWeirdosSolver
+import com.github.synnerz.devonian.features.dungeons.solvers.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
 import com.github.synnerz.devonian.features.garden.PestsDisplay
@@ -127,6 +119,7 @@ object Devonian : ClientModInitializer {
         CreeperBeamsSolver,
         SimonSaysSolver,
         ArrowAlignSolver,
+        CurrentRoomName,
     )
 
     override fun onInitializeClient() {
