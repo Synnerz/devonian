@@ -176,66 +176,66 @@ object DungeonScanner {
             if (currentRoom != null)
                 DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
             // TODO: remove whenever done debugging
-            ChatUtils.sendMessage("$currentRoom")
+            // ChatUtils.sendMessage("$currentRoom")
         }.setEnabled(Location.stateInArea("catacombs"))
     }
 
     fun init() {
         // TODO: remove this whenever finished (or impl in debug tools)
 
-        DevonianCommand.command.subcommand("getcore") { _, _ ->
-            val player = Devonian.minecraft.player ?: return@subcommand 0
-            val comp = WorldPosition(player.x.toInt(), player.z.toInt()).toComponent()
-            val room = rooms.getOrNull(comp.getRoomIdx()) ?: return@subcommand 0
-            for (comp in room.comps) {
-                val x = comp.wx
-                val z = comp.wz
-                ChatUtils.sendMessage("hash: ${hashCeil(x, z, true)}")
-            }
-            1
-        }
-
-        DevonianCommand.command.subcommand("getpuzzledata") { _, _ ->
-            rooms.forEach {
-                if (it == null || it.type != RoomTypes.PUZZLE) return@forEach
-                ChatUtils.sendMessage("&dPuzzle[name=&b\"${it.name}\"&d, rotation=&b\"${it.rotation}\"&d]")
-            }
-            1
-        }
-
-        DevonianCommand.command.subcommand("getcomp") { _, _ ->
-            val player = Devonian.minecraft.player ?: return@subcommand 0
-            val cast = player.pick(60.0, Devonian.minecraft.deltaTracker.getGameTimeDeltaPartialTick(false), false) ?: return@subcommand 0
-            if (cast.type != HitResult.Type.BLOCK) return@subcommand 0
-            val blockPos = (cast as BlockHitResult).blockPos ?: return@subcommand 0
-            val x = blockPos.x
-            val z = blockPos.z
-            val comp = WorldPosition(x, z).toComponent()
-            val room = rooms.getOrNull(comp.getRoomIdx()) ?: return@subcommand 0
-            val relativeCoords = room.fromPos(x, z) ?: return@subcommand 0
-
-            ChatUtils.sendMessage("Component[cx=\"${relativeCoords.first}\", cy=\"${blockPos.y}\", cz=\"${relativeCoords.second}\"" +
-                    ", wx=\"${blockPos.x}\" - \"$x\", wy=\"${blockPos.y}\", wz=\"${blockPos.z}\" - \"$z\"" +
-                    ", room=\"${room.name}\"" +
-                    ", rotation=\"${room.rotation}\"]")
-            1
-        }
-
-        DevonianCommand.command.subcommand("area") { _, args ->
-            val str = (args.firstOrNull() ?: return@subcommand 0) as String
-            AreaEvent(str).post()
-            Location.area = str.lowercase()
-            ChatUtils.sendMessage("&aPosting area event with str &6$str", true)
-            1
-        }.string("name")
-
-        DevonianCommand.command.subcommand("subarea") { _, args ->
-            val str = (args.firstOrNull() ?: return@subcommand 0) as String
-            SubAreaEvent(str).post()
-            Location.subarea = str
-            ChatUtils.sendMessage("&aPosting subarea event with str &6$str", true)
-            1
-        }.string("name")
+//        DevonianCommand.command.subcommand("getcore") { _, _ ->
+//            val player = Devonian.minecraft.player ?: return@subcommand 0
+//            val comp = WorldPosition(player.x.toInt(), player.z.toInt()).toComponent()
+//            val room = rooms.getOrNull(comp.getRoomIdx()) ?: return@subcommand 0
+//            for (comp in room.comps) {
+//                val x = comp.wx
+//                val z = comp.wz
+//                ChatUtils.sendMessage("hash: ${hashCeil(x, z, true)}")
+//            }
+//            1
+//        }
+//
+//        DevonianCommand.command.subcommand("getpuzzledata") { _, _ ->
+//            rooms.forEach {
+//                if (it == null || it.type != RoomTypes.PUZZLE) return@forEach
+//                ChatUtils.sendMessage("&dPuzzle[name=&b\"${it.name}\"&d, rotation=&b\"${it.rotation}\"&d]")
+//            }
+//            1
+//        }
+//
+//        DevonianCommand.command.subcommand("getcomp") { _, _ ->
+//            val player = Devonian.minecraft.player ?: return@subcommand 0
+//            val cast = player.pick(60.0, Devonian.minecraft.deltaTracker.getGameTimeDeltaPartialTick(false), false) ?: return@subcommand 0
+//            if (cast.type != HitResult.Type.BLOCK) return@subcommand 0
+//            val blockPos = (cast as BlockHitResult).blockPos ?: return@subcommand 0
+//            val x = blockPos.x
+//            val z = blockPos.z
+//            val comp = WorldPosition(x, z).toComponent()
+//            val room = rooms.getOrNull(comp.getRoomIdx()) ?: return@subcommand 0
+//            val relativeCoords = room.fromPos(x, z) ?: return@subcommand 0
+//
+//            ChatUtils.sendMessage("Component[cx=\"${relativeCoords.first}\", cy=\"${blockPos.y}\", cz=\"${relativeCoords.second}\"" +
+//                    ", wx=\"${blockPos.x}\" - \"$x\", wy=\"${blockPos.y}\", wz=\"${blockPos.z}\" - \"$z\"" +
+//                    ", room=\"${room.name}\"" +
+//                    ", rotation=\"${room.rotation}\"]")
+//            1
+//        }
+//
+//        DevonianCommand.command.subcommand("area") { _, args ->
+//            val str = (args.firstOrNull() ?: return@subcommand 0) as String
+//            AreaEvent(str).post()
+//            Location.area = str.lowercase()
+//            ChatUtils.sendMessage("&aPosting area event with str &6$str", true)
+//            1
+//        }.string("name")
+//
+//        DevonianCommand.command.subcommand("subarea") { _, args ->
+//            val str = (args.firstOrNull() ?: return@subcommand 0) as String
+//            SubAreaEvent(str).post()
+//            Location.subarea = str
+//            ChatUtils.sendMessage("&aPosting subarea event with str &6$str", true)
+//            1
+//        }.string("name")
     }
 
     fun mergeRooms(comp1: ComponentPosition, comp2: ComponentPosition): Boolean {
