@@ -24,6 +24,54 @@ object BlazeSolver : Feature(
     "Dungeons",
     "catacombs"
 ) {
+    private val SETTING_COLOR_FIRST_OUTLINE = addColorPicker(
+        "firstBlazeColorOutline",
+        "Color for the first correct blaze outline",
+        "First Blaze Outline Color",
+        Color(0, 255, 0, 255).rgb
+    )
+    private val SETTING_COLOR_FIRST_FILLED = addColorPicker(
+        "firstBlazeColorFilled",
+        "Color for the first correct blaze filled",
+        "First Blaze Filled Color",
+        Color(0, 255, 0, 80).rgb
+    )
+    private val SETTING_COLOR_SECOND_OUTLINE = addColorPicker(
+        "secondBlazeColorOutline",
+        "Color for the second correct blaze outline",
+        "Second Blaze Outline Color",
+        Color(255, 165, 0, 255).rgb
+    )
+    private val SETTING_COLOR_SECOND_FILLED = addColorPicker(
+        "secondBlazeColorFilled",
+        "Color for the second correct blaze filled",
+        "Second Blaze Filled Color",
+        Color(255, 165, 0, 80).rgb
+    )
+    private val SETTING_COLOR_THIRD_OUTLINE = addColorPicker(
+        "thirdBlazeColorOutline",
+        "Color for the third correct blaze outline",
+        "Third Blaze Outline Color",
+        Color(255, 0, 0, 255).rgb
+    )
+    private val SETTING_COLOR_THIRD_FILLED = addColorPicker(
+        "thirdBlazeColorFilled",
+        "Color for the third correct blaze filled",
+        "Third Blaze Filled Color",
+        Color(255, 0, 0, 80).rgb
+    )
+    private val SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE = addColorPicker(
+        "efficientBlockColorOutline",
+        "Color for the \"efficient\" block outline to stand at",
+        "\"Efficient\" Blaze Block Outline Color",
+        Color(0, 255, 0, 255).rgb
+    )
+    private val SETTING_EFFICIENT_BLOCK_COLOR_FILLED = addColorPicker(
+        "efficientBlockColorFilled",
+        "Color for the \"efficient\" block filled to stand at",
+        "\"Efficient\" Blaze Block Filled Color",
+        Color(0, 255, 0, 80).rgb
+    )
     private val blazeHpRegex = "^\\[Lv15] ♨ Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
     private val entityList = mutableMapOf<Int, Int>() // <entityId>: <MaxHP>
     var hasPlatform = false
@@ -110,39 +158,39 @@ object BlazeSolver : Feature(
             if (efficientPos != null) {
                 Context.Immediate?.renderFilledBox(
                     efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
-                    color = Color(0, 255, 0, 80),
+                    color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor(),
                     phase = true
                 )
 
                 Context.Immediate?.renderBox(
                     efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
-                    color = Color.GREEN,
+                    color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor(),
                     phase = true
                 )
             }
             // yes i could make this dynamic, but why ?
             // it is pointless if we only need 3 entries
             val blaze = blazes.getOrNull(0) ?: return@on
-            highlightBlaze(blaze.entity)
+            highlightBlaze(blaze.entity, SETTING_COLOR_FIRST_OUTLINE.getColor(), SETTING_COLOR_FIRST_FILLED.getColor())
 
             val blaze2 = blazes.getOrNull(1) ?: return@on
-            highlightBlaze(blaze2.entity, Color.ORANGE, Color(255, 165, 0, 80))
+            highlightBlaze(blaze2.entity, SETTING_COLOR_SECOND_OUTLINE.getColor(), SETTING_COLOR_SECOND_FILLED.getColor())
 
             renderLine(
                 blaze.entity.position(),
                 blaze2.entity.position(),
-                Color.GREEN,
-                Color.ORANGE
+                SETTING_COLOR_FIRST_OUTLINE.getColor(),
+                SETTING_COLOR_SECOND_OUTLINE.getColor()
             )
 
             val blaze3 = blazes.getOrNull(2) ?: return@on
-            highlightBlaze(blaze3.entity, Color.RED, Color(255, 0, 0, 80))
+            highlightBlaze(blaze3.entity, SETTING_COLOR_THIRD_OUTLINE.getColor(), SETTING_COLOR_THIRD_FILLED.getColor())
 
             renderLine(
                 blaze2.entity.position(),
                 blaze3.entity.position(),
-                Color.ORANGE,
-                Color.RED
+                SETTING_COLOR_SECOND_OUTLINE.getColor(),
+                SETTING_COLOR_THIRD_OUTLINE.getColor()
             )
         }
     }
@@ -176,6 +224,8 @@ object BlazeSolver : Feature(
         colorStart: Color = Color.CYAN,
         colorEnd: Color = colorStart
     ) {
+        if (colorStart.alpha == 0 || colorEnd.alpha == 0) return
+
         val x1 = pos1.x.toFloat()
         val x2 = pos2.x.toFloat()
         val y1 = pos1.y.toFloat()
