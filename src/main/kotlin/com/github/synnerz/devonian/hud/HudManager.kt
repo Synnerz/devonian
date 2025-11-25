@@ -75,6 +75,8 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     }
 
     override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
+        if (button != 0) return false
+
         updateSelected()
         selectedHud?.onMouseDrag(deltaX, deltaY)
 
