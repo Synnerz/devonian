@@ -11,7 +11,7 @@ import net.minecraft.world.phys.Vec3
 import java.awt.Color
 
 object CreeperBeamsSolver : Feature(
-    "creepetBeamsSolver",
+    "creeperBeamsSolver",
     "Highlights the correct blocks to hit whenever doing the creeper beams puzzle",
     "Dungeons",
     "catacombs"
