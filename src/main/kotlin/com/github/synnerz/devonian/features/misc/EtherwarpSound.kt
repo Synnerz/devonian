@@ -15,6 +15,15 @@ object EtherwarpSound : Feature(
     "Changes the sound the etherwarp makes whenever you have etherwarped successfully, customize it via /devonian etherwarpsound"
 ) {
     private const val KEY = "etherwarpSound"
+    private val soundOptions = listOf(
+        "minecraft:entity.blaze.hurt",
+        "minecraft:entity.experience_orb.pickup",
+        "minecraft:block.vault.break",
+        "minecraft:entity.elder_guardian.hurt_land",
+        "minecraft:item.totem.use",
+        "minecraft:block.sculk_catalyst.hit",
+        "minecraft:block.ender_chest.close"
+    )
     private var soundEvent = SoundEvents.ENDER_DRAGON_HURT
 
     override fun initialize() {
@@ -35,7 +44,7 @@ object EtherwarpSound : Feature(
             .greedyString("sound")
             .suggest(
                 "sound",
-                *BuiltInRegistries.SOUND_EVENT.entrySet().map { "${it.value.location.namespace}:${it.value.location.path}" }.toTypedArray()
+                *soundOptions.toTypedArray()
             )
 
         JsonUtils.afterLoad {
