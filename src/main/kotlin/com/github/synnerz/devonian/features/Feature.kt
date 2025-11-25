@@ -109,6 +109,21 @@ open class Feature @JvmOverloads constructor(
     }
 
     @JvmOverloads
+    fun addDecimalSlider(
+        configName: String,
+        description: String,
+        displayName: String = configName,
+        min: Double = 0.0, max: Double = 100.0,
+        value: Double = min
+    ): ConfigData.DecimalSlider<Double> {
+        return _category.addDecimalSlider(
+            displayName,
+            description,
+            ConfigData.DecimalSlider("${this.configName}$${configName}", value, min, max)
+        )
+    }
+
+    @JvmOverloads
     fun addButton(
         displayName: String,
         description: String,

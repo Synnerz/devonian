@@ -56,6 +56,13 @@ open class ConfigData<T>(
         val max: Double
     ) : ConfigData<T>(configName, value)
 
+    class DecimalSlider<T>(
+        configName: String,
+        value: T,
+        val min: Double,
+        val max: Double
+    ) : ConfigData<T>(configName, value)
+
     class Button(
         val btnTitle: String,
         val onClick: () -> Unit

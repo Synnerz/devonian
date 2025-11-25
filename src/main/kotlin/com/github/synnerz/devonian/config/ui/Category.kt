@@ -109,6 +109,20 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         return configData
     }
 
+    fun <T> addDecimalSlider(
+        name: String,
+        description: String,
+        configData: ConfigData.DecimalSlider<T>
+    ): ConfigData.DecimalSlider<T> {
+        configs.add(CategoryData(
+            name,
+            description,
+            ConfigType.DECIMALSLIDER,
+            configData
+        ))
+        return configData
+    }
+
     @JvmOverloads
     fun addButton(
         name: String,
@@ -207,6 +221,7 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
                     when (data.type) {
                         ConfigType.SWITCH -> createSwitch(data.configData as ConfigData.Switch)
                         ConfigType.SLIDER -> createSlider(data.configData as ConfigData.Slider<Double>)
+                        ConfigType.DECIMALSLIDER -> createDecimalSlider(data.configData as ConfigData.DecimalSlider<Double>)
                         ConfigType.BUTTON -> createButton(data.configData as ConfigData.Button)
                         ConfigType.TEXTINPUT -> createTextInput(data.configData as ConfigData.TextInput)
                         ConfigType.SELECTION -> createSelection(data.configData as ConfigData.Selection)
@@ -287,6 +302,28 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         configData: ConfigData.Slider<Double>,
         parent: UIRect? = null
     ): UISlider = object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
+        override fun setCurrentX(x: Double) {
+            if (!canTrigger()) return
+            super.setCurrentX(x)
+            configData.set(this.value)
+        }
+
+        override fun setCurrentValue(value: Double) {
+            if (!canTrigger()) return
+            super.setCurrentValue(value)
+            configData.set(this.value)
+        }
+    }.apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+        configData.onChange {
+            value = configData.get()
+        }
+    }
+
+    private fun createDecimalSlider(
+        configData: ConfigData.DecimalSlider<Double>,
+        parent: UIRect? = null
+    ): UIDecimalSlider = object : UIDecimalSlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
         override fun setCurrentX(x: Double) {
             if (!canTrigger()) return
             super.setCurrentX(x)

@@ -6,6 +6,7 @@ enum class ConfigType {
     SWITCH,
     COLORPICKER,
     SLIDER,
+    DECIMALSLIDER,
     TEXTINPUT,
     SELECTION
 }
