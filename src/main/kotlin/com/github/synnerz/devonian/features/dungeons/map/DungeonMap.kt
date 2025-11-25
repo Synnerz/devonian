@@ -143,14 +143,14 @@ object DungeonMap : HudFeature(
         "Entrance Door Color",
         Color(0, 123, 0).rgb
     )
-    private val SETTING_ROOM_SIZE = addSlider(
+    private val SETTING_ROOM_SIZE = addDecimalSlider(
         "roomSize",
         "",
         "Room Size",
         0.0, 1.0,
         0.8
     )
-    private val SETTING_DOOR_SIZE = addSlider(
+    private val SETTING_DOOR_SIZE = addDecimalSlider(
         "doorSize",
         "",
         "Door Size",
@@ -187,7 +187,7 @@ object DungeonMap : HudFeature(
         "Render Puzzle Name",
         false
     )
-    private val SETTING_ICON_SIZE = addSlider(
+    private val SETTING_ICON_SIZE = addDecimalSlider(
         "iconSize",
         "Affects puzzles + checkmarks. (% of the room)",
         "Icon Size",
@@ -201,7 +201,7 @@ object DungeonMap : HudFeature(
         DungeonMapRoomInfoAlignment.entries.map { it.str },
         DungeonMapRoomInfoAlignment.Center.ordinal
     )
-    private val SETTING_TEXT_SIZE = addSlider(
+    private val SETTING_TEXT_SIZE = addDecimalSlider(
         "textSize",
         "Affects room names + secret count. (% of the room)",
         "Text Size",
@@ -234,7 +234,7 @@ object DungeonMap : HudFeature(
         false,
         cheeto = true
     )
-    private val SETTING_HIDDEN_ROOM_DARKEN = addSlider(
+    private val SETTING_HIDDEN_ROOM_DARKEN = addDecimalSlider(
         "hiddenRoomDarken",
         "factor by which to darken hidden rooms",
         "Hidden Room Darken Factor",
