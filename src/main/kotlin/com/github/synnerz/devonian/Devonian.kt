@@ -120,6 +120,7 @@ object Devonian : ClientModInitializer {
         // SimonSaysSolver,
         ArrowAlignSolver,
         CurrentRoomName,
+        CurrentRoomCleared,
     )
 
     override fun onInitializeClient() {
