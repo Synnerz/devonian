@@ -6,8 +6,10 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat.Mode
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.ResourceLocation
+import org.joml.Matrix3x2f
 import java.awt.image.BufferedImage
 import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
@@ -68,20 +70,21 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         if (uploader.texId == -1) return
         if (!valid) return
 
-        ctx.blit(
-            pipeline,
-            mcid,
-            x.toInt(),
-            y.toInt(),
-            0f,
-            0f,
-            w.toInt(),
-            h.toInt(),
-            uploader.w,
-            uploader.h,
-            uploader.w,
-            uploader.h,
-            -1
+        val textureView = uploader.textureView
+        ctx.guiRenderState.submitGuiElement(
+            TexturedQuadRenderState(
+                pipeline,
+                TextureSetup.singleTexture(textureView),
+                Matrix3x2f(ctx.pose()),
+                x,
+                y,
+                x + w,
+                y + h,
+                0f, 0f,
+                1f, 1f,
+                0xFFFFFFFF.toInt(),
+                ctx.scissorStack.peek()
+            )
         )
     }
 

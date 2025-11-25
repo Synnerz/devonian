@@ -1,8 +1,9 @@
 package com.github.synnerz.devonian.features.dungeons.map
 
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer.Companion.pipeline
+import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
+import com.github.synnerz.devonian.api.bufimgrenderer.TexturedQuadRenderState
 import com.github.synnerz.devonian.api.dungeon.*
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -11,9 +12,9 @@ import com.github.synnerz.devonian.hud.texthud.SimpleTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHud
 import com.github.synnerz.devonian.utils.BoundingBox
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.renderer.RenderStateShard
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.resources.ResourceLocation
+import org.joml.Matrix3x2f
 import java.awt.Color
 import kotlin.math.PI
 import kotlin.math.cos
@@ -347,13 +348,24 @@ object DungeonMap : HudFeature(
             val dxr = cos(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
             val dyr = sin(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
 
-            // val mat = ctx.pose()
-            // val consumer = (ctx as GuiGraphicsAccessor).vertexConsumers
-            // val buf = consumer.getBuffer(if (i == 0) layerSelf else layerOther)
-            // buf.addVertexWith2DPose(mat, px + dxf - dxr, py + dyf - dyr, 0f).setUv(0f, 0f).setColor(-1)
-            // buf.addVertexWith2DPose(mat, px - dxf - dxr, py - dyf - dyr, 0f).setUv(0f, 1f).setColor(-1)
-            // buf.addVertexWith2DPose(mat, px + dxf + dxr, py + dyf + dyr, 0f).setUv(1f, 0f).setColor(-1)
-            // buf.addVertexWith2DPose(mat, px - dxf + dxr, py - dyf + dyr, 0f).setUv(1f, 1f).setColor(-1)
+            val textureView = (if (i == 0) markerSelfUploader else markerOtherUploader)?.textureView ?: return@forEach
+            ctx.guiRenderState.submitGuiElement(
+                TexturedQuadRenderState(
+                    BufferedImageRenderer.pipeline,
+                    TextureSetup.singleTexture(textureView),
+                    Matrix3x2f(ctx.pose()),
+                    px + dxf - dxr, py + dyf - dyr,
+                    px - dxf - dxr, py - dyf - dyr,
+                    px + dxf + dxr, py + dyf + dyr,
+                    px - dxf + dxr, py - dyf + dyr,
+                    0f, 0f,
+                    0f, 1f,
+                    1f, 0f,
+                    1f, 1f,
+                    -1,
+                    ctx.scissorStack.peek()
+                )
+            )
         }
     }
 
@@ -368,32 +380,9 @@ object DungeonMap : HudFeature(
     }
 
     val mcidMarkerSelf = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_self")
-    val layerSelf = RenderType.create(
-        "devonian/dungeon_map_marker_self",
-        1536,
-        false,
-        true,
-        pipeline,
-        RenderType.CompositeState
-            .builder()
-            .setTextureState(RenderStateShard.TextureStateShard(mcidMarkerSelf, false))
-            .createCompositeState(false)
-    )
     val mcidMarkerOther = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_other")
-    val layerOther = RenderType.create(
-        "devonian/dungeon_map_marker_other",
-        1536,
-        false,
-        true,
-        pipeline,
-        RenderType.CompositeState
-            .builder()
-            .setTextureState(RenderStateShard.TextureStateShard(mcidMarkerOther, false))
-            .createCompositeState(false)
-    )
-
-    init {
-        BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/markerSelf.png")?.register(mcidMarkerSelf)
-        BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/markerOther.png")?.register(mcidMarkerOther)
-    }
+    val markerSelfUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/markerSelf.png")
+        ?.register(mcidMarkerSelf)
+    val markerOtherUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/markerOther.png")
+        ?.register(mcidMarkerOther)
 }
