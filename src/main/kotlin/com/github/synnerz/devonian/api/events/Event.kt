@@ -23,6 +23,9 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.HitResult
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
+@Target(AnnotationTarget.CLASS)
+annotation class Threaded
+
 open class Event {
     open fun post(): Boolean {
         EventBus.post(this)
@@ -45,12 +48,12 @@ open class CancellableEvent : Event() {
     }
 }
 
-class PacketSentEvent(
+@Threaded class PacketSentEvent(
     val packet: Packet<*>,
     val ci: CallbackInfo
 ) : Event()
 
-class PacketReceivedEvent(
+@Threaded class PacketReceivedEvent(
     val packet: Packet<*>,
     val ci: CallbackInfo
 ) : Event()
@@ -111,11 +114,11 @@ class WorldChangeEvent(
     val world: ClientLevel
 ) : Event()
 
-class AreaEvent(
+@Threaded class AreaEvent(
     val area: String?
 ) : Event()
 
-class SubAreaEvent(
+@Threaded class SubAreaEvent(
     val subarea: String?
 ) : Event()
 
@@ -159,28 +162,28 @@ open class CriteriaEvent(val message: String) : CancellableEvent() {
     }
 }
 
-open class ChatEvent(message: String, val text: Component) : CriteriaEvent(message)
+@Threaded open class ChatEvent(message: String, val text: Component) : CriteriaEvent(message)
 
 abstract class ChatChannelEvent(message: String, text: Component, val name: String, val userMessage: String) :
     ChatEvent(message, text) {
-    class AllChatEvent(message: String, text: Component, name: String, userMessage: String, val level: Int) :
+    @Threaded class AllChatEvent(message: String, text: Component, name: String, userMessage: String, val level: Int) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    class PartyChatEvent(message: String, text: Component, name: String, userMessage: String) :
+    @Threaded class PartyChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    class CoopChatEvent(message: String, text: Component, name: String, userMessage: String) :
+    @Threaded class CoopChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    class GuildChatEvent(message: String, text: Component, name: String, userMessage: String) :
+    @Threaded class GuildChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
 
     abstract class PrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage) {
-        class IncomingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
+        @Threaded class IncomingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
             PrivateChatEvent(message, text, name, userMessage)
 
-        class OutgoingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
+        @Threaded class OutgoingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
             PrivateChatEvent(message, text, name, userMessage)
     }
 
@@ -260,16 +263,16 @@ class RenderOverlayEvent(
 
 class RenderTickEvent : Event()
 
-class TabAddEvent(message: String) : CriteriaEvent(message)
-class TabUpdateEvent(message: String) : CriteriaEvent(message)
+@Threaded class TabAddEvent(message: String) : CriteriaEvent(message)
+@Threaded class TabUpdateEvent(message: String) : CriteriaEvent(message)
 
-class ServerTickEvent(val ticks: Int) : Event()
+@Threaded class ServerTickEvent(val ticks: Int) : Event()
 
-class ScoreboardEvent(message: String) : CriteriaEvent(message)
+@Threaded class ScoreboardEvent(message: String) : CriteriaEvent(message)
 
 class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics) : CancellableEvent()
 
-class SoundPlayEvent(
+@Threaded class SoundPlayEvent(
     val sound: String,
     val pitch: Float,
     val volume: Float,
@@ -282,19 +285,19 @@ class SoundPlayEvent(
 
 class PostClientInit(val minecraft: Minecraft) : Event()
 
-class PacketNameChangeEvent(
+@Threaded class NameChangeEvent(
     val entityId: Int,
     val type: EntityType<*>,
     val nameText: Component,
     val name: String
 ) : Event()
 
-class ActionbarEvent(
+@Threaded class ActionbarEvent(
     val message: String,
     val text: Component
 ) : Event()
 
-class PacketEquipmentEvent(
+@Threaded class EntityEquipmentEvent(
     val entityId: Int,
     val type: EntityType<*>,
     val slots: List<Pair<EquipmentSlot, ItemStack?>>

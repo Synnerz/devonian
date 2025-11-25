@@ -4,7 +4,7 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
-import com.github.synnerz.devonian.api.events.PacketNameChangeEvent
+import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -95,7 +95,7 @@ object BlazeSolver : Feature(
             lastBlazes = blazes.size
         }
 
-        on<PacketNameChangeEvent> { event ->
+        on<NameChangeEvent> { event ->
             if (event.type !== EntityType.ARMOR_STAND) return@on
 
             val name = event.name

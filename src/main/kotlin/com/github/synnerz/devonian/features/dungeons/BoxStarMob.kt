@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
-import com.github.synnerz.devonian.api.events.PacketNameChangeEvent
+import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -114,7 +114,7 @@ object BoxStarMob : Feature(
     private data class MobData(val height: Double, val color: Color)
 
     override fun initialize() {
-        on<PacketNameChangeEvent> { event ->
+        on<NameChangeEvent> { event ->
             if (event.entityId != lastStand) return@on
             lastStand = 0
 

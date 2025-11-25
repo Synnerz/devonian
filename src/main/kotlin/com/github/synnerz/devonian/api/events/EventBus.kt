@@ -138,7 +138,7 @@ object EventBus {
                     val type = entityTypes[id] ?: return@on
                     val data = packet.packedItems
                     val text = getNameFromData(data)
-                    if (text != null) PacketNameChangeEvent(id, type, text, text.string).post()
+                    if (text != null) NameChangeEvent(id, type, text, text.string).post()
                 }
                 is ClientboundSetActionBarTextPacket -> {
                     val text = packet.text ?: return@on
@@ -149,7 +149,7 @@ object EventBus {
                 is ClientboundSetEquipmentPacket -> {
                     val id = packet.entity
                     val type = entityTypes[id] ?: return@on
-                    PacketEquipmentEvent(
+                    EntityEquipmentEvent(
                         id,
                         type,
                         packet.slots.map { Pair(it.first, it.second) }

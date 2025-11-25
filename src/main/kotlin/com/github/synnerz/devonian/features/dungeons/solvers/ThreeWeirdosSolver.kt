@@ -59,7 +59,7 @@ object ThreeWeirdosSolver : Feature(
             getChest(name)
         }
 
-        on<PacketNameChangeEvent> { event ->
+        on<NameChangeEvent> { event ->
             entityList[event.name] = event.entityId
         }
 

@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
-import com.github.synnerz.devonian.api.events.PacketEquipmentEvent
+import com.github.synnerz.devonian.api.events.EntityEquipmentEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
@@ -103,7 +103,7 @@ object KeyPickup : Feature(
                 if (SETTING_KEY_PICKUP_TITLE.get()) Alert.show(title, 1000, playSound = false)
             }
         }
-        on<PacketEquipmentEvent> { event ->
+        on<EntityEquipmentEvent> { event ->
             if (event.type != EntityType.ARMOR_STAND) return@on
             if (event.slots.size != 1) return@on
             val entry = event.slots.firstOrNull() ?: return@on
