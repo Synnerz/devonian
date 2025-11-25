@@ -303,3 +303,7 @@ class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics) : CancellableEvent()
     val type: EntityType<*>,
     val slots: List<Pair<EquipmentSlot, ItemStack?>>
 ) : Event()
+
+class EntityInteractEvent(
+    val entity: Entity
+) : CancellableEvent()
