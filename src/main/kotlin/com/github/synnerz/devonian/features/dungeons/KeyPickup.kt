@@ -151,7 +151,7 @@ object KeyPickup : Feature(
                     SETTING_KEY_WIRE_COLOR.getColor(),
                     phase = true,
                     translate = true,
-                    lineWidth = SETTING_KEY_LINE_WIDTH.get()
+                    // lineWidth = SETTING_KEY_LINE_WIDTH.get()
                 )
                 Context.Immediate?.renderFilledBox(
                     pos.x - 0.5,

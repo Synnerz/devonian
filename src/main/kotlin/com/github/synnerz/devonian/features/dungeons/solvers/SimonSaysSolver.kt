@@ -151,7 +151,7 @@ object SimonSaysSolver : Feature(
                     pos.z - cam.z,
                     wire,
                     true,
-                    SETTING_LINE_WIDTH.get()
+                    // SETTING_LINE_WIDTH.get()
                 )
                 Context.Immediate?.renderFilledShape(
                     BUTTON_SHAPE,

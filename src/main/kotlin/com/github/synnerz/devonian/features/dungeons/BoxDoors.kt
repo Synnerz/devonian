@@ -174,7 +174,7 @@ object BoxDoors : Feature(
             3.0, 4.0,
             wire,
             true, true,
-            SETTING_DOOR_LINE_WIDTH.get()
+            // SETTING_DOOR_LINE_WIDTH.get()
         )
         Context.Immediate?.renderFilledBox(
             comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,

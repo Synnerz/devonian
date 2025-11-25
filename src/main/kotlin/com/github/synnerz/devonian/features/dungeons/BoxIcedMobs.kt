@@ -207,7 +207,7 @@ object BoxIcedMobs : Feature(
                     h,
                     SETTING_WIRE_COLOR.getColor(),
                     translate = true,
-                    lineWidth = SETTING_LINE_WIDTH.get()
+                    // lineWidth = SETTING_LINE_WIDTH.get()
                 )
                 Context.Immediate?.renderFilledBox(
                     pos.x - w * 0.5,
