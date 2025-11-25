@@ -27,7 +27,8 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
     private fun create(img: BufferedImage) {
         w = img.width
         h = img.height
-        texture = RenderSystem.getDevice().createTexture(name, TextureFormat.RGBA8, w, h, 1)
+        texture = RenderSystem.getDevice().createTexture(name, 0, TextureFormat.RGBA8, w, h, 1, 1)
+        textureView = RenderSystem.getDevice().createTextureView(texture!!, 0, 1)
         texId = (texture as GlTexture).glId()
         GlStateManager._bindTexture(texId)
         GlStateManager._texImage2D(
@@ -114,6 +115,7 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
         if (texId == -1) return
         GlStateManager._deleteTexture(texId)
         if (pboId != -1) GlStateManager._glDeleteBuffers(pboId)
+        texture?.close()
         pboId = -1
         texId = pboId
     }
