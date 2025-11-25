@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.RenderPipelines
 import java.awt.Color
 import kotlin.math.max
 
@@ -21,9 +21,9 @@ object Render2D {
     @JvmOverloads
     fun drawString(ctx: GuiGraphics, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
         val matrices = ctx.pose()
-        matrices.pushPose()
-        matrices.translate(x.toFloat(), y.toFloat(), 0f)
-        if (scale != 1f) matrices.scale(scale, scale, 1f)
+        matrices.pushMatrix()
+        matrices.translate(x.toFloat(), y.toFloat())
+        if (scale != 1f) matrices.scale(scale, scale)
 
         ctx.drawString(
             textRenderer,
@@ -34,7 +34,7 @@ object Render2D {
             shadow
         )
 
-        matrices.popPose()
+        matrices.popMatrix()
     }
 
     @JvmOverloads
@@ -48,7 +48,7 @@ object Render2D {
 
     @JvmOverloads
     fun drawRect(ctx: GuiGraphics, x: Int, y: Int, width: Int, height: Int, color: Color = Color.WHITE) {
-        ctx.fill(RenderType.gui(), x, y, x + width, y + height, color.rgb)
+        ctx.fill(RenderPipelines.GUI, x, y, x + width, y + height, color.rgb)
     }
 
     fun drawCircle(ctx: GuiGraphics, cx: Int, cy: Int, radius: Int, color: Color = Color.WHITE) {

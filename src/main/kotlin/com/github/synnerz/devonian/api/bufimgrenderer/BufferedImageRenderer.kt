@@ -11,14 +11,13 @@ import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.util.TriState
 import java.awt.image.BufferedImage
 import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
+abstract class BufferedImageRenderer<T>(val name: String) {
     protected val uploader = BufferedImageUploader(name)
     protected val dirtyImage = atomic<BufferedImage?>(null)
     protected val bimgProvider: BufferedImageFactory = BufferedImageFactoryImpl()
@@ -32,7 +31,7 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
         pipeline,
         RenderType.CompositeState
             .builder()
-            .setTextureState(RenderStateShard.TextureStateShard(mcid, bilinear, false))
+            .setTextureState(RenderStateShard.TextureStateShard(mcid, false))
             .createCompositeState(false)
     )
     protected var valid = true
@@ -83,13 +82,13 @@ abstract class BufferedImageRenderer<T>(val name: String, bilinear: TriState) {
         if (uploader.texId == -1) return
         if (!valid) return
 
-        val mat = ctx.pose().last().pose()
+        val mat = ctx.pose()
         val consumer = (ctx as GuiGraphicsAccessor).vertexConsumers
         val buf = consumer.getBuffer(layer)
-        buf.addVertex(mat, x, y, 0f).setUv(0f, 0f).setColor(-1)
-        buf.addVertex(mat, x, y + h, 0f).setUv(0f, 1f).setColor(-1)
-        buf.addVertex(mat, x + w, y, 0f).setUv(1f, 0f).setColor(-1)
-        buf.addVertex(mat, x + w, y + h, 0f).setUv(1f, 1f).setColor(-1)
+        buf.addVertexWith2DPose(mat, x, y, 0f).setUv(0f, 0f).setColor(-1)
+        buf.addVertexWith2DPose(mat, x, y + h, 0f).setUv(0f, 1f).setColor(-1)
+        buf.addVertexWith2DPose(mat, x + w, y, 0f).setUv(1f, 0f).setColor(-1)
+        buf.addVertexWith2DPose(mat, x + w, y + h, 0f).setUv(1f, 1f).setColor(-1)
     }
 
     companion object {

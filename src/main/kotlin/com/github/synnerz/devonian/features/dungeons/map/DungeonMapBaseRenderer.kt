@@ -9,7 +9,6 @@ import com.github.synnerz.devonian.hud.texthud.StringParser
 import com.github.synnerz.devonian.hud.texthud.TextHud
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.TextRendererImpl
-import net.minecraft.util.TriState
 import java.awt.Color
 import java.awt.Font
 import java.awt.image.BufferedImage
@@ -20,7 +19,7 @@ import kotlin.math.ceil
 import kotlin.math.min
 
 class DungeonMapBaseRenderer :
-    BufferedImageRenderer<DungeonMapRenderData>("dungeonMapBaseRenderer", TriState.FALSE), FontListener {
+    BufferedImageRenderer<DungeonMapRenderData>("dungeonMapBaseRenderer"), FontListener {
     val cachedStrings = Collections.synchronizedMap(
         object : LinkedHashMap<CachedStringKey, CachedRenderedString>(30) {
             override fun removeEldestEntry(eldest: Map.Entry<CachedStringKey?, CachedRenderedString?>?): Boolean = size > 36

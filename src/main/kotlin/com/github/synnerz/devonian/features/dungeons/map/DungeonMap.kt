@@ -15,7 +15,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.util.TriState
 import java.awt.Color
 import kotlin.math.PI
 import kotlin.math.cos
@@ -349,13 +348,13 @@ object DungeonMap : HudFeature(
             val dxr = cos(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
             val dyr = sin(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
 
-            val mat = ctx.pose().last().pose()
+            val mat = ctx.pose()
             val consumer = (ctx as GuiGraphicsAccessor).vertexConsumers
             val buf = consumer.getBuffer(if (i == 0) layerSelf else layerOther)
-            buf.addVertex(mat, px + dxf - dxr, py + dyf - dyr, 0f).setUv(0f, 0f).setColor(-1)
-            buf.addVertex(mat, px - dxf - dxr, py - dyf - dyr, 0f).setUv(0f, 1f).setColor(-1)
-            buf.addVertex(mat, px + dxf + dxr, py + dyf + dyr, 0f).setUv(1f, 0f).setColor(-1)
-            buf.addVertex(mat, px - dxf + dxr, py - dyf + dyr, 0f).setUv(1f, 1f).setColor(-1)
+            buf.addVertexWith2DPose(mat, px + dxf - dxr, py + dyf - dyr, 0f).setUv(0f, 0f).setColor(-1)
+            buf.addVertexWith2DPose(mat, px - dxf - dxr, py - dyf - dyr, 0f).setUv(0f, 1f).setColor(-1)
+            buf.addVertexWith2DPose(mat, px + dxf + dxr, py + dyf + dyr, 0f).setUv(1f, 0f).setColor(-1)
+            buf.addVertexWith2DPose(mat, px - dxf + dxr, py - dyf + dyr, 0f).setUv(1f, 1f).setColor(-1)
         }
     }
 
@@ -378,7 +377,7 @@ object DungeonMap : HudFeature(
         pipeline,
         RenderType.CompositeState
             .builder()
-            .setTextureState(RenderStateShard.TextureStateShard(mcidMarkerSelf, TriState.TRUE, false))
+            .setTextureState(RenderStateShard.TextureStateShard(mcidMarkerSelf, false))
             .createCompositeState(false)
     )
     val mcidMarkerOther = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_other")
@@ -390,7 +389,7 @@ object DungeonMap : HudFeature(
         pipeline,
         RenderType.CompositeState
             .builder()
-            .setTextureState(RenderStateShard.TextureStateShard(mcidMarkerOther, TriState.TRUE, false))
+            .setTextureState(RenderStateShard.TextureStateShard(mcidMarkerOther, false))
             .createCompositeState(false)
     )
 
