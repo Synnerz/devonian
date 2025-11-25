@@ -55,6 +55,7 @@ object ArrowAlignSolver : Feature(
     private val frameIds = atomic<Map<Int, Int>?>(null)
     private val frameState = IntArray(37) { 0 }
     private val clicksQueued = IntArray(37) { 0 }
+    @Volatile
     private var atDev = false
 
     private fun getFrameId(y: Int, z: Int): Int {
@@ -127,6 +128,7 @@ object ArrowAlignSolver : Feature(
         }
 
         on<PacketReceivedEvent> { event ->
+            if (!atDev) return@on
             val packet = event.packet as? ClientboundSetEntityDataPacket ?: return@on
             val entId = packet.id
             val map = frameIds.value ?: return@on
@@ -147,6 +149,7 @@ object ArrowAlignSolver : Feature(
         }
 
         on<EntityInteractEvent> { event ->
+            if (!atDev) return@on
             val ent = event.entity as? ItemFrame ?: return@on
 
             val x = floor(ent.x).toInt()
@@ -165,6 +168,7 @@ object ArrowAlignSolver : Feature(
         }
 
         on<RenderWorldEvent> {
+            if (!atDev) return@on
             val ctx = Context.Immediate ?: return@on
 
             val textRenderer = minecraft.font
