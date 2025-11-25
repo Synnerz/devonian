@@ -9,7 +9,6 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.SimpleTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHud
-import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsAccessor
 import com.github.synnerz.devonian.utils.BoundingBox
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderStateShard
@@ -348,13 +347,13 @@ object DungeonMap : HudFeature(
             val dxr = cos(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
             val dyr = sin(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
 
-            val mat = ctx.pose()
-            val consumer = (ctx as GuiGraphicsAccessor).vertexConsumers
-            val buf = consumer.getBuffer(if (i == 0) layerSelf else layerOther)
-            buf.addVertexWith2DPose(mat, px + dxf - dxr, py + dyf - dyr, 0f).setUv(0f, 0f).setColor(-1)
-            buf.addVertexWith2DPose(mat, px - dxf - dxr, py - dyf - dyr, 0f).setUv(0f, 1f).setColor(-1)
-            buf.addVertexWith2DPose(mat, px + dxf + dxr, py + dyf + dyr, 0f).setUv(1f, 0f).setColor(-1)
-            buf.addVertexWith2DPose(mat, px - dxf + dxr, py - dyf + dyr, 0f).setUv(1f, 1f).setColor(-1)
+            // val mat = ctx.pose()
+            // val consumer = (ctx as GuiGraphicsAccessor).vertexConsumers
+            // val buf = consumer.getBuffer(if (i == 0) layerSelf else layerOther)
+            // buf.addVertexWith2DPose(mat, px + dxf - dxr, py + dyf - dyr, 0f).setUv(0f, 0f).setColor(-1)
+            // buf.addVertexWith2DPose(mat, px - dxf - dxr, py - dyf - dyr, 0f).setUv(0f, 1f).setColor(-1)
+            // buf.addVertexWith2DPose(mat, px + dxf + dxr, py + dyf + dyr, 0f).setUv(1f, 0f).setColor(-1)
+            // buf.addVertexWith2DPose(mat, px - dxf + dxr, py - dyf + dyr, 0f).setUv(1f, 1f).setColor(-1)
         }
     }
 

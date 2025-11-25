@@ -30,7 +30,6 @@
     "accessor.CameraAccessor",
     "accessor.ChatComponentAccessor",
     "accessor.GuiAccessor",
-    "accessor.GuiGraphicsAccessor",
     "accessor.HeartTypeAccessor",
     "accessor.LocalPlayerAccessor"
   ],
