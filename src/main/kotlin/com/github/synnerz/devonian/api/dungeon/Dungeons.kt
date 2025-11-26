@@ -86,9 +86,7 @@ object Dungeons {
     }
     val secretScore = actualSecretPercent.map { it * 40.0 }
 
-    val actualCompletedRooms = completedRooms
-        .zip(inBoss) { a, b -> a + (if (b) 0 else 1) }
-        .zip(bloodCleared) { a, b -> a + (if (b) 0 else 1) }
+    val actualCompletedRooms = BasicState(0)
 
     // [0, 1]
     val actualClearPercent = actualCompletedRooms.zip(totalRooms) { completed, total ->
@@ -161,6 +159,9 @@ object Dungeons {
 
             event.matches(completedRoomsRegex)?.let {
                 completedRooms.value = it[0].toInt()
+                actualCompletedRooms.value = it[0].toInt() +
+                    (if (inBoss.value) 0 else 1) +
+                    (if (bloodCleared.value) 0 else 1)
                 return@on
             }
 
