@@ -181,7 +181,7 @@ object BoxStarMob : Feature(
                     data.color,
                     phase = SETTING_PHASE.get(),
                     translate = true,
-                    // lineWidth = SETTING_LINE_WIDTH.get()
+                    lineWidth = SETTING_LINE_WIDTH.get()
                 )
                 false
             }
