@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
+import com.github.synnerz.devonian.api.events.ActionbarEvent
 import com.github.synnerz.devonian.api.events.AreaEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.SubAreaEvent
@@ -56,6 +57,8 @@ object DungeonScanner {
     var rooms = MutableList<DungeonRoom?>(36) { null }
     var doors = MutableList<DungeonDoor?>(60) { null }
     var availablePos = findAvailablePos()
+
+    private val secretRegex = "\\b(\\d+)/(\\d+) Secrets".toRegex()
 
     private fun findAvailablePos(): MutableList<WorldComponentPosition> {
         val pos = mutableListOf<WorldComponentPosition>()
@@ -173,10 +176,20 @@ object DungeonScanner {
 
             if (lastIdx == jdx) return@on
             lastIdx = jdx
-            if (currentRoom != null)
-                DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
+            if (currentRoom != null) DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
             // TODO: remove whenever done debugging
             // ChatUtils.sendMessage("$currentRoom")
+        }.setEnabled(Location.stateInArea("catacombs"))
+
+        EventBus.on<ActionbarEvent> { event ->
+            val room = currentRoom ?: return@on
+            val match = secretRegex.find(event.message) ?: return@on
+
+            val found = match.groupValues.getOrNull(1)?.toInt() ?: return@on
+            val total = match.groupValues.getOrNull(2)?.toInt() ?: return@on
+
+            if (total != room.totalSecrets) println("mismatching secret counts in ${room.name}")
+            room.secretsCompleted = found
         }.setEnabled(Location.stateInArea("catacombs"))
     }
 
