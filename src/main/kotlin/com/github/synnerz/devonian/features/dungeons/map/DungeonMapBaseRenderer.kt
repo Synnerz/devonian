@@ -17,6 +17,7 @@ import java.util.*
 import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.max
 import kotlin.math.min
 
 class DungeonMapBaseRenderer :
@@ -272,7 +273,10 @@ class DungeonMapBaseRenderer :
                     CheckmarkTypes.UNEXPLORED -> "&f"
                     CheckmarkTypes.NONE -> "&7"
                 }
-                text.add("$colorCode${if (room.checkmark == CheckmarkTypes.GREEN) room.totalSecrets else room.secretsCompleted}/${room.totalSecrets}")
+                text.add("$colorCode${
+                    if (room.checkmark == CheckmarkTypes.GREEN) max(room.totalSecrets, room.secretsCompleted)
+                    else room.secretsCompleted
+                }/${room.totalSecrets}")
             }
 
             if (decoration == null && text.isEmpty()) return@forEach
