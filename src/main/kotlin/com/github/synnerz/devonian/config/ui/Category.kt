@@ -327,18 +327,18 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         override fun setCurrentX(x: Double) {
             if (!canTrigger()) return
             super.setCurrentX(x)
-            configData.set(this.value)
+            configData.set(getCurrentValue())
         }
 
         override fun setCurrentValue(value: Double) {
             if (!canTrigger()) return
             super.setCurrentValue(value)
-            configData.set(this.value)
+            configData.set(getCurrentValue())
         }
     }.apply {
         setColor(ColorPalette.TERTIARY_COLOR)
         configData.onChange {
-            value = configData.get()
+            value = configData.get() * 100
         }
     }
 
