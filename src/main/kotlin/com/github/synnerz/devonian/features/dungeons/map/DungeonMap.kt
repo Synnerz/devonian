@@ -303,7 +303,6 @@ object DungeonMap : HudFeature(
                 it.scale = 1f
                 it.anchor = TextHud.Anchor.Center
                 it.align = TextHud.Align.Center
-                it.shadow = true
                 it.backdrop = TextHud.Backdrop.None
             }
         }
@@ -317,7 +316,7 @@ object DungeonMap : HudFeature(
         val bounds = getBounds()
 
         val renderNames = SETTING_RENDER_NAMES.get() && (if (SETTING_RENDER_NAMES_ONLY_LEAP.get()) {
-            val held = minecraft.player?.useItem
+            val held = minecraft.player?.mainHandItem
             if (held != null) listOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP").contains(ItemUtils.skyblockId(held))
             else false
         } else true)
@@ -339,6 +338,7 @@ object DungeonMap : HudFeature(
                 val hud = textHuds[i]
                 hud.x = px.toDouble()
                 hud.y = py - 5.0
+                hud.shadow = SETTING_TEXT_SHADOW.get()
                 hud.setLine(text)
                 hud.scale = scale * 0.3f * SETTING_NAME_SCALE.get().toFloat()
                 hud.draw(ctx)
