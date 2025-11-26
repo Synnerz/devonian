@@ -336,7 +336,7 @@ object DungeonMap : HudFeature(
 
                 val hud = textHuds[i]
                 hud.x = px.toDouble()
-                hud.y = py - 5.0
+                hud.y = py - 2.8f * SETTING_MARKER_SCALE.get().toFloat() - hud.getHeight() * 0.5
                 hud.shadow = SETTING_TEXT_SHADOW.get()
                 hud.setLine(text)
                 hud.scale = scale * 0.3f * SETTING_NAME_SCALE.get().toFloat()
