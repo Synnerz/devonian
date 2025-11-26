@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimerSplit
@@ -45,6 +46,7 @@ object RunSplits : TextHudFeature(
 
     override fun initialize() {
         on<RenderOverlayEvent> { event ->
+            if (Dungeons.inBoss.value) return@on
             setLines(timerSplit.str())
             draw(event.ctx)
         }
