@@ -28,7 +28,7 @@ class DungeonMapBaseRenderer :
     var cachedW = 0
     var cachedH = 0
 
-    data class CachedStringKey(val str: String, val size: Int)
+    data class CachedStringKey(val str: String, val size: Int, val shadow: Boolean)
 
     data class CachedRenderedString(
         val img: BufferedImage,
@@ -245,25 +245,23 @@ class DungeonMapBaseRenderer :
                 options.roomName &&
                 (options.puzzleName || room.type != RoomTypes.PUZZLE)
             ) room.name?.also { name ->
-                if (options.colorRoomName) {
-                    val colorCode = when (room.type) {
-                        RoomTypes.ENTRANCE,
-                        RoomTypes.FAIRY,
-                            -> "&f"
+                val colorCode = if (options.colorRoomName) when (room.type) {
+                    RoomTypes.ENTRANCE,
+                    RoomTypes.FAIRY,
+                        -> "&f"
 
-                        RoomTypes.BLOOD -> if (room.checkmark == CheckmarkTypes.GREEN) "&a" else "&f"
+                    RoomTypes.BLOOD -> if (room.checkmark == CheckmarkTypes.GREEN) "&a" else "&f"
 
-                        else -> when (room.checkmark) {
-                            CheckmarkTypes.FAILED -> "&c"
-                            CheckmarkTypes.GREEN -> "&a"
-                            CheckmarkTypes.WHITE,
-                            CheckmarkTypes.UNEXPLORED -> "&f"
+                    else -> when (room.checkmark) {
+                        CheckmarkTypes.FAILED -> "&c"
+                        CheckmarkTypes.GREEN -> "&a"
+                        CheckmarkTypes.WHITE,
+                        CheckmarkTypes.UNEXPLORED -> "&f"
 
-                            CheckmarkTypes.NONE -> "&7"
-                        }
+                        CheckmarkTypes.NONE -> "&7"
                     }
-                    name.replace("\u200B", "- ").split(" ").forEach { text.add("$colorCode$it")}
-                } else text.add(name)
+                } else ""
+                name.replace("\u200B", "- ").split(" ").forEach { text.add("$colorCode$it")}
             }
             if (renderRoomInfo && options.secretCount && room.totalSecrets > 0) {
                 val colorCode = when (room.checkmark) {
@@ -331,7 +329,7 @@ class DungeonMapBaseRenderer :
 
                 fontSize = ceil(fontSize * (fontScale * compToBImgF).toFloat())
 
-                val key = CachedStringKey(str, fontSize.toInt())
+                val key = CachedStringKey(str, fontSize.toInt(), options.stringShadow)
                 textToRender.add(TextRenderParam(decBox, key, text))
             }
         }
