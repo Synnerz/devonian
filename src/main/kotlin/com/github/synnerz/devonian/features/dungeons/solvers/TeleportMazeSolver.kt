@@ -137,6 +137,7 @@ object TeleportMazeSolver : Feature(
             oldPad.blacklisted = true
 
             padAngle(pos.x.roundToInt(), pos.z.roundToInt(), yaw)
+            padAngle(pos.x.toInt(), pos.z.toInt(), yaw)
         }
 
         on<RenderWorldEvent> {
@@ -153,6 +154,18 @@ object TeleportMazeSolver : Feature(
             Context.Immediate?.renderFilledBox(
                 pos1.x.toDouble(), 69.0, pos1.z.toDouble(),
                 Color(0, 255, 0, 80),
+                true
+            )
+            // less likely
+            val pos2 = orderedPads.getOrNull(1) ?: return@on
+            Context.Immediate?.renderBox(
+                pos2.x.toDouble(), 69.0, pos2.z.toDouble(),
+                Color.ORANGE,
+                true
+            )
+            Context.Immediate?.renderFilledBox(
+                pos2.x.toDouble(), 69.0, pos2.z.toDouble(),
+                Color(255, 165, 0, 80),
                 true
             )
 
