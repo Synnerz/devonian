@@ -121,6 +121,7 @@ object Devonian : ClientModInitializer {
         ArrowAlignSolver,
         CurrentRoomName,
         CurrentRoomCleared,
+        TeleportMazeSolver,
     )
 
     override fun onInitializeClient() {
