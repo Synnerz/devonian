@@ -12,8 +12,21 @@ object HideNoStarTag : Feature(
     "Dungeons",
     "catacombs"
 ) {
-    private val exceptions = listOf("Blaze", "King Midas")
-    private val noStarTagRegex = "^(?:\\[Lv\\d+] )?\\S* ?[A-Za-z ]+ [\\dkM.,/]+❤$".toRegex()
+    // "Boomer Psycho"
+    private val bloodExceptions = setOf(
+        "Putrid", "Reaper", "Vader", "Frost", "Cannibal", "Revoker", "Tear", "Mr. Dead", "Skull",
+        "Walker", "Psycho", "Ooze", "Freak", "Flamer", "Mute", "Leech", "Parasite",
+        "Bonzo", "Scarf", "Spirit Bear", "Livid",
+        "L.A.S.R.", "The Diamond Giant", "Jolly Pink Giant", "Bigfoot"
+    )
+    private val exceptions = setOf(
+        // TODO: admin souls
+        "Mimic", "Prince", "Crypt Undead",
+        "Blaze",
+        "King Midas",
+        "Deathmite"
+    ) + bloodExceptions
+    private val noStarTagRegex = "^(?:\\[Lv\\d+] )?\\S* ?([A-Za-z ]+) [\\dkM.,/]+❤$".toRegex()
 
     override fun initialize() {
         on<NameChangeEvent> { event ->
@@ -22,8 +35,15 @@ object HideNoStarTag : Feature(
             val world = minecraft.level ?: return@on
 
             val name = event.name
-            if (exceptions.any { name.contains(it) }) return@on
-            if (!name.matches(noStarTagRegex)) return@on
+            val match = noStarTagRegex.matchEntire(name) ?: return@on
+            val mobName = match.groupValues.getOrNull(1) ?: return@on
+            if (exceptions.contains(mobName)) return@on
+
+            mobName.indexOf(" ").also {
+                if (it < 0) return@also
+                val bloodName = mobName.substring(it + 1)
+                if (bloodExceptions.contains(bloodName)) return@on
+            }
 
             Scheduler.scheduleTask { world.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED) }
         }
