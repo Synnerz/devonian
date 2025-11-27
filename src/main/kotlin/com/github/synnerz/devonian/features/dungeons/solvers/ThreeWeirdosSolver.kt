@@ -99,15 +99,15 @@ object ThreeWeirdosSolver : Feature(
         val entityId = entityList[name] ?: return
         val entity = minecraft.level?.getEntity(entityId) ?: return
         val pos = entity.position()
-        val x0 = pos.x
-        val z0 = pos.z
+        val x0 = pos.x - 0.5
+        val z0 = pos.z - 0.5
         currentEntity = pos
 
         for (dir in dirs) {
             val ( dx, dz ) = dir
-            val blockAt = WorldUtils.getBlockState(round(x0 + dx), 69.0, round(z0 + dz)) ?: continue
+            val blockAt = WorldUtils.getBlockState(x0 + dx, 69.0, z0 + dz) ?: continue
             if (blockAt.block != Blocks.CHEST) continue
-            currentChest = round(x0 + dx) to round(z0 + dz)
+            currentChest = x0 + dx to z0 + dz
         }
     }
 }
