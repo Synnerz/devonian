@@ -123,6 +123,7 @@ object Devonian : ClientModInitializer {
         CurrentRoomCleared,
         TeleportMazeSolver,
         TriviaSolver,
+        IcePathSolver,
     )
 
     override fun onInitializeClient() {
