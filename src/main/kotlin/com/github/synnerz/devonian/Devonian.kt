@@ -124,6 +124,7 @@ object Devonian : ClientModInitializer {
         TeleportMazeSolver,
         TriviaSolver,
         IcePathSolver,
+        TicTacToeSolver,
     )
 
     override fun onInitializeClient() {
