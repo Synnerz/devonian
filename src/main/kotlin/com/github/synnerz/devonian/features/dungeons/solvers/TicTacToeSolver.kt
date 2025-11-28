@@ -34,7 +34,6 @@ object TicTacToeSolver : Feature(
     var hasMoved = false
     var lastStatus: String? = null
     var currentBestMove = -1
-    var possibleNextMove = -1
 
     data class TicTacToePlayer(
         val x: Int,
@@ -86,7 +85,6 @@ object TicTacToeSolver : Feature(
                     floor(entity.z).toInt(),
                     status
                 ))
-                possibleNextMove = -1
                 currentBestMove = -1
                 lastStatus = status
                 hasMoved = true
@@ -142,7 +140,6 @@ object TicTacToeSolver : Feature(
         entityPositions.clear()
         hasMoved = false
         currentBestMove = -1
-        possibleNextMove = -1
         lastStatus = null
     }
 
