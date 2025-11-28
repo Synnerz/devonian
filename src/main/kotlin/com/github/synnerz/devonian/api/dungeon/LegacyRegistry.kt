@@ -40,6 +40,7 @@ object LegacyRegistry {
         "minecraft:green_wool" to 35,
         "minecraft:brown_mushroom" to 39,
         "minecraft:gold_block" to 41,
+        "minecraft:iron_block" to 42,
         "minecraft:smooth_stone" to 43,
         "minecraft:cobblestone_slab[type=double]" to 43,
         "minecraft:stone_brick_slab[type=double]" to 43,
