@@ -9,7 +9,6 @@ import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.monster.Zombie
-import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
 import kotlin.math.max
