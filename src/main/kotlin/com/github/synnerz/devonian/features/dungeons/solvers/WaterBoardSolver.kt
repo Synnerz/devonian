@@ -109,12 +109,14 @@ object WaterBoardSolver : Feature(
                 subvariant += "$idx"
             }
 
-            if (subvariant!!.length == 3)
+            if (subvariant!!.length == 3) {
                 currentSolution = buildMap {
                     val sol = solutionsData["$variant"]?.get(subvariant)
                     for (solution in sol!!)
                         put(solution.key, solution.value.toMutableList())
                 }
+                println("Devonian\$WaterBoard[variant=\"$variant\", subvariant=\"$subvariant\"]")
+            }
             else
                 subvariant = null
         }
