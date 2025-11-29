@@ -3,9 +3,12 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
+import com.github.synnerz.devonian.api.events.BlockUpdateEvent
+import com.github.synnerz.devonian.api.events.MultiBlockUpdateEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
+import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import java.awt.Color
@@ -54,7 +57,8 @@ object CreeperBeamsSolver : Feature(
         val z1: Int,
         val x2: Int,
         val y2: Int,
-        val z2: Int
+        val z2: Int,
+        var blacklisted: Boolean = false
     ) {
         fun containsOneOf(x: Int, y: Int, z: Int): Boolean
             = (x1 == x && y1 == y && z1 == z) || (x2 == x && y2 == y && z2 == z)
@@ -111,6 +115,7 @@ object CreeperBeamsSolver : Feature(
             for (idx in solutionList.indices) {
                 if (idx >= 4) break
                 val solution = solutionList[idx]
+                if (solution.blacklisted) continue
 
                 Context.Immediate?.renderFilledBox(
                     solution.x1.toDouble(), solution.y1.toDouble(), solution.z1.toDouble(),
@@ -140,13 +145,34 @@ object CreeperBeamsSolver : Feature(
                 )
             }
         }
-        // TODO: listen to packet block change and remove each solution
-        //  it is _not_ required for dungeon update but later on (since it's simple)
+
+        on<MultiBlockUpdateEvent> {
+            if (!inRoom || solutionList.isEmpty()) return@on
+
+            it.forEach { blockPos, blockState ->
+                if (blockState.block != Blocks.PRISMARINE) return@forEach
+                onBlockUpdate(blockPos)
+            }
+        }
+
+        on<BlockUpdateEvent> {
+            if (!inRoom || solutionList.isEmpty()) return@on
+
+            if (it.blockState.block != Blocks.PRISMARINE) return@on
+            onBlockUpdate(it.blockPos)
+        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         inRoom = false
         blockPair = null
         solutionList.clear()
+    }
+
+    private fun onBlockUpdate(blockPos: BlockPos) {
+        for (data in solutionList) {
+            if (!data.containsOneOf(blockPos.x, blockPos.y, blockPos.z)) continue
+            data.blacklisted = true
+        }
     }
 }
