@@ -169,6 +169,14 @@ object EventBus {
             }
         }
 
+        on<PacketSentEvent> { event ->
+            when (val packet = event.packet) {
+                is ServerboundUseItemOnPacket -> {
+                    BlockPlaceEvent(packet.hitResult, packet.hand).post()
+                }
+            }
+        }
+
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
             PostClientInit(client).post()
         }

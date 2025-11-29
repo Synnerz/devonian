@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
 import net.minecraft.sounds.SoundSource
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EquipmentSlot
@@ -22,6 +23,7 @@ import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
@@ -322,3 +324,8 @@ class MultiBlockUpdateEvent(
         packet.runUpdates(cb)
     }
 }
+
+class BlockPlaceEvent(
+    val blockHitResult: BlockHitResult,
+    val hand: InteractionHand
+) : Event()
