@@ -16,6 +16,16 @@ object WorldUtils {
 
     fun isChunkLoaded(x: Int, z: Int): Boolean = chunkManager?.hasChunk(x shr 4, z shr 4) ?: false
 
+    fun fromBlockTypeOrNull(x: Double, y: Double, z: Double, blockType: Block): BlockState? =
+        fromBlockTypeOrNull(x.toInt(), y.toInt(), z.toInt(), blockType)
+
+    fun fromBlockTypeOrNull(x: Int, y: Int, z: Int, blockType: Block): BlockState? {
+        val blockState = getBlockState(x, y, z) ?: return null
+        if (blockState.block != blockType) return null
+
+        return blockState
+    }
+
     fun getBlockState(x: Double, y: Double, z: Double): BlockState? =
         getBlockState(x.toInt(), y.toInt(), z.toInt())
 
