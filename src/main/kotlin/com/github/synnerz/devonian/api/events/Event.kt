@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
@@ -20,6 +21,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.HitResult
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
@@ -307,3 +309,16 @@ class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics) : CancellableEvent()
 class EntityInteractEvent(
     val entity: Entity
 ) : CancellableEvent()
+
+class BlockUpdateEvent(
+    val blockPos: BlockPos,
+    val blockState: BlockState
+) : Event()
+
+class MultiBlockUpdateEvent(
+    val packet: ClientboundSectionBlocksUpdatePacket
+) : Event() {
+    fun forEach(cb: (BlockPos, BlockState) -> Unit) {
+        packet.runUpdates(cb)
+    }
+}
