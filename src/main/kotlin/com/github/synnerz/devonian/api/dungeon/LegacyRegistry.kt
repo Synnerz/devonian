@@ -10,6 +10,7 @@ object LegacyRegistry {
         "minecraft:stone" to 1,
         "minecraft:polished_andesite" to 1,
         "minecraft:polished_diorite" to 1,
+        "minecraft:polished_granite" to 1,
         "minecraft:andesite" to 1,
         "minecraft:diorite" to 1,
         "minecraft:granite" to 1,
