@@ -160,6 +160,12 @@ object EventBus {
                         packet.slots.map { Pair(it.first, it.second) }
                     ).post()
                 }
+                is ClientboundSectionBlocksUpdatePacket -> {
+                    MultiBlockUpdateEvent(packet).post()
+                }
+                is ClientboundBlockUpdatePacket -> {
+                    BlockUpdateEvent(packet.pos, packet.blockState).post()
+                }
             }
         }
 
