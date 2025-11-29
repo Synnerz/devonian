@@ -4,10 +4,15 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
+import com.github.synnerz.devonian.api.events.BlockPlaceEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.phys.HitResult
 import java.awt.Color
+import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.abs
 
 object BoulderSolver : Feature(
     "boulderSolver",
@@ -52,17 +57,29 @@ object BoulderSolver : Feature(
             22 to 21
         )
     )
-    var currentSolution: List<Pair<Int, Int>>? = null
+    var inBoulder = false
+    var currentSolution: CopyOnWriteArrayList<Pair<Int, Int>>? = null
 
     override fun initialize() {
         on<DungeonEvent.RoomEnter> {
             val room = it.room
             if (room.name != "Boulder") return@on
 
+            inBoulder = true
+
             val grid = getGridLayout(room)
 
-            currentSolution = solutions[grid]?.map { pair -> room.fromComp(pair.first, pair.second)!! }
+            solutions[grid]
+                ?.map { pair -> room.fromComp(pair.first, pair.second)!! }
+                ?.let { currentSolution = CopyOnWriteArrayList(it) }
         }
+
+        on<DungeonEvent.RoomLeave> {
+            if (!inBoulder) return@on
+            inBoulder = false
+            currentSolution = null
+        }
+
         on<RenderWorldEvent> {
             if (currentSolution == null) return@on
             currentSolution?.forEach {
@@ -78,13 +95,31 @@ object BoulderSolver : Feature(
             }
         }
 
-        on<DungeonEvent.RoomLeave> {
-            currentSolution = null
+        on<BlockPlaceEvent> { event ->
+            if (!inBoulder || currentSolution == null) return@on
+            val hitResult = event.blockHitResult
+            if (hitResult.type == HitResult.Type.MISS) return@on
+
+            val pos = hitResult.blockPos
+            val x = pos.x
+            val y = pos.y
+            val z = pos.z
+
+            WorldUtils.fromBlockTypeOrNull(x, y, z, Blocks.STONE_BUTTON)
+                ?: WorldUtils.fromBlockTypeOrNull(x, y, z, Blocks.OAK_WALL_SIGN)
+                ?: return@on
+
+            for (data in currentSolution!!) {
+                val dist = abs(x - data.first) + abs(z - data.second)
+                if (dist != 1) continue
+                currentSolution!!.remove(data)
+            }
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         currentSolution = null
+        inBoulder = false
     }
 
     private fun getGridLayout(room: DungeonRoom): String {
