@@ -32,4 +32,5 @@ object StringUtils {
         num >= max * 0.25 -> "§6"
         else -> "§4"
     }
+    fun colorForNumber(num: Int, max: Int) = colorForNumber(num.toDouble(), max.toDouble())
 }

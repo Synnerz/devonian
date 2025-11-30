@@ -36,7 +36,7 @@ object GoldorFrenzyTimer : TextHudFeature(
             if (!inGoldor) return@on
             setLine(
                 "%s%.2f".format(
-                    StringUtils.colorForNumber(until.toDouble(), 60.0),
+                    StringUtils.colorForNumber(until, 60),
                     until * 0.05
                 )
             )
