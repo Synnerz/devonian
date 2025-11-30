@@ -14,8 +14,7 @@ object ScoreAlert : Feature(
     private val SETTING_270 = addSwitch(
         "270",
         "",
-        "270 Score Alert",
-        true
+        "270 Score Alert"
     )
     private val SETTING_270_MESSAGE = addTextInput(
         "270message",
@@ -26,8 +25,7 @@ object ScoreAlert : Feature(
     private val SETTING_300 = addSwitch(
         "300",
         "",
-        "300 Score Alert",
-        true
+        "300 Score Alert"
     )
     private val SETTING_300_MESSAGE = addTextInput(
         "300message",
