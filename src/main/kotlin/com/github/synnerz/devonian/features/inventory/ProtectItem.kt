@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.inventory
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.CancellableEvent
 import com.github.synnerz.devonian.api.events.DropItemEvent
 import com.github.synnerz.devonian.api.events.GuiKeyEvent
@@ -46,7 +47,7 @@ object ProtectItem : Feature(
         }
 
         on<DropItemEvent> { event ->
-            if (Location.area == "catacombs" && minecraft.screen == null) return@on
+            if (Location.area == "catacombs" && Dungeons.timeElapsed.value != 0 && minecraft.screen == null) return@on
             val stack = event.itemStack
             val uuid = ItemUtils.uuid(stack) ?: return@on
             if (!lockedList.contains(uuid)) return@on
