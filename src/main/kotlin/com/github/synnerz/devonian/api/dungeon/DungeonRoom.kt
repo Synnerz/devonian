@@ -25,7 +25,7 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
     var checkmark = CheckmarkTypes.UNEXPLORED
     var shape = ShapeTypes.Shape1x1
     var totalSecrets = 0
-    var secretsCompleted = 0
+    var secretsCompleted = -1
     var clear = ClearTypes.MOB
     val doors = mutableSetOf<DungeonDoor>()
 
