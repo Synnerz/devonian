@@ -25,4 +25,11 @@ object StringUtils {
         }
         return total + lastValue
     }
+
+    fun colorForNumber(num: Double, max: Double) = when {
+        num >= max * 0.75 -> "§2"
+        num >= max * 0.50 -> "§e"
+        num >= max * 0.25 -> "§6"
+        else -> "§4"
+    }
 }
