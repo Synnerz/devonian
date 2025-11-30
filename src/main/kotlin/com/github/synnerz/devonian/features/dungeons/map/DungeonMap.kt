@@ -340,14 +340,14 @@ object DungeonMap : HudFeature(
                     // Force display player name if leap is being held regardless of configurations, maybe should be configurable
                     // or perhaps force this to be the `SETTING_RENDER_NAMES_ONLY_LEAP` standard, since people expect this behavior
                     if (holdingLeap) player.name
-                    else if (SETTING_USE_CLASS_NAME.get() && player.role != DungeonClass.Unknown) "$nameFormat${player.role.shortName}"
+                    else if (SETTING_USE_CLASS_NAME.get() && player.role != DungeonClass.Unknown) player.role.shortName
                     else player.name
 
                 val hud = textHuds[i]
                 hud.x = px.toDouble()
                 hud.y = py - 2.8f * SETTING_MARKER_SCALE.get().toFloat() - hud.getHeight() * 0.5
                 hud.shadow = SETTING_TEXT_SHADOW.get()
-                hud.setLine(text)
+                hud.setLine("$nameFormat$text")
                 hud.scale = scale * 0.3f * SETTING_NAME_SCALE.get().toFloat()
                 hud.draw(ctx)
             }
