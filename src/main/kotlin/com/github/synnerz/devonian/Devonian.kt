@@ -127,6 +127,7 @@ object Devonian : ClientModInitializer {
         TicTacToeSolver,
         WaterBoardSolver,
         ScoreAlert,
+        GoldorFrenzyTimer,
     )
 
     override fun onInitializeClient() {
