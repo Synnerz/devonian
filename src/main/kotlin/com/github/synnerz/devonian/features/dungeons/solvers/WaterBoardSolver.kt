@@ -90,7 +90,7 @@ object WaterBoardSolver : Feature(
                 left == Blocks.GOLD_BLOCK && right == Blocks.TERRACOTTA -> 0
                 left == Blocks.EMERALD_BLOCK && right == Blocks.QUARTZ_BLOCK -> 1
                 left == Blocks.QUARTZ_BLOCK && right == Blocks.DIAMOND_BLOCK -> 2
-                left == Blocks.GOLD_BLOCK && right == Blocks.QUARTZ_BLOCK -> 2
+                left == Blocks.GOLD_BLOCK && right == Blocks.QUARTZ_BLOCK -> 3
                 else -> null
             } ?: return@on
         }
