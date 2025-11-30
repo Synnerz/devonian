@@ -14,7 +14,8 @@ object ScoreAlert : Feature(
     private val SETTING_270 = addSwitch(
         "270",
         "",
-        "270 Score Alert"
+        "270 Score Alert",
+        true
     )
     private val SETTING_270_MESSAGE = addTextInput(
         "270message",
@@ -25,7 +26,8 @@ object ScoreAlert : Feature(
     private val SETTING_300 = addSwitch(
         "300",
         "",
-        "300 Score Alert"
+        "300 Score Alert",
+        true
     )
     private val SETTING_300_MESSAGE = addTextInput(
         "300message",
@@ -39,6 +41,7 @@ object ScoreAlert : Feature(
 
     override fun initialize() {
         Dungeons.score.listen {
+            if (!isEnabled()) return@listen
             if (it >= 270 && !sent270) {
                 sent270 = true
                 if (SETTING_270.get()) Alert.show(SETTING_270_MESSAGE.get(), 1000)
