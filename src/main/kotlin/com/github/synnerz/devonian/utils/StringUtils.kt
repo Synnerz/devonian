@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.TextColor
+import java.text.NumberFormat
 import java.util.*
 
 object StringUtils {
@@ -76,5 +77,11 @@ object StringUtils {
         str += this.siblings.joinToString("", transform = ::parseFormat)
 
         return str
+    }
+
+    fun addCommas(number: Number): String {
+        return number.let {
+            NumberFormat.getNumberInstance(Locale.US).format(it)
+        }
     }
 }
