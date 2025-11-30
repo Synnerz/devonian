@@ -71,7 +71,7 @@ object SkyblockPrices {
 
     fun buyPrice(name: String): Float {
         if (savedData.bazaarData.products.containsKey(name))
-            return savedData.bazaarData.products[name]!!.buy_summary.last().pricePerUnit
+            return savedData.bazaarData.products[name]?.buy_summary?.lastOrNull()?.pricePerUnit ?: return 0f
 
         val auctionData = savedData.auctionData[name] ?: return 0f
         return auctionData

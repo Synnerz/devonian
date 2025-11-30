@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian
 
+import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
@@ -136,6 +137,7 @@ object Devonian : ClientModInitializer {
         ConfigGui.initialize()
         HudManager.initialize()
         JsonUtils.load()
+        SkyblockPrices
         Config.initialize()
         Location.initialize()
         Alert.initialize()
