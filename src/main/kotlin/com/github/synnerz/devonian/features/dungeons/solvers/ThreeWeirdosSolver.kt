@@ -140,7 +140,7 @@ object ThreeWeirdosSolver : Feature(
     private fun getChest(name: String, isCorrect: Boolean): AnswerData? {
         val entityId = entityList[name] ?: return null
         val entity = minecraft.level?.getEntity(entityId) ?: return null
-        val pos = entity.position()
+        val pos = entity.position() ?: return null
         val x0 = pos.x - 0.5
         val z0 = pos.z - 0.5
         var chestPos: Pair<Double, Double>? = null
