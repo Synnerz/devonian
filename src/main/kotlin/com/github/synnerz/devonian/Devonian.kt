@@ -130,6 +130,7 @@ object Devonian : ClientModInitializer {
         ScoreAlert,
         GoldorFrenzyTimer,
         QuiverDisplay,
+        ChestProfit,
     )
 
     override fun onInitializeClient() {
