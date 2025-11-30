@@ -315,11 +315,14 @@ object DungeonMap : HudFeature(
 
         val bounds = getBounds()
 
-        val renderNames = SETTING_RENDER_NAMES.get() && (if (SETTING_RENDER_NAMES_ONLY_LEAP.get()) {
-            val held = minecraft.player?.mainHandItem
-            if (held != null) listOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP").contains(ItemUtils.skyblockId(held))
-            else false
-        } else true)
+        val holdingLeap = minecraft.player!!.mainHandItem.let {
+            listOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP").contains(ItemUtils.skyblockId(it))
+        }
+
+        val shouldRenderName =
+            if (SETTING_RENDER_NAMES_ONLY_LEAP.get()) holdingLeap
+            else true
+        val renderNames = SETTING_RENDER_NAMES.get() && shouldRenderName
 
         // shrugs
         var idx = 0
@@ -331,9 +334,15 @@ object DungeonMap : HudFeature(
             val py = (bounds.y + pos.z / (Dungeons.floor.maxDim * 2.0) * bounds.h).toFloat()
 
             if (renderNames) {
+                val nameFormat =
+                    if (SETTING_COLOR_NAME_BY_CLASS.get()) player.role.colorCode
+                    else ""
                 val text =
-                    (if (SETTING_COLOR_NAME_BY_CLASS.get()) player.role.colorCode else "") +
-                    if (SETTING_USE_CLASS_NAME.get() && player.role != DungeonClass.Unknown) player.role.shortName else player.name
+                    // Force display player name if leap is being held regardless of configurations, maybe should be configurable
+                    // or perhaps force this to be the `SETTING_RENDER_NAMES_ONLY_LEAP` standard, since people expect this behavior
+                    if (holdingLeap) player.name
+                    else if (SETTING_USE_CLASS_NAME.get() && player.role != DungeonClass.Unknown) "$nameFormat${player.role.shortName}"
+                    else player.name
 
                 val hud = textHuds[i]
                 hud.x = px.toDouble()
