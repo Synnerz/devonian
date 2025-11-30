@@ -128,6 +128,7 @@ object Devonian : ClientModInitializer {
         WaterBoardSolver,
         ScoreAlert,
         GoldorFrenzyTimer,
+        QuiverDisplay,
     )
 
     override fun onInitializeClient() {
