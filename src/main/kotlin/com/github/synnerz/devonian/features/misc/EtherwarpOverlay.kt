@@ -4,7 +4,6 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
 import com.github.synnerz.devonian.utils.math.DDA
