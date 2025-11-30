@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.WorldComponentPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
@@ -51,7 +52,7 @@ object BoxDoors : Feature(
     )
     private val SETTING_HIDE_NORMAL_DOOR_GREEN = addSwitch(
         "hideNormalDoorGreen",
-        "Don't box normal doors when the room it leads to already has a green checkmark",
+        "Don't box normal doors when the room it leads to is not useful",
         "Hide Useless Doors",
         true
     )
@@ -152,10 +153,10 @@ object BoxDoors : Feature(
             if (SETTING_RENDER_NORMAL_DOORS.get()) {
                 val room = DungeonScanner.currentRoom ?: return@on
                 room.doors.forEach {
-                    if (it.type != DoorTypes.NORMAL && it.type != DoorTypes.ENTRANCE) return@forEach
+                    if (it.type !== DoorTypes.NORMAL && it.type !== DoorTypes.ENTRANCE) return@forEach
                     if (
                         SETTING_HIDE_NORMAL_DOOR_GREEN.get() &&
-                        it.rooms.any { it !== room && it.checkmark == CheckmarkTypes.GREEN }
+                        it.rooms.all { !isRoomUseful(it, room) }
                     ) return@on
 
                     drawDoor(
@@ -182,6 +183,12 @@ object BoxDoors : Feature(
             fill,
             false, true
         )
+    }
+
+    private fun isRoomUseful(room: DungeonRoom, excluding: DungeonRoom): Boolean {
+        if (room === excluding) return false
+        if (room.checkmark !== CheckmarkTypes.GREEN) return true
+        return room.doors.any { it.rooms.any { it !== room && it !== excluding && isRoomUseful(it, room) }}
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
