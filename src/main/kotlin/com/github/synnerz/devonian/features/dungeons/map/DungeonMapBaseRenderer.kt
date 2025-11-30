@@ -275,6 +275,7 @@ class DungeonMapBaseRenderer :
                 }
                 text.add("$colorCode${
                     if (room.checkmark == CheckmarkTypes.GREEN) max(room.totalSecrets, room.secretsCompleted)
+                    else if (room.secretsCompleted < 0) "?"
                     else room.secretsCompleted
                 }/${room.totalSecrets}")
             }
