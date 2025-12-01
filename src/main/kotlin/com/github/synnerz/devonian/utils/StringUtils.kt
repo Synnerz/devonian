@@ -84,4 +84,16 @@ object StringUtils {
             NumberFormat.getNumberInstance(Locale.US).format(it)
         }
     }
+
+    fun formatSeconds(seconds: Long): String {
+        val s = seconds % 60
+        val m = (seconds / 60) % 60
+        val h = seconds / 3600
+
+        return buildString {
+            if (h > 0) append("%02dh ".format(h))
+            if (m > 0 || h > 0) append("%02dm ".format(m))
+            append("%02ds".format(s))
+        }
+    }
 }
