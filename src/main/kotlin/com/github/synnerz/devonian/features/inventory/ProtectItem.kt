@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.inventory
 
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
@@ -16,7 +17,6 @@ import com.google.gson.JsonArray
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.resources.ResourceLocation
@@ -35,7 +35,7 @@ object ProtectItem : Feature(
         KeyMapping(
             "key.devonian.protectItem",
             GLFW.GLFW_KEY_UNKNOWN,
-            "devonian"
+            Devonian.keybindCategory
         )
     )
 
@@ -73,9 +73,7 @@ object ProtectItem : Feature(
         }
 
         on<GuiKeyEvent> { event ->
-            val key = event.key
-            val scancode = event.scanCode
-            if (!keybind.matches(key, scancode)) return@on
+            if (!keybind.matches(event.event)) return@on
             val screen = event.screen
             val stack = cursorStack(screen) ?: return@on
             val uuid = ItemUtils.uuid(stack) ?: return@on
@@ -92,8 +90,7 @@ object ProtectItem : Feature(
     // TODO: make this its own utils file (Looking at you ScreenUtils)
     private fun cursorStack(screen: Screen): ItemStack? {
         if (!(screen is InventoryScreen || screen is ContainerScreen)) return null
-        val handled = screen as AbstractContainerScreen<*>
-        val accessor = handled as AbstractContainerScreenAccessor
+        val accessor = screen as AbstractContainerScreenAccessor
         val window = minecraft.window ?: return null
 
         return accessor.getSlotAtPos(
@@ -126,7 +123,7 @@ object ProtectItem : Feature(
         }
         event.cancel()
 
-        val customName = if (stack.customName == null) ChatUtils.literal("&cName not found") else stack.customName
+        val customName = stack.customName ?: ChatUtils.literal("&cName not found")
         val text = ChatUtils.literal("${ChatUtils.prefix} &cCancelled attempt at dropping ")
             .append(customName)
         ChatUtils.sendMessage(text)

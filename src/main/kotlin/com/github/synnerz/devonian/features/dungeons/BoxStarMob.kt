@@ -155,7 +155,7 @@ object BoxStarMob : Feature(
             }
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             val w = minecraft.level ?: return@on
 
             var len = starredIdQ.size
@@ -171,7 +171,7 @@ object BoxStarMob : Feature(
             starred.removeIf { (ent, data) ->
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 
-                val pos = ent.getPosition(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
+                val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
                 Context.Immediate?.renderBox(
                     pos.x - 0.4,
                     pos.y,

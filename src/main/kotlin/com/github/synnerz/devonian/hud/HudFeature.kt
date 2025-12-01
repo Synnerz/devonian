@@ -94,7 +94,7 @@ abstract class HudFeature(
         val bounds = getBounds()
 
         if (isInternal) {
-            ctx.renderOutline(
+            ctx.submitOutline(
                 bounds.x.toInt(),
                 bounds.y.toInt(),
                 ceil(bounds.w).toInt(),
@@ -132,7 +132,7 @@ abstract class HudFeature(
             )
         }
 
-        ctx.renderOutline(
+        ctx.submitOutline(
             bounds.x.toInt(),
             bounds.y.toInt(),
             ceil(bounds.w).toInt(),

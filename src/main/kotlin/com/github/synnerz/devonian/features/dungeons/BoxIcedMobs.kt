@@ -191,12 +191,12 @@ object BoxIcedMobs : Feature(
             itemCandidates.offer(ItemCandidate(5, packet.id))
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             frozenMobs.forEach {
                 val ent = it.value.ent
                 if (ent.isDeadOrDying || ent.isRemoved) return@forEach
 
-                val pos = ent.getPosition(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
+                val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
                 val w = ent.bbWidth + 0.2
                 val h = ent.bbHeight + 0.2
                 Context.Immediate?.renderBox(

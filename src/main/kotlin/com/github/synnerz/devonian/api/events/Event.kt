@@ -1,14 +1,18 @@
 package com.github.synnerz.devonian.api.events
 
 import com.mojang.blaze3d.vertex.PoseStack
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldExtractionContext
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.particle.Particle
-import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.SubmitNodeCollector
+import net.minecraft.client.renderer.entity.state.EntityRenderState
+import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
@@ -84,10 +88,10 @@ class RenderWorldEvent(
 ) : Event()
 
 class RenderEntityEvent(
-    val entity: Entity,
-    val matrixStack: PoseStack,
-    val consumer: MultiBufferSource,
-    val light: Int,
+    val entityState: EntityRenderState,
+    val cameraState: CameraRenderState,
+    val matrix: PoseStack,
+    val submitter: SubmitNodeCollector,
     val ci: CallbackInfo
 ) : Event()
 
@@ -151,11 +155,12 @@ class GuiKeyEvent(
     val keyName: String?,
     val key: Int,
     val scanCode: Int,
-    val screen: Screen
+    val screen: Screen,
+    val event: KeyEvent
 ) : CancellableEvent()
 
 class BeforeBlockOutlineEvent(
-    val renderContext: WorldRenderContext,
+    val renderContext: WorldExtractionContext,
     val hitResult: HitResult?
 ) : CancellableEvent()
 

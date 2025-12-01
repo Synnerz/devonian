@@ -5,7 +5,6 @@ import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import kotlinx.atomicfu.atomic
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.world.entity.Entity
 import java.util.concurrent.PriorityBlockingQueue
 
 object Scheduler {

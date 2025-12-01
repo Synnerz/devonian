@@ -17,9 +17,8 @@ import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.item.Items
 import java.awt.Color
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.jvm.optionals.getOrNull
 
 object KeyPickup : Feature(
     "keyPickup",
@@ -120,12 +119,12 @@ object KeyPickup : Feature(
             if (item.item !== Items.PLAYER_HEAD) return@on
 
             val profile = item.get(DataComponents.PROFILE) ?: return@on
-            val id = profile.id.getOrNull() ?: return@on
+            val id = profile.partialProfile().id ?: return@on
 
             if (id != witherKeyId && id != bloodKeyId) return@on
             idQ.add(Pair(10, event.entityId))
         }
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             val w = minecraft.level ?: return@on
 
             var len = idQ.size
@@ -141,7 +140,7 @@ object KeyPickup : Feature(
             keys.removeIf { ent ->
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 
-                val pos = ent.getPosition(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
+                val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
                 Context.Immediate?.renderBox(
                     pos.x - 0.5,
                     pos.y + 1.2,

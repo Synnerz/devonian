@@ -2,11 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.events.EntityInteractEvent
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.TickEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.Font

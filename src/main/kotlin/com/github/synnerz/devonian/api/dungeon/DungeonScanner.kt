@@ -1,17 +1,13 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.ActionbarEvent
-import com.github.synnerz.devonian.api.events.AreaEvent
 import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.SubAreaEvent
 import com.github.synnerz.devonian.api.events.TickEvent
-import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.Gson
@@ -19,8 +15,6 @@ import net.minecraft.tags.FluidTags
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.SlabBlock
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.phys.BlockHitResult
-import net.minecraft.world.phys.HitResult
 
 @Suppress("MemberVisibilityCanBePrivate")
 object DungeonScanner {

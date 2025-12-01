@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
@@ -38,7 +38,7 @@ object EventBus {
             post(EntityLeaveEvent(entity))
         }
         ClientTickEvents.START_CLIENT_TICK.register { post(TickEvent(it)) }
-        WorldRenderEvents.LAST.register { post(RenderWorldEvent(it)) }
+        WorldRenderEvents.END_MAIN.register { post(RenderWorldEvent(it)) }
         ClientLifecycleEvents.CLIENT_STARTED.register { post(GameLoadEvent(it)) }
         ClientLifecycleEvents.CLIENT_STOPPING.register { post(GameUnloadEvent(it)) }
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world ->
@@ -47,30 +47,31 @@ object EventBus {
             entityTypes.clear()
         }
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
-            ScreenMouseEvents.allowMouseClick(screen).register { _, mx, my, mbtn ->
-                val event = GuiClickEvent(mx, my, mbtn, true, screen)
+            ScreenMouseEvents.allowMouseClick(screen).register { _, event ->
+                val event = GuiClickEvent(event.x, event.y, event.button(), true, screen)
                 post(event)
                 !event.isCancelled()
             }
 
-            ScreenMouseEvents.allowMouseRelease(screen).register { _, mx, my, mbtn ->
-                val event = GuiClickEvent(mx, my, mbtn, false, screen)
+            ScreenMouseEvents.allowMouseRelease(screen).register { _, event ->
+                val event = GuiClickEvent(event.x, event.y, event.button(), false, screen)
                 post(event)
                 !event.isCancelled()
             }
 
-            ScreenKeyboardEvents.allowKeyPress(screen).register { _, key, scancode, _ ->
+            ScreenKeyboardEvents.allowKeyPress(screen).register { _, event ->
                 val event = GuiKeyEvent(
-                    GLFW.glfwGetKeyName(key, scancode),
-                    key,
-                    scancode,
-                    screen
+                    GLFW.glfwGetKeyName(event.key, event.scancode),
+                    event.key,
+                    event.scancode,
+                    screen,
+                    event
                 )
                 post(event)
                 !event.isCancelled()
             }
         }
-        WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register { worldContext, hitResult ->
+        WorldRenderEvents.AFTER_BLOCK_OUTLINE_EXTRACTION.register { worldContext, hitResult ->
             !BeforeBlockOutlineEvent(worldContext, hitResult).post()
         }
 

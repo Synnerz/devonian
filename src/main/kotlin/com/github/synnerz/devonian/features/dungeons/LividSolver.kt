@@ -73,8 +73,8 @@ object LividSolver : Feature(
         }
 
         on<RenderEntityEvent> { event ->
-            val entity = event.entity
-            val matrixStack = event.matrixStack
+            val entity = event.entityState
+            val matrixStack = event.matrix
             if (entity.id != lividId) return@on
 
             val cam = minecraft.gameRenderer.mainCamera.position.reverse()

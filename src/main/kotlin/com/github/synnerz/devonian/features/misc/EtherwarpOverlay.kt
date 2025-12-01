@@ -104,12 +104,13 @@ object EtherwarpOverlay : Feature(
             val pz: Double
             val lookVec: Vec3
             if (SETTING_USE_SMOOTH_POSITION.get()) {
-                val posVec = player.getPosition(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
-                val camVec = player.getEyePosition(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
+                val pt = minecraft.deltaTracker.getGameTimeDeltaPartialTick(false)
+                val posVec = player.getPosition(pt)
+                val camVec = player.getEyePosition(pt)
                 px = posVec.x
                 py = camVec.y
                 pz = posVec.z
-                lookVec = player.getViewVector(event.ctx.tickCounter().getGameTimeDeltaPartialTick(false))
+                lookVec = player.getViewVector(pt)
             } else {
                 val playerAccessor = player as LocalPlayerAccessor
                 px = playerAccessor.lastXClient
@@ -149,7 +150,7 @@ object EtherwarpOverlay : Feature(
                 ) failReason = "&4Can't TP: No air above!"
             }
 
-            val camera = event.ctx.camera()
+            val camera = event.ctx.gameRenderer().mainCamera
             val cameraPos = camera.position
 
             val outlineShape = world.getBlockState(hitResult).getShape(

@@ -61,8 +61,7 @@ object SecretsSound : Feature(
                 if (entityBlock.type != BlockEntityType.SKULL) return@on
                 val skullBlock = entityBlock as SkullBlockEntity
                 val owner = skullBlock.ownerProfile ?: return@on
-                if (owner.id.isEmpty) return@on
-                val id = owner.id.get()
+                val id = owner.partialProfile().id ?: return@on
 
                 if (!skullIds.contains("$id")) return@on
 

@@ -29,12 +29,22 @@ import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
 import net.fabricmc.api.ClientModInitializer
+import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
+import net.minecraft.resources.ResourceLocation
 import org.slf4j.LoggerFactory
 
 object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")
     val minecraft = Minecraft.getInstance()
+    val keybindCategory by lazy {
+        KeyMapping.Category.register(
+            ResourceLocation.fromNamespaceAndPath(
+                "devonian",
+                "keybinds"
+            )
+        )
+    }
     val features = mutableListOf<Feature>()
     private val featureInstances = listOf(
         NoCursorReset,

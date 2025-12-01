@@ -131,7 +131,7 @@ object SimonSaysSolver : Feature(
         }
 
         on<RenderWorldEvent> { event ->
-            val cam = event.ctx.camera().position.reverse()
+            val cam = event.ctx.gameRenderer().mainCamera.position.reverse()
             solution.forEachIndexed { i, pos ->
                 val wire = when (i) {
                     0 -> SETTING_COLOR_WIRE_1.getColor()

@@ -1,12 +1,7 @@
 package com.github.synnerz.devonian.utils.math
 
 import org.ejml.simple.SimpleMatrix
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.pow
-import kotlin.math.sin
+import kotlin.math.*
 
 object MathUtils {
     fun toPolynomial(coeffs: DoubleArray): (x: Double) -> Double {

@@ -7,6 +7,8 @@ import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.KeyEvent
+import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
 import kotlin.math.min
@@ -60,25 +62,25 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         super.mouseMoved(mouseX, mouseY)
     }
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+    override fun mouseClicked(mouseButtonEvent: MouseButtonEvent, bl: Boolean): Boolean {
         mouseDown = true
         updateSelected()
-        selectedHud?.onMouseClick(mouseX, mouseY, button)
+        selectedHud?.onMouseClick(mouseButtonEvent.x, mouseButtonEvent.y, mouseButtonEvent.button())
 
         return false
     }
 
-    override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
+    override fun mouseReleased(mouseButtonEvent: MouseButtonEvent): Boolean {
         mouseDown = false
 
         return false
     }
 
-    override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
-        if (button != 0) return false
+    override fun mouseDragged(mouseButtonEvent: MouseButtonEvent, d: Double, e: Double): Boolean {
+        if (mouseButtonEvent.button() != 0) return false
 
         updateSelected()
-        selectedHud?.onMouseDrag(deltaX, deltaY)
+        selectedHud?.onMouseDrag(d, e)
 
         return false
     }
@@ -95,11 +97,11 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         return false
     }
 
-    override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE) return super.keyPressed(keyCode, scanCode, modifiers)
+    override fun keyPressed(keyEvent: KeyEvent): Boolean {
+        if (keyEvent.key == GLFW.GLFW_KEY_ESCAPE) return super.keyPressed(keyEvent)
 
         if (selectedHud != null) {
-            selectedHud?.onKeyPress(keyCode)
+            selectedHud?.onKeyPress(keyEvent.key)
             // updateSelected()
         }
 

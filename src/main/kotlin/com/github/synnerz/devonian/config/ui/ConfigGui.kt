@@ -8,6 +8,7 @@ import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.KeyEvent
 import net.minecraft.network.chat.Component
 
 object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
@@ -84,9 +85,9 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         // no background here bud
     }
 
-    override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-        background.handleKeyInput(keyCode, scanCode)
-        return super.keyPressed(keyCode, scanCode, modifiers)
+    override fun keyPressed(keyEvent: KeyEvent): Boolean {
+        background.handleKeyInput(keyEvent.key, keyEvent.scancode)
+        return super.keyPressed(keyEvent)
     }
 
     override fun isPauseScreen(): Boolean {

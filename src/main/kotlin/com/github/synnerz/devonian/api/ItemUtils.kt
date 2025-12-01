@@ -6,9 +6,8 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.ItemStack
 
 object ItemUtils {
-    @SuppressWarnings("deprecation")
     fun skyblockId(itemStack: ItemStack): String? {
-        val nbt = itemStack.get(DataComponents.CUSTOM_DATA)?.unsafe ?: return null
+        val nbt = extraAttributes(itemStack) ?: return null
         val itemId = nbt.getString("id")
         if (itemId.isEmpty) return null
 
@@ -16,7 +15,7 @@ object ItemUtils {
     }
 
     fun extraAttributes(itemStack: ItemStack): CompoundTag? {
-        return itemStack.get(DataComponents.CUSTOM_DATA)?.unsafe
+        return itemStack.get(DataComponents.CUSTOM_DATA)?.copyTag()
     }
 
     fun uuid(itemStack: ItemStack): String? {
