@@ -33,6 +33,11 @@ class TimerSplit @JvmOverloads constructor(
         }
     }
 
+    fun onChat(event: ChatEvent, _format: Boolean = false) {
+        for (child in children)
+            child.onChat(event, _format)
+    }
+
     fun reset() {
         for (child in children) {
             child.time = 0L
