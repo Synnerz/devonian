@@ -4,10 +4,7 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
-import com.github.synnerz.devonian.api.events.NameChangeEvent
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.TickEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.RenderType
@@ -80,7 +77,7 @@ object BlazeSolver : Feature(
     var inBlaze = false
     val blazes = CopyOnWriteArrayList<BlazeEntity>()
     var lastBlazes = 0
-    var startedAt = 0L
+    var startedAt = 0
     var efficientPos: Triple<Int, Int, Int>? = null
 
     data class BlazeEntity(val entity: Entity, val maxHP: Int)
@@ -107,7 +104,7 @@ object BlazeSolver : Feature(
             if (inBlaze) entityList.clear()
             inBlaze = false
             hasPlatform = false
-            startedAt = 0L
+            startedAt = 0
             lastBlazes = 0
             efficientPos = null
         }
@@ -123,16 +120,16 @@ object BlazeSolver : Feature(
                 blazes.add(BlazeEntity(entity, maxHP))
             }
 
-            if (blazes.size == 9 && startedAt == 0L) startedAt = System.currentTimeMillis()
-            if (blazes.isEmpty() && startedAt != 0L && lastBlazes == 1) {
-                val time = (System.currentTimeMillis() - startedAt) / 1000f
+            if (blazes.size == 9 && startedAt == 0) startedAt = EventBus.serverTicks()
+            if (blazes.isEmpty() && startedAt != 0 && lastBlazes == 1) {
+                val time = (EventBus.serverTicks() - startedAt) * 0.05
                 val seconds = "%.2fs".format(time)
                 ChatUtils.sendMessage("&bBlaze took&f: &6$seconds", true)
                 blazes.clear()
                 entityList.clear()
                 inBlaze = false
                 hasPlatform = false
-                startedAt = 0L
+                startedAt = 0
                 lastBlazes = 0
                 efficientPos = null
                 return@on
@@ -262,7 +259,7 @@ object BlazeSolver : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         inBlaze = false
         hasPlatform = false
-        startedAt = 0L
+        startedAt = 0
         lastBlazes = 0
         efficientPos = null
         blazes.clear()

@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
@@ -89,6 +90,7 @@ object TriviaSolver : Feature(
     var solution: List<String>? = null
     var currentType: String? = null
     val answers = mutableListOf<String>()
+    var enteredAt = -1
 
     override fun initialize() {
         on<DungeonEvent.RoomEnter> { event ->
@@ -124,12 +126,20 @@ object TriviaSolver : Feature(
                 return@on
             }
 
+            event.matches("^\\[STATUE] Oruo the Omniscient: I am Oruo the Omniscient\\. I have lived many lives\\. I have learned all there is to know\\.$".toRegex())?.let {
+                enteredAt = EventBus.serverTicks()
+                return@on
+            }
+
             event.matches("^\\[STATUE] Oruo the Omniscient: \\w+ answered Question #\\d+ correctly!$".toRegex())?.let {
                 resetSolution()
                 return@on
             }
 
             event.matches("^\\[STATUE] Oruo the Omniscient: \\w+ answered the final question correctly!$".toRegex())?.let {
+                val time = (EventBus.serverTicks() - enteredAt) * 0.05
+                val seconds = "%.2fs".format(time)
+                ChatUtils.sendMessage("&bQuiz took&f: &6$seconds", true)
                 resetSolution()
                 return@on
             }
@@ -180,6 +190,7 @@ object TriviaSolver : Feature(
     }
 
     private fun resetSolution() {
+        enteredAt = -1
         solution = null
         currentType = null
     }

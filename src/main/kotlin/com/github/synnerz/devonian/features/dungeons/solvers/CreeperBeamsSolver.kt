@@ -1,12 +1,10 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
-import com.github.synnerz.devonian.api.events.BlockUpdateEvent
-import com.github.synnerz.devonian.api.events.MultiBlockUpdateEvent
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
@@ -50,6 +48,7 @@ object CreeperBeamsSolver : Feature(
     private val solutionList = mutableListOf<BeamsSolutionData>()
     var blockPair: Pair<Int, Int>? = null
     var inRoom = false
+    var enteredAt = -1
 
     data class BeamsSolutionData(
         val x1: Int,
@@ -107,6 +106,7 @@ object CreeperBeamsSolver : Feature(
             if (!inRoom) return@on
             inRoom = false
             blockPair = null
+            enteredAt = -1
             solutionList.clear()
         }
 
@@ -166,13 +166,30 @@ object CreeperBeamsSolver : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         inRoom = false
         blockPair = null
+        enteredAt = -1
         solutionList.clear()
     }
 
     private fun onBlockUpdate(blockPos: BlockPos) {
         for (data in solutionList) {
-            if (!data.containsOneOf(blockPos.x, blockPos.y, blockPos.z)) continue
+            if (!data.containsOneOf(blockPos.x, blockPos.y, blockPos.z) || data.blacklisted) continue
             data.blacklisted = true
+            if (enteredAt == -1) enteredAt = EventBus.serverTicks()
         }
+
+        if (enteredAt == -1) return
+
+        var blacklisting = 0
+        for (idx in 0..3) {
+            val data = solutionList.getOrNull(idx) ?: continue
+            if (!data.blacklisted) continue
+            blacklisting++
+        }
+        if (blacklisting != 4) return
+
+        val time = (EventBus.serverTicks() - enteredAt) * 0.05
+        val seconds = "%.2fs".format(time)
+        ChatUtils.sendMessage("&bCreeper Beams took&f: &6$seconds", true)
+        enteredAt = -1
     }
 }

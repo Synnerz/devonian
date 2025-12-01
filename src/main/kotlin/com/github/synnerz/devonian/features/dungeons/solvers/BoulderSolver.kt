@@ -1,10 +1,13 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
+import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.events.BlockPlaceEvent
+import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
@@ -58,6 +61,7 @@ object BoulderSolver : Feature(
         )
     )
     var inBoulder = false
+    var enteredAt = -1
     var currentSolution: CopyOnWriteArrayList<Pair<Int, Int>>? = null
 
     override fun initialize() {
@@ -66,6 +70,7 @@ object BoulderSolver : Feature(
             if (room.name != "Boulder") return@on
 
             inBoulder = true
+            enteredAt = EventBus.serverTicks()
 
             val grid = getGridLayout(room)
 
@@ -78,6 +83,7 @@ object BoulderSolver : Feature(
             if (!inBoulder) return@on
             inBoulder = false
             currentSolution = null
+            enteredAt = -1
         }
 
         on<RenderWorldEvent> {
@@ -105,6 +111,20 @@ object BoulderSolver : Feature(
             val y = pos.y
             val z = pos.z
 
+            WorldUtils.fromBlockTypeOrNull(x, y, z, Blocks.CHEST)?.let {
+                if (enteredAt == -1) return@on
+                val room = DungeonScanner.currentRoom ?: return@on
+                val compPos = room.fromPos(x, z) ?: return@on
+                if (compPos.first != 15 || y != 66 || compPos.second != 29) return@on
+
+                val time = (EventBus.serverTicks() - enteredAt) * 0.05
+                val seconds = "%.2fs".format(time)
+                ChatUtils.sendMessage("&bBoulder took&f: &6$seconds", true)
+
+                enteredAt = -1
+                return@on
+            }
+
             WorldUtils.fromBlockTypeOrNull(x, y, z, Blocks.STONE_BUTTON)
                 ?: WorldUtils.fromBlockTypeOrNull(x, y, z, Blocks.OAK_WALL_SIGN)
                 ?: return@on
@@ -120,6 +140,7 @@ object BoulderSolver : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         currentSolution = null
         inBoulder = false
+        enteredAt = -1
     }
 
     private fun getGridLayout(room: DungeonRoom): String {
