@@ -33,18 +33,22 @@ data class TimerSplitData(
         return str
     }
 
-    fun onChat(event: ChatEvent) {
+    fun onChat(event: ChatEvent, _format: Boolean = false) {
         if (criteria.any { event.matches(it) != null } && time == 0L) {
             time = System.currentTimeMillis()
             val currentSeconds = seconds()
 
             if (!sendChat || chat == null || currentSeconds == 0L) return
 
+            if (_format) {
+                ChatUtils.sendMessage(chat.replace("$1", StringUtils.formatSeconds(currentSeconds)), true)
+                return
+            }
             ChatUtils.sendMessage(chat.replace("$1", "${currentSeconds}s"), true)
         }
 
         for (child in children)
-            child.onChat(event)
+            child.onChat(event, _format)
     }
 
     fun boundToTime(): Long? = boundTo?.time
