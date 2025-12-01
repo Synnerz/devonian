@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.api.splits
 
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.utils.StringUtils
 
 class TimerSplit @JvmOverloads constructor(
     val children: MutableList<TimerSplitData> = mutableListOf()
@@ -20,9 +21,15 @@ class TimerSplit @JvmOverloads constructor(
     private fun findBounds() {
         for (idx in children.indices) {
             if (idx == 0) continue
-            children[idx].boundTo = children[idx - 1]
-            for (child in children[idx].children)
-                child.boundTo = children[idx - 1]
+            val parent = children[idx - 1]
+            val data = children[idx]
+
+            if (data.boundTo == null)
+                data.boundTo = parent
+
+            for (child in children[idx].children) {
+                child.boundTo = data.boundTo
+            }
         }
     }
 
@@ -49,7 +56,13 @@ class TimerSplit @JvmOverloads constructor(
     fun addChild(title: String?, criteria: Regex, sendChat: Boolean = true)
         = addChild(title, listOf(criteria), sendChat)
 
-    fun str(): List<String> = children.mapNotNull { c -> c.title()?.replace("$1", "${c.seconds()}s") }
+    fun str(_format: Boolean = false): List<String> = children.mapNotNull { c ->
+        if (_format) return@mapNotNull c.title(_format)?.replace("$1", StringUtils.formatSeconds(c.seconds()))
+        c.title()?.replace("$1", "${c.seconds()}s")
+    }
 
-    fun defaultStr(): List<String> = children.mapNotNull { c -> c.title()?.replace("$1", "${c.seconds()}s") }
+    fun defaultStr(_format: Boolean = false): List<String> = children.mapNotNull { c ->
+        if (_format) return@mapNotNull c.title(_format)?.replace("$1", StringUtils.formatSeconds(c.seconds()))
+        c.title()?.replace("$1", "${c.seconds()}s")
+    }
 }
