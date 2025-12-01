@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimerSplit
@@ -46,11 +47,11 @@ object RunSplits : TextHudFeature(
         TimerSplitData("&bBoss Entry&f: &a$1", bossDialogs, boundTo = mortTimer)
     )
 
-    init {
-        children.add(timerSplit.event)
-    }
-
     override fun initialize() {
+        on<ChatEvent> { event ->
+            timerSplit.onChat(event, SETTING_FORMAT_TIME_HUMAN.get())
+        }
+
         on<RenderOverlayEvent> { event ->
             if (Dungeons.inBoss.value) return@on
             setLines(timerSplit.str(SETTING_FORMAT_TIME_HUMAN.get()))
