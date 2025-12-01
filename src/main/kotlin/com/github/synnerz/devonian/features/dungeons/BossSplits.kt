@@ -1,5 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ScoreboardEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -12,7 +14,18 @@ object BossSplits : TextHudFeature(
     "Dungeons",
     "catacombs"
 ) {
+    private val SETTING_FORMAT_TIME_HUMAN = addSwitch(
+        "formatTimeInHuman",
+        "Formats the splits' time into a more human readable time rather than just second (example: 02m 03s instead of 123s)",
+        "Boss Splits Format Time Human"
+    )
+    private val SETTING_SEND_ALL_END = addSwitch(
+        "sendAllOnRunEnd",
+        "Sends all of the splits in chat whenever the run ends",
+        "Boss Splits Send All End"
+    )
     private val floorRegex = "^ +⏣ The Catacombs \\((\\w)(\\d+)\\)\$".toRegex()
+    private val extraStatsRegex = "^ *> EXTRA STATS <\$".toRegex()
     var currentSplit: TimerSplit? = null
 
     override fun initialize() {
@@ -25,7 +38,18 @@ object BossSplits : TextHudFeature(
             val currentFloor = if (floorNum == 7) "${floorType}${floorNum}" else "F${floorNum}"
 
             currentSplit = BossSplitTypes.byName(currentFloor)!!.ins
-            currentSplit!!.event.register()
+        }
+
+        on<ChatEvent> { event ->
+            currentSplit?.let { split ->
+                split.onChat(event, SETTING_FORMAT_TIME_HUMAN.get())
+                event.matches(extraStatsRegex)?.let {
+                    if (!SETTING_SEND_ALL_END.get()) return@let
+                    Scheduler.scheduleServerTask(2) {
+                        split.sendChat(SETTING_FORMAT_TIME_HUMAN.get())
+                    }
+                }
+            }
         }
 
         on<RenderOverlayEvent> { event ->
@@ -33,17 +57,16 @@ object BossSplits : TextHudFeature(
 
             if (split.children.first().time == 0L) return@on
 
-            setLines(split.str())
+            setLines(split.str(SETTING_FORMAT_TIME_HUMAN.get()))
             draw(event.ctx)
         }
     }
 
-    override fun getEditText(): List<String> = BossSplitTypes.F6.ins.defaultStr()
+    override fun getEditText(): List<String> = BossSplitTypes.F6.ins.defaultStr(SETTING_FORMAT_TIME_HUMAN.get())
 
     override fun onWorldChange(event: WorldChangeEvent) {
         val split = currentSplit ?: return
         split.reset()
-        split.event.unregister()
         currentSplit = null
     }
 }
