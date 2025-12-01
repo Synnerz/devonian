@@ -15,8 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class LocalPlayerMixin {
     @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
     private void devonian$dropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
-        ItemStack stack = Devonian.INSTANCE.getMinecraft().player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (stack != null && !stack.isEmpty()) {
+        LocalPlayer player = Devonian.INSTANCE.getMinecraft().player;
+        if (player == null) return;
+        ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if (!stack.isEmpty()) {
             DropItemEvent event = new DropItemEvent(stack, entireStack);
             EventBus.INSTANCE.post(event);
             if (event.isCancelled()) cir.setReturnValue(false);

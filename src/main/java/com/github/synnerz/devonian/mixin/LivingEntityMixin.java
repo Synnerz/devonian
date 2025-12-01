@@ -27,7 +27,7 @@ public abstract class LivingEntityMixin extends Entity {
     )
     private void devonian$onDeath(DamageSource damageSource, CallbackInfo ci) {
         var world = this.level();
-        if (!world.isClientSide) return;
+        if (!world.isClientSide()) return;
 
         new EntityDeathEvent(this, (ClientLevel) world).post();
     }

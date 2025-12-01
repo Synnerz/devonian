@@ -16,7 +16,10 @@ public class YggdrasilMinecraftSessionServiceMixin {
     )
     private boolean devonian$hasSignature(Property instance) {
         boolean hasSig = instance.hasSignature();
-        if (hasSig && instance.signature().isEmpty()) return false;
+        if (hasSig) {
+            String signature = instance.signature();
+            if (signature == null || signature.isEmpty()) return false;
+        }
 
         return hasSig;
     }

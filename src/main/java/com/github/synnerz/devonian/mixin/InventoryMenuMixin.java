@@ -27,7 +27,7 @@ public abstract class InventoryMenuMixin {
             cancellable = true
     )
     private void devonian$onClosedClear(Player player, CallbackInfo ci) {
-        if (player.level().isClientSide) {
+        if (player.level().isClientSide()) {
             CraftingContainer craftingInventory = getCraftSlots();
             for (int idx = 0; idx < craftingInventory.getContainerSize(); idx++) {
                 ItemStack stack = craftingInventory.getItem(idx);
