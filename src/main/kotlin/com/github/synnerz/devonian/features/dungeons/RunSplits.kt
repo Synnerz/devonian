@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -19,6 +20,11 @@ object RunSplits : TextHudFeature(
         "Formats the splits' time into a more human readable time rather than just second (example: 02m 03s instead of 123s)",
         "Run Splits Format Time Human"
     )
+    private val SETTING_SEND_ALL_END = addSwitch(
+        "sendAllOnRunEnd",
+        "Sends all of the splits in chat whenever the run ends",
+        "Run Splits Send All End"
+    )
     private val mortStartRegex = "^\\[NPC] Mort: Here, I found this map when I first entered the dungeon\\.\$".toRegex()
     private val bloodOpenedRegex = "^\\[BOSS] The Watcher: (.+)\$".toRegex()
     private val bloodDoneRegex = "^\\[BOSS] The Watcher: You have proven yourself\\. You may pass\\.$".toRegex()
@@ -32,6 +38,7 @@ object RunSplits : TextHudFeature(
         "^\\[BOSS] Sadan: So you made it all the way here\\.\\.\\. Now you wish to defy me\\? Sadan\\?!$".toRegex(),
         "^\\[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!$".toRegex()
     )
+    private val extraStatsRegex = "^ *> EXTRA STATS <\$".toRegex()
     private val mortTimer = TimerSplitData(null, mortStartRegex, false)
     private val timerSplit = TimerSplit(
         mortTimer,
@@ -50,6 +57,12 @@ object RunSplits : TextHudFeature(
     override fun initialize() {
         on<ChatEvent> { event ->
             timerSplit.onChat(event, SETTING_FORMAT_TIME_HUMAN.get())
+            event.matches(extraStatsRegex)?.let {
+                if (!SETTING_SEND_ALL_END.get()) return@let
+                Scheduler.scheduleServerTask(2) {
+                    timerSplit.sendChat(SETTING_FORMAT_TIME_HUMAN.get())
+                }
+            }
         }
 
         on<RenderOverlayEvent> { event ->
