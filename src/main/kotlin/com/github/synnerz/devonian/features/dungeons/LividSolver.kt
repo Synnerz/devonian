@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.block.Blocks
 import java.awt.Color
 
@@ -34,21 +35,19 @@ object LividSolver : Feature(
         Color(0, 255, 255).rgb
     )
     var inBoss = false
+    var started = false
     var currentLivid: String? = null
-    var lividId = -1
+    var lividEnt: Entity? = null
 
     override fun initialize() {
         on<ChatEvent> { event ->
             if (event.matches(lividSpawnedRegex) != null) {
-                // Fallback to red if there's no block update packet found
-                Scheduler.scheduleServerTask(2) {
-                    if (lividId != -1) return@scheduleServerTask
-                    currentLivid = "Hockey"
-                }
+                started = true
                 return@on
             }
             event.matches(lividStartRegex) ?: return@on
             inBoss = true
+            currentLivid = "Hockey"
         }
 
         on<PacketReceivedEvent> { event ->
@@ -62,10 +61,16 @@ object LividSolver : Feature(
             }
         }
 
-        on<RenderWorldEvent> { event ->
-            if (lividId < 0) return@on
+        on<TickEvent> {
+            if (!started) return@on
+            val name = if (currentLivid == null) return@on else "$currentLivid Livid"
             val world = minecraft.level ?: return@on
-            val entity = world.getEntity(lividId) ?: return@on
+            lividEnt = world.players().find { it.name.string.contains(name) }
+        }
+
+        on<RenderWorldEvent> { event ->
+            if (!started) return@on
+            val entity = lividEnt ?: return@on
             val matrixStack = event.ctx.matrices()
 
             val cam = minecraft.gameRenderer.mainCamera.position.reverse()
@@ -87,7 +92,8 @@ object LividSolver : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         inBoss = false
+        started = false
         currentLivid = null
-        lividId = -1
+        lividEnt = null
     }
 }
