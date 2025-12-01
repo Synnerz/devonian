@@ -1,9 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
+import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.monster.Silverfish
+import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
 import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -32,6 +35,7 @@ object IcePathSolver : Feature(
     val currentSolution = ConcurrentLinkedQueue<IcePathSolution>()
     var inPath = false
     var silverfishEntity: Silverfish? = null
+    var enteredAt = -1
 
     data class IcePathSolution(
         val x1: Int,
@@ -45,6 +49,7 @@ object IcePathSolver : Feature(
             val room = it.room
             if (room.name != "Ice Path") return@on
             inPath = true
+            enteredAt = EventBus.serverTicks()
 
             for (pos in solutions) {
                 val ( x1, z1, x2, z2 ) = pos
@@ -64,6 +69,7 @@ object IcePathSolver : Feature(
             if (!inPath) return@on
             inPath = false
             currentSolution.clear()
+            enteredAt = -1
         }
 
         on<EntityJoinEvent> {
@@ -96,11 +102,32 @@ object IcePathSolver : Feature(
                 )
             }
         }
+
+        on<BlockPlaceEvent> { event ->
+            if (enteredAt == -1 || !inPath) return@on
+
+            val hitResult = event.blockHitResult
+            if (hitResult.type == HitResult.Type.MISS) return@on
+
+            val pos = hitResult.blockPos
+            val x = pos.x
+            val y = pos.y
+            val z = pos.z
+            val room = DungeonScanner.currentRoom ?: return@on
+            val compPos = room.fromPos(x, z) ?: return@on
+            if (compPos.first != 15 || y != 67 || compPos.second != 28) return@on
+
+            val time = (EventBus.serverTicks() - enteredAt) * 0.05
+            val seconds = "%.2fs".format(time)
+            ChatUtils.sendMessage("&bIce Path took&f: &6$seconds", true)
+            enteredAt = -1
+        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         inPath = false
         silverfishEntity = null
+        enteredAt = -1
         currentSolution.clear()
     }
 }

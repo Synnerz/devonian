@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
@@ -134,10 +135,30 @@ object WaterBoardSolver : Feature(
             if (packet !is ServerboundUseItemOnPacket) return@on
             if (!inWaterBoard) return@on
             val result = packet.hitResult
-            WorldUtils.fromBlockTypeOrNull(result.blockPos.x, result.blockPos.y, result.blockPos.z, Blocks.LEVER) ?: return@on
+            val pos = result.blockPos
+            val x = pos.x
+            val y = pos.y
+            val z = pos.z
+
+            WorldUtils.fromBlockTypeOrNull(x, y, z, Blocks.CHEST)?.let {
+                if (openedWaterAt == -1 || currentSolution == null) return@on
+                val room = DungeonScanner.currentRoom ?: return@on
+                val compPos = room.fromPos(x, z) ?: return@on
+                if (compPos.first != 15 || y != 56 || compPos.second != 22) return@on
+                if (currentSolution!!.values.any { it.isNotEmpty() }) return@on
+
+                val time = (EventBus.serverTicks() - openedWaterAt) * 0.05
+                val seconds = "%.2fs".format(time)
+                ChatUtils.sendMessage("&bWater Board took&f: &6$seconds", true)
+                openedWaterAt = -1
+
+                return@on
+            }
+
+            WorldUtils.fromBlockTypeOrNull(x, y, z, Blocks.LEVER) ?: return@on
 
             val room = DungeonScanner.currentRoom ?: return@on
-            val compPos = room.fromPos(result.blockPos.x, result.blockPos.z) ?: return@on
+            val compPos = room.fromPos(x, z) ?: return@on
 
             for (entry in leverPos) {
                 val k = entry.key

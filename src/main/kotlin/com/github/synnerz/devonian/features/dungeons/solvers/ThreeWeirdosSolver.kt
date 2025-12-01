@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
+import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.level.block.Blocks
@@ -52,6 +53,7 @@ object ThreeWeirdosSolver : Feature(
     private val WRONG_FILLED_COLOR = Color(255, 0, 0, 80)
     private val entityList = mutableMapOf<String, Int>()
     val answers = mutableListOf<AnswerData>()
+    var enteredAt = -1
 
     data class AnswerData(
         var entityPos: Vec3,
@@ -60,8 +62,22 @@ object ThreeWeirdosSolver : Feature(
     )
 
     override fun initialize() {
+        on<DungeonEvent.RoomEnter> {
+            val room = it.room
+            if (room.name != "Three Weirdos") return@on
+            enteredAt = EventBus.serverTicks()
+        }
+
+        on<DungeonEvent.RoomLeave> {
+            if (enteredAt == -1) return@on
+            enteredAt = -1
+        }
+
         on<ChatEvent> { event ->
             event.matches(completedRegex)?.let {
+                val time = (EventBus.serverTicks() - enteredAt) * 0.05
+                val seconds = "%.2fs".format(time)
+                ChatUtils.sendMessage("&bThree Weirdos took&f: &6$seconds", true)
                 reset()
                 return@on
             }
@@ -133,6 +149,7 @@ object ThreeWeirdosSolver : Feature(
     }
 
     private fun reset() {
+        enteredAt = -1
         answers.clear()
         entityList.clear()
     }

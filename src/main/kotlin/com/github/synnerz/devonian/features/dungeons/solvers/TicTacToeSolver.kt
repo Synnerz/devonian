@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
@@ -34,6 +35,7 @@ object TicTacToeSolver : Feature(
     var hasMoved = false
     var lastStatus: String? = null
     var currentBestMove = -1
+    var enteredAt = -1
 
     data class TicTacToePlayer(
         val x: Int,
@@ -48,11 +50,13 @@ object TicTacToeSolver : Feature(
             if (room.name != "Tic Tac Toe") return@on
 
             inTTT = true
+            enteredAt = EventBus.serverTicks()
         }
 
         on<DungeonEvent.RoomLeave> {
             if (!inTTT) return@on
             inTTT = false
+            enteredAt = -1
         }
 
         on<ChatEvent> { event ->
@@ -63,6 +67,9 @@ object TicTacToeSolver : Feature(
 
             event.matches(completedPuzzleRegex) ?: return@on
 
+            val time = (EventBus.serverTicks() - enteredAt) * 0.05
+            val seconds = "%.2fs".format(time)
+            ChatUtils.sendMessage("&bTic Tac Toe took&f: &6$seconds", true)
             reset()
         }
 
@@ -141,6 +148,7 @@ object TicTacToeSolver : Feature(
         hasMoved = false
         currentBestMove = -1
         lastStatus = null
+        enteredAt = -1
     }
 
     private fun onAIMove(board: List<String?>) {

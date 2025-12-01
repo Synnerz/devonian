@@ -1,14 +1,15 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.phys.HitResult
 import org.joml.Vector3f
 import java.awt.Color
 import kotlin.math.abs
@@ -59,6 +60,7 @@ object TeleportMazeSolver : Feature(
     var orderedPads = mutableListOf<Pad>()
     var minX = 0
     var minZ = 0
+    var enteredAt = -1
 
     data class Pad(
         val x: Int,
@@ -82,6 +84,7 @@ object TeleportMazeSolver : Feature(
             val room = it.room
             if (room.name != "Teleport Maze") return@on
             inMaze = true
+            enteredAt = EventBus.serverTicks()
 
             val pads = mutableListOf<Pad>()
             for (pos in endFramePositions) {
@@ -116,6 +119,7 @@ object TeleportMazeSolver : Feature(
             minX = 0
             minZ = 0
             cells = null
+            enteredAt = -1
             orderedPads.clear()
         }
 
@@ -186,6 +190,26 @@ object TeleportMazeSolver : Feature(
                 }
             }
         }
+
+        on<BlockPlaceEvent> { event ->
+            if (enteredAt == -1 || !inMaze) return@on
+
+            val hitResult = event.blockHitResult
+            if (hitResult.type == HitResult.Type.MISS) return@on
+
+            val pos = hitResult.blockPos
+            val x = pos.x
+            val y = pos.y
+            val z = pos.z
+            val room = DungeonScanner.currentRoom ?: return@on
+            val compPos = room.fromPos(x, z) ?: return@on
+            if (compPos.first != 15 || y != 70 || compPos.second != 20) return@on
+
+            val time = (EventBus.serverTicks() - enteredAt) * 0.05
+            val seconds = "%.2fs".format(time)
+            ChatUtils.sendMessage("&bTeleport Maze took&f: &6$seconds", true)
+            enteredAt = -1
+        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
@@ -194,6 +218,7 @@ object TeleportMazeSolver : Feature(
         minX = 0
         minZ = 0
         cells = null
+        enteredAt = -1
         orderedPads.clear()
     }
 
