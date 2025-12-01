@@ -262,7 +262,8 @@ object DungeonMapScanner {
             if (mapId.id and 1000 != 0) return@on
             if (Dungeons.inBoss.value) return@on
 
-            val mapState = MapItem.getSavedData(mapId, Devonian.minecraft.level) ?: return@on
+            val world = Devonian.minecraft.level ?: return@on
+            val mapState = MapItem.getSavedData(mapId, world) ?: return@on
             val colors = mapState.colors ?: return@on
 
             if (roomSize == -1 && !scanMapDimensions(colors)) return@on
