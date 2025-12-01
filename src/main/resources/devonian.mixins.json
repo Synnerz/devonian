@@ -11,6 +11,7 @@
     "ConnectionMixin",
     "EffectsInInventoryMixin",
     "EntityRenderDispatcherMixin",
+    "EntityRendererMixin",
     "FallingBlockRendererMixin",
     "FogRendererMixin",
     "GameRendererMixin",

@@ -95,6 +95,10 @@ class RenderEntityEvent(
     val ci: CallbackInfo
 ) : Event()
 
+class PreRenderEntityEvent(
+    val entity: Entity
+) : CancellableEvent()
+
 class GuiOpenEvent(
     val screen: Screen,
     val ci: CallbackInfo
