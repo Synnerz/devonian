@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector3f
 import java.awt.Color
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 object BlazeSolver : Feature(
     "blazeSolver",
@@ -73,10 +75,10 @@ object BlazeSolver : Feature(
         Color(0, 255, 0, 80).rgb
     )
     private val blazeHpRegex = "^\\[Lv15] ♨ Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
-    private val entityList = mutableMapOf<Int, Int>() // <entityId>: <MaxHP>
+    private val entityList = ConcurrentHashMap<Int, Int>() // <entityId>: <MaxHP>
     var hasPlatform = false
     var inBlaze = false
-    val blazes = mutableListOf<BlazeEntity>()
+    val blazes = CopyOnWriteArrayList<BlazeEntity>()
     var lastBlazes = 0
     var startedAt = 0L
     var efficientPos: Triple<Int, Int, Int>? = null
