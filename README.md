@@ -45,6 +45,33 @@ Adding various QOL features for a better experience while gaming.
   - Similar to RunSplits but inside boss room
 * Prince Killed
   - Announced whenever you killed a prince
+* DungeonMap
+* BoxDoors
+  - Highlights doorways inside the current dungeon run
+* ScoreDisplay
+  - Displays score information
+* BoulderSolver
+* ThreeWeirdosSolver
+* BoxIcedMobs
+  - Box mobs that are ice sprayed
+* BlazeSolver
+* KeyPickup
+  - Adds a title, sound and highlights the wither/blood key that is currently dropped
+* CreeperBeamsSolver
+* ArrowAlignSolver
+* CurrentRoomName
+  - Displays a hud with the player's current room name
+* CurrentRoomCleared
+  - Displays a title whenever the current room is cleared
+* TeleportMazeSolver
+* TriviaSolver
+  - Quiz puzzle solver
+* IcePathSolver
+* TicTacToeSolver
+* WaterBoardSolver
+* ScoreAlert
+* GoldorFrenzyTimer
+* ChestProfit
 
 </details>
 
@@ -176,6 +203,24 @@ Adding various QOL features for a better experience while gaming.
   - Alerts you whenever you join the same server (lobby) and tells you how long its been since you were last seen in it, if the time is above 60s it will be removed (from the list) after the alert.
 * EtherwarpSound
   - Changes the sound the etherwarp makes whenever you have etherwarped successfully, customize it via `/devonian etherwarpsound`
+* InventoryHistoryLog
+  - Displays the items changed, removed or added to your inventory
+* SpeedDisplay
+* DisableChatAutoScroll
+  - Disables auto scrolling down whenever there is a new message
+* DisableAttachedArrows
+* DisableVignette
+* DisableWaterOverlay
+* DisableSuffocatingOverlay
+* PingDisplay
+* DisableVanillaArmor
+  - Disables the "vanilla armor" that appears above the hotbar
+* AccurateAbsorption
+* ChangeCrouchHeight
+  - Visually changes your crouching height
+* DisableFog
+* QuiverDisplay
+  - Displays your quiver's current arrow count as well as the arrow type
 
 </details>
 
