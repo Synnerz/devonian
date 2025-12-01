@@ -13,7 +13,7 @@ import org.lwjgl.opengl.*
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferByte
 import java.awt.image.PixelInterleavedSampleModel
-import java.nio.IntBuffer
+import java.nio.ByteBuffer
 import javax.imageio.ImageIO
 
 class BufferedImageUploader(val name: String) : AbstractTexture() {
@@ -40,7 +40,7 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
             0,
             GL11.GL_RGBA,
             GL11.GL_UNSIGNED_BYTE,
-            null as IntBuffer?
+            null as ByteBuffer?
         )
         GlStateManager._texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST)
         GlStateManager._texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST)

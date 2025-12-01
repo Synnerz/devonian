@@ -76,17 +76,17 @@ class TexturedQuadRenderState(
         ).transformMaxBounds(pose)
     }
 
-    override fun buildVertices(vertexConsumer: VertexConsumer, f: Float) {
-        vertexConsumer.addVertexWith2DPose(pose, x00, y00, f)
+    override fun buildVertices(vertexConsumer: VertexConsumer) {
+        vertexConsumer.addVertexWith2DPose(pose, x00, y00)
             .setUv(u00, v00)
             .setColor(color)
-        vertexConsumer.addVertexWith2DPose(pose, x01, y01, f)
+        vertexConsumer.addVertexWith2DPose(pose, x01, y01)
             .setUv(u01, v01)
             .setColor(color)
-        vertexConsumer.addVertexWith2DPose(pose, x11, y11, f)
+        vertexConsumer.addVertexWith2DPose(pose, x11, y11)
             .setUv(u11, v11)
             .setColor(color)
-        vertexConsumer.addVertexWith2DPose(pose, x10, y10, f)
+        vertexConsumer.addVertexWith2DPose(pose, x10, y10)
             .setUv(u10, v10)
             .setColor(color)
     }
