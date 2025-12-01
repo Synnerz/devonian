@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.api.splits
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.utils.StringUtils
 
 data class TimerSplitData(
     val title: String? = null,
@@ -15,14 +16,19 @@ data class TimerSplitData(
     constructor(title: String?, criteria: Regex, sendChat: Boolean = true, chat: String? = title)
             : this(title, listOf(criteria), sendChat, chat = chat)
 
-    fun title(): String? {
+    fun title(_format: Boolean = false): String? {
         if (children.isEmpty()) return title
 
         var str = title
 
         for (child in children)
-            if (child.title != null)
+            if (child.title != null) {
+                if (_format) {
+                    str += child.title.replace("$1", StringUtils.formatSeconds(child.seconds()))
+                    continue
+                }
                 str += child.title.replace("$1", "${child.seconds()}s")
+            }
 
         return str
     }
@@ -30,10 +36,11 @@ data class TimerSplitData(
     fun onChat(event: ChatEvent) {
         if (criteria.any { event.matches(it) != null } && time == 0L) {
             time = System.currentTimeMillis()
+            val currentSeconds = seconds()
 
-            if (!sendChat || chat == null) return
+            if (!sendChat || chat == null || currentSeconds == 0L) return
 
-            ChatUtils.sendMessage(chat.replace("$1", "${seconds()}s"), true)
+            ChatUtils.sendMessage(chat.replace("$1", "${currentSeconds}s"), true)
         }
 
         for (child in children)
