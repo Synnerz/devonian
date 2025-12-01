@@ -62,20 +62,11 @@ object LividSolver : Feature(
             }
         }
 
-        on<EntityJoinEvent> { event ->
-            Scheduler.scheduleServerTask {
-                val entity = event.entity
-                val name = entity.name.string ?: return@scheduleServerTask
-                if (!name.contains("$currentLivid Livid")) return@scheduleServerTask
-
-                lividId = entity.id
-            }
-        }
-
-        on<RenderEntityEvent> { event ->
-            val entity = event.entityState
-            val matrixStack = event.matrix
-            if (entity.id != lividId) return@on
+        on<RenderWorldEvent> { event ->
+            if (lividId < 0) return@on
+            val world = minecraft.level ?: return@on
+            val entity = world.getEntity(lividId) ?: return@on
+            val matrixStack = event.ctx.matrices()
 
             val cam = minecraft.gameRenderer.mainCamera.position.reverse()
             val width = entity.bbWidth.toDouble()

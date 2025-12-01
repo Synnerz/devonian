@@ -20,7 +20,7 @@ public class EntityRenderDispatcherMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private <E extends Entity> void devonian$preEntityRender(EntityRenderState entityRenderState, CameraRenderState cameraRenderState, double d, double e, double f, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
+    private <E extends Entity> void devonian$entityRender(EntityRenderState entityRenderState, CameraRenderState cameraRenderState, double d, double e, double f, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
         EventBus.INSTANCE.post(new RenderEntityEvent(entityRenderState, cameraRenderState, poseStack, submitNodeCollector, ci));
     }
 }
