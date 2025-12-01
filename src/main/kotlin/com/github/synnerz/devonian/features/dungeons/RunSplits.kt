@@ -13,6 +13,11 @@ object RunSplits : TextHudFeature(
     "Dungeons",
     "catacombs"
 ) {
+    private val SETTING_FORMAT_TIME_HUMAN = addSwitch(
+        "formatTimeInHuman",
+        "Formats the splits' time into a more human readable time rather than just second (example: 02m 03s instead of 123s)",
+        "Run Splits Format Time Human"
+    )
     private val mortStartRegex = "^\\[NPC] Mort: Here, I found this map when I first entered the dungeon\\.\$".toRegex()
     private val bloodOpenedRegex = "^\\[BOSS] The Watcher: (.+)\$".toRegex()
     private val bloodDoneRegex = "^\\[BOSS] The Watcher: You have proven yourself\\. You may pass\\.$".toRegex()
@@ -26,8 +31,9 @@ object RunSplits : TextHudFeature(
         "^\\[BOSS] Sadan: So you made it all the way here\\.\\.\\. Now you wish to defy me\\? Sadan\\?!$".toRegex(),
         "^\\[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!$".toRegex()
     )
+    private val mortTimer = TimerSplitData(null, mortStartRegex, false)
     private val timerSplit = TimerSplit(
-        TimerSplitData(null, mortStartRegex, false),
+        mortTimer,
         TimerSplitData("&cBlood Opened&f: &a$1", bloodOpenedRegex),
         TimerSplitData("&cBlood Done&f: &a$1", bloodDoneRegex)
             .addChild(
@@ -37,7 +43,7 @@ object RunSplits : TextHudFeature(
                     chat = "&cFirst Spawn&f: &a$1"
                 )
             ),
-        TimerSplitData("&bBoss Entry&f: &a$1", bossDialogs)
+        TimerSplitData("&bBoss Entry&f: &a$1", bossDialogs, boundTo = mortTimer)
     )
 
     init {
@@ -47,12 +53,12 @@ object RunSplits : TextHudFeature(
     override fun initialize() {
         on<RenderOverlayEvent> { event ->
             if (Dungeons.inBoss.value) return@on
-            setLines(timerSplit.str())
+            setLines(timerSplit.str(SETTING_FORMAT_TIME_HUMAN.get()))
             draw(event.ctx)
         }
     }
 
-    override fun getEditText(): List<String> = timerSplit.defaultStr()
+    override fun getEditText(): List<String> = timerSplit.defaultStr(SETTING_FORMAT_TIME_HUMAN.get())
 
     override fun onWorldChange(event: WorldChangeEvent) {
         timerSplit.reset()
