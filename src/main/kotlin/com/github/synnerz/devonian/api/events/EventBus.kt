@@ -80,14 +80,16 @@ object EventBus {
                 is ClientboundSoundPacket -> {
                     val sound = packet.sound.unwrapKey().getOrNull()?.location() ?: return@on
                     if (onSoundPacket(
-                        "${sound.namespace}:${sound.path}",
-                        packet.pitch,
-                        packet.volume,
-                        packet.source,
-                        packet.x, packet.y, packet.z,
-                        packet.seed
-                    )) event.ci.cancel()
+                            "${sound.namespace}:${sound.path}",
+                            packet.pitch,
+                            packet.volume,
+                            packet.source,
+                            packet.x, packet.y, packet.z,
+                            packet.seed
+                        )
+                    ) event.ci.cancel()
                 }
+
                 is ClientboundPlayerInfoUpdatePacket -> {
                     val action = packet.actions().firstOrNull() ?: return@on
                     if (action === ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER) {
@@ -105,10 +107,12 @@ object EventBus {
                     }
                     return@on
                 }
+
                 is ClientboundPingPacket -> {
                     totalTicks++
                     ServerTickEvent(totalTicks).post()
                 }
+
                 is ClientboundSetPlayerTeamPacket -> {
                     if (packet.parameters.isEmpty) return@on
                     val team = packet.parameters?.get() ?: return@on
@@ -119,6 +123,7 @@ object EventBus {
                     ScoreboardEvent("${teamPrefix}${teamSuffix.trim()}").post()
                     return@on
                 }
+
                 is ClientboundSystemChatPacket -> {
                     val content = packet.content ?: return@on
                     val message = content.string.clearCodes()
@@ -134,11 +139,13 @@ object EventBus {
 
                     if (b1 || b2) event.ci.cancel()
                 }
+
                 is ClientboundAddEntityPacket -> {
                     val id = packet.id
                     val type = packet.type
                     entityTypes[id] = type
                 }
+
                 is ClientboundSetEntityDataPacket -> {
                     val id = packet.id
                     val type = entityTypes[id] ?: return@on
@@ -146,12 +153,14 @@ object EventBus {
                     val text = getNameFromData(data)
                     if (text != null) NameChangeEvent(id, type, text, text.string).post()
                 }
+
                 is ClientboundSetActionBarTextPacket -> {
                     val text = packet.text ?: return@on
                     val message = text.string.clearCodes()
 
                     ActionbarEvent(message, text).post()
                 }
+
                 is ClientboundSetEquipmentPacket -> {
                     val id = packet.entity
                     val type = entityTypes[id] ?: return@on
@@ -161,9 +170,11 @@ object EventBus {
                         packet.slots.map { Pair(it.first, it.second) }
                     ).post()
                 }
+
                 is ClientboundSectionBlocksUpdatePacket -> {
                     MultiBlockUpdateEvent(packet).post()
                 }
+
                 is ClientboundBlockUpdatePacket -> {
                     BlockUpdateEvent(packet.pos, packet.blockState).post()
                 }

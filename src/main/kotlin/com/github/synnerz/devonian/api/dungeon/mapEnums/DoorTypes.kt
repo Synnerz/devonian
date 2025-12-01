@@ -4,5 +4,5 @@ enum class DoorTypes {
     NORMAL,
     WITHER,
     BLOOD,
-    ENTRANCE
+    ENTRANCE;
 }

@@ -18,11 +18,13 @@ data class DungeonPlayer(
     fun tick() {
         if ((entity?.isDeadOrDying ?: true) || (entity?.isRemoved ?: true)) entity = null
         val ent = entity ?: return
-        updatePosition(PlayerComponentPosition.fromWorld(
-            ent.x,
-            ent.z,
-            -(ent.yRot.toDouble() + 90) * PI / 180.0
-        ))
+        updatePosition(
+            PlayerComponentPosition.fromWorld(
+                ent.x,
+                ent.z,
+                -(ent.yRot.toDouble() + 90) * PI / 180.0
+            )
+        )
     }
 
     fun updatePosition(pos: PlayerComponentPosition) {

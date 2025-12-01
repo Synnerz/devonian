@@ -12,6 +12,7 @@ object SkyblockPrices {
         val auctionData: Map<String, Float>,
         val lastSave: Long
     )
+
     private val pricesFile = File(
         Devonian.minecraft.gameDirectory,
         "config"

@@ -5,5 +5,5 @@ enum class CheckmarkTypes {
     WHITE,
     GREEN,
     FAILED,
-    UNEXPLORED
+    UNEXPLORED;
 }
