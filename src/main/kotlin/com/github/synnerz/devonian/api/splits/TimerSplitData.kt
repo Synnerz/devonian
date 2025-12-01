@@ -36,15 +36,7 @@ data class TimerSplitData(
     fun onChat(event: ChatEvent, _format: Boolean = false) {
         if (criteria.any { event.matches(it) != null } && time == 0L) {
             time = System.currentTimeMillis()
-            val currentSeconds = seconds()
-
-            if (!sendChat || chat == null || currentSeconds == 0L) return
-
-            if (_format) {
-                ChatUtils.sendMessage(chat.replace("$1", StringUtils.formatSeconds(currentSeconds)), true)
-                return
-            }
-            ChatUtils.sendMessage(chat.replace("$1", "${currentSeconds}s"), true)
+            sendChat(_format)
         }
 
         for (child in children)
@@ -74,4 +66,16 @@ data class TimerSplitData(
     @JvmOverloads
     fun addChild(title: String?, criteria: Regex, sendChat: Boolean = true)
             = addChild(title, listOf(criteria), sendChat)
+
+    fun sendChat(_format: Boolean = false) {
+        val currentSeconds = seconds()
+
+        if (!sendChat || chat == null || currentSeconds == 0L) return
+
+        if (_format) {
+            ChatUtils.sendMessage(chat.replace("$1", StringUtils.formatSeconds(currentSeconds)), true)
+            return
+        }
+        ChatUtils.sendMessage(chat.replace("$1", "${currentSeconds}s"), true)
+    }
 }

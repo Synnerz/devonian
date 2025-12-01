@@ -38,6 +38,14 @@ class TimerSplit @JvmOverloads constructor(
             child.onChat(event, _format)
     }
 
+    fun sendChat(_format: Boolean = false) {
+        for (child in children) {
+            child.sendChat(_format)
+            for (child2 in child.children)
+                child2.sendChat(_format)
+        }
+    }
+
     fun reset() {
         for (child in children) {
             child.time = 0L
