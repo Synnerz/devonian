@@ -85,7 +85,7 @@ object ProtectItem : Feature(
             else lockedList.add(uuid)
             updateCache()
 
-            ChatUtils.sendMessage("&bProtect item $msg &b${stack.itemName.string}", true)
+            ChatUtils.sendMessage("&bProtect item $msg &b${stack.customName?.string ?: stack.itemName.string}", true)
         }
     }
 
