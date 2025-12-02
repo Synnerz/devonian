@@ -7,7 +7,6 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
-import com.github.synnerz.devonian.utils.math.MathUtils.lerp
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.renderer.RenderType
@@ -385,7 +384,7 @@ object BurrowGuesser : Feature(
             )
 
             val consumer = minecraft.renderBuffers().bufferSource().getBuffer(RenderType.LINES)
-            val camPos = event.ctx.worldState().cameraRenderState.pos ?: return@on
+            val camPos = event.ctx.camera().position ?: return@on
             val stack = PoseStack()
             stack.pushPose()
             stack.translate(camPos.reverse())
