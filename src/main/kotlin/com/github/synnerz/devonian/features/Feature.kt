@@ -170,7 +170,7 @@ open class Feature @JvmOverloads constructor(
         return _category.addColorPicker(
             displayName,
             description,
-            ConfigData.ColorPicker(configName, value)
+            ConfigData.ColorPicker("${this.configName}$${configName}", value)
         )
     }
 
