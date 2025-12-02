@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.diana
 
+import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.TickEvent
@@ -8,6 +9,7 @@ import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.floor
 import kotlin.math.pow
+import kotlin.math.round
 
 object BurrowManager {
     val burrows = CopyOnWriteArrayList<Burrow>()
@@ -15,7 +17,7 @@ object BurrowManager {
 
     data class Burrow(val type: BurrowType, val x: Double, val y: Double, val z: Double, var ttl: Int) {
         fun sameBlockPos(bp: BlockPos): Boolean {
-            return bp.x == x.toInt() && bp.y == y.toInt() - 1 && bp.z == z.toInt()
+            return bp.x == round(x).toInt() && bp.y == round(y).toInt() && bp.z == round(z).toInt()
         }
 
         fun sameBlockPos(x: Double, y: Double, z: Double) =
@@ -38,11 +40,11 @@ object BurrowManager {
         val t = System.currentTimeMillis()
         if (burrows.any {
             it.type == type && it.sameBlockPos(x, y, z) ||
-            type.empirical && recentDugBurrows.any {
+            recentDugBurrows.any {
                 it.t > t &&
-                it.x == x.toInt() &&
-                it.y == y.toInt() &&
-                it.z == z.toInt()
+                it.x == round(x).toInt() &&
+                it.y == round(y).toInt() &&
+                it.z == round(z).toInt()
             }
         }) return
 
@@ -55,8 +57,8 @@ object BurrowManager {
     }
 
     fun digBurrow(pos: BlockPos) {
-        burrows.removeIf { it.type.empirical && it.sameBlockPos(pos) }
-        recentDugBurrows.add(DugBurrow(System.currentTimeMillis() + 1_000L, pos.x, pos.y, pos.z))
+        burrows.removeIf { it.sameBlockPos(pos) }
+        recentDugBurrows.add(DugBurrow(System.currentTimeMillis() + Ping.getMedianPing().toLong() + 1_000L, pos.x, pos.y, pos.z))
         if (recentDugBurrows.size > 10) recentDugBurrows.remove()
     }
 
