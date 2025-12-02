@@ -45,7 +45,7 @@ object SkyblockPrices {
 
         WebRequests.ioScope.launch {
             val bzRequest = WebRequests.get("https://api.hypixel.net/skyblock/bazaar")
-            val ahRequest = WebRequests.get("https://moulberry.codes/lowestbin.json")
+            val ahRequest = WebRequests.get("https://lowestbin.docilelm.workers.dev/")
             val str = "{ bazaarData: $bzRequest, auctionData: $ahRequest, lastSave: ${System.currentTimeMillis()} }"
 
             savedData = JsonUtils.gson.fromJson(str, PriceData::class.java)
