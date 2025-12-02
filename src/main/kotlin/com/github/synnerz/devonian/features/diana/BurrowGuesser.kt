@@ -7,12 +7,16 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
+import com.github.synnerz.devonian.utils.math.MathUtils.lerp
+import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.atomicfu.atomic
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket
+import org.joml.Vector3f
 import java.awt.Color
 import java.util.*
 import kotlin.math.*
@@ -46,7 +50,7 @@ object BurrowGuesser : Feature(
     )
     private val SETTING_PARTICLE_PATH_COLOR = addColorPicker(
         "particlePathColor",
-        "UNUSED - Color of path of particles",
+        "Color of path of particles",
         "Particle Path Color",
         0
     )
@@ -57,7 +61,7 @@ object BurrowGuesser : Feature(
     private var knownChain = mutableListOf<PositionTime>()
 
     private const val MIN_CHAIN_LENGTH = 6
-    private const val MAX_CHAIN_DISTANCE_ERROR = 0.5
+    private const val MAX_CHAIN_DISTANCE_ERROR = 2.0
     private const val RANSAC_ITERS_PER = 30
 
     private val guessPos = atomic<PositionTime?>(null)
@@ -134,16 +138,13 @@ object BurrowGuesser : Feature(
         val weightT = 3 * weight / sqrt(dx0 * dx0 + dy0 * dy0 + dz0 * dz0)
         // val distance = weightT * 1.9
 
-        guessPos.value = PositionTime(0, poly[0](weightT), poly[1](weightT) - 1.0, poly[2](weightT))
-        // TODO: renderLine
-        /*
+        guessPos.value = PositionTime(0, poly[0](weightT) - 0.5, poly[1](weightT) - 1.0, poly[2](weightT) - 0.5)
         particlePath.value = DoubleArray(300) {
             val i = it / 3
             val o = it % 3
             val t = MathUtils.rescale(i.toDouble(), 0.0, 99.0, 0.0, weightT)
             poly[o](t)
         }
-        */
     }
 
     private fun shuffleUntil(arr: IntArray, limit: Int = arr.size) {
@@ -167,9 +168,10 @@ object BurrowGuesser : Feature(
         if (L1 == 0) return
 
         val comb =
-            MathUtils.binomial(L, MIN_CHAIN_LENGTH) - (
-            if (L - L2 < MIN_CHAIN_LENGTH) 0
-            else MathUtils.binomial(L - L2, MIN_CHAIN_LENGTH)
+            MathUtils.binomial(L, MIN_CHAIN_LENGTH) -
+            (
+                if (L - L2 < MIN_CHAIN_LENGTH) 0
+                else MathUtils.binomial(L - L2, MIN_CHAIN_LENGTH)
             )
         val rand = IntArray(L - 1) { it }
         var start = 0
@@ -214,7 +216,7 @@ object BurrowGuesser : Feature(
                 if (
                     (v.x - px).pow(2) +
                     (v.y - py).pow(2) +
-                    (v.z - pz).pow(2) < 9
+                    (v.z - pz).pow(2) < 9.0
                 ) inliers.add(v)
             }
             possibleStartingParticles.forEach(addIf)
@@ -233,6 +235,7 @@ object BurrowGuesser : Feature(
                 inliers.sumOf { abs(it.x - polyX((it.t - minT).toDouble())) } +
                 inliers.sumOf { abs(it.y - polyY((it.t - minT).toDouble())) } +
                 inliers.sumOf { abs(it.z - polyZ((it.t - minT).toDouble())) }
+
             if (d < bestD) {
                 bestD = d
                 best = inliers
@@ -270,7 +273,7 @@ object BurrowGuesser : Feature(
             val y = packet.y
             val z = packet.z
             val part = PositionTime(t, x, y, z)
-            if (knownChain.size > 0 && t < knownChain.last().t + 5) {
+            if (knownChain.isNotEmpty() && t < knownChain.last().t + 5) {
                 val spline = splinePoly.value
                 if (spline != null) {
                     val predX = spline[0](knownChain.size.toDouble())
@@ -355,7 +358,7 @@ object BurrowGuesser : Feature(
             }
         }
 
-        on<RenderWorldEvent> {
+        on<RenderWorldEvent> { event ->
             BurrowManager.burrows.forEach {
                 if (it.type.empirical) return@forEach
 
@@ -381,15 +384,36 @@ object BurrowGuesser : Feature(
                 phase = true
             )
 
-            // TODO: renderLine
-            /*
+            val consumer = minecraft.renderBuffers().bufferSource().getBuffer(RenderType.LINES)
+            val camPos = event.ctx.worldState().cameraRenderState.pos ?: return@on
+            val stack = PoseStack()
+            stack.pushPose()
+            stack.translate(camPos.reverse())
+
             val path = particlePath.value
             for (i in path.indices step 3) {
-                val x = path[i + 0]
-                val y = path[i + 1]
-                val z = path[i + 2]
+                if (i == 0) continue
+                val x1 = path[i - 3].toFloat()
+                val y1 = path[i - 2].toFloat()
+                val z1 = path[i - 1].toFloat()
+                val x2 = path[i + 0].toFloat()
+                val y2 = path[i + 1].toFloat()
+                val z2 = path[i + 2].toFloat()
+
+                val normalized = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
+
+                consumer
+                    .addVertex(stack.last(), x1, y1, z1)
+                    .setColor(SETTING_PARTICLE_PATH_COLOR.get())
+                    .setNormal(stack.last(), normalized)
+
+                consumer
+                    .addVertex(stack.last(), x2, y2, z2)
+                    .setColor(SETTING_PARTICLE_PATH_COLOR.get())
+                    .setNormal(stack.last(), normalized)
             }
-            */
+
+            stack.popPose()
         }
     }
 
