@@ -224,5 +224,11 @@ Adding various QOL features for a better experience while gaming.
 
 </details>
 
+# Beta Testing
+If you're interested in testing our "beta" versions you can head over to the [actions](https://github.com/Synnerz/devonian/actions) section in our github repo for nightly builds, anything that is not working correctly in any of these builds we'd appreciate if you reported it in our [Discord Server](https://discord.gg/DgRsG2PZS9).
+
+# Discord
+You can join our [Discord Server](https://discord.gg/DgRsG2PZS9) to suggest features, report bugs or simply interact with our small community.
+
 # Credits
 Special thanks to [Chattriggers Fabric](https://github.com/ChatTriggers/ctjs), a lot of internal logic wouldn't be possible without it.
