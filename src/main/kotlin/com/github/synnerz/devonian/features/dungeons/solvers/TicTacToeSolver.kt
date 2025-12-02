@@ -56,7 +56,6 @@ object TicTacToeSolver : Feature(
         on<DungeonEvent.RoomLeave> {
             if (!inTTT) return@on
             inTTT = false
-            enteredAt = -1
         }
 
         on<ChatEvent> { event ->
