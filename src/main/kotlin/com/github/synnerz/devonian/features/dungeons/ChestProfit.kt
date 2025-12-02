@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -169,11 +170,7 @@ object ChestProfit : TextHudFeature(
                     ))
                 }
 
-                addLine(currentData.name)
-                if (!SETTING_COMPACT_MODE.get())
-                    addLines(currentData.itemData.map { "  ${it.itemName}  " })
-                val profit = currentData.profit()
-                addLine("&bProfit&f: ${if (profit < 0) "&c" else "&a"}${StringUtils.addCommas(profit)}")
+                Scheduler.scheduleTask { updateDisplay() }
                 inChest = false
                 return@on
             }
