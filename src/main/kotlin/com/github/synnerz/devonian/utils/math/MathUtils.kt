@@ -50,7 +50,7 @@ object MathUtils {
             y = func(x)
             if (increasing == (y < target)) l = x
             else r = x
-        } while (--i >= 0 && abs(target - y) < eps)
+        } while (--i >= 0 && abs(target - y) > eps)
         return x
     }
 
