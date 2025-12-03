@@ -4,21 +4,19 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.CancellableEvent
 import com.github.synnerz.devonian.api.events.DropItemEvent
 import com.github.synnerz.devonian.api.events.GuiKeyEvent
 import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.JsonArray
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
-import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
-import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.ItemStack
@@ -74,8 +72,7 @@ object ProtectItem : Feature(
 
         on<GuiKeyEvent> { event ->
             if (!keybind.matches(event.event)) return@on
-            val screen = event.screen
-            val stack = cursorStack(screen) ?: return@on
+            val stack = ScreenUtils.cursorStack(event.screen) ?: return@on
             val uuid = ItemUtils.uuid(stack) ?: return@on
             val msg = if (lockedList.contains(uuid)) "&cRemoved" else "&aAdded"
 
@@ -87,18 +84,6 @@ object ProtectItem : Feature(
         }
     }
 
-    // TODO: make this its own utils file (Looking at you ScreenUtils)
-    private fun cursorStack(screen: Screen): ItemStack? {
-        if (!(screen is InventoryScreen || screen is ContainerScreen)) return null
-        val accessor = screen as AbstractContainerScreenAccessor
-        val window = minecraft.window ?: return null
-
-        return accessor.getSlotAtPos(
-            minecraft.mouseHandler.getScaledXPos(window),
-            minecraft.mouseHandler.getScaledYPos(window)
-        )?.item
-    }
-
     private fun isLocked(itemStack: ItemStack?): Boolean {
         if (itemStack == null) return false
         val uuid = ItemUtils.uuid(itemStack) ?: return false
@@ -108,7 +93,7 @@ object ProtectItem : Feature(
     private fun updateCache() {
         val array = JsonArray()
 
-        lockedList.forEach  {  array.add(it)}
+        lockedList.forEach  { array.add(it) }
 
         JsonUtils.set("protectedItems", array)
     }
