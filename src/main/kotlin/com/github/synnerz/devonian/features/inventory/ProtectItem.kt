@@ -93,7 +93,7 @@ object ProtectItem : Feature(
     private fun updateCache() {
         val array = JsonArray()
 
-        lockedList.forEach  { array.add(it) }
+        lockedList.forEach { array.add(it) }
 
         JsonUtils.set("protectedItems", array)
     }
