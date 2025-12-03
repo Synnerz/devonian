@@ -176,6 +176,7 @@ object BurrowGuesser : Feature(
         val rand = IntArray(L - 1) { it }
         var start = 0
 
+        var bestD = Double.POSITIVE_INFINITY
         var best = mutableListOf<PositionTime>()
         val tried = mutableSetOf<Int>()
 
@@ -198,14 +199,14 @@ object BurrowGuesser : Feature(
                 val idx = possInliersI[it]
                 if (idx < L1) possibleStartingParticles[idx] else unclaimedParticles[idx - L1]
             }
-            val minT = possInliers.minOf { it.t }
-            val time = DoubleArray(MIN_CHAIN_LENGTH) { (possInliers[it].t - minT).toDouble() }
-            val cX = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].x }) ?: continue
-            val cY = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].y }) ?: continue
-            val cZ = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].z }) ?: continue
-            val polyX = MathUtils.toPolynomial(cX)
-            val polyY = MathUtils.toPolynomial(cY)
-            val polyZ = MathUtils.toPolynomial(cZ)
+            var minT = possInliers.minOf { it.t }
+            var time = DoubleArray(MIN_CHAIN_LENGTH) { (possInliers[it].t - minT).toDouble() }
+            var cX = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].x }) ?: continue
+            var cY = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].y }) ?: continue
+            var cZ = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].z }) ?: continue
+            var polyX = MathUtils.toPolynomial(cX)
+            var polyY = MathUtils.toPolynomial(cY)
+            var polyZ = MathUtils.toPolynomial(cZ)
 
             val inliers = mutableListOf<PositionTime>()
             val addIf: (PositionTime) -> Unit = { v ->
@@ -223,10 +224,27 @@ object BurrowGuesser : Feature(
 
             if (inliers.size < MIN_CHAIN_LENGTH) continue
 
-            best = inliers
+            minT = inliers.minOf { it.t }
+            time = DoubleArray(inliers.size) { (inliers[it].t - minT).toDouble() }
+            cX = MathUtils.polyRegression(3, time, DoubleArray(inliers.size) { inliers[it].x }) ?: continue
+            cY = MathUtils.polyRegression(3, time, DoubleArray(inliers.size) { inliers[it].y }) ?: continue
+            cZ = MathUtils.polyRegression(3, time, DoubleArray(inliers.size) { inliers[it].z }) ?: continue
+            polyX = MathUtils.toPolynomial(cX)
+            polyY = MathUtils.toPolynomial(cY)
+            polyZ = MathUtils.toPolynomial(cZ)
+
+            val d =
+                inliers.sumOf { abs(it.x - polyX((it.t - minT).toDouble())) } +
+                inliers.sumOf { abs(it.y - polyY((it.t - minT).toDouble())) } +
+                inliers.sumOf { abs(it.z - polyZ((it.t - minT).toDouble())) }
+
+            if (d < bestD) {
+                bestD = d
+                best = inliers
+            }
         }
 
-        if (best.isNotEmpty()) {
+        if (bestD < MAX_CHAIN_DISTANCE_ERROR && best.size >= MIN_CHAIN_LENGTH) {
             val s = best.toSet()
             possibleStartingParticles.removeAll(s)
             unclaimedParticles.removeAll(s)
