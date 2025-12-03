@@ -113,6 +113,7 @@ object Ping {
             while (samples.isNotEmpty() && samples.peek().t < t - 60_000.0) {
                 val sample = samples.poll()
                 if (sample != null) {
+                    if (!medianMax.remove(sample)) medianMin.remove(sample)
                     deltaPing += sample.v
                     deltaWeight += sample.w
                 }
