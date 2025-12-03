@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.api.events.EventBus;
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent;
 import com.github.synnerz.devonian.api.events.PacketSentEvent;
 import io.netty.channel.ChannelFutureListener;
@@ -23,23 +22,22 @@ public abstract class ConnectionMixin {
             method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/protocol/Packet;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/network/Connection;genericsFtw(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;)V",
-                    shift = At.Shift.BEFORE
+                    target = "Lnet/minecraft/network/Connection;genericsFtw(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;)V"
             ),
             cancellable = true
     )
     private void devonian$handlePacket(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo ci) {
         if (getReceiving() == PacketFlow.CLIENTBOUND) {
-            EventBus.INSTANCE.post(new PacketReceivedEvent(packet, ci));
+            if (new PacketReceivedEvent(packet).post()) ci.cancel();
         }
     }
 
     @Inject(
-            method = "sendPacket",
+            method = "doSendPacket",
             at = @At("HEAD"),
             cancellable = true
     )
     private void devonian$sendPacket(Packet<?> packet, ChannelFutureListener channelFutureListener, boolean bl, CallbackInfo ci) {
-        EventBus.INSTANCE.post(new PacketSentEvent(packet, ci));
+        if (new PacketSentEvent(packet).post()) ci.cancel();
     }
 }

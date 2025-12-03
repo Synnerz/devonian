@@ -57,14 +57,12 @@ abstract class CancellableEvent : Event() {
 }
 
 @Threaded class PacketSentEvent(
-    val packet: Packet<*>,
-    val ci: CallbackInfo
-) : Event()
+    val packet: Packet<*>
+) : CancellableEvent()
 
 @Threaded class PacketReceivedEvent(
-    val packet: Packet<*>,
-    val ci: CallbackInfo
-) : Event()
+    val packet: Packet<*>
+) : CancellableEvent()
 
 class EntityJoinEvent(
     val entity: Entity
@@ -109,9 +107,8 @@ class GuiCloseEvent(
 ) : Event()
 
 class ParticleSpawnEvent(
-    val particle: Particle,
-    val ci: CallbackInfo
-) : Event()
+    val particle: Particle
+) : CancellableEvent()
 
 class GameLoadEvent(
     val minecraft: Minecraft

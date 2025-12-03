@@ -75,7 +75,7 @@ object Ping {
                 is ServerboundClientCommandPacket -> {
                     if (packet.action != ServerboundClientCommandPacket.Action.REQUEST_STATS) return@on
                     val t = getTimeMS()
-                    if (!didBeat && lastBeat + 10_000.0 > t) event.ci.cancel()
+                    if (!didBeat && lastBeat + 10_000.0 > t) event.cancel()
                     else {
                         lastBeat = t
                         didBeat = false

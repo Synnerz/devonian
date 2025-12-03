@@ -87,7 +87,7 @@ object EventBus {
                             packet.x, packet.y, packet.z,
                             packet.seed
                         )
-                    ) event.ci.cancel()
+                    ) event.cancel()
                 }
 
                 is ClientboundPlayerInfoUpdatePacket -> {
@@ -137,7 +137,7 @@ object EventBus {
                     val b1 = ChatEvent(message, content).post()
                     val b2 = specialized?.post() ?: false
 
-                    if (b1 || b2) event.ci.cancel()
+                    if (b1 || b2) event.cancel()
                 }
 
                 is ClientboundAddEntityPacket -> {

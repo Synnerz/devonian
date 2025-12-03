@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.api.events.EventBus;
 import com.github.synnerz.devonian.api.events.ParticleSpawnEvent;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
@@ -17,6 +16,6 @@ public class ParticleEngineMixin {
             cancellable = true
     )
     private void devonian$addParticle(Particle particle, CallbackInfo ci) {
-        EventBus.INSTANCE.post(new ParticleSpawnEvent(particle, ci));
+        if (new ParticleSpawnEvent(particle).post()) ci.cancel();
     }
 }

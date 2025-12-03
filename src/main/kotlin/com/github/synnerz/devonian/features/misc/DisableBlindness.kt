@@ -17,7 +17,7 @@ object DisableBlindness : Feature(
             if (packet.entityId != player.id) return@on
             if (packet.effect != MobEffects.BLINDNESS) return@on
 
-            event.ci.cancel()
+            event.cancel()
         }
     }
 }

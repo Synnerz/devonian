@@ -10,7 +10,7 @@ object RemoveBlockBreakParticle : Feature("removeBlockBreakParticle") {
         on<ParticleSpawnEvent> { event ->
             if (event.particle !is TerrainParticle) return@on
 
-            event.ci.cancel()
+            event.cancel()
         }
     }
 }
@@ -20,7 +20,7 @@ object RemoveExplosionParticle : Feature("removeExplosionParticle") {
         on<ParticleSpawnEvent> { event ->
             if (event.particle !is HugeExplosionParticle) return@on
 
-            event.ci.cancel()
+            event.cancel()
         }
     }
 }
