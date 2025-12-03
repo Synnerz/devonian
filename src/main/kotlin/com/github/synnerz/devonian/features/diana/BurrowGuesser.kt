@@ -61,7 +61,7 @@ object BurrowGuesser : Feature(
     private var knownChain = mutableListOf<PositionTime>()
 
     private const val MIN_CHAIN_LENGTH = 6
-    private const val MAX_CHAIN_DISTANCE_ERROR = 2.0
+    private const val MAX_CHAIN_DISTANCE_ERROR = 0.5
     private const val RANSAC_ITERS_PER = 30
 
     private val guessPos = atomic<PositionTime?>(null)
@@ -176,7 +176,6 @@ object BurrowGuesser : Feature(
         val rand = IntArray(L - 1) { it }
         var start = 0
 
-        var bestD = Double.POSITIVE_INFINITY
         var best = mutableListOf<PositionTime>()
         val tried = mutableSetOf<Int>()
 
@@ -199,14 +198,14 @@ object BurrowGuesser : Feature(
                 val idx = possInliersI[it]
                 if (idx < L1) possibleStartingParticles[idx] else unclaimedParticles[idx - L1]
             }
-            var minT = possInliers.minOf { it.t }
-            var time = DoubleArray(MIN_CHAIN_LENGTH) { (possInliers[it].t - minT).toDouble() }
-            var cX = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].x }) ?: continue
-            var cY = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].y }) ?: continue
-            var cZ = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].z }) ?: continue
-            var polyX = MathUtils.toPolynomial(cX)
-            var polyY = MathUtils.toPolynomial(cY)
-            var polyZ = MathUtils.toPolynomial(cZ)
+            val minT = possInliers.minOf { it.t }
+            val time = DoubleArray(MIN_CHAIN_LENGTH) { (possInliers[it].t - minT).toDouble() }
+            val cX = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].x }) ?: continue
+            val cY = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].y }) ?: continue
+            val cZ = MathUtils.polyRegression(3, time, DoubleArray(MIN_CHAIN_LENGTH) { possInliers[it].z }) ?: continue
+            val polyX = MathUtils.toPolynomial(cX)
+            val polyY = MathUtils.toPolynomial(cY)
+            val polyZ = MathUtils.toPolynomial(cZ)
 
             val inliers = mutableListOf<PositionTime>()
             val addIf: (PositionTime) -> Unit = { v ->
@@ -216,33 +215,18 @@ object BurrowGuesser : Feature(
                 if (
                     (v.x - px).pow(2) +
                     (v.y - py).pow(2) +
-                    (v.z - pz).pow(2) < 9.0
+                    (v.z - pz).pow(2) < 0.1
                 ) inliers.add(v)
             }
             possibleStartingParticles.forEach(addIf)
             unclaimedParticles.forEach(addIf)
 
-            minT = inliers.minOf { it.t }
-            time = DoubleArray(inliers.size) { (inliers[it].t - minT).toDouble() }
-            cX = MathUtils.polyRegression(3, time, DoubleArray(inliers.size) { inliers[it].x }) ?: continue
-            cY = MathUtils.polyRegression(3, time, DoubleArray(inliers.size) { inliers[it].y }) ?: continue
-            cZ = MathUtils.polyRegression(3, time, DoubleArray(inliers.size) { inliers[it].z }) ?: continue
-            polyX = MathUtils.toPolynomial(cX)
-            polyY = MathUtils.toPolynomial(cY)
-            polyZ = MathUtils.toPolynomial(cZ)
+            if (inliers.size < MIN_CHAIN_LENGTH) continue
 
-            val d =
-                inliers.sumOf { abs(it.x - polyX((it.t - minT).toDouble())) } +
-                inliers.sumOf { abs(it.y - polyY((it.t - minT).toDouble())) } +
-                inliers.sumOf { abs(it.z - polyZ((it.t - minT).toDouble())) }
-
-            if (d < bestD) {
-                bestD = d
-                best = inliers
-            }
+            best = inliers
         }
 
-        if (bestD < MAX_CHAIN_DISTANCE_ERROR && best.size >= MIN_CHAIN_LENGTH) {
+        if (best.isNotEmpty()) {
             val s = best.toSet()
             possibleStartingParticles.removeAll(s)
             unclaimedParticles.removeAll(s)
@@ -347,12 +331,14 @@ object BurrowGuesser : Feature(
         }
 
         on<TickEvent> {
-            val itemStack = minecraft.player?.mainHandItem ?: return@on
+            val player = minecraft.player ?: return@on
+            val itemStack = player.mainHandItem ?: return@on
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             if (!isSpade(sbId)) return@on
 
             BurrowManager.burrows.removeIf {
                 if (it.type.empirical) return@removeIf false
+                if ((it.x - player.x).pow(2) + (it.z - player.z).pow(2) >= 100.0) return@removeIf false
                 it.ttl -= 5 * 60
                 it.ttl <= 0
             }
