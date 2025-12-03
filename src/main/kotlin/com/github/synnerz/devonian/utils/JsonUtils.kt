@@ -45,6 +45,7 @@ object JsonUtils {
             is Char -> json.addProperty(name, value)
             is Number -> json.addProperty(name, value)
             is JsonArray -> json.add(name, value)
+            is JsonObject -> json.add(name, value)
         }
         return this
     }
@@ -135,6 +136,7 @@ object JsonUtils {
             Long::class -> value.asLong as T
             Boolean::class -> value.asBoolean as T
             List::class -> value.asJsonArray.toList().map { it.asString } as T
+            Map::class -> value.asJsonObject.asMap() as T
             else -> null
         }
     }
