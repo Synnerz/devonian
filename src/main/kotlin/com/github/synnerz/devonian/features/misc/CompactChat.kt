@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
@@ -43,7 +44,7 @@ object CompactChat : Feature(
 
             if (contentCopy.string.equals(textCopy.string)) {
                 iter.remove()
-                ChatUtils.chatComponentAccessor.invokeRefresh()
+                Scheduler.scheduleTask { ChatUtils.chatComponentAccessor.invokeRefresh() }
                 break
             }
         }
