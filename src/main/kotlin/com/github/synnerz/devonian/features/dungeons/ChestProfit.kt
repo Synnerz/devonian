@@ -183,7 +183,7 @@ object ChestProfit : TextHudFeature(
                 val data = currentChestData[currentChest] ?: return@on
                 data.itemData.clear()
                 data.chestPrice = 0
-                updateDisplay()
+                Scheduler.scheduleTask { updateDisplay() }
             }
         }
 
