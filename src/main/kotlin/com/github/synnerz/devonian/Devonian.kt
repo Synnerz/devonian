@@ -140,6 +140,7 @@ object Devonian : ClientModInitializer {
         ChestProfit,
         SlotBinding,
         SlotLocking,
+        HideEntityFire,
     )
 
     override fun onInitializeClient() {
