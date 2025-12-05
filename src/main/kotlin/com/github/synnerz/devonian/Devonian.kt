@@ -141,6 +141,7 @@ object Devonian : ClientModInitializer {
         SlotBinding,
         SlotLocking,
         HideEntityFire,
+        ThirdPersonCrosshair,
     )
 
     override fun onInitializeClient() {

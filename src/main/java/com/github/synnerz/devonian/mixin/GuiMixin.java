@@ -1,10 +1,10 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent;
-import com.github.synnerz.devonian.features.misc.AccurateAbsorption;
-import com.github.synnerz.devonian.features.misc.DisableVanillaArmor;
-import com.github.synnerz.devonian.features.misc.DisableVignette;
-import com.github.synnerz.devonian.features.misc.HidePotionEffectOverlay;
+import com.github.synnerz.devonian.features.misc.*;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -78,5 +78,14 @@ public class GuiMixin {
             blinking
         );
         ci.cancel();
+    }
+
+    @WrapOperation(
+        method = "renderCrosshair",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isFirstPerson()Z")
+    )
+    private boolean devonian$thirdPersonCrosshair(CameraType instance, Operation<Boolean> original) {
+        if (!ThirdPersonCrosshair.INSTANCE.isEnabled()) return original.call(instance);
+        return true;
     }
 }
