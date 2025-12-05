@@ -1,8 +1,7 @@
 package com.github.synnerz.devonian.api
 
-import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.ServerTickEvent
 import kotlinx.atomicfu.atomic
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import java.util.concurrent.PriorityBlockingQueue
@@ -22,14 +21,14 @@ object Scheduler {
             val curr = tick.incrementAndGet()
             while (tasks.isNotEmpty() && tasks.peek().delay <= curr) {
                 val task = tasks.poll() ?: return@register
-                Devonian.minecraft.execute(task.cb)
+                task.cb()
             }
         }
-        EventBus.on<ServerTickEvent> {
+        EventBus.on<ClientThreadServerTickEvent> {
             val curr = tickServer.incrementAndGet()
             while (tasksServer.isNotEmpty() && tasksServer.peek().delay <= curr) {
                 val task = tasksServer.poll() ?: return@on
-                scheduleTask(cb = task.cb)
+                task.cb()
             }
         }
     }

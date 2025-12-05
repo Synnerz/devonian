@@ -8,6 +8,7 @@
     "CameraMixin",
     "CameraTypeMixin",
     "ChatComponentMixin",
+    "ClientCommonPacketListenerImplMixin",
     "ConnectionMixin",
     "EffectsInInventoryMixin",
     "EntityRenderDispatcherMixin",

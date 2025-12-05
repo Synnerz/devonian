@@ -335,3 +335,5 @@ class BlockPlaceEvent(
     val blockHitResult: BlockHitResult,
     val hand: InteractionHand
 ) : Event()
+
+class ClientThreadServerTickEvent() : Event()
