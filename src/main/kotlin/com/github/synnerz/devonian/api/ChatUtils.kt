@@ -112,7 +112,12 @@ object ChatUtils {
         ClientCommandInternals.executeCommand(command)
     }
 
-    fun say(message: String) = Minecraft.getInstance().connection?.sendChat(message)
+    fun say(message: String) {
+        val connection = Minecraft.getInstance().connection ?: return
+        if (message.startsWith("/")) return connection.sendCommand(message.drop(1))
+
+        connection.sendChat(message)
+    }
 
     fun getMessageFromLine(line: GuiMessage.Line): GuiMessage? = lineCache[line]
 }
