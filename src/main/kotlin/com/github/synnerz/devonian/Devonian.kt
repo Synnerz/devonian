@@ -139,7 +139,7 @@ object Devonian : ClientModInitializer {
         QuiverDisplay,
         ChestProfit,
         SlotBinding,
-        SlotLocking
+        SlotLocking,
     )
 
     override fun onInitializeClient() {
