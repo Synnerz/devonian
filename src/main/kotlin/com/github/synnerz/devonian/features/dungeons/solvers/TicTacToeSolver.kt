@@ -79,7 +79,8 @@ object TicTacToeSolver : Feature(
                 if (entity !is ItemFrame) return@scheduleServerTask
                 if (!entity.hasFramedMap()) return@scheduleServerTask
                 val mapId = entity.getFramedMapId(entity.item) ?: return@scheduleServerTask
-                val map = MapItem.getSavedData(mapId, minecraft.level) ?: return@scheduleServerTask
+                val world = minecraft.level ?: return@scheduleServerTask
+                val map = MapItem.getSavedData(mapId, world) ?: return@scheduleServerTask
                 val colors = map.colors
                 val idx = colors.indexOf(114)
                 if (idx == -1) return@scheduleServerTask
