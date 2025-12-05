@@ -15,21 +15,13 @@ object Config {
     private var currentPage = 0
 
     fun initialize() {
-        DevonianCommand.onRun {
-            ChatUtils.sendMessage("&7Settings", true)
-            for (feature in currentFeatures()) {
-                feature.displayChat()
-            }
-            ChatUtils.sendMessageWithId(pageLiteral(), 100)
-            1
-        }
-
         DevonianCommand.command.subcommand("config", true) { _, args ->
             if (args.isEmpty()) {
                 ChatUtils.sendMessage("&7Settings", true)
                 for (feature in currentFeatures()) {
                     feature.displayChat()
                 }
+                ChatUtils.sendMessageWithId(pageLiteral(), 100)
                 return@subcommand 1
             }
 

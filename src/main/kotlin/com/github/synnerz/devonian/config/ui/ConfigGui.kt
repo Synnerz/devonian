@@ -68,8 +68,14 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
 
     fun initialize() {
         selectedCategory.update()
+        DevonianCommand.onRun {
+            Scheduler.scheduleTask {
+                Devonian.minecraft.setScreen(this)
+            }
+            return@onRun 1
+        }
         DevonianCommand.command.subcommand("configui") { _, args ->
-            Scheduler.scheduleTask(1) {
+            Scheduler.scheduleTask {
                 Devonian.minecraft.setScreen(this)
             }
             return@subcommand 1
