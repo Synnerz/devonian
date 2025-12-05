@@ -20,7 +20,9 @@ open class Feature @JvmOverloads constructor(
     area: String? = null,
     subarea: String? = null,
     // To avoid conflict, maybe change the position later ?
-    displayName: String = configName
+    displayName: String = camelCaseRegex.replace(configName) {
+        it.value.replaceFirstChar { it.uppercaseChar() } + " "
+    }.trim()
 ) : Toggleable() {
     val minecraft = Devonian.minecraft
     val id = 256652 + Devonian.features.size
@@ -220,4 +222,8 @@ open class Feature @JvmOverloads constructor(
     open fun onSubAreaChange(event: SubAreaEvent) {}
 
     open fun onWorldChange(event: WorldChangeEvent) {}
+
+    companion object {
+        private val camelCaseRegex = "[a-z]+|[A-Z](?:[a-z]+|[A-Z]*(?![a-z]))|[.\\d]+".toRegex()
+    }
 }
