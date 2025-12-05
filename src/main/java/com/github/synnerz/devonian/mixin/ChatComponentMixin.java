@@ -72,4 +72,12 @@ public class ChatComponentMixin {
     private void devonian$trackDisplayLine(GuiMessage guiMessage, CallbackInfo ci) {
         ChatUtils.INSTANCE.getLineCache().put(this.trimmedMessages.getFirst(), guiMessage);
     }
+
+    @Inject(
+        method = "refreshTrimmedMessages",
+        at = @At("HEAD")
+    )
+    private void devonian$refreshTrimmedMessages(CallbackInfo ci) {
+        ChatUtils.INSTANCE.getLineCache().clear();
+    }
 }
