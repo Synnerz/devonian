@@ -7,11 +7,13 @@ import net.minecraft.client.GuiMessageTag
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
+import java.util.IdentityHashMap
 import kotlin.math.roundToInt
 
 object ChatUtils {
     const val prefix = "&7[&cDevonian&7]"
     val chatLineIds = mutableMapOf<GuiMessage, Int>()
+    val lineCache = IdentityHashMap<GuiMessage.Line, GuiMessage>()
     val chatComponentAccessor get() = Minecraft.getInstance().gui?.chat as ChatComponentAccessor
     val chatGui get() = Minecraft.getInstance().gui?.chat
 
@@ -111,4 +113,6 @@ object ChatUtils {
     }
 
     fun say(message: String) = Minecraft.getInstance().connection?.sendChat(message)
+
+    fun getMessageFromLine(line: GuiMessage.Line): GuiMessage? = lineCache[line]
 }
