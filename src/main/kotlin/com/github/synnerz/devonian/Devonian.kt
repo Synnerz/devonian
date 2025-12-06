@@ -149,6 +149,7 @@ object Devonian : ClientModInitializer {
         featureInstances.forEach(Feature::initialize)
         ConfigGui.initialize()
         HudManager.initialize()
+        KeyShortcuts.initialize()
         JsonUtils.load()
         SkyblockPrices
         Config.initialize()

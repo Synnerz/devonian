@@ -18,6 +18,7 @@
     "GameRendererMixin",
     "GuiMixin",
     "InventoryMenuMixin",
+    "KeyboardHandlerMixin",
     "LightningBoltRendererMixin",
     "LivingEntityMixin",
     "LocalPlayerMixin",
