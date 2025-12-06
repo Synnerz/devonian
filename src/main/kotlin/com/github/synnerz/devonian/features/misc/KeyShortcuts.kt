@@ -105,6 +105,12 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
             }
             1
         }
+        DevonianCommand.command.subcommand("keyshortcuts") { _, args ->
+            Scheduler.scheduleTask {
+                Devonian.minecraft.setScreen(this)
+            }
+            1
+        }
     }
 
     private fun onUpdate() {
