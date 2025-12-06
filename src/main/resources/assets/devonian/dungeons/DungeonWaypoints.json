@@ -1,0 +1,3330 @@
+[
+    {
+        "name": "Mines",
+        "waypoints": {
+            "chest": [
+                [
+                    9,
+                    82,
+                    21
+                ],
+                [
+                    41,
+                    80,
+                    12
+                ],
+                [
+                    9,
+                    108,
+                    17
+                ],
+                [
+                    9,
+                    109,
+                    30
+                ],
+                [
+                    31,
+                    99,
+                    58
+                ],
+                [
+                    56,
+                    78,
+                    58
+                ],
+                [
+                    60,
+                    43,
+                    50
+                ]
+            ],
+            "item": [
+                [
+                    1,
+                    89,
+                    57
+                ],
+                [
+                    53,
+                    48,
+                    8
+                ],
+                [
+                    4,
+                    54,
+                    56
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Doors",
+        "waypoints": {
+            "chest": [
+                [
+                    5,
+                    87,
+                    28
+                ],
+                [
+                    31,
+                    51,
+                    17
+                ],
+                [
+                    8,
+                    58,
+                    17
+                ],
+                [
+                    8,
+                    58,
+                    13
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    46,
+                    65,
+                    15
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Locked Away",
+        "waypoints": {
+            "chest": [
+                [
+                    26,
+                    75,
+                    29
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Beams",
+        "waypoints": {
+            "chest": [
+                [
+                    7,
+                    81,
+                    2
+                ]
+            ],
+            "item": [
+                [
+                    8,
+                    92,
+                    24
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Banners",
+        "waypoints": {
+            "chest": [
+                [
+                    27,
+                    72,
+                    15
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Andesite",
+        "waypoints": {
+            "chest": [],
+            "item": [
+                [
+                    1,
+                    69,
+                    28
+                ]
+            ],
+            "essence": [
+                [
+                    6,
+                    69,
+                    22
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Painting",
+        "waypoints": {
+            "chest": [],
+            "item": [
+                [
+                    24,
+                    69,
+                    21
+                ]
+            ],
+            "essence": [
+                [
+                    6,
+                    80,
+                    21
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Multicolored",
+        "waypoints": {
+            "chest": [
+                [
+                    25,
+                    70,
+                    4
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Black Flag",
+        "waypoints": {
+            "chest": [
+                [
+                    27,
+                    80,
+                    3
+                ],
+                [
+                    28,
+                    80,
+                    25
+                ]
+            ],
+            "item": [
+                [
+                    22,
+                    59,
+                    27
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Overgrown Chains",
+        "waypoints": {
+            "chest": [
+                [
+                    26,
+                    86,
+                    20
+                ]
+            ],
+            "item": [
+                [
+                    3,
+                    81,
+                    3
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Chains",
+        "waypoints": {
+            "chest": [
+                [
+                    27,
+                    69,
+                    10
+                ],
+                [
+                    17,
+                    86,
+                    14
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Golden Oasis",
+        "waypoints": {
+            "chest": [
+                [
+                    12,
+                    63,
+                    23
+                ],
+                [
+                    13,
+                    63,
+                    25
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": [
+                [
+                    12,
+                    71,
+                    8
+                ]
+            ]
+        }
+    },
+    {
+        "name": "Redstone Warrior",
+        "waypoints": {
+            "chest": [
+                [
+                    24,
+                    58,
+                    15
+                ],
+                [
+                    30,
+                    83,
+                    27
+                ]
+            ],
+            "item": [
+                [
+                    58,
+                    78,
+                    29
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Silvers Sword",
+        "waypoints": {
+            "chest": [
+                [
+                    18,
+                    69,
+                    13
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Pedestal",
+        "waypoints": {
+            "chest": [
+                [
+                    31,
+                    70,
+                    15
+                ],
+                [
+                    7,
+                    94,
+                    21
+                ],
+                [
+                    32,
+                    60,
+                    23
+                ]
+            ],
+            "item": [
+                [
+                    50,
+                    61,
+                    18
+                ]
+            ],
+            "essence": [
+                [
+                    53,
+                    61,
+                    22
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Temple",
+        "waypoints": {
+            "chest": [
+                [
+                    16,
+                    54,
+                    15
+                ]
+            ],
+            "item": [
+                [
+                    20,
+                    78,
+                    28
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    2,
+                    65,
+                    25
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Big Red Flag",
+        "waypoints": {
+            "chest": [],
+            "item": [
+                [
+                    26,
+                    75,
+                    25
+                ],
+                [
+                    20,
+                    75,
+                    23
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Mural",
+        "waypoints": {
+            "chest": [
+                [
+                    26,
+                    83,
+                    7
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Perch",
+        "waypoints": {
+            "chest": [
+                [
+                    15,
+                    74,
+                    1
+                ]
+            ],
+            "item": [
+                [
+                    20,
+                    76,
+                    20
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "End",
+        "waypoints": {
+            "chest": [
+                [
+                    15,
+                    69,
+                    6
+                ]
+            ],
+            "item": [],
+            "essence": [
+                [
+                    6,
+                    63,
+                    2
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Cage",
+        "waypoints": {
+            "chest": [
+                [
+                    12,
+                    72,
+                    20
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Sloth",
+        "waypoints": {
+            "chest": [],
+            "item": [
+                [
+                    8,
+                    69,
+                    22
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Steps",
+        "waypoints": {
+            "chest": [],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    14,
+                    75,
+                    7
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Granite",
+        "waypoints": {
+            "chest": [],
+            "item": [
+                [
+                    14,
+                    60,
+                    24
+                ]
+            ],
+            "essence": [
+                [
+                    13,
+                    61,
+                    29
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Crypt",
+        "waypoints": {
+            "chest": [
+                [
+                    13,
+                    60,
+                    15
+                ],
+                [
+                    44,
+                    86,
+                    26
+                ],
+                [
+                    2,
+                    81,
+                    16
+                ],
+                [
+                    19,
+                    89,
+                    2
+                ]
+            ],
+            "item": [
+                [
+                    46,
+                    88,
+                    16
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Dueces",
+        "waypoints": {
+            "chest": [
+                [
+                    2,
+                    78,
+                    15
+                ]
+            ],
+            "item": [
+                [
+                    10,
+                    70,
+                    6
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    8,
+                    74,
+                    7
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Red Green",
+        "waypoints": {
+            "chest": [
+                [
+                    29,
+                    75,
+                    15
+                ]
+            ],
+            "item": [
+                [
+                    13,
+                    77,
+                    28
+                ],
+                [
+                    1,
+                    61,
+                    15
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Long Hall",
+        "waypoints": {
+            "chest": [
+                [
+                    18,
+                    62,
+                    23
+                ],
+                [
+                    28,
+                    82,
+                    15
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Mirror",
+        "waypoints": {
+            "chest": [
+                [
+                    3,
+                    55,
+                    17
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Quad Lava",
+        "waypoints": {
+            "chest": [
+                [
+                    25,
+                    70,
+                    5
+                ],
+                [
+                    11,
+                    60,
+                    20
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Small Waterfall",
+        "waypoints": {
+            "chest": [],
+            "item": [],
+            "essence": [
+                [
+                    6,
+                    77,
+                    26
+                ]
+            ],
+            "bat": [
+                [
+                    3,
+                    82,
+                    22
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Basement",
+        "waypoints": {
+            "chest": [],
+            "item": [],
+            "essence": [
+                [
+                    5,
+                    66,
+                    25
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Dip",
+        "waypoints": {
+            "chest": [
+                [
+                    18,
+                    78,
+                    16
+                ],
+                [
+                    2,
+                    78,
+                    24
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Water",
+        "waypoints": {
+            "chest": [
+                [
+                    2,
+                    69,
+                    5
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    17,
+                    67,
+                    4
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Dome",
+        "waypoints": {
+            "chest": [
+                [
+                    26,
+                    78,
+                    27
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    25,
+                    75,
+                    22
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Scaffolding",
+        "waypoints": {
+            "chest": [
+                [
+                    5,
+                    82,
+                    28
+                ]
+            ],
+            "item": [
+                [
+                    18,
+                    82,
+                    8
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Small Stairs",
+        "waypoints": {
+            "chest": [
+                [
+                    3,
+                    82,
+                    6
+                ]
+            ],
+            "item": [
+                [
+                    24,
+                    63,
+                    3
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Mushroom",
+        "waypoints": {
+            "chest": [
+                [
+                    16,
+                    80,
+                    17
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Slabs",
+        "waypoints": {
+            "chest": [
+                [
+                    22,
+                    85,
+                    3
+                ],
+                [
+                    23,
+                    85,
+                    3
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Duncan",
+        "waypoints": {
+            "chest": [],
+            "item": [
+                [
+                    13,
+                    89,
+                    8
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Logs",
+        "waypoints": {
+            "chest": [
+                [
+                    23,
+                    70,
+                    29
+                ],
+                [
+                    24,
+                    70,
+                    29
+                ],
+                [
+                    23,
+                    78,
+                    21
+                ],
+                [
+                    24,
+                    78,
+                    21
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Cages",
+        "waypoints": {
+            "chest": [
+                [
+                    7,
+                    58,
+                    11
+                ]
+            ],
+            "item": [
+                [
+                    28,
+                    98,
+                    5
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Skull",
+        "waypoints": {
+            "chest": [
+                [
+                    2,
+                    88,
+                    15
+                ],
+                [
+                    52,
+                    91,
+                    7
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Balcony",
+        "waypoints": {
+            "chest": [
+                [
+                    27,
+                    69,
+                    15
+                ],
+                [
+                    20,
+                    42,
+                    28
+                ]
+            ],
+            "item": [
+                [
+                    14,
+                    51,
+                    7
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    4,
+                    60,
+                    25
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Knight",
+        "waypoints": {
+            "chest": [
+                [
+                    24,
+                    69,
+                    29
+                ],
+                [
+                    25,
+                    69,
+                    29
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    6,
+                    76,
+                    23
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Sarcophagus",
+        "waypoints": {
+            "chest": [
+                [
+                    15,
+                    69,
+                    4
+                ]
+            ],
+            "item": [],
+            "essence": [
+                [
+                    18,
+                    68,
+                    27
+                ]
+            ],
+            "bat": [
+                [
+                    21,
+                    70,
+                    26
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Drop",
+        "waypoints": {
+            "chest": [
+                [
+                    5,
+                    59,
+                    15
+                ],
+                [
+                    25,
+                    77,
+                    2
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Raccoon",
+        "waypoints": {
+            "chest": [
+                [
+                    6,
+                    77,
+                    24
+                ],
+                [
+                    27,
+                    69,
+                    24
+                ],
+                [
+                    21,
+                    69,
+                    24
+                ],
+                [
+                    26,
+                    84,
+                    8
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Double Diamond",
+        "waypoints": {
+            "chest": [
+                [
+                    11,
+                    82,
+                    19
+                ]
+            ],
+            "item": [
+                [
+                    24,
+                    65,
+                    22
+                ]
+            ],
+            "essence": [
+                [
+                    6,
+                    69,
+                    6
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Blue Skulls",
+        "waypoints": {
+            "chest": [],
+            "item": [
+                [
+                    27,
+                    77,
+                    29
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Leaves",
+        "waypoints": {
+            "chest": [
+                [
+                    14,
+                    81,
+                    27
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Withermancer",
+        "waypoints": {
+            "chest": [
+                [
+                    59,
+                    55,
+                    45
+                ],
+                [
+                    15,
+                    104,
+                    20
+                ],
+                [
+                    29,
+                    111,
+                    15
+                ]
+            ],
+            "item": [],
+            "essence": [
+                [
+                    1,
+                    111,
+                    15
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Redstone Key",
+        "waypoints": {
+            "chest": [
+                [
+                    28,
+                    62,
+                    23
+                ]
+            ],
+            "item": [
+                [
+                    26,
+                    69,
+                    5
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": [
+                [
+                    19,
+                    66,
+                    7
+                ],
+                [
+                    10,
+                    70,
+                    26
+                ]
+            ]
+        }
+    },
+    {
+        "name": "Prison Cell",
+        "waypoints": {
+            "chest": [
+                [
+                    10,
+                    76,
+                    23
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Cell",
+        "waypoints": {
+            "chest": [],
+            "item": [
+                [
+                    10,
+                    69,
+                    22
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Arrow Trap",
+        "waypoints": {
+            "chest": [
+                [
+                    14,
+                    69,
+                    4
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Bridges",
+        "waypoints": {
+            "chest": [
+                [
+                    41,
+                    52,
+                    21
+                ],
+                [
+                    3,
+                    82,
+                    15
+                ]
+            ],
+            "item": [
+                [
+                    55,
+                    81,
+                    17
+                ]
+            ],
+            "essence": [
+                [
+                    53,
+                    53,
+                    13
+                ],
+                [
+                    53,
+                    52,
+                    17
+                ]
+            ],
+            "bat": [
+                [
+                    48,
+                    97,
+                    2
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Cobble Wall Pillar",
+        "waypoints": {
+            "chest": [
+                [
+                    28,
+                    60,
+                    12
+                ],
+                [
+                    12,
+                    61,
+                    17
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Spikes",
+        "waypoints": {
+            "chest": [
+                [
+                    4,
+                    91,
+                    11
+                ]
+            ],
+            "item": [],
+            "essence": [
+                [
+                    1,
+                    53,
+                    8
+                ]
+            ],
+            "bat": [
+                [
+                    2,
+                    54,
+                    7
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Gold",
+        "waypoints": {
+            "chest": [],
+            "item": [],
+            "essence": [
+                [
+                    14,
+                    69,
+                    13
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Chambers",
+        "waypoints": {
+            "chest": [
+                [
+                    53,
+                    57,
+                    47
+                ],
+                [
+                    4,
+                    69,
+                    57
+                ],
+                [
+                    7,
+                    69,
+                    40
+                ],
+                [
+                    15,
+                    83,
+                    2
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    33,
+                    84,
+                    57
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Lava Ravine",
+        "waypoints": {
+            "chest": [
+                [
+                    29,
+                    88,
+                    9
+                ],
+                [
+                    29,
+                    88,
+                    7
+                ],
+                [
+                    58,
+                    86,
+                    47
+                ],
+                [
+                    23,
+                    67,
+                    57
+                ]
+            ],
+            "item": [
+                [
+                    16,
+                    51,
+                    32
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    12,
+                    64,
+                    33
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Wizard",
+        "waypoints": {
+            "chest": [
+                [
+                    17,
+                    92,
+                    26
+                ],
+                [
+                    90,
+                    89,
+                    24
+                ]
+            ],
+            "item": [
+                [
+                    3,
+                    76,
+                    21
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    25,
+                    53,
+                    12
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Overgrown",
+        "waypoints": {
+            "chest": [
+                [
+                    6,
+                    79,
+                    15
+                ]
+            ],
+            "item": [
+                [
+                    4,
+                    70,
+                    2
+                ]
+            ],
+            "essence": [
+                [
+                    5,
+                    87,
+                    19
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Jumping Skulls",
+        "waypoints": {
+            "chest": [
+                [
+                    26,
+                    62,
+                    23
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Lots Of Floors",
+        "waypoints": {
+            "chest": [
+                [
+                    25,
+                    84,
+                    7
+                ],
+                [
+                    5,
+                    69,
+                    28
+                ],
+                [
+                    1,
+                    76,
+                    5
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Purple Flags",
+        "waypoints": {
+            "chest": [
+                [
+                    32,
+                    67,
+                    7
+                ],
+                [
+                    39,
+                    49,
+                    29
+                ],
+                [
+                    59,
+                    49,
+                    24
+                ]
+            ],
+            "item": [
+                [
+                    27,
+                    49,
+                    28
+                ]
+            ],
+            "essence": [
+                [
+                    6,
+                    57,
+                    28
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Archway",
+        "waypoints": {
+            "chest": [
+                [
+                    1,
+                    70,
+                    2
+                ]
+            ],
+            "item": [
+                [
+                    10,
+                    85,
+                    27
+                ],
+                [
+                    54,
+                    89,
+                    12
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Mage",
+        "waypoints": {
+            "chest": [
+                [
+                    16,
+                    70,
+                    17
+                ],
+                [
+                    42,
+                    62,
+                    15
+                ]
+            ],
+            "item": [],
+            "essence": [
+                [
+                    58,
+                    82,
+                    5
+                ]
+            ],
+            "bat": [
+                [
+                    57,
+                    83,
+                    7
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Grass Ruin",
+        "waypoints": {
+            "chest": [
+                [
+                    3,
+                    55,
+                    14
+                ],
+                [
+                    11,
+                    107,
+                    10
+                ]
+            ],
+            "item": [],
+            "essence": [
+                [
+                    48,
+                    81,
+                    24
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Grand Library",
+        "waypoints": {
+            "chest": [
+                [
+                    23,
+                    93,
+                    2
+                ],
+                [
+                    31,
+                    58,
+                    15
+                ]
+            ],
+            "item": [
+                [
+                    28,
+                    57,
+                    18
+                ]
+            ],
+            "essence": [
+                [
+                    6,
+                    80,
+                    3
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Pit",
+        "waypoints": {
+            "chest": [
+                [
+                    113,
+                    92,
+                    28
+                ],
+                [
+                    7,
+                    65,
+                    7
+                ],
+                [
+                    20,
+                    91,
+                    9
+                ]
+            ],
+            "item": [
+                [
+                    3,
+                    76,
+                    26
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    9,
+                    78,
+                    27
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Atlas",
+        "waypoints": {
+            "chest": [
+                [
+                    36,
+                    57,
+                    15
+                ],
+                [
+                    31,
+                    78,
+                    52
+                ],
+                [
+                    11,
+                    82,
+                    31
+                ]
+            ],
+            "item": [
+                [
+                    55,
+                    76,
+                    28
+                ]
+            ],
+            "essence": [
+                [
+                    38,
+                    78,
+                    4
+                ]
+            ],
+            "bat": [
+                [
+                    5,
+                    72,
+                    57
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Layers",
+        "waypoints": {
+            "chest": [
+                [
+                    5,
+                    69,
+                    2
+                ],
+                [
+                    13,
+                    69,
+                    26
+                ],
+                [
+                    47,
+                    69,
+                    47
+                ],
+                [
+                    54,
+                    78,
+                    56
+                ]
+            ],
+            "item": [
+                [
+                    25,
+                    70,
+                    28
+                ],
+                [
+                    35,
+                    59,
+                    51
+                ],
+                [
+                    47,
+                    79,
+                    34
+                ],
+                [
+                    7,
+                    96,
+                    56
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Waterfall",
+        "waypoints": {
+            "chest": [
+                [
+                    34,
+                    84,
+                    23
+                ],
+                [
+                    121,
+                    81,
+                    15
+                ],
+                [
+                    82,
+                    78,
+                    3
+                ],
+                [
+                    42,
+                    82,
+                    21
+                ],
+                [
+                    53,
+                    44,
+                    27
+                ]
+            ],
+            "item": [
+                [
+                    8,
+                    44,
+                    28
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    70,
+                    61,
+                    3
+                ],
+                [
+                    88,
+                    46,
+                    27
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Pressure Plates",
+        "waypoints": {
+            "chest": [
+                [
+                    20,
+                    70,
+                    15
+                ],
+                [
+                    23,
+                    59,
+                    7
+                ],
+                [
+                    59,
+                    94,
+                    15
+                ],
+                [
+                    60,
+                    94,
+                    7
+                ]
+            ],
+            "item": [
+                [
+                    4,
+                    70,
+                    23
+                ],
+                [
+                    57,
+                    69,
+                    7
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Supertall",
+        "waypoints": {
+            "chest": [
+                [
+                    36,
+                    142,
+                    51
+                ],
+                [
+                    31,
+                    142,
+                    56
+                ],
+                [
+                    26,
+                    142,
+                    51
+                ]
+            ],
+            "item": [
+                [
+                    31,
+                    102,
+                    53
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    2,
+                    72,
+                    2
+                ],
+                [
+                    53,
+                    112,
+                    8
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Gravel",
+        "waypoints": {
+            "chest": [
+                [
+                    35,
+                    69,
+                    11
+                ]
+            ],
+            "item": [
+                [
+                    87,
+                    69,
+                    8
+                ],
+                [
+                    67,
+                    87,
+                    12
+                ]
+            ],
+            "essence": [
+                [
+                    92,
+                    69,
+                    3
+                ],
+                [
+                    66,
+                    87,
+                    14
+                ]
+            ],
+            "bat": [
+                [
+                    37,
+                    91,
+                    14
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Cathedral",
+        "waypoints": {
+            "chest": [
+                [
+                    19,
+                    60,
+                    7
+                ],
+                [
+                    28,
+                    82,
+                    3
+                ],
+                [
+                    38,
+                    59,
+                    36
+                ]
+            ],
+            "item": [
+                [
+                    49,
+                    59,
+                    23
+                ],
+                [
+                    33,
+                    93,
+                    47
+                ],
+                [
+                    20,
+                    90,
+                    44
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    59,
+                    86,
+                    3
+                ],
+                [
+                    37,
+                    74,
+                    15
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Red Blue",
+        "waypoints": {
+            "chest": [
+                [
+                    57,
+                    70,
+                    5
+                ],
+                [
+                    39,
+                    90,
+                    26
+                ]
+            ],
+            "item": [
+                [
+                    60,
+                    86,
+                    22
+                ]
+            ],
+            "essence": [
+                [
+                    79,
+                    83,
+                    15
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Spider",
+        "waypoints": {
+            "chest": [
+                [
+                    28,
+                    50,
+                    4
+                ],
+                [
+                    22,
+                    28,
+                    40
+                ],
+                [
+                    49,
+                    84,
+                    36
+                ],
+                [
+                    10,
+                    83,
+                    56
+                ],
+                [
+                    15,
+                    92,
+                    31
+                ],
+                [
+                    27,
+                    84,
+                    32
+                ]
+            ],
+            "item": [
+                [
+                    26,
+                    91,
+                    39
+                ],
+                [
+                    24,
+                    92,
+                    34
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    55,
+                    86,
+                    35
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Deathmite",
+        "waypoints": {
+            "chest": [
+                [
+                    12,
+                    69,
+                    15
+                ],
+                [
+                    83,
+                    92,
+                    27
+                ],
+                [
+                    67,
+                    82,
+                    15
+                ]
+            ],
+            "item": [
+                [
+                    88,
+                    69,
+                    6
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    83,
+                    98,
+                    26
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Museum",
+        "waypoints": {
+            "chest": [
+                [
+                    31,
+                    70,
+                    60
+                ],
+                [
+                    34,
+                    83,
+                    11
+                ],
+                [
+                    31,
+                    70,
+                    9
+                ],
+                [
+                    48,
+                    62,
+                    6
+                ]
+            ],
+            "item": [],
+            "essence": [
+                [
+                    42,
+                    93,
+                    53
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Market",
+        "waypoints": {
+            "chest": [
+                [
+                    16,
+                    86,
+                    56
+                ],
+                [
+                    32,
+                    61,
+                    48
+                ],
+                [
+                    46,
+                    79,
+                    48
+                ]
+            ],
+            "item": [],
+            "essence": [
+                [
+                    7,
+                    59,
+                    44
+                ]
+            ],
+            "bat": [
+                [
+                    12,
+                    62,
+                    47
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Melon",
+        "waypoints": {
+            "chest": [
+                [
+                    59,
+                    69,
+                    58
+                ],
+                [
+                    41,
+                    85,
+                    56
+                ],
+                [
+                    33,
+                    80,
+                    53
+                ],
+                [
+                    15,
+                    69,
+                    35
+                ],
+                [
+                    26,
+                    79,
+                    1
+                ],
+                [
+                    5,
+                    82,
+                    4
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    7,
+                    76,
+                    27
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Mossy",
+        "waypoints": {
+            "chest": [
+                [
+                    2,
+                    69,
+                    4
+                ],
+                [
+                    63,
+                    95,
+                    15
+                ],
+                [
+                    47,
+                    89,
+                    4
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    72,
+                    87,
+                    11
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Flags",
+        "waypoints": {
+            "chest": [
+                [
+                    37,
+                    67,
+                    58
+                ],
+                [
+                    11,
+                    97,
+                    7
+                ],
+                [
+                    14,
+                    108,
+                    27
+                ],
+                [
+                    14,
+                    108,
+                    41
+                ],
+                [
+                    59,
+                    87,
+                    41
+                ]
+            ],
+            "item": [
+                [
+                    53,
+                    69,
+                    23
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    52,
+                    77,
+                    38
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Well",
+        "waypoints": {
+            "chest": [
+                [
+                    11,
+                    88,
+                    50
+                ],
+                [
+                    18,
+                    91,
+                    25
+                ],
+                [
+                    60,
+                    89,
+                    47
+                ]
+            ],
+            "item": [
+                [
+                    14,
+                    57,
+                    15
+                ],
+                [
+                    59,
+                    91,
+                    35
+                ]
+            ],
+            "essence": [
+                [
+                    2,
+                    95,
+                    59
+                ],
+                [
+                    7,
+                    95,
+                    56
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Hallway",
+        "waypoints": {
+            "chest": [
+                [
+                    28,
+                    69,
+                    3
+                ],
+                [
+                    54,
+                    69,
+                    5
+                ],
+                [
+                    85,
+                    85,
+                    6
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Diagonal",
+        "waypoints": {
+            "chest": [
+                [
+                    90,
+                    77,
+                    14
+                ],
+                [
+                    69,
+                    60,
+                    29
+                ],
+                [
+                    11,
+                    60,
+                    9
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    32,
+                    72,
+                    5
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Catwalk",
+        "waypoints": {
+            "chest": [
+                [
+                    24,
+                    63,
+                    27
+                ],
+                [
+                    24,
+                    50,
+                    15
+                ],
+                [
+                    89,
+                    49,
+                    18
+                ],
+                [
+                    84,
+                    63,
+                    14
+                ]
+            ],
+            "item": [
+                [
+                    80,
+                    50,
+                    6
+                ]
+            ],
+            "essence": [
+                [
+                    80,
+                    50,
+                    8
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Dino Site",
+        "waypoints": {
+            "chest": [
+                [
+                    54,
+                    52,
+                    51
+                ],
+                [
+                    24,
+                    92,
+                    29
+                ]
+            ],
+            "item": [
+                [
+                    47,
+                    57,
+                    36
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    9,
+                    48,
+                    34
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Stairs",
+        "waypoints": {
+            "chest": [
+                [
+                    44,
+                    88,
+                    28
+                ],
+                [
+                    31,
+                    88,
+                    22
+                ],
+                [
+                    8,
+                    70,
+                    9
+                ]
+            ],
+            "item": [
+                [
+                    37,
+                    86,
+                    36
+                ]
+            ],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Quartz Knight",
+        "waypoints": {
+            "chest": [
+                [
+                    6,
+                    63,
+                    27
+                ],
+                [
+                    21,
+                    89,
+                    24
+                ],
+                [
+                    111,
+                    88,
+                    2
+                ],
+                [
+                    18,
+                    90,
+                    24
+                ]
+            ],
+            "item": [
+                [
+                    66,
+                    84,
+                    5
+                ],
+                [
+                    95,
+                    79,
+                    26
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    29,
+                    61,
+                    17
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Buttons",
+        "waypoints": {
+            "chest": [
+                [
+                    57,
+                    69,
+                    60
+                ],
+                [
+                    31,
+                    73,
+                    13
+                ],
+                [
+                    2,
+                    81,
+                    50
+                ],
+                [
+                    53,
+                    55,
+                    31
+                ],
+                [
+                    56,
+                    81,
+                    2
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Rails",
+        "waypoints": {
+            "chest": [
+                [
+                    8,
+                    49,
+                    60
+                ],
+                [
+                    30,
+                    64,
+                    29
+                ],
+                [
+                    30,
+                    72,
+                    34
+                ],
+                [
+                    56,
+                    66,
+                    6
+                ]
+            ],
+            "item": [
+                [
+                    27,
+                    70,
+                    29
+                ]
+            ],
+            "essence": [
+                [
+                    25,
+                    70,
+                    28
+                ],
+                [
+                    6,
+                    49,
+                    10
+                ],
+                [
+                    3,
+                    49,
+                    10
+                ]
+            ],
+            "bat": [
+                [
+                    56,
+                    51,
+                    11
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Vinny 8 Ball",
+        "waypoints": {
+            "chest": [
+                [
+                    26,
+                    69,
+                    17
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Sand Dragon",
+        "waypoints": {
+            "chest": [
+                [
+                    15,
+                    86,
+                    26
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Stone Window",
+        "waypoints": {
+            "chest": [],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    2,
+                    72,
+                    16
+                ],
+                [
+                    24,
+                    80,
+                    8
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Mini Rail Track",
+        "waypoints": {
+            "chest": [
+                [
+                    28,
+                    63,
+                    7
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    20,
+                    72,
+                    10
+                ],
+                [
+                    6,
+                    82,
+                    21
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Carpets",
+        "waypoints": {
+            "chest": [
+                [
+                    15,
+                    85,
+                    15
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Trinity",
+        "waypoints": {
+            "chest": [
+                [
+                    14,
+                    75,
+                    27
+                ]
+            ],
+            "item": [
+                [
+                    7,
+                    74,
+                    27
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    2,
+                    94,
+                    26
+                ],
+                [
+                    8,
+                    87,
+                    18
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Blaze",
+        "waypoints": {
+            "chest": [
+                [
+                    2,
+                    68,
+                    27
+                ],
+                [
+                    2,
+                    118,
+                    27
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Tic Tac Toe",
+        "waypoints": {
+            "chest": [
+                [
+                    9,
+                    69,
+                    25
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "New Trap",
+        "waypoints": {
+            "chest": [
+                [
+                    26,
+                    90,
+                    14
+                ],
+                [
+                    5,
+                    67,
+                    12
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    21,
+                    92,
+                    21
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Old Trap",
+        "waypoints": {
+            "chest": [
+                [
+                    26,
+                    83,
+                    4
+                ],
+                [
+                    23,
+                    90,
+                    17
+                ],
+                [
+                    4,
+                    71,
+                    9
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    22,
+                    90,
+                    9
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Altar",
+        "waypoints": {
+            "chest": [
+                [
+                    51,
+                    88,
+                    45
+                ],
+                [
+                    19,
+                    83,
+                    43
+                ],
+                [
+                    11,
+                    44,
+                    39
+                ]
+            ],
+            "item": [
+                [
+                    14,
+                    71,
+                    48
+                ]
+            ],
+            "essence": [
+                [
+                    17,
+                    93,
+                    27
+                ]
+            ],
+            "bat": [
+                [
+                    36,
+                    55,
+                    35
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Pirate",
+        "waypoints": {
+            "chest": [
+                [
+                    17,
+                    83,
+                    60
+                ],
+                [
+                    46,
+                    84,
+                    57
+                ],
+                [
+                    15,
+                    60,
+                    46
+                ]
+            ],
+            "item": [
+                [
+                    4,
+                    60,
+                    58
+                ]
+            ],
+            "essence": [
+                [
+                    19,
+                    60,
+                    4
+                ]
+            ],
+            "bat": [
+                [
+                    15,
+                    63,
+                    45
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Criss Cross",
+        "waypoints": {
+            "chest": [
+                [
+                    15,
+                    66,
+                    6
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Ritual",
+        "waypoints": {
+            "chest": [
+                [
+                    15,
+                    80,
+                    3
+                ],
+                [
+                    27,
+                    69,
+                    2
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [
+                [
+                    15,
+                    86,
+                    25
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Pipes",
+        "waypoints": {
+            "chest": [
+                [
+                    107,
+                    45,
+                    15
+                ],
+                [
+                    63,
+                    55,
+                    26
+                ],
+                [
+                    119,
+                    54,
+                    5
+                ],
+                [
+                    7,
+                    42,
+                    3
+                ],
+                [
+                    117,
+                    62,
+                    26
+                ]
+            ],
+            "item": [
+                [
+                    49,
+                    32,
+                    6
+                ]
+            ],
+            "essence": [],
+            "bat": [
+                [
+                    122,
+                    57,
+                    19
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Slime",
+        "waypoints": {
+            "chest": [
+                [
+                    29,
+                    87,
+                    14
+                ]
+            ],
+            "item": [
+                [
+                    3,
+                    86,
+                    10
+                ],
+                [
+                    90,
+                    57,
+                    15
+                ]
+            ],
+            "essence": [
+                [
+                    20,
+                    86,
+                    15
+                ]
+            ],
+            "bat": [
+                [
+                    14,
+                    52,
+                    14
+                ]
+            ],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Redstone Crypt",
+        "waypoints": {
+            "chest": [
+                [
+                    9,
+                    69,
+                    3
+                ],
+                [
+                    29,
+                    70,
+                    15
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": [
+                [
+                    4,
+                    71,
+                    4
+                ]
+            ]
+        }
+    },
+    {
+        "name": "Staircase",
+        "waypoints": {
+            "chest": [
+                [
+                    28,
+                    66,
+                    3
+                ]
+            ],
+            "item": [
+                [
+                    12,
+                    78,
+                    26
+                ]
+            ],
+            "essence": [
+                [
+                    22,
+                    75,
+                    2
+                ]
+            ],
+            "bat": [],
+            "redstone": []
+        }
+    },
+    {
+        "name": "Zodd",
+        "waypoints": {
+            "chest": [
+                [
+                    7,
+                    70,
+                    3
+                ]
+            ],
+            "item": [],
+            "essence": [],
+            "bat": [],
+            "redstone": []
+        }
+    }
+]
