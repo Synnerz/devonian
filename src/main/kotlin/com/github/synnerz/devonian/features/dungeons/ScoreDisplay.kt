@@ -13,7 +13,7 @@ object ScoreDisplay : TextHudFeature(
 ) {
     private val SETTING_ILLEGALMAP_FORMAT = addSwitch(
         "illegapStyle",
-        "&4OVERRIDES OTHER SETTINGS",
+        "§4OVERRIDES OTHER SETTINGS",
         "IllegalMap Score Style",
         false
     )
