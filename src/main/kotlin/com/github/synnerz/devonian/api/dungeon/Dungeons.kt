@@ -2,13 +2,20 @@ package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.features.dungeons.SecretsSound
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.Location
 import com.github.synnerz.devonian.utils.State
 import com.github.synnerz.devonian.utils.StringUtils
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.monster.Zombie
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.entity.SkullBlockEntity
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
 import kotlin.math.max
@@ -324,6 +331,56 @@ object Dungeons {
 
             mimicKilled.value = true
             DungeonEvent.MimicKilled().post()
+        }.setEnabled(Location.stateInArea("catacombs"))
+
+        EventBus.on<PacketReceivedEvent> { event ->
+            val packet = event.packet
+            if (packet !is ClientboundTakeItemEntityPacket) return@on
+            val player = Devonian.minecraft.player ?: return@on
+
+            val itemId = packet.itemId
+            val entityIn = Devonian.minecraft.level?.getEntity(itemId) ?: return@on
+            if (entityIn !is ItemEntity) return@on
+            val itemStack = entityIn.item
+            val customName = itemStack.customName?.string ?: return@on
+            if (!DungeonEvent.SecretPickup.SECRET_ITEMS.contains(customName)) return@on
+
+            DungeonEvent.SecretPickup(player.x, player.y, player.z).post()
+        }.setEnabled(Location.stateInArea("catacombs"))
+
+        EventBus.on<PacketSentEvent> { event ->
+            val packet = event.packet
+            if (packet !is ServerboundUseItemOnPacket) return@on
+
+            val minecraft = Devonian.minecraft
+            val result = packet.hitResult
+            val pos = result.blockPos
+            val blockState = minecraft.level?.getBlockState(pos) ?: return@on
+            val registryName = BuiltInRegistries.BLOCK.getKey(blockState.block)
+
+            if (registryName.path == "player_head" && blockState.hasBlockEntity()) {
+                val entityBlock = SecretsSound.minecraft.level?.getBlockEntity(pos) ?: return@on
+                if (entityBlock.type != BlockEntityType.SKULL) return@on
+                val skullBlock = entityBlock as SkullBlockEntity
+                val owner = skullBlock.ownerProfile ?: return@on
+                val id = owner.partialProfile().id ?: return@on
+
+                if (!DungeonEvent.SecretClicked.SECRET_SKULLS.contains("$id")) return@on
+
+                DungeonEvent.SecretClicked(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble()).post()
+                return@on
+            }
+            if (!DungeonEvent.SecretClicked.SECRET_BLOCKS.contains("${registryName.namespace}:${registryName.path}"))
+                return@on
+            DungeonEvent.SecretClicked(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble()).post()
+        }.setEnabled(Location.stateInArea("catacombs"))
+
+        EventBus.on<SoundPlayEvent> { event ->
+            if (event.volume != 0.1f) return@on
+            if (!DungeonEvent.SecretBat.SECRET_BATS.contains(event.sound)) return@on
+            val cancel = DungeonEvent.SecretBat(event.x, event.y, event.z).post()
+            if (!cancel) return@on
+            event.cancel()
         }.setEnabled(Location.stateInArea("catacombs"))
     }
 
