@@ -5,6 +5,7 @@
   "client": [
     "AbstractContainerMenuMixin",
     "AbstractContainerScreenMixin",
+    "BossHealthOverlayMixin",
     "CameraMixin",
     "CameraTypeMixin",
     "ChatComponentMixin",
