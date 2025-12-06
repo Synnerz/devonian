@@ -18,7 +18,7 @@ import org.lwjgl.glfw.GLFW
 
 object SlotBinding : Feature(
     "slotBinding",
-    "Bind a slot to another slot (with keybind in controls) so you can shift + right click on it to swap each others' items around"
+    "Bind a slot to another slot (with keybind in controls) so you can shift + left click on it to swap each others' items around"
 ) {
     private const val KEY_NAME = "slotsBound"
     private val boundSlots = mutableListOf<SlotBindingData>()
