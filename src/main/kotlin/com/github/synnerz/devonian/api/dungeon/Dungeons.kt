@@ -367,7 +367,13 @@ object Dungeons {
 
                 if (!DungeonEvent.SecretClicked.SECRET_SKULLS.contains("$id")) return@on
 
-                DungeonEvent.SecretClicked(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble()).post()
+                DungeonEvent.SecretClicked(
+                    pos.x.toDouble(),
+                    pos.y.toDouble(),
+                    pos.z.toDouble(),
+                    true,
+                    DungeonEvent.SecretClicked.isRedstonekey("$id")
+                ).post()
                 return@on
             }
             if (!DungeonEvent.SecretClicked.SECRET_BLOCKS.contains("${registryName.namespace}:${registryName.path}"))
