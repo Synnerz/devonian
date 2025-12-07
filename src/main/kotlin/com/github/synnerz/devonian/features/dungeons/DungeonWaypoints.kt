@@ -89,12 +89,16 @@ object DungeonWaypoints : Feature(
             ?.bufferedReader()
             .use { it?.readText() },
         Array<WaypointsDataJSON>::class.java
-    ).toList().map { WaypointsData(it) }.toTypedArray()
+    ).toList().map { WaypointsData(it) }.let { old ->
+        val arr = arrayOfNulls<WaypointsData>(old.maxOf { it.roomID } + 1)
+        old.forEach { arr[it.roomID] = it }
+        arr
+    }
     private var roomID: Int? = null
-    private val waypoints = arrayOfNulls<MutableMap<WaypointType, MutableList<IntTriple>>?>(waypointsData.maxOf { it.roomID } + 1)
+    private val waypoints = arrayOfNulls<MutableMap<WaypointType, MutableList<IntTriple>>?>(waypointsData.size)
 
     private fun getWaypoints(id: Int? = roomID): MutableMap<WaypointType, MutableList<IntTriple>>? {
-        val id = roomID ?: return null
+        val id = id ?: return null
         return waypoints.getOrNull(id)
     }
 
@@ -134,10 +138,13 @@ object DungeonWaypoints : Feature(
             if (getWaypoints(id) != null) return@on
 
             val waypointData = waypointsData.getOrNull(id) ?: return@on
-            val currentWaypoints = waypoints.getOrElse(id) {
-                waypoints[id] = EnumMap(WaypointType::class.java)
-                waypoints[id]
-            } ?: return@on
+            val currentWaypoints = waypoints.getOrElse(id) { return@on }.let{
+                if (it == null) {
+                    val map = EnumMap<WaypointType, MutableList<IntTriple>>(WaypointType::class.java)
+                    waypoints[id] = map
+                    map
+                } else it
+            }
             waypointData.waypoints.forEach {
                 val k = it.key
                 val v = it.value
