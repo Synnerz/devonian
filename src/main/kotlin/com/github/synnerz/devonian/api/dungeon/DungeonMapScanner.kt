@@ -264,7 +264,7 @@ object DungeonMapScanner {
 
             val world = Devonian.minecraft.level ?: return@on
             val mapState = MapItem.getSavedData(mapId, world) ?: return@on
-            val colors = mapState.colors ?: return@on
+            val colors = mapState.colors?.clone() ?: return@on
 
             if (roomSize == -1 && !scanMapDimensions(colors)) return@on
             Scheduler.scheduleTask {
