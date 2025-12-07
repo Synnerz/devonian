@@ -151,6 +151,7 @@ object Devonian : ClientModInitializer {
         ConfigGui.initialize()
         HudManager.initialize()
         KeyShortcuts.initialize()
+        CommandAliases.initialize()
         JsonUtils.load()
         SkyblockPrices
         Config.initialize()
