@@ -69,7 +69,7 @@ object AccurateAbsorption : Feature("accurateAbsorption") {
                     x, y,
                     hardcore, false, absorbHp == 1 && heartHp == 0
                 )
-                absorption -= heartHp
+                absorption -= absorbHp
             }
 
             if (heartHp > 0) {
