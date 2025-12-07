@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import java.awt.Color
+import java.util.concurrent.ConcurrentHashMap
 
 object ThreeWeirdosSolver : Feature(
     "threeWeirdosSolver",
@@ -52,7 +53,7 @@ object ThreeWeirdosSolver : Feature(
     private val CORRECT_FILLED_COLOR = Color(0, 255, 0, 80)
     private val WRONG_OUTLINE_COLOR = Color(255, 0, 0, 255)
     private val WRONG_FILLED_COLOR = Color(255, 0, 0, 80)
-    private val entityList = mutableMapOf<String, Int>()
+    private val entityList = ConcurrentHashMap<String, Int>()
     val answers = mutableListOf<AnswerData>()
     var enteredAt = -1
 
