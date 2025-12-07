@@ -123,15 +123,15 @@ object DungeonWaypoints : Feature(
         }
 
         on<ChatEvent> { event ->
-            event.matches("^You found a Secret Redstone Key!$".toRegex()) ?: return@on
-
+            // TODO: later on impl chest locked re-add "That chest is locked!"
             val player = minecraft.player ?: return@on
             val x = player.x
-            val y = player.y
             val z = player.z
 
+            event.matches("^You found a Secret Redstone Key!$".toRegex()) ?: return@on
+
             currentWaypoint?.get("redstone")?.removeIf {
-                it.first == x.toInt() && it.second == y.toInt() && it.third == z.toInt()
+                abs(it.first - x.toInt()) + abs(it.third - z.toInt()) < 15
             }
         }
 
