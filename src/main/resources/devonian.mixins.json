@@ -16,6 +16,7 @@
     "FallingBlockRendererMixin",
     "FogRendererMixin",
     "GameRendererMixin",
+    "GlDeviceMixin",
     "GuiMixin",
     "InventoryMenuMixin",
     "KeyboardHandlerMixin",

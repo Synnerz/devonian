@@ -143,7 +143,8 @@ object Devonian : ClientModInitializer {
         HideEntityFire,
         ThirdPersonCrosshair,
         BossBarHealth,
-        DungeonWaypoints
+        DungeonWaypoints,
+        Fullbright,
     )
 
     override fun onInitializeClient() {
