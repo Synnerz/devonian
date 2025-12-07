@@ -23,6 +23,66 @@ object DungeonWaypoints : Feature(
         "Whether to display a text at the location of the waypoint",
         "Dungeon Waypoints Text"
     )
+    private val SETTING_CHEST_OUTLINE = addColorPicker(
+        "chestOutline",
+        "The color of the highlight outline for chest waypoints",
+        "Dungeon Waypoints Chest Outline",
+        Color(0, 255, 0, 255).rgb
+    )
+    private val SETTING_CHEST_FILLED = addColorPicker(
+        "chestFilled",
+        "The color of the highlight filled for chest waypoints",
+        "Dungeon Waypoints Chest Filled",
+        Color(0, 255, 0, 80).rgb
+    )
+    private val SETTING_ITEM_OUTLINE = addColorPicker(
+        "itemOutline",
+        "The color of the highlight outline for item waypoints",
+        "Dungeon Waypoints Item Outline",
+        Color(0, 0, 255, 255).rgb
+    )
+    private val SETTING_ITEM_FILLED = addColorPicker(
+        "itemFilled",
+        "The color of the highlight filled for item waypoints",
+        "Dungeon Waypoints Item Filled",
+        Color(0, 0, 255, 80).rgb
+    )
+    private val SETTING_ESSENCE_OUTLINE = addColorPicker(
+        "essenceOutline",
+        "The color of the highlight outline for essence waypoints",
+        "Dungeon Waypoints Essence Outline",
+        Color(255, 0, 255, 255).rgb
+    )
+    private val SETTING_ESSENCE_FILLED = addColorPicker(
+        "essenceFilled",
+        "The color of the highlight filled for essence waypoints",
+        "Dungeon Waypoints Essence Filled",
+        Color(255, 0, 255, 80).rgb
+    )
+    private val SETTING_BAT_OUTLINE = addColorPicker(
+        "batOutline",
+        "The color of the highlight outline for bat waypoints",
+        "Dungeon Waypoints Bat Outline",
+        Color(0, 255, 150, 255).rgb
+    )
+    private val SETTING_BAT_FILLED = addColorPicker(
+        "batFilled",
+        "The color of the highlight filled for bat waypoints",
+        "Dungeon Waypoints Bat Filled",
+        Color(0, 255, 150, 80).rgb
+    )
+    private val SETTING_REDSTONE_OUTLINE = addColorPicker(
+        "redstoneOutline",
+        "The color of the highlight outline for redstone key waypoints",
+        "Dungeon Waypoints Redstone Outline",
+        Color(255, 0, 0, 255).rgb
+    )
+    private val SETTING_REDSTONE_FILLED = addColorPicker(
+        "redstoneFilled",
+        "The color of the highlight filled for redstone key waypoints",
+        "Dungeon Waypoints Redstone Filled",
+        Color(255, 0, 0, 80).rgb
+    )
     private val waypointsData = Gson().fromJson(
         this::class.java.getResourceAsStream("/assets/devonian/dungeons/DungeonWaypoints.json")
             ?.bufferedReader()
@@ -114,19 +174,31 @@ object DungeonWaypoints : Feature(
 
             currentWaypoint ?: return@on
             for (data in currentWaypoint!!) {
-                val color = when (data.key) {
-                    // TODO: make this customizable
-                    "chest" -> Color(0, 255, 0, 255)
-                    "item" -> Color(0, 0, 255, 255)
-                    "essence" -> Color(255, 0, 255, 255)
-                    "bat" -> Color(0, 255, 150, 255)
-                    "redstone" -> Color(255, 0, 0, 255)
+                val outlineColor = when (data.key) {
+                    "chest" -> SETTING_CHEST_OUTLINE.getColor()
+                    "item" -> SETTING_ITEM_OUTLINE.getColor()
+                    "essence" -> SETTING_ESSENCE_OUTLINE.getColor()
+                    "bat" -> SETTING_BAT_OUTLINE.getColor()
+                    "redstone" -> SETTING_REDSTONE_OUTLINE.getColor()
+                    else -> Color.YELLOW
+                }
+                val filledColor = when (data.key) {
+                    "chest" -> SETTING_CHEST_FILLED.getColor()
+                    "item" -> SETTING_ITEM_FILLED.getColor()
+                    "essence" -> SETTING_ESSENCE_FILLED.getColor()
+                    "bat" -> SETTING_BAT_FILLED.getColor()
+                    "redstone" -> SETTING_REDSTONE_FILLED.getColor()
                     else -> Color.YELLOW
                 }
                 data.value.forEach { pos ->
                     Context.Immediate?.renderBox(
                         pos.first.toDouble(), pos.second.toDouble(), pos.third.toDouble(),
-                        color,
+                        outlineColor,
+                        phase = true
+                    )
+                    Context.Immediate?.renderFilledBox(
+                        pos.first.toDouble(), pos.second.toDouble(), pos.third.toDouble(),
+                        filledColor,
                         phase = true
                     )
                     if (SETTING_DISPLAY_TEXT.get()) {
