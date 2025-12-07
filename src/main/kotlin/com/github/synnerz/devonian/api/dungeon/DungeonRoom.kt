@@ -27,6 +27,7 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
     var secretsCompleted = -1
     var clear = ClearTypes.MOB
     val doors = mutableSetOf<DungeonDoor>()
+    private var shapeIn = "1x1"
 
     init {
         addComponents(comps.map { it.toComponent() })
@@ -53,6 +54,7 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
             else -> ClearTypes.OTHER
         }
         totalSecrets = data.secrets
+        shapeIn = data.shape
     }
 
     private fun loadFromCore(core: Int): Boolean {
@@ -103,6 +105,7 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
 
     fun findRotation() {
         if (height == 0) return
+        if (shapeIn == "1x4" && comps.size < 4) return
 
         if (type == RoomTypes.FAIRY) {
             val x = comps[0].wx
@@ -132,7 +135,7 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
 
                 rotation = idx * 90
                 corner = pos
-                break
+                return
             }
         }
     }
