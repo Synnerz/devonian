@@ -8,6 +8,7 @@ data class DungeonMapRenderOptions(
     val doorWidth: Double, // [0, 1]
     val dungeonWidth: Int, // number of rooms
     val dungeonHeight: Int, // number of rooms
+    val padding: Double,
     val checkMark: Boolean,
     val puzzleIcon: Boolean,
     val roomName: Boolean,

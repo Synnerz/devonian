@@ -17,7 +17,6 @@ import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
-import kotlin.math.min
 
 class DungeonMapBaseRenderer :
     BufferedImageRenderer<DungeonMapRenderData>("dungeonMapBaseRenderer"), FontListener {
@@ -87,19 +86,22 @@ class DungeonMapBaseRenderer :
         }
 
         val roomRectOffset = (1.0 - options.roomWidth) * 0.5
-        val compToBImgFW = 1.0 / options.dungeonWidth * w
-        val compToBImgFH = 1.0 / options.dungeonHeight * w
-        val compToBImgF = min(compToBImgFW, compToBImgFH)
+        val maxDim = max(options.dungeonWidth, options.dungeonHeight)
+        val totalMaxDim = maxDim + options.padding * 2
+        val compToBImgFW = w / totalMaxDim
+        val compToBImgFH = h / totalMaxDim
+        val bImgOX = ((maxDim - options.dungeonWidth) / 2.0 + options.padding) * compToBImgFW
+        val bImgOY = ((maxDim - options.dungeonHeight) / 2.0 + options.padding) * compToBImgFH
 
         fun drawRoom(x: Int, z: Int, w: Int, h: Int) {
             val cx = x + roomRectOffset
             val cz = z + roomRectOffset
             val cw = options.roomWidth + w - 1
             val ch = options.roomWidth + h - 1
-            val bx = (compToBImgF * cx).toInt()
-            val bz = (compToBImgF * cz).toInt()
-            val bw = ceil(compToBImgF * cw).toInt()
-            val bh = ceil(compToBImgF * ch).toInt()
+            val bx = (compToBImgFW * cx + bImgOX).toInt()
+            val bz = (compToBImgFH * cz + bImgOY).toInt()
+            val bw = ceil(compToBImgFW * cw).toInt()
+            val bh = ceil(compToBImgFH * ch).toInt()
 
             g.fillRect(bx, bz, bw, bh)
         }
@@ -121,10 +123,10 @@ class DungeonMapBaseRenderer :
                 cw = roomRectOffset * 2.0
                 ch = options.roomWidth
             }
-            val bx = (compToBImgF * cx).toInt()
-            val bz = (compToBImgF * cz).toInt()
-            val bw = ceil(compToBImgF * cw).toInt()
-            val bh = ceil(compToBImgF * ch).toInt()
+            val bx = (compToBImgFW * cx + bImgOX).toInt()
+            val bz = (compToBImgFH * cz + bImgOY).toInt()
+            val bw = ceil(compToBImgFW * cw).toInt()
+            val bh = ceil(compToBImgFH * ch).toInt()
 
             g.fillRect(bx, bz, bw, bh)
         }
@@ -292,10 +294,10 @@ class DungeonMapBaseRenderer :
                     center.second - decW * 0.5,
                     decW, decW
                 )
-                val bx = (decBox.x * compToBImgF).toInt()
-                val by = (decBox.y * compToBImgF).toInt()
-                val bw = ceil(decBox.w * compToBImgF).toInt()
-                val bh = ceil(decBox.h * compToBImgF).toInt()
+                val bx = (decBox.x * compToBImgFW + bImgOX).toInt()
+                val by = (decBox.y * compToBImgFH + bImgOY).toInt()
+                val bw = ceil(decBox.w * compToBImgFW).toInt()
+                val bh = ceil(decBox.h * compToBImgFH).toInt()
                 g.drawImage(decoration, bx, by, bw, bh, null)
             }
 
@@ -307,8 +309,8 @@ class DungeonMapBaseRenderer :
                     center.second - decW * 0.5,
                     decW, decW
                 )
-                val bw = ceil(decBox.w * compToBImgF).toInt()
-                val bh = ceil(decBox.h * compToBImgF).toInt()
+                val bw = ceil(decBox.w * compToBImgFW).toInt()
+                val bh = ceil(decBox.h * compToBImgFH).toInt()
 
                 if (bw != cachedW || bh != cachedH) {
                     cachedStrings.clear()
@@ -335,7 +337,7 @@ class DungeonMapBaseRenderer :
                     visualWidth.toDouble(), fontSize.toDouble() * lines.size
                 ).fitInside(decBox)
 
-                fontSize = ceil(fontSize * (fontScale * compToBImgF).toFloat())
+                fontSize = ceil(fontSize * (fontScale * compToBImgFH).toFloat())
 
                 val key = CachedStringKey(str, fontSize.toInt(), options.stringShadow)
                 textToRender.add(TextRenderParam(decBox, key, text))
@@ -388,10 +390,10 @@ class DungeonMapBaseRenderer :
                     0.0, 0.0,
                     rendered.w, rendered.h
                 ).centerInside(BoundingBox(
-                    decBox.x * compToBImgF,
-                    decBox.y * compToBImgF,
-                    decBox.w * compToBImgF,
-                    decBox.h * compToBImgF
+                    decBox.x * compToBImgFW + bImgOX,
+                    decBox.y * compToBImgFH + bImgOY,
+                    decBox.w * compToBImgFW,
+                    decBox.h * compToBImgFH
                 ))
 
                 val bx = (box.x + rendered.xo).toInt()
@@ -426,10 +428,10 @@ class DungeonMapBaseRenderer :
                 cw = roomRectOffset * 2.0
                 ch = options.doorWidth
             }
-            val bx = (compToBImgF * cx).toInt()
-            val bz = (compToBImgF * cz).toInt()
-            val bw = ceil(compToBImgF * cw).toInt()
-            val bh = ceil(compToBImgF * ch).toInt()
+            val bx = (compToBImgFW * cx + bImgOX).toInt()
+            val bz = (compToBImgFH * cz + bImgOY).toInt()
+            val bw = ceil(compToBImgFW * cw).toInt()
+            val bh = ceil(compToBImgFH * ch).toInt()
 
             g.fillRect(bx, bz, bw, bh)
         }

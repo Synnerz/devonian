@@ -11,6 +11,7 @@ import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.SimpleTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHud
 import com.github.synnerz.devonian.utils.BoundingBox
+import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.resources.ResourceLocation
@@ -63,6 +64,19 @@ object DungeonMap : HudFeature(
         "Marker Scale",
         0.0, 10.0,
         1.0
+    )
+    private val SETTING_MAP_BACKGROUND_COLOR = addColorPicker(
+        "backgroundColor",
+        "",
+        "Map Background Color",
+        0
+    )
+    private val SETTING_MAP_PADDING = addDecimalSlider(
+        "padding",
+        "measured in room widths",
+        "Map Padding",
+        0.0, 2.0,
+        0.0
     )
     private val SETTING_ROOM_ENTRANCE_COLOR = addColorPicker(
         "roomEntranceColor",
@@ -259,6 +273,8 @@ object DungeonMap : HudFeature(
                 rooms, doors,
                 DungeonMapRenderOptions(
                     mapOf(
+                        DungeonMapColors.Background to SETTING_MAP_BACKGROUND_COLOR.getColor(),
+
                         DungeonMapColors.RoomEntrance to SETTING_ROOM_ENTRANCE_COLOR.getColor(),
                         DungeonMapColors.RoomNormal to SETTING_ROOM_NORMAL_COLOR.getColor(),
                         DungeonMapColors.RoomMiniboss to SETTING_ROOM_MINIBOSS_COLOR.getColor(),
@@ -276,6 +292,7 @@ object DungeonMap : HudFeature(
                     ),
                     SETTING_ROOM_SIZE.get(), SETTING_DOOR_SIZE.get(),
                     Dungeons.floor.roomsW, Dungeons.floor.roomsH,
+                    SETTING_MAP_PADDING.get(),
                     SETTING_RENDER_CHECKMARK.get(), SETTING_RENDER_PUZZLE_ICON.get(),
                     SETTING_RENDER_ROOM_NAMES.get(),
                     SETTING_RENDER_SECRET_COUNT.get(),
@@ -314,6 +331,16 @@ object DungeonMap : HudFeature(
 
         val bounds = getBounds()
 
+        val totalMaxDim = Dungeons.floor.maxDim + SETTING_MAP_PADDING.get() * 2
+        val boundsOX = (Dungeons.floor.maxDim - Dungeons.floor.roomsW) / 2.0 + SETTING_MAP_PADDING.get()
+        val boundsOY = (Dungeons.floor.maxDim - Dungeons.floor.roomsH) / 2.0 + SETTING_MAP_PADDING.get()
+        val compBounds = BoundingBox(
+            bounds.x + boundsOX / totalMaxDim * bounds.w,
+            bounds.y + boundsOY / totalMaxDim * bounds.h,
+            Dungeons.floor.maxDim / totalMaxDim * bounds.w,
+            Dungeons.floor.maxDim / totalMaxDim * bounds.h
+        )
+
         val holdingLeap = minecraft.player!!.mainHandItem.let {
             listOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP").contains(ItemUtils.skyblockId(it))
         }
@@ -329,15 +356,23 @@ object DungeonMap : HudFeature(
             val i = idx++
             val pos = player.getLerpedPosition() ?: return@forEach
 
-            val px = (bounds.x + pos.x / (Dungeons.floor.maxDim * 2.0) * bounds.w).toFloat()
-            val py = (bounds.y + pos.z / (Dungeons.floor.maxDim * 2.0) * bounds.h).toFloat()
+            val px = MathUtils.rescale(
+                pos.x,
+                0.0, Dungeons.floor.maxDim * 2.0,
+                compBounds.x, compBounds.x + compBounds.w
+            ).toFloat()
+            val py = MathUtils.rescale(
+                pos.z,
+                0.0, Dungeons.floor.maxDim * 2.0,
+                compBounds.y, compBounds.y + compBounds.h
+            ).toFloat()
 
             if (renderNames) {
                 val nameFormat =
                     if (SETTING_COLOR_NAME_BY_CLASS.get()) player.role.colorCode
                     else ""
                 val text =
-                    // Force display player name if leap is being held regardless of configurations, maybe should be configurable
+                // Force display player name if leap is being held regardless of configurations, maybe should be configurable
                     // or perhaps force this to be the `SETTING_RENDER_NAMES_ONLY_LEAP` standard, since people expect this behavior
                     if (holdingLeap) player.name
                     else if (SETTING_USE_CLASS_NAME.get() && player.role != DungeonClass.Unknown) player.role.shortName
