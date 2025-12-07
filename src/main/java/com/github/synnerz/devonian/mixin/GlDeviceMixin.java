@@ -14,7 +14,6 @@ import java.util.function.BiFunction;
 
 @Mixin(GlDevice.class)
 public class GlDeviceMixin {
-
     @WrapOperation(
         method = "compileShader",
         at = @At(value = "INVOKE", target = "Ljava/util/function/BiFunction;apply(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
