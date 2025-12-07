@@ -18,6 +18,7 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
     var cores = listOf<Int>()
     var explored = false
     var name: String? = null
+    var roomID: Int? = null
     var corner = WorldPosition.EMPTY
     var rotation = -1
     var type = RoomTypes.UNKNOWN
@@ -47,6 +48,7 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
     private fun loadFromData(data: DungeonScanner.RoomData) {
         cores = data.cores
         name = data.name
+        roomID = data.roomID
         type = RoomTypes.byName(data.type) ?: RoomTypes.NORMAL
         clear = when (data.clear) {
             "mob" -> ClearTypes.MOB

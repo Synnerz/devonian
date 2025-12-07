@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.google.gson.Gson
 import java.awt.Color
+import java.util.EnumMap
 import kotlin.math.abs
 
 object DungeonWaypoints : Feature(
@@ -87,39 +88,68 @@ object DungeonWaypoints : Feature(
         this::class.java.getResourceAsStream("/assets/devonian/dungeons/DungeonWaypoints.json")
             ?.bufferedReader()
             .use { it?.readText() },
-        Array<WaypointsData>::class.java
-    ).toList()
-    private var roomName: String? = null
-    private val waypoints = mutableMapOf<String, MutableMap<String, MutableList<Triple<Int, Int, Int>>>>()
-    private val currentWaypoint get() = waypoints[roomName]
+        Array<WaypointsDataJSON>::class.java
+    ).toList().map { WaypointsData(it) }.toTypedArray()
+    private var roomID: Int? = null
+    private val waypoints = arrayOfNulls<MutableMap<WaypointType, MutableList<IntTriple>>?>(waypointsData.maxOf { it.roomID } + 1)
 
-    data class WaypointsData(val name: String, val waypoints: Map<String, List<List<Int>>>, val roomID: Int)
+    private fun getWaypoints(id: Int? = roomID): MutableMap<WaypointType, MutableList<IntTriple>>? {
+        val id = roomID ?: return null
+        return waypoints.getOrNull(id)
+    }
+
+    enum class WaypointType(val key: String) {
+        CHEST("chest"),
+        ITEM("item"),
+        ESSENCE("essence"),
+        BAT("redstone"),
+        REDSTONE("redstone"),
+        UNKNOWN("unknown");
+
+        companion object {
+            fun from(key: String) = entries.find { it.key == key } ?: UNKNOWN
+        }
+    }
+    
+    data class IntTriple(val x: Int, val y: Int, val z: Int)
+
+    data class WaypointsDataJSON(val name: String, val waypoints: Map<String, List<List<Int>>>, val roomID: Int)
+    data class WaypointsData(val waypoints: Map<WaypointType, List<IntTriple>>, val roomID: Int) {
+        constructor(old: WaypointsDataJSON) : this(
+            EnumMap<WaypointType, List<IntTriple>>(
+                old.waypoints.entries.associate { (k, v) ->
+                    WaypointType.from(k) to v.map { IntTriple(it[0], it[1], it[2]) }
+                }
+            ),
+            old.roomID
+        )
+    }
 
     override fun initialize() {
         on<DungeonEvent.RoomEnter> { event ->
             val room = event.room
-            if (room.name == null) return@on
-            if (waypoints.containsKey(room.name)) {
-                roomName = room.name
-                return@on
-            }
+            val id = room.roomID ?: return@on
+            roomID = id
 
-            val currentWaypoints = waypointsData.find { it.name == room.name } ?: return@on
-            currentWaypoints.waypoints.forEach {
+            if (getWaypoints(id) != null) return@on
+
+            val waypointData = waypointsData.getOrNull(id) ?: return@on
+            val currentWaypoints = waypoints.getOrElse(id) {
+                waypoints[id] = EnumMap(WaypointType::class.java)
+                waypoints[id]
+            } ?: return@on
+            waypointData.waypoints.forEach {
                 val k = it.key
                 val v = it.value
 
                 v.forEach { pos ->
-                    val ( x, y, z ) = pos
-                    val roomPos = room.fromComp(x, z) ?: return@forEach
-                    waypoints
-                        .getOrPut(room.name!!) { mutableMapOf() }
+                    val roomPos = room.fromComp(pos.x, pos.z) ?: return@forEach
+
+                    currentWaypoints
                         .getOrPut(k) { mutableListOf() }
-                        .add(Triple(roomPos.first, y, roomPos.second))
+                        .add(IntTriple(roomPos.first, pos.y, roomPos.second))
                 }
             }
-
-            roomName = room.name
         }
 
         on<ChatEvent> { event ->
@@ -130,81 +160,84 @@ object DungeonWaypoints : Feature(
 
             event.matches("^You found a Secret Redstone Key!$".toRegex()) ?: return@on
 
-            currentWaypoint?.get("redstone")?.removeIf {
-                abs(it.first - x.toInt()) + abs(it.third - z.toInt()) < 15
+            Scheduler.scheduleTask {
+                getWaypoints()?.get(WaypointType.REDSTONE)?.removeIf {
+                    abs(it.x - x.toInt()) + abs(it.z - z.toInt()) < 15
+                }
             }
         }
 
         on<DungeonEvent.SecretClicked> { event ->
             Scheduler.scheduleTask {
                 val key = when {
-                    event.isSkull && event.isRedstone -> "redstone"
-                    event.isSkull -> "essence"
-                    else -> "chest"
+                    event.isSkull && event.isRedstone -> WaypointType.REDSTONE
+                    event.isSkull -> WaypointType.ESSENCE
+                    else -> WaypointType.CHEST
                 }
-                currentWaypoint?.get(key)?.removeIf {
-                    it.first == event.x.toInt() && it.second == event.y.toInt() && it.third == event.z.toInt()
+                getWaypoints()?.get(key)?.removeIf {
+                    it.x == event.x.toInt() && it.y == event.y.toInt() && it.z == event.z.toInt()
                 }
             }
         }
 
         on<DungeonEvent.SecretPickup> { event ->
             Scheduler.scheduleTask {
-                currentWaypoint?.get("item")?.removeIf {
-                    abs(it.first - event.x.toInt()) + abs(it.third - event.z.toInt()) < 8
+                getWaypoints()?.get(WaypointType.ITEM)?.removeIf {
+                    abs(it.x - event.x.toInt()) + abs(it.z - event.z.toInt()) < 8
                 }
             }
         }
 
         on<DungeonEvent.SecretBat> { event ->
             Scheduler.scheduleTask {
-                currentWaypoint?.get("bat")?.removeIf {
-                    abs(it.first - event.x.toInt()) + abs(it.third - event.z.toInt()) < 10
+                getWaypoints()?.get(WaypointType.BAT)?.removeIf {
+                    abs(it.x - event.x.toInt()) + abs(it.z - event.z.toInt()) < 10
                 }
             }
         }
 
         on<DungeonEvent.RoomLeave> {
-            roomName = null
+            roomID = null
         }
 
         on<RenderWorldEvent> {
+            val id = roomID ?: return@on
             val currentRoom = DungeonScanner.currentRoom ?: return@on
-            if (roomName != currentRoom.name) return@on
+            if (id != currentRoom.roomID) return@on
 
-            currentWaypoint ?: return@on
-            for (data in currentWaypoint!!) {
+            val waypoints = getWaypoints(id) ?: return@on
+            for (data in waypoints) {
                 val outlineColor = when (data.key) {
-                    "chest" -> SETTING_CHEST_OUTLINE.getColor()
-                    "item" -> SETTING_ITEM_OUTLINE.getColor()
-                    "essence" -> SETTING_ESSENCE_OUTLINE.getColor()
-                    "bat" -> SETTING_BAT_OUTLINE.getColor()
-                    "redstone" -> SETTING_REDSTONE_OUTLINE.getColor()
-                    else -> Color.YELLOW
+                    WaypointType.CHEST -> SETTING_CHEST_OUTLINE.getColor()
+                    WaypointType.ITEM -> SETTING_ITEM_OUTLINE.getColor()
+                    WaypointType.ESSENCE -> SETTING_ESSENCE_OUTLINE.getColor()
+                    WaypointType.BAT -> SETTING_BAT_OUTLINE.getColor()
+                    WaypointType.REDSTONE -> SETTING_REDSTONE_OUTLINE.getColor()
+                    WaypointType.UNKNOWN -> SETTING_REDSTONE_OUTLINE.getColor()
                 }
                 val filledColor = when (data.key) {
-                    "chest" -> SETTING_CHEST_FILLED.getColor()
-                    "item" -> SETTING_ITEM_FILLED.getColor()
-                    "essence" -> SETTING_ESSENCE_FILLED.getColor()
-                    "bat" -> SETTING_BAT_FILLED.getColor()
-                    "redstone" -> SETTING_REDSTONE_FILLED.getColor()
-                    else -> Color.YELLOW
+                    WaypointType.CHEST -> SETTING_CHEST_FILLED.getColor()
+                    WaypointType.ITEM -> SETTING_ITEM_FILLED.getColor()
+                    WaypointType.ESSENCE -> SETTING_ESSENCE_FILLED.getColor()
+                    WaypointType.BAT -> SETTING_BAT_FILLED.getColor()
+                    WaypointType.REDSTONE -> SETTING_REDSTONE_FILLED.getColor()
+                    WaypointType.UNKNOWN -> Color.YELLOW
                 }
                 data.value.forEach { pos ->
                     Context.Immediate?.renderBox(
-                        pos.first.toDouble(), pos.second.toDouble(), pos.third.toDouble(),
+                        pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(),
                         outlineColor,
                         phase = true
                     )
                     Context.Immediate?.renderFilledBox(
-                        pos.first.toDouble(), pos.second.toDouble(), pos.third.toDouble(),
+                        pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(),
                         filledColor,
                         phase = true
                     )
                     if (SETTING_DISPLAY_TEXT.get()) {
                         Context.Immediate?.renderString(
-                            data.key,
-                            pos.first + 0.5, pos.second + 1.0, pos.third + 0.5,
+                            data.key.key.replaceFirstChar { it.uppercaseChar() },
+                            pos.x + 0.5, pos.y + 1.0, pos.z + 0.5,
                             increase = true,
                             phase = true
                         )
@@ -215,7 +248,7 @@ object DungeonWaypoints : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        roomName = null
-        waypoints.clear()
+        roomID = null
+        waypoints.fill(null)
     }
 }
