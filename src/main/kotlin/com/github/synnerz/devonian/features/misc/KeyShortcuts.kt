@@ -172,11 +172,25 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
                 ChatUtils.sendMessage("&cRemoved KeyShortcut &7[${UIKeyBind.keyName(data.bind)} > ${data.command}]", true)
                 updateCache()
                 bindRect.remove()
+                rebuildChildren()
             }
         }
         components.add(bindRect)
         bindsList.add(data)
         onUpdate()
+    }
+
+    private fun rebuildChildren() {
+        for (comp in components)
+            main.children.remove(comp)
+        components.clear()
+        main.markDirty()
+
+        val bindsListCopy = bindsList.toMutableList()
+        bindsList.clear()
+
+        for (data in bindsListCopy)
+            createKeyBind(if (components.isEmpty()) 1 else 1 + (components.size % 7), data.command, data.bind)
     }
 
     fun onKeyPress(event: KeyEvent) {
