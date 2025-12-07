@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import kotlin.math.ceil
+import kotlin.math.sign
 import kotlin.math.withSign
 
 abstract class HudFeature(
@@ -50,7 +51,7 @@ abstract class HudFeature(
 
     open fun onMouseScroll(dir: Double) {
         val INCREMENT = 0.02f
-        val delta = INCREMENT.withSign(if (dir == 1.0) 1 else -1)
+        val delta = INCREMENT.withSign(dir.sign.toFloat())
 
         scale = (scale + delta).coerceAtLeast(0.1f)
     }
@@ -76,6 +77,8 @@ abstract class HudFeature(
             GLFW.GLFW_KEY_RIGHT -> dx = INCREMENT
             GLFW.GLFW_KEY_UP -> dy = -INCREMENT
             GLFW.GLFW_KEY_DOWN -> dy = INCREMENT
+            GLFW.GLFW_KEY_MINUS -> return onMouseScroll(-1.0)
+            GLFW.GLFW_KEY_EQUAL -> return onMouseScroll(+1.0)
         }
         val window = Devonian.minecraft.window
         x = (x + dx).coerceIn(MARGIN .. window.guiScaledWidth - MARGIN)
