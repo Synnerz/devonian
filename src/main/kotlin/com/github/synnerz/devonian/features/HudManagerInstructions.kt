@@ -9,6 +9,7 @@ object HudManagerInstructions : TextHudFeature("hudManagerInstructions") {
         "&lDrag&r to move an element.",
         "Alternatively, use the &lArrow Keys&r.",
         "&lScroll&r to resize an element.",
+        "Alternatively, use the &l-&r/&l+ Keys.",
         "For Text Elements ONLY:",
         "&l1&r to change the anchor.",
         "&l2&r to change the alignment.",
