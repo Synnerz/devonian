@@ -256,10 +256,11 @@ class DungeonMapBaseRenderer :
                     else -> when (room.checkmark) {
                         CheckmarkTypes.FAILED -> "&c"
                         CheckmarkTypes.GREEN -> "&a"
-                        CheckmarkTypes.WHITE,
-                        CheckmarkTypes.UNEXPLORED -> "&f"
-
+                        CheckmarkTypes.WHITE -> "&f"
                         CheckmarkTypes.NONE -> "&7"
+                        CheckmarkTypes.UNEXPLORED ->
+                            if (room.explored) "&7"
+                            else "&f"
                     }
                 } else ""
                 name.replace("\u200B", "- ").split(" ").forEach { text.add("$colorCode$it")}
@@ -268,9 +269,11 @@ class DungeonMapBaseRenderer :
                 val colorCode = when (room.checkmark) {
                     CheckmarkTypes.FAILED -> "&c"
                     CheckmarkTypes.GREEN -> "&a"
-                    CheckmarkTypes.WHITE,
-                    CheckmarkTypes.UNEXPLORED -> "&f"
+                    CheckmarkTypes.WHITE -> "&f"
                     CheckmarkTypes.NONE -> "&7"
+                    CheckmarkTypes.UNEXPLORED ->
+                        if (room.explored) "&7"
+                        else "&f"
                 }
                 text.add("$colorCode${
                     if (room.checkmark == CheckmarkTypes.GREEN) max(room.totalSecrets, room.secretsCompleted)
