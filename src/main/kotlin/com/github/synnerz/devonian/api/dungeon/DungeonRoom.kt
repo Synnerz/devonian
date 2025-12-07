@@ -69,7 +69,7 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
     }
 
     fun update() {
-        comps.sortBy { it.cz * 11 + it.cx }
+        comps.sortWith(compareBy<WorldComponentPosition> { it.cz }.thenBy { it.cx })
 
         scan()
         shape()
