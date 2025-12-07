@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.*
@@ -90,9 +91,11 @@ object ThreeWeirdosSolver : Feature(
             val match = event.matches(npcRegex) ?: return@on
             val ( name, message ) = match
             if (wrongAnswers.any { it.matches(message) }) {
-                getChest(name, false)?.let {
-                    if (answers.contains(it)) return@on
-                    answers.add(it)
+                Scheduler.scheduleTask {
+                    getChest(name, false)?.let {
+                        if (answers.contains(it)) return@scheduleTask
+                        answers.add(it)
+                    }
                 }
                 return@on
             }
@@ -100,9 +103,11 @@ object ThreeWeirdosSolver : Feature(
 
             event.cancel()
             ChatUtils.sendMessage("&e[NPC] &b&l$name: &a&l$message")
-            getChest(name, true)?.let {
-                if (answers.contains(it)) return@on
-                answers.add(it)
+            Scheduler.scheduleTask {
+                getChest(name, true)?.let {
+                    if (answers.contains(it)) return@scheduleTask
+                    answers.add(it)
+                }
             }
         }
 
