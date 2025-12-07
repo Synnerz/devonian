@@ -188,6 +188,7 @@ object ChestProfit : TextHudFeature(
         }
 
         on<RenderOverlayEvent> {
+            if (currentChest == null) return@on
             draw(it.ctx)
         }
     }
