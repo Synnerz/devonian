@@ -45,6 +45,7 @@ object LegacyRegistry {
         "minecraft:gold_block" to 41,
         "minecraft:iron_block" to 42,
         "minecraft:smooth_stone" to 43,
+        "minecraft:smooth_sandstone" to 43,
         "minecraft:cobblestone_slab[type=double]" to 43,
         "minecraft:stone_brick_slab[type=double]" to 43,
         "minecraft:smooth_stone_slab[type=double]" to 43,
