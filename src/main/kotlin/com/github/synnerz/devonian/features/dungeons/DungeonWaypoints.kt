@@ -93,7 +93,7 @@ object DungeonWaypoints : Feature(
     private val waypoints = mutableMapOf<String, MutableMap<String, MutableList<Triple<Int, Int, Int>>>>()
     private val currentWaypoint get() = waypoints[roomName]
 
-    data class WaypointsData(val name: String, val waypoints: Map<String, List<List<Int>>>)
+    data class WaypointsData(val name: String, val waypoints: Map<String, List<List<Int>>>, val roomID: Int)
 
     override fun initialize() {
         on<DungeonEvent.RoomEnter> { event ->
