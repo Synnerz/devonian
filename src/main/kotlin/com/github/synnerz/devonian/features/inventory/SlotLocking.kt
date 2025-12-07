@@ -69,15 +69,18 @@ object SlotLocking : Feature(
         on<GuiKeyEvent> { event ->
             if (!keybind.matches(event.event)) return@on
             val slot = ScreenUtils.cursorSlot(event.screen) ?: return@on
+            val containerSize = (event.screen as AbstractContainerScreen<*>).menu.slots.size
             val slotIdx = slot.index
-            val containsSlot = lockedSlots.contains(slotIdx)
+            val fixedSize = if (event.screen is InventoryScreen) 0 else containerSize - 45
+            val idx = slotIdx - fixedSize
+            val containsSlot = lockedSlots.contains(idx)
             val status = if (containsSlot) "&cUnlocked" else "&aLocked"
 
-            if (containsSlot) lockedSlots.remove(slotIdx)
-            else lockedSlots.add(slotIdx)
+            if (containsSlot) lockedSlots.remove(idx)
+            else lockedSlots.add(idx)
             updateCache()
 
-            ChatUtils.sendMessage("&bSlot &6$slotIdx &bwas $status", true)
+            ChatUtils.sendMessage("&bSlot &6$idx &bwas $status", true)
         }
         // TODO: impl rendering lock icon in slots
     }
