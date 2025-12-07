@@ -1113,6 +1113,19 @@
     "doors": "1011"
   },
   {
+    "name": "Teleport Maze",
+    "type": "puzzle",
+    "secrets": 0,
+    "cores": [
+      2089453469
+    ],
+    "roomID": 72,
+    "crypts": 0,
+    "shape": "1x1",
+    "roomScore": 4,
+    "doors": "1000"
+  },
+  {
     "name": "Mines",
     "type": "normal",
     "secrets": 10,
@@ -1224,6 +1237,22 @@
     "secretScore": 3,
     "shape": "1x1",
     "doors": "0101"
+  },
+  {
+    "name": "Temple",
+    "type": "normal",
+    "secrets": 3,
+    "cores": [
+      1480555517,
+      787162812
+    ],
+    "roomID": 80,
+    "clear": "mob",
+    "crypts": 0,
+    "clearScore": 3,
+    "secretScore": 3,
+    "shape": "1x1",
+    "doors": "1011"
   },
   {
     "name": "Double Diamond",
@@ -2062,22 +2091,6 @@
     "shape": "1x3"
   },
   {
-    "name": "Temple",
-    "type": "normal",
-    "secrets": 3,
-    "cores": [
-      1480555517,
-      787162812
-    ],
-    "roomID": 80,
-    "clear": "mob",
-    "crypts": 0,
-    "clearScore": 3,
-    "secretScore": 3,
-    "shape": "1x1",
-    "doors": "1011"
-  },
-  {
     "name": "Ritual",
     "type": "normal",
     "secrets": 3,
@@ -2091,19 +2104,6 @@
     "secretScore": 4,
     "shape": "1x1",
     "doors": "0101"
-  },
-  {
-    "name": "Teleport Maze",
-    "type": "puzzle",
-    "secrets": 0,
-    "cores": [
-      2089453469
-    ],
-    "roomID": 72,
-    "crypts": 0,
-    "shape": "1x1",
-    "roomScore": 4,
-    "doors": "1000"
   },
   {
     "name": "Criss Cross",
