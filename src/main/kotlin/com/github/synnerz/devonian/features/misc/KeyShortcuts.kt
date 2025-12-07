@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.JsonUtils
 import com.github.synnerz.talium.components.*
+import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
 import com.google.gson.JsonElement
@@ -13,9 +14,11 @@ import com.google.gson.JsonObject
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.KeyEvent
+import net.minecraft.client.input.MouseButtonInfo
 import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
+import kotlin.math.abs
 
 object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
     private const val KEY_NAME = "KeyShortcuts"
@@ -75,6 +78,13 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         fun onKeyPress(keyEvent: KeyEvent) {
             if (!shouldTrigger()) return
             if (keyEvent.key != bind) return
+            ChatUtils.say(command)
+        }
+
+        fun onButtonPress(btnInfo: MouseButtonInfo) {
+            if (!shouldTrigger()) return
+            if (bind > 0) return
+            if (-100 + btnInfo.button != bind) return
             ChatUtils.say(command)
         }
 
@@ -200,6 +210,15 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         lastTrigger = System.currentTimeMillis()
     }
 
+    fun onButtonPress(btnInfo: MouseButtonInfo) {
+        if (lastTrigger != -1L && System.currentTimeMillis() - lastTrigger < 200) return
+
+        for (data in bindsList)
+            data.onButtonPress(btnInfo)
+
+        lastTrigger = System.currentTimeMillis()
+    }
+
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.render(guiGraphics, mouseX, mouseY, deltaTicks)
         background.draw()
@@ -247,6 +266,7 @@ class UIKeyBind(
     parent: UIBase? = null
 ) : UIBase(_x, _y, _width, _height, parent) {
     val keyNameText by lazy { UIWrappedText(0.0, 0.0, 100.0, 100.0, "UNKNOWN", true, this@UIKeyBind) }
+    var isEnabled = false
 
     override fun render() {
         UIRect.drawRect(x, y, width, height, color = bgColor)
@@ -258,11 +278,18 @@ class UIKeyBind(
         keyNameText.text = keyName(bind)
     }
 
-//    override fun onMouseRelease(event: UIClickEvent) = apply {
-//        if (!focused) return@apply
-//        // TODO: impl mouse buttons
-//        if (event.button != 0) return@apply
-//    }
+    override fun onMouseRelease(event: UIClickEvent) = apply {
+        if (!focused) return@apply
+        if (!isEnabled) {
+            isEnabled = true
+            return@apply
+        }
+
+        bind = -100 + event.button
+        keyNameText.text = keyName(bind)
+        unfocus()
+        isEnabled = false
+    }
 
     override fun onKeyType(event: UIKeyType) = apply {
         if (!focused) return@apply
@@ -285,6 +312,7 @@ class UIKeyBind(
         @JvmStatic
         @JvmOverloads
         fun keyName(keycode: Int, scanCode: Int = 0): String {
+            if (keycode < -1) return "M${abs(-100 % keycode)}"
             if (keycode == -1) return "UNKNOWN"
             val name = bySpecialKey(keycode) ?: GLFW.glfwGetKeyName(keycode, scanCode)?.uppercase()
             return "KEY ${name ?: "UNKNOWN"}"
