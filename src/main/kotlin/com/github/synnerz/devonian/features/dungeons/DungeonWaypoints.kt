@@ -4,6 +4,7 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
@@ -22,7 +23,6 @@ object DungeonWaypoints : Feature(
         "Whether to display a text at the location of the waypoint",
         "Dungeon Waypoints Text"
     )
-    // TODO: mossy/pit has wrong coordinates
     private val waypointsData = Gson().fromJson(
         this::class.java.getResourceAsStream("/assets/devonian/dungeons/DungeonWaypoints.json")
             ?.bufferedReader()
@@ -30,22 +30,19 @@ object DungeonWaypoints : Feature(
         Array<WaypointsData>::class.java
     ).toList()
     private var roomName: String? = null
-    private val roomWaypoints = mutableMapOf<String, MutableList<Triple<Int, Int, Int>>>(
-        "chest" to mutableListOf(),
-        "item" to mutableListOf(),
-        "essence" to mutableListOf(),
-        "bat" to mutableListOf(),
-        "redstone" to mutableListOf(),
-    )
+    private val waypoints = mutableMapOf<String, MutableMap<String, MutableList<Triple<Int, Int, Int>>>>()
+    private val currentWaypoint get() = waypoints[roomName]
 
     data class WaypointsData(val name: String, val waypoints: Map<String, List<List<Int>>>)
 
-    // TODO: when room completed, black list until world load so the waypoints don't get re-added
-    //  also re-add the chest if it was locked instead of fully removing it
     override fun initialize() {
         on<DungeonEvent.RoomEnter> { event ->
             val room = event.room
-            if (room.name == roomName) return@on
+            if (room.name == null) return@on
+            if (waypoints.containsKey(room.name)) {
+                roomName = room.name
+                return@on
+            }
 
             val currentWaypoints = waypointsData.find { it.name == room.name } ?: return@on
             currentWaypoints.waypoints.forEach {
@@ -55,23 +52,37 @@ object DungeonWaypoints : Feature(
                 v.forEach { pos ->
                     val ( x, y, z ) = pos
                     val roomPos = room.fromComp(x, z) ?: return@forEach
-                    roomWaypoints[k]?.add(Triple(roomPos.first, y, roomPos.second))
+                    waypoints
+                        .getOrPut(room.name!!) { mutableMapOf() }
+                        .getOrPut(k) { mutableListOf() }
+                        .add(Triple(roomPos.first, y, roomPos.second))
                 }
             }
 
             roomName = room.name
         }
 
+        on<ChatEvent> { event ->
+            event.matches("^You found a Secret Redstone Key!$".toRegex()) ?: return@on
+
+            val player = minecraft.player ?: return@on
+            val x = player.x
+            val y = player.y
+            val z = player.z
+
+            currentWaypoint?.get("redstone")?.removeIf {
+                it.first == x.toInt() && it.second == y.toInt() && it.third == z.toInt()
+            }
+        }
+
         on<DungeonEvent.SecretClicked> { event ->
             Scheduler.scheduleTask {
-                // TODO: use chat msg for redstone key
-                // "You found a Secret Redstone Key!"
                 val key = when {
                     event.isSkull && event.isRedstone -> "redstone"
                     event.isSkull -> "essence"
                     else -> "chest"
                 }
-                roomWaypoints[key]?.removeIf {
+                currentWaypoint?.get(key)?.removeIf {
                     it.first == event.x.toInt() && it.second == event.y.toInt() && it.third == event.z.toInt()
                 }
             }
@@ -79,7 +90,7 @@ object DungeonWaypoints : Feature(
 
         on<DungeonEvent.SecretPickup> { event ->
             Scheduler.scheduleTask {
-                roomWaypoints["item"]?.removeIf {
+                currentWaypoint?.get("item")?.removeIf {
                     abs(it.first - event.x.toInt()) + abs(it.third - event.z.toInt()) < 8
                 }
             }
@@ -87,23 +98,22 @@ object DungeonWaypoints : Feature(
 
         on<DungeonEvent.SecretBat> { event ->
             Scheduler.scheduleTask {
-                roomWaypoints["bat"]?.removeIf {
-                    abs(it.first - event.x.toInt()) + abs(it.third - event.z.toInt()) < 8
+                currentWaypoint?.get("bat")?.removeIf {
+                    abs(it.first - event.x.toInt()) + abs(it.third - event.z.toInt()) < 10
                 }
             }
         }
 
         on<DungeonEvent.RoomLeave> {
-            if (it.room?.name == roomName) return@on
             roomName = null
-            roomWaypoints.forEach { it.value.clear() }
         }
 
         on<RenderWorldEvent> {
             val currentRoom = DungeonScanner.currentRoom ?: return@on
             if (roomName != currentRoom.name) return@on
 
-            for (data in roomWaypoints) {
+            currentWaypoint ?: return@on
+            for (data in currentWaypoint!!) {
                 val color = when (data.key) {
                     // TODO: make this customizable
                     "chest" -> Color(0, 255, 0, 255)
@@ -134,6 +144,6 @@ object DungeonWaypoints : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         roomName = null
-        roomWaypoints.forEach { it.value.clear() }
+        waypoints.clear()
     }
 }
