@@ -147,7 +147,8 @@ object Devonian : ClientModInitializer {
         Fullbright,
         SpotifyDisplay,
         RemoveRecipeBook,
-        RemoveContainerBackground
+        RemoveContainerBackground,
+        CustomContainerColor
     )
 
     override fun onInitializeClient() {

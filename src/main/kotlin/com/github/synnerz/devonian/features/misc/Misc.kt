@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.features.Feature
+import java.awt.Color
 
 object RemoveFallingBlocks : Feature("removeFallingBlocks")
 object RemoveFireOverlay : Feature("removeFireOverlay")
@@ -20,3 +21,11 @@ object DisableFog : Feature("disableFog")
 object ThirdPersonCrosshair : Feature("thirdPersonCrosshair")
 object RemoveRecipeBook : Feature("removeRecipeBook")
 object RemoveContainerBackground : Feature("removeContainerBackground")
+object CustomContainerColor : Feature("customContainerColor") {
+    val SETTING_CONTAINER_COLOR = addColorPicker(
+        "containerColor",
+        "The color which the container will use",
+        "Container Color",
+        Color.WHITE.rgb
+    )
+}
