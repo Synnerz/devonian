@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.commands
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.hud.texthud.TextHud
 
 object DevonianCommand {
     private val commandListeners = mutableListOf<() -> Int>()
@@ -20,6 +21,17 @@ object DevonianCommand {
         ChatUtils.say("x: $x, y: $y, z: $z")
         1
     }
+    private val fontChange = command.subcommand("font") { _, args ->
+        val fontName = args.getOrNull(0) as? String ?: return@subcommand 0
+        if (!TextHud.Fonts.containsKey(fontName)) {
+            ChatUtils.sendMessage("&cInvalid font name", true)
+            return@subcommand 0
+        }
+        TextHud.setActiveFont(fontName)
+        1
+    }
+        .greedyString("name")
+        .suggest("name", *TextHud.Fonts.keys.toTypedArray())
 
     fun initialize() {
         command.register()
