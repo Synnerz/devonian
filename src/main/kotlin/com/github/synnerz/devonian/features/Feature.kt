@@ -24,6 +24,7 @@ open class Feature @JvmOverloads constructor(
         it.value.replaceFirstChar { it.uppercaseChar() } + " "
     }.trim()
 ) : Toggleable() {
+    protected val isInternal = configName == "hudManagerInstructions" || configName == "hudManagerHider"
     val minecraft = Devonian.minecraft
     val id = 256652 + Devonian.features.size
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
@@ -39,8 +40,7 @@ open class Feature @JvmOverloads constructor(
         Devonian.features.add(this)
         _category = ConfigGui.category(category)
 
-        if (configName != "hudManagerInstructions")
-            _category.addSwitch(displayName, description, configData)
+        if (!isInternal) _category.addSwitch(displayName, description, configData)
 
         setEnabled((
             if (area == null) BasicState(true)

@@ -51,7 +51,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
 
     private fun updateSelected() {
         if (mouseDown) return
-        selectedHud = huds.filter { it.inBounds(lastMouseX, lastMouseY) }
+        selectedHud = huds.filter { it.isVisibleEdit() && it.inBounds(lastMouseX, lastMouseY) }
             .minByOrNull { it.getBounds().let { min(it.w, it.h) } }
     }
 
@@ -116,7 +116,9 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
             10, 10
         )
 
-        for (hud in huds) hud.sampleDraw(context, mouseX, mouseY, hud == selectedHud)
+        for (hud in huds) {
+            if (hud.isVisibleEdit()) hud.sampleDraw(context, mouseX, mouseY, hud == selectedHud)
+        }
     }
 
     fun addHud(hud: HudFeature) {

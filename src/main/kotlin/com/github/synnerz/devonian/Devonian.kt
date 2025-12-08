@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ui.ConfigGui
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.features.HudManagerInstructions
 import com.github.synnerz.devonian.features.diana.BurrowGuesser
 import com.github.synnerz.devonian.features.diana.BurrowWaypoint
@@ -148,7 +149,8 @@ object Devonian : ClientModInitializer {
         SpotifyDisplay,
         RemoveRecipeBook,
         RemoveContainerBackground,
-        CustomContainerColor
+        CustomContainerColor,
+        HudManagerHider,
     )
 
     override fun onInitializeClient() {
