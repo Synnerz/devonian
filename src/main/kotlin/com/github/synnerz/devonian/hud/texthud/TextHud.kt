@@ -55,21 +55,12 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
     override fun getHeight() =
         if (lines.isEmpty()) 0.0 else (lines.size - 1) * getLineHeight() + (fontAscent + fontDescent) * renderScale
 
-    override fun getBounds(): BoundingBox =
+    override fun getBounds(): BoundingBox = anchor.transform(
         BoundingBox(
-            when (anchor) {
-                Anchor.NW, Anchor.SW -> x
-                Anchor.NE, Anchor.SE -> x - getWidth()
-                Anchor.Center -> x - getWidth() * 0.5
-            },
-            when (anchor) {
-                Anchor.NW, Anchor.NE -> y
-                Anchor.SW, Anchor.SE -> y - getHeight()
-                Anchor.Center -> y - getHeight() * 0.5
-            },
-            getWidth(),
-            getHeight()
+            x, y,
+            getWidth(), getHeight()
         )
+    )
 
     private var fontSize: Float = MC_FONT_SIZE
     private var fontMain: Font? = null
@@ -80,7 +71,11 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             align, shadow, backdrop, fontSize,
             fontMainBase, emptyList(), 0f
         )
-    protected val renderer = TextRenderer(name)
+    protected var rendererInit = false
+    protected val renderer by lazy {
+        rendererInit = true
+        TextRenderer(name)
+    }
 
     private fun update() {
         val window = Devonian.minecraft.window
@@ -154,6 +149,10 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             renderer.update(MathUtils.ceilPow2(actualW, 1), MathUtils.ceilPow2(actualH, 2), lastImageParams)
         }
 
+        drawCachedImage(ctx)
+    }
+
+    protected open fun drawCachedImage(ctx: GuiGraphics) {
         val pos = getBounds()
         renderer.draw(ctx, pos.x.toFloat(), pos.y.toFloat(), renderScale)
     }
@@ -232,6 +231,21 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             SE -> Center
             Center -> NW
         }
+
+        fun transform(bb: BoundingBox) = BoundingBox(
+            when (this) {
+                NW, SW -> bb.x
+                NE, SE -> bb.x - bb.w
+                Center -> bb.x - bb.w * 0.5
+            },
+            when (this) {
+                NW, NE -> bb.y
+                SW, SE -> bb.y - bb.h
+                Center -> bb.y - bb.h * 0.5
+            },
+            bb.w,
+            bb.h
+        )
 
         companion object {
             fun from(ordinal: Int) = entries.getOrElse(ordinal) { NW }

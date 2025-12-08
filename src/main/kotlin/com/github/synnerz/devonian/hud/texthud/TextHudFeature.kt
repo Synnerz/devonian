@@ -19,13 +19,15 @@ abstract class TextHudFeature(
 ) : HudFeature(configName, description, category, area, subarea, hudConfigName), DataProvider, ITextHud {
     abstract fun getEditText(): List<String>
 
-    private var isEditing = false
+    protected var isEditing = false
     override var anchor = Anchor.NW
     override var align = Align.Left
     override var shadow = true
     override var backdrop = Backdrop.None
 
-    private val hud = TextHud(configName, this)
+    protected open fun createHud() = TextHud(configName, this)
+
+    protected val hud = createHud()
 
     override fun _hudInit() {
         JsonUtils.afterLoad {
@@ -59,9 +61,13 @@ abstract class TextHudFeature(
         hud.draw(ctx)
     }
 
+    open fun setEditDisplay() {
+        hud.setLines(getEditText())
+    }
+
     override fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
         isEditing = true
-        hud.setLines(getEditText())
+        setEditDisplay()
         hud.draw(ctx)
 
         super.sampleDraw(ctx, mx, my, selected)
