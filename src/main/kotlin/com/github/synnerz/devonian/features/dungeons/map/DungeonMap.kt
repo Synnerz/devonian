@@ -419,6 +419,13 @@ object DungeonMap : HudFeature(
         }
     }
 
+    override fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
+        val pos = getBounds()
+        ctx.drawCenteredString(minecraft.font, "Dungeon Map :)", (pos.x + pos.w / 2.0).toInt(), (pos.y + pos.h / 2.0).toInt(), -1)
+
+        super.sampleDraw(ctx, mx, my, selected)
+    }
+
     override fun onWorldChange(event: WorldChangeEvent) {
         mapRenderer.invalidate()
     }
