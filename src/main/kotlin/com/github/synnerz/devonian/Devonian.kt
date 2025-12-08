@@ -146,6 +146,8 @@ object Devonian : ClientModInitializer {
         DungeonWaypoints,
         Fullbright,
         SpotifyDisplay,
+        RemoveRecipeBook,
+        RemoveContainerBackground
     )
 
     override fun onInitializeClient() {
