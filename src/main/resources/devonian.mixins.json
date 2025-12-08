@@ -5,6 +5,7 @@
   "client": [
     "AbstractContainerMenuMixin",
     "AbstractContainerScreenMixin",
+    "AbstractRecipeBookScreenMixin",
     "BossHealthOverlayMixin",
     "CameraMixin",
     "CameraTypeMixin",
