@@ -12,7 +12,6 @@ object TextRendererImpl {
     fun drawImage(img: BufferedImage, param: TextRenderParams): BufferedImage {
         val g = img.createGraphics()
         g.font = param.font
-        val ascent = g.fontMetrics.ascent
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         g.paint = Color(-1)
 
@@ -22,12 +21,12 @@ object TextRendererImpl {
                 0,
                 0,
                 (param.lineVW.toInt() + 0.5f).toInt(),
-                (param.lines.size * param.fontSize + 0.5f).toInt()
+                (param.lines.size * param.fontSize + (param.lines.getOrNull(0)?.descent ?: 0f) + 0.5f).toInt()
             )
         }
 
         param.lines.forEachIndexed { i, v ->
-            val y = i * param.fontSize + ascent
+            val y = i * param.fontSize + v.ascent
             val x = when (param.align) {
                 TextHud.Align.Left -> 0f
                 TextHud.Align.Right -> param.lineVW - v.visualWidth
@@ -38,9 +37,9 @@ object TextRendererImpl {
                 g.paint = Color(0, 0, 0, 64)
                 g.fillRect(
                     x.toInt(),
-                    (y - ascent).toInt(),
+                    (y - v.ascent).toInt(),
                     ceil(v.visualWidth).toInt(),
-                    ceil(param.fontSize).toInt()
+                    ceil(param.fontSize + v.descent).toInt()
                 )
             }
             if (param.shadow) {
