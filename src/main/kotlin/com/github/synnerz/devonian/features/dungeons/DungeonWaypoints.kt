@@ -106,7 +106,7 @@ object DungeonWaypoints : Feature(
         CHEST("chest"),
         ITEM("item"),
         ESSENCE("essence"),
-        BAT("redstone"),
+        BAT("bat"),
         REDSTONE("redstone"),
         UNKNOWN("unknown");
 
