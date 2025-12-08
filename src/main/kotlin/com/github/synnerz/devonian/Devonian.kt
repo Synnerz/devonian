@@ -145,6 +145,7 @@ object Devonian : ClientModInitializer {
         BossBarHealth,
         DungeonWaypoints,
         Fullbright,
+        SpotifyDisplay,
     )
 
     override fun onInitializeClient() {
