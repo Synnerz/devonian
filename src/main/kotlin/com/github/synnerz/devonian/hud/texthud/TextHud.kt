@@ -214,6 +214,10 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
         lines.removeAt(i)
     }
 
+    fun dispose() {
+        if (rendererInit) renderer.dispose()
+    }
+
     data class Line(val str: String, var data: StringParser.LineData? = null, var dirty: Boolean = true)
 
     enum class Anchor {

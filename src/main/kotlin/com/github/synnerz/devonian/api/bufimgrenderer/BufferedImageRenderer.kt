@@ -88,6 +88,10 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         )
     }
 
+    fun dispose() {
+        uploader.texture.close()
+    }
+
     companion object {
         val pool = ThreadPoolExecutor(1, 2, 60, TimeUnit.SECONDS, LinkedBlockingQueue())
         val pipeline = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)

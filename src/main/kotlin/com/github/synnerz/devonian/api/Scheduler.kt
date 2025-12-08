@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import kotlinx.atomicfu.atomic
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import java.util.concurrent.Executors
 import java.util.concurrent.PriorityBlockingQueue
 
 object Scheduler {
@@ -13,6 +14,8 @@ object Scheduler {
     private val tasksServer = PriorityBlockingQueue<Task>(10, taskComp)
     private var tickServer = atomic(0)
     private var taskId = atomic(0)
+
+    val schedulePool = Executors.newScheduledThreadPool(0)
 
     data class Task(var delay: Int, val cb: () -> Unit, val id: Int)
 
