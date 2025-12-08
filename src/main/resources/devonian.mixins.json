@@ -30,6 +30,7 @@
     "PlayerRendererMixin",
     "PlayerTabOverlayMixin",
     "ScreenEffectRendererMixin",
+    "ScreenMixin",
     "YggdrasilMinecraftSessionServiceMixin",
     "accessor.AbstractContainerScreenAccessor",
     "accessor.CameraAccessor",
