@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.config.ui.talium
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
@@ -37,11 +38,15 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
             }
         }
     }
-    val categories = mutableListOf<Category>()
-    var selectedCategory: Category
+    lateinit var categories: List<Category>
+    lateinit var selectedCategory: Category
 
-    init {
-        createCategories()
+    fun category(name: String): Category {
+        return categories.find { it.categoryName.equals(name, ignoreCase = true) }!!
+    }
+
+    fun initialize() {
+        categories = Config.categories.keys.map { Category(it, rightPanel, leftPanel) }
         selectedCategory = categories.first()
         selectedCategory.unhide()
         background.onMouseScroll {
@@ -49,24 +54,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
                 selectedCategory.hideColorPickers()
             selectedCategory.onMouseScroll(it.delta)
         }
-    }
 
-    private fun createCategories() {
-        // All our categories should be created here
-        categories.add(Category("Dungeons", rightPanel, leftPanel))
-        categories.add(Category("Dungeon Map", rightPanel, leftPanel))
-        categories.add(Category("Garden", rightPanel, leftPanel))
-        categories.add(Category("Slayers", rightPanel, leftPanel))
-        categories.add(Category("End", rightPanel, leftPanel))
-        categories.add(Category("Diana", rightPanel, leftPanel))
-        categories.add(Category("Misc", rightPanel, leftPanel))
-    }
-
-    fun category(name: String): Category {
-        return categories.find { it.categoryName.lowercase() == name.lowercase() }!!
-    }
-
-    fun initialize() {
         selectedCategory.update()
         DevonianCommand.onRun {
             Scheduler.scheduleTask {

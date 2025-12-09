@@ -3,21 +3,19 @@ package com.github.synnerz.devonian.features
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.*
-import com.github.synnerz.devonian.config.ui.talium.Category
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ui.ConfigData
-import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.Location
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import com.github.synnerz.devonian.utils.Toggleable
-import com.github.synnerz.talium.components.UISwitch
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Style
 
 open class Feature @JvmOverloads constructor(
     val configName: String,
     description: String = "",
-    category: String = "Misc",
+    val category: String = "Misc",
     area: String? = null,
     subarea: String? = null,
     // To avoid conflict, maybe change the position later ?
@@ -28,18 +26,21 @@ open class Feature @JvmOverloads constructor(
     val id = 256652 + Devonian.features.size
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
     private var displayed = false
-    protected var _category: Category
-    private var configComp: UISwitch? = null
-    private val configData = ConfigData.FeatureSwitch(configName, false, this)
     val children = mutableListOf<Toggleable>()
     val area = area?.lowercase()
     val subarea = subarea?.lowercase()
+    private val configSwitch: ConfigData.Switch?
 
     init {
         Devonian.features.add(this)
-        _category = ConfigGui.category(category)
 
-        if (!isInternal) _category.addSwitch(displayName, description, configData)
+        configSwitch = if (isInternal) null
+        else addSwitch(configName, false, description, displayName)
+            .also {
+                it.onChange {
+                    setRegistered(it)
+                }
+            }
 
         setEnabled((
             if (area == null) BasicState(true)
@@ -65,12 +66,12 @@ open class Feature @JvmOverloads constructor(
     }
 
     fun setEnabled() {
-        configData.set(true)
+        configSwitch?.set(true)
         onToggle(true)
     }
 
     fun setDisabled() {
-        configData.set(false)
+        configSwitch?.set(false)
         onToggle(false)
     }
 
@@ -82,97 +83,111 @@ open class Feature @JvmOverloads constructor(
     @JvmOverloads
     fun addSwitch(
         configName: String,
-        description: String,
-        displayName: String = configName,
-        value: Boolean = false,
-        cheeto: Boolean = false
+        value: Boolean,
+        description: String? = null,
+        displayName: String? = null,
+        cheeto: Boolean = false,
     ): ConfigData.Switch {
-        return _category.addSwitch(
-            (if (cheeto) "§c" else "") + displayName,
-            (if (cheeto) "§4Warning: use at your own risk. " else "") + description,
-            ConfigData.Switch("${this.configName}$${configName}", value)
-        )
+        return ConfigData.Switch(
+            "${this.configName}$$configName",
+            value,
+            (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
+            (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
+        ).also { Config.categories[category]!!.add(it) }
     }
 
     @JvmOverloads
     fun addSlider(
         configName: String,
-        description: String,
-        displayName: String = configName,
-        min: Double = 0.0, max: Double = 100.0,
-        value: Double = min
+        value: Double,
+        min: Double, max: Double,
+        description: String? = null,
+        displayName: String? = null,
     ): ConfigData.Slider<Double> {
-        return _category.addSlider(
-            displayName,
+        return ConfigData.Slider(
+            "${this.configName}$$configName",
+            value,
+            min, max,
             description,
-            ConfigData.Slider("${this.configName}$${configName}", value, min, max)
-        )
+            displayName,
+        ).also { Config.categories[category]!!.add(it) }
     }
 
     @JvmOverloads
     fun addDecimalSlider(
         configName: String,
-        description: String,
-        displayName: String = configName,
-        min: Double = 0.0, max: Double = 100.0,
-        value: Double = min
+        value: Double,
+        min: Double, max: Double,
+        description: String? = null,
+        displayName: String? = null,
     ): ConfigData.DecimalSlider<Double> {
-        return _category.addDecimalSlider(
-            displayName,
+        return ConfigData.DecimalSlider(
+            "${this.configName}$$configName",
+            value,
+            min, max,
             description,
-            ConfigData.DecimalSlider("${this.configName}$${configName}", value, min, max)
-        )
+            displayName,
+        ).also { Config.categories[category]!!.add(it) }
     }
 
     @JvmOverloads
     fun addButton(
-        displayName: String,
-        description: String,
+        onClick: () -> Unit,
         buttonTitle: String = "Click!",
-        onClick: () -> Unit
-    ) {
-        _category.addButton(displayName, description, buttonTitle, onClick)
+        description: String? = null,
+        displayName: String? = null,
+    ): ConfigData.Button {
+        return ConfigData.Button(
+            onClick,
+            buttonTitle,
+            description,
+            displayName,
+        )
     }
 
     @JvmOverloads
     fun addTextInput(
         configName: String,
-        description: String,
-        displayName: String = configName,
-        value: String = ""
+        value: String = "",
+        description: String? = null,
+        displayName: String? = null,
     ): ConfigData.TextInput {
-        return _category.addTextInput(
-            displayName,
+        return ConfigData.TextInput(
+            "${this.configName}$$configName",
+            value,
             description,
-            ConfigData.TextInput("${this.configName}$${configName}", value)
-        )
+            displayName,
+        ).also { Config.categories[category]!!.add(it) }
     }
 
     fun addSelection(
         configName: String,
-        description: String,
-        displayName: String = configName,
+        value: Int,
         options: List<String>,
-        value: Int = 0
+        description: String? = null,
+        displayName: String? = null,
     ): ConfigData.Selection {
-        return _category.addSelection(
-            displayName,
+        return ConfigData.Selection(
+            "${this.configName}$$configName",
+            value,
+            options,
             description,
-            ConfigData.Selection("${this.configName}$${configName}", value, options)
-        )
+            displayName,
+        ).also { Config.categories[category]!!.add(it) }
     }
 
     fun addColorPicker(
         configName: String,
-        description: String,
-        displayName: String = configName,
-        value: Int = -1 // argb
+        value: Int, // argb
+        description: String? = null,
+        displayName: String? = null,
     ): ConfigData.ColorPicker {
-        return _category.addColorPicker(
-            displayName,
+        return ConfigData.ColorPicker(
+            "${this.configName}$$configName",
+            value,
             description,
-            ConfigData.ColorPicker("${this.configName}$${configName}", value)
-        )
+            displayName,
+        ).also { Config.categories[category]!!.add(it) }
     }
 
     fun displayChat() {

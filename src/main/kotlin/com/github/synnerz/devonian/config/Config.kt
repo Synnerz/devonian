@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.config
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.config.json.PersistentJsonData
+import com.github.synnerz.devonian.config.ui.ConfigData
 import com.github.synnerz.devonian.hud.texthud.DataProvider
 import java.io.File
 
@@ -47,6 +48,16 @@ object Config : PersistentData by jsonLoader {
         value.shadow?.let { obj.set("shadow", it) }
         value.backdrop?.let { obj.set("backdrop", it) }
     }
+
+    val categories = listOf(
+        "Dungeons",
+        "Dungeon Map",
+        "Garden",
+        "Slayers",
+        "End",
+        "Diana",
+        "Misc",
+    ).associateWith { mutableListOf<ConfigData<*>>() }
 }
 
 data class NullableHudData(

@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.config.ui.talium
 
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ui.ConfigData
 import com.github.synnerz.devonian.config.ui.ConfigType
 import com.github.synnerz.talium.components.*
@@ -8,8 +9,8 @@ import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
 
-open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase) {
-    private val configs = mutableListOf<CategoryData<*>>()
+class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase) {
+    private val configs = Config.categories[categoryName]!!.toMutableList()
     private val components = mutableListOf<UIRect>()
     private val colorComponents = mutableListOf<UIColorPicker>()
     private var currentPage = 0
@@ -43,13 +44,6 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
     private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, categoryName, true).apply {
         setColor(ColorPalette.TEXT_COLOR)
     }
-
-    data class CategoryData<T>(
-        val name: String,
-        val description: String,
-        val type: ConfigType,
-        val configData: ConfigData<T>
-    )
 
     init {
         update()
@@ -86,96 +80,6 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
         }
 
         currentPage--
-    }
-
-    fun addSwitch(
-        name: String,
-        description: String,
-        configData: ConfigData.Switch
-    ): ConfigData.Switch {
-        configs.add(CategoryData(name, description, ConfigType.SWITCH, configData))
-        return configData
-    }
-
-    fun <T> addSlider(
-        name: String,
-        description: String,
-        configData: ConfigData.Slider<T>
-    ): ConfigData.Slider<T> {
-        configs.add(CategoryData(
-                name,
-                description,
-                ConfigType.SLIDER,
-                configData
-        ))
-        return configData
-    }
-
-    fun <T> addDecimalSlider(
-        name: String,
-        description: String,
-        configData: ConfigData.DecimalSlider<T>
-    ): ConfigData.DecimalSlider<T> {
-        configs.add(CategoryData(
-            name,
-            description,
-            ConfigType.DECIMALSLIDER,
-            configData
-        ))
-        return configData
-    }
-
-    @JvmOverloads
-    fun addButton(
-        name: String,
-        description: String,
-        btnTitle: String = "Click!",
-        onClick: () -> Unit
-    ) = apply {
-        configs.add(CategoryData(
-            name, description,
-            ConfigType.BUTTON,
-            ConfigData.Button(btnTitle, onClick)
-        ))
-    }
-
-    fun addTextInput(
-        name: String,
-        description: String,
-        configData: ConfigData.TextInput
-    ): ConfigData.TextInput {
-        configs.add(CategoryData(
-            name, description,
-            ConfigType.TEXTINPUT,
-            configData
-        ))
-        return configData
-    }
-
-    fun addSelection(
-        name: String,
-        description: String,
-        configData: ConfigData.Selection
-    ): ConfigData.Selection {
-        configs.add(CategoryData(
-            name, description,
-            ConfigType.SELECTION,
-            configData
-        ))
-        return configData
-    }
-
-    fun addColorPicker(
-        name: String,
-        description: String,
-        configData: ConfigData.ColorPicker
-    ): ConfigData.ColorPicker {
-        configs.add(CategoryData(
-            name, description,
-            ConfigType.COLORPICKER,
-            configData
-        ))
-        return configData
     }
 
     fun update() {
@@ -217,17 +121,17 @@ open class Category(val categoryName: String, val rightPanel: UIBase, leftPanel:
             val data = configs.removeFirst()
             val y = 1 + (i % 5) * 17
             components.add(createBase(y.toDouble(), rightPanel).apply {
-                addChild(createTitle(data.name))
+                addChild(createTitle(data.displayName))
                 addChild(createDescription(data.description))
                 addChild(
                     when (data.type) {
-                        ConfigType.SWITCH -> createSwitch(data.configData as ConfigData.Switch)
-                        ConfigType.SLIDER -> createSlider(data.configData as ConfigData.Slider<Double>)
-                        ConfigType.DECIMALSLIDER -> createDecimalSlider(data.configData as ConfigData.DecimalSlider<Double>)
-                        ConfigType.BUTTON -> createButton(data.configData as ConfigData.Button)
-                        ConfigType.TEXTINPUT -> createTextInput(data.configData as ConfigData.TextInput)
-                        ConfigType.SELECTION -> createSelection(data.configData as ConfigData.Selection)
-                        ConfigType.COLORPICKER -> createColorPicker(data.configData as ConfigData.ColorPicker, this@apply)
+                        ConfigType.SWITCH -> createSwitch(data as ConfigData.Switch)
+                        ConfigType.SLIDER -> createSlider(data as ConfigData.Slider<Double>)
+                        ConfigType.DECIMALSLIDER -> createDecimalSlider(data as ConfigData.DecimalSlider<Double>)
+                        ConfigType.BUTTON -> createButton(data as ConfigData.Button)
+                        ConfigType.TEXTINPUT -> createTextInput(data as ConfigData.TextInput)
+                        ConfigType.SELECTION -> createSelection(data as ConfigData.Selection)
+                        ConfigType.COLORPICKER -> createColorPicker(data as ConfigData.ColorPicker, this@apply)
                     }
                 )
                 hide()

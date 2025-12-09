@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.config.ui
 
 import com.github.synnerz.devonian.config.Config
-import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import java.awt.Color
 
@@ -15,14 +14,14 @@ open class ConfigData<T>(
     val description = description ?: ""
     val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
 
-    private var onChangeHook: (() -> Unit)? = null
+    private val onChangeHook = mutableListOf<((T) -> Unit)>()
     open fun get() = value
 
     open fun set(newVal: T) {
         if (configName == null) return
         value = newVal
         Config.setConfig(configName, newVal)
-        onChangeHook?.let { it() }
+        onChangeHook.forEach { it(newVal) }
     }
 
     init {
@@ -36,29 +35,16 @@ open class ConfigData<T>(
         }
     }
 
-    fun onChange(cb: () -> Unit) {
-        onChangeHook = cb
+    fun onChange(cb: (T) -> Unit) {
+        onChangeHook.add(cb)
     }
 
-    open class Switch(
+    class Switch(
         configName: String,
         value: Boolean,
         description: String? = null,
         displayName: String? = null,
     ) : ConfigData<Boolean>(configName, ConfigType.SWITCH, value, description, displayName)
-
-    class FeatureSwitch(
-        configName: String,
-        value: Boolean,
-        val feature: Feature,
-        description: String? = null,
-        displayName: String? = null,
-    ) : Switch(configName, value, description, displayName) {
-        override fun set(newVal: Boolean) {
-            super.set(newVal)
-            feature.onToggle(newVal)
-        }
-    }
 
     class Slider<T : Number>(
         configName: String,
@@ -79,8 +65,8 @@ open class ConfigData<T>(
     ) : ConfigData<T>(configName, ConfigType.DECIMALSLIDER, value, description, displayName)
 
     class Button(
-        val btnTitle: String,
         val onClick: () -> Unit,
+        val btnTitle: String = "Click!",
         description: String? = null,
         displayName: String? = null,
     ) : ConfigData<Unit>(null, ConfigType.BUTTON, Unit, description, displayName)
