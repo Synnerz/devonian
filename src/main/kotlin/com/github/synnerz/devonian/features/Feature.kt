@@ -62,17 +62,17 @@ open class Feature @JvmOverloads constructor(
     open fun initialize() {}
 
     fun isEnabled(): Boolean {
-        return configData.get()
+        return isRegistered()
     }
 
     fun setEnabled() {
         configSwitch?.set(true)
-        onToggle(true)
+        setRegistered(true)
     }
 
     fun setDisabled() {
         configSwitch?.set(false)
-        onToggle(false)
+        setRegistered(false)
     }
 
     fun toggle() {
@@ -215,10 +215,6 @@ open class Feature @JvmOverloads constructor(
     fun deleteChat() {
         ChatUtils.removeLines { ChatUtils.chatLineIds[it] == id }
         displayed = false
-    }
-
-    open fun onToggle(state: Boolean) {
-        setRegistered(state)
     }
 
     inline fun <reified T : Event> on(noinline cb: (T) -> Unit) {
