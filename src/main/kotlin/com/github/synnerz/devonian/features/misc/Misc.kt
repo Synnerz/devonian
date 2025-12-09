@@ -29,3 +29,8 @@ object CustomContainerColor : Feature("customContainerColor") {
         "Container Color",
     )
 }
+object DisableChatAutoScroll : Feature(
+    "disableChatAutoScroll",
+    "Disables the auto scrolling to the latest message whenever the chat gui is focused",
+    "Misc"
+)
