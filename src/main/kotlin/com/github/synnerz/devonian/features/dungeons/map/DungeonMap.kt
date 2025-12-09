@@ -203,7 +203,7 @@ object DungeonMap : HudFeature(
     private val SETTING_ICON_SIZE = addDecimalSlider(
         "iconSize",
         0.6,
-        0.0, 1.0,
+        0.0, 2.0,
         "Affects puzzles + checkmarks. (% of the room)",
         "Icon Size",
     )
@@ -217,7 +217,7 @@ object DungeonMap : HudFeature(
     private val SETTING_TEXT_SIZE = addDecimalSlider(
         "textSize",
         0.8,
-        0.0, 1.0,
+        0.0, 2.0,
         "Affects room names + secret count. (% of the room)",
         "Text Size",
     )
