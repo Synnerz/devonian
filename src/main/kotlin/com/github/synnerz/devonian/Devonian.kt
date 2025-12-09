@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.TextConfig
-import com.github.synnerz.devonian.config.ui.ConfigGui
+import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.features.HudManagerInstructions

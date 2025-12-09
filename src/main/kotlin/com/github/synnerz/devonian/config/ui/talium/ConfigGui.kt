@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.config.ui
+package com.github.synnerz.devonian.config.ui.talium
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler

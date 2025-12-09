@@ -3,9 +3,9 @@ package com.github.synnerz.devonian.features
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.*
-import com.github.synnerz.devonian.config.ui.Category
+import com.github.synnerz.devonian.config.ui.talium.Category
 import com.github.synnerz.devonian.config.ui.ConfigData
-import com.github.synnerz.devonian.config.ui.ConfigGui
+import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.Location
 import com.github.synnerz.devonian.utils.Toggleable

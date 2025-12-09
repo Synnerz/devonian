@@ -1,5 +1,7 @@
-package com.github.synnerz.devonian.config.ui
+package com.github.synnerz.devonian.config.ui.talium
 
+import com.github.synnerz.devonian.config.ui.ConfigData
+import com.github.synnerz.devonian.config.ui.ConfigType
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.effects.OutlineEffect
 import com.github.synnerz.talium.events.UIClickEvent
