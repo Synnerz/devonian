@@ -3,9 +3,11 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
+import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.google.gson.Gson
@@ -97,6 +99,7 @@ object DungeonWaypoints : Feature(
     }
     private var roomID: Int? = null
     private val waypoints = arrayOfNulls<MutableMap<WaypointType, MutableList<IntTriple>>?>(waypointsData.size)
+    private var waitingRoom: DungeonRoom? = null
 
     private fun getWaypoints(id: Int? = roomID): MutableMap<WaypointType, MutableList<IntTriple>>? {
         val id = id ?: return null
@@ -130,6 +133,33 @@ object DungeonWaypoints : Feature(
         )
     }
 
+    private fun addSecretsForRoom(room: DungeonRoom): Boolean {
+        val id = room.roomID ?: return false
+        val waypointData = waypointsData.getOrNull(id) ?: return true
+
+        if (!room.hasRotation()) return false
+        val currentWaypoints = waypoints.getOrElse(id) { return true }.let{
+            if (it == null) {
+                val map = EnumMap<WaypointType, MutableList<IntTriple>>(WaypointType::class.java)
+                waypoints[id] = map
+                map
+            } else it
+        }
+        waypointData.waypoints.forEach {
+            val k = it.key
+            val v = it.value
+
+            v.forEach { pos ->
+                val roomPos = room.fromComp(pos.x, pos.z) ?: return false
+
+                currentWaypoints
+                    .getOrPut(k) { mutableListOf() }
+                    .add(IntTriple(roomPos.first, pos.y, roomPos.second))
+            }
+        }
+        return true
+    }
+
     override fun initialize() {
         on<DungeonEvent.RoomEnter> { event ->
             val room = event.room
@@ -137,27 +167,7 @@ object DungeonWaypoints : Feature(
             roomID = id
 
             if (getWaypoints(id) != null) return@on
-
-            val waypointData = waypointsData.getOrNull(id) ?: return@on
-            val currentWaypoints = waypoints.getOrElse(id) { return@on }.let{
-                if (it == null) {
-                    val map = EnumMap<WaypointType, MutableList<IntTriple>>(WaypointType::class.java)
-                    waypoints[id] = map
-                    map
-                } else it
-            }
-            waypointData.waypoints.forEach {
-                val k = it.key
-                val v = it.value
-
-                v.forEach { pos ->
-                    val roomPos = room.fromComp(pos.x, pos.z) ?: return@forEach
-
-                    currentWaypoints
-                        .getOrPut(k) { mutableListOf() }
-                        .add(IntTriple(roomPos.first, pos.y, roomPos.second))
-                }
-            }
+            if (!addSecretsForRoom(room)) waitingRoom = room
         }
 
         on<ChatEvent> { event ->
@@ -253,10 +263,16 @@ object DungeonWaypoints : Feature(
                 }
             }
         }
+
+        on<TickEvent> {
+            val room = waitingRoom ?: return@on
+            if (addSecretsForRoom(room)) waitingRoom = null
+        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         roomID = null
         waypoints.fill(null)
+        waitingRoom = null
     }
 }

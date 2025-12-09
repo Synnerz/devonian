@@ -71,9 +71,6 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
 
         scan()
         shape()
-
-        corner = WorldPosition.EMPTY
-        rotation = -1
     }
 
     fun scan() = apply {
