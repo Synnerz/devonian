@@ -46,6 +46,8 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "BlockEntityRenderDispatcherMixin"
+    "BlockEntityRenderDispatcherMixin",
+    "EntityMixin",
+    "accessor.EntityAccessor"
   ]
 }

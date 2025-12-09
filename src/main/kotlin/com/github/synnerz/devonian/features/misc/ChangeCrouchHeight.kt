@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.CameraAccessor
+import com.github.synnerz.devonian.mixin.accessor.EntityAccessor
 import net.minecraft.client.Camera
 import net.minecraft.world.entity.Pose
 
@@ -18,14 +19,29 @@ object ChangeCrouchHeight : Feature("changeCrouchHeight", "All changes are visua
         "",
         "Use 1.8.9 Crouch Height",
     )
+    private val SETTING_CHANGE_ACTUAL_HEIGHT = addSwitch(
+        "nonVisual",
+        false,
+        "non visual",
+        "Change Actual Crouch Height",
+        cheeto = true,
+    )
 
     fun getEyeHeight(): Float {
         val player = minecraft.player ?: return 0f
-        return when (player.pose) {
+        return getEyeHeight(player.pose)
+    }
+
+    fun getEyeHeight(pose: Pose): Float {
+        val player = minecraft.player ?: return 0f
+        return when (pose) {
             Pose.CROUCHING -> 1.54f
-            else -> player.eyeHeight
+            // otherwise recursion
+            else -> (player as EntityAccessor).eyeHeightField
         }
     }
+
+    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get()
 
     private var wasCrouching = false
 
