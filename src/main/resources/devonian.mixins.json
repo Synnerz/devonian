@@ -48,6 +48,7 @@
   "mixins": [
     "BlockEntityRenderDispatcherMixin",
     "EntityMixin",
+    "PlayerMixin",
     "accessor.EntityAccessor"
   ]
 }

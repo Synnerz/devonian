@@ -34,3 +34,4 @@ object DisableChatAutoScroll : Feature(
     "Disables the auto scrolling to the latest message whenever the chat gui is focused",
     "Misc"
 )
+object DisableSwim : Feature("disableSwim", cheeto = true)
