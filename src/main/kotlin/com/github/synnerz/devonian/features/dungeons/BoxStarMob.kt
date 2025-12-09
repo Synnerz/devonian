@@ -1,10 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
-import com.github.synnerz.devonian.api.events.NameChangeEvent
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
@@ -155,7 +152,7 @@ object BoxStarMob : Feature(
             }
         }
 
-        on<RenderWorldEvent> {
+        on<TickEvent> {
             val w = minecraft.level ?: return@on
 
             var len = starredIdQ.size
@@ -167,7 +164,9 @@ object BoxStarMob : Feature(
                 if (ent == null) starredIdQ.offer(p)
                 else starred.add(Pair(ent, data))
             }
+        }
 
+        on<RenderWorldEvent> {
             starred.removeIf { (ent, data) ->
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 
