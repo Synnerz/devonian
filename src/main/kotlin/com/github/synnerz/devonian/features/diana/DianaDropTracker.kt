@@ -5,9 +5,8 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import com.github.synnerz.devonian.config.JsonUtils
+import com.github.synnerz.devonian.utils.PersistentJsonClass
 import java.io.File
-import java.io.FileWriter
 
 object DianaDropTracker : TextHudFeature(
     "dianaDropTracker",
@@ -24,10 +23,12 @@ object DianaDropTracker : TextHudFeature(
     )
         .resolve("devonian")
         .resolve("dianadroptracker.json")
-    private var currentStats =
-        if (statsFile.exists() && statsFile.readText().isNotEmpty())
-            JsonUtils.gson.fromJson(statsFile.readText(), DianaDropData::class.java)
-        else DianaDropData()
+
+    private val loader = object : PersistentJsonClass<DianaDropData>(statsFile, DianaDropData::class.java) {
+        override fun onLoadDefault() {
+            data = DianaDropData()
+        }
+    }
 
     data class DianaDropData(
         var hiltOfRevelations: Int = 0,
@@ -50,32 +51,24 @@ object DianaDropTracker : TextHudFeature(
     )
 
     init {
-        if (!statsFile.exists()) {
-            statsFile.parentFile.mkdirs()
-            statsFile.createNewFile()
-        }
-
-        JsonUtils.preSave {
-            FileWriter(statsFile).use { JsonUtils.gson.toJson(currentStats, it) }
-        }
-
         DevonianCommand.command.subcommand("rsdianadroptracker") { _, args ->
-            currentStats.hiltOfRevelations = 0
-            currentStats.mythosFragment = 0
-            currentStats.dwarfTurtleShelmet = 0
-            currentStats.daedalusStick = 0
-            currentStats.griffinFeather = 0
-            currentStats.chimeraBook = 0
-            currentStats.cretanUrn = 0
-            currentStats.washedUpSouvenir = 0
-            currentStats.antiqueRemedies = 0
-            currentStats.brainFood = 0
-            currentStats.shimmeringWool = 0
-            currentStats.fatefulStinger = 0
-            currentStats.crownOfGreed = 0
-            currentStats.minosRelic = 0
-            currentStats.crochetTigerPlushie = 0
-            currentStats.braidedGriffinFeather = 0
+            val data = loader.data ?: return@subcommand 1
+            data.hiltOfRevelations = 0
+            data.mythosFragment = 0
+            data.dwarfTurtleShelmet = 0
+            data.daedalusStick = 0
+            data.griffinFeather = 0
+            data.chimeraBook = 0
+            data.cretanUrn = 0
+            data.washedUpSouvenir = 0
+            data.antiqueRemedies = 0
+            data.brainFood = 0
+            data.shimmeringWool = 0
+            data.fatefulStinger = 0
+            data.crownOfGreed = 0
+            data.minosRelic = 0
+            data.crochetTigerPlushie = 0
+            data.braidedGriffinFeather = 0
             1
         }
     }
@@ -86,50 +79,50 @@ object DianaDropTracker : TextHudFeature(
             if (coinsMatch != null) {
                 val coins = coinsMatch[0].replace(",", "").toInt()
 
-                currentStats.coins += coins
+                loader.data?.coins += coins
                 return@on
             }
 
             when (event.matches(rareDropCriteria)?.firstOrNull() ?: return@on) {
-                "Hilt of Revelations" -> currentStats.hiltOfRevelations++
-                "Mythos Fragment" -> currentStats.mythosFragment++
-                "Dwarf Turtle Shelmet" -> currentStats.dwarfTurtleShelmet++
-                "Daedalus Stick" -> currentStats.daedalusStick++
-                "Griffin Feather" -> currentStats.griffinFeather++
-                "Enchanted Book (Chimera 1)" -> currentStats.chimeraBook++
-                "Cretan Urn" -> currentStats.cretanUrn++
-                "Washed-up Souvenir" -> currentStats.washedUpSouvenir++
-                "Antique Remedies" -> currentStats.antiqueRemedies++
-                "Brain Food" -> currentStats.brainFood++
-                "Shimmering Wool" -> currentStats.shimmeringWool++
-                "Fateful Stinger" -> currentStats.fatefulStinger++
-                "Crown of Greed" -> currentStats.crownOfGreed++
-                "Minos Relic" -> currentStats.minosRelic++
-                "Crochet Tiger Plushie" -> currentStats.crochetTigerPlushie++
-                "Braided Griffin Feather" -> currentStats.braidedGriffinFeather++
+                "Hilt of Revelations" -> loader.data?.hiltOfRevelations++
+                "Mythos Fragment" -> loader.data?.mythosFragment++
+                "Dwarf Turtle Shelmet" -> loader.data?.dwarfTurtleShelmet++
+                "Daedalus Stick" -> loader.data?.daedalusStick++
+                "Griffin Feather" -> loader.data?.griffinFeather++
+                "Enchanted Book (Chimera 1)" -> loader.data?.chimeraBook++
+                "Cretan Urn" -> loader.data?.cretanUrn++
+                "Washed-up Souvenir" -> loader.data?.washedUpSouvenir++
+                "Antique Remedies" -> loader.data?.antiqueRemedies++
+                "Brain Food" -> loader.data?.brainFood++
+                "Shimmering Wool" -> loader.data?.shimmeringWool++
+                "Fateful Stinger" -> loader.data?.fatefulStinger++
+                "Crown of Greed" -> loader.data?.crownOfGreed++
+                "Minos Relic" -> loader.data?.minosRelic++
+                "Crochet Tiger Plushie" -> loader.data?.crochetTigerPlushie++
+                "Braided Griffin Feather" -> loader.data?.braidedGriffinFeather++
             }
         }
 
         on<RenderOverlayEvent> { event ->
             setLines(
                 listOf(
-                    "&9Griffin Feather&f: &b${currentStats.griffinFeather}",
-                    "&9Hilt Of Revelations&f: &b${currentStats.hiltOfRevelations}",
-                    "&9Mythos Fragment&f: &b${currentStats.mythosFragment}",
-                    "&9Dwarf Turtle Shelmet&f: &b${currentStats.dwarfTurtleShelmet}",
-                    "&5Cretan Urn&f: &b${currentStats.cretanUrn}",
-                    "&5Antique Remedies&f: &b${currentStats.antiqueRemedies}",
-                    "&5Crochet Tiger Plushie&f: &b${currentStats.crochetTigerPlushie}",
-                    "&5Braided Griffin Feather&f: &b${currentStats.braidedGriffinFeather}",
-                    "&5Brain Food&f: &b${currentStats.brainFood}",
-                    "&5Minos Relic&f: &b${currentStats.minosRelic}",
-                    "&6Washed-up Souvenir&f: &b${currentStats.washedUpSouvenir}",
-                    "&6Daedalus Stick&f: &b${currentStats.daedalusStick}",
-                    "&6Crown of Greed&f: &b${currentStats.crownOfGreed}",
-                    "&6Fateful Stinger&f: &b${currentStats.fatefulStinger}",
-                    "&6Chimera&f: &b${currentStats.chimeraBook}",
-                    "&6Shimmering Wool&f: &b${currentStats.shimmeringWool}",
-                    "&6Coins&f: &b${currentStats.coins}",
+                    "&9Griffin Feather&f: &b${loader.data?.griffinFeather ?: 0}",
+                    "&9Hilt Of Revelations&f: &b${loader.data?.hiltOfRevelations ?: 0}",
+                    "&9Mythos Fragment&f: &b${loader.data?.mythosFragment ?: 0}",
+                    "&9Dwarf Turtle Shelmet&f: &b${loader.data?.dwarfTurtleShelmet ?: 0}",
+                    "&5Cretan Urn&f: &b${loader.data?.cretanUrn ?: 0}",
+                    "&5Antique Remedies&f: &b${loader.data?.antiqueRemedies ?: 0}",
+                    "&5Crochet Tiger Plushie&f: &b${loader.data?.crochetTigerPlushie ?: 0}",
+                    "&5Braided Griffin Feather&f: &b${loader.data?.braidedGriffinFeather ?: 0}",
+                    "&5Brain Food&f: &b${loader.data?.brainFood ?: 0}",
+                    "&5Minos Relic&f: &b${loader.data?.minosRelic ?: 0}",
+                    "&6Washed-up Souvenir&f: &b${loader.data?.washedUpSouvenir ?: 0}",
+                    "&6Daedalus Stick&f: &b${loader.data?.daedalusStick ?: 0}",
+                    "&6Crown of Greed&f: &b${loader.data?.crownOfGreed ?: 0}",
+                    "&6Fateful Stinger&f: &b${loader.data?.fatefulStinger ?: 0}",
+                    "&6Chimera&f: &b${loader.data?.chimeraBook ?: 0}",
+                    "&6Shimmering Wool&f: &b${loader.data?.shimmeringWool ?: 0}",
+                    "&6Coins&f: &b${loader.data?.coins ?: 0}",
                 )
             )
             draw(event.ctx)

@@ -6,8 +6,8 @@ import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.GuiKeyEvent
 import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.config.JsonUtils
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.mojang.blaze3d.platform.InputConstants
@@ -53,10 +53,10 @@ object SlotBinding : Feature(
     }
 
     override fun initialize() {
-        JsonUtils.set(KEY_NAME, JsonObject())
+        Config.set(KEY_NAME, JsonObject())
 
-        JsonUtils.afterLoad {
-            val localData = JsonUtils.get<Map<String, JsonElement>>(KEY_NAME) ?: return@afterLoad
+        Config.onAfterLoad {
+            val localData = Config.get<Map<String, JsonElement>>(KEY_NAME) ?: return@onAfterLoad
             for (data in localData) {
                 val k = data.key.toIntOrNull() ?: continue
                 val v = data.value.asInt
@@ -135,7 +135,7 @@ object SlotBinding : Feature(
             obj.addProperty("${it.from}", it.to)
         }
 
-        JsonUtils.set(KEY_NAME, obj)
+        Config.set(KEY_NAME, obj)
     }
 
     private fun isValid(idx: Int): Boolean

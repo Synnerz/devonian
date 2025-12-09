@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.CancellableEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.config.JsonUtils
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.components.UITextInput
@@ -96,10 +96,10 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
     }
 
     fun initialize() {
-        JsonUtils.set(KEY_NAME, JsonObject())
+        Config.set(KEY_NAME, JsonObject())
 
-        JsonUtils.afterLoad {
-            val cachedData = JsonUtils.get<Map<String, JsonElement>>(KEY_NAME) ?: return@afterLoad
+        Config.onAfterLoad {
+            val cachedData = Config.get<Map<String, JsonElement>>(KEY_NAME) ?: return@onAfterLoad
             cachedData.forEach {
                 val alias = it.key
                 val command = it.value.asString
@@ -237,6 +237,6 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
         for (alias in aliasesList)
             obj.addProperty(alias.alias, alias.command)
 
-        JsonUtils.set(KEY_NAME, obj)
+        Config.set(KEY_NAME, obj)
     }
 }

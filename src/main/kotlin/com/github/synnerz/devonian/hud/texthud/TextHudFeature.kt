@@ -1,9 +1,10 @@
 package com.github.synnerz.devonian.hud.texthud
 
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.TextHud.*
 import com.github.synnerz.devonian.utils.BoundingBox
-import com.github.synnerz.devonian.config.JsonUtils
+import com.github.synnerz.devonian.config.NullableHudData
 import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
@@ -29,26 +30,20 @@ abstract class TextHudFeature(
 
     protected val hud = createHud()
 
-    override fun _hudInit() {
-        JsonUtils.afterLoad {
-            var currentHud = JsonUtils.getHud(legacyName)
-            if (currentHud == null) {
-                JsonUtils.setHud(legacyName, x, y, scale, anchor.ordinal, align.ordinal, shadow, backdrop.ordinal)
-                currentHud = JsonUtils.getHud(legacyName)
-            }
+    override fun load() {
+        val data = Config.getHud(legacyName)
 
-            x = currentHud!!.get("x")?.asDouble ?: 10.0
-            y = currentHud.get("y")?.asDouble ?: 10.0
-            scale = currentHud.get("scale")?.asFloat ?: 1f
-            anchor = Anchor.from(currentHud.get("anchor")?.asInt ?: 0)
-            align = Align.from(currentHud.get("align")?.asInt ?: 0)
-            shadow = currentHud.get("shadow")?.asBoolean ?: true
-            backdrop = Backdrop.from(currentHud.get("backdrop")?.asInt ?: 0)
-        }
+        data.x?.let { x = it }
+        data.y?.let { y = it }
+        data.scale?.let { scale = it }
+        data.anchor?.let { anchor = Anchor.from(it) }
+        data.align?.let { align = Align.from(it) }
+        data.shadow?.let { shadow = it }
+        data.backdrop?.let { backdrop = Backdrop.from(it) }
     }
 
     override fun save() {
-        JsonUtils.setHud(legacyName, x, y, scale, anchor.ordinal, align.ordinal, shadow, backdrop.ordinal)
+        Config.setHud(legacyName, NullableHudData.from(this))
     }
 
     override fun getWidth() = hud.getWidth()

@@ -7,8 +7,8 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.DropItemEvent
 import com.github.synnerz.devonian.api.events.GuiKeyEvent
 import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.config.JsonUtils
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.JsonArray
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
@@ -32,10 +32,10 @@ object SlotLocking : Feature(
     )
 
     override fun initialize() {
-        JsonUtils.set(KEY_NAME, JsonArray())
+        Config.set(KEY_NAME, JsonArray())
 
-        JsonUtils.afterLoad {
-            lockedSlots = JsonUtils.get<List<String>>(KEY_NAME)?.map { it.toInt() }?.toMutableList() ?: mutableListOf()
+        Config.onAfterLoad {
+            lockedSlots = Config.get<List<String>>(KEY_NAME)?.map { it.toInt() }?.toMutableList() ?: mutableListOf()
         }
 
         // TODO: impl listener for whenever the player attempts to switch the slot with keys
@@ -90,6 +90,6 @@ object SlotLocking : Feature(
 
         lockedSlots.forEach { array.add(it) }
 
-        JsonUtils.set(KEY_NAME, array)
+        Config.set(KEY_NAME, array)
     }
 }

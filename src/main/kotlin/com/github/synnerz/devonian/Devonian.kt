@@ -3,6 +3,7 @@ package com.github.synnerz.devonian
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.ConfigGui
 import com.github.synnerz.devonian.features.Feature
@@ -24,7 +25,6 @@ import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
-import com.github.synnerz.devonian.config.JsonUtils
 import com.github.synnerz.devonian.utils.Location
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.KeyMapping
@@ -159,8 +159,15 @@ object Devonian : ClientModInitializer {
         HudManager.initialize()
         KeyShortcuts.initialize()
         CommandAliases.initialize()
-        JsonUtils.load()
-        SkyblockPrices
+        Config.onAfterLoad {
+            featureInstances.forEach { feature ->
+                Config.getConfig<Boolean>(feature.configName)?.let {
+                    feature.onToggle(it)
+                }
+            }
+        }
+        Config.load()
+        SkyblockPrices.initialize()
         TextConfig.initialize()
         Location.initialize()
         Alert.initialize()

@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.config.ui
 
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.config.JsonUtils
 import java.awt.Color
 
 open class ConfigData<T>(
@@ -14,18 +14,18 @@ open class ConfigData<T>(
     open fun set(newVal: T) {
         if (configName == null) return
         value = newVal
-        JsonUtils.setConfig(configName, newVal)
+        Config.setConfig(configName, newVal)
         onChangeHook?.let { it() }
     }
 
     init {
-        if (configName != null)
-            JsonUtils.setConfig(configName, value)
+        if (configName != null) Config.setConfig(configName, value)
 
-        JsonUtils.afterLoad {
-            if (configName == null) return@afterLoad
-            val jsonVal = JsonUtils.fromConfig<T>(configName) ?: return@afterLoad
-            set(jsonVal)
+        Config.onAfterLoad {
+            if (configName == null) return@onAfterLoad
+
+            val savedValue = Config.getConfig(configName, value) ?: return@onAfterLoad
+            set(savedValue)
         }
     }
 

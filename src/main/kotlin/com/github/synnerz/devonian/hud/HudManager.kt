@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.hud
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.config.JsonUtils
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
@@ -30,11 +30,12 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
             return@subcommand 1
         }
 
-        huds.forEach { it._hudInit() }
+        Config.onAfterLoad {
+            huds.forEach { it.load() }
+        }
 
-        JsonUtils.preSave {
-            for (hud in huds)
-                hud.save()
+        Config.onPreSave {
+            huds.forEach { it.save() }
         }
     }
 

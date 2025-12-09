@@ -4,8 +4,8 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.config.JsonUtils
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvents
@@ -27,7 +27,7 @@ object EtherwarpSound : Feature(
     private var soundEvent = SoundEvents.ENDER_DRAGON_HURT
 
     override fun initialize() {
-        JsonUtils.set(KEY, "minecraft:entity.ender_dragon.hurt")
+        Config.set(KEY, "minecraft:entity.ender_dragon.hurt")
 
         // TODO: too lazy to make pitch/volume customizable, make that later on if requested
         // TODO: too lazy to make a setting
@@ -37,7 +37,7 @@ object EtherwarpSound : Feature(
 
             soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
 
-            JsonUtils.set(KEY, soundRegistry)
+            Config.set(KEY, soundRegistry)
             ChatUtils.sendMessage("&aSuccessfully set etherwarp sound to &6$soundRegistry", true)
             1
         }
@@ -47,8 +47,8 @@ object EtherwarpSound : Feature(
                 *soundOptions.toTypedArray()
             )
 
-        JsonUtils.afterLoad {
-            val savedRegistry = JsonUtils.get<String>(KEY) ?: "minecraft:entity.ender_dragon.hurt"
+        Config.onAfterLoad {
+            val savedRegistry = Config.get<String>(KEY) ?: "minecraft:entity.ender_dragon.hurt"
             soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(savedRegistry))
         }
 

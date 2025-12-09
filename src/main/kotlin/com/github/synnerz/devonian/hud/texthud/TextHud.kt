@@ -2,8 +2,8 @@ package com.github.synnerz.devonian.hud.texthud
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.utils.BoundingBox
-import com.github.synnerz.devonian.config.JsonUtils
 import com.github.synnerz.devonian.utils.TextRendererImpl.TextRenderParams
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.client.gui.GuiGraphics
@@ -318,13 +318,13 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
             Fonts["CherryBombOne"] = MAIN_FONT
 
             // TODO: setting
-            JsonUtils.afterLoad {
-                val fontName = JsonUtils.get<String?>("textHudFont")
+            Config.onAfterLoad {
+                val fontName = Config.get<String?>("textHudFont")
                 if (fontName != null) setActiveFont(fontName)
             }
 
-            JsonUtils.preSave {
-                JsonUtils.set("textHudFont", fontMainName)
+            Config.onPreSave {
+                Config.set("textHudFont", fontMainName)
             }
         }
     }

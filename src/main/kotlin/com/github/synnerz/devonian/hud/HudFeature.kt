@@ -1,10 +1,11 @@
 package com.github.synnerz.devonian.hud
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.NullableHudData
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.utils.BoundingBox
-import com.github.synnerz.devonian.config.JsonUtils
 import com.github.synnerz.devonian.utils.Render2D
 import com.github.synnerz.devonian.utils.Render2D.height
 import com.github.synnerz.devonian.utils.Render2D.width
@@ -31,18 +32,16 @@ abstract class HudFeature(
         HudManager.addHud(this)
     }
 
-    open fun _hudInit() {
-        JsonUtils.afterLoad {
-            var currentHud = JsonUtils.getHud(legacyName)
-            if (currentHud == null) {
-                JsonUtils.setHud(legacyName, x, y, scale)
-                currentHud = JsonUtils.getHud(legacyName)
-            }
+    open fun load() {
+        val data = Config.getHud(legacyName)
 
-            x = currentHud!!.get("x")?.asDouble ?: 10.0
-            y = currentHud.get("y")?.asDouble ?: 10.0
-            scale = currentHud.get("scale")?.asFloat ?: 1f
-        }
+        data.x?.let { x = it }
+        data.y?.let { y = it }
+        data.scale?.let { scale = it }
+    }
+
+    open fun save() {
+        Config.setHud(legacyName, NullableHudData(x, y, scale))
     }
 
     abstract fun getBounds(): BoundingBox
@@ -131,10 +130,6 @@ abstract class HudFeature(
             if (selected) Color.WHITE.rgb
             else Color.GRAY.rgb
         )
-    }
-
-    open fun save() {
-        JsonUtils.setHud(legacyName, x, y, scale)
     }
 
     fun isVisibleEdit() = isEnabled() || isInternal || !HudManagerHider.isEnabled()

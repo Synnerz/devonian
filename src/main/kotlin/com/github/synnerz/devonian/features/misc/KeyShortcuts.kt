@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.config.JsonUtils
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
@@ -97,10 +97,10 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
     }
 
     fun initialize() {
-        JsonUtils.set(KEY_NAME, JsonObject())
+        Config.set(KEY_NAME, JsonObject())
 
-        JsonUtils.afterLoad {
-            val cachedData = JsonUtils.get<Map<String, JsonElement>>(KEY_NAME) ?: return@afterLoad
+        Config.onAfterLoad {
+            val cachedData = Config.get<Map<String, JsonElement>>(KEY_NAME) ?: return@onAfterLoad
             cachedData.forEach {
                 val keycode = it.key.toIntOrNull() ?: return@forEach
                 val v = it.value.asJsonObject
@@ -253,7 +253,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
             obj.add("${it.bind}", obj2)
         }
 
-        JsonUtils.set(KEY_NAME, obj)
+        Config.set(KEY_NAME, obj)
     }
 }
 
