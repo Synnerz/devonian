@@ -212,6 +212,8 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
         return x2 to z2
     }
 
+    fun hasRotation() = rotation != -1 && corner != WorldPosition.EMPTY
+
     companion object {
         val roomOffset = listOf(
             WorldPosition(-halfRoomSize, -halfRoomSize),
