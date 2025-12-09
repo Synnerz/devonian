@@ -24,7 +24,7 @@ public class EntityRenderDispatcherMixin {
             cancellable = true
     )
     private void devonian$entityRender(EntityRenderState entityRenderState, CameraRenderState cameraRenderState, double d, double e, double f, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
-        EventBus.INSTANCE.post(new RenderEntityEvent(entityRenderState, cameraRenderState, poseStack, submitNodeCollector, ci));
+        EventBus.INSTANCE.post(new RenderEntityEvent(entityRenderState, cameraRenderState, poseStack, submitNodeCollector));
     }
 
     @Inject(

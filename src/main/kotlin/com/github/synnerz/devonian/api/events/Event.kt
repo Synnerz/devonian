@@ -11,6 +11,7 @@ import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.particle.Particle
 import net.minecraft.client.renderer.SubmitNodeCollector
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.core.BlockPos
@@ -90,7 +91,6 @@ class RenderEntityEvent(
     val cameraState: CameraRenderState,
     val matrix: PoseStack,
     val submitter: SubmitNodeCollector,
-    val ci: CallbackInfo
 ) : Event()
 
 class PreRenderEntityEvent(
@@ -337,3 +337,10 @@ class BlockPlaceEvent(
 ) : Event()
 
 class ClientThreadServerTickEvent() : Event()
+
+class RenderTileEntityEvent(
+    val entityState: BlockEntityRenderState,
+    val cameraState: CameraRenderState,
+    val matrix: PoseStack,
+    val submitter: SubmitNodeCollector,
+) : Event()
