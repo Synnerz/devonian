@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.utils
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.commands.DevonianCommand
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 
@@ -17,6 +19,26 @@ object Location {
     fun stateInArea(vararg area: String?) = stateArea.map { area.contains(it) }
     fun stateInSubarea(vararg subarea: String?) = stateSubarea.map { subarea.contains(it) }
 
+    private fun changeArea(loc: String) {
+        val old = area
+        val l = loc.lowercase()
+        if (old === l) return
+
+        AreaEvent(l).post()
+        area = l
+        stateArea.value = l
+    }
+
+    private fun changeSubarea(loc: String) {
+        val old = subarea
+        val l = loc.lowercase()
+        if (old == l) return
+
+        SubAreaEvent(l).post()
+        subarea = l
+        stateSubarea.value = l
+    }
+
     fun initialize() {
         EventBus.on<PacketReceivedEvent> { event ->
             when (val packet = event.packet) {
@@ -27,10 +49,8 @@ object Location {
                         val line = name.string.replace(emoteRegex, "")
                         if (!line.matches(areaRegex)) return@forEach
                         val newArea = areaRegex.matchEntire(line)?.groupValues?.get(1) ?: return@forEach
-                        if (newArea !== area) AreaEvent(newArea).post()
 
-                        area = newArea.lowercase()
-                        stateArea.value = area
+                        changeArea(newArea)
                     }
                 }
                 // Scoreboard
@@ -45,11 +65,8 @@ object Location {
 
                     val line = "${teamPrefix}${teamSuffix}"
                     if (!line.matches(subAreaRegex)) return@on
-                    val oldSubarea = subarea
-                    if (line !== oldSubarea) SubAreaEvent(line).post()
 
-                    subarea = line.lowercase()
-                    stateSubarea.value = subarea
+                    changeSubarea(line)
                 }
             }
         }
@@ -66,5 +83,19 @@ object Location {
                 stateSubarea.value = null
             }
         }
+
+        DevonianCommand.command.subcommand("area") { _, args ->
+            val str = (args.firstOrNull() ?: return@subcommand 0) as String
+            changeArea(str)
+            ChatUtils.sendMessage("&aPosting area event with str &6$str", true)
+            1
+        }.string("name")
+
+        DevonianCommand.command.subcommand("subarea") { _, args ->
+            val str = (args.firstOrNull() ?: return@subcommand 0) as String
+            changeSubarea(str)
+            ChatUtils.sendMessage("&aPosting subarea event with str &6$str", true)
+            1
+        }.string("name")
     }
 }

@@ -227,22 +227,7 @@ object DungeonScanner {
 //                    ", rotation=\"${room.rotation}\"]")
 //            1
 //        }
-//
-//        DevonianCommand.command.subcommand("area") { _, args ->
-//            val str = (args.firstOrNull() ?: return@subcommand 0) as String
-//            AreaEvent(str).post()
-//            Location.area = str.lowercase()
-//            ChatUtils.sendMessage("&aPosting area event with str &6$str", true)
-//            1
-//        }.string("name")
-//
-//        DevonianCommand.command.subcommand("subarea") { _, args ->
-//            val str = (args.firstOrNull() ?: return@subcommand 0) as String
-//            SubAreaEvent(str).post()
-//            Location.subarea = str
-//            ChatUtils.sendMessage("&aPosting subarea event with str &6$str", true)
-//            1
-//        }.string("name")
+
     }
 
     fun mergeRooms(comp1: ComponentPosition, comp2: ComponentPosition): Boolean {
