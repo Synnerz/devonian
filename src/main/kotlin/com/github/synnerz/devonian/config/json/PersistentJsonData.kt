@@ -12,7 +12,7 @@ import java.io.OutputStream
 // TODO: add auto backup type system
 
 class PersistentJsonData(configFile: File) : PersistentJson(configFile), PersistentData {
-    private var jsonRoot = JsonObject()
+    private val jsonRoot = JsonObject()
     private var root = JsonDataObject(jsonRoot)
 
     override fun onLoad(reader: InputStream) {
@@ -22,6 +22,7 @@ class PersistentJsonData(configFile: File) : PersistentJson(configFile), Persist
         savedData.entrySet().forEach { (k, v) ->
             jsonRoot.add(k, v)
         }
+        root = JsonDataObject(jsonRoot)
     }
 
     override fun onSave(writer: OutputStream) {

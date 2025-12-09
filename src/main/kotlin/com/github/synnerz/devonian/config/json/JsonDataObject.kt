@@ -29,8 +29,11 @@ class JsonDataObject(private val json: JsonObject) : DataObject() {
     private val cached = mutableMapOf<String, JsonDataObject>()
 
     override fun getObject(key: String): DataObject = cached.getOrPut(key) {
-        val obj = JsonObject()
-        json.add(key, obj)
+        var obj = json.get(key)?.asJsonObject
+        if (obj == null) {
+            obj = JsonObject()
+            json.add(key, obj)
+        }
         return@getOrPut JsonDataObject(obj)
     }
 }

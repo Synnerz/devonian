@@ -29,7 +29,7 @@ open class Feature @JvmOverloads constructor(
     val children = mutableListOf<Toggleable>()
     val area = area?.lowercase()
     val subarea = subarea?.lowercase()
-    private val configSwitch: ConfigData.Switch?
+    val configSwitch: ConfigData.Switch?
 
     init {
         Devonian.features.add(this)

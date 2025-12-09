@@ -14,8 +14,10 @@ val configFile = File(
 val jsonLoader = PersistentJsonData(configFile)
 
 object Config : PersistentData by jsonLoader {
-    val configRoot = getData().getObject("config")
-    val hudRoot = getData().getObject("huds")
+    val configRoot: DataObject
+        get() = getData().getObject("config")
+    val hudRoot: DataObject
+        get() = getData().getObject("huds")
 
     fun <T> set(key: String, value: T) = apply { getData().set(key, value) }
     inline fun <reified T> get(key: String) = getData().get<T>(key)

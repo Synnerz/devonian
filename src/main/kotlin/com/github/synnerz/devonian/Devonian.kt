@@ -162,7 +162,7 @@ object Devonian : ClientModInitializer {
         Config.onAfterLoad {
             featureInstances.forEach { feature ->
                 Config.getConfig<Boolean>(feature.configName)?.let {
-                    feature.setRegistered(it)
+                    feature.configSwitch?.set(it)
                 }
             }
         }
