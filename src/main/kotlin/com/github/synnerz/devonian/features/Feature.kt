@@ -29,18 +29,15 @@ open class Feature @JvmOverloads constructor(
     val children = mutableListOf<Toggleable>()
     val area = area?.lowercase()
     val subarea = subarea?.lowercase()
-    val configSwitch: ConfigData.Switch?
+    val configSwitch: ConfigData.Switch = addSwitch(configName, false, description, displayName)
+        .also {
+            it.onChange {
+                setRegistered(it)
+            }
+        }
 
     init {
         Devonian.features.add(this)
-
-        configSwitch = if (isInternal) null
-        else addSwitch(configName, false, description, displayName)
-            .also {
-                it.onChange {
-                    setRegistered(it)
-                }
-            }
 
         setEnabled((
             if (area == null) BasicState(true)
@@ -66,12 +63,12 @@ open class Feature @JvmOverloads constructor(
     }
 
     fun setEnabled() {
-        configSwitch?.set(true)
+        configSwitch.set(true)
         setRegistered(true)
     }
 
     fun setDisabled() {
-        configSwitch?.set(false)
+        configSwitch.set(false)
         setRegistered(false)
     }
 
@@ -93,7 +90,7 @@ open class Feature @JvmOverloads constructor(
             value,
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
-        ).also { Config.categories[category]!!.add(it) }
+        ).also { if (!isInternal) Config.categories[category]!!.add(it) }
     }
 
     @JvmOverloads
