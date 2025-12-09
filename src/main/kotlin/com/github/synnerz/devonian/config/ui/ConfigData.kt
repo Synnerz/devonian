@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.config.ui
 
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.JsonUtils
+import com.github.synnerz.devonian.config.JsonUtils
 import java.awt.Color
 
 open class ConfigData<T>(

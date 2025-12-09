@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.hud.texthud
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
 import com.github.synnerz.devonian.utils.BoundingBox
-import com.github.synnerz.devonian.utils.JsonUtils
+import com.github.synnerz.devonian.config.JsonUtils
 import com.github.synnerz.devonian.utils.TextRendererImpl.TextRenderParams
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.client.gui.GuiGraphics

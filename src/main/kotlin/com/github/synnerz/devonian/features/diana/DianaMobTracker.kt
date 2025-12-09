@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import com.github.synnerz.devonian.utils.JsonUtils
+import com.github.synnerz.devonian.config.JsonUtils
 import java.io.File
 import java.io.FileWriter
 

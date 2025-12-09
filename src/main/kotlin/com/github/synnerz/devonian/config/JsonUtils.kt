@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.config
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.EventBus

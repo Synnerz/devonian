@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.utils.JsonUtils
+import com.github.synnerz.devonian.config.JsonUtils
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter

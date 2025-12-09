@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.utils.BoundingBox
-import com.github.synnerz.devonian.utils.JsonUtils
+import com.github.synnerz.devonian.config.JsonUtils
 import com.github.synnerz.devonian.utils.Render2D
 import com.github.synnerz.devonian.utils.Render2D.height
 import com.github.synnerz.devonian.utils.Render2D.width

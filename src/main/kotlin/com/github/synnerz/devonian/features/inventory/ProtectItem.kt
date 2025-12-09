@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.api.events.DropItemEvent
 import com.github.synnerz.devonian.api.events.GuiKeyEvent
 import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.JsonUtils
+import com.github.synnerz.devonian.config.JsonUtils
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.JsonArray
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
