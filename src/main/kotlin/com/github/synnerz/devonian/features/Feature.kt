@@ -29,7 +29,7 @@ open class Feature @JvmOverloads constructor(
     val children = mutableListOf<Toggleable>()
     val area = area?.lowercase()
     val subarea = subarea?.lowercase()
-    val configSwitch: ConfigData.Switch = addSwitch(configName, false, description, displayName)
+    val configSwitch: ConfigData.Switch = addFeatureSwitch(description, displayName)
         .also {
             it.onChange {
                 setRegistered(it)
@@ -78,6 +78,19 @@ open class Feature @JvmOverloads constructor(
     }
 
     @JvmOverloads
+    protected fun addFeatureSwitch(
+        description: String? = null,
+        displayName: String? = null,
+    ): ConfigData.Switch {
+        return ConfigData.Switch(
+            configName,
+            false,
+            description,
+            displayName,
+        ).also { if (!isInternal) Config.categories[category]!!.add(it) }
+    }
+
+    @JvmOverloads
     fun addSwitch(
         configName: String,
         value: Boolean,
@@ -90,7 +103,7 @@ open class Feature @JvmOverloads constructor(
             value,
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
-        ).also { if (!isInternal) Config.categories[category]!!.add(it) }
+        ).also { Config.categories[category]!!.add(it) }
     }
 
     @JvmOverloads
