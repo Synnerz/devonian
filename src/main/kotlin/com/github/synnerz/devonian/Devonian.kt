@@ -152,6 +152,7 @@ object Devonian : ClientModInitializer {
         CustomContainerColor,
         HudManagerHider,
         BoxMimicChest,
+        NoAbilityCdSound
     )
 
     override fun onInitializeClient() {
