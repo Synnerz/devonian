@@ -29,7 +29,7 @@ open class Feature @JvmOverloads constructor(
     val children = mutableListOf<Toggleable>()
     val area = area?.lowercase()
     val subarea = subarea?.lowercase()
-    val configSwitch: ConfigData.Switch = addFeatureSwitch(description, displayName)
+    val configSwitch = addFeatureSwitch(description, displayName)
         .also {
             it.onChange {
                 setRegistered(it)
@@ -81,13 +81,17 @@ open class Feature @JvmOverloads constructor(
     protected fun addFeatureSwitch(
         description: String? = null,
         displayName: String? = null,
-    ): ConfigData.Switch {
-        return ConfigData.Switch(
+    ): ConfigData.FeatureSwitch {
+        return ConfigData.FeatureSwitch(
             configName,
             false,
             description,
             displayName,
-        ).also { if (!isInternal) Config.categories[category]!!.add(it) }
+        ).also {
+            if (isInternal) return@also
+            Config.categories[category]!!.add(it)
+            Config.features.add(it)
+        }
     }
 
     @JvmOverloads
@@ -103,7 +107,10 @@ open class Feature @JvmOverloads constructor(
             value,
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
-        ).also { Config.categories[category]!!.add(it) }
+        ).also {
+            Config.categories[category]!!.add(it)
+            configSwitch.subconfigs.add(it)
+        }
     }
 
     @JvmOverloads
@@ -120,7 +127,10 @@ open class Feature @JvmOverloads constructor(
             min, max,
             description,
             displayName,
-        ).also { Config.categories[category]!!.add(it) }
+        ).also {
+            Config.categories[category]!!.add(it)
+            configSwitch.subconfigs.add(it)
+        }
     }
 
     @JvmOverloads
@@ -137,7 +147,10 @@ open class Feature @JvmOverloads constructor(
             min, max,
             description,
             displayName,
-        ).also { Config.categories[category]!!.add(it) }
+        ).also {
+            Config.categories[category]!!.add(it)
+            configSwitch.subconfigs.add(it)
+        }
     }
 
     @JvmOverloads
@@ -167,7 +180,10 @@ open class Feature @JvmOverloads constructor(
             value,
             description,
             displayName,
-        ).also { Config.categories[category]!!.add(it) }
+        ).also {
+            Config.categories[category]!!.add(it)
+            configSwitch.subconfigs.add(it)
+        }
     }
 
     fun addSelection(
@@ -183,7 +199,10 @@ open class Feature @JvmOverloads constructor(
             options,
             description,
             displayName,
-        ).also { Config.categories[category]!!.add(it) }
+        ).also {
+            Config.categories[category]!!.add(it)
+            configSwitch.subconfigs.add(it)
+        }
     }
 
     fun addColorPicker(
@@ -197,7 +216,10 @@ open class Feature @JvmOverloads constructor(
             value,
             description,
             displayName,
-        ).also { Config.categories[category]!!.add(it) }
+        ).also {
+            Config.categories[category]!!.add(it)
+            configSwitch.subconfigs.add(it)
+        }
     }
 
     fun displayChat() {
@@ -218,7 +240,8 @@ open class Feature @JvmOverloads constructor(
             ChatUtils.fromText(
                 ChatUtils.literal("&7- &b$configName ${if (isEnabled()) "&a[\uD83D\uDDF8]" else "&c[x]"}")
                     .setStyle(style),
-                id)
+                id
+            )
         )
     }
 

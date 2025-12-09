@@ -60,6 +60,8 @@ object Config : PersistentData by jsonLoader {
         "Diana",
         "Misc",
     ).associateWith { mutableListOf<ConfigData<*>>() }
+
+    val features = mutableListOf<ConfigData.FeatureSwitch>()
 }
 
 data class NullableHudData(

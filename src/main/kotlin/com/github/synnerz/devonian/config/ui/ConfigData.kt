@@ -39,12 +39,26 @@ open class ConfigData<T>(
         onChangeHook.add(cb)
     }
 
-    class Switch(
+    open class Switch(
         configName: String,
         value: Boolean,
         description: String? = null,
         displayName: String? = null,
     ) : ConfigData<Boolean>(configName, ConfigType.SWITCH, value, description, displayName)
+
+    class FeatureSwitch(
+        configName: String,
+        value: Boolean,
+        description: String? = null,
+        displayName: String? = null,
+    ) : Switch(
+        configName,
+        value,
+        description,
+        displayName,
+    ) {
+        val subconfigs = mutableListOf<ConfigData<*>>()
+    }
 
     class Slider<T : Number>(
         configName: String,
