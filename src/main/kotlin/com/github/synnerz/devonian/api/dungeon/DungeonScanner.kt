@@ -51,6 +51,7 @@ object DungeonScanner {
     var rooms = MutableList<DungeonRoom?>(36) { null }
     var doors = MutableList<DungeonDoor?>(60) { null }
     var availablePos = findAvailablePos()
+    private var worldChangeCooldown = 0
 
     private val secretRegex = "\\b(\\d+)/(\\d+) Secrets".toRegex()
 
@@ -147,6 +148,7 @@ object DungeonScanner {
         doors.fill(null)
 
         EventBus.on<TickEvent> {
+            if (--worldChangeCooldown >= 0) return@on
             if (Dungeons.inBoss.value) return@on
             val player = Devonian.minecraft.player ?: return@on
             if (!WorldUtils.isChunkLoaded(player.x, player.z)) return@on
@@ -307,6 +309,7 @@ object DungeonScanner {
     }
 
     fun reset() {
+        worldChangeCooldown = 5
         rooms.fill(null)
         doors.fill(null)
         lastIdx = null
