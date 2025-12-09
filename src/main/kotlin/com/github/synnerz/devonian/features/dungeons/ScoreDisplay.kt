@@ -13,21 +13,21 @@ object ScoreDisplay : TextHudFeature(
 ) {
     private val SETTING_ILLEGALMAP_FORMAT = addSwitch(
         "illegapStyle",
+        false,
         "§4OVERRIDES OTHER SETTINGS",
         "IllegalMap Score Style",
-        false
     )
     private val SETTING_SHOW_SECRETS = addSwitch(
         "showSecrets",
+        true,
         "",
         "Show Secrets",
-        true
     )
     private val SETTING_SHOW_MIMIC_PRINCE = addSwitch(
         "showMimicPrince",
+        true,
         "",
         "Show Mimic/Prince State",
-        true
     )
 
     private fun getLines(

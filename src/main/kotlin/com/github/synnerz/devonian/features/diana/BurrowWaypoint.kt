@@ -19,21 +19,21 @@ object BurrowWaypoint : Feature(
 ) {
     private val SETTING_START_COLOR = addColorPicker(
         "startColor",
+        Color.GREEN.rgb,
         "Color of Start burrows",
         "Start Burrow Color",
-        Color.GREEN.rgb
     )
     private val SETTING_MOB_COLOR = addColorPicker(
         "mobColor",
+        Color.RED.rgb,
         "Color of Mob burrows",
         "Mob Burrow Color",
-        Color.RED.rgb
     )
     private val SETTING_TREAURE_COLOR = addColorPicker(
         "treasureColor",
+        Color.YELLOW.rgb,
         "Color of Treasure burrows",
         "Treasure Burrow Color",
-        Color.YELLOW.rgb
     )
 
     override fun initialize() {

@@ -28,41 +28,41 @@ object KeyPickup : Feature(
 ) {
     private val SETTING_KEY_WIRE_COLOR = addColorPicker(
         "wireColor",
+        Color(255, 0, 255, 255).rgb,
         "",
         "Key Outline Color",
-        Color(255, 0, 255, 255).rgb
     )
     private val SETTING_KEY_FILL_COLOR = addColorPicker(
         "fillColor",
+        Color(255, 0, 255, 64).rgb,
         "",
         "Key Fill Color",
-        Color(255, 0, 255, 64).rgb
     )
     private val SETTING_KEY_LINE_WIDTH = addSlider(
         "lineWidth",
+        3.0,
+        0.0, 10.0,
         "",
         "Key Line Width",
-        0.0, 10.0,
-        3.0
     )
     private val SETTING_KEY_PICKUP_TITLE = addSwitch(
         "pickupTitle",
+        true,
         "",
         "Key Pickup Title",
-        true
     )
     private val SETTING_KEY_PICKUP_SOUND = addSwitch(
         "pickupSound",
+        true,
         "",
         "Key Pickup Sound",
-        true
     )
     private val SETTING_KEY_PICKUP_TIME = addSlider(
         "pickupTime",
+        1.0,
+        0.0, 10.0,
         "The amount of time (in seconds) the title will be in screen",
         "Key Pickup Time",
-        0.0, 10.0,
-        1.0
     )
 
     private val pickupSound = SoundEvents.VAULT_OPEN_SHUTTER

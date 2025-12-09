@@ -23,53 +23,53 @@ object SimonSaysSolver : Feature(
 ) {
     private val SETTING_BLOCK_INCORRECT = addSelection(
         "blockClicks",
+        0,
+        listOf("Never", "Always", "WhenCrouching", "ExceptWhenCrouching"),
         "",
         "Block Incorrect Hits",
-        listOf("Never", "Always", "WhenCrouching", "ExceptWhenCrouching"),
-        0
     )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
+        2.0,
+        0.0, 10.0,
         "",
         "Simon Says Line Width",
-        0.0, 10.0,
-        2.0
     )
     private val SETTING_COLOR_WIRE_1 = addColorPicker(
         "colorWire1",
+        Color(0, 255, 0, 255).rgb,
         "",
         "Correct Button Outline Color",
-        Color(0, 255, 0, 255).rgb
     )
     private val SETTING_COLOR_FILL_1 = addColorPicker(
         "colorFill1",
+        Color(0, 255, 0, 64).rgb,
         "",
         "Correct Button Fill Color",
-        Color(0, 255, 0, 64).rgb
     )
     private val SETTING_COLOR_WIRE_2 = addColorPicker(
         "colorWire2",
+        Color(255, 255, 0, 255).rgb,
         "",
         "Next Button Outline Color",
-        Color(255, 255, 0, 255).rgb
     )
     private val SETTING_COLOR_FILL_2 = addColorPicker(
         "colorFill2",
+        Color(255, 255, 0, 64).rgb,
         "",
         "Next Button Fill Color",
-        Color(255, 255, 0, 64).rgb
     )
     private val SETTING_COLOR_WIRE_3 = addColorPicker(
         "colorWire3",
+        Color(255, 0, 0, 255).rgb,
         "",
         "Next Next Button Outline Color",
-        Color(255, 0, 0, 255).rgb
     )
     private val SETTING_COLOR_FILL_3 = addColorPicker(
         "colorFill3",
+        Color(255, 0, 0, 64).rgb,
         "",
         "Next Next Button Fill Color",
-        Color(255, 0, 0, 64).rgb
     )
 
     private fun shouldBlockClicks() = when (SETTING_BLOCK_INCORRECT.getCurrent()) {

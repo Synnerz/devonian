@@ -15,6 +15,13 @@ object LividSolver : Feature(
     "Dungeons",
     "catacombs"
 ) {
+    private val SETTING_BOX_COLOR = addColorPicker(
+        "boxColor",
+        Color(0, 255, 255).rgb,
+        "",
+        "Livid Box Color",
+    )
+
     private val lividStartRegex = "^\\[BOSS] Livid: Welcome, you've arrived right on time\\. I am Livid, the Master of Shadows\\.$".toRegex()
     private val lividSpawnedRegex = "^\\[BOSS] Livid: I respect you for making it to here, but I'll be your undoing\\.$".toRegex()
     private val mapBlocks = mapOf(
@@ -27,12 +34,6 @@ object LividSolver : Feature(
         Blocks.GREEN_WOOL to "Frog",
         Blocks.BLUE_WOOL to "Scream",
         Blocks.RED_WOOL to "Hockey"
-    )
-    private val SETTING_BOX_COLOR = addColorPicker(
-        "boxColor",
-        "",
-        "Livid Box Color",
-        Color(0, 255, 255).rgb
     )
     var inBoss = false
     var started = false

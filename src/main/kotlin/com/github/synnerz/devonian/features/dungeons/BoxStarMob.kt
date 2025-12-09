@@ -22,53 +22,53 @@ object BoxStarMob : Feature(
 ) {
     private val SETTING_MOB_COLOR = addColorPicker(
         "mobColor",
+        Color(0, 255, 255, 255).rgb,
         "",
         "Starred Mob Color",
-        Color(0, 255, 255, 255).rgb
     )
     private val SETTING_CHONK_COLOR = addColorPicker(
         "chonkColor",
+        Color(255, 0, 128, 255).rgb,
         "withermancers, commanders, lords, and super archers",
         "Starred Chunky Mob Color",
-        Color(255, 0, 128, 255).rgb
     )
     private val SETTING_FEL_COLOR = addColorPicker(
         "felColor",
+        Color(0, 255, 128, 255).rgb,
         "",
         "Starred Fels Color",
-        Color(0, 255, 128, 255).rgb
     )
     private val SETTING_MINI_COLOR = addColorPicker(
         "miniColor",
+        Color(235, 1, 165, 255).rgb,
         "due to the way the detection works (so it's faster) it actually doesn't check if it's starred",
         "Miniboss Color",
-        Color(235, 1, 165, 255).rgb
     )
     private val SETTING_SA_COLOR = addColorPicker(
         "saColor",
+        Color(255, 0, 0, 255).rgb,
         "see mini color",
         "Shadow Assassin Color",
-        Color(255, 0, 0, 255).rgb
     )
     private val SETTING_SM_COLOR = addColorPicker(
         "smColor",
+        Color(255, 128, 0, 255).rgb,
         "",
         "Skeleton Master Color",
-        Color(255, 128, 0, 255).rgb
     )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
+        3.0,
+        0.0, 10.0,
         "",
         "Starred Mobs Line Width",
-        0.0, 10.0,
-        3.0
     )
     private val SETTING_PHASE = addSwitch(
         "phase",
+        false,
         "",
         "Starred Mobs Esp",
-        false,
-        cheeto = true
+        cheeto = true,
     )
 
     private val starred = mutableListOf<Pair<LivingEntity, MobData>>()

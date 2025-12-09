@@ -16,13 +16,15 @@ object BossSplits : TextHudFeature(
 ) {
     private val SETTING_FORMAT_TIME_HUMAN = addSwitch(
         "formatTimeInHuman",
+        false,
         "Formats the splits' time into a more human readable time rather than just second (example: 02m 03s instead of 123s)",
-        "Boss Splits Format Time Human"
+        "Boss Splits Format Time Human",
     )
     private val SETTING_SEND_ALL_END = addSwitch(
         "sendAllOnRunEnd",
+        false,
         "Sends all of the splits in chat whenever the run ends",
-        "Boss Splits Send All End"
+        "Boss Splits Send All End",
     )
     private val floorRegex = "^ +⏣ The Catacombs \\((\\w)(\\d+)\\)\$".toRegex()
     private val extraStatsRegex = "^ *> EXTRA STATS <\$".toRegex()

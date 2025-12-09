@@ -15,41 +15,41 @@ object SpotifyDisplay : TextHudFeature(
 ) {
     private val SETTING_HIDE_NOT_OPEN = addSwitch(
         "hideClosed",
+        true,
         "do not render the spotify display if spotify is not opened",
         "Hide If Not Opened",
-        true
     )
     private val SETTING_MAX_SONG_LENGTH = addSlider(
         "maxSongLength",
+        100.0,
+        0.0, 300.0,
         "",
         "Max Song Name Length",
-        0.0, 300.0,
-        100.0
     )
     private val SETTING_PREFIX = addTextInput(
         "prefix",
+        "&2Spotify &7>&r ",
         "",
         "Spotify Prefix",
-        "&2Spotify &7>&r "
     )
     private val SETTING_FORMAT = addTextInput(
         "format",
+        "&a%ARTIST% &7-&b %SONG%",
         "use %ARTIST% and %SONG% (or dont for some reason idfc)",
         "Spotify Format",
-        "&a%ARTIST% &7-&b %SONG%"
     )
     private val SETTING_ALTERNATE_SCROLLING = addSwitch(
         "alternate",
+        false,
         "",
         "Alternate Marquee Scrolling",
-        false
     )
     private val SETTING_SCROLL_SPEED = addSlider(
         "scrollSpeed",
+        80.0,
+        0.0, 300.0,
         "",
         "Marquee Scroll Speed",
-        0.0, 300.0,
-        80.0
     )
 
     override fun createHud(): TextHud = TextHudFamily("spotifyDisplay", this)

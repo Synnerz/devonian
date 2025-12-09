@@ -18,16 +18,16 @@ object CurrentRoomCleared : Feature(
 ) {
     private val SETTING_ONLY_KEY = addSwitch(
         "onlyKey",
+        false,
         "",
         "Only Show For Blood Rush",
-        false
     )
     private val SETTING_ALERT_TIME = addDecimalSlider(
         "alertTime",
+        0.5,
+        0.0, 2.0,
         "time in seconds",
         "Alert Time",
-        0.0, 2.0,
-        0.5
     )
 
     private var lastRoom: DungeonRoom? = null

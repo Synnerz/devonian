@@ -15,10 +15,10 @@ object InventoryHistoryLog : TextHudFeature(
 ) {
     private val SETTING_ITEM_DISPLAY_TIME = addSlider(
         "itemDisplayTime",
+        4.0,
+        0.0, 30.0,
         "Duration (in seconds) for entries to stay",
         "Item Display Time",
-        0.0, 30.0,
-        4.0
     )
 
     data class ItemizedDifference(val name: String, var quantity: Int) {

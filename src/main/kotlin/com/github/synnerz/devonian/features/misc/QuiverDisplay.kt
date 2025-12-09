@@ -14,23 +14,23 @@ import net.minecraft.world.item.Items
 object QuiverDisplay : TextHudFeature("quiverDisplay") {
     private val SETTING_COLOR_AMOUNT = addSwitch(
         "colorAmount",
+        false,
         "color the amount of arrows remaining based on number",
         "Color Arrow Count",
-        false
     )
     private val SETTING_QUIVER_SIZE = addSelection(
         "quiverSize",
+        0,
+        listOf("Giant", "Large", "Medium"),
         "",
         "Quiver Size",
-        listOf("Giant", "Large", "Medium"),
-        0
     )
     private val SETTING_ALERT_BELOW = addSlider(
         "alertBelow",
+        50.0,
+        0.0, 2880.0,
         "sends a low arrow alert when the number of arrows drops below this amount",
         "Low Arrow Alert",
-        0.0, 2880.0,
-        50.0
     )
 
     // TODO: add quiver refill cost (but no one uses so)

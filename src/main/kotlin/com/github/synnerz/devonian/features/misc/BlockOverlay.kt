@@ -16,21 +16,21 @@ object BlockOverlay : Feature(
 ) {
     private val SETTING_BOX_ENTITY = addSwitch(
         "boxEntity",
+        false,
         "Highlights any entity you are looking at",
         "Highlight Entity",
-        false
     )
     private val SETTING_WIRE_COLOR = addColorPicker(
         "wireColor",
+        Color(0, 0, 0, 102).rgb,
         "",
         "Block Outline Color",
-        Color(0, 0, 0, 102).rgb
     )
     private val SETTING_FILL_COLOR = addColorPicker(
         "fillColor",
+        0,
         "",
         "Block Fill Color",
-        0
     )
 
     override fun initialize() {

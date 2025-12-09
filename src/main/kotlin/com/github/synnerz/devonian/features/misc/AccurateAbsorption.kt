@@ -16,10 +16,10 @@ import kotlin.math.min
 object AccurateAbsorption : Feature("accurateAbsorption") {
     private val SETTING_MAX_ABSORPTION_HEARTS = addSlider(
         "maxAbsorptionHearts",
+        40.0,
+        0.0, 100.0,
         "1 = half a heart, for things like mastiff wish",
         "Max Absorption Hearts",
-        0.0, 100.0,
-        40.0
     )
 
     private val healthRegex = "\\b([\\d,.]+)/([\\d,.]+)❤".toRegex()

@@ -22,65 +22,65 @@ object BoxDoors : Feature(
 ) {
     private val SETTING_DOOR_LOCKED_WIRE_COLOR = addColorPicker(
         "lockedWireColor",
+        Color(255, 0, 0).rgb,
         "",
         "Locked Door Outline Color",
-        Color(255, 0, 0).rgb
     )
     private val SETTING_DOOR_LOCKED_FILL_COLOR = addColorPicker(
         "lockedFillColor",
+        Color(255, 0, 0, 64).rgb,
         "",
         "Locked Door Fill Color",
-        Color(255, 0, 0, 64).rgb
     )
     private val SETTING_DOOR_KEY_WIRE_COLOR = addColorPicker(
         "keyWireColor",
+        Color(0, 255, 0).rgb,
         "",
         "Unlocked Door Outline Color",
-        Color(0, 255, 0).rgb
     )
     private val SETTING_DOOR_KEY_FILL_COLOR = addColorPicker(
         "keyFillColor",
+        Color(0, 255, 0, 64).rgb,
         "",
         "Unlocked Door Fill Color",
-        Color(0, 255, 0, 64).rgb
     )
     private val SETTING_RENDER_NORMAL_DOORS = addSwitch(
         "renderNormalDoors",
+        true,
         "Highlights normal doorways not only the wither/blood ones",
         "Highlight Normal Doors",
-        true
     )
     private val SETTING_HIDE_NORMAL_DOOR_GREEN = addSwitch(
         "hideNormalDoorGreen",
+        true,
         "Don't box normal doors when the room it leads to is not useful",
         "Hide Useless Doors",
-        true
     )
     private val SETTING_DOOR_NORMAL_WIRE_COLOR = addColorPicker(
         "normalWireColor",
+        Color(0, 128, 128).rgb,
         "",
         "Normal Door Outline Color",
-        Color(0, 128, 128).rgb
     )
     private val SETTING_DOOR_NORMAL_FILL_COLOR = addColorPicker(
         "normalFillColor",
+        Color(0, 128, 128, 0).rgb,
         "",
         "Normal Door Fill Color",
-        Color(0, 128, 128, 0).rgb
     )
     private val SETTING_DOOR_LINE_WIDTH = addSlider(
         "doorLineWidth",
+        3.0,
+        1.0, 10.0,
         "Line width of the box outline of the door",
         "Door Line Width",
-        1.0, 10.0,
-        3.0
     )
     private val SETTING_RENDER_HIDDEN_DOORS = addSwitch(
         "renderUnknownDoors",
+        false,
         "Whether to highlight the doors that are in rooms that have not been explored yet",
         "Highlight Unknown Doors",
-        false,
-        cheeto = true
+        cheeto = true,
     )
 
     private val witherKeys = atomic(0)

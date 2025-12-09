@@ -19,15 +19,15 @@ object SecretsClickedBox : Feature(
     private val lockedChestRegex = "^That chest is locked!$".toRegex()
     private val SETTING_BLOCK_COLOR = addColorPicker(
         "blockColor",
+        Color(0, 255, 255, 50).rgb,
         "",
         "Clicked Block Color",
-        Color(0, 255, 255, 50).rgb
     )
     private val SETTING_LOCKED_BLOCK_COLOR = addColorPicker(
         "lockedBlockColor",
+        Color(255, 0, 0, 50).rgb,
         "",
         "Locked Block Color",
-        Color(255, 0, 0, 50).rgb
     )
     var clickedBlock: BlockPos? = null
     var wasLocked = false

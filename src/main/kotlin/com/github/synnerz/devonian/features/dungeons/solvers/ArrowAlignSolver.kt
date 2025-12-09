@@ -22,10 +22,10 @@ object ArrowAlignSolver : Feature(
 ) {
     private val SETTING_BLOCK_INCORRECT = addSelection(
         "blockClicks",
+        0,
+        listOf("Never", "Always", "WhenCrouching", "ExceptWhenCrouching"),
         "",
         "Block Incorrect Hits",
-        listOf("Never", "Always", "WhenCrouching", "ExceptWhenCrouching"),
-        0
     )
 
     private fun shouldBlockClicks() = when (SETTING_BLOCK_INCORRECT.getCurrent()) {

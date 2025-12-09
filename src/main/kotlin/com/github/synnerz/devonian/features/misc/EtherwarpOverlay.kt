@@ -24,39 +24,39 @@ object EtherwarpOverlay : Feature(
 ) {
     private val SETTING_ETHER_WIRE_COLOR = addColorPicker(
         "wireColor",
+        Color(46, 221, 23, 160).rgb,
         "",
         "Ether Outline Color",
-        Color(46, 221, 23, 160).rgb
     )
     private val SETTING_ETHER_FILL_COLOR = addColorPicker(
         "fillColor",
+        Color(96, 222, 85, 96).rgb,
         "",
         "Ether Fill Color",
-        Color(96, 222, 85, 96).rgb
     )
     private val SETTING_ETHER_FAIL_WIRE_COLOR = addColorPicker(
         "failWireColor",
+        Color(202, 34, 7, 160).rgb,
         "",
         "Ether Fail Outline Color",
-        Color(202, 34, 7, 160).rgb
     )
     private val SETTING_ETHER_FAIL_FILL_COLOR = addColorPicker(
         "failFillColor",
+        Color(186, 43, 30, 96).rgb,
         "",
         "Ether Fail Fill Color",
-        Color(186, 43, 30, 96).rgb
     )
     private val SETTING_ETHER_USING_CANCEL_INTERACT = addSwitch(
         "usingCI",
+        false,
         "Enables the etherwarp overlay even when looking at an interactable block",
         "Ether Using CI",
-        false
     )
     private val SETTING_USE_SMOOTH_POSITION = addSwitch(
         "smooth",
+        false,
         "Uses your camera position/look rather than the servers position/look",
         "Ether Use Smooth Position",
-        false
     )
 
     private val validWeapons = mutableListOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")

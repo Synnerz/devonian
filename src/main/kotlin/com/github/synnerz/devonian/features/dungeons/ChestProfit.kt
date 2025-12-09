@@ -23,14 +23,15 @@ object ChestProfit : TextHudFeature(
 ) {
     private val SETTING_USE_ESSENCE_PROFIT = addSwitch(
         "useEssenceProfit",
+        true,
         "Whether to use Wither/Undead essence for profit",
         "Chest Profit Essence",
-        value = true
     )
     private val SETTING_COMPACT_MODE = addSwitch(
         "compactMode",
+        false,
         "Compact mode stops showing the entire item list and only shows the chest name with its profit",
-        "Chest Profit Compact Mode"
+        "Chest Profit Compact Mode",
     )
     private val chestNames = listOf(
         "Wood Chest",

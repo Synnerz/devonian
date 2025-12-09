@@ -8,15 +8,15 @@ import net.minecraft.world.entity.Pose
 object ChangeCrouchHeight : Feature("changeCrouchHeight", "All changes are visual only") {
     private val SETTING_INSTANT_CROUCH = addSwitch(
         "instantCrouch",
+        true,
         "",
         "Instant Crouch",
-        true
     )
     private val SETTING_USE_189_HEIGHT = addSwitch(
         "legacyHeight",
+        true,
         "",
         "Use 1.8.9 Crouch Height",
-        true
     )
 
     fun getEyeHeight(): Float {

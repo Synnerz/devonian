@@ -25,51 +25,51 @@ object BlazeSolver : Feature(
 ) {
     private val SETTING_COLOR_FIRST_OUTLINE = addColorPicker(
         "firstBlazeColorOutline",
+        Color(0, 255, 0, 255).rgb,
         "Color for the first correct blaze outline",
         "First Blaze Outline Color",
-        Color(0, 255, 0, 255).rgb
     )
     private val SETTING_COLOR_FIRST_FILLED = addColorPicker(
         "firstBlazeColorFilled",
+        Color(0, 255, 0, 80).rgb,
         "Color for the first correct blaze filled",
         "First Blaze Filled Color",
-        Color(0, 255, 0, 80).rgb
     )
     private val SETTING_COLOR_SECOND_OUTLINE = addColorPicker(
         "secondBlazeColorOutline",
+        Color(255, 165, 0, 255).rgb,
         "Color for the second correct blaze outline",
         "Second Blaze Outline Color",
-        Color(255, 165, 0, 255).rgb
     )
     private val SETTING_COLOR_SECOND_FILLED = addColorPicker(
         "secondBlazeColorFilled",
+        Color(255, 165, 0, 80).rgb,
         "Color for the second correct blaze filled",
         "Second Blaze Filled Color",
-        Color(255, 165, 0, 80).rgb
     )
     private val SETTING_COLOR_THIRD_OUTLINE = addColorPicker(
         "thirdBlazeColorOutline",
+        Color(255, 0, 0, 255).rgb,
         "Color for the third correct blaze outline",
         "Third Blaze Outline Color",
-        Color(255, 0, 0, 255).rgb
     )
     private val SETTING_COLOR_THIRD_FILLED = addColorPicker(
         "thirdBlazeColorFilled",
+        Color(255, 0, 0, 80).rgb,
         "Color for the third correct blaze filled",
         "Third Blaze Filled Color",
-        Color(255, 0, 0, 80).rgb
     )
     private val SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE = addColorPicker(
         "efficientBlockColorOutline",
+        Color(0, 255, 0, 255).rgb,
         "Color for the \"efficient\" block outline to stand at",
         "\"Efficient\" Blaze Block Outline Color",
-        Color(0, 255, 0, 255).rgb
     )
     private val SETTING_EFFICIENT_BLOCK_COLOR_FILLED = addColorPicker(
         "efficientBlockColorFilled",
+        Color(0, 255, 0, 80).rgb,
         "Color for the \"efficient\" block filled to stand at",
         "\"Efficient\" Blaze Block Filled Color",
-        Color(0, 255, 0, 80).rgb
     )
     private val blazeHpRegex = "^\\[Lv15] ♨ Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
     private val entityList = ConcurrentHashMap<Int, Int>() // <entityId>: <MaxHP>

@@ -15,33 +15,33 @@ object ChatWaypoint : Feature(
 ) {
     private val SETTING_ALL_CHAT = addSwitch(
         "allChat",
+        true,
         "Grab waypoints from all chat",
         "from All Chat",
-        true
     )
     private val SETTING_OWN_WAYPOINTS = addSwitch(
         "ownWaypoints",
+        true,
         "Display waypoints you send",
         "Show Own Waypoints",
-        true
     )
     private val SETTING_CLEAR_WAYPOINTS_SWAP_SERVER = addSwitch(
         "waypointDementia",
+        true,
         "Clear waypoints on server swap",
         "Waypoint Dementia",
-        true
     )
     private val SETTING_WAYPOINT_COLOR = addColorPicker(
         "waypointColor",
+        Color.CYAN.rgb,
         "Color of waypoints",
         "Waypoint Color",
-        Color.CYAN.rgb
     )
     private val SETTING_SHOW_SENDER_NAME = addSwitch(
         "showSenderName",
+        true,
         "Show sender name with waypoint",
         "Show Sender Name",
-        true
     )
 
     private val coordRegex = "(?:\\s|^)(?:x: )?(-?\\d+)(?:, y:)? (-?\\d+)(?:, z:)? (-?\\d+)(?:\\s|\$)".toRegex()

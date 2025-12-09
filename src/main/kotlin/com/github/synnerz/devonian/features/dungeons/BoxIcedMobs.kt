@@ -26,22 +26,22 @@ object BoxIcedMobs : Feature(
 ) {
     private val SETTING_WIRE_COLOR = addColorPicker(
         "wireColor",
+        Color(173, 216, 230, 255).rgb,
         "",
         "Iced Mob Outline Color",
-        Color(173, 216, 230, 255).rgb
     )
     private val SETTING_FILL_COLOR = addColorPicker(
         "fillColor",
+        Color(173, 188, 230, 80).rgb,
         "",
         "Iced Mob Fill Color",
-        Color(173, 188, 230, 80).rgb
     )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
+        3.0,
+        0.0, 10.0,
         "",
         "Iced Mob Line Width",
-        0.0, 10.0,
-        3.0
     )
 
     private val itemCandidates = ConcurrentLinkedQueue<ItemCandidate>()

@@ -17,14 +17,17 @@ object RunSplits : TextHudFeature(
 ) {
     private val SETTING_FORMAT_TIME_HUMAN = addSwitch(
         "formatTimeInHuman",
+        false,
         "Formats the splits' time into a more human readable time rather than just second (example: 02m 03s instead of 123s)",
-        "Run Splits Format Time Human"
+        "Run Splits Format Time Human",
     )
     private val SETTING_SEND_ALL_END = addSwitch(
         "sendAllOnRunEnd",
+        false,
         "Sends all of the splits in chat whenever the run ends",
-        "Run Splits Send All End"
+        "Run Splits Send All End",
     )
+
     private val mortStartRegex = "^\\[NPC] Mort: Here, I found this map when I first entered the dungeon\\.\$".toRegex()
     private val bloodOpenedRegex = "^\\[BOSS] The Watcher: (.+)\$".toRegex()
     private val bloodDoneRegex = "^\\[BOSS] The Watcher: You have proven yourself\\. You may pass\\.$".toRegex()

@@ -12,10 +12,10 @@ object PingDisplay : TextHudFeature(
 ) {
     private val SETTING_PING_TYPE = addSelection(
         "pingType",
+        0,
+        listOf("Median", "Mean", "Instantaneous"),
         "",
         "Ping Type",
-        listOf("Median", "Mean", "Instantaneous"),
-        0
     )
 
     fun formatPing(n: Double) = "${

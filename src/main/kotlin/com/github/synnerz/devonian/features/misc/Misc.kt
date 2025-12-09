@@ -24,8 +24,8 @@ object RemoveContainerBackground : Feature("removeContainerBackground")
 object CustomContainerColor : Feature("customContainerColor") {
     val SETTING_CONTAINER_COLOR = addColorPicker(
         "containerColor",
+        Color.WHITE.rgb,
         "The color which the container will use",
         "Container Color",
-        Color.WHITE.rgb
     )
 }

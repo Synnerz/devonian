@@ -32,27 +32,27 @@ object BurrowGuesser : Feature(
 ) {
     private val SETTING_GUESS_COLOR = addColorPicker(
         "guessColor",
+        Color.BLUE.rgb,
         "Color of current guess",
         "Guess Color",
-        Color.BLUE.rgb
     )
     private val SETTING_OLD_GUESS_COLOR = addColorPicker(
         "oldGuessColor",
+        Color(82, 14, 125).rgb,
         "Color of old guess",
         "Old Guess Color",
-        Color(82, 14, 125).rgb
     )
     private val SETTING_REMEMBER_PREVIOUS_GUESSES = addSwitch(
         "storeGuesses",
+        true,
         "Remember locations of previous guesses",
         "Remember Guesses",
-        true
     )
     private val SETTING_PARTICLE_PATH_COLOR = addColorPicker(
         "particlePathColor",
+        0,
         "Color of path of particles",
         "Particle Path Color",
-        0
     )
 
     private val spadeUsePositions = LinkedList<PositionTime>()

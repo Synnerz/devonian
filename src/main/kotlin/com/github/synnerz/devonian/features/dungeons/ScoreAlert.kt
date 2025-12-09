@@ -13,27 +13,27 @@ object ScoreAlert : Feature(
 ) {
     private val SETTING_270 = addSwitch(
         "270",
+        true,
         "",
         "270 Score Alert",
-        true
     )
     private val SETTING_270_MESSAGE = addTextInput(
         "270message",
+        "270 Score",
         "",
         "270 Score Alert Message",
-        "270 Score"
     )
     private val SETTING_300 = addSwitch(
         "300",
+        true,
         "",
         "300 Score Alert",
-        true
     )
     private val SETTING_300_MESSAGE = addTextInput(
         "300message",
+        "300 Score",
         "",
         "300 Score Alert Message",
-        "300 Score"
     )
 
     private var sent270 = false
