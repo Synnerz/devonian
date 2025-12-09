@@ -9,7 +9,7 @@ import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
 
-class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase) {
+class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase, idx: Int) {
     private val configs = Config.categories[categoryName]!!.toMutableList()
     private val components = mutableListOf<UIRect>()
     private val colorComponents = mutableListOf<UIColorPicker>()
@@ -47,7 +47,11 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
 
     init {
         update()
-        categoryButton = UIRect(0.0, 12.0 + (9 * ConfigGui.categories.size), 100.0, 8.0, parent = leftPanel).apply {
+        categoryButton = UIRect(
+            0.0, 12.0 + (9 * (idx + 1)),
+            100.0, 8.0,
+            parent = leftPanel
+        ).apply {
             onMouseRelease {
                 if (ConfigGui.selectedCategory.categoryName == categoryName) return@onMouseRelease
                 ConfigGui.selectedCategory.hide()

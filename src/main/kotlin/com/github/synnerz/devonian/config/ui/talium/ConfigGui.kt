@@ -41,12 +41,10 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     lateinit var categories: List<Category>
     lateinit var selectedCategory: Category
 
-    fun category(name: String): Category {
-        return categories.find { it.categoryName.equals(name, ignoreCase = true) }!!
-    }
-
     fun initialize() {
-        categories = Config.categories.keys.map { Category(it, rightPanel, leftPanel) }
+        categories = Config.categories.keys.mapIndexed { i, v ->
+            Category(v, rightPanel, leftPanel, i)
+        }
         selectedCategory = categories.first()
         selectedCategory.unhide()
         background.onMouseScroll {
