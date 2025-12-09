@@ -11,6 +11,7 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.JsonArray
+import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
@@ -35,7 +36,7 @@ object SlotLocking : Feature(
         Config.set(KEY_NAME, JsonArray())
 
         Config.onAfterLoad {
-            lockedSlots = Config.get<List<String>>(KEY_NAME)?.map { it.toInt() }?.toMutableList() ?: mutableListOf()
+            lockedSlots = Config.get<List<JsonPrimitive>>(KEY_NAME)?.map { it.asInt }?.toMutableList() ?: mutableListOf()
         }
 
         // TODO: impl listener for whenever the player attempts to switch the slot with keys
