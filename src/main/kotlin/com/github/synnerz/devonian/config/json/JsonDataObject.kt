@@ -14,7 +14,6 @@ class JsonDataObject(private val json: JsonObject) : DataObject() {
             is JsonArray -> json.add(key, value)
             is JsonObject -> json.add(key, value)
         }
-        return this
     }
 
     override fun getString(key: String): String? = json.get(key)?.asString
