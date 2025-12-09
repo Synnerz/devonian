@@ -282,25 +282,26 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
 
     companion object {
         const val MC_FONT_SIZE = 10f
-        val MAIN_FONT: Font = try {
-            Font.createFont(
+        private val customFonts = linkedMapOf(
+            "Mojangles" to "/assets/devonian/Mojangles.ttf",
+            "CherryBombOne" to "/assets/devonian/CherryBombOne-Regular.ttf",
+        ).entries.associateTo(linkedMapOf()) { (name, path) ->
+            name to Font.createFont(
                 Font.TRUETYPE_FONT, Objects.requireNonNull(
-                    this::class.java.getResourceAsStream("/assets/devonian/CherryBombOne-Regular.ttf")
+                    this::class.java.getResourceAsStream(path)
                 )
             )
-        } catch (_: Exception) {
-            GraphicsEnvironment.getLocalGraphicsEnvironment().allFonts[0]
         }
-        val Fonts = mutableMapOf<String, Font>()
+        val Fonts = linkedMapOf<String, Font>()
         private val Instances = mutableListOf<FontListener>()
 
         fun registerFontListener(listener: FontListener) {
             Instances.add(listener)
         }
 
-        var fontMainBase: Font = MAIN_FONT
+        var fontMainBase: Font = customFonts.firstEntry().value
             private set
-        var fontMainName = "CherryBombOne"
+        var fontMainName = customFonts.firstEntry().key
             private set
 
         fun setActiveFont(fontName: String) {
@@ -312,10 +313,13 @@ open class TextHud(val name: String, private val data: DataProvider) : ITextHud,
         }
 
         init {
-            for (f in GraphicsEnvironment.getLocalGraphicsEnvironment().allFonts) {
-                Fonts[f.family.replace(" ", "")] = f
+            customFonts.forEach { (name, font) ->
+                Fonts[name] = font
             }
-            Fonts["CherryBombOne"] = MAIN_FONT
+
+            for (f in GraphicsEnvironment.getLocalGraphicsEnvironment().allFonts) {
+                Fonts.putIfAbsent(f.family.replace(" ", ""), f)
+            }
 
             // TODO: setting
             Config.onAfterLoad {
