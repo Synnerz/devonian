@@ -17,7 +17,7 @@ import java.awt.Color
 object GolemWaypoint : Feature(
     "golemWaypoint",
     "Sets a waypoint to where the golem should spawn",
-    "end",
+    "End",
     "the end"
 ) {
     private var protectorRegex = "^ Protector: (\\w+)$".toRegex()

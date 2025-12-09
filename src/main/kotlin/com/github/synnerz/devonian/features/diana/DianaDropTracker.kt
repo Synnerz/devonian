@@ -11,7 +11,7 @@ import java.io.File
 object DianaDropTracker : TextHudFeature(
     "dianaDropTracker",
     "Tracks the drops you got during the diana event",
-    "diana",
+    "Diana",
     "hub"
 ) {
     private val rareDropCriteria =

@@ -8,7 +8,7 @@ import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 object GardenDisplay : TextHudFeature(
     "gardenDisplay",
     "Displays all your Garden's current stats from tab. (for example current composter Fuel)",
-    "garden",
+    "Garden",
     "garden"
 ) {
     private val nextVisitorRegex = "^ Next Visitor: ([\\w !]+)$".toRegex()

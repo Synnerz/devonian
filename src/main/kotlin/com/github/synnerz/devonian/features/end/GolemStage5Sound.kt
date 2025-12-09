@@ -8,7 +8,7 @@ import net.minecraft.sounds.SoundEvents
 object GolemStage5Sound : Feature(
     "golemStage5Sound",
     "Plays an Anvil Place sound whenever the golem hits stage 5",
-    "end",
+    "End",
     "the end"
 ) {
     private val golemSpawnRegex = "^The ground begins to shake as an End Stone Protector rises from below!$".toRegex()
