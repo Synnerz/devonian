@@ -3,12 +3,15 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.features.misc.DisableSuffocatingOverlay;
 import com.github.synnerz.devonian.features.misc.DisableWaterOverlay;
 import com.github.synnerz.devonian.features.misc.RemoveFireOverlay;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ScreenEffectRenderer;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,13 +39,12 @@ public class ScreenEffectRendererMixin {
         ci.cancel();
     }
 
-    @Inject(
+    @WrapOperation(
         method = "renderScreenEffect",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;getViewBlockingState(Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/level/block/state/BlockState;"),
-        cancellable = true
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;getViewBlockingState(Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/level/block/state/BlockState;")
     )
-    private static void devonian$disableSuffocatingOverlay(boolean bl, float f, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
-        if (!DisableSuffocatingOverlay.INSTANCE.isEnabled()) return;
-        if (ci != null) ci.cancel();
+    private static BlockState devonian$disableSuffocatingOverlay(Player player, Operation<BlockState> original) {
+        if (!DisableSuffocatingOverlay.INSTANCE.isEnabled()) return original.call(player);
+        return null;
     }
 }
