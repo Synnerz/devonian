@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.features.misc.DisableSwim;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +18,8 @@ public class PlayerMixin {
     private void devonian$disableSwim(Player instance, Pose pose, Operation<Void> original) {
         if (
             DisableSwim.INSTANCE.isEnabled() &&
-            pose == Pose.SWIMMING
+            pose == Pose.SWIMMING &&
+            instance instanceof LocalPlayer
         ) return;
         original.call(instance, pose);
     }
