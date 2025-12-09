@@ -19,7 +19,8 @@ open class Feature @JvmOverloads constructor(
     area: String? = null,
     subarea: String? = null,
     // To avoid conflict, maybe change the position later ?
-    displayName: String = configName.camelCaseToSentence()
+    displayName: String = configName.camelCaseToSentence(),
+    cheeto: Boolean = false,
 ) : Toggleable() {
     protected val isInternal = configName == "hudManagerInstructions" || configName == "hudManagerHider"
     val minecraft = Devonian.minecraft
@@ -29,7 +30,7 @@ open class Feature @JvmOverloads constructor(
     val children = mutableListOf<Toggleable>()
     val area = area?.lowercase()
     val subarea = subarea?.lowercase()
-    val configSwitch = addFeatureSwitch(description, displayName)
+    val configSwitch = addFeatureSwitch(description, displayName, cheeto)
         .also {
             it.onChange {
                 setRegistered(it)
@@ -81,12 +82,13 @@ open class Feature @JvmOverloads constructor(
     protected fun addFeatureSwitch(
         description: String? = null,
         displayName: String? = null,
+        cheeto: Boolean = false,
     ): ConfigData.FeatureSwitch {
         return ConfigData.FeatureSwitch(
             configName,
             false,
-            description,
-            displayName,
+            (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
+            (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
         ).also {
             if (isInternal) return@also
             Config.categories[category]!!.add(it)
