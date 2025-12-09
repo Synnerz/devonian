@@ -2,12 +2,19 @@ package com.github.synnerz.devonian.config.ui
 
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import java.awt.Color
 
 open class ConfigData<T>(
     val configName: String?,
-    var value: T
+    val type: ConfigType,
+    var value: T,
+    description: String? = null,
+    displayName: String? = null,
 ) {
+    val description = description ?: ""
+    val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
+
     private var onChangeHook: (() -> Unit)? = null
     open fun get() = value
 
@@ -19,13 +26,13 @@ open class ConfigData<T>(
     }
 
     init {
-        if (configName != null) Config.setConfig(configName, value)
+        if (configName != null) {
+            Config.setConfig(configName, value)
 
-        Config.onAfterLoad {
-            if (configName == null) return@onAfterLoad
-
-            val savedValue = Config.getConfig(configName, value) ?: return@onAfterLoad
-            set(savedValue)
+            Config.onAfterLoad {
+                val savedValue = Config.getConfig(configName, value) ?: return@onAfterLoad
+                set(savedValue)
+            }
         }
     }
 
@@ -35,56 +42,72 @@ open class ConfigData<T>(
 
     open class Switch(
         configName: String,
-        value: Boolean
-    ) : ConfigData<Boolean>(configName, value)
+        value: Boolean,
+        description: String? = null,
+        displayName: String? = null,
+    ) : ConfigData<Boolean>(configName, ConfigType.SWITCH, value, description, displayName)
 
     class FeatureSwitch(
         configName: String,
         value: Boolean,
-        val feature: Feature
-    ) : Switch(configName, value) {
+        val feature: Feature,
+        description: String? = null,
+        displayName: String? = null,
+    ) : Switch(configName, value, description, displayName) {
         override fun set(newVal: Boolean) {
             super.set(newVal)
             feature.onToggle(newVal)
         }
     }
 
-    class Slider<T>(
+    class Slider<T : Number>(
         configName: String,
         value: T,
         val min: Double,
-        val max: Double
-    ) : ConfigData<T>(configName, value)
+        val max: Double,
+        description: String? = null,
+        displayName: String? = null,
+    ) : ConfigData<T>(configName, ConfigType.SLIDER, value, description, displayName)
 
-    class DecimalSlider<T>(
+    class DecimalSlider<T : Number>(
         configName: String,
         value: T,
         val min: Double,
-        val max: Double
-    ) : ConfigData<T>(configName, value)
+        val max: Double,
+        description: String? = null,
+        displayName: String? = null,
+    ) : ConfigData<T>(configName, ConfigType.DECIMALSLIDER, value, description, displayName)
 
     class Button(
         val btnTitle: String,
-        val onClick: () -> Unit
-    ) : ConfigData<Boolean>(null, false)
+        val onClick: () -> Unit,
+        description: String? = null,
+        displayName: String? = null,
+    ) : ConfigData<Unit>(null, ConfigType.BUTTON, Unit, description, displayName)
 
     class TextInput(
         configName: String,
-        value: String
-    ) : ConfigData<String>(configName, value)
+        value: String,
+        description: String? = null,
+        displayName: String? = null,
+    ) : ConfigData<String>(configName, ConfigType.TEXTINPUT, value, description, displayName)
 
     class Selection(
         configName: String,
         value: Int,
-        val options: List<String>
-    ) : ConfigData<Int>(configName, value) {
+        val options: List<String>,
+        description: String? = null,
+        displayName: String? = null,
+    ) : ConfigData<Int>(configName, ConfigType.SELECTION, value, description, displayName) {
         fun getCurrent(): String = options[get()]
     }
 
     class ColorPicker(
         configName: String,
-        value: Int
-    ) : ConfigData<Int>(configName, value) {
+        value: Int,
+        description: String? = null,
+        displayName: String? = null,
+    ) : ConfigData<Int>(configName, ConfigType.COLORPICKER, value, description, displayName) {
         private var color = Color(value, true)
         fun getColor(): Color = color
 
