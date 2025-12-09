@@ -8,7 +8,7 @@ import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 
-object Config {
+object TextConfig {
     private val featuresSize get() = features.size
     private val minPage = 0
     private val maxPage get() = featuresSize / 10

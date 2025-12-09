@@ -3,7 +3,7 @@ package com.github.synnerz.devonian
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.ConfigGui
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.HudManagerHider
@@ -161,7 +161,7 @@ object Devonian : ClientModInitializer {
         CommandAliases.initialize()
         JsonUtils.load()
         SkyblockPrices
-        Config.initialize()
+        TextConfig.initialize()
         Location.initialize()
         Alert.initialize()
         Dungeons.initialize()
