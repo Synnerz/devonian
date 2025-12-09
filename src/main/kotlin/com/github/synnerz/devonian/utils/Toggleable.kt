@@ -7,11 +7,13 @@ abstract class Toggleable {
 
     protected abstract fun add()
     protected abstract fun remove()
+    protected open fun change() {}
 
     fun register() = apply {
         if (isRegistered) return@apply
         if (!isActuallyRegistered && (enabledState?.value ?: true)) {
             add()
+            change()
             isActuallyRegistered = true
         }
         isRegistered = true
@@ -21,6 +23,7 @@ abstract class Toggleable {
         if (!isRegistered) return@apply
         if (isActuallyRegistered) {
             remove()
+            change()
             isActuallyRegistered = false
         }
         isRegistered = false
@@ -38,11 +41,13 @@ abstract class Toggleable {
         if (b) {
             if (!isActuallyRegistered) {
                 add()
+                change()
                 isActuallyRegistered = true
             }
         } else {
             if (isActuallyRegistered) {
                 remove()
+                change()
                 isActuallyRegistered = false
             }
         }
