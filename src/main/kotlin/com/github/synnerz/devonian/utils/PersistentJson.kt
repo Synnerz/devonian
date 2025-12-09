@@ -1,5 +1,7 @@
 package com.github.synnerz.devonian.utils
 
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.GameUnloadEvent
 import com.google.gson.GsonBuilder
 import java.io.*
 
@@ -13,6 +15,12 @@ abstract class PersistentJson(private val configFile: File) {
 
     fun onPreSave(cb: () -> Unit) {
         preSaveListeners.add(cb)
+    }
+
+    init {
+        EventBus.on<GameUnloadEvent> {
+            save()
+        }
     }
 
     abstract fun onLoad(reader: InputStream)
