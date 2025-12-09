@@ -96,4 +96,9 @@ object StringUtils {
             append("%02ds".format(s))
         }
     }
+
+    private val camelCaseRegex = "[a-z]+|[A-Z](?:[a-z]+|[A-Z]*(?![a-z]))|[.\\d]+".toRegex()
+    fun String.camelCaseToSentence(): String = camelCaseRegex.replace(this) {
+        it.value.replaceFirstChar { it.uppercaseChar() } + " "
+    }.trim()
 }

@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.config.ui.ConfigData
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import com.github.synnerz.devonian.utils.Toggleable
 import com.github.synnerz.talium.components.UISwitch
 import net.minecraft.network.chat.ClickEvent
@@ -20,9 +21,7 @@ open class Feature @JvmOverloads constructor(
     area: String? = null,
     subarea: String? = null,
     // To avoid conflict, maybe change the position later ?
-    displayName: String = camelCaseRegex.replace(configName) {
-        it.value.replaceFirstChar { it.uppercaseChar() } + " "
-    }.trim()
+    displayName: String = configName.camelCaseToSentence()
 ) : Toggleable() {
     protected val isInternal = configName == "hudManagerInstructions" || configName == "hudManagerHider"
     val minecraft = Devonian.minecraft
@@ -222,8 +221,4 @@ open class Feature @JvmOverloads constructor(
     open fun onSubAreaChange(event: SubAreaEvent) {}
 
     open fun onWorldChange(event: WorldChangeEvent) {}
-
-    companion object {
-        private val camelCaseRegex = "[a-z]+|[A-Z](?:[a-z]+|[A-Z]*(?![a-z]))|[.\\d]+".toRegex()
-    }
 }
