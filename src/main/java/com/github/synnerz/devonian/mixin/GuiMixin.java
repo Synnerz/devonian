@@ -29,7 +29,7 @@ public class GuiMixin {
 
     @Inject(
         method = "render",
-        at = @At("TAIL")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderSleepOverlay(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V")
     )
     private void devonian$onRenderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         new RenderOverlayEvent(guiGraphics, deltaTracker).post();
