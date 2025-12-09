@@ -8,13 +8,9 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.ShapeTypes
 import net.minecraft.world.level.block.Blocks
 import kotlin.math.floor
 
-class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: Int) {
-    val roomOffset = listOf(
-        WorldPosition(-halfRoomSize, -halfRoomSize),
-        WorldPosition(halfRoomSize, -halfRoomSize),
-        WorldPosition(halfRoomSize, halfRoomSize),
-        WorldPosition(-halfRoomSize, halfRoomSize)
-    )
+class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
+    val comps = mutableListOf<WorldComponentPosition>()
+    private val possibleCorners = mutableListOf<Triple<Int, WorldComponentPosition, WorldPosition>>()
     var cores = listOf<Int>()
     var explored = false
     var name: String? = null
@@ -28,7 +24,7 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
     var secretsCompleted = -1
     var clear = ClearTypes.MOB
     val doors = mutableSetOf<DungeonDoor>()
-    private var shapeIn = "1x1"
+    private var shapeIn = ""
 
     init {
         addComponents(comps.map { it.toComponent() })
@@ -95,7 +91,20 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
     fun addComponent(comp: ComponentPosition, update: Boolean = true) = apply {
         if (comps.any { it.toComponent() == comp }) return@apply
 
-        comps.add(comp.withWorld())
+        val w = comp.withWorld()
+        comps.add(w)
+        roomOffset.forEachIndexed { i, v ->
+            possibleCorners.add(
+                Triple(
+                    i,
+                    w,
+                    WorldPosition(
+                        w.wx + v.x,
+                        w.wz + v.z
+                    )
+                )
+            )
+        }
 
         if (update) update()
     }
@@ -120,25 +129,36 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
             return
         }
 
-        for (comp in comps) {
-            val x = comp.wx
-            val z = comp.wz
-
-            for (idx in roomOffset.indices) {
-                val ( dx, dz ) = roomOffset[idx]
-                val pos = WorldPosition(x + dx, z + dz)
-                val nx = pos.x
-                val nz = pos.z
-                if (!WorldUtils.isChunkLoaded(nx, nz)) continue
-
-                val blockState = WorldUtils.getBlockState(nx, height, nz) ?: continue
-                val block = blockState.block ?: continue
-                if (block != Blocks.BLUE_TERRACOTTA) continue
-
-                rotation = idx * 90
-                corner = pos
-                return
+        possibleCorners.removeIf { (idx, comp, pos) ->
+            if ((shapeIn == "1x4" || shapeIn == "1x3" || shapeIn == "1x2") && comps.size >= 2) {
+                val cidx = comps.indexOf(comp)
+                if (cidx != 0 && cidx != comps.size - 1) return@removeIf true
+                val isHorz = comps[0].cz == comps[1].cz
+                if (cidx == 0) {
+                    if (isHorz) {
+                        if (idx != 0 && idx != 3) return@removeIf true
+                    } else {
+                        if (idx != 0 && idx != 1) return@removeIf true
+                    }
+                } else {
+                    if (isHorz) {
+                        if (idx != 1 && idx != 2) return@removeIf true
+                    } else {
+                        if (idx != 2 && idx != 3) return@removeIf true
+                    }
+                }
             }
+            val x = pos.x
+            val z = pos.z
+            if (!WorldUtils.isChunkLoaded(x, z)) return@removeIf false
+
+            val blockState = WorldUtils.getBlockState(x, height, z) ?: return@removeIf false
+            val block = blockState.block ?: return@removeIf false
+            if (block != Blocks.BLUE_TERRACOTTA) return@removeIf true
+
+            rotation = idx * 90
+            corner = pos
+            true
         }
     }
 
@@ -193,5 +213,14 @@ class DungeonRoom(val comps: MutableList<WorldComponentPosition>, var height: In
         val z2 = z1 + corner.z
 
         return x2 to z2
+    }
+
+    companion object {
+        val roomOffset = listOf(
+            WorldPosition(-halfRoomSize, -halfRoomSize),
+            WorldPosition(halfRoomSize, -halfRoomSize),
+            WorldPosition(halfRoomSize, halfRoomSize),
+            WorldPosition(-halfRoomSize, halfRoomSize)
+        )
     }
 }
