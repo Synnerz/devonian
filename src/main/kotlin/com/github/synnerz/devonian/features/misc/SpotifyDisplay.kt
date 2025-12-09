@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.hud.texthud.Marquee
 import com.github.synnerz.devonian.hud.texthud.TextHud
 import com.github.synnerz.devonian.hud.texthud.TextHudFamily
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import java.util.Scanner
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object SpotifyDisplay : TextHudFeature(

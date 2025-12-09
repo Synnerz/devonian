@@ -23,7 +23,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     private val rightPanel = UIRect(21.0, 1.0, 78.5, 98.0, parent = main).apply {
         setColor(ColorPalette.SECONDARY_COLOR)
     }
-    private val configTitle = UIText(0.0, 0.0, 100.0, 10.0,"Devonian", true, leftPanel).apply {
+    private val configTitle = UIText(0.0, 0.0, 100.0, 10.0, "Devonian", true, leftPanel).apply {
         setColor(ColorPalette.TITLE_COLOR)
     }
     private val editHudsButton = UIRect(32.5, 90.0, 35.0, 8.0, parent = rightPanel).apply {

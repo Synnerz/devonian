@@ -2,7 +2,6 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.features.misc.RemoveLightning;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LightningBoltRenderer;
 import net.minecraft.client.renderer.entity.state.LightningBoltRenderState;

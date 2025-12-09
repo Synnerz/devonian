@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket

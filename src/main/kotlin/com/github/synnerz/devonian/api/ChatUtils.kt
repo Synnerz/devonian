@@ -7,7 +7,7 @@ import net.minecraft.client.GuiMessageTag
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
-import java.util.IdentityHashMap
+import java.util.*
 import kotlin.math.roundToInt
 
 object ChatUtils {

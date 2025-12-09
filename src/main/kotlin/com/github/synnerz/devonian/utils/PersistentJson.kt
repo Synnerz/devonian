@@ -1,11 +1,7 @@
 package com.github.synnerz.devonian.utils
 
 import com.google.gson.GsonBuilder
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
 
 abstract class PersistentJson(private val configFile: File) {
     private val afterLoadListeners = mutableListOf<() -> Unit>()

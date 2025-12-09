@@ -2,9 +2,7 @@ package com.github.synnerz.devonian.utils
 
 import java.io.File
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.io.OutputStream
-import java.io.OutputStreamWriter
 
 open class PersistentJsonClass<T : Any>(configFile: File, val clazz: Class<T>) : PersistentJson(configFile) {
     var data: T? = null

@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.config.ui
 
-// TODO: percent slider, decimal slider
+// TODO: percent slider
 enum class ConfigType {
     BUTTON,
     SWITCH,

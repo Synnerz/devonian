@@ -1,14 +1,12 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
-import kotlin.math.abs
 
 object WorldUtils {
     val world: ClientLevel? get() = Devonian.minecraft.level

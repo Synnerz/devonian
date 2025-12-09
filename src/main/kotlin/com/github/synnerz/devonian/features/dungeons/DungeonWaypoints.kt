@@ -10,7 +10,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.google.gson.Gson
 import java.awt.Color
-import java.util.EnumMap
+import java.util.*
 import kotlin.math.abs
 
 object DungeonWaypoints : Feature(

@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.PersistentJsonClass
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.concurrent.TimeUnit
 

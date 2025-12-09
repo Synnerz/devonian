@@ -1,8 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.ChatFormatting
@@ -12,7 +10,6 @@ import net.minecraft.network.chat.FormattedText
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.contents.PlainTextContents
-import net.minecraft.network.protocol.game.ClientboundSystemChatPacket
 import java.util.*
 
 // Credits to <https://github.com/caoimhebyrne/compact-chat>
