@@ -130,21 +130,29 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
         }
 
         possibleCorners.removeIf { (idx, comp, pos) ->
-            if ((shapeIn == "1x4" || shapeIn == "1x3" || shapeIn == "1x2") && comps.size >= 2) {
-                val cidx = comps.indexOf(comp)
-                if (cidx != 0 && cidx != comps.size - 1) return@removeIf true
-                val isHorz = comps[0].cz == comps[1].cz
-                if (cidx == 0) {
-                    if (isHorz) {
-                        if (idx != 0 && idx != 3) return@removeIf true
+            if (shapeIn == "1x4" || shapeIn == "1x3" || shapeIn == "1x2") {
+                val fullSize = when (shapeIn) {
+                    "1x4" -> 4
+                    "1x3" -> 3
+                    "1x2" -> 2
+                    else -> 2
+                }
+                if (comps.size >= fullSize) {
+                    val cidx = comps.indexOf(comp)
+                    if (cidx != 0 && cidx != comps.size - 1) return@removeIf true
+                    val isHorz = comps[0].cz == comps[1].cz
+                    if (cidx == 0) {
+                        if (isHorz) {
+                            if (idx != 0 && idx != 3) return@removeIf true
+                        } else {
+                            if (idx != 0 && idx != 1) return@removeIf true
+                        }
                     } else {
-                        if (idx != 0 && idx != 1) return@removeIf true
-                    }
-                } else {
-                    if (isHorz) {
-                        if (idx != 1 && idx != 2) return@removeIf true
-                    } else {
-                        if (idx != 2 && idx != 3) return@removeIf true
+                        if (isHorz) {
+                            if (idx != 1 && idx != 2) return@removeIf true
+                        } else {
+                            if (idx != 2 && idx != 3) return@removeIf true
+                        }
                     }
                 }
             }
