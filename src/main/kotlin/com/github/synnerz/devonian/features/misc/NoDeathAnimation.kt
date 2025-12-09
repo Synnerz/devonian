@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.api.events.PreRenderEntityEvent
+import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.LivingEntity
 
@@ -11,7 +11,7 @@ object NoDeathAnimation : Feature(
     private val lividNameRegex = "^\\w+ Livid\$".toRegex()
 
     override fun initialize() {
-        on<PreRenderEntityEvent> { event ->
+        on<ExtractRenderEntityEvent> { event ->
             if (event.entity !is LivingEntity) return@on
             val entity = event.entity
 

@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
-import com.github.synnerz.devonian.api.events.RenderTileEntityEvent
+import com.github.synnerz.devonian.api.events.PostRenderTileEntityEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.client.renderer.blockentity.state.ChestRenderState
 import net.minecraft.world.level.block.state.properties.ChestType
@@ -21,7 +21,7 @@ object BoxMimicChest : Feature(
     )
 
     override fun initialize() {
-        on<RenderTileEntityEvent> { event ->
+        on<PostRenderTileEntityEvent> { event ->
             val state = event.entityState as? ChestRenderState ?: return@on
             if (state.material != ChestRenderState.ChestMaterialType.TRAPPED) return@on
             if (state.type != ChestType.SINGLE) return@on

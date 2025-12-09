@@ -86,14 +86,23 @@ class RenderWorldEvent(
     val ctx: WorldRenderContext
 ) : Event()
 
-class RenderEntityEvent(
+class PreRenderEntityEvent(
     val entityState: EntityRenderState,
     val cameraState: CameraRenderState,
     val matrix: PoseStack,
     val submitter: SubmitNodeCollector,
 ) : Event()
 
-class PreRenderEntityEvent(
+/*
+class PostRenderEntityEvent(
+    val entityState: EntityRenderState,
+    val cameraState: CameraRenderState,
+    val matrix: PoseStack,
+    val submitter: SubmitNodeCollector,
+) : Event()
+ */
+
+class ExtractRenderEntityEvent(
     val entity: Entity
 ) : CancellableEvent()
 
@@ -338,7 +347,16 @@ class BlockPlaceEvent(
 
 class ClientThreadServerTickEvent() : Event()
 
-class RenderTileEntityEvent(
+/*
+class PreRenderTileEntityEvent(
+    val entityState: BlockEntityRenderState,
+    val cameraState: CameraRenderState,
+    val matrix: PoseStack,
+    val submitter: SubmitNodeCollector,
+) : Event()
+*/
+
+class PostRenderTileEntityEvent(
     val entityState: BlockEntityRenderState,
     val cameraState: CameraRenderState,
     val matrix: PoseStack,

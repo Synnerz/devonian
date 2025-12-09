@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.api.events.EventBus;
+import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent;
 import com.github.synnerz.devonian.api.events.PreRenderEntityEvent;
-import com.github.synnerz.devonian.api.events.RenderEntityEvent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -20,11 +20,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class EntityRenderDispatcherMixin {
     @Inject(
             method = "submit",
-            at = @At("HEAD"),
-            cancellable = true
+            at = @At("HEAD")
     )
-    private void devonian$entityRender(EntityRenderState entityRenderState, CameraRenderState cameraRenderState, double d, double e, double f, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
-        EventBus.INSTANCE.post(new RenderEntityEvent(entityRenderState, cameraRenderState, poseStack, submitNodeCollector));
+    private void devonian$preRenderEntity(EntityRenderState entityRenderState, CameraRenderState cameraRenderState, double d, double e, double f, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
+        new PreRenderEntityEvent(entityRenderState, cameraRenderState, poseStack, submitNodeCollector).post();
     }
 
     @Inject(
@@ -32,8 +31,8 @@ public class EntityRenderDispatcherMixin {
         at = @At("HEAD"),
         cancellable = true
     )
-    private void devonian$preRenderEntity(Entity entity, float f, CallbackInfoReturnable<EntityRenderState> cir) {
-        PreRenderEntityEvent event = new PreRenderEntityEvent(entity);
+    private void devonian$extractRenderEntity(Entity entity, float f, CallbackInfoReturnable<EntityRenderState> cir) {
+        ExtractRenderEntityEvent event = new ExtractRenderEntityEvent(entity);
         if (event.post()) {
             EntityRenderState noop = new EntityRenderState();
             noop.entityType = EntityType.AREA_EFFECT_CLOUD;
