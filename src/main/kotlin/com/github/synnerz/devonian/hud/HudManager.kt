@@ -50,11 +50,10 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         HudManagerHider.y = window.guiScaledHeight / 4.0
     }
 
-    override fun onClose() {
-        super.onClose()
-
+    override fun removed() {
         selectedHud = null
         isEditing = false
+        mouseDown = false
     }
 
     private fun updateSelected() {
