@@ -67,7 +67,7 @@ object GolemLootQuality : Feature(
 
             val match = event.matches(zealotKillsRegex) ?: return@on
             val zealotKills = match[0].toInt()
-            val placementQuality = positionQuality[yourPosition - 1]
+            val placementQuality = positionQuality.getOrNull(yourPosition - 1) ?: return@on
             val quality = placementQuality + (50 * yourDamage / firstDamage) + min(zealotKills, 100)
 
             val tbc = if (quality >= 250) "&a\uD83D\uDDF8" else "&cx"
