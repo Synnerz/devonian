@@ -15,10 +15,10 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
     private val colorComponents = mutableListOf<UIColorPicker>()
     private var currentPage = 0
         set(value) {
-            field = value.coerceIn(0, components.size / 5)
+            field = value.coerceIn(0, components.size / 7)
             onUpdate()
         }
-    private val leftArrow = UIRect(1.0, 90.0, 10.0, 8.0, parent = rightPanel).apply {
+    private val leftArrow = UIRect(1.0, 92.0, 10.0, 8.0, parent = rightPanel).apply {
         setColor(ColorPalette.TERTIARY_COLOR)
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "<-", true).apply {
             setColor(ColorPalette.TEXT_COLOR)
@@ -29,7 +29,7 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
             currentPage--
         }
     }
-    private val rightArrow = UIRect(88.0, 90.0, 10.0, 8.0, parent = rightPanel).apply {
+    private val rightArrow = UIRect(88.0, 92.0, 10.0, 8.0, parent = rightPanel).apply {
         setColor(ColorPalette.TERTIARY_COLOR)
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "->", true).apply {
             setColor(ColorPalette.TEXT_COLOR)
@@ -92,7 +92,7 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
     }
 
     private fun onUpdate() {
-        val currentMax = components.size / 5
+        val currentMax = components.size / 7
         when (currentPage) {
             0 -> {
                 leftArrow.hide()
@@ -111,7 +111,7 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
 
         for (idx in components.indices) {
             val comp = components[idx]
-            val page = idx / 5
+            val page = idx / 7
             if (page == currentPage) comp.unhide()
             else comp.hide()
         }
@@ -123,8 +123,8 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
 
         while (configs.isNotEmpty()) {
             val data = configs.removeFirst()
-            val y = 1 + (i % 5) * 17
-            components.add(createBase(y.toDouble(), rightPanel).apply {
+            val y = 1 + (i % 7) * 13.0
+            components.add(createBase(y, rightPanel).apply {
                 addChild(createTitle(data.displayName))
                 addChild(createDescription(data.description))
                 addChild(
@@ -160,7 +160,7 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
     }
 
     private fun createBase(y: Double, parent: UIBase): UIRect =
-        UIRect(1.0, y, 98.0, 15.0, parent = parent).apply {
+        UIRect(1.0, y, 98.0, 12.0, parent = parent).apply {
             addEffects(OutlineEffect(1.0, ColorPalette.OUTLINE_COLOR))
         }
 
