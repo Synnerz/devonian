@@ -4,6 +4,8 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.features.HudManagerHider
+import com.github.synnerz.devonian.features.HudManagerInstructions
 import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
@@ -41,6 +43,11 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
 
     override fun init() {
         isEditing = true
+        val window = minecraft?.window ?: return
+        HudManagerInstructions.x = window.guiScaledWidth / 2.0
+        HudManagerInstructions.y = window.guiScaledHeight / 2.0
+        HudManagerHider.x = window.guiScaledWidth / 2.0
+        HudManagerHider.y = window.guiScaledHeight / 4.0
     }
 
     override fun onClose() {
@@ -53,7 +60,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     private fun updateSelected() {
         if (mouseDown) return
         selectedHud = huds.filter { it.isVisibleEdit() && it.inBounds(lastMouseX, lastMouseY) }
-            .minByOrNull { it.getBounds().let { min(it.w, it.h) } }
+            .minByOrNull { it.getBounds().let { min(it.w, it.h) } + (if (it.isEnabled()) 0 else 1000000) }
     }
 
     override fun mouseMoved(mouseX: Double, mouseY: Double) {
@@ -110,7 +117,16 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     }
 
     override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        for (hud in huds) {
+            if (hud.isEnabled()) continue
+            if (hud.isInternal) continue
+            if (hud.isVisibleEdit()) hud.sampleDraw(context, mouseX, mouseY, hud == selectedHud)
+        }
+
+        val window = minecraft?.window
+        if (window != null) context.fill(0, 0, window.guiScaledWidth, window.guiScaledHeight, 0x80000000.toInt())
         super.render(context, mouseX, mouseY, deltaTicks)
+
         Render2D.drawString(
             context,
             "Hud Manager",
@@ -118,6 +134,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         )
 
         for (hud in huds) {
+            if (!hud.isEnabled() && !hud.isInternal) continue
             if (hud.isVisibleEdit()) hud.sampleDraw(context, mouseX, mouseY, hud == selectedHud)
         }
     }
