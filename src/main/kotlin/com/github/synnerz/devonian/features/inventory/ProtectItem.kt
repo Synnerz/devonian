@@ -14,6 +14,7 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.Location
 import com.google.gson.JsonArray
+import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
@@ -42,7 +43,7 @@ object ProtectItem : Feature(
         Config.set(KEY_NAME, JsonArray())
 
         Config.onAfterLoad {
-            lockedList = Config.get<List<String>>(KEY_NAME)?.toMutableList() ?: mutableListOf()
+            lockedList = Config.get<List<JsonPrimitive>>(KEY_NAME)?.map { it.asString } ?.toMutableList() ?: mutableListOf()
         }
 
         on<DropItemEvent> { event ->
