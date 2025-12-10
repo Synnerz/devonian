@@ -10,12 +10,13 @@ import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
 
 class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase, idx: Int) {
-    private val configs = Config.categories[categoryName]!!.toMutableList()
+    val CONFIGS_PER_PAGE = 7
+    val configs = Config.categories[categoryName]!!.toList()
     private val components = mutableListOf<UIRect>()
     private val colorComponents = mutableListOf<UIColorPicker>()
-    private var currentPage = 0
+    var currentPage = 0
         set(value) {
-            field = value.coerceIn(0, components.size / 7)
+            field = value.coerceIn(0, components.size / CONFIGS_PER_PAGE)
             onUpdate()
         }
     private val leftArrow = UIRect(1.0, 92.0, 10.0, 8.0, parent = rightPanel).apply {
@@ -92,7 +93,7 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
     }
 
     private fun onUpdate() {
-        val currentMax = components.size / 7
+        val currentMax = components.size / CONFIGS_PER_PAGE
         when (currentPage) {
             0 -> {
                 leftArrow.hide()
@@ -111,7 +112,7 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
 
         for (idx in components.indices) {
             val comp = components[idx]
-            val page = idx / 7
+            val page = idx / CONFIGS_PER_PAGE
             if (page == currentPage) comp.unhide()
             else comp.hide()
         }
@@ -119,11 +120,9 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
 
     @Suppress("unchecked_cast")
     private fun create() {
-        var i = 0
-
-        while (configs.isNotEmpty()) {
-            val data = configs.removeFirst()
-            val y = 1 + (i % 7) * 13.0
+        for (i in components.size until configs.size) {
+            val data = configs[i]
+            val y = 1 + (i % CONFIGS_PER_PAGE) * 13.0
             components.add(createBase(y, rightPanel).apply {
                 addChild(createTitle(data.displayName))
                 addChild(createDescription(data.description))
@@ -140,7 +139,6 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
                 )
                 hide()
             })
-            i++
         }
     }
 
