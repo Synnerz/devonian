@@ -105,7 +105,7 @@ object Dungeons {
 
     val deathPenalty = deaths.zip(hasSpirit) { deaths, spirit ->
         if (deaths == 0) 0
-        else -2 * deaths + (if (spirit) 1 else 0)
+        else 2 * deaths - (if (spirit) 1 else 0)
     }
     val puzzlePenalty = completedPuzzles.zip(totalPuzzles) { completed, total ->
         10 * (total - completed)
