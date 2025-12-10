@@ -155,6 +155,7 @@ object Devonian : ClientModInitializer {
         NoAbilityCdSound,
         DisableSwim,
         CenteredCrosshair,
+        DisableEnderPearlCooldown,
     )
 
     override fun onInitializeClient() {
