@@ -29,6 +29,16 @@ object ScoreDisplay : TextHudFeature(
         "",
         "Show Mimic/Prince State",
     )
+    private val SETTING_FORCE_PAUL = addSwitch(
+        "paul",
+        false,
+        "",
+        "Force Paul",
+    ).also {
+        it.onChange { v ->
+            Dungeons.isPaul.value = v
+        }
+    }
 
     private fun getLines(
         score: Int,
