@@ -48,7 +48,7 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
     init {
         update()
         categoryButton = UIRect(
-            0.0, 12.0 + (9 * (idx + 1)),
+            0.0, 12.0 + 9 * idx,
             100.0, 8.0,
             parent = leftPanel
         ).apply {
