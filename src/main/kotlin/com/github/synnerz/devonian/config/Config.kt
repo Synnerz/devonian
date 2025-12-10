@@ -60,6 +60,12 @@ object Config : PersistentData by jsonLoader {
         "Diana",
         "Misc",
     ).associateWith { mutableListOf<ConfigData<*>>() }
+    val categoryFromConfig = mutableMapOf<ConfigData<*>, String>()
+
+    fun registerCategory(config: ConfigData<*>, category: String) {
+        categories[category]!!.add(config)
+        categoryFromConfig[config] = category
+    }
 
     val features = mutableListOf<ConfigData.FeatureSwitch>()
 }

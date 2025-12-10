@@ -91,7 +91,7 @@ open class Feature @JvmOverloads constructor(
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
         ).also {
             if (isInternal) return@also
-            Config.categories[category]!!.add(it)
+            Config.registerCategory(it, category)
             Config.features.add(it)
         }
     }
@@ -110,7 +110,7 @@ open class Feature @JvmOverloads constructor(
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
         ).also {
-            Config.categories[category]!!.add(it)
+            Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -130,7 +130,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
         ).also {
-            Config.categories[category]!!.add(it)
+            Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -150,7 +150,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
         ).also {
-            Config.categories[category]!!.add(it)
+            Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -183,7 +183,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
         ).also {
-            Config.categories[category]!!.add(it)
+            Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -202,7 +202,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
         ).also {
-            Config.categories[category]!!.add(it)
+            Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -219,7 +219,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
         ).also {
-            Config.categories[category]!!.add(it)
+            Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
         }
     }
