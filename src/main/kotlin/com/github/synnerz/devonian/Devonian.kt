@@ -154,6 +154,7 @@ object Devonian : ClientModInitializer {
         BoxMimicChest,
         NoAbilityCdSound,
         DisableSwim,
+        CenteredCrosshair,
     )
 
     override fun onInitializeClient() {

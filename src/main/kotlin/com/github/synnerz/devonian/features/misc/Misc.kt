@@ -35,3 +35,4 @@ object DisableChatAutoScroll : Feature(
     "Misc"
 )
 object DisableSwim : Feature("disableSwim", cheeto = true)
+object CenteredCrosshair : Feature("centeredCrosshair")

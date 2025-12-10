@@ -39,6 +39,7 @@
     "accessor.ChatComponentAccessor",
     "accessor.GlDeviceAccessor",
     "accessor.GuiAccessor",
+    "accessor.GuiGraphicsAccessor",
     "accessor.HeartTypeAccessor",
     "accessor.LocalPlayerAccessor"
   ],
