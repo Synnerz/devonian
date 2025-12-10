@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.hud
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.NullableHudData
+import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.utils.BoundingBox
@@ -63,7 +64,12 @@ abstract class HudFeature(
     }
 
     open fun onMouseClick(mx: Double, my: Double, mbtn: Int) {
-        if (mbtn == 1) toggle()
+        when (mbtn) {
+            GLFW.GLFW_MOUSE_BUTTON_RIGHT -> toggle()
+            GLFW.GLFW_MOUSE_BUTTON_MIDDLE -> {
+                if (!isInternal) ConfigGui.scrollToConfig(configSwitch)
+            }
+        }
     }
 
     open fun onKeyPress(keyCode: Int) {

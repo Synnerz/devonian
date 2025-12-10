@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ui.ConfigData
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
@@ -65,6 +66,30 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
                 Devonian.minecraft.setScreen(this)
             }
             return@subcommand 1
+        }
+    }
+
+    fun scrollToConfig(config: ConfigData<*>) {
+        val category = Config.categoryFromConfig[config]!!
+        Scheduler.scheduleTask {
+            Devonian.minecraft.setScreen(this)
+
+            val correct = categories.find { it.categoryName == category }!!
+
+            if (correct !== selectedCategory) {
+                selectedCategory.hide()
+                selectedCategory = correct
+                correct.unhide()
+            }
+
+            val idx = correct.configs.indexOf(config)
+            if (idx < 0) {
+                println("Talium ConfigGui scrollToConfig: cannot find matching config in Category: ${config.displayName}")
+                return@scheduleTask
+            }
+
+            val page = idx / correct.CONFIGS_PER_PAGE
+            correct.currentPage = page
         }
     }
 
