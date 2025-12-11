@@ -256,6 +256,7 @@ object DungeonMap : HudFeature(
         "",
         "Render Hidden Rooms",
         cheeto = true,
+        isHidden = true,
     )
     private val SETTING_HIDDEN_ROOM_DARKEN = addDecimalSlider(
         "hiddenRoomDarken",
