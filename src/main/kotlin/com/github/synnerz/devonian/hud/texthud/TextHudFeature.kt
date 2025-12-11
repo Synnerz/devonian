@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.TextHud.*
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -17,7 +18,10 @@ abstract class TextHudFeature(
     area: String? = null,
     subarea: String? = null,
     hudConfigName: String = configName[0].uppercase() + configName.substring(1),
-) : HudFeature(configName, description, category, area, subarea, hudConfigName), DataProvider, ITextHud {
+    displayName: String = configName.camelCaseToSentence(),
+    cheeto: Boolean = false,
+    isInternal: Boolean = false,
+) : HudFeature(configName, description, category, area, subarea, hudConfigName, displayName, cheeto, isInternal), DataProvider, ITextHud {
     abstract fun getEditText(): List<String>
 
     protected var isEditing = false

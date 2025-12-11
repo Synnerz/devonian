@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.Render2D
 import com.github.synnerz.devonian.utils.Render2D.height
 import com.github.synnerz.devonian.utils.Render2D.width
+import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -23,8 +24,11 @@ abstract class HudFeature(
     category: String,
     area: String? = null,
     subarea: String? = null,
-    protected val legacyName: String = configName[0].uppercase() + configName.substring(1)
-) : Feature(configName, description, category, area, subarea) {
+    protected val legacyName: String = configName[0].uppercase() + configName.substring(1),
+    displayName: String = configName.camelCaseToSentence(),
+    cheeto: Boolean = false,
+    isInternal: Boolean = false,
+) : Feature(configName, description, category, area, subarea, displayName, cheeto, isInternal) {
     var x = 10.0
     var y = 10.0
     var scale = 1f

@@ -21,8 +21,8 @@ open class Feature @JvmOverloads constructor(
     // To avoid conflict, maybe change the position later ?
     displayName: String = configName.camelCaseToSentence(),
     cheeto: Boolean = false,
+    val isInternal: Boolean = false,
 ) : Toggleable() {
-    val isInternal = configName == "hudManagerInstructions" || configName == "hudManagerHider"
     val minecraft = Devonian.minecraft
     val id = 256652 + Devonian.features.size
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
