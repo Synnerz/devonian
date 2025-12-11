@@ -66,6 +66,7 @@ object BoxStarMob : Feature(
         "",
         "Starred Mobs Esp",
         cheeto = true,
+        isHidden = true,
     )
 
     private val starred = mutableListOf<Pair<LivingEntity, MobData>>()
