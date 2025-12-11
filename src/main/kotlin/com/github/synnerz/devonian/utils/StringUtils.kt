@@ -21,8 +21,16 @@ object StringUtils {
     private val colorToFormat = ChatFormatting.entries.mapNotNull { format ->
         TextColor.fromLegacyFormat(format)?.let { it to format }
     }.toMap()
+    private val escapedAmp = "&{2}".toRegex()
+    private val ampToSection = "&(?=[0-9a-fklmnor])".toRegex()
 
     fun String.clearCodes(): String = this.replace(removeCodesRegex, "")
+
+    fun String.replaceCodes(): String = this
+        .split(escapedAmp)
+        .joinToString("&") {
+            it.replace(ampToSection, "§")
+        }
 
     fun parseRoman(roman: String): Int {
         var lastValue = 0
