@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.dungeons.SecretsSound
 import com.github.synnerz.devonian.utils.BasicState
@@ -204,26 +205,28 @@ object Dungeons {
             val match = event.matches(playerInfoRegex) ?: return@on
             val (name, role) = match
 
-            val player = players.getOrPut(name) {
-                playerClasses[name] = DungeonClass.Unknown
-                DungeonPlayer(
-                    name,
-                    Devonian.minecraft.connection?.getPlayerInfo(name),
-                    DungeonClass.Unknown,
-                    0,
-                    false
-                )
-            }
+            Scheduler.scheduleTask {
+                val player = players.getOrPut(name) {
+                    playerClasses[name] = DungeonClass.Unknown
+                    DungeonPlayer(
+                        name,
+                        Devonian.minecraft.connection?.getPlayerInfo(name),
+                        DungeonClass.Unknown,
+                        0,
+                        false
+                    )
+                }
 
-            if (role == "DEAD") player.isDead = true
-            else {
-                player.isDead = false
-                val c = DungeonClass.from(role)
-                player.role = c
-                playerClasses[name] = c
+                if (role == "DEAD") player.isDead = true
+                else {
+                    player.isDead = false
+                    val c = DungeonClass.from(role)
+                    player.role = c
+                    playerClasses[name] = c
 
-                val level = match.getOrNull(2)
-                if (level != null) player.classLevel = StringUtils.parseRoman(level)
+                    val level = match.getOrNull(2)
+                    if (level != null) player.classLevel = StringUtils.parseRoman(level)
+                }
             }
         }.setEnabled(Location.stateInArea("catacombs"))
 
