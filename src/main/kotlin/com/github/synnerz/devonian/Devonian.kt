@@ -164,6 +164,7 @@ object Devonian : ClientModInitializer {
         FixRedVignette,
         HideCraftingText,
         HideOffhandSlotBackground,
+        AutoArchitectDraft,
     )
 
     override fun onInitializeClient() {
