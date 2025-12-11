@@ -158,6 +158,7 @@ object Devonian : ClientModInitializer {
         CenteredCrosshair,
         DisableEnderPearlCooldown,
         HudManagerRenderer,
+        DisableWorldLoadingScreen,
     )
 
     override fun onInitializeClient() {

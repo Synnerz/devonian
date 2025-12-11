@@ -11,6 +11,7 @@
     "CameraTypeMixin",
     "ChatComponentMixin",
     "ClientCommonPacketListenerImplMixin",
+    "ClientPacketListenerMixin",
     "ConnectionMixin",
     "ContainerScreenMixin",
     "EffectsInInventoryMixin",
