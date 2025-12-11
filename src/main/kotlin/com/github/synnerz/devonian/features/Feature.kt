@@ -103,12 +103,14 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         cheeto: Boolean = false,
+        isHidden: Boolean = false,
     ): ConfigData.Switch {
         return ConfigData.Switch(
             "${this.configName}$$configName",
             value,
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
+            isHidden,
         ).also {
             Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)

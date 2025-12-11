@@ -44,6 +44,7 @@ open class ConfigData<T>(
         value: Boolean,
         description: String? = null,
         displayName: String? = null,
+        val isHidden: Boolean = false,
     ) : ConfigData<Boolean>(configName, ConfigType.SWITCH, value, description, displayName)
 
     class FeatureSwitch(

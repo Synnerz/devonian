@@ -58,8 +58,14 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
 
     @Suppress("unchecked_cast")
     private fun create() {
-        for (i in components.size until configs.size) {
-            val data = configs[i]
+        val nconfigs = configs.filter {
+            if (it is ConfigData.Switch)
+                !it.isHidden
+            else true
+        }
+
+        for (i in components.size until nconfigs.size) {
+            val data = nconfigs[i]
             val y = 1 + i * 17.0
             components.add(createBase(y, scrollableRect).apply {
                 addChild(createTitle(data.displayName))
