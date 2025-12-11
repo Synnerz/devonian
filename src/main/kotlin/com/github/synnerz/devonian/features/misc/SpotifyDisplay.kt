@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.hud.texthud.Marquee
-import com.github.synnerz.devonian.hud.texthud.TextHud
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHudFamily
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import java.util.*
@@ -52,7 +52,7 @@ object SpotifyDisplay : TextHudFeature(
         "Marquee Scroll Speed",
     )
 
-    override fun createHud(): TextHud = TextHudFamily("spotifyDisplay", this)
+    override fun createHud(): StylizedTextHud = TextHudFamily("spotifyDisplay", this)
 
     override fun getEditText(): List<String> = throw UnsupportedOperationException()
 
@@ -60,7 +60,7 @@ object SpotifyDisplay : TextHudFeature(
         setDisplay("Never Gonna Give You Up", "Rick Astley")
     }
 
-    val prefixHud = TextHud("spotifyDisplayPrefix", (hud as TextHudFamily).createChildProvider())
+    val prefixHud = StylizedTextHud("spotifyDisplayPrefix", (hud as TextHudFamily).createChildProvider())
     val marqueeHud = Marquee("spotifyDisplayMarquee", (hud as TextHudFamily).createChildProvider())
 
     init {

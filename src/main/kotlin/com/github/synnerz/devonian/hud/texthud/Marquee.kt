@@ -5,7 +5,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle
 import kotlin.math.ceil
 import kotlin.math.max
 
-class Marquee(name: String, data: DataProvider) : TextHud(name, data) {
+class Marquee(name: String, data: DataProvider) : StylizedTextHud(name, data) {
     override fun getWidth(): Double = maxLen * scale
 
     private var actualX = 0.0
@@ -39,14 +39,14 @@ class Marquee(name: String, data: DataProvider) : TextHud(name, data) {
         x = actualX
     }
 
-    override fun drawCachedImage(ctx: GuiGraphics) {
+    override fun renderText(ctx: GuiGraphics) {
         ctx.scissorStack.push(
             ScreenRectangle(
                 ceil(actualX).toInt(), ceil(y).toInt(),
                 (maxLen * scale).toInt(), getHeight().toInt()
             )
         )
-        super.drawCachedImage(ctx)
+        super.renderText(ctx)
         ctx.scissorStack.pop()
     }
 }

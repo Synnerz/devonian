@@ -120,7 +120,7 @@ object StringParser {
         f2: Font,
         f3: Font,
         fontSize: Float
-    ): LineData {
+    ): LayoutLineData {
         var str = str
         str = "$str&r"
         val sb = StringBuilder()
@@ -220,25 +220,31 @@ object StringParser {
         val tylA = TextLayout(a.iterator, g.fontRenderContext)
         val tylB = if (b == null) null else TextLayout(b.iterator, g.fontRenderContext)
 
-        return LineData(
-            o.toTypedArray<ObfData>(),
+        return LayoutLineData(
             tylA.advance,
             tylA.visibleAdvance,
             tylA.ascent,
             tylA.descent,
+            o.isNotEmpty(),
             tylA,
             tylB,
         )
     }
 
-    class LineData internal constructor(
-        val obfData: Array<ObfData>,
-        val width: Float,
-        val visualWidth: Float,
-        val ascent: Float,
-        val descent: Float,
+    class LayoutLineData(
+        width: Float,
+        visualWidth: Float,
+        ascent: Float,
+        descent: Float,
+        hasObfuText: Boolean,
         val layout: TextLayout,
         val layoutShadow: TextLayout?,
+    ) : StylizedTextHud.LineData(
+        width,
+        visualWidth,
+        ascent,
+        descent,
+        hasObfuText,
     )
 
     internal class AttrData(val t: Char, val s: Int, val e: Int)

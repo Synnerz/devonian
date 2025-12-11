@@ -4,9 +4,7 @@ import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.WorldComponentPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.*
-import com.github.synnerz.devonian.hud.texthud.FontListener
-import com.github.synnerz.devonian.hud.texthud.StringParser
-import com.github.synnerz.devonian.hud.texthud.TextHud
+import com.github.synnerz.devonian.hud.texthud.*
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.TextRendererImpl
 import java.awt.Color
@@ -320,8 +318,8 @@ class DungeonMapBaseRenderer :
 
                 val str = text.joinToString("\n")
 
-                var fontSize = TextHud.MC_FONT_SIZE
-                val font = TextHud.fontMainBase.deriveFont(Font.PLAIN, fontSize)
+                var fontSize = StylizedTextHud.BASE_FONT_SIZE
+                val font = BImgTextHudRenderer.fontMainBase.deriveFont(Font.PLAIN, fontSize)
                 g.font = font
 
                 val lines = text.map { StringParser.processString(
@@ -400,12 +398,14 @@ class DungeonMapBaseRenderer :
 
         if (textToRender.isNotEmpty()) {
             val fontSize = textToRender.minOf { it.key.size }.toFloat()
-            val font = TextHud.fontMainBase.deriveFont(Font.PLAIN, fontSize)
+            val font = BImgTextHudRenderer.fontMainBase.deriveFont(Font.PLAIN, fontSize)
             g.font = font
             g.paint = Color(-1)
             val ascent = g.fontMetrics.ascent
 
             textToRender.forEach { (decBox, key, text) ->
+                if (text.isEmpty()) return@forEach
+
                 val rendered = cachedStrings.getOrPut(key) {
                     val lines = text.map { StringParser.processString(
                         it,
@@ -416,25 +416,28 @@ class DungeonMapBaseRenderer :
                     ) }
                     val visualWidth = lines.maxOf { it.visualWidth }
 
-                    val w = visualWidth + (if (options.stringShadow) 0.1 * fontSize else 0.0) + 5.0
-                    val h = (fontSize * lines.size + ascent).toDouble()
+                    val w = visualWidth + (if (options.stringShadow) 0.1f * fontSize else 0.0f) + 5.0f
+                    val h = fontSize * lines.size + ascent
                     val img = bimgProvider.create(w.toInt(), h.toInt())
 
-                    TextRendererImpl.drawImage(img, TextRendererImpl.TextRenderParams(
-                        TextHud.Align.Center,
+                    TextRendererImpl.drawImage(img, TextRenderer.RenderParams(
+                        StylizedTextHud.TextRenderParams(
+                            StylizedTextHud.Align.Center,
                         options.stringShadow,
-                        TextHud.Backdrop.None,
-                        fontSize,
-                        font,
+                        StylizedTextHud.Backdrop.None,
+                            fontSize,
+                        ),
                         lines,
-                        visualWidth
+                        w, w,
+                        lines.maxOfOrNull { it.descent } ?: 0f,
+                        lines.maxOfOrNull { it.ascent } ?: 0f,
                     ))
 
                     CachedRenderedString(
                         img,
                         0.0, -ascent / 2.0,
-                        w,
-                        h,
+                        w.toDouble(),
+                        h.toDouble(),
                         visualWidth.toDouble(),
                         fontSize * lines.size.toDouble()
                     )

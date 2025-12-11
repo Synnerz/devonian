@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.features.HudManagerInstructions
+import com.github.synnerz.devonian.features.HudManagerRenderer
 import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
@@ -48,6 +49,8 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         HudManagerInstructions.y = window.guiScaledHeight / 2.0
         HudManagerHider.x = window.guiScaledWidth / 2.0
         HudManagerHider.y = window.guiScaledHeight / 4.0
+        HudManagerRenderer.x = window.guiScaledWidth / 2.0
+        HudManagerRenderer.y = window.guiScaledHeight * 3.0 / 8.0
     }
 
     override fun removed() {

@@ -3,14 +3,14 @@ package com.github.synnerz.devonian.features.dungeons.map
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
-import com.github.synnerz.devonian.api.bufimgrenderer.TexturedQuadRenderState
 import com.github.synnerz.devonian.api.dungeon.*
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.HudFeature
-import com.github.synnerz.devonian.hud.texthud.SimpleTextHud
-import com.github.synnerz.devonian.hud.texthud.TextHud
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.utils.BoundingBox
+import com.github.synnerz.devonian.utils.TexturedQuadRenderState
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.TextureSetup
@@ -313,13 +313,13 @@ object DungeonMap : HudFeature(
 
     private val textHuds by lazy {
         List(5) {
-            SimpleTextHud("dungeon_map_name_$it").also {
+            StylizedTextHud("dungeon_map_name_$it").also {
                 it.x = 0.0
                 it.y = -10.0
                 it.scale = 1f
-                it.anchor = TextHud.Anchor.Center
-                it.align = TextHud.Align.Center
-                it.backdrop = TextHud.Backdrop.None
+                it.anchor = Anchor.Center
+                it.align = Align.Center
+                it.backdrop = Backdrop.None
             }
         }
     }

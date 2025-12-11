@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.features.HudManagerInstructions
+import com.github.synnerz.devonian.features.HudManagerRenderer
 import com.github.synnerz.devonian.features.diana.BurrowGuesser
 import com.github.synnerz.devonian.features.diana.BurrowWaypoint
 import com.github.synnerz.devonian.features.diana.DianaDropTracker
@@ -156,6 +157,7 @@ object Devonian : ClientModInitializer {
         DisableSwim,
         CenteredCrosshair,
         DisableEnderPearlCooldown,
+        HudManagerRenderer,
     )
 
     override fun onInitializeClient() {

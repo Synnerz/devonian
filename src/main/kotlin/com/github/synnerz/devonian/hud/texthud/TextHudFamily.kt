@@ -2,8 +2,8 @@ package com.github.synnerz.devonian.hud.texthud
 
 import net.minecraft.client.gui.GuiGraphics
 
-class TextHudFamily(name: String, data: DataProvider) : TextHud(name, data) {
-    val children = mutableListOf<TextHud>()
+class TextHudFamily(name: String, data: DataProvider) : StylizedTextHud(name, data) {
+    val children = mutableListOf<StylizedTextHud>()
 
     fun createChildProvider() = DerivedProvider(this)
 
@@ -31,10 +31,18 @@ class TextHudFamily(name: String, data: DataProvider) : TextHud(name, data) {
             child.draw(ctx)
         }
     }
+
+    override fun update() {
+        throw IllegalStateException()
+    }
+
+    override fun renderText(ctx: GuiGraphics) {
+        throw IllegalStateException()
+    }
 }
 
 class DerivedProvider(
-    val parent: TextHud,
+    val parent: StylizedTextHud,
 ) : DataProvider {
     override var x: Double = 0.0
     override var y: Double = 0.0
@@ -43,11 +51,11 @@ class DerivedProvider(
         get() = parent.scale
         set(_) = throw UnsupportedOperationException()
 
-    override var anchor: TextHud.Anchor
-        get() = TextHud.Anchor.NW
+    override var anchor: StylizedTextHud.Anchor
+        get() = StylizedTextHud.Anchor.NW
         set(_) = throw UnsupportedOperationException()
 
-    override var align: TextHud.Align
+    override var align: StylizedTextHud.Align
         get() = parent.align
         set(_) = throw UnsupportedOperationException()
 
@@ -55,7 +63,7 @@ class DerivedProvider(
         get() = parent.shadow
         set(_) = throw UnsupportedOperationException()
 
-    override var backdrop: TextHud.Backdrop
+    override var backdrop: StylizedTextHud.Backdrop
         get() = parent.backdrop
         set(_) = throw UnsupportedOperationException()
 }

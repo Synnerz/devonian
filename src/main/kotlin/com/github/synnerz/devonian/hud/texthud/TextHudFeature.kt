@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.hud.texthud
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.NullableHudData
 import com.github.synnerz.devonian.hud.HudFeature
-import com.github.synnerz.devonian.hud.texthud.TextHud.*
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.Render2D
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
@@ -30,9 +30,9 @@ abstract class TextHudFeature(
     override var shadow = true
     override var backdrop = Backdrop.None
 
-    protected open fun createHud() = TextHud(configName, this)
+    protected open fun createHud(): StylizedTextHud = StylizedTextHud(configName, this)
 
-    protected val hud = createHud()
+    protected val hud by lazy { createHud() }
 
     override fun load() {
         val data = Config.getHud(legacyName)
