@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
 import com.github.synnerz.devonian.api.dungeon.*
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
@@ -266,6 +267,15 @@ object DungeonMap : HudFeature(
 
     private val mapRenderer = DungeonMapBaseRenderer()
 
+    private var dump = false
+
+    init {
+        DevonianCommand.command.subcommand("dumpmap") { _, _ ->
+            dump = true
+            return@subcommand 1
+        }
+    }
+
     override fun getBounds(): BoundingBox = BoundingBox(
         x, y,
         100.0 * scale, 100.0 * scale
@@ -273,6 +283,21 @@ object DungeonMap : HudFeature(
 
     fun redrawMap(rooms: List<DungeonRoom?>, doors: List<DungeonDoor?>) {
         if (Dungeons.floor == FloorType.None) return
+
+        if (dump) {
+            println("Rooms:")
+            rooms.forEach {
+                if (it == null) return@forEach
+                println("${System.identityHashCode(it)} ${it.name} ${it.explored} ${it.type.name} ${it.rotation} ${it.comps.joinToString(",") { it.toComponent().toString() }} ${it.doors.joinToString(",") { "${System.identityHashCode(it)} ${it.type.name} ${it.opened} ${it.comp.toComponent()}" }}")
+            }
+            println("Doors:")
+            doors.forEach {
+                if (it == null) return@forEach
+                println("${System.identityHashCode(it)} ${it.type.name} ${it.opened} ${it.comp.toComponent()} ${it.rooms.joinToString(",") { "${System.identityHashCode(it)} ${it.name} ${it.explored} ${it.comps.joinToString(",") { it.toComponent().toString() }}" }}")
+            }
+            dump = false
+        }
+
         val bounds = getBounds()
         val window = minecraft.window
         mapRenderer.update(
