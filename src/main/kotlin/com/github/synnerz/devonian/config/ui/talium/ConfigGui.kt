@@ -51,7 +51,6 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         background.onMouseScroll {
             if (!selectedCategory.canTrigger())
                 selectedCategory.hideColorPickers()
-            selectedCategory.onMouseScroll(it.delta)
         }
 
         selectedCategory.update()
@@ -88,8 +87,9 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
                 return@scheduleTask
             }
 
-            val page = idx / correct.CONFIGS_PER_PAGE
-            correct.currentPage = page
+            // FIXME
+            // val page = idx / correct.CONFIGS_PER_PAGE
+            // correct.currentPage = page
         }
     }
 

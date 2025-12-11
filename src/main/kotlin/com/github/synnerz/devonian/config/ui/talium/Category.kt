@@ -8,39 +8,13 @@ import com.github.synnerz.talium.effects.OutlineEffect
 import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
+import com.github.synnerz.talium.utils.Renderer
 
 class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase, idx: Int) {
-    val CONFIGS_PER_PAGE = 7
     val configs = Config.categories[categoryName]!!.toList()
     private val components = mutableListOf<UIRect>()
     private val colorComponents = mutableListOf<UIColorPicker>()
-    var currentPage = 0
-        set(value) {
-            field = value.coerceIn(0, components.size / CONFIGS_PER_PAGE)
-            onUpdate()
-        }
-    private val leftArrow = UIRect(1.0, 92.0, 10.0, 8.0, parent = rightPanel).apply {
-        setColor(ColorPalette.TERTIARY_COLOR)
-        addChild(UIText(0.0, 0.0, 100.0, 100.0, "<-", true).apply {
-            setColor(ColorPalette.TEXT_COLOR)
-        })
-        onMouseRelease {
-            if (!canTrigger()) return@onMouseRelease
-            if (it.button != 0) return@onMouseRelease
-            currentPage--
-        }
-    }
-    private val rightArrow = UIRect(88.0, 92.0, 10.0, 8.0, parent = rightPanel).apply {
-        setColor(ColorPalette.TERTIARY_COLOR)
-        addChild(UIText(0.0, 0.0, 100.0, 100.0, "->", true).apply {
-            setColor(ColorPalette.TEXT_COLOR)
-        })
-        onMouseRelease {
-            if (!canTrigger()) return@onMouseRelease
-            if (it.button != 0) return@onMouseRelease
-            currentPage++
-        }
-    }
+    private val scrollableRect = UIScrollable(0.0, 0.0, 100.0, 90.0, parent = rightPanel)
     private var categoryButton: UIRect
     private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, categoryName, true).apply {
         setColor(ColorPalette.TEXT_COLOR)
@@ -78,52 +52,16 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
                 comp.hideDropdown()
     }
 
-    fun onMouseScroll(delta: Int) {
-        if (delta == -1) {
-            currentPage++
-            return
-        }
-
-        currentPage--
-    }
-
     fun update() {
         create()
-        onUpdate()
-    }
-
-    private fun onUpdate() {
-        val currentMax = components.size / CONFIGS_PER_PAGE
-        when (currentPage) {
-            0 -> {
-                leftArrow.hide()
-                if (currentMax == 0 && configs.isEmpty()) rightArrow.hide()
-                else rightArrow.unhide()
-            }
-            currentMax -> {
-                rightArrow.hide()
-                leftArrow.unhide()
-            }
-            else -> {
-                leftArrow.unhide()
-                rightArrow.unhide()
-            }
-        }
-
-        for (idx in components.indices) {
-            val comp = components[idx]
-            val page = idx / CONFIGS_PER_PAGE
-            if (page == currentPage) comp.unhide()
-            else comp.hide()
-        }
     }
 
     @Suppress("unchecked_cast")
     private fun create() {
         for (i in components.size until configs.size) {
             val data = configs[i]
-            val y = 1 + (i % CONFIGS_PER_PAGE) * 13.0
-            components.add(createBase(y, rightPanel).apply {
+            val y = 1 + i * 17.0
+            components.add(createBase(y, scrollableRect).apply {
                 addChild(createTitle(data.displayName))
                 addChild(createDescription(data.description))
                 addChild(
@@ -137,28 +75,22 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
                         ConfigType.COLORPICKER -> createColorPicker(data as ConfigData.ColorPicker, this@apply)
                     }
                 )
-                hide()
             })
         }
     }
 
     fun hide() {
         categoryTitle.setColor(ColorPalette.TEXT_COLOR)
-        leftArrow.hide()
-        rightArrow.hide()
-        for (comp in components)
-            comp.hide()
+        scrollableRect.hide()
     }
 
     fun unhide() {
         categoryTitle.setColor(ColorPalette.LIGHT_TEXT_COLOR)
-        leftArrow.unhide()
-        rightArrow.unhide()
-        onUpdate()
+        scrollableRect.unhide()
     }
 
     private fun createBase(y: Double, parent: UIBase): UIRect =
-        UIRect(1.0, y, 98.0, 12.0, parent = parent).apply {
+        UIRect(1.0, y, 98.0, 15.0, parent = parent).apply {
             addEffects(OutlineEffect(1.0, ColorPalette.OUTLINE_COLOR))
         }
 
@@ -302,14 +234,12 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
                 fakeChild.setChildOf(rightPanel.parent!!.parent!!)
             fakeChild._height = 15.0
             fakeChild._width = 15.0
-            huePicker.parent = fakeChild
-            gradientPicker.parent = fakeChild
 
             colorComponents.add(this)
         }
 
         override fun onUpdate() = apply {
-            fakeChild._x = (x / (fakeChild.parent?.width ?: 1.0)) * 100
+            fakeChild._x = ((x / (fakeChild.parent?.width ?: 1.0)) * 100) - 5.0
             fakeChild._y = 5.0 + (y / (fakeChild.parent?.height ?: 1.0)) * 100
             fakeChild.setDirty()
         }
@@ -323,6 +253,19 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
             if (!canTrigger()) return
             hideColorPickers()
             super.unhideDropdown()
+        }
+
+        override fun createFakeChild(x: Double, y: Double, width: Double, height: Double, parent: UIBase?): UIRect {
+            return object : UIRect(x, y, width, height, parent = parent) {
+                override fun preDraw() {
+                    Renderer.stack().pushMatrix()
+                    Renderer.stack().translate(0f, -scrollableRect.yOffset.toFloat())
+                }
+
+                override fun postDraw() {
+                    Renderer.stack().popMatrix()
+                }
+            }.apply { hide() }
         }
     }.apply {
         setColor(ColorPalette.TERTIARY_COLOR)
