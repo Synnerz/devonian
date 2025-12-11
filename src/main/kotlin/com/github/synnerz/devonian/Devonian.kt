@@ -160,6 +160,7 @@ object Devonian : ClientModInitializer {
         HudManagerRenderer,
         DisableWorldLoadingScreen,
         HighlightDroppedItems,
+        DisableHungerBar,
     )
 
     override fun onInitializeClient() {

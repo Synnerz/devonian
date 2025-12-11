@@ -37,3 +37,4 @@ object DisableChatAutoScroll : Feature(
 object DisableSwim : Feature("disableSwim", cheeto = true)
 object CenteredCrosshair : Feature("centeredCrosshair")
 object DisableEnderPearlCooldown : Feature("disableEnderPearlCooldown")
+object DisableHungerBar : Feature("disableHungerBar")

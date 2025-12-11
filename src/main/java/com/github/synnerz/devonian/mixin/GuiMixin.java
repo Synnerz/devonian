@@ -139,4 +139,14 @@ public class GuiMixin {
             )
         );
     }
+
+    @Inject(
+        method = "renderFood",
+        at = @At("HEAD"),
+        cancellable = true
+    )
+    private void devonian$disableHungerBar(GuiGraphics guiGraphics, Player player, int i, int j, CallbackInfo ci) {
+        if (!DisableHungerBar.INSTANCE.isEnabled()) return;
+        ci.cancel();
+    }
 }
