@@ -1,11 +1,7 @@
 package com.github.synnerz.devonian
 
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.events.BlockInteractEvent
-import com.github.synnerz.devonian.api.events.EntityInteractEvent
-import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.TextConfig
@@ -188,12 +184,5 @@ object Devonian : ClientModInitializer {
         Alert.initialize()
         Dungeons.initialize()
         DevonianCommand.initialize()
-
-        EventBus.on<BlockInteractEvent> {
-            ChatUtils.sendMessage("block rc")
-        }
-        EventBus.on<EntityInteractEvent> {
-            ChatUtils.sendMessage("entity rc")
-        }
     }
 }
