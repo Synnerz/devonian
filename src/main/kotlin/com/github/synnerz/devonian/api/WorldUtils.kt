@@ -1,12 +1,14 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
+import kotlin.math.abs
 
 object WorldUtils {
     val world: ClientLevel? get() = Devonian.minecraft.level
@@ -14,7 +16,16 @@ object WorldUtils {
 
     fun isChunkLoaded(x: Double, z: Double): Boolean = isChunkLoaded(x.toInt(), z.toInt())
 
-    fun isChunkLoaded(x: Int, z: Int): Boolean = chunkManager?.hasChunk(x shr 4, z shr 4) ?: false
+    fun isChunkLoaded(x: Int, z: Int): Boolean {
+        val player = Devonian.minecraft.player as? LocalPlayerAccessor ?: return false
+        val cx = x shr 4
+        val cz = z shr 4
+        val pcx = player.lastXClient.toInt() shr 4
+        val pcz = player.lastZClient.toInt() shr 4
+        val b1 = chunkManager?.hasChunk(x shr 4, z shr 4) ?: false
+        val b2 = abs(cx - pcx) + abs(cz - pcz) <= 9
+        return b1 && b2
+    }
 
     fun fromBlockTypeOrNull(x: Double, y: Double, z: Double, blockType: Block): BlockState? =
         fromBlockTypeOrNull(x.toInt(), y.toInt(), z.toInt(), blockType)
