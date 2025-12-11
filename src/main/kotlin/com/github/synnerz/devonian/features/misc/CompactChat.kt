@@ -22,6 +22,7 @@ object CompactChat : Feature(
     private val chatHistory = hashMapOf<String, MessageHistory>()
     private val recentMessages = hashMapOf<String, Int>()
     private val textContentCache = IdentityHashMap<GuiMessage, String?>()
+    private val nonLineBreakMessage = "\\w".toRegex()
 
     data class MessageHistory(var count: Int = 0, var lastTime: Long = 0L)
 
@@ -56,7 +57,7 @@ object CompactChat : Feature(
 
             if (msg == incomingMsg) {
                 val count = recentMessages.merge(msg, 1, Int::plus) ?: 1
-                if (count == 1) {
+                if (count == 1 || nonLineBreakMessage.containsMatchIn(msg)) {
                     iter.remove()
                 } else {
                     // Immutable java.lang.UnsupportedOperationException
