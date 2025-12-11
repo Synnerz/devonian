@@ -123,6 +123,7 @@ object LegacyRegistry {
         "minecraft:brown_terracotta" to 159,
         "minecraft:magenta_stained_glass_pane" to 160,
         "minecraft:dark_oak_stairs" to 164,
+        "minecraft:slime_block" to 165,
         "minecraft:barrier" to 166,
         "minecraft:dark_prismarine" to 168,
         "minecraft:prismarine" to 168,
