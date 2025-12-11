@@ -163,6 +163,7 @@ object Devonian : ClientModInitializer {
         DisableHungerBar,
         FixRedVignette,
         HideCraftingText,
+        HideOffhandSlotBackground,
     )
 
     override fun onInitializeClient() {
