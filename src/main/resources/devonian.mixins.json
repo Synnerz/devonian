@@ -30,6 +30,7 @@
     "LocalPlayerMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
+    "MultiPlayerGameModeMixin",
     "ParticleEngineMixin",
     "PlayerRendererMixin",
     "PlayerTabOverlayMixin",
