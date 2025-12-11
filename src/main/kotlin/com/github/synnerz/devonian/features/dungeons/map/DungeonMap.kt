@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.map
 
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
@@ -12,7 +13,9 @@ import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.TexturedQuadRenderState
 import com.github.synnerz.devonian.utils.math.MathUtils
+import com.mojang.blaze3d.textures.GpuTextureView
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.PlayerFaceRenderer.*
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.resources.ResourceLocation
 import org.joml.Matrix3x2f
@@ -27,6 +30,12 @@ object DungeonMap : HudFeature(
     "Dungeon Map",
     "catacombs"
 ) {
+    private val SETTING_USE_PLAYER_HEADS = addSwitch(
+        "playerHeads",
+        false,
+        "",
+        "Render Player Heads",
+    )
     private val SETTING_RENDER_NAMES = addSwitch(
         "renderNames",
         true,
@@ -367,6 +376,43 @@ object DungeonMap : HudFeature(
                 compBounds.y, compBounds.y + compBounds.h
             ).toFloat()
 
+            var dxf = cos(-pos.r).toFloat() * SETTING_MARKER_SCALE.get().toFloat()
+            var dyf = sin(-pos.r).toFloat() * SETTING_MARKER_SCALE.get().toFloat()
+            var dxr = cos(-pos.r + PI / 2).toFloat() * SETTING_MARKER_SCALE.get().toFloat()
+            var dyr = sin(-pos.r + PI / 2).toFloat() * SETTING_MARKER_SCALE.get().toFloat()
+            val u0: Float
+            val v0: Float
+            val u1: Float
+            val v1: Float
+            val maxDy: Float
+            val textureView: GpuTextureView
+            val info = player.profileInfo
+            if (SETTING_USE_PLAYER_HEADS.get() && info != null) {
+                dxf *= 4f
+                dyf *= 4f
+                dxr *= 4f
+                dyr *= 4f
+                u0 = SKIN_HEAD_U.toFloat() / SKIN_TEX_WIDTH
+                v0 = SKIN_HEAD_V.toFloat() / SKIN_TEX_HEIGHT
+                u1 = (SKIN_HEAD_U + SKIN_HEAD_WIDTH).toFloat() / SKIN_TEX_WIDTH
+                v1 = (SKIN_HEAD_V + SKIN_HEAD_HEIGHT).toFloat() / SKIN_TEX_HEIGHT
+                maxDy = 4f
+                val skin = info.skin
+                val rl = skin.body.texturePath()
+                textureView = Devonian.minecraft.textureManager.getTexture(rl).textureView
+            } else {
+                dxf *= 2.8f
+                dyf *= 2.8f
+                dxr *= 2f
+                dyr *= 2f
+                u0 = 0f
+                v0 = 0f
+                u1 = 1f
+                v1 = 1f
+                maxDy = 2.8f
+                textureView = (if (i == 0) markerSelfUploader else markerOtherUploader)?.textureView ?: return@forEach
+            }
+
             if (renderNames) {
                 val nameFormat =
                     if (SETTING_COLOR_NAME_BY_CLASS.get()) player.role.colorCode
@@ -380,19 +426,13 @@ object DungeonMap : HudFeature(
 
                 val hud = textHuds[i]
                 hud.x = px.toDouble()
-                hud.y = py - 2.8f * SETTING_MARKER_SCALE.get().toFloat() - hud.getHeight() * 0.5
+                hud.y = py - maxDy * SETTING_MARKER_SCALE.get().toFloat() - hud.getHeight() * 0.5
                 hud.shadow = SETTING_TEXT_SHADOW.get()
                 hud.setLine("$nameFormat$text")
                 hud.scale = scale * 0.3f * SETTING_NAME_SCALE.get().toFloat()
                 hud.draw(ctx)
             }
 
-            val dxf = cos(-pos.r).toFloat() * 2.8f * SETTING_MARKER_SCALE.get().toFloat()
-            val dyf = sin(-pos.r).toFloat() * 2.8f * SETTING_MARKER_SCALE.get().toFloat()
-            val dxr = cos(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
-            val dyr = sin(-pos.r + PI / 2).toFloat() * 2f * SETTING_MARKER_SCALE.get().toFloat()
-
-            val textureView = (if (i == 0) markerSelfUploader else markerOtherUploader)?.textureView ?: return@forEach
             ctx.guiRenderState.submitGuiElement(
                 TexturedQuadRenderState(
                     BufferedImageRenderer.pipeline,
@@ -402,10 +442,10 @@ object DungeonMap : HudFeature(
                     px - dxf - dxr, py - dyf - dyr,
                     px + dxf + dxr, py + dyf + dyr,
                     px - dxf + dxr, py - dyf + dyr,
-                    0f, 0f,
-                    0f, 1f,
-                    1f, 0f,
-                    1f, 1f,
+                    u0, v0,
+                    u0, v1,
+                    u1, v0,
+                    u1, v1,
                     -1,
                     ctx.scissorStack.peek()
                 )

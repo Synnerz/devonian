@@ -208,6 +208,7 @@ object Dungeons {
                 playerClasses[name] = DungeonClass.Unknown
                 DungeonPlayer(
                     name,
+                    Devonian.minecraft.connection?.getPlayerInfo(name),
                     DungeonClass.Unknown,
                     0,
                     false

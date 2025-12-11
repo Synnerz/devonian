@@ -1,11 +1,13 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.utils.math.MathUtils
+import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.world.entity.player.Player
 import kotlin.math.PI
 
 data class DungeonPlayer(
     val name: String,
+    val profileInfo: PlayerInfo?,
     var role: DungeonClass,
     var classLevel: Int,
     var isDead: Boolean,
