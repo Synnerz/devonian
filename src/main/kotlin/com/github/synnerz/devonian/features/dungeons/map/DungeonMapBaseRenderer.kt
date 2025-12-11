@@ -428,7 +428,7 @@ class DungeonMapBaseRenderer :
                             fontSize,
                         ),
                         lines,
-                        w, w,
+                        visualWidth, visualWidth,
                         lines.maxOfOrNull { it.descent } ?: 0f,
                         lines.maxOfOrNull { it.ascent } ?: 0f,
                     ))
