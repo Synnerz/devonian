@@ -9,7 +9,10 @@ import net.minecraft.client.gui.screens.Overlay
 object DisableWorldLoadingScreen : Feature("disableWorldLoadingScreen") {
     override fun initialize() {
         on<GuiOpenEvent> { event ->
-            if (event.screen !is LevelLoadingScreen) return@on
+            if (event.screen !is LevelLoadingScreen) {
+                if (minecraft.overlay is PausingOverlay) minecraft.overlay = null
+                return@on
+            }
             event.cancel()
             minecraft.setScreen(null)
             minecraft.overlay = PausingOverlay
