@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.api.bufimgrenderer.TexturedQuadRenderState;
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent;
 import com.github.synnerz.devonian.features.misc.*;
 import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsAccessor;
+import com.github.synnerz.devonian.utils.TexturedQuadRenderState;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.pipeline.RenderPipeline;

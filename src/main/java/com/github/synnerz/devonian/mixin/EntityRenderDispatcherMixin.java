@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.api.events.EventBus;
 import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent;
 import com.github.synnerz.devonian.api.events.PreRenderEntityEvent;
 import com.mojang.blaze3d.vertex.PoseStack;
