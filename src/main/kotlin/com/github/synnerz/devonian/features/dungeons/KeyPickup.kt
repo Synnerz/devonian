@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EntityEquipmentEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
@@ -124,7 +125,8 @@ object KeyPickup : Feature(
             if (id != witherKeyId && id != bloodKeyId) return@on
             idQ.add(Pair(10, event.entityId))
         }
-        on<RenderWorldEvent> {
+
+        on<TickEvent> {
             val w = minecraft.level ?: return@on
 
             var len = idQ.size
@@ -136,7 +138,8 @@ object KeyPickup : Feature(
                     if (p.first > 0) idQ.offer(Pair(p.first - 1, p.second))
                 } else keys.add(ent)
             }
-
+        }
+        on<RenderWorldEvent> {
             keys.removeIf { ent ->
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 

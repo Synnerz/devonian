@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
@@ -61,14 +62,13 @@ object EtherwarpOverlay : Feature(
 
     private val validWeapons = mutableListOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
     var failReason = ""
+    private var dist = 0
 
     override fun initialize() {
-        on<RenderWorldEvent> { event ->
-            val player = minecraft.player
-            if (minecraft.level == null || player == null) return@on
-            val world = minecraft.level!!
+        on<TickEvent> {
+            dist = 0
 
-            failReason = ""
+            val player = minecraft.player ?: return@on
 
             val heldItem = player.getItemInHand(InteractionHand.MAIN_HAND)
             if (
@@ -86,6 +86,20 @@ object EtherwarpOverlay : Feature(
             val extraAttributes = ItemUtils.extraAttributes(heldItem) ?: return@on
             if (requireSneak && !extraAttributes.contains("ethermerge")) return@on
 
+            val tunedTransmission = extraAttributes.get("tuned_transmission")
+            val tunedInt = tunedTransmission?.asInt()
+            val tuners = if (tunedInt == null || tunedInt.isEmpty) 0 else tunedInt.get()
+
+            dist = 57 + tuners
+        }
+        on<RenderWorldEvent> { event ->
+            failReason = ""
+
+            if (dist == 0) return@on
+
+            val player = minecraft.player ?: return@on
+            val world = minecraft.level ?: return@on
+
             if (!SETTING_ETHER_USING_CANCEL_INTERACT.get()) {
                 val target = minecraft.hitResult
                 if (target != null && target.type == HitResult.Type.BLOCK) {
@@ -93,11 +107,6 @@ object EtherwarpOverlay : Feature(
                     if (BlockTypes.Interactable.contains(world.getBlockState(blockTarget.blockPos).block)) return@on
                 }
             }
-
-            val tunedTransmission = extraAttributes.get("tuned_transmission")
-            val tunedInt = tunedTransmission?.asInt()
-            val tuners = if (tunedInt == null || tunedInt.isEmpty) 0 else tunedInt.get()
-            val dist = 57 + tuners
 
             val px: Double
             val py: Double
