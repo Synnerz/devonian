@@ -125,6 +125,8 @@ object LegacyRegistry {
         "minecraft:dark_oak_stairs" to 164,
         "minecraft:barrier" to 166,
         "minecraft:dark_prismarine" to 168,
+        "minecraft:prismarine" to 168,
+        "minecraft:prismarine_bricks" to 168,
         "minecraft:sea_lantern" to 169,
         "minecraft:green_carpet" to 171,
         "minecraft:gray_carpet" to 171,
