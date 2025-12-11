@@ -23,6 +23,7 @@
     "GuiMixin",
     "InventoryMenuMixin",
     "InventoryScreenMixin",
+    "ItemClusterRenderStateMixin",
     "KeyboardHandlerMixin",
     "LightningBoltRendererMixin",
     "LivingEntityMixin",

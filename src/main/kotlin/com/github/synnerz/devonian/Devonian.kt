@@ -159,6 +159,7 @@ object Devonian : ClientModInitializer {
         DisableEnderPearlCooldown,
         HudManagerRenderer,
         DisableWorldLoadingScreen,
+        HighlightDroppedItems,
     )
 
     override fun onInitializeClient() {
