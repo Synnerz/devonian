@@ -14,25 +14,29 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
+    @Shadow
+    @Nullable
+    public Screen screen;
+
     @Inject(
             method = "setScreen",
             at = @At("HEAD"),
             cancellable = true
     )
     private void devonian$setScreen(Screen screen, CallbackInfo ci) {
-        if (screen == null) {
-            EventBus.INSTANCE.post(new GuiCloseEvent(ci));
-            return;
-        }
-
-        EventBus.INSTANCE.post(new GuiOpenEvent(screen, ci));
+        if (
+            this.screen != null && new GuiCloseEvent(this.screen).post() ||
+            screen != null && new GuiOpenEvent(screen).post()
+        ) ci.cancel();
     }
 
     @WrapOperation(
@@ -64,7 +68,7 @@ public class MinecraftMixin {
     }
 
     @Inject(
-            method = "runTick",
+            method = "run Tick",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/DeltaTracker$Timer;advanceTime(JZ)I"

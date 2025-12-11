@@ -30,7 +30,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 @Target(AnnotationTarget.CLASS)
 annotation class Threaded
@@ -107,13 +106,12 @@ class ExtractRenderEntityEvent(
 ) : CancellableEvent()
 
 class GuiOpenEvent(
-    val screen: Screen,
-    val ci: CallbackInfo
-) : Event()
+    val screen: Screen
+) : CancellableEvent()
 
 class GuiCloseEvent(
-    val ci: CallbackInfo
-) : Event()
+    val screen: Screen
+) : CancellableEvent()
 
 class ParticleSpawnEvent(
     val particle: Particle
