@@ -47,6 +47,7 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "AvatarMixin",
     "BlockEntityRenderDispatcherMixin",
     "EntityMixin",
     "ItemCooldownsMixin",

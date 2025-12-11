@@ -26,19 +26,6 @@ public class EntityMixin {
         cir.setReturnValue(ChangeCrouchHeight.INSTANCE.getEyeHeight());
     }
 
-    @Inject(
-        method = "getEyeHeight(Lnet/minecraft/world/entity/Pose;)F",
-        at = @At("HEAD"),
-        cancellable = true
-    )
-    private void devonian$sneakHeight(Pose pose, CallbackInfoReturnable<Float> cir) {
-        if (!ChangeCrouchHeight.INSTANCE.isEnabled()) return;
-        if (!ChangeCrouchHeight.INSTANCE.changeNonVisual()) return;
-        Entity that = (Entity) (Object) this;
-        if (!(that instanceof LocalPlayer)) return;
-        cir.setReturnValue(ChangeCrouchHeight.INSTANCE.getEyeHeight(pose));
-    }
-
     @ModifyVariable(
         method = "setSwimming",
         at = @At("HEAD"),
