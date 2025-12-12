@@ -283,7 +283,8 @@ object DungeonMap : HudFeature(
     )
 
     fun redrawMap(rooms: List<DungeonRoom?>, doors: List<DungeonDoor?>) {
-        if (Dungeons.floor == FloorType.None) return
+        var floor = Dungeons.floor
+        if (floor == FloorType.None) floor = FloorType.M7
 
         if (dump) {
             println("Rooms:")
@@ -326,7 +327,7 @@ object DungeonMap : HudFeature(
                         DungeonMapColors.DoorEntrance to SETTING_DOOR_ENTRANCE_COLOR.getColor()
                     ),
                     SETTING_ROOM_SIZE.get(), SETTING_DOOR_SIZE.get(),
-                    Dungeons.floor.roomsW, Dungeons.floor.roomsH,
+                    floor.roomsW, floor.roomsH,
                     SETTING_MAP_PADDING.get(),
                     SETTING_RENDER_CHECKMARK.get(), SETTING_RENDER_PUZZLE_ICON.get(),
                     SETTING_RENDER_ROOM_NAMES.get(),
@@ -361,19 +362,20 @@ object DungeonMap : HudFeature(
 
     override fun drawImpl(ctx: GuiGraphics) {
         if (Dungeons.inBoss.value) return
-        if (Dungeons.floor == FloorType.None) return
+        var floor = Dungeons.floor
+        if (floor == FloorType.None) floor = FloorType.M7
         mapRenderer.draw(ctx, x.toFloat(), y.toFloat(), (1.0 / minecraft.window.guiScale).toFloat())
 
         val bounds = getBounds()
 
-        val totalMaxDim = Dungeons.floor.maxDim + SETTING_MAP_PADDING.get() * 2
-        val boundsOX = (Dungeons.floor.maxDim - Dungeons.floor.roomsW) / 2.0 + SETTING_MAP_PADDING.get()
-        val boundsOY = (Dungeons.floor.maxDim - Dungeons.floor.roomsH) / 2.0 + SETTING_MAP_PADDING.get()
+        val totalMaxDim = floor.maxDim + SETTING_MAP_PADDING.get() * 2
+        val boundsOX = (floor.maxDim - floor.roomsW) / 2.0 + SETTING_MAP_PADDING.get()
+        val boundsOY = (floor.maxDim - floor.roomsH) / 2.0 + SETTING_MAP_PADDING.get()
         val compBounds = BoundingBox(
             bounds.x + boundsOX / totalMaxDim * bounds.w,
             bounds.y + boundsOY / totalMaxDim * bounds.h,
-            Dungeons.floor.maxDim / totalMaxDim * bounds.w,
-            Dungeons.floor.maxDim / totalMaxDim * bounds.h
+            floor.maxDim / totalMaxDim * bounds.w,
+            floor.maxDim / totalMaxDim * bounds.h
         )
 
         val holdingLeap = minecraft.player!!.mainHandItem.let {
@@ -394,12 +396,12 @@ object DungeonMap : HudFeature(
 
             val px = MathUtils.rescale(
                 pos.x,
-                0.0, Dungeons.floor.maxDim * 2.0,
+                0.0, floor.maxDim * 2.0,
                 compBounds.x, compBounds.x + compBounds.w
             ).toFloat()
             val py = MathUtils.rescale(
                 pos.z,
-                0.0, Dungeons.floor.maxDim * 2.0,
+                0.0, floor.maxDim * 2.0,
                 compBounds.y, compBounds.y + compBounds.h
             ).toFloat()
 
