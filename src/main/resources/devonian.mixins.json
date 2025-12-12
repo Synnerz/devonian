@@ -44,6 +44,7 @@
     "accessor.GuiAccessor",
     "accessor.GuiGraphicsAccessor",
     "accessor.HeartTypeAccessor",
+    "accessor.LevelLoadingScreenAccessor",
     "accessor.LocalPlayerAccessor"
   ],
   "injectors": {
