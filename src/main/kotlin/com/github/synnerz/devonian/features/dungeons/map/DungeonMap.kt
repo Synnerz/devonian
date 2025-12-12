@@ -389,6 +389,7 @@ object DungeonMap : HudFeature(
         var idx = 0
         Dungeons.players.forEach { (_, player) ->
             val i = idx++
+            if (player.isDead) return@forEach
             val pos = player.getLerpedPosition() ?: return@forEach
 
             val px = MathUtils.rescale(
