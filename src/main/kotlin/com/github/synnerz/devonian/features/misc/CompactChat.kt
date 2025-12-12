@@ -18,7 +18,13 @@ object CompactChat : Feature(
     "compactChat",
     "Stacks the messages if they are repeated and adds the amount of times it was repeated"
 ) {
-    private val STYLE = Style.EMPTY.withColor(ChatFormatting.GRAY)
+    private val STYLE = Style.EMPTY
+        .withColor(ChatFormatting.GRAY)
+        .withBold(false)
+        .withItalic(false)
+        .withObfuscated(false)
+        .withStrikethrough(false)
+        .withUnderlined(false)
     private val chatHistory = hashMapOf<String, MessageHistory>()
     private val recentMessages = hashMapOf<String, Int>()
     private val textContentCache = IdentityHashMap<GuiMessage, String?>()
