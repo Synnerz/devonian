@@ -8,7 +8,6 @@ import com.github.synnerz.talium.effects.OutlineEffect
 import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
-import com.github.synnerz.talium.utils.Renderer
 
 class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase, idx: Int) {
     val configs = Config.categories[categoryName]!!.toList()
@@ -236,18 +235,7 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
         parent: UIRect? = null
     ): UIColorPicker = object : UIColorPicker(80.0, 25.0, 15.0, 50.0, configData.get(), parent) {
         init {
-            if (rightPanel.parent?.parent != null)
-                fakeChild.setChildOf(rightPanel.parent!!.parent!!)
-            fakeChild._height = 15.0
-            fakeChild._width = 15.0
-
             colorComponents.add(this)
-        }
-
-        override fun onUpdate() = apply {
-            fakeChild._x = ((x / (fakeChild.parent?.width ?: 1.0)) * 100) - 5.0
-            fakeChild._y = 5.0 + (y / (fakeChild.parent?.height ?: 1.0)) * 100
-            fakeChild.setDirty()
         }
 
         override fun setValue(hue: Double) {
@@ -259,19 +247,6 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
             if (!canTrigger()) return
             hideColorPickers()
             super.unhideDropdown()
-        }
-
-        override fun createFakeChild(x: Double, y: Double, width: Double, height: Double, parent: UIBase?): UIRect {
-            return object : UIRect(x, y, width, height, parent = parent) {
-                override fun preDraw() {
-                    Renderer.stack().pushMatrix()
-                    Renderer.stack().translate(0f, -scrollableRect.yOffset.toFloat())
-                }
-
-                override fun postDraw() {
-                    Renderer.stack().popMatrix()
-                }
-            }.apply { hide() }
         }
     }.apply {
         setColor(ColorPalette.TERTIARY_COLOR)
