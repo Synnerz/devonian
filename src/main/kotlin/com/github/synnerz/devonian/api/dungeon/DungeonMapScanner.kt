@@ -165,7 +165,7 @@ object DungeonMapScanner {
 
             val room: DungeonRoom
             if (room_ == null) {
-                val comp = ComponentPosition(x, z)
+                val comp = ComponentPosition(x * 2, z * 2)
                 room = DungeonRoom(mutableListOf(comp.withWorld()), 0)
                 DungeonScanner.addRoom(comp, room)
             } else room = room_
