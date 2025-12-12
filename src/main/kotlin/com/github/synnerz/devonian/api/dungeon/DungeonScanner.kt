@@ -51,7 +51,8 @@ object DungeonScanner {
     var rooms = MutableList<DungeonRoom?>(36) { null }
     var doors = MutableList<DungeonDoor?>(60) { null }
     var availablePos = findAvailablePos()
-    private var worldChangeCooldown = 0
+    private var worldChangeCooldown = 5
+    private var foundEntrance = 5
 
     private val secretRegex = "\\b(\\d+)/(\\d+) Secrets".toRegex()
 
@@ -261,6 +262,9 @@ object DungeonScanner {
 
     fun mergeRooms(room1: DungeonRoom, room2: DungeonRoom) {
         if (room1 === room2) return
+
+        if (room1.type == RoomTypes.ENTRANCE || room2.type == RoomTypes.ENTRANCE) return
+
         for (comp in room2.comps) {
             val c = comp.toComponent()
             room1.addComponent(c, false)
@@ -310,26 +314,26 @@ object DungeonScanner {
 
     fun reset() {
         worldChangeCooldown = 5
+        foundEntrance = 5
         rooms.fill(null)
         doors.fill(null)
         lastIdx = null
         currentRoom = null
-        availablePos = findAvailablePos()
+        availablePos = findAvailablePos().asReversed()
     }
 
     fun scan() {
         if (availablePos.isEmpty()) return
+        foundEntrance--
 
         val startLen = availablePos.size
-        availablePos.reversed().forEachIndexed { idx, pos ->
+        availablePos.removeIf { pos ->
             val (wx, wz, cx, cz) = pos
             val comp = pos.toComponent()
-            if (!WorldUtils.isChunkLoaded(wx, wz)) return@forEachIndexed
-
-            availablePos.remove(pos)
+            if (!WorldUtils.isChunkLoaded(wx, wz)) return@removeIf false
 
             val roofHeight = getHighestY(wx, wz)
-            if (roofHeight < 0) return@forEachIndexed
+            if (roofHeight < 0) return@removeIf true
 
             // Door scan
             if (comp.isValidDoor()) {
@@ -339,16 +343,17 @@ object DungeonScanner {
 
                     addDoor(door)
                 }
-                return@forEachIndexed
+                return@removeIf true
             }
-            if (roofHeight <= 0) return@forEachIndexed
+            if (roofHeight <= 0) return@removeIf true
 
             var room = DungeonRoom(mutableListOf(pos), roofHeight).scan()
+            addRoom(comp, room)
             if (room.type == RoomTypes.ENTRANCE) {
                 room.explored = true
                 room.checkmark = CheckmarkTypes.NONE
-            }
-            addRoom(comp, room)
+                foundEntrance = 0
+            } else if (foundEntrance > 0) return@removeIf false
 
             comp.getNeighbors().forEach { (posRoom, posDoor) ->
                 val worldPos = posDoor.withWorld()
@@ -389,6 +394,7 @@ object DungeonScanner {
                 mergeRooms(nroom, room)
                 room = nroom
             }
+            return@removeIf true
         }
 
         if (availablePos.size != startLen) DungeonMap.redrawMap(rooms.toList(), doors.toList())
