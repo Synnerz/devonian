@@ -143,6 +143,7 @@ object DungeonMapScanner {
 
     private fun updateRooms(colors: ByteArray) {
         if (colors.size < COLOR_SIZE) return
+        if (colors[0] != MapColors.EMPTY.color) return
 
         val visited = mutableSetOf<DungeonRoom>()
         DungeonScanner.rooms.forEachIndexed { idx, room_ ->
