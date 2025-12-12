@@ -3,8 +3,9 @@ package com.github.synnerz.devonian.features
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
-import com.github.synnerz.devonian.config.ui.ConfigData
+import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.Location
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
@@ -15,7 +16,7 @@ import net.minecraft.network.chat.Style
 open class Feature @JvmOverloads constructor(
     val configName: String,
     description: String = "",
-    val category: String = "Misc",
+    val category: Categories = Categories.MISC,
     area: String? = null,
     subarea: String? = null,
     // To avoid conflict, maybe change the position later ?
@@ -29,8 +30,6 @@ open class Feature @JvmOverloads constructor(
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
     private var displayed = false
     val children = mutableListOf<Toggleable>()
-    val area = area?.lowercase()
-    val subarea = subarea?.lowercase()
     val configSwitch = addFeatureSwitch(description, displayName, cheeto)
         .also {
             it.onChange {
@@ -43,10 +42,10 @@ open class Feature @JvmOverloads constructor(
 
         setEnabled((
             if (area == null) BasicState(true)
-            else Location.stateInArea(area)
+            else Location.stateInArea(area.lowercase())
         ).zip(
             if (subarea == null) BasicState(true)
-            else Location.stateInSubarea(subarea)
+            else Location.stateInSubarea(subarea.lowercase())
         ) { a, b -> a && b })
     }
 
@@ -84,6 +83,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         cheeto: Boolean = false,
+        isHidden: Boolean = false,
     ): ConfigData.FeatureSwitch {
         return ConfigData.FeatureSwitch(
             configName,
@@ -91,9 +91,10 @@ open class Feature @JvmOverloads constructor(
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
             subcategory,
+            isHidden
         ).also {
             if (isInternal) return@also
-            Config.registerCategory(it, category)
+            Config.registerCategory(it, category, subcategory)
             Config.features.add(it)
         }
     }
@@ -105,18 +106,18 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         cheeto: Boolean = false,
-        isHidden: Boolean = false,
         subcategory: String = this.subcategory,
+        isHidden: Boolean = false,
     ): ConfigData.Switch {
         return ConfigData.Switch(
             "${this.configName}$$configName",
             value,
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
-            isHidden,
             subcategory,
+            isHidden,
         ).also {
-            Config.registerCategory(it, category)
+            Config.registerCategory(it, category, subcategory)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -129,6 +130,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
+        isHidden: Boolean = false,
     ): ConfigData.Slider<Double> {
         return ConfigData.Slider(
             "${this.configName}$$configName",
@@ -137,8 +139,9 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            isHidden,
         ).also {
-            Config.registerCategory(it, category)
+            Config.registerCategory(it, category, subcategory)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -151,6 +154,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
+        isHidden: Boolean = false,
     ): ConfigData.DecimalSlider<Double> {
         return ConfigData.DecimalSlider(
             "${this.configName}$$configName",
@@ -159,8 +163,9 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            isHidden,
         ).also {
-            Config.registerCategory(it, category)
+            Config.registerCategory(it, category, subcategory)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -172,6 +177,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
+        isHidden: Boolean = false,
     ): ConfigData.Button {
         return ConfigData.Button(
             onClick,
@@ -179,6 +185,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            isHidden,
         )
     }
 
@@ -189,6 +196,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
+        isHidden: Boolean = false,
     ): ConfigData.TextInput {
         return ConfigData.TextInput(
             "${this.configName}$$configName",
@@ -196,8 +204,9 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            isHidden,
         ).also {
-            Config.registerCategory(it, category)
+            Config.registerCategory(it, category, subcategory)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -209,6 +218,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
+        isHidden: Boolean = false,
     ): ConfigData.Selection {
         return ConfigData.Selection(
             "${this.configName}$$configName",
@@ -217,8 +227,9 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            isHidden,
         ).also {
-            Config.registerCategory(it, category)
+            Config.registerCategory(it, category, subcategory)
             configSwitch.subconfigs.add(it)
         }
     }
@@ -229,6 +240,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
+        isHidden: Boolean = false,
     ): ConfigData.ColorPicker {
         return ConfigData.ColorPicker(
             "${this.configName}$$configName",
@@ -236,8 +248,9 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            isHidden,
         ).also {
-            Config.registerCategory(it, category)
+            Config.registerCategory(it, category, subcategory)
             configSwitch.subconfigs.add(it)
         }
     }

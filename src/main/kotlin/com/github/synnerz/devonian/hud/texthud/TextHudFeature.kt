@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.hud.texthud
 
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.NullableHudData
 import com.github.synnerz.devonian.hud.HudFeature
@@ -14,14 +15,26 @@ import java.awt.Color
 abstract class TextHudFeature(
     configName: String,
     description: String = "",
-    category: String = "Misc",
+    category: Categories = Categories.MISC,
     area: String? = null,
     subarea: String? = null,
     hudConfigName: String = configName[0].uppercase() + configName.substring(1),
     displayName: String = configName.camelCaseToSentence(),
     cheeto: Boolean = false,
     isInternal: Boolean = false,
-) : HudFeature(configName, description, category, area, subarea, hudConfigName, displayName, cheeto, isInternal), DataProvider, ITextHud {
+    subcategory: String = "General",
+) : HudFeature(
+    configName,
+    description,
+    category,
+    area,
+    subarea,
+    hudConfigName,
+    displayName,
+    cheeto,
+    isInternal,
+    subcategory
+), DataProvider, ITextHud {
     abstract fun getEditText(): List<String>
 
     protected var isEditing = false

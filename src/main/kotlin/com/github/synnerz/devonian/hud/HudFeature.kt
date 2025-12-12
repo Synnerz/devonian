@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.hud
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.NullableHudData
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
@@ -21,14 +22,15 @@ import kotlin.math.withSign
 abstract class HudFeature(
     configName: String,
     description: String,
-    category: String,
+    category: Categories = Categories.MISC,
     area: String? = null,
     subarea: String? = null,
     protected val legacyName: String = configName[0].uppercase() + configName.substring(1),
     displayName: String = configName.camelCaseToSentence(),
     cheeto: Boolean = false,
     isInternal: Boolean = false,
-) : Feature(configName, description, category, area, subarea, displayName, cheeto, isInternal) {
+    subcategory: String = "General",
+) : Feature(configName, description, category, area, subarea, displayName, cheeto, isInternal, subcategory) {
     var x = 10.0
     var y = 10.0
     var scale = 1f

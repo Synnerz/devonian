@@ -2,9 +2,10 @@ package com.github.synnerz.devonian.config
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.config.json.PersistentJsonData
-import com.github.synnerz.devonian.config.ui.ConfigData
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.DataProvider
 import java.io.File
+import java.util.*
 
 val configFile = File(
     Devonian.minecraft.gameDirectory,
@@ -51,20 +52,14 @@ object Config : PersistentData by jsonLoader {
         value.backdrop?.let { obj.set("backdrop", it) }
     }
 
-    val categories = listOf(
-        "Dungeons",
-        "Dungeon Map",
-        "Garden",
-        "Slayers",
-        "End",
-        "Diana",
-        "Misc",
-    ).associateWith { mutableListOf<ConfigData<*>>() }
-    val categoryFromConfig = mutableMapOf<ConfigData<*>, String>()
+    val categories = Categories.entries.associateWithTo(EnumMap(Categories::class.java)) {
+        it.subcategories.associateWith { mutableListOf<ConfigData<*>>() }
+    }
+    val categoryFromConfig = mutableMapOf<ConfigData<*>, Pair<Categories, String>>()
 
-    fun registerCategory(config: ConfigData<*>, category: String) {
-        categories[category]!!.add(config)
-        categoryFromConfig[config] = category
+    fun registerCategory(config: ConfigData<*>, category: Categories, subcategory: String) {
+        categories[category]!![subcategory]!!.add(config)
+        categoryFromConfig[config] = Pair(category, subcategory)
     }
 
     val features = mutableListOf<ConfigData.FeatureSwitch>()
