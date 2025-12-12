@@ -1,7 +1,12 @@
-package com.github.synnerz.devonian.features.dungeons
+package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
-import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.TickEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
 import net.minecraft.world.entity.Entity
@@ -11,8 +16,9 @@ import java.awt.Color
 object LividSolver : Feature(
     "lividSolver",
     "Highlights the correct livid in F5/M5",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val SETTING_BOX_COLOR = addColorPicker(
         "boxColor",
@@ -80,7 +86,7 @@ object LividSolver : Feature(
             matrixStack.pushPose()
             matrixStack.translate(cam.x, cam.y, cam.z)
 
-            Context.Immediate?.renderBox(
+            Context.Companion.Immediate?.renderBox(
                 entity.x - halfWidth, entity.y, entity.z - halfWidth,
                 width, entity.bbHeight.toDouble(),
                 SETTING_BOX_COLOR.getColor(), translate = false
