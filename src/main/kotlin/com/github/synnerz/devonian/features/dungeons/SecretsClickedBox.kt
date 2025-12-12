@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.BlockPos
 import java.awt.Color
@@ -13,8 +14,9 @@ import java.awt.Color
 object SecretsClickedBox : Feature(
     "secretsClickedBox",
     "Highlights the secrets you have clicked surrounding them with a box, if a chest secret for example is locked the color will change to red.",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "World",
 ) {
     private val lockedChestRegex = "^That chest is locked!$".toRegex()
     private val SETTING_BLOCK_COLOR = addColorPicker(

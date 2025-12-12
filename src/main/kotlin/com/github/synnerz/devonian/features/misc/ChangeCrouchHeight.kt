@@ -6,7 +6,11 @@ import com.github.synnerz.devonian.mixin.accessor.EntityAccessor
 import net.minecraft.client.Camera
 import net.minecraft.world.entity.Pose
 
-object ChangeCrouchHeight : Feature("changeCrouchHeight", "All changes are visual only") {
+object ChangeCrouchHeight : Feature(
+    "changeCrouchHeight",
+    "All changes are visual only",
+    subcategory = "Tweaks",
+) {
     private val SETTING_INSTANT_CROUCH = addSwitch(
         "instantCrouch",
         true,

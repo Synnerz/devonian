@@ -3,13 +3,15 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object ScoreDisplay : TextHudFeature(
     "dungeonScoreDisplay",
     "Displays score information.",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     private val SETTING_ILLEGALMAP_FORMAT = addSwitch(
         "illegapStyle",

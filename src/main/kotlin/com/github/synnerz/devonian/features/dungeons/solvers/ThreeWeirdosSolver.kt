@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
@@ -15,8 +16,9 @@ import java.util.concurrent.ConcurrentHashMap
 object ThreeWeirdosSolver : Feature(
     "threeWeirdosSolver",
     "Highlights the correct chest in the three weirdos puzzle room as well as changing the color of the text in chat",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val npcRegex = "^\\[NPC] (\\w+): (.*)".toRegex()
     private val completedRegex = "^PUZZLE SOLVED! \\w+ wasn't fooled by \\w+! Good job!$".toRegex()

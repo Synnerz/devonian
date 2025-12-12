@@ -6,13 +6,15 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ScoreboardEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimerSplit
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object BossSplits : TextHudFeature(
     "bossSplits",
     "Displays your current dungeon's boss splits, how long each section took to complete.",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     private val SETTING_FORMAT_TIME_HUMAN = addSwitch(
         "formatTimeInHuman",

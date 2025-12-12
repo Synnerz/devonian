@@ -3,12 +3,13 @@ package com.github.synnerz.devonian.features.garden
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object GardenDisplay : TextHudFeature(
     "gardenDisplay",
     "Displays all your Garden's current stats from tab. (for example current composter Fuel)",
-    "Garden",
+    Categories.GARDEN,
     "garden"
 ) {
     private val nextVisitorRegex = "^ Next Visitor: ([\\w !]+)$".toRegex()

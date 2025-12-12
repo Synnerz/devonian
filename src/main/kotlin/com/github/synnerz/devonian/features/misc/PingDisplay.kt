@@ -6,10 +6,7 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
-object PingDisplay : TextHudFeature(
-    "pingDisplay",
-    ""
-) {
+object PingDisplay : TextHudFeature("pingDisplay") {
     private val SETTING_PING_TYPE = addSelection(
         "pingType",
         0,

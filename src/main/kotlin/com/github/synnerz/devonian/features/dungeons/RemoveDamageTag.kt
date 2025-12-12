@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.NameChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
@@ -9,8 +10,9 @@ import net.minecraft.world.entity.EntityType
 object RemoveDamageTag : Feature(
     "removeDamageTag",
     "Removes the damage tags created by you or others.",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "QOL",
 ) {
     private var damageTagRegex = "^.?\\d[\\d,.]+.*?$".toRegex()
 

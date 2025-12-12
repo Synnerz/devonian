@@ -13,7 +13,7 @@ import java.awt.Color
 
 object FactoryHelper : Feature(
     "factoryHelper",
-    "Highlights the best (cheapest) employee or coach jackrabbit upgrade to go for next."
+    "Highlights the best (cheapest) employee or coach jackrabbit upgrade to go for next.",
 ) {
     private val nextCPSRegex = "^  \\+([\\d.,]+)x? Chocolate per second$".toRegex()
     private val currentCPSRegex = "\\+([\\d.,]+)x? Chocolate per".toRegex()

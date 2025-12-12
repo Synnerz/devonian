@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.ChatScreen
 
 object CopyChat : Feature(
     "copyChat",
-    "Right click to copy a message in chat."
+    "Right click to copy a message in chat.",
 ) {
     override fun initialize() {
         on<GuiClickEvent> { event ->

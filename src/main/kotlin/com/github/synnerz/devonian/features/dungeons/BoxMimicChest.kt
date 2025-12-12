@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.events.PostRenderTileEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.client.renderer.blockentity.state.ChestRenderState
 import net.minecraft.core.BlockPos
@@ -12,8 +13,9 @@ import java.awt.Color
 object BoxMimicChest : Feature(
     "boxMimicChest",
     "draws box around mimic chest",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "World",
 ) {
     private val SETTING_COLOR = addColorPicker(
         "color",

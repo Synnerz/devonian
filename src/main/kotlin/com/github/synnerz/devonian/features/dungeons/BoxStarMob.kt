@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
@@ -14,8 +15,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 object BoxStarMob : Feature(
     "boxStarMob",
     "Renders a box surrounding the star mobs in dungeons to complete a room.",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "World",
 ) {
     private val SETTING_MOB_COLOR = addColorPicker(
         "mobColor",

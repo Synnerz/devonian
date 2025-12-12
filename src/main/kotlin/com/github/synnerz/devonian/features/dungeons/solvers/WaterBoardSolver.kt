@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.google.gson.Gson
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
@@ -16,8 +17,9 @@ import java.awt.Color
 object WaterBoardSolver : Feature(
     "waterBoardSolver",
     "Highlights the most \"efficient\" levers to flick at the specified time to get a one flow solution in water board puzzle",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     // TODO: optimize these since they are not the most optimal currently.
     @Suppress("unchecked_cast")

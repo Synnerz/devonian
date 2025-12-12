@@ -7,7 +7,8 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 object DoubleAnimationFix : Feature(
     "doubleAnimationFix",
     "fix animations playing twice sometimes (sneak)",
-    cheeto = true
+    subcategory = "Tweaks",
+    cheeto = true,
 ) {
     override fun initialize() {
         on<PacketReceivedEvent> { event ->

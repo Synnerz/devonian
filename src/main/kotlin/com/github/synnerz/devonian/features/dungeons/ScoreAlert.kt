@@ -2,14 +2,16 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
 
 object ScoreAlert : Feature(
     "scoreAlert",
     "Alerts on 270/300 score",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "QOL",
 ) {
     private val SETTING_270 = addSwitch(
         "270",

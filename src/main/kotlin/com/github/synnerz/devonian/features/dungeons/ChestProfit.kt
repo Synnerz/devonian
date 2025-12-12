@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
@@ -18,8 +19,9 @@ import kotlin.math.roundToInt
 object ChestProfit : TextHudFeature(
     "chestProfit",
     "Displays the amount of profit that is in the dungeon chests you currently have opened (only works inside dungeons)",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     private val SETTING_USE_ESSENCE_PROFIT = addSwitch(
         "useEssenceProfit",

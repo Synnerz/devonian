@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.Font
@@ -17,8 +18,9 @@ import kotlin.math.max
 object ArrowAlignSolver : Feature(
     "arrowAlignSolver",
     "s3 dev",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val SETTING_BLOCK_INCORRECT = addSelection(
         "blockClicks",

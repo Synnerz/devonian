@@ -26,7 +26,8 @@ import org.lwjgl.glfw.GLFW
 
 object ProtectItem : Feature(
     "protectItem",
-    "Protects an item, so you can no longer accidentally throw it away or sell it."
+    "Protects an item, so you can no longer accidentally throw it away or sell it.",
+    subcategory = "Inventory",
 ) {
     private const val KEY_NAME = "protectedItems"
     private var lockedList = mutableListOf<String>()

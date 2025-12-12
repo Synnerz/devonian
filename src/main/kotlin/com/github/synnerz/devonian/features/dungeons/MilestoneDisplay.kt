@@ -3,13 +3,15 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object MilestoneDisplay : TextHudFeature(
     "milestoneDisplay",
     "Displays your current Milestone.",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     private val milestoneRegex = "^ Your Milestone: .(.)\$".toRegex()
     private val milestonSymbols = mutableListOf("⓿", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾")

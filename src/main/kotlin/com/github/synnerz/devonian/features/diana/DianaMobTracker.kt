@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.PersistentJsonClass
 import java.io.File
@@ -11,7 +12,7 @@ import java.io.File
 object DianaMobTracker : TextHudFeature(
     "dianaMobTracker",
     "Tracks the mobs you killed during the diana event",
-    "Diana",
+    Categories.DIANA,
     "hub"
 ) {
     private val mobCriteria = "^(?:Woah|Yikes|Oi|Danger|Good Grief|Uh oh|Oh)! You dug out a? ?([\\w ]+)!$".toRegex()

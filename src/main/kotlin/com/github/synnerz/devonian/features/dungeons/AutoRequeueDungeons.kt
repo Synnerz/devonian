@@ -3,13 +3,15 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.Location
 
 object AutoRequeueDungeons : Feature(
     "autoRequeueDungeons",
     "Automatically calls the /instancerequeue command at the end of a run.",
-    "Dungeons"
+    Categories.DUNGEONS,
+    subcategory = "QOL",
 ) {
     private val extraStatsRegex = "^ *> EXTRA STATS <\$".toRegex()
     private val partyChatRegex = "^Party > (?:\\[\\d+] .? ?)?(?:\\[[^]]+] )?(\\w{1,16}): !(\\w{1,2})(?: [\\w ]+)?$".toRegex()

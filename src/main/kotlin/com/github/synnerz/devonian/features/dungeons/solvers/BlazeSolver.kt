@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.RenderType
@@ -20,8 +21,9 @@ import java.util.concurrent.CopyOnWriteArrayList
 object BlazeSolver : Feature(
     "blazeSolver",
     "Highlights the correct blaze to shoot in blaze puzzle",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val SETTING_COLOR_FIRST_OUTLINE = addColorPicker(
         "firstBlazeColorOutline",

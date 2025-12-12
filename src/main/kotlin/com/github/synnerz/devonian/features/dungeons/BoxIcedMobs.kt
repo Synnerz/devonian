@@ -4,6 +4,7 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
@@ -21,8 +22,9 @@ import kotlin.math.PI
 object BoxIcedMobs : Feature(
     "boxIcedMobs",
     "Box mobs that are ice sprayed",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "World",
 ) {
     private val SETTING_WIRE_COLOR = addColorPicker(
         "wireColor",

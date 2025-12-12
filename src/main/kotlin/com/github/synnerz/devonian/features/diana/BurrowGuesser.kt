@@ -4,6 +4,7 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
@@ -26,7 +27,7 @@ import kotlin.random.Random
 object BurrowGuesser : Feature(
     "burrowGuesser",
     "Whenever right clicking on a spade, it will attempt to guess where the location will be a",
-    "Diana",
+    Categories.DIANA,
     "hub"
 ) {
     private val SETTING_GUESS_COLOR = addColorPicker(

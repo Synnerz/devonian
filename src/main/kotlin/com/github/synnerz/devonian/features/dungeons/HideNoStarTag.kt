@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.NameChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
@@ -9,8 +10,9 @@ import net.minecraft.world.entity.EntityType
 object HideNoStarTag : Feature(
     "hideNoStarTag",
     "Hides name tag of mobs that do not have star in their name tag",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "QOL",
 ) {
     // "Boomer Psycho"
     private val bloodExceptions = setOf(

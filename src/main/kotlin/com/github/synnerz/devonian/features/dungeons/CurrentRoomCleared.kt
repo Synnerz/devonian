@@ -7,14 +7,16 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
 
 object CurrentRoomCleared : Feature(
     "currentRoomClearedAlert",
     "",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     private val SETTING_ONLY_KEY = addSwitch(
         "onlyKey",

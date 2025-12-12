@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object EtherwarpOverlayFailReason : TextHudFeature(
     "etherwarpFailReasonDisplay",
-    "Shows reason why etherwarp fails."
+    "Shows reason why etherwarp fails.",
 ) {
     override fun initialize() {
         on<RenderOverlayEvent> { event ->

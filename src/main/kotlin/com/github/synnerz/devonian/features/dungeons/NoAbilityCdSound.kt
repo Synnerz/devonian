@@ -2,13 +2,15 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 
 object NoAbilityCdSound : Feature(
     "noAbilityCdSound",
     "Removes the ability cooldown sound in dungeons",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "QOL",
 ) {
     val SETTING_NO_MESSAGE = addSwitch(
         "noMessage",

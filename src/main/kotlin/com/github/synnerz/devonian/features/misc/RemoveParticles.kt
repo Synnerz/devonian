@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.client.particle.HugeExplosionParticle
 import net.minecraft.client.particle.TerrainParticle
 
-object RemoveBlockBreakParticle : Feature("removeBlockBreakParticle") {
+object RemoveBlockBreakParticle : Feature("removeBlockBreakParticle", subcategory = "Hiders") {
     override fun initialize() {
         on<ParticleSpawnEvent> { event ->
             if (event.particle !is TerrainParticle) return@on
@@ -15,7 +15,7 @@ object RemoveBlockBreakParticle : Feature("removeBlockBreakParticle") {
     }
 }
 
-object RemoveExplosionParticle : Feature("removeExplosionParticle") {
+object RemoveExplosionParticle : Feature("removeExplosionParticle", subcategory = "Hiders") {
     override fun initialize() {
         on<ParticleSpawnEvent> { event ->
             if (event.particle !is HugeExplosionParticle) return@on

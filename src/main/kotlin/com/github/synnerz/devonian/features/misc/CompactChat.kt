@@ -16,7 +16,7 @@ import java.util.*
 // Licensed under the MIT license
 object CompactChat : Feature(
     "compactChat",
-    "Stacks the messages if they are repeated and adds the amount of times it was repeated"
+    "Stacks the messages if they are repeated and adds the amount of times it was repeated",
 ) {
     private val STYLE = Style.EMPTY
         .withColor(ChatFormatting.GRAY)

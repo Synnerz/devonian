@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.decoration.ItemFrame
 import net.minecraft.world.item.MapItem
@@ -15,8 +16,9 @@ import kotlin.math.floor
 object TicTacToeSolver : Feature(
     "ticTacToeSolver",
     "Highlights the most \"efficient\" button to press to complete the tictactoe puzzle",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val completedPuzzleRegex = "^PUZZLE SOLVED! \\w+ tied Tic Tac Toe! Good job!$".toRegex()
     private val failedPuzzleRegex = "^PUZZLE FAIL! \\w+ lost Tic Tac Toe! Yikes!$".toRegex()

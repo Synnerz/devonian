@@ -3,13 +3,15 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object CurrentRoomName : TextHudFeature(
     "currentRoomName",
     "Displays the current dungeon room name you are in",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     override fun initialize() {
         on<RenderOverlayEvent> {

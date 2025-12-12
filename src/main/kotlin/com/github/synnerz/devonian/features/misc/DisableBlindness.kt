@@ -7,7 +7,8 @@ import net.minecraft.world.effect.MobEffects
 
 object DisableBlindness : Feature(
     "disableBlindness",
-    "Disables the blindness effect (from the server idk you can still get blind)"
+    "Disables the blindness effect (from the server idk you can still get blind)",
+    subcategory = "Tweaks",
 ) {
     override fun initialize() {
         on<PacketReceivedEvent> { event ->

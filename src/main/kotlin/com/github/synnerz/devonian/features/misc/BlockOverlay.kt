@@ -12,7 +12,8 @@ import java.awt.Color
 
 object BlockOverlay : Feature(
     "blockOverlay",
-    "Adds a more customizable Block Overlay."
+    "Adds a more customizable Block Overlay.",
+    subcategory = "Tweaks",
 ) {
     private val SETTING_BOX_ENTITY = addSwitch(
         "boxEntity",

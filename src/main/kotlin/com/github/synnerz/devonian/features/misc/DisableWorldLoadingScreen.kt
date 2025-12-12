@@ -7,7 +7,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.LevelLoadingScreen
 import net.minecraft.client.gui.screens.Overlay
 
-object DisableWorldLoadingScreen : Feature("disableWorldLoadingScreen") {
+object DisableWorldLoadingScreen : Feature("disableWorldLoadingScreen", subcategory = "Tweaks") {
     private var levelLoadingScreen: LevelLoadingScreenAccessor? = null
 
     override fun initialize() {

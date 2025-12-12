@@ -7,7 +7,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes
 object SpeedDisplay : TextHudFeature(
     "speedDisplay",
     "Show current player speed",
-    "Misc"
 ) {
     override fun getEditText(): List<String> = listOf("&f400✦")
 

@@ -10,7 +10,8 @@ import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 
 object NoCursorReset : Feature(
     "noCursorReset",
-    "Avoids resetting your cursor whenever navigating guis"
+    "Avoids resetting your cursor whenever navigating guis",
+    subcategory = "Inventory",
 ) {
     var closedGui = false
     var resetCursor = atomic(true)

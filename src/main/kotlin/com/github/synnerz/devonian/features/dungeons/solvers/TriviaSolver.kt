@@ -9,14 +9,16 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import java.awt.Color
 
 object TriviaSolver : Feature(
     "triviaSolver",
     "Highlights the correct answer block and chat message for quiz puzzle",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val solutions = mapOf(
         "What is the status of The Watcher?" to listOf("Stalker"),

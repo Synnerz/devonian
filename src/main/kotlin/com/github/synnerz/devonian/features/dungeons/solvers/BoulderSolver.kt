@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.api.events.BlockPlaceEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.HitResult
@@ -20,8 +21,9 @@ import kotlin.math.abs
 object BoulderSolver : Feature(
     "boulderSolver",
     "Highlights the blocks you should click to successfully solve the Boulder puzzle",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val OUTLINE_COLOR = Color(0, 255, 255, 255)
     private val FILLED_COLOR = Color(0, 255, 255, 80)

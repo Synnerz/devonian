@@ -3,13 +3,15 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object DeathsDisplay : TextHudFeature(
     "deathsDisplay",
     "Displays the current amount of Team Deaths.",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     private val deathsRegex = "^Team Deaths: (\\d+)$".toRegex()
     private var deathCount = 0

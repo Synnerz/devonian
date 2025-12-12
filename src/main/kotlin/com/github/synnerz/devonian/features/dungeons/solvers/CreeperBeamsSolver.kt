@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
@@ -14,8 +15,9 @@ import java.awt.Color
 object CreeperBeamsSolver : Feature(
     "creeperBeamsSolver",
     "Highlights the correct blocks to hit whenever doing the creeper beams puzzle",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val solutions = listOf(
         BeamsSolutionData(15, 74, 15, 15, 84, 13),

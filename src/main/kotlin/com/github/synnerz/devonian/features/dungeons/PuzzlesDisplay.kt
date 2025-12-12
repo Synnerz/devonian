@@ -3,14 +3,16 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import java.util.concurrent.CopyOnWriteArrayList
 
 object PuzzlesDisplay : TextHudFeature(
     "puzzlesDisplay",
     "Displays the current Puzzle count as well as their name and state.",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     private val puzzleStates = mutableListOf("✦", "✔", "✖")
     private val puzzleStatesColores = mutableListOf("&6✦", "&a✔", "&c✖")

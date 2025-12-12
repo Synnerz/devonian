@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.api.events.EntityEquipmentEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
 import net.minecraft.core.component.DataComponents
@@ -24,8 +25,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 object KeyPickup : Feature(
     "keyPickup",
     "",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "World",
 ) {
     private val SETTING_KEY_WIRE_COLOR = addColorPicker(
         "wireColor",

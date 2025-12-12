@@ -4,12 +4,13 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object GolemSpawnTimer : TextHudFeature(
     "golemSpawnTimer",
     "Displays a timer whenever the Golem has hit stage 5 of 20 seconds (according to wiki)",
-    "End",
+    Categories.END,
     "the end"
 ) {
     private val golemSpawnRegex = "^The ground begins to shake as an End Stone Protector rises from below!$".toRegex()

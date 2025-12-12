@@ -12,7 +12,7 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-object AccurateAbsorption : Feature("accurateAbsorption") {
+object AccurateAbsorption : Feature("accurateAbsorption", subcategory = "Tweaks") {
     private val SETTING_MAX_ABSORPTION_HEARTS = addSlider(
         "maxAbsorptionHearts",
         40.0,

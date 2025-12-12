@@ -8,7 +8,8 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 
 object MiddleClickGui : Feature(
     "middleClickGui",
-    "Cancels your left clicks and turns it into a middle clicks on certain guis"
+    "Cancels your left clicks and turns it into a middle clicks on certain guis",
+    subcategory = "Inventory",
 ) {
     val avoidGuis = mutableListOf(
         "Wardrobe",

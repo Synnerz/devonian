@@ -9,7 +9,7 @@ import com.mojang.blaze3d.shaders.ShaderType
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.renderer.RenderPipelines
 
-object Fullbright : Feature("fullbright") {
+object Fullbright : Feature("fullbright", subcategory = "Tweaks") {
     override fun initialize() {
         children.add(
             object : Toggleable() {

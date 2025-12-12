@@ -2,13 +2,14 @@ package com.github.synnerz.devonian.features.end
 
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.sounds.SoundEvents
 
 object GolemStage5Sound : Feature(
     "golemStage5Sound",
     "Plays an Anvil Place sound whenever the golem hits stage 5",
-    "End",
+    Categories.END,
     "the end"
 ) {
     private val golemSpawnRegex = "^The ground begins to shake as an End Stone Protector rises from below!$".toRegex()

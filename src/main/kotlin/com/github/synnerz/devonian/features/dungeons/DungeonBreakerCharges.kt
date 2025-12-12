@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
@@ -11,8 +12,9 @@ import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 object DungeonBreakerCharges : TextHudFeature(
     "dungeonBreakerDisplay",
     "Displays the amount of charges left",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     var colorCode = "&6"
     var charges = 20

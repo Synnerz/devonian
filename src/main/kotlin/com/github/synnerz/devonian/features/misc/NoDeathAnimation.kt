@@ -9,7 +9,8 @@ import net.minecraft.world.entity.monster.WitherSkeleton
 
 object NoDeathAnimation : Feature(
     "noDeathAnimation",
-    "Removes the Death Animation from entities that die."
+    "Removes the Death Animation from entities that die.",
+    subcategory = "Hiders",
 ) {
     private val SETTING_HIDE_DEAD_NAMETAGS = addSwitch(
         "hideTags",

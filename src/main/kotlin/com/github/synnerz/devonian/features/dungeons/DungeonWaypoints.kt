@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.google.gson.Gson
 import java.awt.Color
@@ -18,8 +19,9 @@ import kotlin.math.abs
 object DungeonWaypoints : Feature(
     "dungeonWaypoints",
     "Highlights chest/items/bat spots where they would spawn at",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "World",
 ) {
     private val SETTING_DISPLAY_TEXT = addSwitch(
         "displayText",

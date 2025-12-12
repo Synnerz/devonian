@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.BlockInteractEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.BlockPos
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
@@ -18,8 +19,9 @@ import java.util.concurrent.CopyOnWriteArrayList
 object SimonSaysSolver : Feature(
     "simonSaysSolver",
     "Highlights the correct buttons to press",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val SETTING_BLOCK_INCORRECT = addSelection(
         "blockClicks",

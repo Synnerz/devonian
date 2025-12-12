@@ -7,13 +7,15 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimerSplit
 import com.github.synnerz.devonian.api.splits.TimerSplitData
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object RunSplits : TextHudFeature(
     "runSplits",
     "Displays how long your party has take to complete Blood Rush, Blood Open & Boss Enter",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD",
 ) {
     private val SETTING_FORMAT_TIME_HUMAN = addSwitch(
         "formatTimeInHuman",

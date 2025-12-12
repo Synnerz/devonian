@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.Location
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
@@ -11,7 +12,8 @@ import kotlin.math.abs
 
 object InventoryHistoryLog : TextHudFeature(
     "inventoryHistoryLog",
-    "Displays the items changed, removed or added to your inventory"
+    "Displays the items changed, removed or added to your inventory",
+    subcategory = "Inventory",
 ) {
     private val SETTING_ITEM_DISPLAY_TIME = addSlider(
         "itemDisplayTime",

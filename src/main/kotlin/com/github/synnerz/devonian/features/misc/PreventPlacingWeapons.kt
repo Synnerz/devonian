@@ -6,7 +6,8 @@ import com.github.synnerz.devonian.features.Feature
 
 object PreventPlacingWeapons : Feature(
     "preventPlacingWeapons",
-    "Prevents placing weapons that are placeable."
+    "Prevents placing weapons that are placeable.",
+    subcategory = "Tweaks",
 ) {
     val weaponIds = mutableListOf(
         "FLOWER_OF_TRUTH",

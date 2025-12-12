@@ -7,7 +7,8 @@ import net.minecraft.world.item.Items
 
 object PreventPlacingPlayerHeads : Feature(
     "preventPlacingPlayerHeads",
-    "Stops Player Heads from being placeable."
+    "Stops Player Heads from being placeable.",
+    subcategory = "Tweaks",
 ) {
     override fun initialize() {
         on<BlockInteractEvent> { event ->

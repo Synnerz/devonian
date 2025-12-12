@@ -11,7 +11,7 @@ import kotlin.math.sqrt
 
 object ChatWaypoint : Feature(
     "chatWaypoint",
-    "Renders a waypoint at the location where a player sent in Party/Coop chat. (You can send coordinates for other people by doing /devonian sendcoords)"
+    "Renders a waypoint at the location where a player sent in Party/Coop chat. (You can send coordinates for other people by doing /devonian sendcoords)",
 ) {
     private val SETTING_ALL_CHAT = addSwitch(
         "allChat",

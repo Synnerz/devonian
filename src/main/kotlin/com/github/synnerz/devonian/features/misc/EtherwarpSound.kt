@@ -12,7 +12,8 @@ import net.minecraft.sounds.SoundEvents
 
 object EtherwarpSound : Feature(
     "etherwarpSound",
-    "Changes the sound the etherwarp makes whenever you have etherwarped successfully, customize it via /devonian etherwarpsound"
+    "Changes the sound the etherwarp makes whenever you have etherwarped successfully, customize it via /devonian etherwarpsound",
+    subcategory = "Tweaks",
 ) {
     private const val KEY = "etherwarpSound"
     private val soundOptions = listOf(

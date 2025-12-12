@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket
 import net.minecraft.world.level.block.Blocks
@@ -20,8 +21,9 @@ import kotlin.math.sin
 object TeleportMazeSolver : Feature(
     "teleportMazeSolver",
     "Highlights the correct teleport pad to use inside the teleport maze puzzle",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "Solvers",
 ) {
     private val endFramePositions = listOf(
         // Y is always 69

@@ -3,25 +3,25 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.features.Feature
 import java.awt.Color
 
-object RemoveFallingBlocks : Feature("removeFallingBlocks")
-object RemoveFireOverlay : Feature("removeFireOverlay")
-object NoHurtCamera : Feature("noHurtCamera")
-object RemoveLightning : Feature("removeLightning")
-object HideInventoryEffects : Feature("hideInventoryEffects")
-object HidePotionEffectOverlay : Feature("hidePotionEffectOverlay")
-object RemoveFrontView : Feature("removeFrontView")
-object RemoveChatLimit : Feature("removeChatLimit")
-object RemoveTabPing : Feature("removeTabPing")
-object DisableAttachedArrows : Feature("disableAttachedArrows")
-object DisableVignette : Feature("disableVignette")
-object DisableWaterOverlay : Feature("disableWaterOverlay")
-object DisableSuffocatingOverlay : Feature("disableSuffocatingOverlay")
-object DisableVanillaArmor : Feature("disableVanillaArmor")
-object DisableFog : Feature("disableFog")
-object ThirdPersonCrosshair : Feature("thirdPersonCrosshair")
-object RemoveRecipeBook : Feature("removeRecipeBook")
-object RemoveContainerBackground : Feature("removeContainerBackground")
-object CustomContainerColor : Feature("customContainerColor") {
+object RemoveFallingBlocks : Feature("removeFallingBlocks", subcategory = "Hiders")
+object RemoveFireOverlay : Feature("removeFireOverlay", subcategory = "Hiders")
+object NoHurtCamera : Feature("noHurtCamera", subcategory = "Hiders")
+object RemoveLightning : Feature("removeLightning", subcategory = "Hiders")
+object HideInventoryEffects : Feature("hideInventoryEffects", subcategory = "Hiders")
+object HidePotionEffectOverlay : Feature("hidePotionEffectOverlay", subcategory = "Hiders")
+object RemoveFrontView : Feature("removeFrontView", subcategory = "Tweaks")
+object RemoveChatLimit : Feature("removeChatLimit", subcategory = "Tweaks")
+object RemoveTabPing : Feature("removeTabPing", subcategory = "Hiders")
+object DisableAttachedArrows : Feature("disableAttachedArrows", subcategory = "Hiders")
+object DisableVignette : Feature("disableVignette", subcategory = "Hiders")
+object DisableWaterOverlay : Feature("disableWaterOverlay", subcategory = "Hiders")
+object DisableSuffocatingOverlay : Feature("disableSuffocatingOverlay", subcategory = "Hiders")
+object DisableVanillaArmor : Feature("disableVanillaArmor", subcategory = "Hiders")
+object DisableFog : Feature("disableFog", subcategory = "Hiders")
+object ThirdPersonCrosshair : Feature("thirdPersonCrosshair", subcategory = "Tweaks")
+object RemoveRecipeBook : Feature("removeRecipeBook", subcategory = "Hiders")
+object RemoveContainerBackground : Feature("removeContainerBackground", subcategory = "Hiders")
+object CustomContainerColor : Feature("customContainerColor", subcategory = "Tweaks") {
     val SETTING_CONTAINER_COLOR = addColorPicker(
         "containerColor",
         Color.WHITE.rgb,
@@ -32,11 +32,11 @@ object CustomContainerColor : Feature("customContainerColor") {
 object DisableChatAutoScroll : Feature(
     "disableChatAutoScroll",
     "Disables the auto scrolling to the latest message whenever the chat gui is focused",
-    "Misc"
+    subcategory = "Tweaks"
 )
-object DisableSwim : Feature("disableSwim", cheeto = true)
-object CenteredCrosshair : Feature("centeredCrosshair")
-object DisableEnderPearlCooldown : Feature("disableEnderPearlCooldown")
-object DisableHungerBar : Feature("disableHungerBar")
-object FixRedVignette : Feature("fixRedVignette", "fixes red vignettes (SA tp) from blocking clicks", cheeto = true)
-object HideCraftingText : Feature("hideCraftingText", "in inventory above craftin menu")
+object DisableSwim : Feature("disableSwim", subcategory = "Tweaks", cheeto = true)
+object CenteredCrosshair : Feature("centeredCrosshair", subcategory = "Tweaks")
+object DisableEnderPearlCooldown : Feature("disableEnderPearlCooldown", subcategory = "Hiders")
+object DisableHungerBar : Feature("disableHungerBar", subcategory = "Hiders")
+object FixRedVignette : Feature("fixRedVignette", "fixes red vignettes (SA tp) from blocking clicks", subcategory = "Tweaks", cheeto = true)
+object HideCraftingText : Feature("hideCraftingText", "in inventory above craftin menu", subcategory = "Hiders")

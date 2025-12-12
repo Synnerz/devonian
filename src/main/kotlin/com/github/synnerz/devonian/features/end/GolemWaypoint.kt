@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.SubAreaEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.Location
 import net.minecraft.core.BlockPos
@@ -17,7 +18,7 @@ import java.awt.Color
 object GolemWaypoint : Feature(
     "golemWaypoint",
     "Sets a waypoint to where the golem should spawn",
-    "End",
+    Categories.END,
     "the end"
 ) {
     private var protectorRegex = "^ Protector: (\\w+)$".toRegex()

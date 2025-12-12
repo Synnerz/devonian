@@ -10,7 +10,7 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.contents.PlainTextContents
 
-object BossBarHealth : Feature("bossBarShowHealth") {
+object BossBarHealth : Feature("bossBarShowHealth", subcategory = "Tweaks") {
     private val STYLE1 = Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)
     private val STYLE2 = Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)
 

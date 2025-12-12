@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import kotlinx.atomicfu.atomic
 import java.awt.Color
@@ -17,8 +18,9 @@ import java.awt.Color
 object BoxDoors : Feature(
     "boxDoors",
     "Draws boxes around doors.",
-    "Dungeons",
-    "catacombs"
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "World",
 ) {
     private val SETTING_DOOR_LOCKED_WIRE_COLOR = addColorPicker(
         "lockedWireColor",

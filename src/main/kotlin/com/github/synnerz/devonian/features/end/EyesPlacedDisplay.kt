@@ -3,13 +3,14 @@ package com.github.synnerz.devonian.features.end
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.Location
 
 object EyesPlacedDisplay : TextHudFeature(
     "eyesPlaced",
     "Displays the amount of eyes placed whenever in the Dragon's Nest",
-    "End",
+    Categories.END,
     "the end"
 ) {
     private val eyesPlacedRegex = "^ Eyes placed: (\\d+)/(\\d+)".toRegex()

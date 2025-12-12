@@ -4,6 +4,7 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
@@ -14,7 +15,7 @@ import kotlin.math.floor
 object BurrowWaypoint : Feature(
     "burrowWaypoint",
     "Adds a waypoint with the type of burrow whenever the particles are detected",
-    "Diana",
+    Categories.DIANA,
     "hub"
 ) {
     private val SETTING_START_COLOR = addColorPicker(

@@ -4,13 +4,14 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import kotlin.math.round
 
 object GolemDPS : Feature(
     "golemDps",
     "Tells you how much DPS you did during the Golem fight",
-    "End",
+    Categories.END,
     "the end"
 ) {
     private val golemSpawnRegex = "^BEWARE - An End Stone Protector has risen!$".toRegex()

@@ -5,12 +5,13 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ScoreboardEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 
 object BossSpawnTime : Feature(
     "bossSpawnTime",
     "Displays the amount of time taken to spawn a Slayer Boss.",
-    "Slayers"
+    Categories.SLAYERS,
 ) {
     private val questStartedRegex = "^  SLAYER QUEST STARTED!$".toRegex()
     private val bossSpawnedRegex = "^Slay the boss!".toRegex()
