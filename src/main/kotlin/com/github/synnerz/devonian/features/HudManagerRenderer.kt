@@ -6,7 +6,10 @@ import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.Toggleable
 
 object HudManagerRenderer : TextHudFeature("hudManagerRenderer", isInternal = true) {
-    override fun getEditText(): List<String> = listOf("Change HUD Style")
+    override fun getEditText(): List<String> = listOf("Change HUD Style").let {
+        if (isEnabled()) listOf(it[0], "Hint: /dv font <name>")
+        else it
+    }
 
     override fun initialize() {
         children.add(
