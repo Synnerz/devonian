@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.api.dungeon
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.world.entity.player.Player
+import java.awt.Color
 import kotlin.math.PI
 
 data class DungeonPlayer(
@@ -57,14 +58,21 @@ data class DungeonPlayer(
     }
 }
 
-enum class DungeonClass(val shortName: String, val singleLetter: Char, val colorCode: String) {
-    Archer("Arch", 'a', "§c"),
-    Berserk("Bers", 'b', "§6"),
-    Mage("Mage", 'm', "§3"),
-    Healer("Heal", 'h', "§5"),
-    Tank("Tank", 't', "§a"),
+enum class DungeonClass(
+    val shortName: String,
+    val singleLetter: Char,
+    val colorCode: String,
+    val color: Color
+) {
+    Archer("Arch", 'a', "§c", Color(255, 85, 85, 255)),
+    Berserk("Bers", 'b', "§6", Color(255, 170, 0, 255)),
+    Mage("Mage", 'm', "§3", Color(0, 170, 170, 255)),
+    Healer("Heal", 'h', "§5", Color(170, 0, 170, 255)),
+    Tank("Tank", 't', "§a", Color(85, 255, 85, 255)),
 
-    Unknown("Unknown", '\u0000', "");
+    Unknown("Unknown", '\u0000', "", Color(0, 0, 0, 0));
+
+    val colorRgb: Int = color.rgb
 
     companion object {
         fun from(fullName: String): DungeonClass = when (fullName) {

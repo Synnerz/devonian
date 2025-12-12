@@ -473,22 +473,22 @@ class DungeonMapBaseRenderer :
     companion object {
         val CHECKMARK = mapOf(
             CheckmarkTypes.NONE to null,
-            CheckmarkTypes.WHITE to getImg("whiteCheck.png"),
-            CheckmarkTypes.GREEN to getImg("greenCheck.png"),
-            CheckmarkTypes.FAILED to getImg("failedRoom.png"),
-            CheckmarkTypes.UNEXPLORED to getImg("questionMark.png"),
+            CheckmarkTypes.WHITE to getImg("checks/whiteCheck.png")!!,
+            CheckmarkTypes.GREEN to getImg("checks/greenCheck.png")!!,
+            CheckmarkTypes.FAILED to getImg("checks/failedRoom.png")!!,
+            CheckmarkTypes.UNEXPLORED to getImg("checks/questionMark.png")!!,
         )
         val SPECIAL_ROOMS = mapOf(
-            "Creeper Beams" to getImg("creeper.png"),
-            "Three Weirdos" to getImg("chest.png"),
-            "Tic Tac Toe" to getImg("shears.png"),
-            "Water Board" to getImg("bucket_water.png"),
-            "Teleport Maze" to getImg("endframe_side.png"),
-            "Blaze" to getImg("blaze_powder.png"),
-            "Boulder" to getImg("planks_oak.png"),
-            "Ice Fill" to getImg("ice.png"),
-            "Ice Path" to getImg("spawner.png"),
-            "Quiz" to getImg("book_normal.png"),
+            "Creeper Beams" to getImg("puzzles/creeper.png")!!,
+            "Three Weirdos" to getImg("puzzles/chest.png")!!,
+            "Tic Tac Toe" to getImg("puzzles/shears.png")!!,
+            "Water Board" to getImg("puzzles/bucket_water.png")!!,
+            "Teleport Maze" to getImg("puzzles/endframe_side.png")!!,
+            "Blaze" to getImg("puzzles/blaze_powder.png")!!,
+            "Boulder" to getImg("puzzles/planks_oak.png")!!,
+            "Ice Fill" to getImg("puzzles/ice.png")!!,
+            "Ice Path" to getImg("puzzles/spawner.png")!!,
+            "Quiz" to getImg("puzzles/book_normal.png")!!,
         )
 
         private fun getImg(path: String): BufferedImage? {

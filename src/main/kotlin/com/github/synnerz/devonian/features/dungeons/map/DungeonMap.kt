@@ -37,6 +37,12 @@ object DungeonMap : HudFeature(
         "",
         "Render Player Heads",
     )
+    private val SETTING_USE_MARKER_SELF = addSwitch(
+        "markerSelf",
+        true,
+        "",
+        "Use Marker for Self",
+    )
     private val SETTING_RENDER_NAMES = addSwitch(
         "renderNames",
         true,
@@ -60,6 +66,12 @@ object DungeonMap : HudFeature(
         true,
         "Colors the player names by their respective class",
         "Color Player Names",
+    )
+    private val SETTING_COLOR_MARKER_BY_CLASS = addSwitch(
+        "colorMarkerClass",
+        true,
+        "Colors the player marker by their respective class",
+        "Color Player Markers",
     )
     private val SETTING_NAME_SCALE = addSlider(
         "nameScale",
@@ -416,7 +428,10 @@ object DungeonMap : HudFeature(
             val maxDy: Float
             val textureView: GpuTextureView
             val info = player.profileInfo
-            if (SETTING_USE_PLAYER_HEADS.get() && info != null) {
+            val isHead =
+                SETTING_USE_PLAYER_HEADS.get() && info != null &&
+                (!SETTING_USE_MARKER_SELF.get() || i > 0)
+            if (isHead) {
                 dxf *= 4f
                 dyf *= 4f
                 dxr *= 4f
@@ -434,12 +449,12 @@ object DungeonMap : HudFeature(
                 dyf *= 2.8f
                 dxr *= 2f
                 dyr *= 2f
-                u0 = 0f
-                v0 = 0f
-                u1 = 1f
-                v1 = 1f
+                u0 = if (i == 0) MARKER_SELF_U0 else MARKER_OTHER_U0
+                v0 = if (i == 0) MARKER_SELF_V0 else MARKER_OTHER_V0
+                u1 = if (i == 0) MARKER_SELF_U1 else MARKER_OTHER_U1
+                v1 = if (i == 0) MARKER_SELF_V1 else MARKER_OTHER_V1
                 maxDy = 2.8f
-                textureView = (if (i == 0) markerSelfUploader else markerOtherUploader)?.textureView ?: return@forEach
+                textureView = markerAtlasUploader.textureView
             }
 
             if (renderNames) {
@@ -479,6 +494,42 @@ object DungeonMap : HudFeature(
                     ctx.scissorStack.peek()
                 )
             )
+
+            if (SETTING_COLOR_MARKER_BY_CLASS.get() && player.role.color.alpha != 0) {
+                val u0: Float
+                val v0: Float
+                val u1: Float
+                val v1: Float
+                if (isHead) {
+                    u0 = MARKER_HEAD_OUTLINE_U0
+                    v0 = MARKER_HEAD_OUTLINE_V0
+                    u1 = MARKER_HEAD_OUTLINE_U1
+                    v1 = MARKER_HEAD_OUTLINE_V1
+                } else {
+                    u0 = MARKER_POINTER_OUTLINE_U0
+                    v0 = MARKER_POINTER_OUTLINE_V0
+                    u1 = MARKER_POINTER_OUTLINE_U1
+                    v1 = MARKER_POINTER_OUTLINE_V1
+                }
+
+                ctx.guiRenderState.submitGuiElement(
+                    TexturedQuadRenderState(
+                        BufferedImageRenderer.pipeline,
+                        TextureSetup.singleTexture(markerAtlasUploader.textureView),
+                        Matrix3x2f(ctx.pose()),
+                        px + dxf - dxr, py + dyf - dyr,
+                        px - dxf - dxr, py - dyf - dyr,
+                        px + dxf + dxr, py + dyf + dyr,
+                        px - dxf + dxr, py - dyf + dyr,
+                        u0, v0,
+                        u0, v1,
+                        u1, v0,
+                        u1, v1,
+                        player.role.colorRgb,
+                        ctx.scissorStack.peek()
+                    )
+                )
+            }
         }
     }
 
@@ -499,10 +550,67 @@ object DungeonMap : HudFeature(
         mapRenderer.invalidate()
     }
 
-    val mcidMarkerSelf = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_self")
-    val mcidMarkerOther = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_other")
-    val markerSelfUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/markerSelf.png")
-        ?.register(mcidMarkerSelf)
-    val markerOtherUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/markerOther.png")
-        ?.register(mcidMarkerOther)
+    val mcidMarkerAtlas = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_atlas")!!
+    val markerAtlasUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/markerAtlas.png")!!
+        .register(mcidMarkerAtlas)
+
+    val MARKER_SELF_U0: Float
+    val MARKER_SELF_V0: Float
+    val MARKER_SELF_U1: Float
+    val MARKER_SELF_V1: Float
+
+    val MARKER_OTHER_U0: Float
+    val MARKER_OTHER_V0: Float
+    val MARKER_OTHER_U1: Float
+    val MARKER_OTHER_V1: Float
+
+    val MARKER_POINTER_OUTLINE_U0: Float
+    val MARKER_POINTER_OUTLINE_V0: Float
+    val MARKER_POINTER_OUTLINE_U1: Float
+    val MARKER_POINTER_OUTLINE_V1: Float
+
+    val MARKER_HEAD_OUTLINE_U0: Float
+    val MARKER_HEAD_OUTLINE_V0: Float
+    val MARKER_HEAD_OUTLINE_U1: Float
+    val MARKER_HEAD_OUTLINE_V1: Float
+
+    init {
+        val MARKER_ATLAS_WIDTH = 200 * 1f
+        val MARKER_ATLAS_HEIGHT = 280 * 1f
+
+        val MARKER_WIDTH = 100
+        val MARKER_HEIGHT = 140
+        val selfX = 0
+        val selfY = 0
+        val otherX = MARKER_WIDTH
+        val otherY = 0
+
+        val pointerOutlineX = 0
+        val pointerOutlineY = MARKER_HEIGHT
+
+        val HEAD_WIDTH = 80
+        val HEAD_HEIGHT = 80
+        val headOutlineX = MARKER_WIDTH
+        val headOutlineY = MARKER_HEIGHT
+
+        MARKER_SELF_U0 = selfX / MARKER_ATLAS_WIDTH
+        MARKER_SELF_V0 = selfY / MARKER_ATLAS_HEIGHT
+        MARKER_SELF_U1 = (selfX + MARKER_WIDTH) / MARKER_ATLAS_WIDTH
+        MARKER_SELF_V1 = (selfY + MARKER_HEIGHT) / MARKER_ATLAS_HEIGHT
+
+        MARKER_OTHER_U0 = otherX / MARKER_ATLAS_WIDTH
+        MARKER_OTHER_V0 = otherY / MARKER_ATLAS_HEIGHT
+        MARKER_OTHER_U1 = (otherX + MARKER_WIDTH) / MARKER_ATLAS_WIDTH
+        MARKER_OTHER_V1 = (otherY + MARKER_HEIGHT) / MARKER_ATLAS_HEIGHT
+
+        MARKER_POINTER_OUTLINE_U0 = pointerOutlineX / MARKER_ATLAS_WIDTH
+        MARKER_POINTER_OUTLINE_V0 = pointerOutlineY / MARKER_ATLAS_HEIGHT
+        MARKER_POINTER_OUTLINE_U1 = (pointerOutlineX + MARKER_WIDTH) / MARKER_ATLAS_WIDTH
+        MARKER_POINTER_OUTLINE_V1 = (pointerOutlineY + MARKER_HEIGHT) / MARKER_ATLAS_HEIGHT
+
+        MARKER_HEAD_OUTLINE_U0 = headOutlineX / MARKER_ATLAS_WIDTH
+        MARKER_HEAD_OUTLINE_V0 = headOutlineY / MARKER_ATLAS_HEIGHT
+        MARKER_HEAD_OUTLINE_U1 = (headOutlineX + HEAD_WIDTH) / MARKER_ATLAS_WIDTH
+        MARKER_HEAD_OUTLINE_V1 = (headOutlineY + HEAD_HEIGHT) / MARKER_ATLAS_HEIGHT
+    }
 }
