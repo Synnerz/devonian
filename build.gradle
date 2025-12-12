@@ -34,7 +34,7 @@ dependencies {
 
 	include modImplementation("maven.modrinth:barrl:1.5.0-1.21.10")
 	// TODO: upload to modrinth
-	include modImplementation("com.github.Synnerz:talium:807293ba17")
+	include modImplementation("com.github.Synnerz:talium:1e4731c54c")
 
 	embed "org.ejml:ejml-all:0.44.0"
 }
