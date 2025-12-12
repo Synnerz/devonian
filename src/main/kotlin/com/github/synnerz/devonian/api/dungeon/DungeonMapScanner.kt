@@ -170,18 +170,18 @@ object DungeonMapScanner {
                 DungeonScanner.addRoom(comp, room)
             } else room = room_
 
-            if (room.type == RoomTypes.UNKNOWN) {
-                room.type = when (roomCol) {
-                    MapColors.ROOM_ENTRANCE.color -> RoomTypes.ENTRANCE
-                    MapColors.ROOM_BLOOD.color -> RoomTypes.BLOOD
-                    MapColors.ROOM_UNOPENED.color -> RoomTypes.NORMAL
-                    MapColors.ROOM_BOSS.color -> RoomTypes.YELLOW
-                    MapColors.ROOM_FAIRY.color -> RoomTypes.FAIRY
-                    MapColors.ROOM_NORMAL.color -> RoomTypes.NORMAL
-                    MapColors.ROOM_PUZZLE.color -> RoomTypes.PUZZLE
-                    MapColors.ROOM_TRAP.color -> RoomTypes.TRAP
-                    else -> RoomTypes.UNKNOWN
-                }
+            room.type = when (roomCol) {
+                MapColors.ROOM_ENTRANCE.color -> RoomTypes.ENTRANCE
+                MapColors.ROOM_BLOOD.color -> RoomTypes.BLOOD
+                MapColors.ROOM_UNOPENED.color ->
+                    if (room.type == RoomTypes.UNKNOWN) RoomTypes.NORMAL
+                    else room.type
+                MapColors.ROOM_BOSS.color -> RoomTypes.YELLOW
+                MapColors.ROOM_FAIRY.color -> RoomTypes.FAIRY
+                MapColors.ROOM_NORMAL.color -> RoomTypes.NORMAL
+                MapColors.ROOM_PUZZLE.color -> RoomTypes.PUZZLE
+                MapColors.ROOM_TRAP.color -> RoomTypes.TRAP
+                else -> RoomTypes.UNKNOWN
             }
             if (!room.explored) room.explored = roomCol != MapColors.ROOM_UNOPENED.color
 
