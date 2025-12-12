@@ -72,9 +72,6 @@ abstract class HudFeature(
     open fun onMouseClick(mx: Double, my: Double, mbtn: Int) {
         when (mbtn) {
             GLFW.GLFW_MOUSE_BUTTON_RIGHT -> toggle()
-            GLFW.GLFW_MOUSE_BUTTON_MIDDLE -> {
-                if (!isInternal) ConfigGui.scrollToConfig(configSwitch)
-            }
         }
     }
 

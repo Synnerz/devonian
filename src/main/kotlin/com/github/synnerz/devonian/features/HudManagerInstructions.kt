@@ -6,7 +6,6 @@ object HudManagerInstructions : TextHudFeature("hudManagerInstructions", isInter
     override fun getEditText(): List<String> = listOf(
         "&lLeft Click&r to select an element.",
         "&lRight Click&r to toggle an element.",
-        "&lMiddle Click&r to open the settings for an element.",
         "&lDrag&r to move an element.",
         "Alternatively, use the &lArrow Keys&r.",
         "&lScroll&r to resize an element.",
