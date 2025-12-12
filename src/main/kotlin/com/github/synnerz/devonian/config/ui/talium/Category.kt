@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.config.ui.talium
 
 import com.github.synnerz.devonian.config.Config
-import com.github.synnerz.devonian.config.ui.Categories
-import com.github.synnerz.devonian.config.ui.ConfigData
-import com.github.synnerz.devonian.config.ui.ConfigType
+import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.config.ConfigData
+import com.github.synnerz.devonian.config.ConfigType
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.effects.OutlineEffect
 import com.github.synnerz.talium.events.UIClickEvent
@@ -11,14 +11,13 @@ import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
 
 class Category(
-    val categoryName: String,
+    val category: Categories,
     val rightPanel: UIBase,
     leftPanel: UIBase,
     idx: Int,
     val createBtn: Boolean = true,
 ) {
-    private val categoryEnum = Categories.byName(categoryName) ?: Categories.byDisplayName(categoryName)!!
-    val configs = Config.categories[categoryName]!!.toList()
+    val configs = Config.categories[category]!!
     private val components = mutableListOf<UIRect>()
     private val colorComponents = mutableListOf<UIColorPicker>()
     private val subcategoryPanel = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
@@ -27,17 +26,21 @@ class Category(
     private val scrollableRect = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel)
     private val subcategoriesRect = mutableMapOf<String, UIScrollable>()
     private var categoryButton: UIRect?
-    private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, categoryName, true).apply {
+    private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, category.displayName, true).apply {
         setColor(ColorPalette.TEXT_COLOR)
     }
-    private var currentSubcategory = "General"
+    private var currentSubcategory = category.subcategories[0]
 
     init {
-        categoryEnum.subcategories.forEachIndexed { jdx, it ->
-            subcategoriesRect[it] = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel).apply { hide() }
+        val subCount = category.subcategories.size
+        val subCatGap = 0.5
+        val subCatMargins = 1.0
+        val subCatWidth = (100.0 - subCatMargins * 2 - subCatGap * (subCount - 1)) / subCount
+        category.subcategories.forEachIndexed { jdx, name ->
+            subcategoriesRect[name] = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel).apply { hide() }
             subcategoryPanel.addChild(
-                UIRect(1.0 + jdx * 15.5, 2.5, 15.0, 95.0).apply {
-                    val text = UIText(0.0, 0.0, 100.0, 100.0, it, true, parent = this).apply {
+                UIRect(subCatMargins + (subCatWidth + subCatGap) * jdx, 2.5, subCatWidth, 95.0).apply {
+                    val text = UIText(0.0, 0.0, 100.0, 100.0, name, true, parent = this).apply {
                         setColor(ColorPalette.TEXT_COLOR)
                         // TODO: add a way to make the current sub category's text different color
                     }
@@ -45,7 +48,7 @@ class Category(
                         if (event.button != 0) return@onMouseRelease
                         subcategoriesRect[currentSubcategory]?.hide()
                         hideColorPickers()
-                        currentSubcategory = it
+                        currentSubcategory = name
                         subcategoriesRect[currentSubcategory]?.unhide()
                     }
                     addEffect(OutlineEffect(0.5, ColorPalette.OUTLINE_COLOR))
@@ -61,7 +64,7 @@ class Category(
                 parent = leftPanel
             ).apply {
                 onMouseRelease {
-                    if (ConfigGui.selectedCategory.categoryName == categoryName) return@onMouseRelease
+                    if (ConfigGui.selectedCategory === this@Category) return@onMouseRelease
                     ConfigGui.selectedCategory.hide()
                     ConfigGui.selectedCategory = this@Category
                     ConfigGui.selectedCategory.unhide()
@@ -89,24 +92,15 @@ class Category(
 
     @Suppress("unchecked_cast")
     private fun create() {
-        val nconfigs = configs.filter {
-            if (it is ConfigData.Switch)
-                !it.isHidden
-            else true
-        }
-
-        val subcategory = mutableMapOf<String, MutableList<ConfigData<*>>>()
-
-        nconfigs.forEach {
-            subcategory.getOrPut(it.subcategory) { mutableListOf() }.add(it)
-        }
-
-        subcategory.forEach { (subname, list) ->
+        configs.forEach { (subname, list) ->
             val scrollable = subcategoriesRect[subname]!!
 
-            for (idx in scrollable.children.size until list.size) {
-                val data = list[idx]
-                val y = 1 + idx * 17.0
+            var idx = 0
+            list.forEach { data ->
+                if (data.isHidden) return@forEach
+                val i = idx++
+
+                val y = 1 + i * 17.0
 
                 components.add(createBase(y, scrollable).apply {
                     addChild(createTitle(data.displayName))
