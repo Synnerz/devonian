@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.config.ui.talium
 
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ui.Categories
 import com.github.synnerz.devonian.config.ui.ConfigData
 import com.github.synnerz.devonian.config.ui.ConfigType
 import com.github.synnerz.talium.components.*
@@ -9,32 +10,67 @@ import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
 
-class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBase, idx: Int) {
+class Category(
+    val categoryName: String,
+    val rightPanel: UIBase,
+    leftPanel: UIBase,
+    idx: Int,
+    val createBtn: Boolean = true,
+) {
+    private val categoryEnum = Categories.byName(categoryName) ?: Categories.byDisplayName(categoryName)!!
     val configs = Config.categories[categoryName]!!.toList()
     private val components = mutableListOf<UIRect>()
     private val colorComponents = mutableListOf<UIColorPicker>()
-    private val scrollableRect = UIScrollable(0.0, 0.0, 100.0, 90.0, parent = rightPanel)
-    private var categoryButton: UIRect
+    private val subcategoryPanel = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+    }
+    private val scrollableRect = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel)
+    private val subcategoriesRect = mutableMapOf<String, UIScrollable>()
+    private var categoryButton: UIRect?
     private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, categoryName, true).apply {
         setColor(ColorPalette.TEXT_COLOR)
     }
+    private var currentSubcategory = "General"
 
     init {
-        update()
-        categoryButton = UIRect(
-            0.0, 12.0 + 9 * idx,
-            100.0, 8.0,
-            parent = leftPanel
-        ).apply {
-            onMouseRelease {
-                if (ConfigGui.selectedCategory.categoryName == categoryName) return@onMouseRelease
-                ConfigGui.selectedCategory.hide()
-                ConfigGui.selectedCategory = this@Category
-                ConfigGui.selectedCategory.unhide()
-                ConfigGui.selectedCategory.update()
-            }
-            addChild(categoryTitle)
+        categoryEnum.subcategories.forEachIndexed { jdx, it ->
+            subcategoriesRect[it] = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel).apply { hide() }
+            subcategoryPanel.addChild(
+                UIRect(1.0 + jdx * 15.5, 2.5, 15.0, 95.0).apply {
+                    val text = UIText(0.0, 0.0, 100.0, 100.0, it, true, parent = this).apply {
+                        setColor(ColorPalette.TEXT_COLOR)
+                        // TODO: add a way to make the current sub category's text different color
+                    }
+                    onMouseRelease { event ->
+                        if (event.button != 0) return@onMouseRelease
+                        subcategoriesRect[currentSubcategory]?.hide()
+                        hideColorPickers()
+                        currentSubcategory = it
+                        subcategoriesRect[currentSubcategory]?.unhide()
+                    }
+                    addEffect(OutlineEffect(0.5, ColorPalette.OUTLINE_COLOR))
+                }
+            )
         }
+        create()
+
+        if (createBtn) {
+            categoryButton = UIRect(
+                0.0, 12.0 + 9 * idx,
+                100.0, 8.0,
+                parent = leftPanel
+            ).apply {
+                onMouseRelease {
+                    if (ConfigGui.selectedCategory.categoryName == categoryName) return@onMouseRelease
+                    ConfigGui.selectedCategory.hide()
+                    ConfigGui.selectedCategory = this@Category
+                    ConfigGui.selectedCategory.unhide()
+                }
+                addChild(categoryTitle)
+            }
+        }
+        else categoryButton = null
+
         hide()
     }
 
@@ -51,10 +87,6 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
                 comp.hideDropdown()
     }
 
-    fun update() {
-        create()
-    }
-
     @Suppress("unchecked_cast")
     private fun create() {
         val nconfigs = configs.filter {
@@ -63,35 +95,50 @@ class Category(val categoryName: String, val rightPanel: UIBase, leftPanel: UIBa
             else true
         }
 
-        for (i in components.size until nconfigs.size) {
-            val data = nconfigs[i]
-            val y = 1 + i * 17.0
-            components.add(createBase(y, scrollableRect).apply {
-                addChild(createTitle(data.displayName))
-                addChild(createDescription(data.description))
-                addChild(
-                    when (data.type) {
-                        ConfigType.SWITCH -> createSwitch(data as ConfigData.Switch)
-                        ConfigType.SLIDER -> createSlider(data as ConfigData.Slider<Double>)
-                        ConfigType.DECIMALSLIDER -> createDecimalSlider(data as ConfigData.DecimalSlider<Double>)
-                        ConfigType.BUTTON -> createButton(data as ConfigData.Button)
-                        ConfigType.TEXTINPUT -> createTextInput(data as ConfigData.TextInput)
-                        ConfigType.SELECTION -> createSelection(data as ConfigData.Selection)
-                        ConfigType.COLORPICKER -> createColorPicker(data as ConfigData.ColorPicker, this@apply)
-                    }
-                )
-            })
+        val subcategory = mutableMapOf<String, MutableList<ConfigData<*>>>()
+
+        nconfigs.forEach {
+            subcategory.getOrPut(it.subcategory) { mutableListOf() }.add(it)
+        }
+
+        subcategory.forEach { (subname, list) ->
+            val scrollable = subcategoriesRect[subname]!!
+
+            for (idx in scrollable.children.size until list.size) {
+                val data = list[idx]
+                val y = 1 + idx * 17.0
+
+                components.add(createBase(y, scrollable).apply {
+                    addChild(createTitle(data.displayName))
+                    addChild(createDescription(data.description))
+                    addChild(
+                        when (data.type) {
+                            ConfigType.SWITCH -> createSwitch(data as ConfigData.Switch)
+                            ConfigType.SLIDER -> createSlider(data as ConfigData.Slider<Double>)
+                            ConfigType.DECIMALSLIDER -> createDecimalSlider(data as ConfigData.DecimalSlider<Double>)
+                            ConfigType.BUTTON -> createButton(data as ConfigData.Button)
+                            ConfigType.TEXTINPUT -> createTextInput(data as ConfigData.TextInput)
+                            ConfigType.SELECTION -> createSelection(data as ConfigData.Selection)
+                            ConfigType.COLORPICKER -> createColorPicker(data as ConfigData.ColorPicker, this@apply)
+                        }
+                    )
+                })
+            }
         }
     }
 
     fun hide() {
         categoryTitle.setColor(ColorPalette.TEXT_COLOR)
         scrollableRect.hide()
+        subcategoryPanel.hide()
+        subcategoriesRect[currentSubcategory]?.hide()
     }
 
     fun unhide() {
         categoryTitle.setColor(ColorPalette.LIGHT_TEXT_COLOR)
         scrollableRect.unhide()
+        subcategoryPanel.unhide()
+        subcategoriesRect[currentSubcategory]?.unhide()
     }
 
     private fun createBase(y: Double, parent: UIBase): UIRect =

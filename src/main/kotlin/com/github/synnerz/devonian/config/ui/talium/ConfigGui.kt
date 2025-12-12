@@ -53,7 +53,6 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
                 selectedCategory.hideColorPickers()
         }
 
-        selectedCategory.update()
         DevonianCommand.onRun {
             Scheduler.scheduleTask {
                 Devonian.minecraft.setScreen(this)

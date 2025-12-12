@@ -10,6 +10,7 @@ open class ConfigData<T>(
     var value: T,
     description: String? = null,
     displayName: String? = null,
+    val subcategory: String = "General",
 ) {
     val description = description ?: ""
     val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
@@ -45,18 +46,21 @@ open class ConfigData<T>(
         description: String? = null,
         displayName: String? = null,
         val isHidden: Boolean = false,
-    ) : ConfigData<Boolean>(configName, ConfigType.SWITCH, value, description, displayName)
+        subcategory: String = "General",
+    ) : ConfigData<Boolean>(configName, ConfigType.SWITCH, value, description, displayName, subcategory)
 
     class FeatureSwitch(
         configName: String,
         value: Boolean,
         description: String? = null,
         displayName: String? = null,
+        subcategory: String = "General",
     ) : Switch(
         configName,
         value,
         description,
         displayName,
+        subcategory = subcategory,
     ) {
         val subconfigs = mutableListOf<ConfigData<*>>()
     }
@@ -68,7 +72,8 @@ open class ConfigData<T>(
         val max: Double,
         description: String? = null,
         displayName: String? = null,
-    ) : ConfigData<T>(configName, ConfigType.SLIDER, value, description, displayName)
+        subcategory: String = "General",
+    ) : ConfigData<T>(configName, ConfigType.SLIDER, value, description, displayName, subcategory)
 
     class DecimalSlider<T : Number>(
         configName: String,
@@ -77,21 +82,24 @@ open class ConfigData<T>(
         val max: Double,
         description: String? = null,
         displayName: String? = null,
-    ) : ConfigData<T>(configName, ConfigType.DECIMALSLIDER, value, description, displayName)
+        subcategory: String = "General",
+    ) : ConfigData<T>(configName, ConfigType.DECIMALSLIDER, value, description, displayName, subcategory)
 
     class Button(
         val onClick: () -> Unit,
         val btnTitle: String = "Click!",
         description: String? = null,
         displayName: String? = null,
-    ) : ConfigData<Unit>(null, ConfigType.BUTTON, Unit, description, displayName)
+        subcategory: String = "General",
+    ) : ConfigData<Unit>(null, ConfigType.BUTTON, Unit, description, displayName, subcategory)
 
     class TextInput(
         configName: String,
         value: String,
         description: String? = null,
         displayName: String? = null,
-    ) : ConfigData<String>(configName, ConfigType.TEXTINPUT, value, description, displayName)
+        subcategory: String = "General",
+    ) : ConfigData<String>(configName, ConfigType.TEXTINPUT, value, description, displayName, subcategory)
 
     class Selection(
         configName: String,
@@ -99,7 +107,8 @@ open class ConfigData<T>(
         val options: List<String>,
         description: String? = null,
         displayName: String? = null,
-    ) : ConfigData<Int>(configName, ConfigType.SELECTION, value, description, displayName) {
+        subcategory: String = "General",
+    ) : ConfigData<Int>(configName, ConfigType.SELECTION, value, description, displayName, subcategory) {
         fun getCurrent(): String = options[get()]
     }
 
@@ -108,7 +117,8 @@ open class ConfigData<T>(
         value: Int,
         description: String? = null,
         displayName: String? = null,
-    ) : ConfigData<Int>(configName, ConfigType.COLORPICKER, value, description, displayName) {
+        subcategory: String = "General",
+    ) : ConfigData<Int>(configName, ConfigType.COLORPICKER, value, description, displayName, subcategory) {
         private var color = Color(value, true)
         fun getColor(): Color = color
 

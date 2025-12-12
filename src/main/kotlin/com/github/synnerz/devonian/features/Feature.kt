@@ -22,6 +22,7 @@ open class Feature @JvmOverloads constructor(
     displayName: String = configName.camelCaseToSentence(),
     cheeto: Boolean = false,
     val isInternal: Boolean = false,
+    val subcategory: String = "General",
 ) : Toggleable() {
     val minecraft = Devonian.minecraft
     val id = 256652 + Devonian.features.size
@@ -89,6 +90,7 @@ open class Feature @JvmOverloads constructor(
             false,
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
+            subcategory,
         ).also {
             if (isInternal) return@also
             Config.registerCategory(it, category)
@@ -104,6 +106,7 @@ open class Feature @JvmOverloads constructor(
         displayName: String? = null,
         cheeto: Boolean = false,
         isHidden: Boolean = false,
+        subcategory: String = this.subcategory,
     ): ConfigData.Switch {
         return ConfigData.Switch(
             "${this.configName}$$configName",
@@ -111,6 +114,7 @@ open class Feature @JvmOverloads constructor(
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
             isHidden,
+            subcategory,
         ).also {
             Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
@@ -124,6 +128,7 @@ open class Feature @JvmOverloads constructor(
         min: Double, max: Double,
         description: String? = null,
         displayName: String? = null,
+        subcategory: String = this.subcategory,
     ): ConfigData.Slider<Double> {
         return ConfigData.Slider(
             "${this.configName}$$configName",
@@ -131,6 +136,7 @@ open class Feature @JvmOverloads constructor(
             min, max,
             description,
             displayName,
+            subcategory,
         ).also {
             Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
@@ -144,6 +150,7 @@ open class Feature @JvmOverloads constructor(
         min: Double, max: Double,
         description: String? = null,
         displayName: String? = null,
+        subcategory: String = this.subcategory,
     ): ConfigData.DecimalSlider<Double> {
         return ConfigData.DecimalSlider(
             "${this.configName}$$configName",
@@ -151,6 +158,7 @@ open class Feature @JvmOverloads constructor(
             min, max,
             description,
             displayName,
+            subcategory,
         ).also {
             Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
@@ -163,12 +171,14 @@ open class Feature @JvmOverloads constructor(
         buttonTitle: String = "Click!",
         description: String? = null,
         displayName: String? = null,
+        subcategory: String = this.subcategory,
     ): ConfigData.Button {
         return ConfigData.Button(
             onClick,
             buttonTitle,
             description,
             displayName,
+            subcategory,
         )
     }
 
@@ -178,12 +188,14 @@ open class Feature @JvmOverloads constructor(
         value: String = "",
         description: String? = null,
         displayName: String? = null,
+        subcategory: String = this.subcategory,
     ): ConfigData.TextInput {
         return ConfigData.TextInput(
             "${this.configName}$$configName",
             value,
             description,
             displayName,
+            subcategory,
         ).also {
             Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
@@ -196,6 +208,7 @@ open class Feature @JvmOverloads constructor(
         options: List<String>,
         description: String? = null,
         displayName: String? = null,
+        subcategory: String = this.subcategory,
     ): ConfigData.Selection {
         return ConfigData.Selection(
             "${this.configName}$$configName",
@@ -203,6 +216,7 @@ open class Feature @JvmOverloads constructor(
             options,
             description,
             displayName,
+            subcategory,
         ).also {
             Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
@@ -214,12 +228,14 @@ open class Feature @JvmOverloads constructor(
         value: Int, // argb
         description: String? = null,
         displayName: String? = null,
+        subcategory: String = this.subcategory,
     ): ConfigData.ColorPicker {
         return ConfigData.ColorPicker(
             "${this.configName}$$configName",
             value,
             description,
             displayName,
+            subcategory,
         ).also {
             Config.registerCategory(it, category)
             configSwitch.subconfigs.add(it)
