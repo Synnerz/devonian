@@ -7,7 +7,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 object SelectedItemName : TextHudFeature(
     "selectedItemName",
-    "Cancels the selected item name above hotbar and adds a custom one that is movable"
+    "Cancels the selected item name above hotbar and adds a custom one that is movable",
+    subcategory = "Tweaks",
 ) {
     fun onRender(ctx: GuiGraphics, ci: CallbackInfo) {
         if (!isEnabled()) return
