@@ -11,7 +11,7 @@ enum class Categories(
     END("End"),
     DIANA("Diana"),
     MISC("Misc", listOf("General", "Inventory", "Hiders", "Tweaks")),
-    DEBUG("Debug", listOf("Renderers", "Utils"));
+    DEBUG("Debug", listOf("Renderers", "Utils", "Packet Logger"));
 
     init {
         if (subcategories.isEmpty()) throw IllegalArgumentException("must provide at least 1 subcategory")

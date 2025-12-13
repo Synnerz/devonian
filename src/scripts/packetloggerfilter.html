@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Packet Logger Filter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 40px;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    #checkboxForm>div {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-item label {
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    .label-name {
+      display: block;
+    }
+
+    .label-desc {
+      display: block;
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .output {
+      margin-top: 15px;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Select Options</h2>
+
+    <form id="checkboxForm">
+      <button type="button" onclick="selectAll()">Select All</button>
+      <button type="button" onclick="deselectAll()">Deselect All</button>
+      <div style="margin: 20px;">
+        <div id="checkboxContainerServer"></div>
+        <div id="checkboxContainerClient"></div>
+      </div>
+      <button type="submit">Copy</button>
+    </form>
+  </div>
+
+  <script>
+    function selectAll() {
+      const checkboxes = document.querySelectorAll('#checkboxForm input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = true);
+    }
+
+    function deselectAll() {
+      const checkboxes = document.querySelectorAll('#checkboxForm input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = false);
+    }
+  </script>
+
+  <script>
+    const c2sPackets = [
+      ['ServerboundPingRequestPacket', '', 'ping_request'],
+      ['ServerboundAcceptCodeOfConductPacket', '', 'accept_code_of_conduct'],
+      ['ServerboundFinishConfigurationPacket', '', 'finish_configuration'],
+      ['ServerboundSelectKnownPacks', '', 'select_known_packs'],
+      ['ServerboundClientInformationPacket', '', 'client_information'],
+      ['ServerboundCustomPayloadPacket', '', 'custom_payload'],
+      ['ServerboundKeepAlivePacket', '', 'keep_alive'],
+      ['ServerboundPongPacket', '', 'pong'],
+      ['ServerboundResourcePackPacket', '', 'resource_pack'],
+      ['ServerboundCustomClickActionPacket', '', 'custom_click_action'],
+      ['ServerboundAcceptTeleportationPacket', '', 'accept_teleportation'],
+      ['ServerboundBlockEntityTagQueryPacket', '', 'block_entity_tag_query'],
+      ['ServerboundSelectBundleItemPacket', '', 'bundle_item_selected'],
+      ['ServerboundChangeDifficultyPacket', '', 'change_difficulty'],
+      ['ServerboundChangeGameModePacket', '', 'change_game_mode'],
+      ['ServerboundChatAckPacket', '', 'chat_ack'],
+      ['ServerboundChatCommandPacket', '', 'chat_command'],
+      ['ServerboundChatCommandSignedPacket', '', 'chat_command_signed'],
+      ['ServerboundChatPacket', '', 'chat'],
+      ['ServerboundChatSessionUpdatePacket', '', 'chat_session_update'],
+      ['ServerboundChunkBatchReceivedPacket', '', 'chunk_batch_received'],
+      ['ServerboundClientCommandPacket', '', 'client_command'],
+      ['ServerboundClientTickEndPacket', '', 'client_tick_end'],
+      ['ServerboundCommandSuggestionPacket', '', 'command_suggestion'],
+      ['ServerboundConfigurationAcknowledgedPacket', '', 'configuration_acknowledged'],
+      ['ServerboundContainerButtonClickPacket', '', 'container_button_click'],
+      ['ServerboundContainerClickPacket', '', 'container_click'],
+      ['ServerboundContainerClosePacket', '', 'container_close'],
+      ['ServerboundContainerSlotStateChangedPacket', '', 'container_slot_state_changed'],
+      ['ServerboundDebugSubscriptionRequestPacket', '', 'debug_subscription_request'],
+      ['ServerboundEditBookPacket', '', 'edit_book'],
+      ['ServerboundEntityTagQueryPacket', '', 'entity_tag_query'],
+      ['ServerboundInteractPacket', '', 'interact'],
+      ['ServerboundJigsawGeneratePacket', '', 'jigsaw_generate'],
+      ['ServerboundLockDifficultyPacket', '', 'lock_difficulty'],
+      ['ServerboundMovePlayerPacket.Pos', '', 'move_player_pos'],
+      ['ServerboundMovePlayerPacket.PosRot', '', 'move_player_pos_rot'],
+      ['ServerboundMovePlayerPacket.Rot', '', 'move_player_rot'],
+      ['ServerboundMovePlayerPacket.StatusOnly', '', 'move_player_status_only'],
+      ['ServerboundMoveVehiclePacket', '', 'move_vehicle'],
+      ['ServerboundPaddleBoatPacket', '', 'paddle_boat'],
+      ['ServerboundPickItemFromBlockPacket', '', 'pick_item_from_block'],
+      ['ServerboundPickItemFromEntityPacket', '', 'pick_item_from_entity'],
+      ['ServerboundPlaceRecipePacket', '', 'place_recipe'],
+      ['ServerboundPlayerAbilitiesPacket', '', 'player_abilities'],
+      ['ServerboundPlayerActionPacket', '', 'player_action'],
+      ['ServerboundPlayerCommandPacket', '', 'player_command'],
+      ['ServerboundPlayerInputPacket', '', 'player_input'],
+      ['ServerboundPlayerLoadedPacket', '', 'player_loaded'],
+      ['ServerboundRecipeBookChangeSettingsPacket', '', 'recipe_book_change_settings'],
+      ['ServerboundRecipeBookSeenRecipePacket', '', 'recipe_book_seen_recipe'],
+      ['ServerboundRenameItemPacket', '', 'rename_item'],
+      ['ServerboundSeenAdvancementsPacket', '', 'seen_advancements'],
+      ['ServerboundSelectTradePacket', '', 'select_trade'],
+      ['ServerboundSetBeaconPacket', '', 'set_beacon'],
+      ['ServerboundSetCarriedItemPacket', '', 'set_carried_item'],
+      ['ServerboundSetCommandBlockPacket', '', 'set_command_block'],
+      ['ServerboundSetCommandMinecartPacket', '', 'set_command_minecart'],
+      ['ServerboundSetCreativeModeSlotPacket', '', 'set_creative_mode_slot'],
+      ['ServerboundSetJigsawBlockPacket', '', 'set_jigsaw_block'],
+      ['ServerboundSetStructureBlockPacket', '', 'set_structure_block'],
+      ['ServerboundSetTestBlockPacket', '', 'set_test_block'],
+      ['ServerboundTestInstanceBlockActionPacket', '', 'test_instance_block_action'],
+      ['ServerboundSignUpdatePacket', '', 'sign_update'],
+      ['ServerboundSwingPacket', '', 'swing'],
+      ['ServerboundTeleportToEntityPacket', '', 'teleport_to_entity'],
+      ['ServerboundUseItemOnPacket', '', 'use_item_on'],
+      ['ServerboundUseItemPacket', '', 'use_item'],
+      ['ServerboundStatusRequestPacket', '', 'status_request'],
+      ['ServerboundCustomQueryAnswerPacket', '', 'custom_query_answer'],
+      ['ServerboundHelloPacket', '', 'hello'],
+      ['ServerboundKeyPacket', '', 'key'],
+      ['ServerboundLoginAcknowledgedPacket', '', 'login_acknowledged'],
+      ['ServerboundCookieResponsePacket', '', 'cookie_response'],
+    ];
+    const s2cPackets = [
+      ['ClientboundPongResponsePacket', '', 'pong_response'],
+      ['ClientboundCodeOfConductPacket', '', 'code_of_conduct'],
+      ['ClientboundFinishConfigurationPacket', '', 'finish_configuration'],
+      ['ClientboundRegistryDataPacket', '', 'registry_data'],
+      ['ClientboundResetChatPacket', '', 'reset_chat'],
+      ['ClientboundSelectKnownPacks', '', 'select_known_packs'],
+      ['ClientboundUpdateEnabledFeaturesPacket', '', 'update_enabled_features'],
+      ['ClientboundClearDialogPacket', '', 'clear_dialog'],
+      ['ClientboundCustomPayloadPacket', '', 'custom_payload'],
+      ['ClientboundCustomReportDetailsPacket', '', 'custom_report_details'],
+      ['ClientboundDisconnectPacket', '', 'disconnect'],
+      ['ClientboundKeepAlivePacket', '', 'keep_alive'],
+      ['ClientboundPingPacket', '', 'ping'],
+      ['ClientboundResourcePackPopPacket', '', 'resource_pack_pop'],
+      ['ClientboundResourcePackPushPacket', '', 'resource_pack_push'],
+      ['ClientboundServerLinksPacket', '', 'server_links'],
+      ['ClientboundShowDialogPacket', '', 'show_dialog'],
+      ['ClientboundStoreCookiePacket', '', 'store_cookie'],
+      ['ClientboundTransferPacket', '', 'transfer'],
+      ['ClientboundUpdateTagsPacket', '', 'update_tags'],
+      ['ClientboundBundlePacket', '', 'bundle'],
+      ['ClientboundBundleDelimiterPacket', '', 'bundle_delimiter'],
+      ['ClientboundAddEntityPacket', '', 'add_entity'],
+      ['ClientboundAnimatePacket', '', 'animate'],
+      ['ClientboundAwardStatsPacket', '', 'award_stats'],
+      ['ClientboundBlockChangedAckPacket', '', 'block_changed_ack'],
+      ['ClientboundBlockDestructionPacket', '', 'block_destruction'],
+      ['ClientboundBlockEntityDataPacket', '', 'block_entity_data'],
+      ['ClientboundBlockEventPacket', '', 'block_event'],
+      ['ClientboundBlockUpdatePacket', '', 'block_update'],
+      ['ClientboundBossEventPacket', '', 'boss_event'],
+      ['ClientboundChangeDifficultyPacket', '', 'change_difficulty'],
+      ['ClientboundChunkBatchFinishedPacket', '', 'chunk_batch_finished'],
+      ['ClientboundChunkBatchStartPacket', '', 'chunk_batch_start'],
+      ['ClientboundChunksBiomesPacket', '', 'chunks_biomes'],
+      ['ClientboundClearTitlesPacket', '', 'clear_titles'],
+      ['ClientboundCommandSuggestionsPacket', '', 'command_suggestions'],
+      ['ClientboundCommandsPacket', '', 'commands'],
+      ['ClientboundContainerClosePacket', '', 'container_close'],
+      ['ClientboundContainerSetContentPacket', '', 'container_set_content'],
+      ['ClientboundContainerSetDataPacket', '', 'container_set_data'],
+      ['ClientboundContainerSetSlotPacket', '', 'container_set_slot'],
+      ['ClientboundCooldownPacket', '', 'cooldown'],
+      ['ClientboundCustomChatCompletionsPacket', '', 'custom_chat_completions'],
+      ['ClientboundDamageEventPacket', '', 'damage_event'],
+      ['ClientboundDebugBlockValuePacket', '', 'debug/block_value'],
+      ['ClientboundDebugChunkValuePacket', '', 'debug/chunk_value'],
+      ['ClientboundDebugEntityValuePacket', '', 'debug/entity_value'],
+      ['ClientboundDebugEventPacket', '', 'debug/event'],
+      ['ClientboundDebugSamplePacket', '', 'debug_sample'],
+      ['ClientboundDeleteChatPacket', '', 'delete_chat'],
+      ['ClientboundDisguisedChatPacket', '', 'disguised_chat'],
+      ['ClientboundEntityEventPacket', '', 'entity_event'],
+      ['ClientboundEntityPositionSyncPacket', '', 'entity_position_sync'],
+      ['ClientboundExplodePacket', '', 'explode'],
+      ['ClientboundForgetLevelChunkPacket', '', 'forget_level_chunk'],
+      ['ClientboundGameEventPacket', '', 'game_event'],
+      ['ClientboundGameTestHighlightPosPacket', '', 'game_test_highlight_pos'],
+      ['ClientboundHorseScreenOpenPacket', '', 'horse_screen_open'],
+      ['ClientboundHurtAnimationPacket', '', 'hurt_animation'],
+      ['ClientboundInitializeBorderPacket', '', 'initialize_border'],
+      ['ClientboundLevelChunkWithLightPacket', '', 'level_chunk_with_light'],
+      ['ClientboundLevelEventPacket', '', 'level_event'],
+      ['ClientboundLevelParticlesPacket', '', 'level_particles'],
+      ['ClientboundLightUpdatePacket', '', 'light_update'],
+      ['ClientboundLoginPacket', '', 'login'],
+      ['ClientboundMapItemDataPacket', '', 'map_item_data'],
+      ['ClientboundMerchantOffersPacket', '', 'merchant_offers'],
+      ['ClientboundMoveEntityPacket.Pos', '', 'move_entity_pos'],
+      ['ClientboundMoveEntityPacket.PosRot', '', 'move_entity_pos_rot'],
+      ['ClientboundMoveMinecartPacket', '', 'move_minecart_along_track'],
+      ['ClientboundMoveEntityPacket.Rot', '', 'move_entity_rot'],
+      ['ClientboundMoveVehiclePacket', '', 'move_vehicle'],
+      ['ClientboundOpenBookPacket', '', 'open_book'],
+      ['ClientboundOpenScreenPacket', '', 'open_screen'],
+      ['ClientboundOpenSignEditorPacket', '', 'open_sign_editor'],
+      ['ClientboundPlaceGhostRecipePacket', '', 'place_ghost_recipe'],
+      ['ClientboundPlayerAbilitiesPacket', '', 'player_abilities'],
+      ['ClientboundPlayerChatPacket', '', 'player_chat'],
+      ['ClientboundPlayerCombatEndPacket', '', 'player_combat_end'],
+      ['ClientboundPlayerCombatEnterPacket', '', 'player_combat_enter'],
+      ['ClientboundPlayerCombatKillPacket', '', 'player_combat_kill'],
+      ['ClientboundPlayerInfoRemovePacket', '', 'player_info_remove'],
+      ['ClientboundPlayerInfoUpdatePacket', '', 'player_info_update'],
+      ['ClientboundPlayerLookAtPacket', '', 'player_look_at'],
+      ['ClientboundPlayerPositionPacket', '', 'player_position'],
+      ['ClientboundPlayerRotationPacket', '', 'player_rotation'],
+      ['ClientboundRecipeBookAddPacket', '', 'recipe_book_add'],
+      ['ClientboundRecipeBookRemovePacket', '', 'recipe_book_remove'],
+      ['ClientboundRecipeBookSettingsPacket', '', 'recipe_book_settings'],
+      ['ClientboundRemoveEntitiesPacket', '', 'remove_entities'],
+      ['ClientboundRemoveMobEffectPacket', '', 'remove_mob_effect'],
+      ['ClientboundRespawnPacket', '', 'respawn'],
+      ['ClientboundRotateHeadPacket', '', 'rotate_head'],
+      ['ClientboundSectionBlocksUpdatePacket', '', 'section_blocks_update'],
+      ['ClientboundSelectAdvancementsTabPacket', '', 'select_advancements_tab'],
+      ['ClientboundServerDataPacket', '', 'server_data'],
+      ['ClientboundSetActionBarTextPacket', '', 'set_action_bar_text'],
+      ['ClientboundSetBorderCenterPacket', '', 'set_border_center'],
+      ['ClientboundSetBorderLerpSizePacket', '', 'set_border_lerp_size'],
+      ['ClientboundSetBorderSizePacket', '', 'set_border_size'],
+      ['ClientboundSetBorderWarningDelayPacket', '', 'set_border_warning_delay'],
+      ['ClientboundSetBorderWarningDistancePacket', '', 'set_border_warning_distance'],
+      ['ClientboundSetCameraPacket', '', 'set_camera'],
+      ['ClientboundSetChunkCacheCenterPacket', '', 'set_chunk_cache_center'],
+      ['ClientboundSetChunkCacheRadiusPacket', '', 'set_chunk_cache_radius'],
+      ['ClientboundSetDefaultSpawnPositionPacket', '', 'set_default_spawn_position'],
+      ['ClientboundSetDisplayObjectivePacket', '', 'set_display_objective'],
+      ['ClientboundSetEntityDataPacket', '', 'set_entity_data'],
+      ['ClientboundSetEntityLinkPacket', '', 'set_entity_link'],
+      ['ClientboundSetEntityMotionPacket', '', 'set_entity_motion'],
+      ['ClientboundSetEquipmentPacket', '', 'set_equipment'],
+      ['ClientboundSetExperiencePacket', '', 'set_experience'],
+      ['ClientboundSetHealthPacket', '', 'set_health'],
+      ['ClientboundSetHeldSlotPacket', '', 'set_held_slot'],
+      ['ClientboundSetObjectivePacket', '', 'set_objective'],
+      ['ClientboundSetPassengersPacket', '', 'set_passengers'],
+      ['ClientboundSetPlayerTeamPacket', '', 'set_player_team'],
+      ['ClientboundSetScorePacket', '', 'set_score'],
+      ['ClientboundSetSimulationDistancePacket', '', 'set_simulation_distance'],
+      ['ClientboundSetSubtitleTextPacket', '', 'set_subtitle_text'],
+      ['ClientboundSetTimePacket', '', 'set_time'],
+      ['ClientboundSetTitleTextPacket', '', 'set_title_text'],
+      ['ClientboundSetTitlesAnimationPacket', '', 'set_titles_animation'],
+      ['ClientboundSoundEntityPacket', '', 'sound_entity'],
+      ['ClientboundSoundPacket', '', 'sound'],
+      ['ClientboundStartConfigurationPacket', '', 'start_configuration'],
+      ['ClientboundStopSoundPacket', '', 'stop_sound'],
+      ['ClientboundSystemChatPacket', '', 'system_chat'],
+      ['ClientboundTabListPacket', '', 'tab_list'],
+      ['ClientboundTagQueryPacket', '', 'tag_query'],
+      ['ClientboundTakeItemEntityPacket', '', 'take_item_entity'],
+      ['ClientboundTeleportEntityPacket', '', 'teleport_entity'],
+      ['ClientboundTestInstanceBlockStatus', '', 'test_instance_block_status'],
+      ['ClientboundUpdateAdvancementsPacket', '', 'update_advancements'],
+      ['ClientboundUpdateAttributesPacket', '', 'update_attributes'],
+      ['ClientboundUpdateMobEffectPacket', '', 'update_mob_effect'],
+      ['ClientboundUpdateRecipesPacket', '', 'update_recipes'],
+      ['ClientboundProjectilePowerPacket', '', 'projectile_power'],
+      ['ClientboundTrackedWaypointPacket', '', 'waypoint'],
+      ['ClientboundResetScorePacket', '', 'reset_score'],
+      ['ClientboundTickingStatePacket', '', 'ticking_state'],
+      ['ClientboundTickingStepPacket', '', 'ticking_step'],
+      ['ClientboundSetCursorItemPacket', '', 'set_cursor_item'],
+      ['ClientboundSetPlayerInventoryPacket', '', 'set_player_inventory'],
+      ['ClientboundStatusResponsePacket', '', 'status_response'],
+      ['ClientboundCustomQueryPacket', '', 'custom_query'],
+      ['ClientboundLoginFinishedPacket', '', 'login_finished'],
+      ['ClientboundHelloPacket', '', 'hello'],
+      ['ClientboundLoginCompressionPacket', '', 'login_compression'],
+      ['ClientboundLoginDisconnectPacket', '', 'login_disconnect'],
+      ['ClientboundCookieRequestPacket', '', 'cookie_request'],
+      ['ClientIntentionPacket', '', 'intention'],
+    ];
+
+    function addTo(packets, container) {
+      packets.forEach(([name, desc]) => {
+        const div = document.createElement('div');
+        div.className = 'checkbox-item';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `checkbox-${name}`;
+        checkbox.name = name;
+
+        const label = document.createElement('label');
+        label.htmlFor = checkbox.id;
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = name;
+        nameSpan.classList.add('label-name');
+
+        const descSpan = document.createElement('span');
+        descSpan.textContent = desc;
+        descSpan.classList.add('label-desc');
+
+        label.appendChild(nameSpan);
+        label.appendChild(descSpan);
+
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        container.appendChild(div);
+      });
+    }
+
+    addTo(c2sPackets, document.getElementById('checkboxContainerServer'));
+    addTo(s2cPackets, document.getElementById('checkboxContainerClient'));
+
+    document.getElementById('checkboxForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const str = c2sPackets.concat(s2cPackets).map(([name, _, type]) => {
+        const checked = document.getElementById(`checkbox-${name}`).checked;
+        return checked ? name[0].toLowerCase() + type : null;
+      }).filter(Boolean).join(',');
+
+      navigator.clipboard.writeText(str);
+    });
+  </script>
+</body>
+
+</html>
