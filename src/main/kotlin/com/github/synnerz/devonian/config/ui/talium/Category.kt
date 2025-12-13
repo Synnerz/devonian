@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.config.ui.talium
 
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.ConfigData
@@ -97,7 +98,7 @@ class Category(
 
             var idx = 0
             list.forEach { data ->
-                if (data.isHidden) return@forEach
+                if (data.isHidden && !Devonian.isDev) return@forEach
                 val i = idx++
 
                 val y = 1 + i * 17.0
