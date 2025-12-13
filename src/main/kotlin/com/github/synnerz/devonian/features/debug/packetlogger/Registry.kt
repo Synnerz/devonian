@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.debug.packetlogger
 
+import com.github.synnerz.devonian.features.debug.packetlogger.s2c.*
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.PacketFlow
 
@@ -17,4 +18,12 @@ object Registry {
         Key(packet.type().id.path, packet.type().flow),
         ISerializer.EMPTY
     ) as ISerializer<T>
+
+    init {
+        register(BlockUpdatePacket)
+        register(MultiBlockUpdatePacket)
+        register(SoundPacket)
+        register(SoundEntityPacket)
+        register(LevelEventPacket)
+    }
 }
