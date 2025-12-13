@@ -53,6 +53,7 @@ object DungeonScanner {
     var availablePos = findAvailablePos()
     private var worldChangeCooldown = 5
     private var foundEntrance = 5
+    private var wasInEntrance = false
 
     private val secretRegex = "\\b(\\d+)/(\\d+) Secrets".toRegex()
 
@@ -156,6 +157,14 @@ object DungeonScanner {
             val comp = WorldPosition(player.x.toInt(), player.z.toInt()).toComponent()
             val jdx = comp.getRoomIdx()
 
+            if (jdx !in 0..35) return@on
+
+            val newRoom = rooms[jdx]
+            if (!wasInEntrance) {
+                if (newRoom?.type == RoomTypes.ENTRANCE) wasInEntrance = true
+                else if (foundEntrance <= 0) return@on
+            }
+
             scan()
             checkRoomState()
             checkDoorState()
@@ -166,9 +175,7 @@ object DungeonScanner {
             if (lastIdx != null && lastIdx != jdx)
                 DungeonEvent.RoomLeave(currentRoom, lastIdx!!).post()
 
-            if (jdx !in 0..35) return@on
-
-            currentRoom = rooms.getOrNull(jdx)
+            currentRoom = rooms[jdx]
             currentRoom?.explored = true
 
             if (lastIdx == jdx) return@on
@@ -315,6 +322,7 @@ object DungeonScanner {
     fun reset() {
         worldChangeCooldown = 5
         foundEntrance = 5
+        wasInEntrance = false
         rooms.fill(null)
         doors.fill(null)
         lastIdx = null
