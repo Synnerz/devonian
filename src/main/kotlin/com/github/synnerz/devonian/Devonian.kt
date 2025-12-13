@@ -11,6 +11,7 @@ import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.features.HudManagerInstructions
 import com.github.synnerz.devonian.features.HudManagerRenderer
 import com.github.synnerz.devonian.features.debug.CopyItem
+import com.github.synnerz.devonian.features.debug.renderers.RenderSlotIndex
 import com.github.synnerz.devonian.features.diana.BurrowGuesser
 import com.github.synnerz.devonian.features.diana.BurrowWaypoint
 import com.github.synnerz.devonian.features.diana.DianaDropTracker
@@ -173,6 +174,7 @@ object Devonian : ClientModInitializer {
         AutoArchitectDraft,
         DoubleAnimationFix,
         CopyItem,
+        RenderSlotIndex,
     )
 
     override fun onInitializeClient() {
