@@ -287,8 +287,10 @@ open class Feature @JvmOverloads constructor(
         displayed = false
     }
 
-    inline fun <reified T : Event> on(noinline cb: (T) -> Unit) {
-        children.add(EventBus.on<T>(cb, false))
+    inline fun <reified T : Event> on(noinline cb: (T) -> Unit): EventListener<T> {
+        val listener = EventBus.on<T>(cb, false)
+        children.add(listener)
+        return listener
     }
 
     init {
