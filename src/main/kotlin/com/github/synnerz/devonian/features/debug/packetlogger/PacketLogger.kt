@@ -144,7 +144,7 @@ object PacketLogger : TextHudFeature(
         val serializer = Registry.get(packet)
 
         val obj = JsonDataObject(JsonObject())
-        obj.set("_class", packet.javaClass.simpleName)
+        obj.set("_class", packet.javaClass.name)
         obj.set("_tick", lastTick)
         obj.set("_time", System.currentTimeMillis() - startTime)
 
