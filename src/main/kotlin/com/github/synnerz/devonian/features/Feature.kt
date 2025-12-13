@@ -24,13 +24,14 @@ open class Feature @JvmOverloads constructor(
     cheeto: Boolean = false,
     val isInternal: Boolean = false,
     val subcategory: String = "General",
+    val isHidden: Boolean = false,
 ) : Toggleable() {
     val minecraft = Devonian.minecraft
     val id = 256652 + Devonian.features.size
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
     private var displayed = false
     val children = mutableListOf<Toggleable>()
-    val configSwitch = addFeatureSwitch(description, displayName, cheeto)
+    val configSwitch = addFeatureSwitch(description, displayName, cheeto, isHidden)
         .also {
             it.onChange {
                 setRegistered(it)
@@ -83,7 +84,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         cheeto: Boolean = false,
-        isHidden: Boolean = false,
+        isHidden: Boolean = this.isHidden,
     ): ConfigData.FeatureSwitch {
         return ConfigData.FeatureSwitch(
             configName,
@@ -91,7 +92,7 @@ open class Feature @JvmOverloads constructor(
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
             subcategory,
-            isHidden
+            isHidden,
         ).also {
             if (isInternal) return@also
             Config.registerCategory(it, category, subcategory)
@@ -107,7 +108,7 @@ open class Feature @JvmOverloads constructor(
         displayName: String? = null,
         cheeto: Boolean = false,
         subcategory: String = this.subcategory,
-        isHidden: Boolean = false,
+        isHidden: Boolean = this.isHidden,
     ): ConfigData.Switch {
         return ConfigData.Switch(
             "${this.configName}$$configName",
@@ -130,7 +131,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
-        isHidden: Boolean = false,
+        isHidden: Boolean = this.isHidden,
     ): ConfigData.Slider<Double> {
         return ConfigData.Slider(
             "${this.configName}$$configName",
@@ -154,7 +155,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
-        isHidden: Boolean = false,
+        isHidden: Boolean = this.isHidden,
     ): ConfigData.DecimalSlider<Double> {
         return ConfigData.DecimalSlider(
             "${this.configName}$$configName",
@@ -177,7 +178,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
-        isHidden: Boolean = false,
+        isHidden: Boolean = this.isHidden,
     ): ConfigData.Button {
         return ConfigData.Button(
             onClick,
@@ -196,7 +197,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
-        isHidden: Boolean = false,
+        isHidden: Boolean = this.isHidden,
     ): ConfigData.TextInput {
         return ConfigData.TextInput(
             "${this.configName}$$configName",
@@ -218,7 +219,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
-        isHidden: Boolean = false,
+        isHidden: Boolean = this.isHidden,
     ): ConfigData.Selection {
         return ConfigData.Selection(
             "${this.configName}$$configName",
@@ -240,7 +241,7 @@ open class Feature @JvmOverloads constructor(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = this.subcategory,
-        isHidden: Boolean = false,
+        isHidden: Boolean = this.isHidden,
     ): ConfigData.ColorPicker {
         return ConfigData.ColorPicker(
             "${this.configName}$$configName",
