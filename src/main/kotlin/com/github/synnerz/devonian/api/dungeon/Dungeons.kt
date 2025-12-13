@@ -321,6 +321,7 @@ object Dungeons {
                 if (message == "If you win, you live. If you lose, you die. If you don't fight, you can't win.") return@on
                 if (message == "If I had spent more time studying and less time watching anime, maybe mother would be here with me!") return@on
                 if (message == "Wither Ultra!") return@on
+                if (message == "Yare yare daze...") return@on
             }
 
             DungeonEvent.BossMessageEvent(boss, message).post()
