@@ -32,10 +32,15 @@ import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import org.slf4j.LoggerFactory
+import java.util.UUID
 
 object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")
     val minecraft = Minecraft.getInstance()
+    val isDev = setOf(
+        UUID.fromString("21c82573-9d28-4d7b-957f-adf20938cd38"),
+        UUID.fromString("819d8402-51eb-4c0c-bcf2-d070dcb82a93"),
+    ).contains(minecraft.gameProfile.id)
     val keybindCategory by lazy {
         KeyMapping.Category.register(
             ResourceLocation.fromNamespaceAndPath(
