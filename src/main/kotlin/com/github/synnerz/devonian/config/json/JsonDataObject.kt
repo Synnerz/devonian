@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.config.json
 
 import com.github.synnerz.devonian.config.DataObject
+import com.github.synnerz.devonian.utils.PersistentJson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
@@ -34,5 +35,9 @@ class JsonDataObject(private val json: JsonObject) : DataObject() {
             json.add(key, obj)
         }
         return@getOrPut JsonDataObject(obj)
+    }
+
+    override fun toString(): String {
+        return PersistentJson.gson.toJson(json)
     }
 }
