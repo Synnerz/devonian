@@ -30,7 +30,8 @@ abstract class HudFeature(
     cheeto: Boolean = false,
     isInternal: Boolean = false,
     subcategory: String = "General",
-) : Feature(configName, description, category, area, subarea, displayName, cheeto, isInternal, subcategory) {
+    isHidden: Boolean = false,
+) : Feature(configName, description, category, area, subarea, displayName, cheeto, isInternal, subcategory, isHidden) {
     var x = 10.0
     var y = 10.0
     var scale = 1f
@@ -141,5 +142,7 @@ abstract class HudFeature(
         )
     }
 
-    fun isVisibleEdit() = isEnabled() || isInternal || !HudManagerHider.isEnabled()
+    fun isVisibleEdit() =
+        (isEnabled() || isInternal || !HudManagerHider.isEnabled()) &&
+        (!isHidden || Devonian.isDev)
 }
