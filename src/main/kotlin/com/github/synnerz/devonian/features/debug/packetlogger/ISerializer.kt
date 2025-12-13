@@ -13,8 +13,10 @@ interface ISerializer<T : Packet<*>> {
 
     companion object {
         val EMPTY = object : ISerializer<Packet<*>> {
-            override val type: PacketType<Packet<*>> = throw UnsupportedOperationException()
-            override val flow: PacketFlow = throw UnsupportedOperationException()
+            override val type: PacketType<Packet<*>>
+                get() = throw UnsupportedOperationException()
+            override val flow: PacketFlow
+                get() = throw UnsupportedOperationException()
 
             override fun serialize(packet: Packet<*>, obj: JsonDataObject) {}
         }
