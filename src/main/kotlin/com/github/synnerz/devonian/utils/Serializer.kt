@@ -3,10 +3,12 @@ package com.github.synnerz.devonian.utils
 import com.github.synnerz.devonian.config.json.JsonDataObject
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import com.google.gson.*
+import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.*
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.state.BlockState
 
 object Serializer {
     fun serializeNBT(nbt: Tag): JsonElement? = when (nbt) {
@@ -59,7 +61,7 @@ object Serializer {
 
     fun serializeItem(stack: ItemStack): JsonDataObject {
         val item = stack.item
-        val obj = JsonDataObject(JsonObject())
+        val obj = JsonDataObject()
 
         stack.get(DataComponents.CUSTOM_NAME)?.let {
             obj.set("name", it.colorCodes())
@@ -99,6 +101,20 @@ object Serializer {
             obj.set("ExtraAttributes", serializeNBT(nbt))
         }
 
+        return obj
+    }
+
+    fun serializeBlockPos(pos: BlockPos): JsonDataObject {
+        val obj = JsonDataObject()
+        obj.set("x", pos.x)
+        obj.set("y", pos.y)
+        obj.set("z", pos.z)
+        return obj
+    }
+
+    fun serializeBlockState(pos: BlockState): JsonDataObject {
+        val obj = JsonDataObject()
+        obj.set("block", BuiltInRegistries.BLOCK.getKey(pos.block).toString())
         return obj
     }
 }
