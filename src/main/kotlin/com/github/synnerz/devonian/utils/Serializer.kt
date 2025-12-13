@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.*
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.Vec3
 
 object Serializer {
     fun serializeNBT(nbt: Tag): JsonElement? = when (nbt) {
@@ -115,6 +116,14 @@ object Serializer {
     fun serializeBlockState(pos: BlockState): JsonDataObject {
         val obj = JsonDataObject()
         obj.set("block", BuiltInRegistries.BLOCK.getKey(pos.block).toString())
+        return obj
+    }
+
+    fun serializeVec(pos: Vec3): JsonDataObject {
+        val obj = JsonDataObject()
+        obj.set("x", pos.x)
+        obj.set("y", pos.y)
+        obj.set("z", pos.z)
         return obj
     }
 }

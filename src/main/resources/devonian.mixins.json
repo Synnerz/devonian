@@ -56,6 +56,7 @@
     "EntityMixin",
     "ItemCooldownsMixin",
     "PlayerMixin",
+    "accessor.ClientboundEntityEventPacketAccessor",
     "accessor.EntityAccessor"
   ]
 }
