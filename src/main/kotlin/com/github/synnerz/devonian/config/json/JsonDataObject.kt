@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.utils.PersistentJson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
-class JsonDataObject(private val json: JsonObject) : DataObject() {
+class JsonDataObject(val json: JsonObject = JsonObject()) : DataObject() {
     override fun <T> set(key: String, value: T) = apply {
         when (value) {
             is Boolean -> json.addProperty(key, value)
@@ -14,6 +14,7 @@ class JsonDataObject(private val json: JsonObject) : DataObject() {
             is Number -> json.addProperty(key, value)
             is JsonArray -> json.add(key, value)
             is JsonObject -> json.add(key, value)
+            is JsonDataObject -> json.add(key, value.json)
         }
     }
 
