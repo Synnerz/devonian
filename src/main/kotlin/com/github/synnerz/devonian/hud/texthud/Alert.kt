@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.utils.BoundingBox
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.sounds.SoundEvents
 
 object Alert : StylizedTextHud("internal_devonian_alert") {
@@ -28,8 +29,6 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
 
             clearTime = System.currentTimeMillis() + durationMs
             if (playSound) mc?.player?.playSound(soundEvent, 1f, 1f)
-
-            (renderer as? BImgTextHudRenderer)?.invalidate()
         }
     }
 
@@ -46,10 +45,19 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
             window.guiScaledHeight * 0.4
         )
 
-        scale = getBounds().fitInside(bb).first.toFloat()
+        val f = getBounds().fitInside(bb).first.toFloat()
+        if (f != 1f) {
+            scale *= f
+            (renderer as? BImgTextHudRenderer)?.invalidate()
+            super.update()
+        }
 
-        super.update()
         needRescale = false
+    }
+
+    override fun renderText(ctx: GuiGraphics) {
+        if (needRescale) return
+        super.renderText(ctx)
     }
 
     fun initialize() {
