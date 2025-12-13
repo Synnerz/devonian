@@ -25,5 +25,7 @@ object Registry {
         register(SoundPacket)
         register(SoundEntityPacket)
         register(LevelEventPacket)
+        register(ExplodePacket)
+        register(EntityEventPacket)
     }
 }
