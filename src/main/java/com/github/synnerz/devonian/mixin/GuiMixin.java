@@ -149,4 +149,16 @@ public class GuiMixin {
         if (!DisableHungerBar.INSTANCE.isEnabled()) return;
         ci.cancel();
     }
+
+    @Inject(
+            method = "renderSelectedItemName",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/GuiGraphics;drawStringWithBackdrop(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIII)V"
+            ),
+            cancellable = true
+    )
+    private void devonian$onRenderSelectedName(GuiGraphics guiGraphics, CallbackInfo ci) {
+        SelectedItemName.INSTANCE.onRender(guiGraphics, ci);
+    }
 }

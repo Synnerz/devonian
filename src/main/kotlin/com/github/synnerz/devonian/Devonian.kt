@@ -166,6 +166,7 @@ object Devonian : ClientModInitializer {
         HideOffhandSlotBackground,
         AutoArchitectDraft,
         DoubleAnimationFix,
+        SelectedItemName,
     )
 
     override fun onInitializeClient() {
