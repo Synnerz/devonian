@@ -187,7 +187,10 @@ open class Feature @JvmOverloads constructor(
             displayName,
             subcategory,
             isHidden,
-        )
+        ).also {
+            Config.registerCategory(it, category, subcategory)
+            configSwitch.subconfigs.add(it)
+        }
     }
 
     @JvmOverloads
