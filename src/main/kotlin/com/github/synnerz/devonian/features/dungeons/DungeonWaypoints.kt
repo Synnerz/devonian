@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
@@ -221,6 +222,7 @@ object DungeonWaypoints : Feature(
         }
 
         on<RenderWorldEvent> {
+            if (Dungeons.inBoss.value) return@on
             val id = roomID ?: return@on
             val currentRoom = DungeonScanner.currentRoom ?: return@on
             if (id != currentRoom.roomID) return@on
