@@ -1,8 +1,6 @@
 package com.github.synnerz.devonian.config.ui.talium
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.config.ConfigType
@@ -19,60 +17,62 @@ class SearchCategory(
 ) {
     private val components = mutableListOf<Pair<ConfigData<*>, UIRect>>()
     private val colorComponents = mutableListOf<UIColorPicker>()
-    private val searchPanel = UITextInput(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
+    private val searchPanel = UITextInput(32.5, 92.0, 35.0, 8.0, parent = rightPanel).apply {
+        var previousText = ""
+        var oldCategory: Category? = null
+
         setColor(ColorPalette.TERTIARY_COLOR)
+
+        onKeyType { event ->
+            // Unhide
+            if (previousText.isEmpty() && text.isNotEmpty()) {
+                oldCategory = ConfigGui.selectedCategory
+                oldCategory?.hide()
+                ConfigGui.selectedCategory = null
+                scrollableRect.unhide()
+            }
+            // Hide
+            else if (previousText.isNotEmpty() && text.isEmpty()) {
+                hideColorPickers()
+                scrollableRect.hide()
+                oldCategory?.unhide()
+                if (oldCategory == null) {
+                    ConfigGui.selectedCategory = ConfigGui.categories.first()
+                    ConfigGui.selectedCategory?.unhide()
+                }
+                oldCategory = null
+                previousText = ""
+                unfocus()
+                return@onKeyType
+            }
+            if (previousText !== text)
+                onSearch(text)
+            previousText = text
+        }
     }
     private val scrollableRect = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel)
-    private var categoryButton: UIRect?
-    private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, "Search", true).apply {
-        setColor(ColorPalette.TEXT_COLOR)
-    }
-
-    private var lastSearch = "chick sucks"
 
     init {
         create()
-
-        categoryButton = UIRect(
-            0.0, 12.0 + 9 * idx,
-            100.0, 8.0,
-            parent = leftPanel
-        ).apply {
-            onMouseRelease {
-                if (ConfigGui.selectedCategory == null) return@onMouseRelease
-                ConfigGui.selectedCategory?.hide()
-                ConfigGui.selectedCategory = null
-                this@SearchCategory.unhide()
-            }
-            addChild(categoryTitle)
-        }
-
         hide()
-        EventBus.on<TickEvent> {
-            if (!ConfigGui.opened || ConfigGui.selectedCategory != null) return@on
-            val str = searchPanel.text
-            if (str == lastSearch) return@on
-            lastSearch = str
-
-            var idx = 0
-            components.forEach { (data, ui) ->
-                if (matches(data)) {
-                    val i = idx++
-                    val y = 1.0 + i * 17.0
-                    ui._y = y
-                    ui.unhide()
-                    ui.update()
-                } else ui.hide()
-            }
-            scrollableRect.updateScrollY(0.0)
-
-            scrollableRect.yOffset = 0.0
-        }
     }
 
-    private fun matches(config: ConfigData<*>): Boolean {
-        return config.displayName.contains(lastSearch, ignoreCase = true) ||
-            config.description.contains(lastSearch, ignoreCase = true)
+    private fun onSearch(str: String) {
+        var idx = 0
+
+        components.forEach { (data, comp) ->
+            if (data.displayName.contains(str, ignoreCase = true) || data.description.contains(str, ignoreCase = true)) {
+                val i = idx++
+                val y = 1.0 + i * 17.0
+                comp._y = y
+                comp.markDirty()
+                comp.unhide()
+                comp.update()
+            } else comp.hide()
+        }
+
+        scrollableRect.updateScrollY(0.0)
+        scrollableRect.yOffset = 0.0
     }
 
     // shit workaround to prevent the player from opening
@@ -124,12 +124,10 @@ class SearchCategory(
     }
 
     fun hide() {
-        categoryTitle.setColor(ColorPalette.TEXT_COLOR)
         scrollableRect.hide()
     }
 
     fun unhide() {
-        categoryTitle.setColor(ColorPalette.LIGHT_TEXT_COLOR)
         scrollableRect.unhide()
     }
 

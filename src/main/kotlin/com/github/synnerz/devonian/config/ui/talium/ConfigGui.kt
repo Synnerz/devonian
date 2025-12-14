@@ -27,18 +27,18 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     private val configTitle = UIText(0.0, 0.0, 100.0, 10.0, "Devonian", true, leftPanel).apply {
         setColor(ColorPalette.TITLE_COLOR)
     }
-    private val editHudsButton = UIRect(32.5, 92.0, 35.0, 8.0, parent = rightPanel).apply {
-        setColor(ColorPalette.TERTIARY_COLOR)
-        addChild(UIText(0.0, 0.0, 100.0, 100.0, "Edit Huds", true).apply {
-            setColor(ColorPalette.TEXT_COLOR)
-        })
-        onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
-            Scheduler.scheduleTask(1) {
-                Devonian.minecraft.setScreen(HudManager)
-            }
-        }
-    }
+//    private val editHudsButton = UIRect(32.5, 92.0, 35.0, 8.0, parent = rightPanel).apply {
+//        setColor(ColorPalette.TERTIARY_COLOR)
+//        addChild(UIText(0.0, 0.0, 100.0, 100.0, "Edit Huds", true).apply {
+//            setColor(ColorPalette.TEXT_COLOR)
+//        })
+//        onMouseRelease {
+//            if (it.button != 0) return@onMouseRelease
+//            Scheduler.scheduleTask(1) {
+//                Devonian.minecraft.setScreen(HudManager)
+//            }
+//        }
+//    }
 
     lateinit var categories: List<Category>
     var selectedCategory: Category? = null
