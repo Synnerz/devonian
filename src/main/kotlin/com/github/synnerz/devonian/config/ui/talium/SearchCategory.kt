@@ -13,10 +13,9 @@ import com.github.synnerz.talium.events.UIKeyType
 class SearchCategory(rightPanel: UIBase) {
     private val components = mutableListOf<Pair<ConfigData<*>, UIRect>>()
     private val colorComponents = mutableListOf<UIColorPicker>()
+    private var previousText = ""
+    private var oldCategory: Category? = null
     private val searchPanel = UITextInput(32.5, 92.0, 35.0, 8.0, parent = rightPanel).apply {
-        var previousText = ""
-        var oldCategory: Category? = null
-
         setColor(ColorPalette.TERTIARY_COLOR)
 
         onKeyType { event ->
@@ -25,26 +24,33 @@ class SearchCategory(rightPanel: UIBase) {
                 oldCategory = ConfigGui.selectedCategory
                 oldCategory?.hide()
                 ConfigGui.selectedCategory = null
-                scrollableRect.unhide()
+                this@SearchCategory.unhide()
             }
             // Hide
             else if (previousText.isNotEmpty() && text.isEmpty()) {
                 hideColorPickers()
-                scrollableRect.hide()
-                oldCategory?.unhide()
-                if (oldCategory == null) {
+                this@SearchCategory.hide()
+
+                if (oldCategory == null && ConfigGui.selectedCategory == null) {
                     ConfigGui.selectedCategory = ConfigGui.categories.first()
                     ConfigGui.selectedCategory?.unhide()
-                }
+                } else if (ConfigGui.selectedCategory == null)
+                    oldCategory?.unhide()
+
                 oldCategory = null
                 previousText = ""
-                unfocus()
                 return@onKeyType
             }
             if (previousText !== text)
                 onSearch(text)
             previousText = text
         }
+    }
+    private val categoryTitleBg = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+    }
+    private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, "Searching...", true, parent = categoryTitleBg).apply {
+        setColor(ColorPalette.TEXT_COLOR)
     }
     private val scrollableRect = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel)
 
@@ -69,6 +75,7 @@ class SearchCategory(rightPanel: UIBase) {
 
         scrollableRect.updateScrollY(0.0)
         scrollableRect.yOffset = 0.0
+        categoryTitle.text = "Searching \"$str\""
     }
 
     // shit workaround to prevent the player from opening
@@ -121,10 +128,17 @@ class SearchCategory(rightPanel: UIBase) {
 
     fun hide() {
         scrollableRect.hide()
+        categoryTitleBg.hide()
+        categoryTitle.text = "Searching..."
+        previousText = ""
+        oldCategory = null
     }
 
     fun unhide() {
         scrollableRect.unhide()
+        categoryTitleBg.unhide()
+        categoryTitle.text = "Searching..."
+        oldCategory = null
     }
 
     private fun createBase(y: Double, parent: UIBase): UIRect =
