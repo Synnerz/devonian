@@ -35,19 +35,21 @@ public abstract class AbstractContainerScreenMixin {
     private void devonian$onSlotClicked(Slot slot, int i, int j, ClickType clickType, CallbackInfo ci) {
         CancellableEvent event = null;
 
+        AbstractContainerScreen<?> that = (AbstractContainerScreen<?>) (Object) this;
+
         switch (clickType) {
             case PICKUP:
                 if (slot == null) event = new DropItemEvent(null, true, menu.getCarried());
-                else event = new PickupItemInventoryEvent(slot);
+                else event = new PickupItemInventoryEvent(slot, that);
                 break;
             case THROW:
                 event = new DropItemEvent(slot, j != 0);
                 break;
             case PICKUP_ALL:
-                if (slot != null) event = new PickupItemInventoryEvent(slot);
+                if (slot != null) event = new PickupItemInventoryEvent(slot, that);
                 break;
             case QUICK_MOVE:
-                if (slot != null) event = new QuickMoveItemEvent(slot);
+                if (slot != null) event = new QuickMoveItemEvent(slot, that);
                 break;
             case SWAP: {
                 if (slot == null) break;
@@ -61,7 +63,7 @@ public abstract class AbstractContainerScreenMixin {
             case QUICK_CRAFT:
                 // leftover item, into the cursor slot
                 if (slot == null) break;
-                event = new QuickCraftMoveEvent(slot, (j & 4) > 0);
+                event = new QuickCraftMoveEvent(slot, (j & 4) > 0, that);
                 break;
         }
 

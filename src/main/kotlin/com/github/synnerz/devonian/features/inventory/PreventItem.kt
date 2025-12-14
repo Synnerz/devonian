@@ -2,9 +2,11 @@ package com.github.synnerz.devonian.features.inventory
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.utils.Location
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.inventory.Slot
@@ -42,33 +44,36 @@ object PreventItem {
             val slot = event.slot
             if (slot.container !== mc.player?.inventory) return@on
 
-            val evn = SlotEvent(slot, slot.item, slot.containerSlot, false, event)
+            val selling = isSellScreen(event.screen)
+            val evn = SlotEvent(slot, slot.item, slot.containerSlot, selling, event)
             if (!evn.post()) return@on
 
             event.cancel()
-            onCancel("&cPrevented moving item", evn.actors)
+            onCancel("&cPrevented ${if (selling) "selling" else "moving"} item", evn.actors)
         }
 
         EventBus.on<QuickMoveItemEvent> { event ->
             val slot = event.slot
             if (slot.container !== mc.player?.inventory) return@on
 
-            val evn = SlotEvent(slot, slot.item, slot.containerSlot, false, event)
+            val selling = isSellScreen(event.screen)
+            val evn = SlotEvent(slot, slot.item, slot.containerSlot, selling, event)
             if (!evn.post()) return@on
 
             event.cancel()
-            onCancel("&cPrevented moving item", evn.actors)
+            onCancel("&cPrevented ${if (selling) "selling" else "moving"} item", evn.actors)
         }
 
         EventBus.on<QuickCraftMoveEvent> { event ->
             val slot = event.slot
             if (slot.container !== mc.player?.inventory) return@on
 
-            val evn = SlotEvent(slot, slot.item, slot.containerSlot, false, event)
+            val selling = isSellScreen(event.screen)
+            val evn = SlotEvent(slot, slot.item, slot.containerSlot, selling, event)
             if (!evn.post()) return@on
 
             event.cancel()
-            onCancel("&cPrevented placing item", evn.actors)
+            onCancel("&cPrevented ${if (selling) "selling" else "placing"} item", evn.actors)
         }
 
         EventBus.on<SwapItemEvent> { event ->
@@ -84,6 +89,15 @@ object PreventItem {
             event.cancel()
             onCancel("&cPrevented moving item", (evn1.actors.toSet() + evn2.actors).toList())
         }
+    }
+
+    fun isSellScreen(screen: AbstractContainerScreen<*>): Boolean {
+        val hopper = screen.menu.items.getOrNull(49) ?: return false
+        val lore = ItemUtils.lore(hopper, false) ?: return false
+        val first = lore.getOrNull(0) ?: return false
+        if (first == "Click items in your inventory to sell") return true
+        val last = lore.getOrNull(lore.size - 1) ?: return false
+        return last == "Click to buyback!"
     }
 
     class SlotEvent(

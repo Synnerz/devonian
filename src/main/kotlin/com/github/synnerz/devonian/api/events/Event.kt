@@ -379,17 +379,20 @@ class SwapItemEvent(
 ) : CancellableEvent()
 
 class PickupItemInventoryEvent(
-    val slot: Slot
+    val slot: Slot,
+    val screen: AbstractContainerScreen<*>
 ) : CancellableEvent()
 
 class QuickMoveItemEvent(
-    val slot: Slot
+    val slot: Slot,
+    val screen: AbstractContainerScreen<*>
 ) : CancellableEvent()
 
 class QuickCraftMoveEvent(
     val slot: Slot,
     // is right click
     val isSingleItem: Boolean,
+    val screen: AbstractContainerScreen<*>
 ) : CancellableEvent()
 
 class PostRenderSlotsEvent(
