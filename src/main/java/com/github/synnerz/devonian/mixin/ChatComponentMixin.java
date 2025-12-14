@@ -26,16 +26,16 @@ public class ChatComponentMixin {
 
     @Redirect(
             method = "addMessageToQueue",
-            at = @At(value = "INVOKE", target = "Ljava/util/List;size()I")
+            at = @At(value = "INVOKE", target = "Ljava/util/List;size()I", ordinal = 0)
     )
     private int devonian$onMessageSize(List<?> instance) {
-        if (RemoveChatLimit.INSTANCE.isEnabled() && instance.size() > 100) return 100;
+        if (!RemoveChatLimit.INSTANCE.isEnabled()) return 100;
         return instance.size();
     }
 
     @Redirect(
             method = "addMessageToDisplayQueue",
-            at = @At(value = "INVOKE", target = "Ljava/util/List;size()I")
+            at = @At(value = "INVOKE", target = "Ljava/util/List;size()I", ordinal = 2)
     )
     private int devonian$onMessageVisibleSize(List<?> instance) {
         if (RemoveChatLimit.INSTANCE.isEnabled() && instance.size() > 100) return 100;
