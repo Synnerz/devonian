@@ -37,7 +37,9 @@ object ChatUtils {
     }
 
     fun sendMessage(message: Component) {
-        Minecraft.getInstance().player?.displayClientMessage(message, false)
+        Minecraft.getInstance().execute {
+            Minecraft.getInstance().player?.displayClientMessage(message, false)
+        }
     }
 
     @JvmOverloads
