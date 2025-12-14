@@ -177,7 +177,7 @@ object SlotBinding : Feature(
             if (SETTING_PROTECT.get()) {
                 if (event.swapped != null) {
                     val slots = boundSlots.getOrNull(event.idx) ?: return@on
-                    if (!slots.contains(event.swapped.containerSlot)) event.cancel("SlotBinding")
+                    if (!slots.isEmpty() && !slots.contains(event.swapped.containerSlot)) event.cancel("SlotBinding")
                     return@on
                 }
 
