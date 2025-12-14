@@ -7,24 +7,36 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.DropItemEvent
 import com.github.synnerz.devonian.api.events.GuiKeyEvent
 import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
+import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.devonian.utils.Render2D
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import org.lwjgl.glfw.GLFW
+import java.awt.Color
 
 object SlotLocking : Feature(
     "slotLocking",
     "Lock a slot in your inventory to not be able to throw or move the item in that specific slot",
     subcategory = "Inventory",
 ) {
+    private val SETTING_LOCKED_SLOT_COLOR = addColorPicker(
+        "slotColor",
+        Color.RED.rgb,
+        "",
+        "Locked Slot Outline Color",
+    )
+
     private const val KEY_NAME = "slotsLocked"
-    private var lockedSlots = mutableListOf<Int>()
+    private val lockedSlots = Array(40) { false }
     private val keybind = KeyBindingHelper.registerKeyBinding(
         KeyMapping(
             "key.devonian.slotLocking",
@@ -33,65 +45,57 @@ object SlotLocking : Feature(
         )
     )
 
+    private val TOGGLE_SOUND = SoundEvents.EXPERIENCE_ORB_PICKUP
+
     override fun initialize() {
         Config.set(KEY_NAME, JsonArray())
 
         Config.onAfterLoad {
-            lockedSlots = Config.get<List<JsonPrimitive>>(KEY_NAME)?.map { it.asInt }?.toMutableList() ?: mutableListOf()
+            Config.get<List<JsonPrimitive>>(KEY_NAME)?.map { it.asBoolean }?.forEachIndexed { i, v ->
+                lockedSlots[i] = v
+            }
         }
 
-        // TODO: impl listener for whenever the player attempts to switch the slot with keys
-        //  so the player cannot hit <hotbar slot num key> and it switches out
-        on<DropItemEvent> { event ->
-            if (minecraft.screen != null) return@on
-            if (Location.area == "catacombs" && Dungeons.timeElapsed.value != 0) return@on
-            val player = minecraft.player ?: return@on
-            val heldSlot = player.inventory?.selectedSlot ?: return@on
-            if (!lockedSlots.contains(36 + heldSlot)) return@on
+        Config.onPreSave {
+            val array = JsonArray()
 
-            event.cancel()
-            ChatUtils.sendMessage("&cThat slot is locked", true)
+            lockedSlots.forEach { array.add(it) }
+
+            Config.set(KEY_NAME, array)
         }
 
-        on<GuiSlotClickEvent> { event ->
-            val slot = event.slot ?: return@on
-            if (slot.container != minecraft.player?.inventory) return@on
-            val slotIdx = slot.index
-            val screen = minecraft.screen ?: return@on
-            val containerSize = (screen as AbstractContainerScreen<*>).menu.slots.size
-            // sub the player's inv
-            val fixedSize = if (screen is InventoryScreen) 0 else containerSize - 45
-            val idx = slotIdx - fixedSize
-            if (!lockedSlots.contains(idx)) return@on
-
-            event.cancel()
-            ChatUtils.sendMessage("&cThat slot is locked", true)
+        on<PreventItem.SlotEvent> { event ->
+            val locked = lockedSlots.getOrNull(event.idx) ?: return@on
+            if (locked) event.cancel("SlotLocking")
         }
 
         on<GuiKeyEvent> { event ->
             if (!keybind.matches(event.event)) return@on
+
             val slot = ScreenUtils.cursorSlot(event.screen) ?: return@on
-            val containerSize = (event.screen as AbstractContainerScreen<*>).menu.slots.size
-            val slotIdx = slot.index
-            val fixedSize = if (event.screen is InventoryScreen) 0 else containerSize - 45
-            val idx = slotIdx - fixedSize
-            val containsSlot = lockedSlots.contains(idx)
-            val status = if (containsSlot) "&cUnlocked" else "&aLocked"
+            if (slot.container != minecraft.player?.inventory) return@on
 
-            if (containsSlot) lockedSlots.remove(idx)
-            else lockedSlots.add(idx)
-            updateCache()
+            val idx = slot.containerSlot
 
-            ChatUtils.sendMessage("&bSlot &6$idx &bwas $status", true)
+            val containsSlot = lockedSlots.getOrNull(idx) ?: return@on
+            lockedSlots[idx] = !containsSlot
+            minecraft.level?.playPlayerSound(
+                TOGGLE_SOUND,
+                SoundSource.MASTER,
+                1f, if (containsSlot) 0.1f else 1f
+            )
         }
-        // TODO: impl rendering lock icon in slots
-    }
 
-    private fun updateCache() {
-        val array = JsonArray()
+        on<RenderSlotEvent> { event ->
+            val slot = event.slot
+            if (slot.container != minecraft.player?.inventory) return@on
 
-        lockedSlots.forEach { array.add(it) }
+            val idx = slot.containerSlot
 
-        Config.set(KEY_NAME, array)
+            val locked = lockedSlots.getOrNull(idx) ?: return@on
+            if (!locked) return@on
+
+            Render2D.drawWireRect(event.ctx, slot.x, slot.y, 16, 16, SETTING_LOCKED_SLOT_COLOR.getColor(), lw = 2)
+        }
     }
 }
