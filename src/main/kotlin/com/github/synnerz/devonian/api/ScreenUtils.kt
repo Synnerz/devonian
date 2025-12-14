@@ -49,11 +49,4 @@ object ScreenUtils {
             minecraft.mouseHandler.getScaledYPos(window)
         )
     }
-
-    fun swap(from: Int, to: Int) {
-        minecraft.player ?: return
-        val screenId = ((minecraft.screen ?: return) as InventoryScreen).menu?.containerId ?: return
-
-        minecraft.gameMode?.handleInventoryMouseClick(screenId, from, to, ClickType.SWAP, minecraft.player!!)
-    }
 }
