@@ -85,12 +85,12 @@ public abstract class AbstractContainerScreenMixin {
         method = "renderSlots",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;)V"
+            target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;II)V"
         )
     )
-    private void devonian$drawSlots(AbstractContainerScreen instance, GuiGraphics guiGraphics, Slot slot, Operation<Void> original) {
+    private void devonian$drawSlots(AbstractContainerScreen instance, GuiGraphics guiGraphics, Slot slot, int i, int j, Operation<Void> original) {
         if (new RenderSlotEvent(slot, guiGraphics, instance).post()) return;
-        original.call(instance, guiGraphics, slot);
+        original.call(instance, guiGraphics, slot, i, j);
     }
 
     @Inject(

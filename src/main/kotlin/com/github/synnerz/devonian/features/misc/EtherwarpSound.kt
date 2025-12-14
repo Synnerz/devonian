@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvents
 
 object EtherwarpSound : Feature(
@@ -37,7 +37,7 @@ object EtherwarpSound : Feature(
             val soundRegistry = args.first() as String
 
 
-            val sound = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
+            val sound = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(soundRegistry))
             if (sound == null) {
                 ChatUtils.sendMessage("&4Cannot find sound: &6$soundRegistry", true)
                 return@subcommand 0
@@ -56,7 +56,7 @@ object EtherwarpSound : Feature(
 
         Config.onAfterLoad {
             val savedRegistry = Config.get<String>(KEY) ?: "minecraft:entity.ender_dragon.hurt"
-            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(savedRegistry))
+            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(savedRegistry))
                 ?: SoundEvents.ENDER_DRAGON_HURT
         }
 

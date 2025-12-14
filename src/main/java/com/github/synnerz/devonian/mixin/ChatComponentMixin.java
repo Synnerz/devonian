@@ -67,7 +67,7 @@ public class ChatComponentMixin {
 
     @Inject(
         method = "addMessageToDisplayQueue",
-        at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V", shift = At.Shift.AFTER)
+        at = @At(value = "INVOKE", target = "Ljava/util/List;addFirst(Ljava/lang/Object;)V", shift = At.Shift.AFTER)
     )
     private void devonian$trackDisplayLine(GuiMessage guiMessage, CallbackInfo ci) {
         ChatUtils.INSTANCE.getLineCache().put(this.trimmedMessages.getFirst(), guiMessage);

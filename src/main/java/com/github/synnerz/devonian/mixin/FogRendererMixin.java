@@ -14,7 +14,7 @@ public class FogRendererMixin {
         ordinal = 0,
         argsOnly = true
     )
-    private static FogRenderer.FogMode devonian$disableFog(FogRenderer.FogMode fogMode) {
+    private FogRenderer.FogMode devonian$disableFog(FogRenderer.FogMode fogMode) {
         if (!DisableFog.INSTANCE.isEnabled()) return fogMode;
         return FogRenderer.FogMode.NONE;
     }

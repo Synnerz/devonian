@@ -52,11 +52,10 @@ object ChangeCrouchHeight : Feature(
     fun tick(camera: Camera): Boolean {
         if (camera !is CameraAccessor) return false
 
-        if (camera.entity == null) return false
-        if (camera.entity !== minecraft.player) return false
+        if (camera.entity() !== minecraft.player) return false
 
         val eye = getEyeHeight()
-        val isCrouching = camera.entity.pose == Pose.CROUCHING
+        val isCrouching = camera.entity().pose == Pose.CROUCHING
         if (SETTING_INSTANT_CROUCH.get() && (isCrouching || wasCrouching)) {
             camera.eyeHeightOld = eye
             camera.eyeHeight = eye

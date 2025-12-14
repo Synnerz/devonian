@@ -9,7 +9,7 @@ import com.mojang.blaze3d.opengl.GlTexture
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.TextureFormat
 import net.minecraft.client.renderer.texture.AbstractTexture
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.lwjgl.opengl.*
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferByte
@@ -105,7 +105,7 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
         else uploadImpl(img)
     }
 
-    fun register(mcid: ResourceLocation) = apply {
+    fun register(mcid: Identifier) = apply {
         val texMng = Devonian.minecraft?.textureManager
         if (texMng != null) texMng.register(mcid, this)
         else EventBus.on<PostClientInitEvent> { event ->

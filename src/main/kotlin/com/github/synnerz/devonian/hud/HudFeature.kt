@@ -158,7 +158,7 @@ abstract class HudFeature(
             )
         }
 
-        ctx.submitOutline(
+        ctx.renderOutline(
             bounds.x.toInt(),
             bounds.y.toInt(),
             ceil(bounds.w).toInt(),

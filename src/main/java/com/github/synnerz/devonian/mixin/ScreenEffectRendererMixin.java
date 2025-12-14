@@ -43,7 +43,7 @@ public class ScreenEffectRendererMixin {
         method = "renderScreenEffect",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;getViewBlockingState(Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/level/block/state/BlockState;")
     )
-    private static BlockState devonian$disableSuffocatingOverlay(Player player, Operation<BlockState> original) {
+    private BlockState devonian$disableSuffocatingOverlay(Player player, Operation<BlockState> original) {
         if (!DisableSuffocatingOverlay.INSTANCE.isEnabled()) return original.call(player);
         return null;
     }

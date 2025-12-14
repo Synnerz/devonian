@@ -23,7 +23,7 @@ import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.numbers.NumberFormat;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -130,21 +130,19 @@ public class GuiMixin {
 
     @WrapOperation(
         method = "renderCrosshair",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V", ordinal = 0)
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V", ordinal = 0)
     )
-    private void devonian$centeredCrosshair(GuiGraphics instance, RenderPipeline renderPipeline, ResourceLocation resourceLocation, int i, int j, int k, int l, Operation<Void> original) {
+    private void devonian$centeredCrosshair(GuiGraphics instance, RenderPipeline renderPipeline, Identifier identifier, int i, int j, int k, int l, Operation<Void> original) {
         if (!CenteredCrosshair.INSTANCE.isEnabled()) {
-            original.call(instance, renderPipeline, resourceLocation, i, j, k, l);
+            original.call(instance, renderPipeline, identifier, i, j, k, l);
             return;
         }
         GuiGraphicsAccessor accessor = (GuiGraphicsAccessor) instance;
-        TextureAtlasSprite sprite = accessor.getGuiSprites().getSprite(resourceLocation);
+        TextureAtlasSprite sprite = accessor.getGuiSprites().getSprite(identifier);
         GuiSpriteScaling scaling = GuiGraphicsAccessor.invokeSpriteScaling(sprite);
-        TextureSetup texture = TextureSetup.singleTexture(
-            minecraft.getTextureManager().getTexture(
-                accessor.getGuiSprites().getSprite(resourceLocation).atlasLocation()
-            ).getTextureView()
-        );
+        TextureSetup texture = new TextureSetup(minecraft.getTextureManager().getTexture(
+                accessor.getGuiSprites().getSprite(identifier).atlasLocation()
+        ).getTextureView(), null, null, null, null, null);
         Matrix3x2f mat = new Matrix3x2f(instance.pose());
 
         instance.guiRenderState.submitGuiElement(

@@ -47,7 +47,7 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.ZoneOffset
@@ -89,7 +89,7 @@ object Devonian : ClientModInitializer {
 
     val keybindCategory by lazy {
         KeyMapping.Category.register(
-            ResourceLocation.fromNamespaceAndPath(
+            Identifier.fromNamespaceAndPath(
                 "devonian",
                 "keybinds"
             )

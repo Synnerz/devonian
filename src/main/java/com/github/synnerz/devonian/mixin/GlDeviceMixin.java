@@ -4,32 +4,29 @@ import com.github.synnerz.devonian.features.misc.Fullbright;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.opengl.GlDevice;
+import com.mojang.blaze3d.shaders.ShaderSource;
 import com.mojang.blaze3d.shaders.ShaderType;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-
-import java.util.function.BiFunction;
 
 @Mixin(GlDevice.class)
 public class GlDeviceMixin {
     @WrapOperation(
         method = "compileShader",
-        at = @At(value = "INVOKE", target = "Ljava/util/function/BiFunction;apply(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+        at = @At(
+                value = "INVOKE",
+                target = "Lcom/mojang/blaze3d/shaders/ShaderSource;get(Lnet/minecraft/resources/Identifier;Lcom/mojang/blaze3d/shaders/ShaderType;)Ljava/lang/String;"
+        )
     )
-    private Object devonian$fullbright(
-        BiFunction<ResourceLocation, ShaderType, String> instance,
-        Object id_,
-        Object type_,
-        Operation<String> original
+    private String devonian$fullbright(
+            ShaderSource instance, Identifier identifier, ShaderType shaderType, Operation<String> original
     ) {
-        if (!Fullbright.INSTANCE.isEnabled()) return original.call(instance, id_, type_);
+        if (!Fullbright.INSTANCE.isEnabled()) return original.call(instance, identifier, shaderType);
 
-        ResourceLocation id = (ResourceLocation) id_;
-        ShaderType type = (ShaderType) type_;
-        if (type != ShaderType.FRAGMENT || !id.equals(RenderPipelines.LIGHTMAP.getFragmentShader()))
-            return original.call(instance, id_, type_);
+        if (shaderType != ShaderType.FRAGMENT || !identifier.equals(RenderPipelines.LIGHTMAP.getFragmentShader()))
+            return original.call(instance, identifier, shaderType);
 
         return """
             #version 150

@@ -93,7 +93,7 @@ object BlockOverlay : Feature(
                         .getShape(
                             EmptyBlockGetter.INSTANCE,
                             blockPos,
-                            CollisionContext.of(camera.entity)
+                            CollisionContext.of(camera.entity())
                         )
                     harharImLosingMyFuckingSanity = shape
                     offset = Vec3(blockPos)

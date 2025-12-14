@@ -3,11 +3,13 @@ package com.github.synnerz.devonian.api
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.misc.chat.CompactChatComponent
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.mixin.accessor.ChatComponentAccessor
 import net.fabricmc.fabric.impl.command.client.ClientCommandInternals
 import net.minecraft.client.GuiMessage
 import net.minecraft.client.GuiMessageTag
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import java.util.*
@@ -105,7 +107,8 @@ object ChatUtils {
 
     fun centerTextPadding(text: String): String {
         val textRenderer = Minecraft.getInstance().font
-        val chatWidth = chatGui?.width ?: 0
+        val ww = Devonian.minecraft.options.chatWidth()
+        val chatWidth = ChatComponent.getWidth(ww.get())
         val textWidth = textRenderer.width(text)
         if (textWidth >= chatWidth) return text
 

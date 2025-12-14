@@ -198,7 +198,7 @@ object EtherwarpOverlay : Feature(
                 else  world.getBlockState(hitResult).getShape(
                     EmptyBlockGetter.INSTANCE,
                     hitResult,
-                    CollisionContext.of(camera.entity)
+                    CollisionContext.of(camera.entity())
                 )
 
             Render3DImmediate.renderWireframeShape(

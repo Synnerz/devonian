@@ -81,9 +81,9 @@ object BurrowGuesser : Feature(
 
         if (SETTING_REMEMBER_PREVIOUS_GUESSES.get()) {
             val guess = guessPos.value
-            val player = minecraft.player
+            val player = minecraft.player ?: return
             if (
-                guess != null && player != null &&
+                guess != null &&
                 (player.x - guess.x).pow(2) + (player.y - guess.y).pow(2) + (player.z - guess.z).pow(2) > 100 &&
                 (if (guess.z < -30) -230 < guess.x else -300 < guess.x) && guess.x < 210 &&
                 -240 < guess.z && guess.z < 210 &&

@@ -6,7 +6,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ChestMenu;
 import org.spongepowered.asm.mixin.Final;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ContainerScreen.class)
 public abstract class ContainerScreenMixin extends AbstractContainerScreen<ChestMenu> {
-    @Shadow @Final private static ResourceLocation CONTAINER_BACKGROUND;
+    @Shadow @Final private static Identifier CONTAINER_BACKGROUND;
 
     @Shadow @Final private int containerRows;
 
@@ -31,7 +31,7 @@ public abstract class ContainerScreenMixin extends AbstractContainerScreen<Chest
             method = "renderBg",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIFFIIII)V",
+                    target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIFFIIII)V",
                     ordinal = 0
             ),
             locals = LocalCapture.CAPTURE_FAILSOFT,

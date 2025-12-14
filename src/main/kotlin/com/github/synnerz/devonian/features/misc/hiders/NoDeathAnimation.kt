@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import net.minecraft.world.entity.decoration.ArmorStand
-import net.minecraft.world.entity.monster.WitherSkeleton
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton
 
 object NoDeathAnimation : Feature(
     "noDeathAnimation",

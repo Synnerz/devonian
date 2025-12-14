@@ -3,13 +3,14 @@ package com.github.synnerz.devonian.api.bufimgrenderer
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.mojang.blaze3d.pipeline.RenderPipeline
+import com.mojang.blaze3d.textures.GpuSampler
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat.Mode
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.RenderPipelines
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.joml.Matrix3x2f
 import java.awt.image.BufferedImage
 import java.util.concurrent.Executors
@@ -22,7 +23,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
     protected var running = false
     protected var waiting: Triple<Int, Int, T>? = null
     protected var lastFuture: Future<*>? = null
-    protected val mcid = ResourceLocation.fromNamespaceAndPath("devonian", "buffered_image/${name.lowercase()}")
+    protected val mcid = Identifier.fromNamespaceAndPath("devonian", "buffered_image/${name.lowercase()}")
     protected var valid = true
     protected var old = false
 
@@ -91,7 +92,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         ctx.guiRenderState.submitGuiElement(
             TexturedQuadRenderState(
                 pipeline,
-                TextureSetup.singleTexture(textureView),
+                TextureSetup(textureView, null, null, null, null, null),
                 Matrix3x2f(ctx.pose()),
                 x,
                 y,

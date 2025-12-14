@@ -154,6 +154,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                     // if (parent.backdrop == Backdrop.Line) 0x40000000 else 0,
                     0,
                     parent.shadow == Shadow.Drop,
+                    false, // "includeEmpty" param i think this is right
                     ctx.scissorStack.peek()
                 ).also {
                     val that = it as? GuiTextRenderStateAccessor ?: return@also
