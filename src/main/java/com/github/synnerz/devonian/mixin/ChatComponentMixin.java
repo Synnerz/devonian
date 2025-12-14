@@ -24,22 +24,22 @@ public class ChatComponentMixin {
     @Final
     private List<GuiMessage.Line> trimmedMessages;
 
-    @Redirect(
-            method = "addMessageToQueue",
-            at = @At(value = "INVOKE", target = "Ljava/util/List;size()I", ordinal = 0)
+    @ModifyConstant(
+        method = "addMessageToDisplayQueue",
+        constant = @Constant(intValue = 100)
     )
-    private int devonian$onMessageSize(List<?> instance) {
-        if (!RemoveChatLimit.INSTANCE.isEnabled()) return 100;
-        return instance.size();
+    private int devonian$removeChatLimitaddMessageToDisplayQueue(int constant) {
+        if (!RemoveChatLimit.INSTANCE.isEnabled()) return constant;
+        return RemoveChatLimit.INSTANCE.getSETTING_MAX_MESSAGES().get().intValue();
     }
 
-    @Redirect(
-            method = "addMessageToDisplayQueue",
-            at = @At(value = "INVOKE", target = "Ljava/util/List;size()I", ordinal = 2)
+    @ModifyConstant(
+        method = "addMessageToQueue",
+        constant = @Constant(intValue = 100)
     )
-    private int devonian$onMessageVisibleSize(List<?> instance) {
-        if (RemoveChatLimit.INSTANCE.isEnabled() && instance.size() > 100) return 100;
-        return instance.size();
+    private int devonian$removeChatLimitaddMessageToQueue(int constant) {
+        if (!RemoveChatLimit.INSTANCE.isEnabled()) return constant;
+        return RemoveChatLimit.INSTANCE.getSETTING_MAX_MESSAGES().get().intValue();
     }
 
     @ModifyVariable(

@@ -10,7 +10,15 @@ object RemoveLightning : Feature("removeLightning", subcategory = "Hiders")
 object HideInventoryEffects : Feature("hideInventoryEffects", subcategory = "Hiders")
 object HidePotionEffectOverlay : Feature("hidePotionEffectOverlay", subcategory = "Hiders")
 object RemoveFrontView : Feature("removeFrontView", subcategory = "Tweaks")
-object RemoveChatLimit : Feature("removeChatLimit", subcategory = "Tweaks")
+object RemoveChatLimit : Feature("removeChatLimit", subcategory = "Tweaks") {
+    val SETTING_MAX_MESSAGES = addSlider(
+        "maxMessages",
+        1000.0,
+        100.0, 10000.0,
+        "",
+        "Max Chat Messages",
+    )
+}
 object RemoveTabPing : Feature("removeTabPing", subcategory = "Hiders")
 object DisableAttachedArrows : Feature("disableAttachedArrows", subcategory = "Hiders")
 object DisableVignette : Feature("disableVignette", subcategory = "Hiders")
