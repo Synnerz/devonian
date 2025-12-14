@@ -175,6 +175,9 @@ object Devonian : ClientModInitializer {
         AutoArchitectDraft,
         DoubleAnimationFix,
         SelectedItemName,
+        PurplePadTimer,
+
+        // Debug
         CopyItem,
         RenderSlotIndex,
         PacketLogger,
