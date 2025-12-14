@@ -51,6 +51,14 @@ object Render2D {
         ctx.fill(RenderPipelines.GUI, x, y, x + width, y + height, color.rgb)
     }
 
+    fun drawWireRect(ctx: GuiGraphics, x: Int, y: Int, w: Int, h: Int, c: Color, lw: Int = 1) {
+        val rgb = c.rgb
+        ctx.fill(x, y, x + w, y + lw, rgb)
+        ctx.fill(x, y + lw, x + lw, y + h, rgb)
+        ctx.fill(x + w - lw, y + lw, x + w, y + h, rgb)
+        ctx.fill(x + lw, y + h - lw, x + w - lw, y + h, rgb)
+    }
+
     fun drawCircle(ctx: GuiGraphics, cx: Int, cy: Int, radius: Int, color: Color = Color.WHITE) {
         var x = 0
         var y = radius
