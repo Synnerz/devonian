@@ -10,11 +10,7 @@ import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
 
-class SearchCategory(
-    rightPanel: UIBase,
-    leftPanel: UIBase,
-    idx: Int,
-) {
+class SearchCategory(rightPanel: UIBase) {
     private val components = mutableListOf<Pair<ConfigData<*>, UIRect>>()
     private val colorComponents = mutableListOf<UIColorPicker>()
     private val searchPanel = UITextInput(32.5, 92.0, 35.0, 8.0, parent = rightPanel).apply {
