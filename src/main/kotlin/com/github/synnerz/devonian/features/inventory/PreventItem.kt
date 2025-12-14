@@ -34,6 +34,7 @@ object PreventItem {
             if (Location.area == "catacombs" && Dungeons.timeElapsed.value != 0) return@on
 
             val slot = event.slot ?: return@on
+            if (slot.container != mc.player?.inventory) return@on
 
             val evn = SlotEvent(slot, slot.item, slot.containerSlot, true)
             if (!evn.post()) return@on
@@ -44,6 +45,7 @@ object PreventItem {
 
         EventBus.on<PickupItemInventoryEvent> { event ->
             val slot = event.slot
+            if (slot.container != mc.player?.inventory) return@on
 
             val evn = SlotEvent(slot, slot.item, slot.containerSlot, false)
             if (!evn.post()) return@on
@@ -54,6 +56,7 @@ object PreventItem {
 
         EventBus.on<QuickMoveItemEvent> { event ->
             val slot = event.slot
+            if (slot.container != mc.player?.inventory) return@on
 
             val evn = SlotEvent(slot, slot.item, slot.containerSlot, false)
             if (!evn.post()) return@on
@@ -64,6 +67,7 @@ object PreventItem {
 
         EventBus.on<QuickCraftMoveEvent> { event ->
             val slot = event.slot
+            if (slot.container != mc.player?.inventory) return@on
 
             val evn = SlotEvent(slot, slot.item, slot.containerSlot, false)
             if (!evn.post()) return@on
@@ -75,6 +79,8 @@ object PreventItem {
         EventBus.on<SwapItemEvent> { event ->
             val slot1 = event.slot1
             val slot2 = event.slot2
+            if (slot1.container != mc.player?.inventory) return@on
+            if (slot2.container != mc.player?.inventory) return@on
 
             val evn1 = SlotEvent(slot1, slot1.item, slot1.containerSlot, false, slot2, false)
             val evn2 = SlotEvent(slot2, slot2.item, slot2.containerSlot, false, slot1, true)
