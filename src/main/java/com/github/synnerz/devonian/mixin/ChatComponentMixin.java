@@ -10,12 +10,10 @@ import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Mixin(ChatComponent.class)
@@ -80,4 +78,7 @@ public class ChatComponentMixin {
     private void devonian$refreshTrimmedMessages(CallbackInfo ci) {
         ChatUtils.INSTANCE.getLineCache().clear();
     }
+
+    @Shadow
+    private List<GuiMessage> allMessages = new LinkedList<>();
 }
