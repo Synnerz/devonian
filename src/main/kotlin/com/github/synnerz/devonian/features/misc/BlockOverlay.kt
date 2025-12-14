@@ -2,8 +2,10 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.events.BeforeBlockOutlineEvent
+import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.level.EmptyBlockGetter
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
@@ -33,6 +35,27 @@ object BlockOverlay : Feature(
         "",
         "Block Fill Color",
     )
+    private val SETTING_WIRE_WIDTH = addSlider(
+        "wireWidth",
+        3.0,
+        0.0, 10.0,
+        "",
+        "Outline Line Width",
+    )
+    private val SETTING_WIRE_PHASE = addSwitch(
+        "wirePhase",
+        true,
+        "",
+        "Outline Wire Phase",
+    )
+    private val SETTING_FILL_PHASE = addSwitch(
+        "fillPhase",
+        false,
+        "",
+        "Outline Fill Phase",
+    )
+
+    private var harharImLosingMyFuckingSanity = listOf<AABB>()
 
     override fun initialize() {
         on<BeforeBlockOutlineEvent> { event ->
@@ -46,25 +69,15 @@ object BlockOverlay : Feature(
                     if (!SETTING_BOX_ENTITY.get()) return@on
                     val entity = (hit as? EntityHitResult)?.entity ?: return@on
                     val pos = entity.getPosition(event.renderContext.tickCounter().getGameTimeDeltaPartialTick(false))
-                    Context.Immediate?.renderBox(
-                        pos.x - entity.bbWidth * 0.5f,
-                        pos.y,
-                        pos.z - entity.bbWidth * 0.5,
-                        entity.bbWidth.toDouble(),
-                        entity.bbHeight.toDouble(),
-                        SETTING_WIRE_COLOR.getColor(),
-                        phase = minecraft.options.cameraType.isFirstPerson,
-                        translate = true
-                    )
-                    Context.Immediate?.renderFilledBox(
-                        pos.x - entity.bbWidth * 0.5f,
-                        pos.y,
-                        pos.z - entity.bbWidth * 0.5,
-                        entity.bbWidth.toDouble(),
-                        entity.bbHeight.toDouble(),
-                        SETTING_WIRE_COLOR.getColor(),
-                        phase = minecraft.options.cameraType.isFirstPerson,
-                        translate = true
+                    harharImLosingMyFuckingSanity = listOf(
+                        AABB(
+                            pos.x - entity.bbWidth * 0.5,
+                            pos.y,
+                            pos.z - entity.bbWidth * 0.5,
+                            pos.x + entity.bbWidth * 0.5,
+                            pos.y + entity.bbHeight,
+                            pos.z + entity.bbWidth * 0.5,
+                        )
                     )
                 }
 
@@ -72,7 +85,6 @@ object BlockOverlay : Feature(
                     val world = minecraft.level ?: return@on
                     val blockPos = (event.hitResult as? BlockHitResult)?.blockPos ?: return@on
                     val camera = minecraft.gameRenderer.mainCamera
-                    val cam = camera.position
                     // accurate bounding box
                     val blockShape = world.getBlockState(blockPos)
                         .getShape(
@@ -81,23 +93,30 @@ object BlockOverlay : Feature(
                             CollisionContext.of(camera.entity)
                         )
 
-                    Context.Immediate?.renderBoxShape(
-                        blockShape,
-                        blockPos.x - cam.x,
-                        blockPos.y - cam.y,
-                        blockPos.z - cam.z,
-                        SETTING_WIRE_COLOR.getColor(),
-                        minecraft.options.cameraType.isFirstPerson
-                    )
-                    Context.Immediate?.renderFilledShape(
-                        blockShape,
-                        blockPos.x - cam.x,
-                        blockPos.y - cam.y,
-                        blockPos.z - cam.z,
-                        SETTING_FILL_COLOR.getColor(),
-                        minecraft.options.cameraType.isFirstPerson
-                    )
+                    harharImLosingMyFuckingSanity = blockShape.toAabbs().map { it.move(blockPos) }
                 }
+            }
+        }
+
+        on<RenderWorldEvent> {
+            val boxes = harharImLosingMyFuckingSanity
+            boxes.forEach {
+                val aabb = it.inflate(0.001)
+                Context.Immediate?.renderBox(
+                    aabb.minX, aabb.minY, aabb.minZ,
+                    aabb.maxX - aabb.minX, aabb.maxY - aabb.minY,
+                    SETTING_WIRE_COLOR.getColor(),
+                    phase = SETTING_WIRE_PHASE.get(),
+                    lineWidth = SETTING_WIRE_WIDTH.get(),
+                    widthZ = aabb.maxZ - aabb.minZ
+                )
+                Context.Immediate?.renderFilledBox(
+                    aabb.minX, aabb.minY, aabb.minZ,
+                    aabb.maxX - aabb.minX, aabb.maxY - aabb.minY,
+                    SETTING_FILL_COLOR.getColor(),
+                    phase = SETTING_FILL_PHASE.get(),
+                    widthZ = aabb.maxZ - aabb.minZ
+                )
             }
         }
     }

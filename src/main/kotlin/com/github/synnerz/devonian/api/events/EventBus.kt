@@ -72,7 +72,9 @@ object EventBus {
             }
         }
         WorldRenderEvents.AFTER_BLOCK_OUTLINE_EXTRACTION.register { worldContext, hitResult ->
-            !BeforeBlockOutlineEvent(worldContext, hitResult).post()
+            val cancel = BeforeBlockOutlineEvent(worldContext, hitResult).post()
+            if (cancel) worldContext.worldState().blockOutlineRenderState = null
+            !cancel
         }
 
         on<PacketReceivedEvent> { event ->
