@@ -135,7 +135,7 @@ object Devonian : ClientModInitializer {
         DisableFog,
         KeyPickup,
         CreeperBeamsSolver,
-        // SimonSaysSolver,
+        SimonSaysSolver,
         ArrowAlignSolver,
         CurrentRoomName,
         CurrentRoomCleared,

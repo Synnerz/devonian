@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.shapes.Shapes
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
@@ -93,12 +92,12 @@ object SimonSaysSolver : Feature(
         )
     }
 
-    private fun isValidButtonLocation(pos: BlockPos) = pos.x == 110 && pos.y in 120 .. 123 && pos.z in 92 .. 95
+    private fun isValidButtonLocation(pos: BlockPos) = pos.y in 120 .. 123 && pos.z in 92 .. 95
 
     private fun onSeaLantern(pos: BlockPos): Boolean {
         if (pos.x != 111) return false
         if (!isValidButtonLocation(pos)) return false
-        if (!solution.contains(pos)) solution.add(pos)
+        if (!solution.contains(pos)) solution.add(pos.west())
         return true
     }
 
@@ -106,28 +105,17 @@ object SimonSaysSolver : Feature(
         on<PacketReceivedEvent> { event ->
             when (val packet = event.packet) {
                 is ClientboundBlockUpdatePacket -> {
-                    if (packet.blockState.block !== Blocks.SEA_LANTERN) return@on
+                    if (packet.blockState.block != Blocks.SEA_LANTERN) return@on
                     onSeaLantern(packet.pos)
                 }
 
                 is ClientboundSectionBlocksUpdatePacket -> {
-                    var firstPos: BlockPos? = null
-                    var firstState: BlockState? = null
-                    var foundLantern = false
                     packet.runUpdates { pos, state ->
-                        if (firstPos == null) {
-                            firstPos = pos
-                            firstState = state
-                        }
-                        if (state.block === Blocks.SEA_LANTERN && onSeaLantern(pos)) foundLantern = true
+                        if (state.isAir && pos.x == 110 && isValidButtonLocation(pos)) solution.clear()
                     }
-                    if (foundLantern) return@on
-
-                    val pos = firstPos ?: return@on
-                    val state = firstState ?: return@on
-                    if (pos.x != 110 || pos.y != 121 || pos.z != 94) return@on
-                    if (!state.isAir) return@on
-                    solution.clear()
+                    packet.runUpdates { pos, state ->
+                        if (state.block == Blocks.SEA_LANTERN) onSeaLantern(pos)
+                    }
                 }
             }
         }
@@ -148,20 +136,20 @@ object SimonSaysSolver : Feature(
 
                 Context.Immediate?.renderBoxShape(
                     BUTTON_SHAPE,
-                    pos.x - cam.x,
-                    pos.y - cam.y,
-                    pos.z - cam.z,
+                    pos.x + cam.x,
+                    pos.y + cam.y,
+                    pos.z + cam.z,
                     wire,
                     true,
                     SETTING_LINE_WIDTH.get()
                 )
                 Context.Immediate?.renderFilledShape(
                     BUTTON_SHAPE,
-                    pos.x - cam.x,
-                    pos.y - cam.y,
-                    pos.z - cam.z,
+                    pos.x + cam.x,
+                    pos.y + cam.y,
+                    pos.z + cam.z,
                     fill,
-                    true
+                    false,
                 )
             }
         }
@@ -170,9 +158,10 @@ object SimonSaysSolver : Feature(
             if (solution.isEmpty()) return@on
 
             val pos = event.pos
+            if (pos.x != 110) return@on
             if (!isValidButtonLocation(pos)) return@on
 
-            if (solution[0] == pos) solution.removeFirstOrNull()
+            if (solution.getOrNull(0) == pos) solution.removeFirstOrNull()
             else {
                 if (shouldBlockClicks()) event.cancel()
                 else {
