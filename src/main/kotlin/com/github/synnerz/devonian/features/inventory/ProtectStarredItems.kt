@@ -18,7 +18,11 @@ object ProtectStarredItems : Feature("protectStarredItems", subcategory = "Inven
     fun isStarred(item: ItemStack): Boolean {
         if (item.isEmpty) return false
         val data = ItemUtils.extraAttributes(item) ?: return false
-        val stars = data.getInt("upgrade_level")
-        return stars.isPresent && stars.get() > 0
+        val stars = listOf(
+            "upgrade_level",
+            "item_tier",
+            "dungeon_item_level",
+        )
+        return stars.any { data.getInt(it).isPresent }
     }
 }
