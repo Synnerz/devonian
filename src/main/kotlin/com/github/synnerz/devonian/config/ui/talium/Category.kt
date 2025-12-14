@@ -66,7 +66,10 @@ open class Category(
             ).apply {
                 onMouseRelease {
                     if (ConfigGui.selectedCategory === this@Category) return@onMouseRelease
-                    ConfigGui.selectedCategory?.hide()
+                    if (ConfigGui.selectedCategory == null)
+                        ConfigGui.searchCategory.hide()
+                    else
+                        ConfigGui.selectedCategory?.hide()
                     ConfigGui.selectedCategory = this@Category
                     this@Category.unhide()
                 }

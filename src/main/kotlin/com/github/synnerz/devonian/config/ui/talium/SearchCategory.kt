@@ -28,7 +28,7 @@ class SearchCategory(
         setColor(ColorPalette.TEXT_COLOR)
     }
 
-    private var lastSearch = "awoooooo"
+    private var lastSearch = "chick sucks"
 
     init {
         create()

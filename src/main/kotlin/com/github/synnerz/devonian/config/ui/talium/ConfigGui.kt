@@ -53,7 +53,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         selectedCategory = categories.first()
         selectedCategory?.unhide()
         background.onMouseScroll {
-            if (!(selectedCategory?.canTrigger() ?: true))
+            if (selectedCategory?.canTrigger() == false)
                 selectedCategory?.hideColorPickers()
         }
 
