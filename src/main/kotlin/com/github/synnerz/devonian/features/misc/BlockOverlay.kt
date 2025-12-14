@@ -100,6 +100,7 @@ object BlockOverlay : Feature(
 
         on<RenderWorldEvent> {
             val boxes = harharImLosingMyFuckingSanity
+            harharImLosingMyFuckingSanity = listOf()
             boxes.forEach {
                 val aabb = it.inflate(0.001)
                 Context.Immediate?.renderBox(
