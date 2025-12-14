@@ -3,20 +3,10 @@ package com.github.synnerz.devonian.features.debug
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.config.Categories
-import com.github.synnerz.devonian.config.json.JsonDataObject
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
 import com.github.synnerz.devonian.utils.Serializer
-import com.github.synnerz.devonian.utils.StringUtils.colorCodes
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
-import net.minecraft.core.component.DataComponents
-import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.nbt.*
 import net.minecraft.network.chat.Component
-import net.minecraft.world.item.ItemStack
 import org.lwjgl.glfw.GLFW.*
 
 object CopyItem : Feature(
