@@ -1,23 +1,19 @@
 package com.github.synnerz.devonian.features.inventory
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ScreenUtils
-import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.events.DropItemEvent
-import com.github.synnerz.devonian.api.events.GuiKeyEvent
-import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
+import com.github.synnerz.devonian.api.events.GuiCloseEvent
+import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
+import com.github.synnerz.devonian.api.events.GuiKeyUpEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
 import com.github.synnerz.devonian.utils.Render2D
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import org.lwjgl.glfw.GLFW
@@ -44,6 +40,7 @@ object SlotLocking : Feature(
             Devonian.keybindCategory
         )
     )
+    private var once = false
 
     private val TOGGLE_SOUND = SoundEvents.EXPERIENCE_ORB_PICKUP
 
@@ -69,11 +66,14 @@ object SlotLocking : Feature(
             if (locked) event.cancel("SlotLocking")
         }
 
-        on<GuiKeyEvent> { event ->
+        on<GuiKeyDownEvent> { event ->
             if (!keybind.matches(event.event)) return@on
+            if (once) return@on
+            once = true
 
-            val slot = ScreenUtils.cursorSlot(event.screen) ?: return@on
-            if (slot.container != minecraft.player?.inventory) return@on
+            val screen = event.screen as? AbstractContainerScreenAccessor ?: return@on
+            val slot = screen.hoveredSlot ?: return@on
+            if (slot.container !== minecraft.player?.inventory) return@on
 
             val idx = slot.containerSlot
 
@@ -86,16 +86,29 @@ object SlotLocking : Feature(
             )
         }
 
+        on<GuiKeyUpEvent> { event ->
+            if (!keybind.matches(event.event)) return@on
+            once = false
+        }
+
+        on<GuiCloseEvent> {
+            once = false
+        }
+
         on<RenderSlotEvent> { event ->
             val slot = event.slot
-            if (slot.container != minecraft.player?.inventory) return@on
+            if (slot.container !== minecraft.player?.inventory) return@on
 
             val idx = slot.containerSlot
 
             val locked = lockedSlots.getOrNull(idx) ?: return@on
             if (!locked) return@on
 
-            Render2D.drawWireRect(event.ctx, slot.x, slot.y, 16, 16, SETTING_LOCKED_SLOT_COLOR.getColor(), lw = 2)
+            if (SlotBinding.compatIsRendering(slot)) {
+                event.ctx.fill(slot.x + 2, slot.y + 2, slot.x + 14, slot.y + 14, SETTING_LOCKED_SLOT_COLOR.get())
+            } else {
+                Render2D.drawWireRect(event.ctx, slot.x, slot.y, 16, 16, SETTING_LOCKED_SLOT_COLOR.getColor(), lw = 2)
+            }
         }
     }
 }
