@@ -176,6 +176,7 @@ object Devonian : ClientModInitializer {
         DoubleAnimationFix,
         SelectedItemName,
         PurplePadTimer,
+        CancelF7BossSounds,
 
         // Debug
         CopyItem,
