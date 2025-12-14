@@ -45,11 +45,12 @@ object PreventItem {
             if (slot.container !== mc.player?.inventory) return@on
 
             val selling = isSellScreen(event.screen)
-            val evn = SlotEvent(slot, slot.item, slot.containerSlot, selling, event)
+            val salvage = isSalvageScreen(event.screen)
+            val evn = SlotEvent(slot, slot.item, slot.containerSlot, selling || salvage, event)
             if (!evn.post()) return@on
 
             event.cancel()
-            onCancel("&cPrevented ${if (selling) "selling" else "moving"} item", evn.actors)
+            onCancel("&cPrevented ${if (selling) "selling" else if (salvage) "salvaging" else "moving"} item", evn.actors)
         }
 
         EventBus.on<QuickMoveItemEvent> { event ->
@@ -57,11 +58,12 @@ object PreventItem {
             if (slot.container !== mc.player?.inventory) return@on
 
             val selling = isSellScreen(event.screen)
-            val evn = SlotEvent(slot, slot.item, slot.containerSlot, selling, event)
+            val salvage = isSalvageScreen(event.screen)
+            val evn = SlotEvent(slot, slot.item, slot.containerSlot, selling || salvage, event)
             if (!evn.post()) return@on
 
             event.cancel()
-            onCancel("&cPrevented ${if (selling) "selling" else "moving"} item", evn.actors)
+            onCancel("&cPrevented ${if (selling) "selling" else if (salvage) "salvaging" else "moving"} item", evn.actors)
         }
 
         EventBus.on<QuickCraftMoveEvent> { event ->
@@ -69,11 +71,12 @@ object PreventItem {
             if (slot.container !== mc.player?.inventory) return@on
 
             val selling = isSellScreen(event.screen)
-            val evn = SlotEvent(slot, slot.item, slot.containerSlot, selling, event)
+            val salvage = isSalvageScreen(event.screen)
+            val evn = SlotEvent(slot, slot.item, slot.containerSlot, selling || salvage, event)
             if (!evn.post()) return@on
 
             event.cancel()
-            onCancel("&cPrevented ${if (selling) "selling" else "placing"} item", evn.actors)
+            onCancel("&cPrevented ${if (selling) "selling" else if (salvage) "salvaging" else "placing"} item", evn.actors)
         }
 
         EventBus.on<SwapItemEvent> { event ->
@@ -98,6 +101,10 @@ object PreventItem {
         if (first == "Click items in your inventory to sell") return true
         val last = lore.getOrNull(lore.size - 1) ?: return false
         return last == "Click to buyback!"
+    }
+
+    fun isSalvageScreen(screen: AbstractContainerScreen<*>): Boolean {
+        return screen.title.string == "Salvage Items"
     }
 
     class SlotEvent(
