@@ -7,6 +7,7 @@ import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import java.util.TreeSet
 
 class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientCommandSource>, List<Any>) -> Int) {
     private val commandArgs = mutableListOf<Pair<String, ArgumentType<*>>>()
@@ -28,9 +29,14 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
             val argBuilder = argument(argName, argType)
             val suggestions = commandSuggestions[argName]
             if (suggestions != null) {
+                val map = TreeSet(String.CASE_INSENSITIVE_ORDER)
+                map.addAll(suggestions)
                 argBuilder.suggests { _, builder ->
-                    for (str in suggestions) {
-                        builder.suggest(str)
+                    val pre = builder.input.substring(builder.start)
+                    val iter = map.tailSet(pre, true)
+                    for (str in iter) {
+                        if (str.startsWith(pre, true)) builder.suggest(str)
+                        else break
                     }
                     builder.buildFuture()
                 }
