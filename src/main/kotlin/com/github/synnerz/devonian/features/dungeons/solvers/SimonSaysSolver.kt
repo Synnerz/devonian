@@ -1,10 +1,8 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
-import com.github.synnerz.devonian.api.events.BlockInteractEvent
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.WorldUtils
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.BlockPos
@@ -91,12 +89,15 @@ object SimonSaysSolver : Feature(
             0.6875 + e
         )
     }
+    private var buttonlessTicks = 0
+    private var wasOff = false
 
     private fun isValidButtonLocation(pos: BlockPos) = pos.y in 120 .. 123 && pos.z in 92 .. 95
 
     private fun onSeaLantern(pos: BlockPos): Boolean {
         if (pos.x != 111) return false
         if (!isValidButtonLocation(pos)) return false
+        if (buttonlessTicks > 15) wasOff = true
         if (!solution.contains(pos)) solution.add(pos.west())
         return true
     }
@@ -121,6 +122,7 @@ object SimonSaysSolver : Feature(
         }
 
         on<RenderWorldEvent> { event ->
+            if (wasOff) return@on
             val cam = event.ctx.gameRenderer().mainCamera.position.reverse()
             solution.forEachIndexed { i, pos ->
                 val wire = when (i) {
@@ -165,14 +167,37 @@ object SimonSaysSolver : Feature(
             else {
                 if (shouldBlockClicks()) event.cancel()
                 else {
-                    solution.dropWhile { it != pos }
+                    while (solution.getOrNull(0) != pos) solution.removeFirstOrNull()
                     solution.removeFirstOrNull()
                 }
             }
+        }
+
+        on<ClientThreadServerTickEvent> {
+            val pos = BlockPos(110, 120, 92)
+            if (WorldUtils.isChunkLoaded(pos.x, pos.z)) return@on
+
+            if (WorldUtils.getBlockState(pos.x, pos.y, pos.z)?.block == Blocks.STONE_BUTTON) {
+                buttonlessTicks = 0
+                if (wasOff) {
+                    wasOff = false
+                    val kept = when (solution.size) {
+                        0 -> 0
+                        1 -> 1
+                        in 2 .. 3 -> 2
+                        in 4 .. 6 -> 3
+                        in 7 .. 9 -> 4
+                        else -> 5
+                    }
+                    while (solution.size > kept) solution.removeFirstOrNull()
+                }
+            } else buttonlessTicks++
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         solution.clear()
+        buttonlessTicks = 0
+        wasOff = false
     }
 }
