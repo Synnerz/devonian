@@ -3,7 +3,6 @@
   "package": "com.github.synnerz.devonian.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "AbstractContainerMenuMixin",
     "AbstractContainerScreenMixin",
     "AbstractRecipeBookScreenMixin",
     "BossHealthOverlayMixin",
@@ -21,7 +20,6 @@
     "GameRendererMixin",
     "GlDeviceMixin",
     "GuiMixin",
-    "InventoryMenuMixin",
     "InventoryScreenMixin",
     "ItemClusterRenderStateMixin",
     "KeyboardHandlerMixin",

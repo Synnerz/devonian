@@ -72,9 +72,10 @@ class EntityLeaveEvent(
     val entity: Entity
 ) : Event()
 
-class DropItemEvent(
-    val itemStack: ItemStack,
-    val entireStack: Boolean
+class DropItemEvent @JvmOverloads constructor(
+    val slot: Slot?,
+    val entireStack: Boolean,
+    val itemStack: ItemStack = slot?.item ?: ItemStack.EMPTY,
 ) : CancellableEvent()
 
 class TickEvent(
@@ -360,3 +361,22 @@ class PostRenderTileEntityEvent(
     val matrix: PoseStack,
     val submitter: SubmitNodeCollector,
 ) : Event()
+
+class SwapItemEvent(
+    val slot1: Slot,
+    val slot2: Slot,
+) : CancellableEvent()
+
+class PickupItemInventoryEvent(
+    val slot: Slot
+) : CancellableEvent()
+
+class QuickMoveItemEvent(
+    val slot: Slot
+) : CancellableEvent()
+
+class QuickCraftMoveEvent(
+    val slot: Slot,
+    // is right click
+    val isSingleItem: Boolean,
+) : CancellableEvent()

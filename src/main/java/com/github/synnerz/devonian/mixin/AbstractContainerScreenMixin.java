@@ -1,15 +1,14 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.api.events.DropItemEvent;
-import com.github.synnerz.devonian.api.events.EventBus;
-import com.github.synnerz.devonian.api.events.GuiSlotClickEvent;
-import com.github.synnerz.devonian.api.events.RenderSlotEvent;
+import com.github.synnerz.devonian.Devonian;
+import com.github.synnerz.devonian.api.events.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Optional;
 
 @Mixin(value = AbstractContainerScreen.class, priority = 1002)
 public abstract class AbstractContainerScreenMixin {
@@ -28,39 +29,43 @@ public abstract class AbstractContainerScreenMixin {
 
     @Inject(
             method = "slotClicked",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handleInventoryMouseClick(IIILnet/minecraft/world/inventory/ClickType;Lnet/minecraft/world/entity/player/Player;)V"),
-            cancellable = true
-    )
-    private void devonian$onSlotClick(Slot slot, int i, int j, ClickType clickType, CallbackInfo ci) {
-        GuiSlotClickEvent event = new GuiSlotClickEvent(slot, i, j, clickType, menu);
-        EventBus.INSTANCE.post(event);
-        if (event.isCancelled()) ci.cancel();
-    }
-
-    @Inject(
-            method = "slotClicked",
             at = @At("HEAD"),
             cancellable = true
     )
-    private void devonian$onDropItem(Slot slot, int i, int j, ClickType clickType, CallbackInfo ci) {
-        if (
-                (i != -999 && clickType == ClickType.THROW) ||
-                (i == -999 && clickType == ClickType.PICKUP)
-        ) {
-            ItemStack stack = menu.getCarried();
-            if (!stack.isEmpty()) {
-                DropItemEvent event = new DropItemEvent(stack, j == 0);
-                EventBus.INSTANCE.post(event);
-                if (event.isCancelled()) ci.cancel();
-            } else if (slot != null) {
-                ItemStack slotStack = slot.getItem();
-                if (!slotStack.isEmpty()) {
-                    DropItemEvent event = new DropItemEvent(slotStack, j == 0);
-                    EventBus.INSTANCE.post(event);
-                    if (event.isCancelled()) ci.cancel();
-                }
+    private void devonian$onSlotClicked(Slot slot, int i, int j, ClickType clickType, CallbackInfo ci) {
+        CancellableEvent event = null;
+
+        switch (clickType) {
+            case PICKUP:
+                if (slot == null) event = new DropItemEvent(null, true, menu.getCarried());
+                else event = new PickupItemInventoryEvent(slot);
+                break;
+            case THROW:
+                event = new DropItemEvent(slot, j != 0);
+                break;
+            case PICKUP_ALL:
+                if (slot != null) event = new PickupItemInventoryEvent(slot);
+                break;
+            case QUICK_MOVE:
+                if (slot != null) event = new QuickMoveItemEvent(slot);
+                break;
+            case SWAP: {
+                if (slot == null) break;
+                Player player = Devonian.INSTANCE.getMinecraft().player;
+                if (player == null) break;
+                Inventory inv = player.getInventory();
+                Optional<Slot> other = menu.slots.stream().filter(v -> v.container == inv && v.getContainerSlot() == j).findAny();
+                if (other.isPresent()) event = new SwapItemEvent(slot, other.get());
+                break;
             }
+            case QUICK_CRAFT:
+                // leftover item, into the cursor slot
+                if (slot == null) break;
+                event = new QuickCraftMoveEvent(slot, (j & 4) > 0);
+                break;
         }
+
+        if (event != null && event.post()) ci.cancel();
     }
 
     @Redirect(

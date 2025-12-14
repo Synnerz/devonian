@@ -201,6 +201,7 @@ object Devonian : ClientModInitializer {
         TextConfig.initialize()
         Location.initialize()
         Alert.initialize()
+        PreventItem.initialize()
         Dungeons.initialize()
         DevonianCommand.initialize()
     }
