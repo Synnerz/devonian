@@ -5,7 +5,9 @@ import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderPipelines
+import org.joml.Matrix3x2f
 import java.awt.Color
+import kotlin.math.hypot
 import kotlin.math.max
 
 object Render2D {
@@ -78,6 +80,33 @@ object Render2D {
             }
             x++
         }
+    }
+
+    fun drawLine(
+        ctx: GuiGraphics,
+        x1: Float, y1: Float,
+        x2: Float, y2: Float,
+        c: Color,
+        lw: Int = 1,
+    ) {
+        val mat = Matrix3x2f(ctx.pose())
+        var dx = y1 - y2
+        var dy = x2 - x1
+        val f = lw / hypot(dx, dy)
+        dx *= f
+        dy *= f
+        ctx.guiRenderState.submitGuiElement(
+            QuadRenderState(
+                RenderPipelines.GUI,
+                mat,
+                x1 + dx, y1 + dy,
+                x1 - dx, y1 - dy,
+                x2 + dx, y2 + dy,
+                x2 - dx, y2 - dy,
+                c.rgb,
+                ctx.scissorStack.peek(),
+            )
+        )
     }
 
     fun String.width(): Int {
