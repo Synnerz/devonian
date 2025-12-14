@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.common.ClientboundPingPacket
 import net.minecraft.network.protocol.game.*
 import net.minecraft.network.syncher.SynchedEntityData
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EntityType
 import org.lwjgl.glfw.GLFW
@@ -87,7 +88,8 @@ object EventBus {
                             packet.volume,
                             packet.source,
                             packet.x, packet.y, packet.z,
-                            packet.seed
+                            packet.seed,
+                            packet.sound.value()
                         )
                     ) event.cancel()
                 }
@@ -202,8 +204,9 @@ object EventBus {
         volume: Float,
         category: SoundSource,
         x: Double, y: Double, z: Double,
-        seed: Long
-    ): Boolean = SoundPlayEvent(soundEvent, pitch, volume, category, x, y, z, seed).post()
+        seed: Long,
+        underlyingEvent: SoundEvent,
+    ): Boolean = SoundPlayEvent(soundEvent, pitch, volume, category, x, y, z, seed, underlyingEvent).post()
 
     fun serverTicks(): Int = totalTicks
 

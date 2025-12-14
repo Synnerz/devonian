@@ -18,6 +18,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.Entity
@@ -298,7 +299,8 @@ class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics) : CancellableEvent()
     val x: Double,
     val y: Double,
     val z: Double,
-    val seed: Long
+    val seed: Long,
+    val underlyingEvent: SoundEvent,
 ) : CancellableEvent()
 
 // while no, yes
