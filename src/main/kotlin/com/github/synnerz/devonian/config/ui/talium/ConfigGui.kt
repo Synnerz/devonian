@@ -39,18 +39,22 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
             }
         }
     }
+
     lateinit var categories: List<Category>
-    lateinit var selectedCategory: Category
+    var selectedCategory: Category? = null
+    lateinit var searchCategory: SearchCategory
+    var opened = false
 
     fun initialize() {
         categories = Config.categories.keys.mapIndexed { i, v ->
             Category(v, rightPanel, leftPanel, i)
         }
+        searchCategory = SearchCategory(rightPanel, leftPanel, categories.size)
         selectedCategory = categories.first()
-        selectedCategory.unhide()
+        selectedCategory?.unhide()
         background.onMouseScroll {
-            if (!selectedCategory.canTrigger())
-                selectedCategory.hideColorPickers()
+            if (!(selectedCategory?.canTrigger() ?: true))
+                selectedCategory?.hideColorPickers()
         }
 
         DevonianCommand.onRun {
@@ -85,8 +89,12 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         return false
     }
 
-    override fun onClose() {
-        selectedCategory.hideColorPickers()
-        super.onClose()
+    override fun removed() {
+        selectedCategory?.hideColorPickers()
+        opened = false
+    }
+
+    override fun added() {
+        opened = true
     }
 }
