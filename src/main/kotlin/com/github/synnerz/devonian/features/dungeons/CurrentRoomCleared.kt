@@ -31,6 +31,12 @@ object CurrentRoomCleared : Feature(
         "time in seconds",
         "Alert Time",
     )
+    private val SETTING_NO_BLOOD_ALERT = addSwitch(
+        "noBloodAlert",
+        false,
+        "",
+        "No Blood Room Alert"
+    )
 
     private var lastRoom: DungeonRoom? = null
     private var wasCleared = false
@@ -39,7 +45,8 @@ object CurrentRoomCleared : Feature(
         on<TickEvent> {
             val room = DungeonScanner.currentRoom ?: return@on
             val isCleared = room.checkmark === CheckmarkTypes.WHITE || room.checkmark === CheckmarkTypes.GREEN
-            if (lastRoom === room && !wasCleared && isCleared && room.type !== RoomTypes.FAIRY) {
+            val shouldTrigger = if (SETTING_NO_BLOOD_ALERT.get()) room.type !== RoomTypes.BLOOD else true
+            if (lastRoom === room && !wasCleared && isCleared && room.type !== RoomTypes.FAIRY && shouldTrigger) {
                 if (!SETTING_ONLY_KEY.get() || room.doors.any { it.type === DoorTypes.WITHER || it.type === DoorTypes.BLOOD }) {
                     Alert.show("&aRoom Cleared!", (SETTING_ALERT_TIME.get() * 1000.0).toInt())
                 }
