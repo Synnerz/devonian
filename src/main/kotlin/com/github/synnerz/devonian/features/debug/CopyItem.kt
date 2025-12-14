@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.debug
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.events.GuiKeyEvent
+import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.json.JsonDataObject
 import com.github.synnerz.devonian.features.Feature
@@ -26,7 +26,7 @@ object CopyItem : Feature(
     subcategory = "Utils",
 ) {
     override fun initialize() {
-        on<GuiKeyEvent> { event ->
+        on<GuiKeyDownEvent> { event ->
             if (event.key != GLFW_KEY_C) return@on
 
             val isCtrlDown = glfwGetKey(minecraft.window.handle(), GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS

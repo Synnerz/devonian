@@ -7,6 +7,7 @@ import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.particle.Particle
@@ -161,7 +162,15 @@ class GuiSlotClickEvent(
     val handler: AbstractContainerMenu
 ) : CancellableEvent()
 
-class GuiKeyEvent(
+class GuiKeyDownEvent(
+    val keyName: String?,
+    val key: Int,
+    val scanCode: Int,
+    val screen: Screen,
+    val event: KeyEvent
+) : CancellableEvent()
+
+class GuiKeyUpEvent(
     val keyName: String?,
     val key: Int,
     val scanCode: Int,

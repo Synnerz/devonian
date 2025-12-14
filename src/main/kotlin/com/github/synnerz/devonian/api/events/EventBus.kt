@@ -61,12 +61,24 @@ object EventBus {
             }
 
             ScreenKeyboardEvents.allowKeyPress(screen).register { _, event ->
-                val event = GuiKeyEvent(
+                val event = GuiKeyDownEvent(
                     GLFW.glfwGetKeyName(event.key, event.scancode),
                     event.key,
                     event.scancode,
                     screen,
-                    event
+                    event,
+                )
+                post(event)
+                !event.isCancelled()
+            }
+
+            ScreenKeyboardEvents.allowKeyRelease(screen).register { _, event ->
+                val event = GuiKeyUpEvent(
+                    GLFW.glfwGetKeyName(event.key, event.scancode),
+                    event.key,
+                    event.scancode,
+                    screen,
+                    event,
                 )
                 post(event)
                 !event.isCancelled()

@@ -8,7 +8,7 @@ import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.CancellableEvent
 import com.github.synnerz.devonian.api.events.DropItemEvent
-import com.github.synnerz.devonian.api.events.GuiKeyEvent
+import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.api.events.GuiSlotClickEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
@@ -73,7 +73,7 @@ object ProtectItem : Feature(
             cancelEvent(event, event.slot.item)
         }
 
-        on<GuiKeyEvent> { event ->
+        on<GuiKeyDownEvent> { event ->
             if (!keybind.matches(event.event)) return@on
             val stack = ScreenUtils.cursorStack(event.screen) ?: return@on
             val uuid = ItemUtils.uuid(stack) ?: return@on
