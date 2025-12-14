@@ -382,3 +382,10 @@ class QuickCraftMoveEvent(
     // is right click
     val isSingleItem: Boolean,
 ) : CancellableEvent()
+
+class PostRenderSlotsEvent(
+    val ctx: GuiGraphics,
+    val mouseX: Int,
+    val mouseY: Int,
+    val container: AbstractContainerScreen<*>,
+) : Event()
