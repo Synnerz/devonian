@@ -15,10 +15,10 @@ class QuadRenderState(
     val pose: Matrix3x2f,
     val x00: Float,
     val y00: Float,
-    val x01: Float,
-    val y01: Float,
-    val x10: Float,
-    val y10: Float,
+    x01: Float,
+    y01: Float,
+    x10: Float,
+    y10: Float,
     val x11: Float,
     val y11: Float,
     val color: Int,
@@ -44,6 +44,34 @@ class QuadRenderState(
         scissorArea
     )
 
+    val x01: Float
+    val y01: Float
+    val x10: Float
+    val y10: Float
+
+    init {
+        if (
+            x00 * y10 +
+            x10 * y11 +
+            x11 * y01 +
+            x01 * y00 <
+            y00 * x10 +
+            y10 * x11 +
+            y11 * x01 +
+            y01 * x00
+        ) {
+            this.x01 = x10
+            this.y01 = y10
+            this.x10 = x01
+            this.y10 = y01
+        } else {
+            this.x01 = x01
+            this.y01 = y01
+            this.x10 = x10
+            this.y10 = y10
+        }
+    }
+
     val bounds: ScreenRectangle
 
     init {
@@ -58,14 +86,10 @@ class QuadRenderState(
     }
 
     override fun buildVertices(vertexConsumer: VertexConsumer) {
-        vertexConsumer.addVertexWith2DPose(pose, x00, y00)
-            .setColor(color)
-        vertexConsumer.addVertexWith2DPose(pose, x01, y01)
-            .setColor(color)
-        vertexConsumer.addVertexWith2DPose(pose, x11, y11)
-            .setColor(color)
-        vertexConsumer.addVertexWith2DPose(pose, x10, y10)
-            .setColor(color)
+        vertexConsumer.addVertexWith2DPose(pose, x00, y00).setColor(color)
+        vertexConsumer.addVertexWith2DPose(pose, x01, y01).setColor(color)
+        vertexConsumer.addVertexWith2DPose(pose, x11, y11).setColor(color)
+        vertexConsumer.addVertexWith2DPose(pose, x10, y10).setColor(color)
     }
 
     override fun pipeline(): RenderPipeline = pipeline

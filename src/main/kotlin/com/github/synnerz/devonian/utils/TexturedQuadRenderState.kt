@@ -16,18 +16,18 @@ class TexturedQuadRenderState(
     val pose: Matrix3x2f,
     val x00: Float,
     val y00: Float,
-    val x01: Float,
-    val y01: Float,
-    val x10: Float,
-    val y10: Float,
+    x01: Float,
+    y01: Float,
+    x10: Float,
+    y10: Float,
     val x11: Float,
     val y11: Float,
     val u00: Float,
     val v00: Float,
-    val u01: Float,
-    val v01: Float,
-    val u10: Float,
-    val v10: Float,
+    u01: Float,
+    v01: Float,
+    u10: Float,
+    v10: Float,
     val u11: Float,
     val v11: Float,
     val color: Int,
@@ -62,6 +62,46 @@ class TexturedQuadRenderState(
         color,
         scissorArea
     )
+
+    val x01: Float
+    val y01: Float
+    val x10: Float
+    val y10: Float
+    val u01: Float
+    val v01: Float
+    val u10: Float
+    val v10: Float
+
+    init {
+        if (
+            x00 * y10 +
+            x10 * y11 +
+            x11 * y01 +
+            x01 * y00 <
+            y00 * x10 +
+            y10 * x11 +
+            y11 * x01 +
+            y01 * x00
+        ) {
+            this.x01 = x10
+            this.y01 = y10
+            this.x10 = x01
+            this.y10 = y01
+            this.u01 = u10
+            this.v01 = v10
+            this.u10 = u01
+            this.v10 = v01
+        } else {
+            this.x01 = x01
+            this.y01 = y01
+            this.x10 = x10
+            this.y10 = y10
+            this.u01 = u01
+            this.v01 = v01
+            this.u10 = u10
+            this.v10 = v10
+        }
+    }
 
     val bounds: ScreenRectangle
 
