@@ -2,6 +2,8 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.api.events.*;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,7 +16,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Optional;
@@ -25,12 +26,10 @@ public abstract class AbstractContainerScreenMixin {
     @Final
     protected AbstractContainerMenu menu;
 
-    @Shadow protected abstract void renderSlot(GuiGraphics context, Slot slot);
-
     @Inject(
-            method = "slotClicked",
-            at = @At("HEAD"),
-            cancellable = true
+        method = "slotClicked",
+        at = @At("HEAD"),
+        cancellable = true
     )
     private void devonian$onSlotClicked(Slot slot, int i, int j, ClickType clickType, CallbackInfo ci) {
         CancellableEvent event = null;
@@ -70,17 +69,16 @@ public abstract class AbstractContainerScreenMixin {
         if (event != null && event.post()) ci.cancel();
     }
 
-    @Redirect(
-            method = "renderSlots",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;)V"
-            )
+    @WrapOperation(
+        method = "renderSlots",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;)V"
+        )
     )
-    private void devonian$drawSlots(AbstractContainerScreen instance, GuiGraphics guiGraphics, Slot slot) {
+    private void devonian$drawSlots(AbstractContainerScreen instance, GuiGraphics guiGraphics, Slot slot, Operation<Void> original) {
         if (new RenderSlotEvent(slot, guiGraphics).post()) return;
-
-        renderSlot(guiGraphics, slot);
+        original.call(instance, guiGraphics, slot);
     }
 
     @Inject(
