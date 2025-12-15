@@ -3,5 +3,6 @@
   "key.devonian.protectItem": "Protect Item",
   "key.devonian.slotBinding": "Slot Binding",
   "key.devonian.slotLocking": "Slot Locking",
-  "key.devonian.mcgBlacklist": "Middle Click Gui Blacklist"
+  "key.devonian.mcgBlacklist": "Middle Click Gui Blacklist",
+  "key.devonian.pphBlacklist": "Placing Player Heads Blacklist"
 }
