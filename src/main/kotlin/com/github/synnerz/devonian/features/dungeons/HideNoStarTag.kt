@@ -12,7 +12,7 @@ object HideNoStarTag : Feature(
     "Hides name tag of mobs that do not have star in their name tag",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL",
+    subcategory = "Hiders",
 ) {
     // "Boomer Psycho"
     private val bloodExceptions = setOf(

@@ -10,7 +10,7 @@ object CancelF7BossSounds : Feature(
     "Cancels the boss sounds played in f7 boss fight",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "Hiders",
 ) {
     override fun initialize() {
         on<SoundPlayEvent> { event ->

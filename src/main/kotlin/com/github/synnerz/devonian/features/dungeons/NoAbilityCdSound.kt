@@ -10,7 +10,7 @@ object NoAbilityCdSound : Feature(
     "Removes the ability cooldown sound in dungeons",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL",
+    subcategory = "Hiders",
 ) {
     val SETTING_NO_MESSAGE = addSwitch(
         "noMessage",

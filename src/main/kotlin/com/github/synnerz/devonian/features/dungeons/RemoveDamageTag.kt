@@ -12,7 +12,7 @@ object RemoveDamageTag : Feature(
     "Removes the damage tags created by you or others.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL",
+    subcategory = "Hiders",
 ) {
     private var damageTagRegex = "^.?\\d[\\d,.]+.*?$".toRegex()
 
