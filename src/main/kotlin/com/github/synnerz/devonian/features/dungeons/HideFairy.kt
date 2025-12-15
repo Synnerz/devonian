@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EntityEquipmentEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -29,7 +30,7 @@ object HideFairy : Feature(
                 if (item.isEmpty) return@forEach
 
                 val prof = item.get(DataComponents.PROFILE) ?: return@forEach
-                if (prof.partialProfile().id == fairyUUID) {
+                if (prof.partialProfile().id == fairyUUID) Scheduler.scheduleTask {
                     minecraft.level?.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED)
                 }
             }
