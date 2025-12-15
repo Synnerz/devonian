@@ -39,6 +39,10 @@ class DungeonMapBaseRenderer :
         cachedStrings.clear()
     }
 
+    init {
+        BImgTextHudRenderer.registerFontListener(this)
+    }
+
     data class TextRenderParam(val box: BoundingBox, val key: CachedStringKey, val text: List<String>)
 
     override fun drawImage(img: BufferedImage, param: DungeonMapRenderData): BufferedImage {
