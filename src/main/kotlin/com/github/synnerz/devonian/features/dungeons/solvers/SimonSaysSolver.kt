@@ -98,6 +98,7 @@ object SimonSaysSolver : Feature(
         if (pos.x != 111) return false
         if (!isValidButtonLocation(pos)) return false
         if (buttonlessTicks > 15) wasOff = true
+        buttonlessTicks = 0
         if (!solution.contains(pos)) solution.add(pos.west())
         return true
     }
@@ -175,7 +176,7 @@ object SimonSaysSolver : Feature(
 
         on<ClientThreadServerTickEvent> {
             val pos = BlockPos(110, 120, 92)
-            if (WorldUtils.isChunkLoaded(pos.x, pos.z)) return@on
+            if (!WorldUtils.isChunkLoaded(pos.x, pos.z)) return@on
 
             if (WorldUtils.getBlockState(pos.x, pos.y, pos.z)?.block == Blocks.STONE_BUTTON) {
                 buttonlessTicks = 0
