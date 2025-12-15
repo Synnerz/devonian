@@ -218,10 +218,13 @@ object SlotBinding : Feature(
         on<PostRenderSlotsEvent> { event ->
             val curr = currentHeldSlot ?: return@on
             val cont = event.container as AbstractContainerScreenAccessor
+            val inv = minecraft.player?.inventory
 
             event.container.menu.slots.forEach { slot ->
                 if (curr === slot) return@forEach
                 if (
+                    slot.container === inv &&
+                    slot.containerSlot != 40 &&
                     (curr.containerSlot < 9 || slot.containerSlot < 9) &&
                     !boundSlots[curr.containerSlot].contains(slot.containerSlot)
                 ) return@forEach
