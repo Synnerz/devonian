@@ -101,6 +101,7 @@ object TpsDisplay : TextHudFeature("tpsDisplay") {
         }
 
         on<RenderOverlayEvent> { event ->
+            if (minecraft.isSingleplayer) return@on
             draw(event.ctx)
         }
     }
