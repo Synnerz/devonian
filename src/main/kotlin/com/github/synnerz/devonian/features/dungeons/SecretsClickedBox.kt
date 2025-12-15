@@ -9,6 +9,8 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.BlockPos
+import net.minecraft.world.level.EmptyBlockGetter
+import net.minecraft.world.phys.shapes.CollisionContext
 import java.awt.Color
 
 object SecretsClickedBox : Feature(
@@ -53,15 +55,31 @@ object SecretsClickedBox : Feature(
         on<RenderWorldEvent> {
             if (clickedBlock == null) return@on
             val immediate = Context.Immediate ?: return@on
-            immediate.renderFilledBox(
-                clickedBlock!!.x.toDouble(), clickedBlock!!.y.toDouble(), clickedBlock!!.z.toDouble(),
-                if (wasLocked) SETTING_LOCKED_BLOCK_COLOR.getColor() else SETTING_BLOCK_COLOR.getColor(), true
-            )
+            val camera = minecraft.gameRenderer.mainCamera
+            val blockShape = minecraft.level?.getBlockState(clickedBlock!!)
+                ?.getShape(
+                    EmptyBlockGetter.INSTANCE,
+                    clickedBlock!!,
+                    CollisionContext.of(camera.entity)
+                ) ?: return@on
+            val aabb = blockShape.toAabbs().map { it.move(clickedBlock!!) }
 
-            immediate.renderBox(
-                clickedBlock!!.x.toDouble(), clickedBlock!!.y.toDouble(), clickedBlock!!.z.toDouble(),
-                if (wasLocked) Color.RED else Color.CYAN, true
-            )
+            aabb.forEach {
+                val pos = it.inflate(0.001)
+                immediate.renderFilledBox(
+                    pos.minX, pos.minY, pos.minZ,
+                    pos.maxX - pos.minX, pos.maxY - pos.minY,
+                    if (wasLocked) SETTING_LOCKED_BLOCK_COLOR.getColor() else SETTING_BLOCK_COLOR.getColor(),
+                    true
+                )
+
+                immediate.renderBox(
+                    pos.minX, pos.minY, pos.minZ,
+                    pos.maxX - pos.minX, pos.maxY - pos.minY,
+                    if (wasLocked) Color.RED else Color.CYAN,
+                    true
+                )
+            }
         }
 
         on<WorldChangeEvent> {
