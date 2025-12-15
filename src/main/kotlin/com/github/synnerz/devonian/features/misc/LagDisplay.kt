@@ -23,10 +23,11 @@ object LagDisplay : TextHudFeature("lagDisplay") {
 
         on<RenderOverlayEvent> { event ->
             val t = System.currentTimeMillis()
-            if (t - lastPacket < SETTING_THRESH.get()) return@on
+            val dt = t - lastPacket
+            if (dt < SETTING_THRESH.get()) return@on
 
-            val color = StringUtils.colorForNumber(t - lastPacket, 2_000L)
-            setLine("zzz for $color%.2fs".format((t - lastPacket) / 1000.0))
+            val color = StringUtils.colorForNumber(2_000L - dt, 2_000L)
+            setLine("zzz for $color%.2fs".format(dt / 1000.0))
             draw(event.ctx)
         }
     }
