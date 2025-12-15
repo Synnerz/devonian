@@ -182,6 +182,7 @@ object Devonian : ClientModInitializer {
         LagDisplay,
         HideFairy,
         HideSoulweaverSkulls,
+        HideArcherPassive,
 
         // Debug
         CopyItem,
