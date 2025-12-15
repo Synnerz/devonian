@@ -89,17 +89,16 @@ object SimonSaysSolver : Feature(
             0.6875 + e
         )
     }
-    private var buttonlessTicks = 0
-    private var wasOff = false
+    private var wasStartButtonLast = false
+    private var hasButtons = false
 
     private fun isValidButtonLocation(pos: BlockPos) = pos.y in 120 .. 123 && pos.z in 92 .. 95
 
     private fun onSeaLantern(pos: BlockPos): Boolean {
         if (pos.x != 111) return false
         if (!isValidButtonLocation(pos)) return false
-        if (buttonlessTicks > 15) wasOff = true
-        buttonlessTicks = 0
-        if (!solution.contains(pos)) solution.add(pos.west())
+        val p = pos.west()
+        if (solution.getOrNull(solution.size - 1) != p) solution.add(p)
         return true
     }
 
@@ -114,8 +113,6 @@ object SimonSaysSolver : Feature(
                 is ClientboundSectionBlocksUpdatePacket -> {
                     packet.runUpdates { pos, state ->
                         if (state.isAir && pos.x == 110 && isValidButtonLocation(pos)) solution.clear()
-                    }
-                    packet.runUpdates { pos, state ->
                         if (state.block == Blocks.SEA_LANTERN) onSeaLantern(pos)
                     }
                 }
@@ -123,7 +120,9 @@ object SimonSaysSolver : Feature(
         }
 
         on<RenderWorldEvent> { event ->
-            if (wasOff) return@on
+            if (!hasButtons) return@on
+            if (wasStartButtonLast) return@on
+
             val cam = event.ctx.gameRenderer().mainCamera.position.reverse()
             solution.forEachIndexed { i, pos ->
                 val wire = when (i) {
@@ -158,10 +157,12 @@ object SimonSaysSolver : Feature(
         }
 
         on<BlockInteractEvent> { event ->
-            if (solution.isEmpty()) return@on
-
             val pos = event.pos
+
             if (pos.x != 110) return@on
+            wasStartButtonLast = pos.y == 121 && pos.z == 91
+
+            if (solution.isEmpty()) return@on
             if (!isValidButtonLocation(pos)) return@on
 
             if (solution.getOrNull(0) == pos) solution.removeFirstOrNull()
@@ -183,9 +184,9 @@ object SimonSaysSolver : Feature(
             if (!WorldUtils.isChunkLoaded(pos.x, pos.z)) return@on
 
             if (WorldUtils.getBlockState(pos.x, pos.y, pos.z)?.block == Blocks.STONE_BUTTON) {
-                buttonlessTicks = 0
-                if (wasOff) {
-                    wasOff = false
+                hasButtons = true
+                if (wasStartButtonLast) {
+                    wasStartButtonLast = false
                     val kept = when (solution.size) {
                         0 -> 0
                         1 -> 1
@@ -196,13 +197,13 @@ object SimonSaysSolver : Feature(
                     }
                     while (solution.size > kept) solution.removeFirstOrNull()
                 }
-            } else buttonlessTicks++
+            } else hasButtons = false
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         solution.clear()
-        buttonlessTicks = 0
-        wasOff = false
+        wasStartButtonLast = false
+        hasButtons = false
     }
 }
