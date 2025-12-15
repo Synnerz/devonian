@@ -133,7 +133,8 @@ object EtherwarpOverlay : Feature(
                 px, py, pz,
                 lookVec.x * dist,
                 lookVec.y * dist,
-                lookVec.z * dist
+                lookVec.z * dist,
+                false,
             )
 
             if (hitResult == null) {
@@ -146,6 +147,7 @@ object EtherwarpOverlay : Feature(
                     px + lookVec.x * maxDist,
                     py + lookVec.y * maxDist,
                     pz + lookVec.z * maxDist,
+                    false,
                 )
                 if (hitResult == null) return@on
             } else {

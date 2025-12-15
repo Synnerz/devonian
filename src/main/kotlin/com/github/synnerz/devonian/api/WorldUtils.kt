@@ -62,12 +62,14 @@ object WorldUtils {
 
     fun raycast(
         x: Double, y: Double, z: Double,
-        dx: Double, dy: Double, dz: Double
+        dx: Double, dy: Double, dz: Double,
+        firstBlock: Boolean,
     ): BlockPos? {
         val w = world ?: return null
 
         for (bp in DDA(x, y, z, dx, dy, dz)) {
             val bs = w.getBlockState(bp)
+            if (firstBlock && !bs.isAir) return bp
             if (!BlockTypes.AirLike.contains(bs.block)) return bp
         }
 

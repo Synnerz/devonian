@@ -34,6 +34,7 @@ object DungeonRoomComponentRenderer : Feature(
                 lookVec.x * 128.0,
                 lookVec.y * 128.0,
                 lookVec.z * 128.0,
+                true,
             ) ?: return@on
 
             val rotated = room.fromPos(hitResult.x, hitResult.z) ?: return@on
