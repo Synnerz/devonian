@@ -2,5 +2,6 @@
   "key.category.devonian.keybinds": "Devonian",
   "key.devonian.protectItem": "Protect Item",
   "key.devonian.slotBinding": "Slot Binding",
-  "key.devonian.slotLocking": "Slot Locking"
+  "key.devonian.slotLocking": "Slot Locking",
+  "key.devonian.mcgBlacklist": "Middle Click Gui Blacklist"
 }
