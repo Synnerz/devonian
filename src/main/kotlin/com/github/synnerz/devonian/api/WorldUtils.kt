@@ -2,12 +2,15 @@ package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
+import com.github.synnerz.devonian.utils.BlockTypes
+import com.github.synnerz.devonian.utils.math.DDA
 import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
+import kotlin.collections.iterator
 import kotlin.math.abs
 
 object WorldUtils {
@@ -55,5 +58,19 @@ object WorldUtils {
     fun registryName(block: Block): String {
         val registry = BuiltInRegistries.BLOCK.getKey(block)
         return "${registry.namespace}:${registry.path}"
+    }
+
+    fun raycast(
+        x: Double, y: Double, z: Double,
+        dx: Double, dy: Double, dz: Double
+    ): BlockPos? {
+        val w = world ?: return null
+
+        for (bp in DDA(x, y, z, dx, dy, dz)) {
+            val bs = w.getBlockState(bp)
+            if (!BlockTypes.AirLike.contains(bs.block)) return bp
+        }
+
+        return null
     }
 }

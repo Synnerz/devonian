@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.Feature
@@ -128,7 +129,7 @@ object EtherwarpOverlay : Feature(
                 lookVec = player.calculateViewVector(playerAccessor.lastPitchClient, playerAccessor.lastYawClient)
             }
 
-            var hitResult = raycast(
+            var hitResult = WorldUtils.raycast(
                 px, py, pz,
                 lookVec.x * dist,
                 lookVec.y * dist,
@@ -138,7 +139,7 @@ object EtherwarpOverlay : Feature(
             if (hitResult == null) {
                 failReason = "&4Can't TP: Too far!"
                 val maxDist = hypot(256.0, 16.0 * minecraft.options.effectiveRenderDistance)
-                hitResult = raycast(
+                hitResult = WorldUtils.raycast(
                     px + lookVec.x * dist,
                     py + lookVec.y * dist,
                     pz + lookVec.z * dist,
@@ -186,19 +187,5 @@ object EtherwarpOverlay : Feature(
                 true
             )
         }
-    }
-
-    private fun raycast(
-        x: Double, y: Double, z: Double,
-        dx: Double, dy: Double, dz: Double
-    ): BlockPos? {
-        val w = minecraft.level ?: return null
-
-        for (bp in DDA(x, y, z, dx, dy, dz)) {
-            val bs = w.getBlockState(bp)
-            if (!BlockTypes.AirLike.contains(bs.block)) return bp
-        }
-
-        return null
     }
 }
