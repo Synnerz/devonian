@@ -181,6 +181,7 @@ object Devonian : ClientModInitializer {
         TpsDisplay,
         LagDisplay,
         HideFairy,
+        HideSoulweaverSkulls,
 
         // Debug
         CopyItem,
