@@ -30,6 +30,7 @@ import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.api.Location
+import com.github.synnerz.devonian.features.debug.renderers.DungeonRoomComponentRenderer
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
@@ -191,6 +192,7 @@ object Devonian : ClientModInitializer {
         CopyItem,
         RenderSlotIndex,
         PacketLogger,
+        DungeonRoomComponentRenderer,
     )
 
     override fun onInitializeClient() {
