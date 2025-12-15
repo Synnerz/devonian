@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.utils.BasicState
-import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import com.github.synnerz.devonian.utils.Toggleable
 import net.minecraft.network.chat.ClickEvent

@@ -8,7 +8,7 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.devonian.api.Location
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.SkullBlock
 import java.awt.Color

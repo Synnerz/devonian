@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.devonian.api.Location
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.components.LerpingBossEvent
 import net.minecraft.network.chat.Component

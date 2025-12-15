@@ -9,7 +9,7 @@ import com.github.synnerz.devonian.api.events.ActionbarEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
-import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.devonian.api.Location
 import com.google.gson.Gson
 import net.minecraft.tags.FluidTags
 import net.minecraft.world.level.block.Blocks

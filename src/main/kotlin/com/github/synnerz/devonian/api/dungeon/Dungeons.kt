@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.dungeons.SecretsSound
 import com.github.synnerz.devonian.utils.BasicState
-import com.github.synnerz.devonian.utils.Location
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.utils.State
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.core.registries.BuiltInRegistries
