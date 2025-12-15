@@ -179,6 +179,7 @@ object Devonian : ClientModInitializer {
         CancelF7BossSounds,
         ProtectStarredItems,
         TpsDisplay,
+        LagDisplay,
 
         // Debug
         CopyItem,

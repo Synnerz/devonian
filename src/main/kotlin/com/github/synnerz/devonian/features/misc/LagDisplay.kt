@@ -1,0 +1,35 @@
+package com.github.synnerz.devonian.features.misc
+
+import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.StringUtils
+
+object LagDisplay : TextHudFeature("lagDisplay") {
+    private val SETTING_THRESH = addSlider(
+        "thresh",
+        300.0,
+        50.0, 1000.0,
+        "show when server has not responded for this long",
+        "Lag Threshold",
+    )
+
+    private var lastPacket = 0L
+
+    override fun initialize() {
+        on<PacketReceivedEvent> {
+            lastPacket = System.currentTimeMillis()
+        }
+
+        on<RenderOverlayEvent> { event ->
+            val t = System.currentTimeMillis()
+            if (t - lastPacket < SETTING_THRESH.get()) return@on
+
+            val color = StringUtils.colorForNumber(t - lastPacket, 2_000L)
+            setLine("zzz for $color%.2fs".format((t - lastPacket) / 1000.0))
+            draw(event.ctx)
+        }
+    }
+
+    override fun getEditText(): List<String> = listOf("zzz for &469.42s")
+}
