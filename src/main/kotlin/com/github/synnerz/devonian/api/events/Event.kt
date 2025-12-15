@@ -78,6 +78,7 @@ class DropItemEvent @JvmOverloads constructor(
     val slot: Slot?,
     val entireStack: Boolean,
     val itemStack: ItemStack = slot?.item ?: ItemStack.EMPTY,
+    val willDropInDungeons: Boolean = false,
 ) : CancellableEvent()
 
 class TickEvent(

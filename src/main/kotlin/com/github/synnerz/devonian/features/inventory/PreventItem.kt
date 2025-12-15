@@ -28,12 +28,12 @@ object PreventItem {
 
     fun initialize() {
         EventBus.on<DropItemEvent> { event ->
-            if (Location.area == "catacombs" && Dungeons.timeElapsed.value != 0) return@on
+            if (!event.willDropInDungeons && Location.area == "catacombs" && Dungeons.timeElapsed.value != 0) return@on
 
-            val slot = event.slot ?: return@on
-            if (slot.container !== mc.player?.inventory) return@on
+            val slot = event.slot
+            if (slot != null && slot.container !== mc.player?.inventory) return@on
 
-            val evn = SlotEvent(slot, slot.item, slot.containerSlot, true, event)
+            val evn = SlotEvent(slot, event.itemStack, slot?.containerSlot ?: 999, true, event)
             if (!evn.post()) return@on
 
             event.cancel()
@@ -108,7 +108,7 @@ object PreventItem {
     }
 
     class SlotEvent(
-        val slot: Slot,
+        val slot: Slot?,
         val item: ItemStack,
         val idx: Int,
         val losesItem: Boolean,

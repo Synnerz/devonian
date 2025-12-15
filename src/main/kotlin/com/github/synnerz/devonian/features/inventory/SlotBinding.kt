@@ -169,7 +169,7 @@ object SlotBinding : Feature(
                     val inv = player.inventory
                     val dst = menu.slots.find { it.container === inv && it.containerSlot == other }!!
                     minecraft.gameMode?.handleInventoryMouseClick(id, dst.index, event.idx, ClickType.SWAP, player)
-                } else minecraft.gameMode?.handleInventoryMouseClick(id, event.slot.index, other, ClickType.SWAP, player)
+                } else minecraft.gameMode?.handleInventoryMouseClick(id, event.slot!!.index, other, ClickType.SWAP, player)
                 event.cancel()
                 return@on
             }
