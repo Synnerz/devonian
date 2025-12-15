@@ -180,6 +180,7 @@ object Devonian : ClientModInitializer {
         ProtectStarredItems,
         TpsDisplay,
         LagDisplay,
+        HideFairy,
 
         // Debug
         CopyItem,
