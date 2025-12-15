@@ -54,6 +54,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
 
     fun invalidate() {
         valid = false
+        lastFuture?.cancel(true)
     }
 
     fun draw(ctx: GuiGraphics, x: Float, y: Float, scale: Float = 1f) {
