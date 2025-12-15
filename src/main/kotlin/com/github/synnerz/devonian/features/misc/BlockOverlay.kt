@@ -54,6 +54,12 @@ object BlockOverlay : Feature(
         "",
         "Outline Fill Phase",
     )
+    private val SETTING_DYNAMIC_PHASE = addSwitch(
+        "dynamicPhase",
+        false,
+        "Sets the phase to false if you're in third person, otherwise it is always set to true",
+        "Dynamic Phase"
+    )
 
     private var harharImLosingMyFuckingSanity = listOf<AABB>()
 
@@ -100,14 +106,17 @@ object BlockOverlay : Feature(
 
         on<RenderWorldEvent> {
             val boxes = harharImLosingMyFuckingSanity
+            val isFirstPerson = minecraft.options.cameraType.isFirstPerson
+
             harharImLosingMyFuckingSanity = listOf()
+
             boxes.forEach {
                 val aabb = it.inflate(0.001)
                 Context.Immediate?.renderBox(
                     aabb.minX, aabb.minY, aabb.minZ,
                     aabb.maxX - aabb.minX, aabb.maxY - aabb.minY,
                     SETTING_WIRE_COLOR.getColor(),
-                    phase = SETTING_WIRE_PHASE.get(),
+                    phase = if (SETTING_DYNAMIC_PHASE.get()) isFirstPerson else SETTING_WIRE_PHASE.get(),
                     lineWidth = SETTING_WIRE_WIDTH.get(),
                     widthZ = aabb.maxZ - aabb.minZ
                 )
@@ -115,7 +124,7 @@ object BlockOverlay : Feature(
                     aabb.minX, aabb.minY, aabb.minZ,
                     aabb.maxX - aabb.minX, aabb.maxY - aabb.minY,
                     SETTING_FILL_COLOR.getColor(),
-                    phase = SETTING_FILL_PHASE.get(),
+                    phase = if (SETTING_DYNAMIC_PHASE.get()) isFirstPerson else SETTING_FILL_PHASE.get(),
                     widthZ = aabb.maxZ - aabb.minZ
                 )
             }
