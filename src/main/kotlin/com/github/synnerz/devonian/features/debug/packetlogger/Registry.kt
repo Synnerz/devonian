@@ -29,5 +29,6 @@ object Registry {
         register(EntityEventPacket)
         register(EntityEquipmentPacket)
         register(SpawnEntityPacket)
+        register(EntityDataPacket)
     }
 }

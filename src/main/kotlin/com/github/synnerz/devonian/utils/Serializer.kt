@@ -2,7 +2,10 @@ package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.config.json.JsonDataObject
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
-import com.google.gson.*
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
@@ -125,5 +128,26 @@ object Serializer {
         obj.set("y", pos.y)
         obj.set("z", pos.z)
         return obj
+    }
+
+    fun serialize(value: Any?): JsonDataObject {
+        return when (value) {
+            is ItemStack -> serializeItem(value)
+            is BlockPos -> serializeBlockPos(value)
+            is BlockState -> serializeBlockState(value)
+            is Vec3 -> serializeVec(value)
+            null -> JsonDataObject()
+            else -> {
+                val obj = JsonDataObject()
+                obj.set("class", value.javaClass.name)
+                when (value) {
+                    is Enum<*> -> obj.set("name", value.name)
+                    is Boolean -> obj.set("value", value)
+                    is Number -> obj.set("value", value)
+                    is String -> obj.set("value", value)
+                }
+                obj
+            }
+        }
     }
 }
