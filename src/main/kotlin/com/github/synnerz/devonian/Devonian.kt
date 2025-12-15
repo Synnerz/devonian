@@ -201,6 +201,7 @@ object Devonian : ClientModInitializer {
         HudManager.initialize()
         KeyShortcuts.initialize()
         CommandAliases.initialize()
+        RefillGFSCommands.initialize()
         Config.onAfterLoad {
             featureInstances.forEach { feature ->
                 Config.getConfig<Boolean>(feature.configName)?.let {
