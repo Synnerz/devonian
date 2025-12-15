@@ -373,7 +373,9 @@ class SwapItemEvent(
 
 class PickupItemInventoryEvent(
     val slot: Slot,
-    val screen: AbstractContainerScreen<*>
+    val screen: AbstractContainerScreen<*>,
+    // is right click
+    val isSplitItem: Boolean,
 ) : CancellableEvent()
 
 class QuickMoveItemEvent(

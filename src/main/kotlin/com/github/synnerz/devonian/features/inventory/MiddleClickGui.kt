@@ -25,11 +25,13 @@ object MiddleClickGui : Feature(
 
     val avoidItems = mutableSetOf(
         "Reforge Item",
-        "Salvage Item",
+        "Salvage Items",
     )
 
     override fun initialize() {
         on<PickupItemInventoryEvent> { event ->
+            if (event.isSplitItem) return@on
+
             val slot = event.slot
             if (slot.container === minecraft.player?.inventory) return@on
 
@@ -40,8 +42,8 @@ object MiddleClickGui : Feature(
             val screenName = event.screen.title?.string ?: return@on
             if (avoidGuis.any { screenName.startsWith(it) }) return@on
 
-            val itemName = stack.itemName.string
-            if (avoidItems.contains(itemName)) return@on
+            val itemName = stack.customName?.string
+            if (itemName != null && avoidItems.contains(itemName)) return@on
 
             event.cancel()
             ScreenUtils.click(slot.index, false, "MIDDLE")
