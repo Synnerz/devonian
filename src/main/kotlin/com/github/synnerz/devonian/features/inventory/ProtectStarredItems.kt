@@ -20,7 +20,6 @@ object ProtectStarredItems : Feature("protectStarredItems", subcategory = "Inven
         val data = ItemUtils.extraAttributes(item) ?: return false
         val stars = listOf(
             "upgrade_level",
-            "item_tier",
             "dungeon_item_level",
         )
         return stars.any { data.getInt(it).isPresent }
