@@ -27,5 +27,7 @@ object Registry {
         register(LevelEventPacket)
         register(ExplodePacket)
         register(EntityEventPacket)
+        register(EntityEquipmentPacket)
+        register(SpawnEntityPacket)
     }
 }
