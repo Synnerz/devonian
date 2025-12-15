@@ -166,6 +166,7 @@ object EventBus {
                     val id = packet.id
                     val type = entityTypes[id] ?: return@on
                     val data = packet.packedItems
+                    EntityDataEvent(id, type, data).post()
                     val text = getNameFromData(data)
                     if (text != null) NameChangeEvent(id, type, text, text.string).post()
                 }

@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
+import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.InteractionHand
@@ -395,4 +396,10 @@ class PostRenderSlotsEvent(
     val mouseX: Int,
     val mouseY: Int,
     val container: AbstractContainerScreen<*>,
+) : Event()
+
+@Threaded class EntityDataEvent(
+    val entityId: Int,
+    val type: EntityType<*>,
+    val data: List<SynchedEntityData.DataValue<*>>,
 ) : Event()
