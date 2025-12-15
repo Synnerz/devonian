@@ -427,8 +427,8 @@ class DungeonMapBaseRenderer :
                     TextRendererImpl.drawImage(img, TextRenderer.RenderParams(
                         StylizedTextHud.TextRenderParams(
                             StylizedTextHud.Align.Center,
-                        options.stringShadow,
-                        StylizedTextHud.Backdrop.None,
+                            options.stringShadow,
+                            StylizedTextHud.Backdrop.None,
                             fontSize,
                         ),
                         lines,
