@@ -154,14 +154,6 @@ class GuiClickEvent(
     val screen: Screen
 ) : CancellableEvent()
 
-class GuiSlotClickEvent(
-    val slot: Slot?,
-    val slotId: Int,
-    val mbtn: Int,
-    val actionType: ClickType,
-    val handler: AbstractContainerMenu
-) : CancellableEvent()
-
 class GuiKeyDownEvent(
     val keyName: String?,
     val key: Int,
