@@ -190,7 +190,7 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
      * @param z
      */
     fun fromPos(x: Int, z: Int): Pair<Int, Int>? {
-        if (rotation == -1 || corner == WorldPosition.EMPTY) return null
+        if (!hasRotation()) return null
         val x1 = x - floor(corner.x + 0.5).toInt()
         val z1 = z - floor(corner.z + 0.5).toInt()
 
@@ -204,7 +204,7 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
      * @param z
      */
     fun fromComp(x: Int, z: Int): Pair<Int, Int>? {
-        if (rotation == -1 || corner == WorldPosition.EMPTY) return null
+        if (!hasRotation()) return null
         val ( x1, z1 ) = rotatePos(x, z, 360 - rotation)
         val x2 = x1 + corner.x
         val z2 = z1 + corner.z
