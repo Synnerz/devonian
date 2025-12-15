@@ -183,6 +183,7 @@ object Devonian : ClientModInitializer {
         HideFairy,
         HideSoulweaverSkulls,
         HideArcherPassive,
+        HideWitherKing,
 
         // Debug
         CopyItem,
