@@ -178,6 +178,7 @@ object Devonian : ClientModInitializer {
         PurplePadTimer,
         CancelF7BossSounds,
         ProtectStarredItems,
+        TpsDisplay,
 
         // Debug
         CopyItem,
