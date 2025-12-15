@@ -21,17 +21,29 @@ object SecretsClickedBox : Feature(
     subcategory = "World",
 ) {
     private val lockedChestRegex = "^That chest is locked!$".toRegex()
-    private val SETTING_BLOCK_COLOR = addColorPicker(
-        "blockColor",
+    private val SETTING_OUTLINE_SUCCESS_COLOR = addColorPicker(
+        "outlineSuccessColor",
+        Color(0, 255, 255, 255).rgb,
+        "",
+        "Clicked Block Outline Color"
+    )
+    private val SETTING_FILLED_SUCCESS_COLOR = addColorPicker(
+        "filledSuccessColor",
         Color(0, 255, 255, 50).rgb,
         "",
-        "Clicked Block Color",
+        "Clicked Block Filled Color"
     )
-    private val SETTING_LOCKED_BLOCK_COLOR = addColorPicker(
-        "lockedBlockColor",
+    private val SETTING_OUTLINE_FAILED_COLOR = addColorPicker(
+        "outlineFailedColor",
+        Color(255, 0, 0, 255).rgb,
+        "",
+        "Locked Block Outline Color"
+    )
+    private val SETTING_FILLED_FAILED_COLOR = addColorPicker(
+        "filledFailedColor",
         Color(255, 0, 0, 50).rgb,
         "",
-        "Locked Block Color",
+        "Locked Block Filled Color"
     )
     var clickedBlock: BlockPos? = null
     var wasLocked = false
@@ -69,14 +81,14 @@ object SecretsClickedBox : Feature(
                 immediate.renderFilledBox(
                     pos.minX, pos.minY, pos.minZ,
                     pos.maxX - pos.minX, pos.maxY - pos.minY,
-                    if (wasLocked) SETTING_LOCKED_BLOCK_COLOR.getColor() else SETTING_BLOCK_COLOR.getColor(),
+                    if (wasLocked) SETTING_FILLED_FAILED_COLOR.getColor() else SETTING_FILLED_SUCCESS_COLOR.getColor(),
                     true
                 )
 
                 immediate.renderBox(
                     pos.minX, pos.minY, pos.minZ,
                     pos.maxX - pos.minX, pos.maxY - pos.minY,
-                    if (wasLocked) Color.RED else Color.CYAN,
+                    if (wasLocked) SETTING_OUTLINE_FAILED_COLOR.getColor() else SETTING_OUTLINE_SUCCESS_COLOR.getColor(),
                     true
                 )
             }
