@@ -26,8 +26,6 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EquipmentSlot
-import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockState
@@ -402,4 +400,10 @@ class PostRenderSlotsEvent(
     val entityId: Int,
     val type: EntityType<*>,
     val data: List<SynchedEntityData.DataValue<*>>,
+) : Event()
+
+class KeyPressEvent(
+    val key: Int,
+    val scancode: Int,
+    val underlying: KeyEvent,
 ) : Event()

@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.api.events.KeyPressEvent;
 import com.github.synnerz.devonian.features.misc.KeyShortcuts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.KeyboardHandler;
@@ -24,6 +25,7 @@ public class KeyboardHandlerMixin {
         if (screen != null || minecraft.level == null) return;
         if (l != window.handle()) return;
 
+        new KeyPressEvent(keyEvent.key(), keyEvent.scancode(), keyEvent).post();
         KeyShortcuts.INSTANCE.onKeyPress(keyEvent);
     }
 }
