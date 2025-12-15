@@ -34,7 +34,7 @@ object HideWitherKing : Feature(
 
                 is ClientboundLevelParticlesPacket -> {
                     if (packet.y !in 9.0 .. 25.0 || packet.z > 45.0) return@on
-                    if (packet.type() != ParticleTypes.WITCH) return@on
+                    if (packet.particle.type != ParticleTypes.WITCH) return@on
                     event.cancel()
                 }
             }
