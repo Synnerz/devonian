@@ -26,10 +26,10 @@ object HideFairy : Feature(
             event.slots.forEach { (slot, item) ->
                 if (slot != EquipmentSlot.MAINHAND) return@forEach
 
-                val item = item ?: return@forEach
-                if (item.isEmpty) return@forEach
+                val item = item ?: return@on
+                if (item.isEmpty) return@on
 
-                val prof = item.get(DataComponents.PROFILE) ?: return@forEach
+                val prof = item.get(DataComponents.PROFILE) ?: return@on
                 if (prof.partialProfile().id == fairyUUID) Scheduler.scheduleTask {
                     minecraft.level?.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED)
                 }
