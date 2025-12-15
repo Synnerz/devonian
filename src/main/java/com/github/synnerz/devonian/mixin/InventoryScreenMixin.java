@@ -2,6 +2,8 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.features.misc.CustomContainerColor;
 import com.github.synnerz.devonian.features.misc.HideCraftingText;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
@@ -14,7 +16,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InventoryScreen.class)
@@ -23,28 +24,29 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
         super(recipeBookMenu, recipeBookComponent, inventory, component);
     }
 
-    @Redirect(
-            method = "renderBg",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIFFIIII)V"
-            )
+    @WrapOperation(
+        method = "renderBg",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIFFIIII)V")
     )
-    private void devonian$renderBg(GuiGraphics instance, RenderPipeline renderPipeline, ResourceLocation resourceLocation, int i, int j, float f, float g, int k, int l, int m, int n) {
-        int color = !CustomContainerColor.INSTANCE.isEnabled() ? -1 : CustomContainerColor.INSTANCE.getSETTING_CONTAINER_COLOR().get();
+    private void devonian$renderBg(GuiGraphics instance, RenderPipeline renderPipeline, ResourceLocation resourceLocation, int i, int j, float f, float g, int k, int l, int m, int n, Operation<Void> original) {
+        if (!CustomContainerColor.INSTANCE.isEnabled()) {
+            original.call(instance, renderPipeline, resourceLocation, i, j, f, g, k, l, m, n);
+            return;
+        }
 
+        int color = CustomContainerColor.INSTANCE.getSETTING_CONTAINER_COLOR().get();
         instance.blit(
-                renderPipeline,
-                resourceLocation,
-                i,
-                j,
-                0.0f,
-                0.0f,
-                imageWidth,
-                imageHeight,
-                256,
-                256,
-                color
+            renderPipeline,
+            resourceLocation,
+            i,
+            j,
+            0.0f,
+            0.0f,
+            imageWidth,
+            imageHeight,
+            256,
+            256,
+            color
         );
     }
 
