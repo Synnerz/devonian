@@ -168,7 +168,11 @@ object SimonSaysSolver : Feature(
             else {
                 if (shouldBlockClicks()) event.cancel()
                 else {
-                    while (solution.getOrNull(0) != pos) solution.removeFirstOrNull()
+                    do {
+                        val v = solution.getOrNull(0) ?: break
+                        if (v == pos) break
+                        solution.removeFirstOrNull()
+                    } while (true)
                     solution.removeFirstOrNull()
                 }
             }
