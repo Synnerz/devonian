@@ -85,7 +85,7 @@ public abstract class AbstractContainerScreenMixin {
 
     @Inject(
         method = "renderContents",
-        at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;popMatrix()Lorg/joml/Matrix3x2fStack;")
+        at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;popMatrix()Lorg/joml/Matrix3x2fStack;", remap = false)
     )
     private void devonian$postRenderSlots(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
         new PostRenderSlotsEvent(guiGraphics, i, j, (AbstractContainerScreen<?>) (Object) this).post();
