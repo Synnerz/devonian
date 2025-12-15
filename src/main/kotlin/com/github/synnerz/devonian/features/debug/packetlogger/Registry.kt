@@ -30,5 +30,6 @@ object Registry {
         register(EntityEquipmentPacket)
         register(SpawnEntityPacket)
         register(EntityDataPacket)
+        register(ParticlePacket)
     }
 }

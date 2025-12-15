@@ -13,6 +13,7 @@ import net.minecraft.nbt.*
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
+import org.joml.Vector3f
 
 object Serializer {
     fun serializeNBT(nbt: Tag): JsonElement? = when (nbt) {
@@ -130,12 +131,21 @@ object Serializer {
         return obj
     }
 
+    fun serializeVector3f(pos: Vector3f): JsonDataObject {
+        val obj = JsonDataObject()
+        obj.set("x", pos.x)
+        obj.set("y", pos.y)
+        obj.set("z", pos.z)
+        return obj
+    }
+
     fun serialize(value: Any?): JsonDataObject {
         return when (value) {
             is ItemStack -> serializeItem(value)
             is BlockPos -> serializeBlockPos(value)
             is BlockState -> serializeBlockState(value)
             is Vec3 -> serializeVec(value)
+            is Vector3f -> serializeVector3f(value)
             null -> JsonDataObject()
             else -> {
                 val obj = JsonDataObject()
