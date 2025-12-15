@@ -13,6 +13,7 @@ import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccesso
 import com.github.synnerz.devonian.utils.Render2D
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
+import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.sounds.SoundEvents
@@ -30,8 +31,15 @@ object SlotBinding : Feature(
     private val SETTING_BOUND_LINES = addSwitch(
         "boundLines",
         true,
-        "draw lines connecting bound slots",
-        "Connect Bound Slots",
+        "Draws outline on the bound slots",
+        "Bound Outline",
+    )
+    private val SETTING_POINTING_LINE_MODE = addSelection(
+        "pointingLineMode",
+        0,
+        listOf("None", "Always", "Shifting"),
+        "The mode to use for displaying lines between two binds",
+        "Pointing Line Mode"
     )
     private val SETTING_PROTECT = addSwitch(
         "protect",
@@ -177,7 +185,7 @@ object SlotBinding : Feature(
             if (SETTING_PROTECT.get()) {
                 if (event.swapped != null) {
                     val slots = boundSlots.getOrNull(event.idx) ?: return@on
-                    if (!slots.isEmpty() && !slots.contains(event.swapped.containerSlot)) event.cancel("SlotBinding")
+                    if (slots.isNotEmpty() && !slots.contains(event.swapped.containerSlot)) event.cancel("SlotBinding")
                     return@on
                 }
 
@@ -200,11 +208,13 @@ object SlotBinding : Feature(
 
             bound.forEach { other ->
                 val c = colorFor(idx, other)
-                Render2D.drawWireRect(event.ctx, slot.x, slot.y, 16, 16, c, lw = 2)
+                if (SETTING_BOUND_LINES.get())
+                    Render2D.drawWireRect(event.ctx, slot.x, slot.y, 16, 16, c, lw = 2)
 
-                if (!SETTING_BOUND_LINES.get()) return@forEach
                 if (idx > other) {
                     val loc = slotLocCache[other] ?: return@forEach
+                    if (SETTING_POINTING_LINE_MODE.get() == 0 || SETTING_POINTING_LINE_MODE.get() == 2 && !InputConstants.isKeyDown(minecraft.window!!, GLFW.GLFW_KEY_LEFT_SHIFT)) return@forEach
+
                     Render2D.drawLine(
                         event.ctx,
                         slot.x + 8f, slot.y + 8f,
