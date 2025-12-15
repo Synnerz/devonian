@@ -316,15 +316,6 @@ object Dungeons {
             val (name, message) = event.matches(bossMessageRegex) ?: return@on
             val boss = DungeonBoss.from(name) ?: return@on
 
-            if (boss == DungeonBoss.Scarf) {
-                if (message == "How can you move forward when you keep regretting the past?") return@on
-                if (message == "If you win, you live. If you lose, you die. If you don't fight, you can't win.") return@on
-                if (message == "If I had spent more time studying and less time watching anime, maybe mother would be here with me!") return@on
-                if (message == "Wither Ultra!") return@on
-                if (message == "Yare yare daze...") return@on
-                if (message == "No more hiding!") return@on
-            }
-
             DungeonEvent.BossMessageEvent(boss, message).post()
             if (boss != DungeonBoss.Watcher) inBoss.value = true
             else if (message == "You have proven yourself. You may pass.") bloodCleared.value = true
@@ -420,23 +411,23 @@ object Dungeons {
         totalRoomHisto.clear()
     }
 
-    enum class DungeonBoss(val displayName: String) {
-        Watcher("The Watcher"),
-        Bonzo("Bonzo"),
-        Scarf("Scarf"),
-        Professor("The Professor"),
-        Thorn("Thorn"),
-        Livid("Livid"),
-        Sadan("Sadan"),
-        Maxor("Maxor"),
-        Storm("Storm"),
-        Goldor("Goldor"),
-        Necron("Necron"),
-        WitherKing("Wither King");
+    enum class DungeonBoss(val displayName: String, val floor: Int) {
+        Watcher("The Watcher", FloorType.Entrance.floorNum),
+        Bonzo("Bonzo", FloorType.F1.floorNum),
+        Scarf("Scarf", FloorType.F2.floorNum),
+        Professor("The Professor", FloorType.F3.floorNum),
+        Thorn("Thorn", FloorType.F4.floorNum),
+        Livid("Livid", FloorType.F5.floorNum),
+        Sadan("Sadan", FloorType.F6.floorNum),
+        Maxor("Maxor", FloorType.F7.floorNum),
+        Storm("Storm", FloorType.F7.floorNum),
+        Goldor("Goldor", FloorType.F7.floorNum),
+        Necron("Necron", FloorType.F7.floorNum),
+        WitherKing("Wither King", FloorType.F7.floorNum);
 
         companion object {
             private val map = entries.associateBy { it.displayName }
-            fun from(name: String) = map[name]
+            fun from(name: String) = map[name]?.takeIf { it == Watcher || it.floor == floor.floorNum }
         }
     }
 }
