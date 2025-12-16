@@ -147,12 +147,12 @@ open class Category(
     private fun createTitle(text: String, parent: UIRect? = null): UIText =
         UIText(0.0, 2.0, 100.0, 25.0, text, true, parent).apply {
             setColor(ColorPalette.TEXT_COLOR)
+            textScale = 1.2f
         }
 
     private fun createDescription(text: String, parent: UIRect? = null): UIWrappedText =
         UIWrappedText(2.0, 28.0, 75.0, 75.0, text, parent = parent).apply {
             setColor(ColorPalette.LIGHT_TEXT_COLOR)
-            textScale = 0.9f
         }
 
     private fun createButton(
