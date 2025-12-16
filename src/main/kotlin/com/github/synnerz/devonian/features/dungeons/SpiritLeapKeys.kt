@@ -48,7 +48,7 @@ object SpiritLeapKeys : Feature(
     private val playersData = mutableListOf<LeapPlayer>()
     private var containerId = -1
 
-    data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass?)
+    data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val isDead: Boolean)
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
@@ -68,7 +68,8 @@ object SpiritLeapKeys : Feature(
                 if (itemStack.item != Items.PLAYER_HEAD) continue
                 val name = itemStack.customName?.string ?: continue
 
-                playersData.add(LeapPlayer(idx, name, Dungeons.players[name]?.role))
+                val data = Dungeons.players[name] ?: continue
+                playersData.add(LeapPlayer(idx, name, data.role, data.isDead))
             }
 
             containerId = -1
@@ -82,7 +83,7 @@ object SpiritLeapKeys : Feature(
                 if (event.key != it) return@forEachIndexed
                 event.cancel()
                 val role = DungeonClass.from(rolesList[idx])
-                val data = playersData.firstOrNull { it.role == role } ?: return@forEachIndexed
+                val data = playersData.firstOrNull { it.role == role && !it.isDead } ?: return@forEachIndexed
                 val slot = data.slot
                 ScreenUtils.click(slot)
                 return@on
