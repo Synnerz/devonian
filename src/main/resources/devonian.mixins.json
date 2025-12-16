@@ -33,6 +33,7 @@
     "ParticleEngineMixin",
     "PlayerRendererMixin",
     "PlayerTabOverlayMixin",
+    "PreparedTextBuilderMixin",
     "ScreenEffectRendererMixin",
     "ScreenMixin",
     "YggdrasilMinecraftSessionServiceMixin",
