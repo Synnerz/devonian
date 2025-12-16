@@ -36,6 +36,12 @@ object BurrowGuesser : Feature(
         "Color of current guess",
         "Guess Color",
     )
+    private val SETTING_RENDER_BEAM = addSwitch(
+        "renderBeam",
+        true,
+        "Whether to render the beacon beam",
+        "Render Beam"
+    )
     private val SETTING_OLD_GUESS_COLOR = addColorPicker(
         "oldGuessColor",
         Color(82, 14, 125).rgb,
@@ -366,7 +372,7 @@ object BurrowGuesser : Feature(
             BurrowManager.burrows.forEach {
                 if (it.type.empirical) return@forEach
 
-                Context.Immediate?.renderWaypoint(
+                renderWaypoint(
                     it.x, it.y, it.z,
                     when (it.type) {
                         BurrowManager.BurrowType.GUESS -> SETTING_GUESS_COLOR.getColor()
@@ -380,7 +386,7 @@ object BurrowGuesser : Feature(
             }
 
             val guess = guessPos.value
-            if (guess != null) Context.Immediate?.renderWaypoint(
+            if (guess != null) renderWaypoint(
                 guess.x, guess.y, guess.z,
                 SETTING_GUESS_COLOR.getColor(),
                 BurrowManager.BurrowType.GUESS.displayName,
@@ -423,5 +429,36 @@ object BurrowGuesser : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         fullReset()
+    }
+
+    private fun renderWaypoint(
+        x: Double, y: Double, z: Double,
+        color: Color,
+        title: String? = null,
+        increase: Boolean = false,
+        phase: Boolean = false
+    ) {
+        if (color.alpha == 0) return
+
+        val ctx = Context.Immediate ?: return
+        val pos = minecraft.player ?: return
+        val dx = x - pos.x
+        val dy = y + 2 - pos.y
+        val dz = z - pos.z
+
+        ctx.renderFilledBox(x, y, z, Color(color.red, color.green, color.blue, color.alpha / 3), phase)
+        ctx.renderBox(x, y, z, color, phase)
+        if (SETTING_RENDER_BEAM.get()) ctx.renderBeam(x, y + 1, z, color, phase)
+
+        val dist = sqrt(dx * dx + dy * dy + dz * dz)
+        if (dist > 10.0) ctx.renderString(
+            title ?: "%.2fm".format(dist),
+            x + 0.5,
+            y + 2.0,
+            z + 0.5,
+            backgroundBox = true,
+            increase = increase,
+            phase = phase
+        )
     }
 }
