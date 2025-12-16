@@ -7,7 +7,6 @@ import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import com.mojang.blaze3d.vertex.PoseStack
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.world.entity.Entity

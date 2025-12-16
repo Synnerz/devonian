@@ -315,15 +315,7 @@ object Dungeons {
 
             val (name, message) = event.matches(bossMessageRegex) ?: return@on
             val boss = DungeonBoss.from(name) ?: return@on
-
-            if (boss == DungeonBoss.Scarf) {
-                if (message == "How can you move forward when you keep regretting the past?") return@on
-                if (message == "If you win, you live. If you lose, you die. If you don't fight, you can't win.") return@on
-                if (message == "If I had spent more time studying and less time watching anime, maybe mother would be here with me!") return@on
-                if (message == "Wither Ultra!") return@on
-                if (message == "Yare yare daze...") return@on
-                if (message == "No more hiding!") return@on
-            }
+            if (boss.ordinal + 1 != floor.floorNum) return@on
 
             DungeonEvent.BossMessageEvent(boss, message).post()
             if (boss != DungeonBoss.Watcher) inBoss.value = true
