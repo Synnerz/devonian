@@ -189,6 +189,7 @@ object Devonian : ClientModInitializer {
         HideHypeHearts,
         CloseChestOnKey,
         IceFillSolver,
+        SpiritLeapKeys,
 
         // Debug
         CopyItem,
