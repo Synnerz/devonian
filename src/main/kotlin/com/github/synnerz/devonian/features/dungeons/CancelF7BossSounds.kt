@@ -44,12 +44,12 @@ object CancelF7BossSounds : Feature(
             // Lower wither hurt
             if (
                 event.sound == "minecraft:entity.wither.hurt" &&
-                event.volume == 0.5f &&
-                (event.pitch == 0.93650794f || event.pitch == 1.0158731f || event.pitch == 1.1111112f)
+                (event.volume == 0.5f || event.volume == 5.0f) &&
+                (event.pitch == 1.0f || event.pitch == 0.93650794f || event.pitch == 1.0158731f || event.pitch == 1.1111112f)
             ) event.cancel()
 
             if (event.sound == "minecraft:entity.generic.explode") {
-                if ((event.volume == 15.0f || event.volume == 30.0f) && event.pitch == 0.4920635f) event.cancel()
+                if (event.volume in 2f..40f && event.pitch == 0.4920635f) event.cancel()
                 if (event.volume == 4.0f && event.pitch in 0.5714286f..0.7619048f) event.cancel()
             }
 
