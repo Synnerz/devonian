@@ -111,8 +111,11 @@ object SimonSaysSolver : Feature(
                 }
 
                 is ClientboundSectionBlocksUpdatePacket -> {
+                    var pop = 16
                     packet.runUpdates { pos, state ->
-                        if (state.isAir && pos.x == 110 && isValidButtonLocation(pos)) solution.clear()
+                        if (state.isAir && pos.x == 110 && isValidButtonLocation(pos) && --pop == 0) solution.clear()
+                    }
+                    packet.runUpdates { pos, state ->
                         if (state.block == Blocks.SEA_LANTERN) onSeaLantern(pos)
                     }
                 }
