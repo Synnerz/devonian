@@ -159,13 +159,14 @@ object DungeonScanner {
 
             if (jdx !in 0..35) return@on
 
+            scan()
+
             val newRoom = rooms[jdx]
             if (!wasInEntrance) {
                 if (newRoom?.type == RoomTypes.ENTRANCE) wasInEntrance = true
-                else if (foundEntrance <= 0) return@on
+                else if (foundEntrance > 0) return@on
             }
 
-            scan()
             checkRoomState()
             checkDoorState()
 
@@ -181,8 +182,6 @@ object DungeonScanner {
             if (lastIdx == jdx) return@on
             lastIdx = jdx
             if (currentRoom != null) DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
-            // TODO: remove whenever done debugging
-            // ChatUtils.sendMessage("$currentRoom")
         }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<ActionbarEvent> { event ->
@@ -217,24 +216,6 @@ object DungeonScanner {
 //                if (it == null || it.type != RoomTypes.PUZZLE) return@forEach
 //                ChatUtils.sendMessage("&dPuzzle[name=&b\"${it.name}\"&d, rotation=&b\"${it.rotation}\"&d]")
 //            }
-//            1
-//        }
-//
-//        DevonianCommand.command.subcommand("getcomp") { _, _ ->
-//            val player = Devonian.minecraft.player ?: return@subcommand 0
-//            val cast = player.pick(60.0, Devonian.minecraft.deltaTracker.getGameTimeDeltaPartialTick(false), false) ?: return@subcommand 0
-//            if (cast.type != HitResult.Type.BLOCK) return@subcommand 0
-//            val blockPos = (cast as BlockHitResult).blockPos ?: return@subcommand 0
-//            val x = blockPos.x
-//            val z = blockPos.z
-//            val comp = WorldPosition(x, z).toComponent()
-//            val room = rooms.getOrNull(comp.getRoomIdx()) ?: return@subcommand 0
-//            val relativeCoords = room.fromPos(x, z) ?: return@subcommand 0
-//
-//            ChatUtils.sendMessage("Component[cx=\"${relativeCoords.first}\", cy=\"${blockPos.y}\", cz=\"${relativeCoords.second}\"" +
-//                    ", wx=\"${blockPos.x}\" - \"$x\", wy=\"${blockPos.y}\", wz=\"${blockPos.z}\" - \"$z\"" +
-//                    ", room=\"${room.name}\"" +
-//                    ", rotation=\"${room.rotation}\"]")
 //            1
 //        }
 
@@ -331,8 +312,8 @@ object DungeonScanner {
     }
 
     fun scan() {
-        if (availablePos.isEmpty()) return
         foundEntrance--
+        if (availablePos.isEmpty()) return
 
         val startLen = availablePos.size
         availablePos.removeIf { pos ->
