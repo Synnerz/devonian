@@ -55,7 +55,8 @@ object ItemRarityBackground : Feature(
     private fun render(x: Int, y: Int, item: ItemStack, ctx: GuiGraphics) {
         if (item.isEmpty) return
 
-        val type = ItemUtils.lore(item)?.lastOrNull() ?: return
+        val lore = ItemUtils.lore(item) ?: return
+        val type = (if (lore.contains("Sell Price")) findLore(lore) else lore.lastOrNull()) ?: return
         val rgb = rarities.entries.find { type.contains(it.key) }?.value ?: return
         val opacity = (SETTING_RENDER_OPACITY.get() * 255).roundToInt()
         val color = (rgb and 0x00FFFFFF) or (opacity shl 24)
@@ -104,6 +105,16 @@ object ItemRarityBackground : Feature(
         on<RenderHotbarSlotEvent> { event ->
             render(event.x, event.y, event.item, event.ctx)
         }
+    }
+
+    private fun findLore(lore: List<String>): String? {
+        val idx = lore.indexOfLast { rarities.entries.any { rarity -> it.contains(rarity.key) } }
+        if (idx == -1) return null
+        val match = lore.getOrNull(idx) ?: return null
+        val sellMatch = lore.getOrNull(idx + 2) ?: return null
+        if (!sellMatch.contains("Sell Price")) return null
+
+        return match
     }
 
     private val blurId = ResourceLocation.fromNamespaceAndPath("devonian", "item_rarity_background_blur")!!
