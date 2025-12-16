@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
@@ -87,5 +88,9 @@ object SpiritLeapKeys : Feature(
                 return@on
             }
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        playersData.clear()
     }
 }
