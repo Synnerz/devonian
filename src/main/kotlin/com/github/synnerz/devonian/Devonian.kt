@@ -193,6 +193,7 @@ object Devonian : ClientModInitializer {
         LividInvulnerable,
         ItemRarityBackground,
         PuzzleTimers,
+        HideCheapCoins,
 
         // Debug
         CopyItem,
