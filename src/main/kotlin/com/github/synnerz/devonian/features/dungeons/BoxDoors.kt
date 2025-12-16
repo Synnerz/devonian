@@ -141,7 +141,7 @@ object BoxDoors : Feature(
 
                 val colorWire: Color
                 val colorFill: Color
-                if (hasKey) {
+                if (hasKey && it.rooms.any { room -> room == DungeonScanner.currentRoom }) {
                     colorWire = SETTING_DOOR_KEY_WIRE_COLOR.getColor()
                     colorFill = SETTING_DOOR_KEY_FILL_COLOR.getColor()
                 } else {
