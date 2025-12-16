@@ -50,7 +50,7 @@ object CancelF7BossSounds : Feature(
 
             if (event.sound == "minecraft:entity.generic.explode") {
                 if (event.volume in 2f..40f && event.pitch == 0.4920635f) event.cancel()
-                if (event.volume == 4.0f && event.pitch in 0.5714286f..0.7619048f) event.cancel()
+                if (event.volume in 2f..4f && event.pitch in 0.52380955f..0.8095238f) event.cancel()
             }
 
             if (
