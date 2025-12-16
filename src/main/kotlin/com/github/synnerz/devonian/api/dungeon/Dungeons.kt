@@ -315,7 +315,7 @@ object Dungeons {
 
             val (name, message) = event.matches(bossMessageRegex) ?: return@on
             val boss = DungeonBoss.from(name) ?: return@on
-            if (boss.ordinal + 1 != floor.floorNum) return@on
+            if (boss == DungeonBoss.Scarf && floor.floorNum != 2) return@on
 
             DungeonEvent.BossMessageEvent(boss, message).post()
             if (boss != DungeonBoss.Watcher) inBoss.value = true
