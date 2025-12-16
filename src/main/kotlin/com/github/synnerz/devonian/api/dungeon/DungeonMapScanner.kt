@@ -13,6 +13,7 @@ import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket
 import net.minecraft.world.item.MapItem
 import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
+import net.minecraft.world.level.saveddata.maps.MapId
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData
 import kotlin.math.PI
 
@@ -28,6 +29,7 @@ object DungeonMapScanner {
     var mapWidth = -1
     var mapHeight = -1
     private val unscannedDoors = mutableSetOf<ComponentPosition>()
+    private var lastMapId: MapId? = null
 
     fun reset() {
         roomSize = -1
@@ -43,6 +45,9 @@ object DungeonMapScanner {
                 unscannedDoors.add(ComponentPosition(x, z))
             }
         }
+        val id = lastMapId ?: return
+        Devonian.minecraft.level?.overrideMapData(id, null)
+        lastMapId = null
     }
 
     private enum class MapColors(val color: Byte) {
@@ -266,6 +271,7 @@ object DungeonMapScanner {
             val world = Devonian.minecraft.level ?: return@on
             val mapState = MapItem.getSavedData(mapId, world) ?: return@on
             val colors = mapState.colors?.clone() ?: return@on
+            if (colors[0] != MapColors.EMPTY.color) lastMapId = mapId
 
             if (roomSize == -1 && !scanMapDimensions(colors)) return@on
             Scheduler.scheduleTask {
