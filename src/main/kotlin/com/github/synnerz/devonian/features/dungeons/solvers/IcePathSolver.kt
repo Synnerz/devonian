@@ -82,13 +82,17 @@ object IcePathSolver : Feature(
         }
 
         on<TickEvent> {
-            if (silverfishEntity == null || silverfishEntity!!.isDeadOrDying || currentSolution.isEmpty()) return@on
+            if (silverfishEntity == null || silverfishEntity!!.isDeadOrDying) {
+                if (currentSolution.size == 1) currentSolution.clear()
+                return@on
+            }
+            if (currentSolution.isEmpty()) return@on
 
             val firstSolution = currentSolution.first() ?: return@on
-            val x = (silverfishEntity!!.x + 0.5).roundToInt()
-            val z = (silverfishEntity!!.z + 0.5).roundToInt()
-            val dist = abs(x - firstSolution.x2) + abs(z - firstSolution.z2)
-            if (dist > 2) return@on
+            val x = silverfishEntity!!.x
+            val z = silverfishEntity!!.z
+            val dist = abs(x - firstSolution.x2 - 0.5) + abs(z - firstSolution.z2 - 0.5)
+            if (dist > 0.8) return@on
 
             currentSolution.remove(firstSolution)
         }
