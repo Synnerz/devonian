@@ -13,13 +13,13 @@ object LividInvulnerable : TextHudFeature(
     "catacombs",
     subcategory = "HUD"
 ) {
-    private val lividRegex = "^\\[BOSS] Livid: This Orb you see, is Thorn, or what is left of him\\.$".toRegex()
+    private val lividRegex = "^\\[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows\\.$".toRegex()
     private var startedAt = 0
 
     override fun initialize() {
         on<ChatEvent> { event ->
             if (event.matches(lividRegex) == null) return@on
-            startedAt = 310
+            startedAt = 395
         }
 
         on<ServerTickEvent> {
