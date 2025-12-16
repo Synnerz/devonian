@@ -29,6 +29,7 @@
     "MinecraftMixin",
     "MouseHandlerMixin",
     "MultiPlayerGameModeMixin",
+    "NameTagFeatureRendererMixin",
     "ParticleEngineMixin",
     "PlayerRendererMixin",
     "PlayerTabOverlayMixin",

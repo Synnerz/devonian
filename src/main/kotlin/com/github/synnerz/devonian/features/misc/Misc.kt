@@ -48,3 +48,4 @@ object DisableEnderPearlCooldown : Feature("disableEnderPearlCooldown", subcateg
 object DisableHungerBar : Feature("disableHungerBar", subcategory = "Hiders")
 object FixRedVignette : Feature("fixRedVignette", "fixes red vignettes (SA tp) from blocking clicks", subcategory = "Tweaks", cheeto = true)
 object HideCraftingText : Feature("hideCraftingText", "in inventory above craftin menu", subcategory = "Hiders")
+object DisableNametagBackground : Feature("disableNametagBackground", subcategory = "Tweaks")

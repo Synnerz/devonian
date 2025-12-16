@@ -194,6 +194,7 @@ object Devonian : ClientModInitializer {
         ItemRarityBackground,
         PuzzleTimers,
         HideCheapCoins,
+        DisableNametagBackground,
 
         // Debug
         CopyItem,
