@@ -151,7 +151,7 @@ open class Category(
         }
 
     private fun createDescription(text: String, parent: UIRect? = null): UIWrappedText =
-        UIWrappedText(2.0, 28.0, 75.0, 75.0, text, parent = parent).apply {
+        UIWrappedText(2.0, 29.0, 75.0, 75.0, text, parent = parent).apply {
             setColor(ColorPalette.LIGHT_TEXT_COLOR)
         }
 
