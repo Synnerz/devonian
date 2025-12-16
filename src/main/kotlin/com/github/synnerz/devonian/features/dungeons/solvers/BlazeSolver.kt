@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.mojang.blaze3d.vertex.PoseStack
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
@@ -155,7 +156,7 @@ object BlazeSolver : Feature(
             entityList[entityId] = maxHp
         }
 
-        on<RenderWorldEvent> {
+        on<RenderWorldEvent> { event ->
             if (efficientPos != null) {
                 Context.Immediate?.renderFilledBox(
                     efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
@@ -178,26 +179,25 @@ object BlazeSolver : Feature(
             highlightBlaze(blaze2.entity, SETTING_COLOR_SECOND_OUTLINE.getColor(), SETTING_COLOR_SECOND_FILLED.getColor())
 
             renderLine(
-                blaze.entity.position(),
-                blaze2.entity.position(),
+                blaze.entity.position().add(0.0, 0.8, 0.0),
+                blaze2.entity.position().add(0.0, 0.8, 0.0),
                 SETTING_COLOR_FIRST_OUTLINE.getColor(),
-                SETTING_COLOR_SECOND_OUTLINE.getColor()
+                SETTING_COLOR_SECOND_OUTLINE.getColor(),
+                event.ctx,
             )
 
             val blaze3 = blazes.getOrNull(2) ?: return@on
             highlightBlaze(blaze3.entity, SETTING_COLOR_THIRD_OUTLINE.getColor(), SETTING_COLOR_THIRD_FILLED.getColor())
 
             renderLine(
-                blaze2.entity.position(),
-                blaze3.entity.position(),
+                blaze2.entity.position().add(0.0, 0.8, 0.0),
+                blaze3.entity.position().add(0.0, 0.8, 0.0),
                 SETTING_COLOR_SECOND_OUTLINE.getColor(),
-                SETTING_COLOR_THIRD_OUTLINE.getColor()
+                SETTING_COLOR_THIRD_OUTLINE.getColor(),
+                event.ctx,
             )
         }
     }
-
-    private fun lerp(c: Double, l: Double, t: Float = minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
-        = l + (c - l) * t
 
     private fun highlightBlaze(
         entity: Entity,
@@ -223,7 +223,8 @@ object BlazeSolver : Feature(
         pos1: Vec3,
         pos2: Vec3,
         colorStart: Color = Color.CYAN,
-        colorEnd: Color = colorStart
+        colorEnd: Color = colorStart,
+        ctx: WorldRenderContext,
     ) {
         if (colorStart.alpha == 0 || colorEnd.alpha == 0) return
 
@@ -235,27 +236,23 @@ object BlazeSolver : Feature(
         val z2 = pos2.z.toFloat()
 
         val normalized = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
-        val consumer = minecraft.renderBuffers().bufferSource().getBuffer(RenderType.LINE_STRIP)
-        val camPos = minecraft.cameraEntity ?: return
-        val stack = PoseStack()
-        stack.pushPose()
-        stack.translate(
-            -lerp(camPos.x, camPos.xo),
-            -lerp(camPos.y, camPos.yo),
-            -lerp(camPos.z, camPos.zo)
-        )
+        val consumer = minecraft.renderBuffers().bufferSource().getBuffer(RenderType.LINES)
+        val camPos = ctx.worldState().cameraRenderState.pos ?: return
+        ctx.matrices().pushPose()
+        ctx.matrices().translate(camPos.reverse())
+        val mat = ctx.matrices().last()
 
         consumer
-            .addVertex(stack.last(), x1, y1, z1)
+            .addVertex(mat, x1, y1, z1)
             .setColor(colorStart.rgb)
-            .setNormal(stack.last(), normalized)
+            .setNormal(mat, normalized)
 
         consumer
-            .addVertex(stack.last(), x2, y2, z2)
+            .addVertex(mat, x2, y2, z2)
             .setColor(colorEnd.rgb)
-            .setNormal(stack.last(), normalized)
+            .setNormal(mat, normalized)
 
-        stack.popPose()
+        ctx.matrices().popPose()
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {

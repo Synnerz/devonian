@@ -112,7 +112,7 @@ object CreeperBeamsSolver : Feature(
             solutionList.clear()
         }
 
-        on<RenderWorldEvent> {
+        on<RenderWorldEvent> { event ->
             if (solutionList.isEmpty()) return@on
             for (idx in solutionList.indices) {
                 if (idx >= 4) break
@@ -141,9 +141,10 @@ object CreeperBeamsSolver : Feature(
 
                 // TODO: make the renderLine from BlazeSolver into barrl or something
                 BlazeSolver.renderLine(
-                    Vec3(solution.x1 + 0.5, solution.y1 - 1.0, solution.z1 + 0.5),
-                    Vec3(solution.x2.toDouble(), solution.y2 - 1.0, solution.z2.toDouble()),
-                    colorChoicesOutline[idx]
+                    Vec3(solution.x1 + 0.5, solution.y1 + 0.5, solution.z1 + 0.5),
+                    Vec3(solution.x2 + 0.5, solution.y2 + 0.5, solution.z2 + 0.5),
+                    colorChoicesOutline[idx],
+                    ctx = event.ctx,
                 )
             }
         }

@@ -93,14 +93,15 @@ object IcePathSolver : Feature(
             currentSolution.remove(firstSolution)
         }
 
-        on<RenderWorldEvent> {
+        on<RenderWorldEvent> { event ->
             if (currentSolution.isEmpty()) return@on
 
             currentSolution.forEachIndexed { idx, sol ->
                 BlazeSolver.renderLine(
-                    Vec3(sol.x1 + 0.5, 66.0, sol.z1 + 0.5),
-                    Vec3(sol.x2 + 0.5, 66.0, sol.z2 + 0.5),
-                    if (idx == 0) Color.GREEN else Color.RED
+                    Vec3(sol.x1 + 0.5, 67.5, sol.z1 + 0.5),
+                    Vec3(sol.x2 + 0.5, 67.5, sol.z2 + 0.5),
+                    if (idx == 0) Color.GREEN else Color.RED,
+                    ctx = event.ctx,
                 )
             }
         }

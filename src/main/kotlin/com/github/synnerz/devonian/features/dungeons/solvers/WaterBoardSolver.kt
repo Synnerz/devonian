@@ -190,7 +190,7 @@ object WaterBoardSolver : Feature(
             }
         }
 
-        on<RenderWorldEvent> {
+        on<RenderWorldEvent> { event ->
             if (!inWaterBoard || currentSolution == null || currentSolution!!.isEmpty()) return@on
 
             val room = DungeonScanner.currentRoom ?: return@on
@@ -244,10 +244,11 @@ object WaterBoardSolver : Feature(
             val lever2 = levers.getOrNull(1) ?: return@on
 
             BlazeSolver.renderLine(
-                Vec3(lever1.first + 0.5, 60.0, lever1.second + 0.5),
-                Vec3(lever2.first.toDouble(), 60.0, lever2.second.toDouble()),
+                Vec3(lever1.first + 0.5, 61.5, lever1.second + 0.5),
+                Vec3(lever2.first + 0.5, 61.5, lever2.second + 0.5),
                 FIRST_COLOR,
-                SECOND_COLOR
+                SECOND_COLOR,
+                event.ctx,
             )
         }
     }
