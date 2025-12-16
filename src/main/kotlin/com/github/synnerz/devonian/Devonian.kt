@@ -187,6 +187,7 @@ object Devonian : ClientModInitializer {
         HideWitherKing,
         HideHealerOrbs,
         HideHypeHearts,
+        CloseChestOnKey,
 
         // Debug
         CopyItem,
