@@ -191,6 +191,7 @@ object Devonian : ClientModInitializer {
         IceFillSolver,
         SpiritLeapKeys,
         LividInvulnerable,
+        ItemRarityBackground,
 
         // Debug
         CopyItem,
