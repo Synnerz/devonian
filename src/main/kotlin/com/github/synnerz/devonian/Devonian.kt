@@ -190,6 +190,7 @@ object Devonian : ClientModInitializer {
         CloseChestOnKey,
         IceFillSolver,
         SpiritLeapKeys,
+        LividInvulnerable,
 
         // Debug
         CopyItem,
