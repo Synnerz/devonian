@@ -363,14 +363,14 @@ class IcePlatform(
             return@first (odd > even) == (it.parity == 1)
         } ?: return
 
-        var minCost = 5138008
+        var minCost = 5318008
         var best: LinkedList<Coord>? = null
 
         val visitedHist = LongArray(maxId + 1)
         val route = arrayOfNulls<Destination>(total)
         val queue = ArrayDeque<Destination>()
 
-        queue.add(Destination(first, -1,0, 0, 1L shl idAt(first.comp.x, first.comp.z)))
+        queue.add(Destination(first, -1, 0, 0, 1L shl idAt(first.comp.x, first.comp.z)))
 
         while (queue.isNotEmpty()) {
             val d = queue.removeLast()
