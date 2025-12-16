@@ -376,7 +376,7 @@ class IcePlatform(
             val d = queue.removeLast()
 
             var pathLen = d.size
-            if (d.cost + pathLen > minCost) continue
+            if (d.cost + total - pathLen > minCost) continue
 
             route[pathLen++] = d
             val visited = visitedHist[d.size] or d.mask
