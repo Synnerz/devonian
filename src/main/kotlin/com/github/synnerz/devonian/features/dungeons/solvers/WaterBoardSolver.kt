@@ -147,7 +147,7 @@ object WaterBoardSolver : Feature(
                 val room = DungeonScanner.currentRoom ?: return@on
                 val compPos = room.fromPos(x, z) ?: return@on
                 if (compPos.first != 15 || y != 56 || compPos.second != 22) return@on
-                if (currentSolution!!.values.any { it.isNotEmpty() }) return@on
+                if (currentSolution!!.values.any { it.isNotEmpty() } || !PuzzleTimers.isEnabled()) return@on
 
                 val time = (EventBus.serverTicks() - openedWaterAt) * 0.05
                 val seconds = "%.2fs".format(time)

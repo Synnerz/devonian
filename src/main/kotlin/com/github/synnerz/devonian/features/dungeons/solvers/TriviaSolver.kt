@@ -139,6 +139,7 @@ object TriviaSolver : Feature(
             }
 
             event.matches("^\\[STATUE] Oruo the Omniscient: \\w+ answered the final question correctly!$".toRegex())?.let {
+                if (!PuzzleTimers.isEnabled()) return@on
                 val time = (EventBus.serverTicks() - enteredAt) * 0.05
                 val seconds = "%.2fs".format(time)
                 ChatUtils.sendMessage("&bQuiz took&f: &6$seconds", true)

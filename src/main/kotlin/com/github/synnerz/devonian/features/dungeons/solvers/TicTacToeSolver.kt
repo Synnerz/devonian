@@ -67,6 +67,7 @@ object TicTacToeSolver : Feature(
             }
 
             event.matches(completedPuzzleRegex) ?: return@on
+            if (!PuzzleTimers.isEnabled()) return@on
 
             val time = (EventBus.serverTicks() - enteredAt) * 0.05
             val seconds = "%.2fs".format(time)

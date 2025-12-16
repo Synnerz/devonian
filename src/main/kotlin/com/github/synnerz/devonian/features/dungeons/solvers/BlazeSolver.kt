@@ -123,7 +123,7 @@ object BlazeSolver : Feature(
             }
 
             if (blazes.size == 9 && startedAt == 0) startedAt = EventBus.serverTicks()
-            if (blazes.isEmpty() && startedAt != 0 && lastBlazes == 1) {
+            if (blazes.isEmpty() && startedAt != 0 && lastBlazes == 1 && PuzzleTimers.isEnabled()) {
                 val time = (EventBus.serverTicks() - startedAt) * 0.05
                 val seconds = "%.2fs".format(time)
                 ChatUtils.sendMessage("&bBlaze took&f: &6$seconds", true)

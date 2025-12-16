@@ -117,7 +117,7 @@ object BoulderSolver : Feature(
                 if (enteredAt == -1) return@on
                 val room = DungeonScanner.currentRoom ?: return@on
                 val compPos = room.fromPos(x, z) ?: return@on
-                if (compPos.first != 15 || y != 66 || compPos.second != 29) return@on
+                if (compPos.first != 15 || y != 66 || compPos.second != 29 || !PuzzleTimers.isEnabled()) return@on
 
                 val time = (EventBus.serverTicks() - enteredAt) * 0.05
                 val seconds = "%.2fs".format(time)

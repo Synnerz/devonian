@@ -188,7 +188,7 @@ object CreeperBeamsSolver : Feature(
             if (!data.blacklisted) continue
             blacklisting++
         }
-        if (blacklisting != 4) return
+        if (blacklisting != 4 || !PuzzleTimers.isEnabled()) return
 
         val time = (EventBus.serverTicks() - enteredAt) * 0.05
         val seconds = "%.2fs".format(time)

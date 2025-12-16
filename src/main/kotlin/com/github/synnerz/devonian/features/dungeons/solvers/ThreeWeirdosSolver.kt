@@ -79,6 +79,7 @@ object ThreeWeirdosSolver : Feature(
 
         on<ChatEvent> { event ->
             event.matches(completedRegex)?.let {
+                if (!PuzzleTimers.isEnabled()) return@on
                 val time = (EventBus.serverTicks() - enteredAt) * 0.05
                 val seconds = "%.2fs".format(time)
                 ChatUtils.sendMessage("&bThree Weirdos took&f: &6$seconds", true)

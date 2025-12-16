@@ -205,7 +205,7 @@ object TeleportMazeSolver : Feature(
             val z = pos.z
             val room = DungeonScanner.currentRoom ?: return@on
             val compPos = room.fromPos(x, z) ?: return@on
-            if (compPos.first != 15 || y != 70 || compPos.second != 20) return@on
+            if (compPos.first != 15 || y != 70 || compPos.second != 20 || !PuzzleTimers.isEnabled()) return@on
 
             val time = (EventBus.serverTicks() - enteredAt) * 0.05
             val seconds = "%.2fs".format(time)
