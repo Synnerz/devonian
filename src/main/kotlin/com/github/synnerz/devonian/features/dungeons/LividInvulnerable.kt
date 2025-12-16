@@ -19,7 +19,7 @@ object LividInvulnerable : TextHudFeature(
     override fun initialize() {
         on<ChatEvent> { event ->
             if (event.matches(lividRegex) == null) return@on
-            startedAt = 395
+            startedAt = 390
         }
 
         on<ServerTickEvent> {
