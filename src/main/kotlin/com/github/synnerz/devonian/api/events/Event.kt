@@ -292,6 +292,8 @@ class RenderTickEvent : Event()
 
 class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics) : CancellableEvent()
 
+class RenderHotbarSlotEvent(val item: ItemStack, val x: Int, val y: Int, val ctx: GuiGraphics) : CancellableEvent()
+
 @Threaded class SoundPlayEvent(
     val sound: String,
     val pitch: Float,

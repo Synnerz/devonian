@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.api.events.RenderHotbarSlotEvent;
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent;
 import com.github.synnerz.devonian.features.misc.*;
 import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsAccessor;
@@ -18,6 +19,7 @@ import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -161,5 +163,14 @@ public class GuiMixin {
     )
     private void devonian$onRenderSelectedName(GuiGraphics guiGraphics, CallbackInfo ci) {
         SelectedItemName.INSTANCE.onRender(guiGraphics, ci);
+    }
+
+    @Inject(
+        method = "renderSlot",
+        at = @At("HEAD"),
+        cancellable = true
+    )
+    private void devonian$onRenderHotbarSlot(GuiGraphics guiGraphics, int i, int j, DeltaTracker deltaTracker, Player player, ItemStack itemStack, int k, CallbackInfo ci) {
+        if (new RenderHotbarSlotEvent(itemStack, i, j, guiGraphics).post()) ci.cancel();
     }
 }
