@@ -28,7 +28,7 @@ object PreventItem {
 
     fun initialize() {
         EventBus.on<DropItemEvent> { event ->
-            if (!event.willDropInDungeons && Location.area == "catacombs" && Dungeons.timeElapsed.value != 0) return@on
+            if (!event.willDropInDungeons && Location.area == "catacombs" && Dungeons.timeElapsed.value != 0 && Devonian.minecraft.screen == null) return@on
 
             val slot = event.slot
             if (slot != null && slot.container !== mc.player?.inventory) return@on
