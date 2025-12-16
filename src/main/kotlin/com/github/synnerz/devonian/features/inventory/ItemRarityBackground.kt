@@ -20,8 +20,8 @@ object ItemRarityBackground : Feature(
     subcategory = "Inventory",
 ) {
     private val rarities = linkedMapOf(
-        "COMMON" to (TextColor.fromLegacyFormat(ChatFormatting.WHITE)!!.value or 0xFF000000.toInt()),
         "UNCOMMON" to (TextColor.fromLegacyFormat(ChatFormatting.GREEN)!!.value or 0xFF000000.toInt()),
+        "COMMON" to (TextColor.fromLegacyFormat(ChatFormatting.WHITE)!!.value or 0xFF000000.toInt()),
         "RARE" to (TextColor.fromLegacyFormat(ChatFormatting.BLUE)!!.value or 0xFF000000.toInt()),
         "EPIC" to (TextColor.fromLegacyFormat(ChatFormatting.DARK_PURPLE)!!.value or 0xFF000000.toInt()),
         "LEGENDARY" to (TextColor.fromLegacyFormat(ChatFormatting.GOLD)!!.value or 0xFF000000.toInt()),
