@@ -93,8 +93,8 @@ object SimonSaysSolver : Feature(
         else -> false
     }
     private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
-    private val LAG_SOUND = SoundEvents.NOTE_BLOCK_GUITAR
-    private val CORRECT_SOUND = SoundEvents.NOTE_BLOCK_COW_BELL
+    private val LAG_SOUND = SoundEvents.NOTE_BLOCK_BASEDRUM
+    private val CORRECT_SOUND = SoundEvents.NOTE_BLOCK_XYLOPHONE
 
     private val solution = CopyOnWriteArrayList<BlockPos>()
     private val BUTTON_SHAPE = 0.002.let { e ->
