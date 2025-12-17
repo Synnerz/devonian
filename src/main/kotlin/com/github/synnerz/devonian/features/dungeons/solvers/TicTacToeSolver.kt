@@ -86,6 +86,7 @@ object TicTacToeSolver : Feature(
             val entity = it.entity
 
             Scheduler.scheduleServerTask(4) {
+                if (hasSent) return@scheduleServerTask
                 if (entity !is ItemFrame) return@scheduleServerTask
                 if (!entity.hasFramedMap()) return@scheduleServerTask
                 val mapId = entity.getFramedMapId(entity.item) ?: return@scheduleServerTask
