@@ -42,6 +42,7 @@ public abstract class AbstractContainerScreenMixin {
                 else event = new PickupItemInventoryEvent(slot, that, j == 1);
                 break;
             case THROW:
+                if (slot == null) break;
                 event = new DropItemEvent(slot, j != 0, slot.getItem(), true);
                 break;
             case PICKUP_ALL:
