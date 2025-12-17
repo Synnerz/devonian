@@ -50,3 +50,4 @@ object FixRedVignette : Feature("fixRedVignette", "fixes red vignettes (SA tp) f
 object HideCraftingText : Feature("hideCraftingText", "in inventory above craftin menu", subcategory = "Hiders")
 object DisableNametagBackground : Feature("disableNametagBackground", subcategory = "Tweaks")
 object DisableTextShadow : Feature("disableTextShadow", subcategory = "Tweaks")
+object FixObfuscatedText : Feature("fixObfuscatedText", "fixes shifting around text", subcategory = "Tweaks")

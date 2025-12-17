@@ -17,6 +17,7 @@
     "EntityRenderDispatcherMixin",
     "FallingBlockRendererMixin",
     "FogRendererMixin",
+    "FontMixin",
     "GameRendererMixin",
     "GlDeviceMixin",
     "GuiMixin",

@@ -198,6 +198,7 @@ object Devonian : ClientModInitializer {
         SpiritMask,
         PhoenixTimer,
         CreeperBeamsDing,
+        FixObfuscatedText,
 
         // Debug
         CopyItem,
