@@ -186,6 +186,11 @@ open class CriteriaEvent(val message: String) : CancellableEvent() {
 
 @Threaded open class ChatEvent(message: String, val text: Component) : CriteriaEvent(message)
 
+@Threaded class ActionbarEvent(
+    message: String,
+    val text: Component
+) : CriteriaEvent(message)
+
 abstract class ChatChannelEvent(message: String, text: Component, val name: String, val userMessage: String) :
     ChatEvent(message, text) {
     @Threaded class AllChatEvent(message: String, text: Component, name: String, userMessage: String, val level: Int) :
@@ -316,11 +321,6 @@ class RenderTickEvent : Event()
     val type: EntityType<*>,
     val nameText: Component,
     val name: String
-) : Event()
-
-@Threaded class ActionbarEvent(
-    val message: String,
-    val text: Component
 ) : Event()
 
 @Threaded class EntityEquipmentEvent(

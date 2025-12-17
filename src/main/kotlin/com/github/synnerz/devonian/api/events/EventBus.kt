@@ -146,7 +146,8 @@ object EventBus {
                     val message = content.string.clearCodes()
 
                     if (packet.overlay) {
-                        ActionbarEvent(message, content).post()
+                        if (ActionbarEvent(message, content).post())
+                            event.cancel()
                         return@on
                     }
 
