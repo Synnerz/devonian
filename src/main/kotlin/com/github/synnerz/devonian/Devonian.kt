@@ -203,6 +203,7 @@ object Devonian : ClientModInitializer {
         CustomSidebarColor,
         SecretsHud,
         CustomDefenseHud,
+        CustomManaUseHud,
 
         // Debug
         CopyItem,
