@@ -39,7 +39,7 @@ object SlotBinding : Feature(
         0,
         listOf("None", "Always", "Shifting"),
         "The mode to use for displaying lines between two binds",
-        "Pointing Line Mode"
+        "Pointing Line Mode",
     )
     private val SETTING_PROTECT = addSwitch(
         "protect",
@@ -173,6 +173,8 @@ object SlotBinding : Feature(
                 val menu = player.containerMenu ?: return@also
                 val id = menu.containerId
 
+                setToFront(event.idx, other)
+
                 if (event.idx < 9 && other >= 9) {
                     val inv = player.inventory
                     val dst = menu.slots.find { it.container === inv && it.containerSlot == other }!!
@@ -203,25 +205,33 @@ object SlotBinding : Feature(
             val idx = slot.containerSlot
             val bound = boundSlots.getOrNull(idx) ?: return@on
 
+            val hovered = (event.screen as AbstractContainerScreenAccessor).hoveredSlot
+            val isHoveringBound = hovered != null && (boundSlots.getOrNull(hovered.containerSlot)?.size ?: 0) > 0
+
             while (slotLocCache.size <= idx) slotLocCache.add(null)
             slotLocCache[idx] = Pair(slot.x, slot.y)
 
-            bound.forEach { other ->
+            bound.forEachIndexed { i, other ->
                 val c = colorFor(idx, other)
                 if (SETTING_BOUND_LINES.get())
                     Render2D.drawWireRect(event.ctx, slot.x, slot.y, 16, 16, c, lw = 2)
 
-                if (idx > other) {
-                    val loc = slotLocCache[other] ?: return@forEach
-                    if (SETTING_POINTING_LINE_MODE.get() == 0 || SETTING_POINTING_LINE_MODE.get() == 2 && !InputConstants.isKeyDown(minecraft.window!!, GLFW.GLFW_KEY_LEFT_SHIFT)) return@forEach
+                val loc = slotLocCache[other] ?: return@forEachIndexed
+                if (isHoveringBound) {
+                    if (hovered != slot || i > 0) return@forEachIndexed
+                } else if (idx < other) return@forEachIndexed
+                if (
+                    SETTING_POINTING_LINE_MODE.get() == 0 ||
+                    SETTING_POINTING_LINE_MODE.get() == 2 &&
+                        !InputConstants.isKeyDown(minecraft.window!!, GLFW.GLFW_KEY_LEFT_SHIFT)
+                ) return@forEachIndexed
 
-                    Render2D.drawLine(
-                        event.ctx,
-                        slot.x + 8f, slot.y + 8f,
-                        loc.first + 8f, loc.second + 8f,
-                        c,
-                    )
-                }
+                Render2D.drawLine(
+                    event.ctx,
+                    slot.x + 8f, slot.y + 8f,
+                    loc.first + 8f, loc.second + 8f,
+                    c,
+                )
             }
         }
 
@@ -260,6 +270,13 @@ object SlotBinding : Feature(
                 Color.GREEN,
             )
         }
+    }
+
+    fun setToFront(idx1: Int, idx2: Int) {
+        val i1 = boundSlots[idx1].indexOf(idx2)
+        val i2 = boundSlots[idx2].indexOf(idx1)
+        if (i1 > 0) boundSlots[idx1][0] = boundSlots[idx1][i1].also { boundSlots[idx1][i1] = boundSlots[idx1][0] }
+        if (i2 > 0) boundSlots[idx2][0] = boundSlots[idx2][i2].also { boundSlots[idx2][i2] = boundSlots[idx2][0] }
     }
 
     fun compatIsRendering(slot: Slot): Boolean {

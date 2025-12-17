@@ -290,7 +290,7 @@ class RenderTickEvent : Event()
 
 @Threaded class ScoreboardEvent(message: String) : CriteriaEvent(message)
 
-class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics) : CancellableEvent()
+class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics, val screen: AbstractContainerScreen<*>) : CancellableEvent()
 
 class RenderHotbarSlotEvent(val item: ItemStack, val x: Int, val y: Int, val ctx: GuiGraphics) : CancellableEvent()
 
