@@ -202,6 +202,7 @@ object Devonian : ClientModInitializer {
         CustomMageBeam,
         CustomSidebarColor,
         SecretsHud,
+        CustomDefenseHud,
 
         // Debug
         CopyItem,
