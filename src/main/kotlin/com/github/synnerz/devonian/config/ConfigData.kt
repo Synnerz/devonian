@@ -7,6 +7,7 @@ open class ConfigData<T>(
     val configName: String?,
     val type: ConfigType,
     var value: T,
+    val parent: FeatureSwitch?,
     description: String? = null,
     displayName: String? = null,
     val subcategory: String = "General",
@@ -43,11 +44,21 @@ open class ConfigData<T>(
     open class Switch(
         configName: String,
         value: Boolean,
+        parent: FeatureSwitch?,
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
         isHidden: Boolean = false,
-    ) : ConfigData<Boolean>(configName, ConfigType.SWITCH, value, description, displayName, subcategory, isHidden)
+    ) : ConfigData<Boolean>(
+        configName,
+        ConfigType.SWITCH,
+        value,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        isHidden
+    )
 
     class FeatureSwitch(
         configName: String,
@@ -59,6 +70,7 @@ open class ConfigData<T>(
     ) : Switch(
         configName,
         value,
+        null,
         description,
         displayName,
         subcategory,
@@ -70,63 +82,69 @@ open class ConfigData<T>(
     class Slider<T : Number>(
         configName: String,
         value: T,
+        parent: FeatureSwitch?,
         val min: Double,
         val max: Double,
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
         isHidden: Boolean = false,
-    ) : ConfigData<T>(configName, ConfigType.SLIDER, value, description, displayName, subcategory, isHidden)
+    ) : ConfigData<T>(configName, ConfigType.SLIDER, value, parent, description, displayName, subcategory, isHidden)
 
     class DecimalSlider<T : Number>(
         configName: String,
         value: T,
+        parent: FeatureSwitch?,
         val min: Double,
         val max: Double,
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
         isHidden: Boolean = false,
-    ) : ConfigData<T>(configName, ConfigType.DECIMALSLIDER, value, description, displayName, subcategory, isHidden)
+    ) : ConfigData<T>(configName, ConfigType.DECIMALSLIDER, value, parent, description, displayName, subcategory, isHidden)
 
     class Button(
         val onClick: () -> Unit,
         val btnTitle: String = "Click!",
+        parent: FeatureSwitch?,
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
         isHidden: Boolean = false,
-    ) : ConfigData<Unit>(null, ConfigType.BUTTON, Unit, description, displayName, subcategory, isHidden)
+    ) : ConfigData<Unit>(null, ConfigType.BUTTON, Unit, parent, description, displayName, subcategory, isHidden)
 
     class TextInput(
         configName: String,
         value: String,
+        parent: FeatureSwitch?,
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
         isHidden: Boolean = false,
-    ) : ConfigData<String>(configName, ConfigType.TEXTINPUT, value, description, displayName, subcategory, isHidden)
+    ) : ConfigData<String>(configName, ConfigType.TEXTINPUT, value, parent, description, displayName, subcategory, isHidden)
 
     class Selection(
         configName: String,
         value: Int,
         val options: List<String>,
+        parent: FeatureSwitch?,
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
         isHidden: Boolean = false,
-    ) : ConfigData<Int>(configName, ConfigType.SELECTION, value, description, displayName, subcategory, isHidden) {
+    ) : ConfigData<Int>(configName, ConfigType.SELECTION, value, parent, description, displayName, subcategory, isHidden) {
         fun getCurrent(): String = options[get()]
     }
 
     class ColorPicker(
         configName: String,
         value: Int,
+        parent: FeatureSwitch?,
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
         isHidden: Boolean = false,
-    ) : ConfigData<Int>(configName, ConfigType.COLORPICKER, value, description, displayName, subcategory, isHidden) {
+    ) : ConfigData<Int>(configName, ConfigType.COLORPICKER, value, parent, description, displayName, subcategory, isHidden) {
         private var color = Color(value, true)
         fun getColor(): Color = color
 

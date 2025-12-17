@@ -113,6 +113,7 @@ open class Feature @JvmOverloads constructor(
         return ConfigData.Switch(
             "${this.configName}$$configName",
             value,
+            configSwitch,
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
             subcategory,
@@ -136,6 +137,7 @@ open class Feature @JvmOverloads constructor(
         return ConfigData.Slider(
             "${this.configName}$$configName",
             value,
+            configSwitch,
             min, max,
             description,
             displayName,
@@ -160,6 +162,7 @@ open class Feature @JvmOverloads constructor(
         return ConfigData.DecimalSlider(
             "${this.configName}$$configName",
             value,
+            configSwitch,
             min, max,
             description,
             displayName,
@@ -183,6 +186,7 @@ open class Feature @JvmOverloads constructor(
         return ConfigData.Button(
             onClick,
             buttonTitle,
+            configSwitch,
             description,
             displayName,
             subcategory,
@@ -205,6 +209,7 @@ open class Feature @JvmOverloads constructor(
         return ConfigData.TextInput(
             "${this.configName}$$configName",
             value,
+            configSwitch,
             description,
             displayName,
             subcategory,
@@ -228,6 +233,7 @@ open class Feature @JvmOverloads constructor(
             "${this.configName}$$configName",
             value,
             options,
+            configSwitch,
             description,
             displayName,
             subcategory,
@@ -249,6 +255,7 @@ open class Feature @JvmOverloads constructor(
         return ConfigData.ColorPicker(
             "${this.configName}$$configName",
             value,
+            configSwitch,
             description,
             displayName,
             subcategory,
