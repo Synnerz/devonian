@@ -198,6 +198,7 @@ object Devonian : ClientModInitializer {
         DisableTextShadow,
         HideGroundedArrows,
         BonzoMask,
+        SpiritMask,
 
         // Debug
         CopyItem,
