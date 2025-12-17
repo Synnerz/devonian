@@ -141,7 +141,10 @@ object KeyPickup : Feature(
                 } else keys.add(ent)
             }
         }
+
         on<RenderWorldEvent> {
+            if (Dungeons.inBoss.value) return@on
+
             keys.removeIf { ent ->
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 
