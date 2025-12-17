@@ -25,6 +25,12 @@ object BlazeSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    private val SETTING_SEND_MSG = addSwitch(
+        "sendMsg",
+        false,
+        "Sends \"Blaze done\" in party chat",
+        "Blaze Done Message"
+    )
     private val SETTING_COLOR_FIRST_OUTLINE = addColorPicker(
         "firstBlazeColorOutline",
         Color(0, 255, 0, 255).rgb,
@@ -81,6 +87,7 @@ object BlazeSolver : Feature(
     var lastBlazes = 0
     var startedAt = 0
     var efficientPos: Triple<Int, Int, Int>? = null
+    var hasSent = false
 
     data class BlazeEntity(val entity: Entity, val maxHP: Int)
 
@@ -134,6 +141,10 @@ object BlazeSolver : Feature(
                 startedAt = 0
                 lastBlazes = 0
                 efficientPos = null
+                if (!hasSent) {
+                    hasSent = true
+                    ChatUtils.command("pc Blaze done")
+                }
                 return@on
             }
 
@@ -262,5 +273,6 @@ object BlazeSolver : Feature(
         efficientPos = null
         blazes.clear()
         entityList.clear()
+        hasSent = false
     }
 }

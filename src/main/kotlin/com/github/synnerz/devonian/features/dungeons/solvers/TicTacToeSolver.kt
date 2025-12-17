@@ -20,6 +20,12 @@ object TicTacToeSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    private val SETTING_SEND_MSG = addSwitch(
+        "sendMsg",
+        false,
+        "Sends \"Tic Tac Toe done\" in party chat",
+        "TTT Done Message"
+    )
     private val completedPuzzleRegex = "^PUZZLE SOLVED! \\w+ tied Tic Tac Toe! Good job!$".toRegex()
     private val failedPuzzleRegex = "^PUZZLE FAIL! \\w+ lost Tic Tac Toe! Yikes!$".toRegex()
     private val boardPos = listOf(
@@ -38,6 +44,7 @@ object TicTacToeSolver : Feature(
     var lastStatus: String? = null
     var currentBestMove = -1
     var enteredAt = -1
+    var hasSent = false
 
     data class TicTacToePlayer(
         val x: Int,
@@ -118,6 +125,10 @@ object TicTacToeSolver : Feature(
 
             hasMoved = false
             if (lastStatus == "X") onAIMove(currentBoard)
+            if (currentBoard.filterNotNull().size == 8 && SETTING_SEND_MSG.get() && !hasSent) {
+                hasSent = true
+                ChatUtils.command("pc Tic Tac Toe done")
+            }
             lastStatus = null
         }
 
@@ -142,6 +153,7 @@ object TicTacToeSolver : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         inTTT = false
+        hasSent = false
         reset()
     }
 
