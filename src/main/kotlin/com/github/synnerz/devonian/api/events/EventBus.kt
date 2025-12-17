@@ -262,10 +262,15 @@ object EventBus {
     }
 
     private fun addImpl(T: KClass<*>, listener: EventListener<Event>) {
-        events.getOrPut(T) {
+        val arr = events.getOrPut(T) {
             if (T.hasAnnotation<Threaded>()) CopyOnWriteArrayList()
             else ArrayList()
-        }.add(listener)
+        }
+        if (T.hasAnnotation<Ordered>()) {
+            var i = arr.binarySearch(listener, Comparator.comparingInt { it.prio })
+            if (i < 0) i = -(i + 1)
+            arr.add(i, listener)
+        } else arr.add(listener)
     }
 
     fun add(T: KClass<*>, listener: EventListener<Event>) {

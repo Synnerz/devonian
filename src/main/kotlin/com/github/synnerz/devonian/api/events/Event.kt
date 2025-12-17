@@ -34,6 +34,8 @@ import net.minecraft.world.phys.HitResult
 
 @Target(AnnotationTarget.CLASS)
 annotation class Threaded
+@Target(AnnotationTarget.CLASS)
+annotation class Ordered
 
 abstract class Event {
     open fun post(): Boolean {

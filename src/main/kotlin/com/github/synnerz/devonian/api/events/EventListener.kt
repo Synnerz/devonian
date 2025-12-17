@@ -5,8 +5,17 @@ import kotlin.reflect.KClass
 
 class EventListener<T : Event> (
     private val cb: (T) -> Unit,
-    private val event: KClass<T>
+    private val event: KClass<T>,
 ) : Toggleable() {
+    var prio: Int = 0
+        set(value) {
+            field = value
+            if (isRegistered()) {
+                unregister()
+                register()
+            }
+        }
+
     @Suppress("UNCHECKED_CAST")
     override fun add() {
         EventBus.add(event, this as EventListener<Event>)
