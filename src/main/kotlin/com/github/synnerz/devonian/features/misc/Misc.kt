@@ -51,3 +51,17 @@ object HideCraftingText : Feature("hideCraftingText", "in inventory above crafti
 object DisableNametagBackground : Feature("disableNametagBackground", subcategory = "Tweaks")
 object DisableTextShadow : Feature("disableTextShadow", subcategory = "Tweaks")
 object FixObfuscatedText : Feature("fixObfuscatedText", "fixes shifting around text", subcategory = "Tweaks")
+object CustomSidebarColor : Feature("customSideBarColor", "Sets the color for scoreboard", subcategory = "Tweaks") {
+    val SETTING_TITLE_COLOR = addColorPicker(
+        "titleColor",
+        Color(0, 0, 0, 100).rgb,
+        "The scoreboard title background color",
+        "Sidebar Title Color"
+    )
+    val SETTING_BODY_COLOR = addColorPicker(
+        "titleColor",
+        Color(0, 0, 0, 100).rgb,
+        "The scoreboard body background color",
+        "Sidebar Body Color"
+    )
+}

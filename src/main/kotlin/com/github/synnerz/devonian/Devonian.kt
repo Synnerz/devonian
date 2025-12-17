@@ -200,6 +200,7 @@ object Devonian : ClientModInitializer {
         CreeperBeamsDing,
         FixObfuscatedText,
         CustomMageBeam,
+        CustomSidebarColor,
 
         // Debug
         CopyItem,

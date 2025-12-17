@@ -173,4 +173,38 @@ public class GuiMixin {
     private void devonian$onRenderHotbarSlot(GuiGraphics guiGraphics, int i, int j, DeltaTracker deltaTracker, Player player, ItemStack itemStack, int k, CallbackInfo ci) {
         if (new RenderHotbarSlotEvent(itemStack, i, j, guiGraphics).post()) ci.cancel();
     }
+
+    @WrapOperation(
+            method = "displayScoreboardSidebar",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V",
+                    ordinal = 0
+            )
+    )
+    private void devonian$sidebarTitle(GuiGraphics instance, int i, int j, int k, int l, int m, Operation<Void> original) {
+        if (!CustomSidebarColor.INSTANCE.isEnabled()) {
+            original.call(instance, i, j, k, l, m);
+            return;
+        }
+
+        instance.fill(i, j, k, l, CustomSidebarColor.INSTANCE.getSETTING_TITLE_COLOR().get());
+    }
+
+    @WrapOperation(
+            method = "displayScoreboardSidebar",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V",
+                    ordinal = 1
+            )
+    )
+    private void devonian$sidebarBody(GuiGraphics instance, int i, int j, int k, int l, int m, Operation<Void> original) {
+        if (!CustomSidebarColor.INSTANCE.isEnabled()) {
+            original.call(instance, i, j, k, l, m);
+            return;
+        }
+
+        instance.fill(i, j, k, l, CustomSidebarColor.INSTANCE.getSETTING_BODY_COLOR().get());
+    }
 }
