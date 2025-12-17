@@ -12,7 +12,6 @@ import net.minecraft.world.phys.Vec3
 import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.math.abs
-import kotlin.math.roundToInt
 
 object IcePathSolver : Feature(
     "icePathSolver",
@@ -38,6 +37,7 @@ object IcePathSolver : Feature(
     var inPath = false
     var silverfishEntity: Silverfish? = null
     var enteredAt = -1
+    var wasCompleted = false
 
     data class IcePathSolution(
         val x1: Int,
@@ -98,7 +98,7 @@ object IcePathSolver : Feature(
         }
 
         on<RenderWorldEvent> { event ->
-            if (currentSolution.isEmpty()) return@on
+            if (currentSolution.isEmpty() || wasCompleted) return@on
 
             currentSolution.forEachIndexed { idx, sol ->
                 BlazeSolver.renderLine(
@@ -128,6 +128,7 @@ object IcePathSolver : Feature(
             val seconds = "%.2fs".format(time)
             ChatUtils.sendMessage("&bIce Path took&f: &6$seconds", true)
             enteredAt = -1
+            wasCompleted = true
         }
     }
 
@@ -136,5 +137,6 @@ object IcePathSolver : Feature(
         silverfishEntity = null
         enteredAt = -1
         currentSolution.clear()
+        wasCompleted = false
     }
 }
