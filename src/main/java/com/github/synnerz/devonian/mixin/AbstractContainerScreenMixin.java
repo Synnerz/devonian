@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,8 +43,7 @@ public abstract class AbstractContainerScreenMixin {
                 else event = new PickupItemInventoryEvent(slot, that, j == 1);
                 break;
             case THROW:
-                if (slot == null) break;
-                event = new DropItemEvent(slot, j != 0, slot.getItem(), true);
+                event = new DropItemEvent(slot, j != 0, slot == null ? ItemStack.EMPTY : slot.getItem(), true);
                 break;
             case PICKUP_ALL:
                 if (slot != null) event = new PickupItemInventoryEvent(slot, that, false);
