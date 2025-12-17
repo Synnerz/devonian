@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
+import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -60,13 +61,13 @@ object TpsDisplay : TextHudFeature("tpsDisplay") {
             1
         }
 
-        on<ClientThreadServerTickEvent> {
+        EventBus.on<ClientThreadServerTickEvent> {
             val t = System.currentTimeMillis()
             arrTotal.add(t + TTL)
             arrSecond.add(t + 1_000L)
         }
 
-        on<TickEvent> {
+        EventBus.on<TickEvent> {
             val t = System.currentTimeMillis()
 
             var iter = arrTotal.iterator()
