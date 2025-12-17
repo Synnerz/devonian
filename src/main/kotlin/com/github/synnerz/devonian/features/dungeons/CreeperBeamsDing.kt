@@ -1,9 +1,10 @@
-package com.github.synnerz.devonian.features
+package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.features.Feature
 import net.minecraft.sounds.SoundEvents
 
 object CreeperBeamsDing : Feature(
