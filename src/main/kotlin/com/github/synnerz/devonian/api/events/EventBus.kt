@@ -125,6 +125,7 @@ object EventBus {
                 }
 
                 is ClientboundPingPacket -> {
+                    if (packet.id >= 0) return@on
                     totalTicks++
                     ServerTickEvent(totalTicks).post()
                 }
