@@ -8,6 +8,8 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.BlockPos
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.shapes.Shapes
 import java.awt.Color
@@ -26,6 +28,19 @@ object SimonSaysSolver : Feature(
         listOf("Never", "Always", "WhenCrouching", "ExceptWhenCrouching"),
         "",
         "Block Incorrect Hits",
+    )
+    private val SETTING_BLOCK_LAG = addSlider(
+        "blockLag",
+        0.0,
+        0.0, 10.0,
+        "blocks clicks if the previous click was within this number of server ticks",
+        "Block Clicks if Lagging",
+    )
+    private val SETTING_CHIME_ON_CLICK = addSwitch(
+        "chime",
+        false,
+        "plays sound if correct button was clicked",
+        "Chime on Correct Button",
     )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
@@ -77,6 +92,9 @@ object SimonSaysSolver : Feature(
         "ExceptWhenCrouching" -> !(minecraft?.player?.isShiftKeyDown ?: true)
         else -> false
     }
+    private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
+    private val LAG_SOUND = SoundEvents.NOTE_BLOCK_GUITAR
+    private val CORRECT_SOUND = SoundEvents.NOTE_BLOCK_COW_BELL
 
     private val solution = CopyOnWriteArrayList<BlockPos>()
     private val BUTTON_SHAPE = 0.002.let { e ->
@@ -91,6 +109,8 @@ object SimonSaysSolver : Feature(
     }
     private var wasStartButtonLast = false
     private var hasButtons = false
+    private var lastSolClick = 0
+    var solutionTotal = 0
 
     private fun isValidButtonLocation(pos: BlockPos) = pos.y in 120 .. 123 && pos.z in 92 .. 95
 
@@ -123,9 +143,6 @@ object SimonSaysSolver : Feature(
         }
 
         on<RenderWorldEvent> { event ->
-            if (!hasButtons) return@on
-            if (wasStartButtonLast) return@on
-
             val cam = event.ctx.gameRenderer().mainCamera.position.reverse()
             solution.forEachIndexed { i, pos ->
                 val wire = when (i) {
@@ -168,17 +185,38 @@ object SimonSaysSolver : Feature(
             if (solution.isEmpty()) return@on
             if (!isValidButtonLocation(pos)) return@on
 
-            if (solution.getOrNull(0) == pos) solution.removeFirstOrNull()
-            else {
-                if (shouldBlockClicks()) event.cancel()
-                else {
-                    do {
-                        val v = solution.getOrNull(0) ?: break
-                        if (v == pos) break
-                        solution.removeFirstOrNull()
-                    } while (true)
+            if (solution.getOrNull(0) == pos) {
+                val tick = EventBus.serverTicks()
+                if (lastSolClick + SETTING_BLOCK_LAG.get() < tick) {
                     solution.removeFirstOrNull()
-                }
+                    lastSolClick = tick
+                    if (SETTING_CHIME_ON_CLICK.get()) minecraft.level?.playPlayerSound(
+                        CORRECT_SOUND.value(),
+                        SoundSource.MASTER,
+                        1f, 0.5f,
+                    )
+                    return@on
+                } else minecraft.level?.playPlayerSound(
+                    LAG_SOUND.value(),
+                    SoundSource.MASTER,
+                    1f, 0.5f,
+                )
+            }
+
+            if (shouldBlockClicks()) {
+                event.cancel()
+                minecraft.level?.playPlayerSound(
+                    PREVENTED_SOUND.value(),
+                    SoundSource.MASTER,
+                    1f, 0.5f,
+                )
+            } else {
+                do {
+                    val v = solution.getOrNull(0) ?: break
+                    if (v == pos) break
+                    solution.removeFirstOrNull()
+                } while (true)
+                solution.removeFirstOrNull()
             }
         }
 
@@ -187,7 +225,6 @@ object SimonSaysSolver : Feature(
             if (!WorldUtils.isChunkLoaded(pos.x, pos.z)) return@on
 
             if (WorldUtils.getBlockState(pos.x, pos.y, pos.z)?.block == Blocks.STONE_BUTTON) {
-                hasButtons = true
                 if (wasStartButtonLast) {
                     wasStartButtonLast = false
                     val kept = when (solution.size) {
@@ -200,6 +237,8 @@ object SimonSaysSolver : Feature(
                     }
                     while (solution.size > kept) solution.removeFirstOrNull()
                 }
+                if (!hasButtons) solutionTotal = solution.size
+                hasButtons = true
             } else hasButtons = false
         }
     }
@@ -208,5 +247,7 @@ object SimonSaysSolver : Feature(
         solution.clear()
         wasStartButtonLast = false
         hasButtons = false
+        lastSolClick = 0
+        solutionTotal = 0
     }
 }
