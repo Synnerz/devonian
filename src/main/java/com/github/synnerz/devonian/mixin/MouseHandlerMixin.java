@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.input.MouseButtonInfo;
+import org.lwjgl.glfw.GLFW;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,28 +19,70 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MouseHandlerMixin {
     @Shadow @Final private Minecraft minecraft;
 
+    @Shadow
+    private boolean ignoreFirstMove;
+
+    @Shadow
+    private double xpos;
+
+    @Shadow
+    private double ypos;
+
     @WrapWithCondition(
-            method = {"releaseMouse", "grabMouse"},
-            at = @At(
-                    value = "FIELD",
-                    target = "Lnet/minecraft/client/MouseHandler;xpos:D",
-                    opcode = Opcodes.PUTFIELD
-            )
+        method = "releaseMouse",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/MouseHandler;xpos:D",
+            opcode = Opcodes.PUTFIELD
+        )
     )
-    private boolean devonian$setXCursor(MouseHandler instance, double value) {
+    private boolean devonian$setXCursorRelease(MouseHandler instance, double value) {
         return NoCursorReset.INSTANCE.shouldReset();
     }
 
     @WrapWithCondition(
-            method = {"releaseMouse", "grabMouse"},
-            at = @At(
-                    value = "FIELD",
-                    target = "Lnet/minecraft/client/MouseHandler;ypos:D",
-                    opcode = Opcodes.PUTFIELD
-            )
+        method = "releaseMouse",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/MouseHandler;ypos:D",
+            opcode = Opcodes.PUTFIELD
+        )
     )
-    private boolean devonian$setYCursor(MouseHandler instance, double value) {
+    private boolean devonian$setYCursorRelease(MouseHandler instance, double value) {
         return NoCursorReset.INSTANCE.shouldReset();
+    }
+
+    @Inject(
+        method = "releaseMouse",
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V", shift = At.Shift.AFTER)
+    )
+    private void devonian$releaseMouseSetPosFix(CallbackInfo ci) {
+        GLFW.glfwSetCursorPos(minecraft.getWindow().handle(), xpos, ypos);
+        this.ignoreFirstMove = true;
+    }
+
+    @WrapWithCondition(
+        method = "grabMouse",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/MouseHandler;xpos:D",
+            opcode = Opcodes.PUTFIELD
+        )
+    )
+    private boolean devonian$setXCursorGrab(MouseHandler instance, double value) {
+        return false;
+    }
+
+    @WrapWithCondition(
+        method = "grabMouse",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/MouseHandler;ypos:D",
+            opcode = Opcodes.PUTFIELD
+        )
+    )
+    private boolean devonian$setYCursorGrab(MouseHandler instance, double value) {
+        return false;
     }
 
     @Inject(
