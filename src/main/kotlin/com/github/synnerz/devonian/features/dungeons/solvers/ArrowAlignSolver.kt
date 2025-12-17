@@ -9,6 +9,8 @@ import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.decoration.ItemFrame
 import net.minecraft.world.item.Items
 import org.joml.Quaternionf
@@ -48,6 +50,7 @@ object ArrowAlignSolver : Feature(
         intArrayOf(7, 1, 1, 9, 9, 9, 9, 9, 7, 9, 3, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 7, 9, 3, 9, 9, 9, 9, 9, 5, 5, 3),
         intArrayOf(9, 1, 9, 7, 9, 9, 9, 9, 9, 3, 9, 7, 9, 9, 9, 9, 9, 3, 9, 7, 9, 9, 9, 9, 9, 3, 9, 7, 9, 9, 9, 9, 9, 3, 1, 1, 9),
     )
+    private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
 
     private var solution: IntArray? = null
     private val frameIds = atomic<Map<Int, Int>?>(null)
@@ -159,8 +162,14 @@ object ArrowAlignSolver : Feature(
             if (id == -1) return@on
 
             val c = getClicks(id)
-            if (shouldBlockClicks() && c == 0) event.cancel()
-            else synchronized(clicksQueued) {
+            if (shouldBlockClicks() && c == 0) {
+                event.cancel()
+                minecraft.level?.playPlayerSound(
+                    PREVENTED_SOUND.value(),
+                    SoundSource.MASTER,
+                    1f, 0.5f,
+                )
+            } else synchronized(clicksQueued) {
                 clicksQueued[id]++
             }
         }
