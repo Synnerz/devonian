@@ -75,6 +75,7 @@ object ThreeWeirdosSolver : Feature(
         on<DungeonEvent.RoomLeave> {
             if (enteredAt == -1) return@on
             enteredAt = -1
+            answers.clear()
         }
 
         on<ChatEvent> { event ->
