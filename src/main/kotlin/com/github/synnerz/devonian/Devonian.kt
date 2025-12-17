@@ -196,6 +196,7 @@ object Devonian : ClientModInitializer {
         HideCheapCoins,
         DisableNametagBackground,
         DisableTextShadow,
+        HideGroundedArrows,
 
         // Debug
         CopyItem,
