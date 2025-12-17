@@ -41,25 +41,36 @@ object ItemRarityBackground : Feature(
         "",
         "Rarity Render Line Width"
     )
-    private val rarities = linkedMapOf(
-        "UNCOMMON" to (TextColor.fromLegacyFormat(ChatFormatting.GREEN)!!.value or 0xFF000000.toInt()),
-        "COMMON" to (TextColor.fromLegacyFormat(ChatFormatting.WHITE)!!.value or 0xFF000000.toInt()),
-        "RARE" to (TextColor.fromLegacyFormat(ChatFormatting.BLUE)!!.value or 0xFF000000.toInt()),
-        "EPIC" to (TextColor.fromLegacyFormat(ChatFormatting.DARK_PURPLE)!!.value or 0xFF000000.toInt()),
-        "LEGENDARY" to (TextColor.fromLegacyFormat(ChatFormatting.GOLD)!!.value or 0xFF000000.toInt()),
-        "MYTHIC" to (TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE)!!.value or 0xFF000000.toInt()),
-        "DIVINE" to (TextColor.fromLegacyFormat(ChatFormatting.AQUA)!!.value or 0xFF000000.toInt()),
-        "SPECIAL" to (TextColor.fromLegacyFormat(ChatFormatting.RED)!!.value or 0xFF000000.toInt()),
+    private val rarities = listOf(
+        "COMMON" to TextColor.fromLegacyFormat(ChatFormatting.WHITE)!!.value,
+        "UNCOMMON" to TextColor.fromLegacyFormat(ChatFormatting.GREEN)!!.value,
+        "RARE" to TextColor.fromLegacyFormat(ChatFormatting.BLUE)!!.value,
+        "EPIC" to TextColor.fromLegacyFormat(ChatFormatting.DARK_PURPLE)!!.value,
+        "LEGENDARY" to TextColor.fromLegacyFormat(ChatFormatting.GOLD)!!.value,
+        "MYTHIC" to TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE)!!.value,
+        "SPECIAL" to TextColor.fromLegacyFormat(ChatFormatting.RED)!!.value,
+        "ULTIMATE" to TextColor.fromLegacyFormat(ChatFormatting.DARK_RED)!!.value,
+        "ADMIN" to TextColor.fromLegacyFormat(ChatFormatting.DARK_RED)!!.value,
+
+        "a UNCOMMON" to TextColor.fromLegacyFormat(ChatFormatting.GREEN)!!.value,
+        "a RARE" to TextColor.fromLegacyFormat(ChatFormatting.BLUE)!!.value,
+        "a EPIC" to TextColor.fromLegacyFormat(ChatFormatting.DARK_PURPLE)!!.value,
+        "a LEGENDARY" to TextColor.fromLegacyFormat(ChatFormatting.GOLD)!!.value,
+        "a MYTHIC" to TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE)!!.value,
+        "a DIVINE" to TextColor.fromLegacyFormat(ChatFormatting.AQUA)!!.value,
+        "a VERY SPECIAL" to TextColor.fromLegacyFormat(ChatFormatting.RED)!!.value,
+
+        "SHINY LEGENDARY" to TextColor.fromLegacyFormat(ChatFormatting.GOLD)!!.value,
+        "a SHINY MYTHIC" to TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE)!!.value,
     )
 
     private fun render(x: Int, y: Int, item: ItemStack, ctx: GuiGraphics) {
         if (item.isEmpty) return
 
         val lore = ItemUtils.lore(item) ?: return
-        val type = (if (lore.contains("Sell Price")) findLore(lore) else lore.lastOrNull()) ?: return
-        val rgb = rarities.entries.find { type.contains(it.key) }?.value ?: return
-        val opacity = (SETTING_RENDER_OPACITY.get() * 255).roundToInt()
-        val color = (rgb and 0x00FFFFFF) or (opacity shl 24)
+        val rgb = findColor(lore) ?: return
+        val opacity = (SETTING_RENDER_OPACITY.get() * 255.0).roundToInt()
+        val color = rgb or (opacity shl 24)
         val lineWidth = SETTING_RENDER_LINE_WIDTH.get().roundToInt()
 
         when (SETTING_RENDER_MODE.get()) {
@@ -107,14 +118,14 @@ object ItemRarityBackground : Feature(
         }.prio = 0
     }
 
-    private fun findLore(lore: List<String>): String? {
-        val idx = lore.indexOfLast { rarities.entries.any { rarity -> it.contains(rarity.key) } }
-        if (idx == -1) return null
-        val match = lore.getOrNull(idx) ?: return null
-        val sellMatch = lore.getOrNull(idx + 2) ?: return null
-        if (!sellMatch.contains("Sell Price")) return null
+    private fun findColor(lore: List<String>): Int? {
+        if (lore.isEmpty()) return null
+        findRarity(lore.last())?.let { return it }
+        return lore.stream().map { findRarity(it) }.filter { it != null }.findAny().orElseGet { null }
+    }
 
-        return match
+    private fun findRarity(str: String): Int? {
+        return rarities.find { str.startsWith(it.first) }?.second
     }
 
     private val blurId = ResourceLocation.fromNamespaceAndPath("devonian", "item_rarity_background_blur")!!
