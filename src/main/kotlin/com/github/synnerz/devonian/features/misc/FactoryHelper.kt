@@ -76,7 +76,7 @@ object FactoryHelper : Feature(
                     16, 16, Color.CYAN
                 )
             }
-        }
+        }.prio = 20
     }
 
     private fun findBest() {

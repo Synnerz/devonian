@@ -18,6 +18,6 @@ object RenderSlotIndex : Feature(
                 event.slot.x, event.slot.y,
                 -1
             )
-        }
+        }.prio = 1000
     }
 }

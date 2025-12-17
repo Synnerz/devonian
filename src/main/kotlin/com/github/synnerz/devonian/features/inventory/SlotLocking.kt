@@ -105,10 +105,10 @@ object SlotLocking : Feature(
             if (!locked) return@on
 
             if (SlotBinding.compatIsRendering(slot)) {
-                event.ctx.fill(slot.x + 2, slot.y + 2, slot.x + 14, slot.y + 14, SETTING_LOCKED_SLOT_COLOR.get())
+                event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, SETTING_LOCKED_SLOT_COLOR.get())
             } else {
                 Render2D.drawWireRect(event.ctx, slot.x, slot.y, 16, 16, SETTING_LOCKED_SLOT_COLOR.getColor(), lw = 2)
             }
-        }
+        }.prio = 10
     }
 }

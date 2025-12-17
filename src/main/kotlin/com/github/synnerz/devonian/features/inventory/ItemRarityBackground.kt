@@ -100,11 +100,11 @@ object ItemRarityBackground : Feature(
     override fun initialize() {
         on<RenderSlotEvent> { event ->
             render(event.slot.x, event.slot.y, event.slot.item, event.ctx)
-        }
+        }.prio = 0
 
         on<RenderHotbarSlotEvent> { event ->
             render(event.x, event.y, event.item, event.ctx)
-        }
+        }.prio = 0
     }
 
     private fun findLore(lore: List<String>): String? {

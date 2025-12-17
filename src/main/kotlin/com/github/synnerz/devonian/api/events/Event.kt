@@ -292,9 +292,9 @@ class RenderTickEvent : Event()
 
 @Threaded class ScoreboardEvent(message: String) : CriteriaEvent(message)
 
-class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics, val screen: AbstractContainerScreen<*>) : CancellableEvent()
+@Ordered class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics, val screen: AbstractContainerScreen<*>) : CancellableEvent()
 
-class RenderHotbarSlotEvent(val item: ItemStack, val x: Int, val y: Int, val ctx: GuiGraphics) : CancellableEvent()
+@Ordered class RenderHotbarSlotEvent(val item: ItemStack, val x: Int, val y: Int, val ctx: GuiGraphics) : CancellableEvent()
 
 @Threaded class SoundPlayEvent(
     val sound: String,
@@ -393,7 +393,7 @@ class QuickCraftMoveEvent(
     val screen: AbstractContainerScreen<*>
 ) : CancellableEvent()
 
-class PostRenderSlotsEvent(
+@Ordered class PostRenderSlotsEvent(
     val ctx: GuiGraphics,
     val mouseX: Int,
     val mouseY: Int,

@@ -233,7 +233,7 @@ object SlotBinding : Feature(
                     c,
                 )
             }
-        }
+        }.prio = 20
 
         on<PostRenderSlotsEvent> { event ->
             val curr = currentHeldSlot ?: return@on
@@ -269,7 +269,7 @@ object SlotBinding : Feature(
                 (event.mouseX - cont.leftPos).toFloat(), (event.mouseY - cont.topPos).toFloat(),
                 Color.GREEN,
             )
-        }
+        }.prio = 0
     }
 
     fun setToFront(idx1: Int, idx2: Int) {
