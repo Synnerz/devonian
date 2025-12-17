@@ -53,6 +53,7 @@ object DungeonRoomComponentRenderer : Feature(
                 hitResult.y + 1.5,
                 hitResult.z + 0.5,
                 phase = true,
+                increase = true,
             )
         }
     }
