@@ -49,6 +49,14 @@ object ChatUtils {
         sendMessage(literal("${toAdd}$message"))
     }
 
+    fun sendActionbar(message: Component) {
+        Minecraft.getInstance().execute {
+            Minecraft.getInstance().player?.displayClientMessage(message, true)
+        }
+    }
+
+    fun sendActionbar(message: String) = sendActionbar(literal(message))
+
     fun removeLines(cb: (GuiMessage) -> Boolean) {
         var removedLine = false
         val messageList = chatComponentAccessor.messages?.listIterator() ?: return
