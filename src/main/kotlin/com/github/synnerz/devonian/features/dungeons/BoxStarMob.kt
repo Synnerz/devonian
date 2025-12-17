@@ -118,7 +118,7 @@ object BoxStarMob : Feature(
             if (event.entityId != lastStand) return@on
             lastStand = 0
 
-            if (!event.name.contains('✯')) return@on
+            if (event.name.indexOf('✯') < 1) return@on
 
             starredIdQ.add(
                 Pair(
