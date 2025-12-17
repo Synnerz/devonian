@@ -6,10 +6,6 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
-import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.features.HudManagerHider
-import com.github.synnerz.devonian.features.HudManagerInstructions
-import com.github.synnerz.devonian.features.HudManagerRenderer
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger
 import com.github.synnerz.devonian.features.debug.renderers.RenderSlotIndex
@@ -30,6 +26,7 @@ import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.api.Location
+import com.github.synnerz.devonian.features.*
 import com.github.synnerz.devonian.features.debug.renderers.DungeonRoomComponentRenderer
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.KeyMapping
@@ -200,6 +197,7 @@ object Devonian : ClientModInitializer {
         BonzoMask,
         SpiritMask,
         PhoenixTimer,
+        CreeperBeamsDing,
 
         // Debug
         CopyItem,
