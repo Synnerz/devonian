@@ -199,6 +199,7 @@ object Devonian : ClientModInitializer {
         PhoenixTimer,
         CreeperBeamsDing,
         FixObfuscatedText,
+        CustomMageBeam,
 
         // Debug
         CopyItem,
