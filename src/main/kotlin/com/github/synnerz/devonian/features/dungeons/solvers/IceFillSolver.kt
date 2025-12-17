@@ -336,7 +336,7 @@ class IcePlatform(
             solution = LinkedList()
             return
         }
-        if (abs(odd - even) > 2) return
+        if (abs(odd - even) >= 2) return
 
         val first = Devonian.minecraft.player?.let {
             // ether sets height to +.05
@@ -351,12 +351,13 @@ class IcePlatform(
                 total++
                 odd += b.parity
                 even += b.parity xor 1
-                if (abs(odd - even) > 2) return
+                if (abs(odd - even) >= 2) return
             }
             b
         } ?: listOf(
             if (endOnStart) mutableBlocks[idAt(start.x, start.z)] else null,
             mutableBlocks[maxId],
+            if (endOnStart) null else mutableBlocks[idAt(start.x, start.z)],
             *mutableBlocks,
         ).first {
             if (it == null) return@first false
