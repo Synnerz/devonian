@@ -351,6 +351,7 @@ class IcePlatform(
                 total++
                 odd += b.parity
                 even += b.parity xor 1
+                if (abs(odd - even) > 2) return
             }
             b
         } ?: listOf(
