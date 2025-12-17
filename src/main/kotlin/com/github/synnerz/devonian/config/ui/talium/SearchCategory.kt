@@ -60,10 +60,19 @@ class SearchCategory(rightPanel: UIBase) {
     }
 
     private fun onSearch(str: String) {
-        var idx = 0
+        val shownFeats = Config.features.filterTo(mutableSetOf()) { matchesConfig(it, str) }
+        val shownSubConfigs = Config.features.associateWith { it.subconfigs.filterTo(mutableSetOf()) { matchesConfig(it, str) } }
 
+        var idx = 0
         components.forEach { (data, comp) ->
-            if (data.displayName.contains(str, ignoreCase = true) || data.description.contains(str, ignoreCase = true)) {
+            val show = if (data is ConfigData.FeatureSwitch) {
+                shownFeats.contains(data) ||
+                shownSubConfigs[data]!!.isNotEmpty()
+            } else {
+                shownFeats.contains(data.parent) ||
+                shownSubConfigs[data.parent]!!.contains(data)
+            }
+            if (show) {
                 val i = idx++
                 val y = 1.0 + i * 17.0
                 comp._y = y
@@ -76,6 +85,10 @@ class SearchCategory(rightPanel: UIBase) {
         scrollableRect.updateScrollY(0.0)
         scrollableRect.yOffset = 0.0
         categoryTitle.text = "Searching \"$str\""
+    }
+
+    private fun matchesConfig(config: ConfigData<*>, str: String): Boolean {
+        return config.displayName.contains(str, ignoreCase = true) || config.description.contains(str, ignoreCase = true)
     }
 
     // shit workaround to prevent the player from opening
