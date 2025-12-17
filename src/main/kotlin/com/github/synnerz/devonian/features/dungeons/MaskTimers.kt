@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -20,7 +21,7 @@ object BonzoMask : TextHudFeature(
         "Hide Bonzo After IMM"
     )
     private const val IMMUNITY_TIME = 3 * 1000L
-    private var COOLDOWN_TIME = 180 * 1000L // TODO: make this dynamic with lore
+    private val cooldownItemRegex = "^Cooldown: (\\d+)s$".toRegex()
     private val maskRegex = "^Your( ⚚)? Bonzo's Mask saved your life!$".toRegex()
     private var startedAt = -1L
     private var cdStartedAt = -1L
@@ -30,7 +31,16 @@ object BonzoMask : TextHudFeature(
             if (event.matches(maskRegex) == null) return@on
 
             startedAt = System.currentTimeMillis() + IMMUNITY_TIME
-            cdStartedAt = System.currentTimeMillis() + COOLDOWN_TIME
+
+            val helmLore = minecraft.player?.inventory?.getItem(39) ?: return@on
+            val lore = ItemUtils.lore(helmLore) ?: return@on
+            val timeIdx = lore.indexOfLast { it.contains("Cooldown: ") }
+            if (timeIdx == -1) return@on
+            val cdStr = lore[timeIdx]
+            val match = cooldownItemRegex.matchEntire(cdStr)?.groupValues?.drop(1) ?: return@on
+            val time = match[0].toIntOrNull() ?: return@on
+
+            cdStartedAt = System.currentTimeMillis() + (time * 1000L)
         }
 
         on<RenderOverlayEvent> {
@@ -135,7 +145,7 @@ object PhoenixTimer : TextHudFeature(
         "hideAfterImm",
         false,
         "Hides the entire phoenix display after the immunity timer is over",
-        "Hide Spirit After IMM"
+        "Hide Phoenix After IMM"
     )
     private const val IMMUNITY_TIME = 4 * 1000L
     private var COOLDOWN_TIME = 60 * 1000L
