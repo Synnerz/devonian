@@ -334,12 +334,13 @@ class DungeonMapBaseRenderer :
                     it,
                     g,
                     font, font, font,
-                    fontSize
+                    fontSize,
+                    noRender = true,
                 ) }
-                val visualWidth = lines.maxOf { it.visualWidth }
+                val width = lines.maxOf { it.width }
                 val (fontScale, _) = BoundingBox(
                     0.0, 0.0,
-                    visualWidth.toDouble(), fontSize.toDouble() * lines.size
+                    width.toDouble(), fontSize.toDouble() * lines.size
                 ).fitInside(decBox)
 
                 fontSize = ceil(fontSize * (fontScale * compToBImgFH).toFloat())
@@ -404,8 +405,9 @@ class DungeonMapBaseRenderer :
         }
 
         if (textToRender.isNotEmpty()) {
-            val fontSize = textToRender.minOf { it.key.size }.toFloat()
-            val font = BImgTextHudRenderer.fontMainBase.deriveFont(Font.PLAIN, fontSize)
+            val fontSize = textToRender.minOf { it.key.size }
+            val fontSizeF = fontSize.toFloat()
+            val font = BImgTextHudRenderer.fontMainBase.deriveFont(Font.PLAIN, fontSizeF)
             g.font = font
             g.paint = Color(-1)
             val ascent = g.fontMetrics.ascent
@@ -413,16 +415,16 @@ class DungeonMapBaseRenderer :
             textToRender.forEach { (decBox, key, text) ->
                 if (text.isEmpty()) return@forEach
 
-                val rendered = cachedStrings.getOrPut(key) {
+                val rendered = cachedStrings.getOrPut(CachedStringKey(key.str, fontSize, key.shadow)) {
                     val lines = text.map { StringParser.processString(
                         it,
                         g,
                         font, font, font,
-                        fontSize
+                        fontSizeF
                     ) }
-                    val visualWidth = lines.maxOf { it.visualWidth }
+                    val width = lines.maxOf { it.width }
 
-                    val w = visualWidth + options.stringShadow.getSizeIncrease(fontSize) + 5.0f
+                    val w = width + options.stringShadow.getSizeIncrease(fontSizeF) + 5.0f
                     val h = fontSize * lines.size + ascent
                     val img = bimgProvider.create(w.toInt(), h.toInt())
 
@@ -431,10 +433,10 @@ class DungeonMapBaseRenderer :
                             StylizedTextHud.Align.Center,
                             options.stringShadow,
                             StylizedTextHud.Backdrop.None,
-                            fontSize,
+                            fontSizeF,
                         ),
                         lines,
-                        visualWidth, visualWidth,
+                        width,
                         lines.maxOfOrNull { it.descent } ?: 0f,
                         lines.maxOfOrNull { it.ascent } ?: 0f,
                     ))
@@ -444,7 +446,7 @@ class DungeonMapBaseRenderer :
                         0.0, -ascent / 2.0,
                         w.toDouble(),
                         h.toDouble(),
-                        visualWidth.toDouble(),
+                        width.toDouble(),
                         fontSize * lines.size.toDouble()
                     )
                 }

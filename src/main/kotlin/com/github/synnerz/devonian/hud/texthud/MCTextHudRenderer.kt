@@ -20,7 +20,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
         val comp = Component.literal(str.replaceCodes())
         val w = (font?.width(comp) ?: 0) * parent.scale / parent.renderScale.toFloat()
         return CompLineData(
-            w, w,
+            w,
             parent.fontSize,
             parent.fontSize * 0.25f,
             false,
@@ -54,8 +54,8 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
             val y = i * BASE_FONT_SIZE
             val x = when (parent.align) {
                 Align.Left -> 0f
-                Align.Right -> parent.lineVisualWidth - data.visualWidth
-                Align.Center -> (parent.lineVisualWidth - data.visualWidth) * 0.5f
+                Align.Right -> parent.lineWidth - data.width
+                Align.Center -> (parent.lineWidth - data.width) * 0.5f
             } / parent.scale * parent.renderScale.toFloat()
 
             if (parent.backdrop == Backdrop.Line) ctx.guiRenderState.submitGuiElement(
@@ -63,7 +63,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                     RenderPipelines.GUI,
                     mat,
                     x, y,
-                    (x + data.visualWidth / parent.scale * parent.renderScale).toFloat(),
+                    (x + data.width / parent.scale * parent.renderScale).toFloat(),
                     (y + (data.ascent + data.descent) / parent.scale * parent.renderScale).toFloat(),
                     0x40000000,
                     ctx.scissorStack.peek()
@@ -141,14 +141,12 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
 
     class CompLineData(
         width: Float,
-        visualWidth: Float,
         ascent: Float,
         descent: Float,
         hasObfuText: Boolean,
         val comp: Component,
     ) : LineData(
         width,
-        visualWidth,
         ascent,
         descent,
         hasObfuText,

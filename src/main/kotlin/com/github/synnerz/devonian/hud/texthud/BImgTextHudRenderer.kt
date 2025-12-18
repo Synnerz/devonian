@@ -67,7 +67,7 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
 
     override fun onUpdateImage() {
         val params = parent.lastRenderParams
-        val actualW = ceil(parent.lineVisualWidth).toInt()
+        val actualW = ceil(parent.lineWidth).toInt()
         val actualH = ceil(params.fontSize * (parent.lines.size + 1) + params.shadow.getSizeIncrease(params.fontSize)).toInt()
         renderer.update(
             MathUtils.ceilPow2(actualW, 1),
@@ -76,7 +76,6 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
                 params,
                 parent.lines.map { it.data as StringParser.LayoutLineData },
                 parent.lineWidth,
-                parent.lineVisualWidth,
                 parent.fontAscent,
                 parent.fontDescent,
             )

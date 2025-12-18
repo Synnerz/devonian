@@ -53,8 +53,6 @@ open class StylizedTextHud(
         private set
     var lineWidth = 0f
         private set
-    var lineVisualWidth = 0f
-        private set
     var fontAscent = 0f
         private set
     var fontDescent = 0f
@@ -99,7 +97,6 @@ open class StylizedTextHud(
         lastRenderParams = currentParams
 
         lineWidth = 0f
-        lineVisualWidth = 0f
         fontAscent = 0f
         fontDescent = 0f
         hasObfuText = false
@@ -108,18 +105,16 @@ open class StylizedTextHud(
         lines.forEach {
             if (it.dirty) {
                 it.data = renderer.onUpdateLine(it.str, currentParams)
+                if (it.data!!.width != 0f) it.data!!.width += shadow.getSizeIncrease(fontSize)
                 it.dirty = false
                 markImage()
             }
 
             lineWidth = max(lineWidth, it.data!!.width)
-            lineVisualWidth = max(lineVisualWidth, it.data!!.visualWidth)
             fontAscent = max(fontAscent, it.data!!.ascent)
             fontDescent = max(fontDescent, it.data!!.descent)
             if (it.data!!.hasObfuText) hasObfuText = true
         }
-
-        if (lineVisualWidth != 0f) lineVisualWidth += shadow.getSizeIncrease(fontSize)
 
         renderer.updateCleanup()
     }
@@ -188,20 +183,17 @@ open class StylizedTextHud(
 
     open class LineData(
         width: Float,
-        visualWidth: Float,
         ascent: Float,
         descent: Float,
         val hasObfuText: Boolean,
     ) : FontMetrics(
         width,
-        visualWidth,
         ascent,
         descent,
     )
 
     open class FontMetrics(
-        val width: Float,
-        val visualWidth: Float,
+        var width: Float,
         val ascent: Float,
         val descent: Float,
     )

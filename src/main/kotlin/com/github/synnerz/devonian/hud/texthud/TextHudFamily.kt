@@ -27,7 +27,7 @@ class TextHudFamily(name: String, data: DataProvider) : StylizedTextHud(name, da
         children.forEach { child ->
             child.x = bounds.x + x
             child.y = bounds.y + bounds.h - child.getHeight()
-            x += child.getWidth()
+            x += child.getWidth() + 2.0 * scale
             child.draw(ctx)
         }
     }

@@ -102,7 +102,8 @@ object StringParser {
         f1: Font,
         f2: Font,
         f3: Font,
-        fontSize: Float
+        fontSize: Float,
+        noRender: Boolean = false,
     ): LayoutLineData {
         var str = str
         str = "&f$str&r"
@@ -193,20 +194,21 @@ object StringParser {
 
         val tyl = TextLayout(attStr.iterator, g.fontRenderContext)
         val shapes = mutableListOf<Pair<Color, Shape>>()
-        var x = 0.0
-        val frc = g.fontRenderContext
-        atts.forEach { v ->
-            if (!isColorCode(v.t)) return@forEach
-            if (v.s >= v.e) return@forEach
+        if (!noRender) {
+            var x = 0.0
+            val frc = g.fontRenderContext
+            atts.forEach { v ->
+                if (!isColorCode(v.t)) return@forEach
+                if (v.s >= v.e) return@forEach
 
-            val tyl = TextLayout(attStr.getIterator(null, v.s, v.e), frc)
-            val shape = tyl.getOutline(AffineTransform.getTranslateInstance(x, 0.0))
-            x += tyl.advance
-            shapes.add(Pair(COLORS[v.t] ?: Color(-1), shape))
+                val tyl = TextLayout(attStr.getIterator(null, v.s, v.e), frc)
+                val shape = tyl.getOutline(AffineTransform.getTranslateInstance(x, 0.0))
+                x += tyl.advance
+                shapes.add(Pair(COLORS[v.t] ?: Color(-1), shape))
+            }
         }
 
         return LayoutLineData(
-            tyl.advance,
             tyl.visibleAdvance,
             tyl.ascent,
             tyl.descent,
@@ -217,14 +219,12 @@ object StringParser {
 
     class LayoutLineData(
         width: Float,
-        visualWidth: Float,
         ascent: Float,
         descent: Float,
         hasObfuText: Boolean,
         val shapes: List<Pair<Color, Shape>>,
     ) : StylizedTextHud.LineData(
         width,
-        visualWidth,
         ascent,
         descent,
         hasObfuText,

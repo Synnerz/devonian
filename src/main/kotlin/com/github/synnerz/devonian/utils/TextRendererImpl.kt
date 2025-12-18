@@ -38,33 +38,35 @@ object TextRendererImpl {
             g.fillRect(
                 0,
                 0,
-                (param.visualWidth + 0.5f).toInt(),
+                (param.width + 0.5f).toInt(),
                 (param.lines.size * rp.fontSize + (param.lines.getOrNull(0)?.descent ?: 0f) + 0.5f).toInt()
             )
         }
 
         g.paint = Color(-1)
+        val empty = AffineTransform.getTranslateInstance(0.0, 0.0)
         param.lines.forEachIndexed { i, v ->
-            val y = i * rp.fontSize + v.ascent
+            val y = i * rp.fontSize
             val x = when (rp.align) {
                 Align.Left -> 0f
-                Align.Right -> param.visualWidth - v.visualWidth
+                Align.Right -> param.width - v.width
                 Align.Center
-                    -> (param.visualWidth - v.visualWidth) * 0.5f
+                    -> (param.width - v.width) * 0.5f
             }
-            tmpG.transform = AffineTransform.getTranslateInstance(x.toDouble(), y.toDouble())
 
             if (rp.backdrop == Backdrop.Line) {
                 g.paint = Color(0, 0, 0, 64)
                 g.fillRect(
-                    0,
-                    v.ascent.toInt(),
-                    ceil(v.visualWidth).toInt(),
+                    x.toInt(),
+                    (y + v.ascent - rp.fontSize).toInt(),
+                    ceil(v.width).toInt(),
                     ceil(rp.fontSize + v.descent).toInt()
                 )
             }
 
+            tmpG.transform = AffineTransform.getTranslateInstance(x.toDouble(), y.toDouble() + v.ascent)
             if (rp.shadow == Shadow.Outline) {
+                tmpG.translate(rp.fontSize * 0.1, 0.0)
                 val outlineColor = Color(0)
                 tmpG.stroke = BasicStroke(rp.fontSize * 0.1f)
                 v.shapes.forEach {
@@ -80,6 +82,7 @@ object TextRendererImpl {
                     tmpG.fill(it.second)
                 }
             }
+            tmpG.transform = empty
         }
 
         if (isDrop) {
