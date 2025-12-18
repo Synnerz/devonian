@@ -206,6 +206,7 @@ object Devonian : ClientModInitializer {
         CustomManaUseHud,
         CroesusProfit,
         WardrobeKeybinds,
+        FireFreezeTimer,
 
         // Debug
         CopyItem,
