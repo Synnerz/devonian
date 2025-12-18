@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
@@ -128,12 +127,23 @@ object ItemAnimations : Feature(
 
     fun applyTransformations(pose: PoseStack) {
         if (!isEnabled()) return
-        val f = getItemScale().toFloat()
-        pose.scale(1f, 1f, f)
+        val scale = getItemScale().toFloat()
+        val xo = SETTING_X_OFFSET.get()
+        val yo = SETTING_Y_OFFSET.get()
+        val zo = SETTING_Z_OFFSET.get()
+
         pose.mulPose(Axis.XP.rotationDegrees(SETTING_PITCH_OFFSET.get().toFloat()))
         pose.mulPose(Axis.YP.rotationDegrees(SETTING_YAW_OFFSET.get().toFloat()))
         pose.mulPose(Axis.ZP.rotationDegrees(SETTING_ROLL_OFFSET.get().toFloat()))
-        pose.translate(SETTING_X_OFFSET.get().toFloat(), SETTING_Y_OFFSET.get().toFloat(), SETTING_Z_OFFSET.get().toFloat())
+        if (scale != 1f)
+            pose.scale(scale, scale, 1f)
+
+        if (xo > 0.0 || yo > 0.0 || zo > 0.0)
+            pose.translate(
+                SETTING_X_OFFSET.get().toFloat() / scale,
+                SETTING_Y_OFFSET.get().toFloat() / scale,
+                SETTING_Z_OFFSET.get().toFloat(),
+            )
     }
 
     private fun getCurrentSwingDuration(): Int {
