@@ -56,9 +56,8 @@ object Ping {
         }
     }
 
-    fun addSample(from: Double, weight: Int, to: Double = getTimeMS()) {
-        val ping = to - from
-        val sample = PingSample(to, ping, weight)
+    fun addSample(ping: Double, weight: Int, t: Double) {
+        val sample = PingSample(t, ping, weight)
 
         pingSum.update { it + ping * weight }
         weightSum.plusAssign(weight)
@@ -67,6 +66,11 @@ object Ping {
         if (ping > getMedianPing()) medianMin.add(sample)
         else medianMax.add(sample)
         rebalanceHeaps()
+    }
+
+    private fun addSample_(from: Double, weight: Int) {
+        val t = getTimeMS()
+        addSample(t - from, weight, t)
     }
 
     init {
@@ -94,17 +98,17 @@ object Ping {
                     if (didBeat) return@on
                     if (lastBeat == 0.0) return@on
 
-                    addSample(lastBeat, 10)
+                    addSample_(lastBeat, 10)
                     didBeat = true
                 }
 
                 is ClientboundBlockUpdatePacket -> {
                     val t = awaitingBlockUpdate.remove(packet.pos)
-                    if (t != null) addSample(t, 1)
+                    if (t != null) addSample_(t, 1)
                 }
 
                 is ClientboundPongResponsePacket -> {
-                    addSample(packet.time.toDouble(), 1, System.currentTimeMillis().toDouble())
+                    addSample((System.currentTimeMillis() - packet.time).toDouble(), 5, getTimeMS())
                 }
             }
         }

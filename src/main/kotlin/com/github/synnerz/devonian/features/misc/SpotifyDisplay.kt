@@ -52,7 +52,7 @@ object SpotifyDisplay : TextHudFeature(
         "Marquee Scroll Speed",
     )
 
-    override fun createHud(): StylizedTextHud = TextHudFamily("spotifyDisplay", this)
+    override fun createHud(): StylizedTextHud = TextHudFamily(configName, this)
 
     override fun getEditText(): List<String> = throw UnsupportedOperationException()
 
