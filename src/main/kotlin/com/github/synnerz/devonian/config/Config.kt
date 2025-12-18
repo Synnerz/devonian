@@ -35,7 +35,7 @@ object Config : PersistentData by jsonLoader {
             obj.getFloat("scale"),
             obj.getInt("anchor"),
             obj.getInt("align"),
-            obj.getBoolean("shadow"),
+            obj.getInt("shadow2"),
             obj.getInt("backdrop"),
         )
     }
@@ -48,7 +48,7 @@ object Config : PersistentData by jsonLoader {
         value.scale?.let { obj.set("scale", it) }
         value.anchor?.let { obj.set("anchor", it) }
         value.align?.let { obj.set("align", it) }
-        value.shadow?.let { obj.set("shadow", it) }
+        value.shadow?.let { obj.set("shadow2", it) }
         value.backdrop?.let { obj.set("backdrop", it) }
     }
 
@@ -71,7 +71,7 @@ data class NullableHudData(
     var scale: Float? = null,
     var anchor: Int? = null,
     var align: Int? = null,
-    var shadow: Boolean? = null,
+    var shadow: Int? = null,
     var backdrop: Int? = null,
 ) {
     companion object {
@@ -81,7 +81,7 @@ data class NullableHudData(
             data.scale,
             data.anchor.ordinal,
             data.align.ordinal,
-            data.shadow,
+            data.shadow.ordinal,
             data.backdrop.ordinal,
         )
     }

@@ -70,7 +70,7 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
 
         anchor = Anchor.Center
         align = Align.Center
-        shadow = true
+        shadow = Shadow.Drop
         backdrop = Backdrop.None
     }
 }

@@ -95,7 +95,14 @@ abstract class BufferedImageRenderer<T>(val name: String) {
     }
 
     companion object {
-        val pool = ThreadPoolExecutor(1, 2, 60, TimeUnit.SECONDS, LinkedBlockingQueue())
+        private var threadId = 0
+        val pool = ThreadPoolExecutor(
+            1, 2,
+            60, TimeUnit.SECONDS,
+            LinkedBlockingQueue()
+        ) { run ->
+            Thread(run, "Devonian BufferedImage Renderer-${threadId++}")
+        }
         val pipeline = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation("devonian/buffered_image_textured_triangle_strip")
             .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, Mode.QUADS)

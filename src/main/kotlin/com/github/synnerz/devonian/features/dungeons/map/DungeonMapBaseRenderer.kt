@@ -26,7 +26,7 @@ class DungeonMapBaseRenderer :
     var cachedW = 0
     var cachedH = 0
 
-    data class CachedStringKey(val str: String, val size: Int, val shadow: Boolean)
+    data class CachedStringKey(val str: String, val size: Int, val shadow: StylizedTextHud.Shadow)
 
     data class CachedRenderedString(
         val img: BufferedImage,
@@ -332,7 +332,6 @@ class DungeonMapBaseRenderer :
 
                 val lines = text.map { StringParser.processString(
                     it,
-                    options.stringShadow,
                     g,
                     font, font, font,
                     fontSize
@@ -417,14 +416,13 @@ class DungeonMapBaseRenderer :
                 val rendered = cachedStrings.getOrPut(key) {
                     val lines = text.map { StringParser.processString(
                         it,
-                        options.stringShadow,
                         g,
                         font, font, font,
                         fontSize
                     ) }
                     val visualWidth = lines.maxOf { it.visualWidth }
 
-                    val w = visualWidth + (if (options.stringShadow) 0.1f * fontSize else 0.0f) + 5.0f
+                    val w = visualWidth + options.stringShadow.getSizeIncrease(fontSize) + 5.0f
                     val h = fontSize * lines.size + ascent
                     val img = bimgProvider.create(w.toInt(), h.toInt())
 

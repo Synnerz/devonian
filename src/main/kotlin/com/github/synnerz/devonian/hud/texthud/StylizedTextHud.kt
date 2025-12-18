@@ -12,7 +12,7 @@ open class StylizedTextHud(
         0.0, 0.0, 1f,
         Anchor.NW,
         Align.Left,
-        false,
+        Shadow.None,
         Backdrop.None
     ),
     renderer: IStylizedTextHudRenderer = getRenderer(name),
@@ -94,8 +94,6 @@ open class StylizedTextHud(
 
         renderScale = 1.0 / window.guiScale
 
-        if (lastRenderParams.shadow != shadow) markText()
-
         val currentParams = TextRenderParams(align, shadow, backdrop, fontSize)
         if (currentParams != lastRenderParams) markImage()
         lastRenderParams = currentParams
@@ -121,7 +119,7 @@ open class StylizedTextHud(
             if (it.data!!.hasObfuText) hasObfuText = true
         }
 
-        if (lineVisualWidth != 0f) lineVisualWidth += (if (shadow) fontSize * 0.1f else 0.0f)
+        if (lineVisualWidth != 0f) lineVisualWidth += shadow.getSizeIncrease(fontSize)
 
         renderer.updateCleanup()
     }
@@ -212,7 +210,7 @@ open class StylizedTextHud(
 
     data class TextRenderParams(
         val align: Align,
-        val shadow: Boolean,
+        val shadow: Shadow,
         val backdrop: Backdrop,
         val fontSize: Float,
     )
@@ -261,6 +259,22 @@ open class StylizedTextHud(
 
         companion object {
             fun from(ordinal: Int) = entries.getOrElse(ordinal) { Left }
+        }
+    }
+
+    enum class Shadow(private val mul: Float) {
+        None(0f), Drop(0.1f), Outline(0.2f);
+
+        fun cycle() = when (this) {
+            None -> Drop
+            Drop -> Outline
+            Outline -> None
+        }
+
+        fun getSizeIncrease(fontSize: Float) = fontSize * mul
+
+        companion object {
+            fun from(ordinal: Int) = entries.getOrElse(ordinal) { None }
         }
     }
 

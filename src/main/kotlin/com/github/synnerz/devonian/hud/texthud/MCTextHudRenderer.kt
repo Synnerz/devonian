@@ -1,8 +1,7 @@
 package com.github.synnerz.devonian.hud.texthud
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.Align
-import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.Backdrop
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.Companion.BASE_FONT_SIZE
 import com.github.synnerz.devonian.utils.QuadRenderState
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
@@ -15,8 +14,8 @@ import org.joml.Matrix3x2f
 class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
     override fun onUpdateLine(
         str: String,
-        params: StylizedTextHud.TextRenderParams
-    ): StylizedTextHud.LineData {
+        params: TextRenderParams
+    ): LineData {
         val font = Devonian.minecraft.font
         val comp = Component.literal(str.replaceCodes())
         val w = (font?.width(comp) ?: 0) * parent.scale / parent.renderScale.toFloat()
@@ -71,6 +70,57 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                 )
             )
 
+            if (parent.shadow == Shadow.Outline) {
+                ctx.guiRenderState.submitText(
+                    GuiTextRenderState(
+                        font,
+                        data.comp.visualOrderText,
+                        mat,
+                        x.toInt() - 1, y.toInt() + 2,
+                        0xFF000000.toInt(),
+                        0,
+                        false,
+                        ctx.scissorStack.peek()
+                    )
+                )
+                ctx.guiRenderState.submitText(
+                    GuiTextRenderState(
+                        font,
+                        data.comp.visualOrderText,
+                        mat,
+                        x.toInt() + 1, y.toInt() + 2,
+                        0xFF000000.toInt(),
+                        0,
+                        false,
+                        ctx.scissorStack.peek()
+                    )
+                )
+                ctx.guiRenderState.submitText(
+                    GuiTextRenderState(
+                        font,
+                        data.comp.visualOrderText,
+                        mat,
+                        x.toInt(), y.toInt() + 2 - 1,
+                        0xFF000000.toInt(),
+                        0,
+                        false,
+                        ctx.scissorStack.peek()
+                    )
+                )
+                ctx.guiRenderState.submitText(
+                    GuiTextRenderState(
+                        font,
+                        data.comp.visualOrderText,
+                        mat,
+                        x.toInt(), y.toInt() + 2 + 1,
+                        0xFF000000.toInt(),
+                        0,
+                        false,
+                        ctx.scissorStack.peek()
+                    )
+                )
+            }
+
             ctx.guiRenderState.submitText(
                 GuiTextRenderState(
                     font,
@@ -80,7 +130,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                     -1,
                     // if (parent.backdrop == Backdrop.Line) 0x40000000 else 0,
                     0,
-                    parent.shadow,
+                    parent.shadow == Shadow.Drop,
                     ctx.scissorStack.peek()
                 )
             )
@@ -96,7 +146,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
         descent: Float,
         hasObfuText: Boolean,
         val comp: Component,
-    ) : StylizedTextHud.LineData(
+    ) : LineData(
         width,
         visualWidth,
         ascent,

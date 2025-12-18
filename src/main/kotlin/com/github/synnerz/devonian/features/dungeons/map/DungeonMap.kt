@@ -294,9 +294,10 @@ object DungeonMap : HudFeature(
         "Text Alignment",
         subcategory = "Style",
     )
-    private val SETTING_TEXT_SHADOW = addSwitch(
-        "textShadow",
-        true,
+    private val SETTING_TEXT_SHADOW = addSelection(
+        "textShadow2",
+        0,
+        listOf("None", "Drop", "Outline"),
         "",
         "Text Shadow",
         subcategory = "Style",
@@ -397,7 +398,7 @@ object DungeonMap : HudFeature(
                     DungeonMapRoomInfoAlignment.from(SETTING_ICON_ALIGNMENT.getCurrent()),
                     SETTING_TEXT_SIZE.get(),
                     DungeonMapRoomInfoAlignment.from(SETTING_TEXT_ALIGNMENT.getCurrent()),
-                    SETTING_TEXT_SHADOW.get(),
+                    Shadow.from(SETTING_TEXT_SHADOW.get()),
                     SETTING_COLOR_ROOM_TEXT.get(),
                     SETTING_RENDER_HIDDEN_ROOMS.get(),
                     Dungeons.started.value,
@@ -519,7 +520,7 @@ object DungeonMap : HudFeature(
                 val hud = textHuds[i]
                 hud.x = px.toDouble()
                 hud.y = py - maxDy * SETTING_MARKER_SCALE.get().toFloat() - hud.getHeight() * 0.5
-                hud.shadow = SETTING_TEXT_SHADOW.get()
+                hud.shadow = Shadow.from(SETTING_TEXT_SHADOW.get())
                 hud.setLine("$nameFormat$text")
                 hud.scale = scale * 0.3f * SETTING_NAME_SCALE.get().toFloat()
                 hud.draw(ctx)

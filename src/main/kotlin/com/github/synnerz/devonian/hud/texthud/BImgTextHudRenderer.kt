@@ -8,6 +8,7 @@ import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.GraphicsEnvironment
 import java.awt.RenderingHints
+import java.awt.image.RescaleOp
 import kotlin.math.ceil
 
 class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontListener {
@@ -44,16 +45,16 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
             cachedGraphics = BufferedImageFactoryImpl.BLANK_IMAGE.createGraphics()
             cachedGraphics!!.font = fontMain
             cachedGraphics!!.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+            cachedGraphics!!.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
         }
 
         return StringParser.processString(
             str,
-            params.shadow,
             cachedGraphics!!,
             fontMain!!,
             fontMono!!,
             fontBack!!,
-            params.fontSize
+            params.fontSize,
         )
     }
 
@@ -67,7 +68,7 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
     override fun onUpdateImage() {
         val params = parent.lastRenderParams
         val actualW = ceil(parent.lineVisualWidth).toInt()
-        val actualH = ceil(params.fontSize * (parent.lines.size + 1) + (if (params.shadow) params.fontSize * 0.1 else 0.0)).toInt()
+        val actualH = ceil(params.fontSize * (parent.lines.size + 1) + params.shadow.getSizeIncrease(params.fontSize)).toInt()
         renderer.update(
             MathUtils.ceilPow2(actualW, 1),
             MathUtils.ceilPow2(actualH, 2),

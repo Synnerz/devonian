@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.map
 
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import java.awt.Color
 
 data class DungeonMapRenderOptions(
@@ -19,7 +20,7 @@ data class DungeonMapRenderOptions(
     val iconAlignment: DungeonMapRoomInfoAlignment,
     val textSize: Double, // [0, 1]
     val textAlignment: DungeonMapRoomInfoAlignment,
-    val stringShadow: Boolean,
+    val stringShadow: StylizedTextHud.Shadow,
     val colorRoomName: Boolean,
     val renderUnknownRooms: Boolean,
     val dungeonStarted: Boolean,

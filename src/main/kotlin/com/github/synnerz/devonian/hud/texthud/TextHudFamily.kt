@@ -59,7 +59,7 @@ class DerivedProvider(
         get() = parent.align
         set(_) = throw UnsupportedOperationException()
 
-    override var shadow: Boolean
+    override var shadow: StylizedTextHud.Shadow
         get() = parent.shadow
         set(_) = throw UnsupportedOperationException()
 

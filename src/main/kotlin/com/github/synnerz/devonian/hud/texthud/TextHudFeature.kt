@@ -42,7 +42,7 @@ abstract class TextHudFeature(
     protected var isEditing = false
     override var anchor = Anchor.NW
     override var align = Align.Left
-    override var shadow = true
+    override var shadow = Shadow.None
     override var backdrop = Backdrop.None
 
     protected open fun createHud(): StylizedTextHud = StylizedTextHud(configName, this)
@@ -57,7 +57,7 @@ abstract class TextHudFeature(
         data.scale?.let { scale = it }
         data.anchor?.let { anchor = Anchor.from(it) }
         data.align?.let { align = Align.from(it) }
-        data.shadow?.let { shadow = it }
+        data.shadow?.let { shadow = Shadow.from(it) }
         data.backdrop?.let { backdrop = Backdrop.from(it) }
     }
 
@@ -102,7 +102,7 @@ abstract class TextHudFeature(
         when (keyCode) {
             GLFW.GLFW_KEY_1 -> anchor = anchor.cycle()
             GLFW.GLFW_KEY_2 -> align = align.cycle()
-            GLFW.GLFW_KEY_3 -> shadow = !shadow
+            GLFW.GLFW_KEY_3 -> shadow = shadow.cycle()
             GLFW.GLFW_KEY_4 -> backdrop = backdrop.cycle()
         }
     }

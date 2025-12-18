@@ -1,11 +1,14 @@
 package com.github.synnerz.devonian.hud.texthud
 
+import com.github.synnerz.devonian.hud.texthud.StringParser.COLORS
 import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.GraphicsEnvironment
+import java.awt.Shape
 import java.awt.font.TextAttribute
 import java.awt.font.TextLayout
+import java.awt.geom.AffineTransform
 import java.text.AttributedCharacterIterator
 import java.text.AttributedString
 import java.util.function.Consumer
@@ -68,43 +71,24 @@ object StringParser {
         addAttribute(att, TextAttribute.FONT, f1, s, e)
     }
 
-    private val COLORS1: MutableMap<Char, Color> = HashMap()
-    private val COLORS2: MutableMap<Char, Color> = HashMap()
-
-    init {
-        COLORS1['0'] = Color(0)
-        COLORS1['1'] = Color(170)
-        COLORS1['2'] = Color(43520)
-        COLORS1['3'] = Color(43690)
-        COLORS1['4'] = Color(11141120)
-        COLORS1['5'] = Color(11141290)
-        COLORS1['6'] = Color(16755200)
-        COLORS1['7'] = Color(11184810)
-        COLORS1['8'] = Color(5592405)
-        COLORS1['9'] = Color(5592575)
-        COLORS1['a'] = Color(5635925)
-        COLORS1['b'] = Color(5636095)
-        COLORS1['c'] = Color(16733525)
-        COLORS1['d'] = Color(16733695)
-        COLORS1['e'] = Color(16777045)
-        COLORS1['f'] = Color(16777215)
-        COLORS2['0'] = Color(0)
-        COLORS2['1'] = Color(42)
-        COLORS2['2'] = Color(10752)
-        COLORS2['3'] = Color(10794)
-        COLORS2['4'] = Color(2752512)
-        COLORS2['5'] = Color(2752554)
-        COLORS2['6'] = Color(4139520)
-        COLORS2['7'] = Color(2763306)
-        COLORS2['8'] = Color(1381653)
-        COLORS2['9'] = Color(1381695)
-        COLORS2['a'] = Color(1392405)
-        COLORS2['b'] = Color(1392447)
-        COLORS2['c'] = Color(4134165)
-        COLORS2['d'] = Color(4134207)
-        COLORS2['e'] = Color(4144917)
-        COLORS2['f'] = Color(4144959)
-    }
+    private val COLORS = mapOf(
+        '0' to Color(0),
+        '1' to Color(170),
+        '2' to Color(43520),
+        '3' to Color(43690),
+        '4' to Color(11141120),
+        '5' to Color(11141290),
+        '6' to Color(16755200),
+        '7' to Color(11184810),
+        '8' to Color(5592405),
+        '9' to Color(5592575),
+        'a' to Color(5635925),
+        'b' to Color(5636095),
+        'c' to Color(16733525),
+        'd' to Color(16733695),
+        'e' to Color(16777045),
+        'f' to Color(16777215),
+    )
 
     private fun obfuscate(c: Char): Char {
         var n = (Math.random() * 142).toInt()
@@ -114,7 +98,6 @@ object StringParser {
 
     fun processString(
         str: String,
-        shadow: Boolean,
         g: Graphics2D,
         f1: Font,
         f2: Font,
@@ -122,7 +105,7 @@ object StringParser {
         fontSize: Float
     ): LayoutLineData {
         var str = str
-        str = "$str&r"
+        str = "&f$str&r"
         val sb = StringBuilder()
         val o: MutableList<ObfData> = ArrayList()
         val atts: MutableList<AttrData> = ArrayList()
@@ -167,8 +150,9 @@ object StringParser {
                     continue
                 }
                 if (k == 'r') {
-                    cAtts.forEach(Consumer { v: AttrData -> atts.add(AttrData(v.t, v.s, sb.length)) })
+                    cAtts.forEach { v -> atts.add(AttrData(v.t, v.s, sb.length)) }
                     cAtts.clear()
+                    cAtts.add(AttrData('f', sb.length, 0))
                     if (obfS >= 0) o.add(ObfData(obfS, sb.length))
                     obfS = -1
                     i++
@@ -182,52 +166,52 @@ object StringParser {
 
         val s = sb.toString()
         val ca = s.toCharArray()
-        val a = AttributedString(s)
-        val b = if (shadow) AttributedString(s) else null
+        val attStr = AttributedString(s)
 
-        addAttribute(a, TextAttribute.SIZE, fontSize, 0, s.length)
-        addAttribute(b, TextAttribute.SIZE, fontSize, 0, s.length)
+        addAttribute(attStr, TextAttribute.SIZE, fontSize, 0, s.length)
         var end = 0
         for (v in o) {
-            setFontAttr(a, ca, f1, f3, end, v.s)
-            setFontAttr(b, ca, f1, f3, end, v.s)
-            addAttribute(a, TextAttribute.FONT, f2, v.s, v.e)
-            addAttribute(b, TextAttribute.FONT, f2, v.s, v.e)
+            setFontAttr(attStr, ca, f1, f3, end, v.s)
+            addAttribute(attStr, TextAttribute.FONT, f2, v.s, v.e)
             end = v.e
         }
-        setFontAttr(a, ca, f1, f3, end, s.length)
-        setFontAttr(b, ca, f1, f3, end, s.length)
+        setFontAttr(attStr, ca, f1, f3, end, s.length)
 
-        atts.forEach(Consumer { v: AttrData ->
+        atts.forEach { v ->
             if (isColorCode(v.t)) {
-                addAttribute(a, TextAttribute.FOREGROUND, COLORS1[v.t], v.s, v.e)
-                addAttribute(b, TextAttribute.FOREGROUND, COLORS2[v.t], v.s, v.e)
+                return@forEach
             } else if (v.t == 'l') {
-                addAttribute(b, TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, v.s, v.e)
-                addAttribute(a, TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, v.s, v.e)
+                addAttribute(attStr, TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, v.s, v.e)
             } else if (v.t == 'o') {
-                addAttribute(b, TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, v.s, v.e)
-                addAttribute(a, TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, v.s, v.e)
+                addAttribute(attStr, TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, v.s, v.e)
             } else if (v.t == 'm') {
-                addAttribute(b, TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, v.s, v.e)
-                addAttribute(a, TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, v.s, v.e)
+                addAttribute(attStr, TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, v.s, v.e)
             } else if (v.t == 'n') {
-                addAttribute(b, TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL, v.s, v.e)
-                addAttribute(a, TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL, v.s, v.e)
-            } else throw RuntimeException("unknown attribute: " + v.t)
-        })
+                addAttribute(attStr, TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL, v.s, v.e)
+            } else throw IllegalStateException("unknown attribute: " + v.t)
+        }
 
-        val tylA = TextLayout(a.iterator, g.fontRenderContext)
-        val tylB = if (b == null) null else TextLayout(b.iterator, g.fontRenderContext)
+        val tyl = TextLayout(attStr.iterator, g.fontRenderContext)
+        val shapes = mutableListOf<Pair<Color, Shape>>()
+        var x = 0.0
+        val frc = g.fontRenderContext
+        atts.forEach { v ->
+            if (!isColorCode(v.t)) return@forEach
+            if (v.s >= v.e) return@forEach
+
+            val tyl = TextLayout(attStr.getIterator(null, v.s, v.e), frc)
+            val shape = tyl.getOutline(AffineTransform.getTranslateInstance(x, 0.0))
+            x += tyl.advance
+            shapes.add(Pair(COLORS[v.t] ?: Color(-1), shape))
+        }
 
         return LayoutLineData(
-            tylA.advance,
-            tylA.visibleAdvance,
-            tylA.ascent,
-            tylA.descent,
+            tyl.advance,
+            tyl.visibleAdvance,
+            tyl.ascent,
+            tyl.descent,
             o.isNotEmpty(),
-            tylA,
-            tylB,
+            shapes,
         )
     }
 
@@ -237,8 +221,7 @@ object StringParser {
         ascent: Float,
         descent: Float,
         hasObfuText: Boolean,
-        val layout: TextLayout,
-        val layoutShadow: TextLayout?,
+        val shapes: List<Pair<Color, Shape>>,
     ) : StylizedTextHud.LineData(
         width,
         visualWidth,

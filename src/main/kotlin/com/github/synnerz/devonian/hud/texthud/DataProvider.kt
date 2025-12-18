@@ -8,7 +8,7 @@ interface DataProvider {
     var scale: Float
     var anchor: Anchor
     var align: Align
-    var shadow: Boolean
+    var shadow: Shadow
     var backdrop: Backdrop
 }
 
@@ -18,6 +18,6 @@ class StaticProvider(
     override var scale: Float,
     override var anchor: Anchor,
     override var align: Align,
-    override var shadow: Boolean,
+    override var shadow: Shadow,
     override var backdrop: Backdrop
 ) : DataProvider
