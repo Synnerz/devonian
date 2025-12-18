@@ -7,6 +7,19 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
+private fun colorForNumber(num: Float, max: Float) = when {
+    num >= max * 0.75 -> "&a"
+    num >= max * 0.50 -> "&e"
+    else -> "&c"
+}
+
+fun colorForNumberReverse(num: Float, max: Float) = when {
+    num >= max * 0.75 -> "&c"
+    num >= max * 0.50 -> "&6"
+    num >= max * 0.25 -> "&e"
+    else -> "&a"
+}
+
 object BonzoMask : TextHudFeature(
     "bonzoMaskTimer",
     "Displays the immunity time as well as the cooldown for bonzo mask",
@@ -24,6 +37,7 @@ object BonzoMask : TextHudFeature(
     private val cooldownItemRegex = "^Cooldown: (\\d+)s$".toRegex()
     private val maskRegex = "^Your( ⚚)? Bonzo's Mask saved your life!$".toRegex()
     private var startedAt = -1L
+    private var COOLDOWN_TIME = 180
     private var cdStartedAt = -1L
 
     override fun initialize() {
@@ -40,7 +54,8 @@ object BonzoMask : TextHudFeature(
             val match = cooldownItemRegex.matchEntire(cdStr)?.groupValues?.drop(1) ?: return@on
             val time = match[0].toIntOrNull() ?: return@on
 
-            cdStartedAt = System.currentTimeMillis() + (time * 1000L)
+            COOLDOWN_TIME = time
+            cdStartedAt = System.currentTimeMillis() + (COOLDOWN_TIME * 1000L)
         }
 
         on<RenderOverlayEvent> {
@@ -54,23 +69,27 @@ object BonzoMask : TextHudFeature(
 
             val timeImmune = (startedAt - System.currentTimeMillis()) / 1000f
             val secondImmune = "%.2fs".format(timeImmune)
-            val immuneStr = if (timeImmune <= 0f && startedAt != -1L) "&c" else "&a$secondImmune &7"
             val timeCooldown = (cdStartedAt - System.currentTimeMillis()) / 1000f
             val secondCooldown = "%.2fs".format(timeCooldown)
             val cooldownStr = if (timeCooldown <= 0f) "&l&aREADY" else "(${secondCooldown})"
+            val str = when {
+                timeImmune > 0 -> "${colorForNumber(timeImmune, IMMUNITY_TIME / 1000f)}$secondImmune"
+                else -> "${colorForNumberReverse(timeCooldown, COOLDOWN_TIME.toFloat())}$cooldownStr"
+            }
 
-            setLine("&9Bonzo's Mask&f: $immuneStr$cooldownStr")
+            setLine("&9Bonzo's Mask&f: $str")
             draw(it.ctx)
             if (SETTING_HIDE_AFTER_IM.get() && timeImmune <= 0f)
                 startedAt = -1
         }
     }
 
-    override fun getEditText(): List<String> = listOf("&9Bonzo's Mask&f: &a3.00s &7(180s)")
+    override fun getEditText(): List<String> = listOf("&9Bonzo's Mask&f: &a3.00s")
 
     override fun onWorldChange(event: WorldChangeEvent) {
         startedAt = -1
         cdStartedAt = -1
+        COOLDOWN_TIME = 180
         clearLines()
     }
 }
@@ -113,19 +132,22 @@ object SpiritMask : TextHudFeature(
 
             val timeImmune = (startedAt - System.currentTimeMillis()) / 1000f
             val secondImmune = "%.2fs".format(timeImmune)
-            val immuneStr = if (timeImmune <= 0f && startedAt != -1L) "&c" else "&a$secondImmune &7"
             val timeCooldown = (cdStartedAt - System.currentTimeMillis()) / 1000f
             val secondCooldown = "%.2fs".format(timeCooldown)
             val cooldownStr = if (timeCooldown <= 0f) "&l&aREADY" else "(${secondCooldown})"
+            val str = when {
+                timeImmune > 0 -> "${colorForNumber(timeImmune, IMMUNITY_TIME / 1000f)}$secondImmune"
+                else -> "${colorForNumberReverse(timeCooldown, COOLDOWN_TIME / 1000f)}$cooldownStr"
+            }
 
-            setLine("&fSpirit Mask&f: $immuneStr$cooldownStr")
+            setLine("&fSpirit Mask&f: $str")
             draw(it.ctx)
             if (SETTING_HIDE_AFTER_IM.get() && timeImmune <= 0f)
                 startedAt = -1
         }
     }
 
-    override fun getEditText(): List<String> = listOf("&fSpirit Mask&f: &a1.00s &7(30s)")
+    override fun getEditText(): List<String> = listOf("&fSpirit Mask&f: &a1.00s")
 
     override fun onWorldChange(event: WorldChangeEvent) {
         startedAt = -1
@@ -172,19 +194,22 @@ object PhoenixTimer : TextHudFeature(
 
             val timeImmune = (startedAt - System.currentTimeMillis()) / 1000f
             val secondImmune = "%.2fs".format(timeImmune)
-            val immuneStr = if (timeImmune <= 0f && startedAt != -1L) "&c" else "&a$secondImmune &7"
             val timeCooldown = (cdStartedAt - System.currentTimeMillis()) / 1000f
             val secondCooldown = "%.2fs".format(timeCooldown)
             val cooldownStr = if (timeCooldown <= 0f) "&l&aREADY" else "(${secondCooldown})"
+            val str = when {
+                timeImmune > 0 -> "${colorForNumber(timeImmune, IMMUNITY_TIME / 1000f)}$secondImmune"
+                else -> "${colorForNumberReverse(timeCooldown, COOLDOWN_TIME / 1000f)}$cooldownStr"
+            }
 
-            setLine("&cPhoenix&f: $immuneStr$cooldownStr")
+            setLine("&cPhoenix&f: $str")
             draw(it.ctx)
             if (SETTING_HIDE_AFTER_IM.get() && timeImmune <= 0f)
                 startedAt = -1
         }
     }
 
-    override fun getEditText(): List<String> = listOf("&cPhoenix&f: &a4.00s &7(60s)")
+    override fun getEditText(): List<String> = listOf("&cPhoenix&f: &a4.00s")
 
     override fun onWorldChange(event: WorldChangeEvent) {
         startedAt = -1
