@@ -204,6 +204,7 @@ object Devonian : ClientModInitializer {
         SecretsHud,
         CustomDefenseHud,
         CustomManaUseHud,
+        CroesusProfit,
 
         // Debug
         CopyItem,
