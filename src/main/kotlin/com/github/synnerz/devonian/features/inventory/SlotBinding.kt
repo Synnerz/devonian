@@ -216,7 +216,7 @@ object SlotBinding : Feature(
                 if (SETTING_BOUND_LINES.get())
                     Render2D.drawWireRect(event.ctx, slot.x, slot.y, 16, 16, c, lw = 2)
 
-                val loc = slotLocCache.getOrNull(idx) ?: return@forEachIndexed
+                val loc = slotLocCache.getOrNull(other) ?: return@forEachIndexed
                 if (isHoveringBound) {
                     if (hovered != slot || i > 0) return@forEachIndexed
                 } else if (idx < other) return@forEachIndexed
