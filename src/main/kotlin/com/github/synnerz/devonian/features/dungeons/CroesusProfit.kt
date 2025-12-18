@@ -180,6 +180,7 @@ object CroesusProfit : TextHudFeature(
         }
 
         on<RenderOverlayEvent> {
+            if (chestsData["Wood"]!!.items.isEmpty()) return@on
             draw(it.ctx)
         }
 
@@ -193,7 +194,7 @@ object CroesusProfit : TextHudFeature(
     }
 
     // lazy part 2
-    override fun getEditText(): List<String> = listOf("&5Obsidian Chest", "&aA", "&aLife", "&bProfit&f: &a100")
+    override fun getEditText(): List<String> = listOf("&fCroesus Profit", "&5Obsidian Chest", "&aA", "&aLife", "&bProfit&f: &a100")
 
     override fun onWorldChange(event: WorldChangeEvent) {
         inChest = false
