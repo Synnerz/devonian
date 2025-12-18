@@ -27,6 +27,7 @@ object SkyblockPrices {
     }
 
     fun initialize() {
+        loader.load()
         Scheduler.schedulePool.scheduleWithFixedDelay(::update, 1L, 21L, TimeUnit.MINUTES)
     }
 
