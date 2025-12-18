@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.api.events.EntityDeathEvent;
 import com.github.synnerz.devonian.features.misc.ItemAnimations;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -38,6 +39,8 @@ public abstract class LivingEntityMixin extends Entity {
         at = @At("HEAD")
     )
     private void devonian$itemAnimations1(CallbackInfo ci) {
+        LivingEntity that = (LivingEntity) (Object) this;
+        if (!(that instanceof LocalPlayer)) return;
         ItemAnimations.INSTANCE.onUpdateSwingTime();
     }
 
@@ -46,6 +49,8 @@ public abstract class LivingEntityMixin extends Entity {
         at = @At("HEAD")
     )
     private void devonian$itemAnimations2(CallbackInfo ci) {
+        LivingEntity that = (LivingEntity) (Object) this;
+        if (!(that instanceof LocalPlayer)) return;
         ItemAnimations.INSTANCE.onSwing();
     }
 }

@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
@@ -173,16 +174,16 @@ object ItemAnimations : Feature(
 
         val total = getCurrentSwingDuration()
 
-        if (swinging) swingTimeTick++
-        else swingTimeTick = 0
+        if (swinging) {
+            swingTimeTick++
+            if (getSwingTime() >= total) {
+                swingTimeTick = 0
+                swinging = false
+            }
+        } else swingTimeTick = 0
 
-        val duration = getSwingTime()
-        if (duration >= total) {
-            swingTimeTick = 0
-            swinging = false
-        }
 
-        attackAnim = duration.toFloat() / total
+        attackAnim = getSwingTime().toFloat() / total
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
