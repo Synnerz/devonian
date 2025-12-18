@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.api.events.EntityDeathEvent;
+import com.github.synnerz.devonian.features.misc.ItemAnimations;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -30,5 +31,21 @@ public abstract class LivingEntityMixin extends Entity {
         if (!world.isClientSide()) return;
 
         new EntityDeathEvent(this, (ClientLevel) world).post();
+    }
+
+    @Inject(
+        method = "updateSwingTime",
+        at = @At("HEAD")
+    )
+    private void devonian$itemAnimations1(CallbackInfo ci) {
+        ItemAnimations.INSTANCE.onUpdateSwingTime();
+    }
+
+    @Inject(
+        method = "swing(Lnet/minecraft/world/InteractionHand;Z)V",
+        at = @At("HEAD")
+    )
+    private void devonian$itemAnimations2(CallbackInfo ci) {
+        ItemAnimations.INSTANCE.onSwing();
     }
 }
