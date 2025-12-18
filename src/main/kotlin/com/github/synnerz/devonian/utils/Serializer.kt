@@ -10,6 +10,11 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.*
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
@@ -139,6 +144,54 @@ object Serializer {
         return obj
     }
 
+    fun serializeEntity(ent: Entity): JsonDataObject {
+        val obj = JsonDataObject()
+        obj.set("id", ent.id)
+        obj.set("uuid", ent.uuid.toString())
+        obj.set("type", EntityType.getKey(ent.type).toString())
+
+        val name = JsonDataObject()
+        ent.customName?.let {
+            name.set("customName", it.colorCodes())
+            name.set("customName_", it.string)
+        }
+        ent.displayName?.let {
+            name.set("displayName", it.colorCodes())
+            name.set("displayName_", it.string)
+        }
+        obj.set("name", name)
+
+        val pos = JsonDataObject()
+        pos.set("x", ent.x)
+        pos.set("y", ent.y)
+        pos.set("z", ent.z)
+        pos.set("xRot", ent.xRot)
+        pos.set("yRot", ent.yRot)
+        obj.set("pos", pos)
+
+        if (ent is LivingEntity) {
+            val hp = JsonDataObject()
+            hp.set("health", ent.health)
+            hp.set("max", ent.maxHealth)
+            obj.set("hp", hp)
+
+            val eq = JsonDataObject()
+            EquipmentSlot.entries.forEach { slot ->
+                val item = ent.getItemBySlot(slot) ?: return@forEach
+                if (item.isEmpty) return@forEach
+                eq.set(slot.name, serializeItem(item))
+            }
+            obj.set("equipment", eq)
+        }
+
+        if (ent is Player) {
+            name.set("playerName", ent.gameProfile.name)
+            obj.set("profile", ent.gameProfile.id.toString())
+        }
+
+        return obj
+    }
+
     fun serialize(value: Any?): JsonDataObject {
         return when (value) {
             is ItemStack -> serializeItem(value)
@@ -146,6 +199,7 @@ object Serializer {
             is BlockState -> serializeBlockState(value)
             is Vec3 -> serializeVec(value)
             is Vector3f -> serializeVector3f(value)
+            is Entity -> serializeEntity(value)
             null -> JsonDataObject()
             else -> {
                 val obj = JsonDataObject()

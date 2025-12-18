@@ -27,6 +27,7 @@ import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.features.*
+import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.renderers.DungeonRoomComponentRenderer
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.KeyMapping
@@ -214,6 +215,7 @@ object Devonian : ClientModInitializer {
         RenderSlotIndex,
         PacketLogger,
         DungeonRoomComponentRenderer,
+        WAILA,
     )
 
     override fun onInitializeClient() {
