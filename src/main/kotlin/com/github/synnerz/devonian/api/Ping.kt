@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.game.ClientboundAwardStatsPacket
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
 import net.minecraft.network.protocol.game.ServerboundClientCommandPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
+import net.minecraft.network.protocol.ping.ClientboundPongResponsePacket
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
 
@@ -55,10 +56,9 @@ object Ping {
         }
     }
 
-    fun addSample(from: Double, weight: Int) {
-        val t = getTimeMS()
-        val ping = t - from
-        val sample = PingSample(t, ping, weight)
+    fun addSample(from: Double, weight: Int, to: Double = getTimeMS()) {
+        val ping = to - from
+        val sample = PingSample(to, ping, weight)
 
         pingSum.update { it + ping * weight }
         weightSum.plusAssign(weight)
@@ -101,6 +101,10 @@ object Ping {
                 is ClientboundBlockUpdatePacket -> {
                     val t = awaitingBlockUpdate.remove(packet.pos)
                     if (t != null) addSample(t, 1)
+                }
+
+                is ClientboundPongResponsePacket -> {
+                    addSample(packet.time.toDouble(), 1, System.currentTimeMillis().toDouble())
                 }
             }
         }
