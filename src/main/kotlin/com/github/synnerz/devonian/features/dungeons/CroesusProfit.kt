@@ -26,6 +26,15 @@ object CroesusProfit : TextHudFeature(
     private val chestRegex = "^(?:Master )?Catacombs - Floor [IV]+$".toRegex()
     private val enchantedBookRegex = "^Enchanted Book \\(([\\w ]+) ([IV]+)\\)$".toRegex()
     private val essenceRegex = "^(Wither|Undead) Essence x(\\d+)$".toRegex()
+    private val specialIds = mapOf(
+        // big thank Unclaimed NOOB Six
+        "WITHER_SHARD" to "SHARD_WITHER",
+        "THORN_SHARD" to "SHARD_THORN",
+        "APEX_DRAGON_SHARD" to "SHARD_APEX_DRAGON",
+        "POWER_DRAGON_SHARD" to "SHARD_POWER_DRAGON",
+        "SCARF_SHARD" to "SHARD_SCARF",
+        "NECROMANCERS_BROOCH" to "NECROMANCER_BROOCH",
+    )
     private val chestsData = mapOf(
         "Wood" to ChestData("&fWood"),
         "Gold" to ChestData("&6Gold"),
@@ -141,11 +150,13 @@ object CroesusProfit : TextHudFeature(
                         continue
                     }
 
-                    val itemId = line
+                    var itemId = line
                         .uppercase()
                         .replace("- ", "")
                         .replace("'", "")
                         .replace(" ", "_")
+                    if (itemId in specialIds) itemId = specialIds[itemId]!!
+
                     val price = SkyblockPrices.buyPrice(itemId).roundToInt()
 
                     // TODO: probably make this a toggle
