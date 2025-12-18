@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ActionbarEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -27,7 +28,9 @@ object CustomDefenseHud : TextHudFeature(
             event.cancel()
             ChatUtils.sendActionbar(event.text.colorCodes().replace(formattedDefenseRegex, "     "))
             if (SETTING_ONLY_HIDE.get()) return@on
-            setLine("&a${match[0]}❈")
+            Scheduler.scheduleTask {
+                setLine("&a${match[0]}❈")
+            }
         }
 
         on<RenderOverlayEvent> {

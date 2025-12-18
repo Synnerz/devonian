@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ActionbarEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -28,14 +29,18 @@ object CustomManaUseHud : TextHudFeature(
         on<ActionbarEvent> { event ->
             if (gatheredAt != -1 && EventBus.serverTicks() - gatheredAt > (1.5 / 0.05)) {
                 gatheredAt = -1
-                clearLines()
+                Scheduler.scheduleTask {
+                    clearLines()
+                }
             }
             val match = event.matches(manaUseRegex) ?: return@on
             ChatUtils.sendActionbar(event.text.colorCodes().replace(formattedManaUseRegex, "     "))
             if (SETTING_ONLY_HIDE.get()) return@on
             val manaUse = match[0]
             val itemUse = match[1]
-            setLine("&b-${manaUse} &7(&e${itemUse}&7)")
+            Scheduler.scheduleTask {
+                setLine("&b-${manaUse} &7(&e${itemUse}&7)")
+            }
             gatheredAt = EventBus.serverTicks()
         }
 
