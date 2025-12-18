@@ -36,7 +36,11 @@ public class ItemInHandRendererMixin {
 
     @Inject(
         method = "renderHandsWithItems",
-        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lorg/joml/Quaternionfc;)V", ordinal = 1, shift = At.Shift.AFTER)
+        at = @At(
+                value = "INVOKE",
+                target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;renderArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V",
+                ordinal = 0
+        )
     )
     private void devonian$itemAnimations(float f, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, LocalPlayer localPlayer, int i, CallbackInfo ci) {
         ItemAnimations.INSTANCE.applyTransformations(poseStack);
