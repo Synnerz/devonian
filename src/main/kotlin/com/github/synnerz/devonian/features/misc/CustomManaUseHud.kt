@@ -40,6 +40,7 @@ object CustomManaUseHud : TextHudFeature(
         }
 
         on<RenderOverlayEvent> {
+            if (SETTING_ONLY_HIDE.get()) return@on
             draw(it.ctx)
         }
     }
