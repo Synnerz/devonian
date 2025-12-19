@@ -65,3 +65,4 @@ object CustomSidebarColor : Feature("customSideBarColor", "Sets the color for sc
         "Sidebar Body Color"
     )
 }
+object NametagShadow : Feature("nametagShadow", "Enables shadows on name tags", subcategory = "Tweaks")

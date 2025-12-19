@@ -211,6 +211,7 @@ object Devonian : ClientModInitializer {
         ItemAnimations,
         ScrollableTooltip,
         CustomLeapGui,
+        NametagShadow,
 
         // Debug
         CopyItem,
