@@ -22,7 +22,18 @@ object CroesusProfit : TextHudFeature(
     "Dungeon Hub",
     subcategory = "HUD"
 ) {
-    // TODO: add similar customizations as ChestProfit
+    private val SETTING_USE_ESSENCE_PROFIT = addSwitch(
+        "useEssenceProfit",
+        true,
+        "Whether to use Wither/Undead essence for profit",
+        "Croesus Profit Essence",
+    )
+    private val SETTING_COMPACT_MODE = addSwitch(
+        "compactMode",
+        false,
+        "Compact mode stops showing the entire item list and only shows the chest name with its profit",
+        "Croesus Profit Compact Mode",
+    )
     private val chestRegex = "^(?:Master )?Catacombs - Floor [IV]+$".toRegex()
     private val enchantedBookRegex = "^Enchanted Book \\(([\\w ]+) ([IV]+)\\)$".toRegex()
     private val essenceRegex = "^(Wither|Undead) Essence x(\\d+)$".toRegex()
@@ -50,7 +61,13 @@ object CroesusProfit : TextHudFeature(
     data class ChestItemData(
         val name: String, // formatted lore line
         val price: Int = 0,
-    )
+        val isEssence: Boolean = false,
+    ) {
+        fun price(): Int {
+            if (isEssence && !SETTING_USE_ESSENCE_PROFIT.get()) return 0
+            return price
+        }
+    }
 
     data class ChestData(
         val chestName: String,
@@ -59,7 +76,7 @@ object CroesusProfit : TextHudFeature(
         var requiresKey: Boolean = false,
         var slotIdx: Int = -1,
     ) {
-        fun totalProfit(): Int = items.sumOf { it.price } - chestPrice
+        fun totalProfit(): Int = items.sumOf { it.price() } - chestPrice
     }
 
     override fun initialize() {
@@ -146,7 +163,7 @@ object CroesusProfit : TextHudFeature(
                         val amount = essenceMatch[1].toIntOrNull() ?: continue
                         val price = (SkyblockPrices.buyPrice("ESSENCE_$type") * amount).roundToInt()
 
-                        data.items.add(ChestItemData(formatLore[jdx], price))
+                        data.items.add(ChestItemData(formatLore[jdx], price, true))
                         continue
                     }
 
@@ -233,7 +250,8 @@ object CroesusProfit : TextHudFeature(
             val profit = v.totalProfit()
 
             addLine(v.chestName)
-            addLines(items.map { "  ${it.name}  " })
+            if (!SETTING_COMPACT_MODE.get())
+                addLines(items.map { "  ${it.name}  " })
             if (v.requiresKey)
                 addLine("&9+ Dungeon Chest Key ")
             addLine("&bProfit&f: ${if (profit < 0) "&c" else "&a"}${StringUtils.addCommas(profit)}")
