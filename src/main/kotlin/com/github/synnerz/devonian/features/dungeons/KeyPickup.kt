@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
@@ -124,7 +125,10 @@ object KeyPickup : Feature(
             val profile = item.get(DataComponents.PROFILE) ?: return@on
             val id = profile.partialProfile().id ?: return@on
 
-            if (id != witherKeyId && id != bloodKeyId) return@on
+            if (
+                id != witherKeyId &&
+                (id != bloodKeyId || ItemUtils.skyblockId(item) != null)
+            ) return@on
             idQ.add(Pair(10, event.entityId))
         }
 
