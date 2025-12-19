@@ -55,8 +55,10 @@ object CroesusProfit : TextHudFeature(
         "Bedrock" to ChestData("&8Bedrock"),
     )
     private val PROFITABLE_COLOR = Color.GREEN.rgb
+    private val SECOND_PROFITABLE_COLOR = Color.YELLOW.rgb
     private var inChest = false
     private var mostProfitable = -1
+    private var secondMostProfitable = -1
 
     data class ChestItemData(
         val name: String, // formatted lore line
@@ -192,7 +194,9 @@ object CroesusProfit : TextHudFeature(
 
             inChest = false
             Scheduler.scheduleTask {
-                mostProfitable = chestsData.values.reduce { acc, chestData -> if (acc.totalProfit() > chestData.totalProfit()) acc else chestData }.slotIdx
+                val sorted = chestsData.values.sortedByDescending { it.totalProfit() }
+                mostProfitable = sorted.firstOrNull()?.slotIdx ?: -1
+                secondMostProfitable = sorted.getOrNull(1)?.slotIdx ?: -1
                 updateDisplay()
             }
         }
@@ -214,6 +218,12 @@ object CroesusProfit : TextHudFeature(
 
         on<RenderSlotEvent> { event ->
             val slot = event.slot
+            if (secondMostProfitable != -1 && slot.containerSlot == secondMostProfitable) {
+                if (slot.container == minecraft.player?.inventory) return@on
+                event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, SECOND_PROFITABLE_COLOR)
+                return@on
+            }
+
             if (mostProfitable == -1 || slot.containerSlot != mostProfitable) return@on
             if (slot.container == minecraft.player?.inventory) return@on
 
@@ -239,6 +249,7 @@ object CroesusProfit : TextHudFeature(
             v.slotIdx = -1
         }
         mostProfitable = -1
+        secondMostProfitable = -1
     }
 
     private fun updateDisplay() {
