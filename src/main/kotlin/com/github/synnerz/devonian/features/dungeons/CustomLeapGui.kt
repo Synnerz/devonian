@@ -24,7 +24,6 @@ object CustomLeapGui : Feature(
     "catacombs",
     subcategory = "QOL"
 ) {
-    // make outline color the class' color
     private const val CONTAINER_NAME = "Spirit Leap"
     private val closeChestKey get() = minecraft.options.keyInventory
     private val PRIMARY_COLOR = Color(25, 25, 25, 255)
@@ -38,12 +37,14 @@ object CustomLeapGui : Feature(
             val packet = event.packet
             if (packet is ClientboundContainerClosePacket) {
                 Scheduler.scheduleTask { background.clearChildren() }
+                containerId = -1
                 return@on
             }
 
             if (packet is ClientboundOpenScreenPacket) {
                 if (packet.title.string != CONTAINER_NAME) {
                     Scheduler.scheduleTask { background.clearChildren() }
+                    containerId = -1
                     return@on
                 }
                 containerId = packet.containerId
