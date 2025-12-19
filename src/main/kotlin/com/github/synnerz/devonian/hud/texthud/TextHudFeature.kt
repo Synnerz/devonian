@@ -42,7 +42,7 @@ abstract class TextHudFeature(
     protected var isEditing = false
     override var anchor = Anchor.NW
     override var align = Align.Left
-    override var shadow = Shadow.None
+    override var shadow = Shadow.Drop
     override var backdrop = Backdrop.None
 
     protected open fun createHud(): StylizedTextHud = StylizedTextHud(configName, this)
