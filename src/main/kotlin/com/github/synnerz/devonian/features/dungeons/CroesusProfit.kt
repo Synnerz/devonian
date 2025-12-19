@@ -20,7 +20,7 @@ object CroesusProfit : TextHudFeature(
     "Shows the profit of the current chest(s) opened in croesus",
     Categories.DUNGEONS,
     "Dungeon Hub",
-    subcategory = "QOL"
+    subcategory = "HUD"
 ) {
     // TODO: add similar customizations as ChestProfit
     private val chestRegex = "^(?:Master )?Catacombs - Floor [IV]+$".toRegex()
