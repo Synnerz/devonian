@@ -20,6 +20,7 @@
     "FontMixin",
     "GameRendererMixin",
     "GlDeviceMixin",
+    "GuiGraphicsMixin",
     "GuiMixin",
     "InventoryScreenMixin",
     "ItemClusterRenderStateMixin",

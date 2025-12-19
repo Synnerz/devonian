@@ -209,6 +209,7 @@ object Devonian : ClientModInitializer {
         WardrobeKeybinds,
         FireFreezeTimer,
         ItemAnimations,
+        ScrollableTooltip,
 
         // Debug
         CopyItem,
