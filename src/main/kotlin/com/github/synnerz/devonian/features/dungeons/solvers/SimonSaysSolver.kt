@@ -44,7 +44,7 @@ object SimonSaysSolver : Feature(
     )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
-        2.0,
+        3.0,
         0.0, 10.0,
         "",
         "Simon Says Line Width",
