@@ -210,6 +210,7 @@ object Devonian : ClientModInitializer {
         FireFreezeTimer,
         ItemAnimations,
         ScrollableTooltip,
+        CustomLeapGui,
 
         // Debug
         CopyItem,
