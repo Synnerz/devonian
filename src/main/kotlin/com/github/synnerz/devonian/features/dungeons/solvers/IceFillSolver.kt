@@ -150,7 +150,6 @@ object IceFillSolver : Feature(
                     start.y.toDouble(),
                     start.z.toDouble(),
                     SETTING_BOX1_COLOR.getColor(),
-                    phase = true,
                     lineWidth = SETTING_LINE_WIDTH.get(),
                 )
                 if (start !== end) Context.Immediate?.renderBox(
@@ -158,7 +157,6 @@ object IceFillSolver : Feature(
                     end.y.toDouble(),
                     end.z.toDouble(),
                     SETTING_BOX2_COLOR.getColor(),
-                    phase = true,
                     lineWidth = SETTING_LINE_WIDTH.get(),
                 )
             }
