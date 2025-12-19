@@ -1,11 +1,14 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import kotlin.math.roundToInt
 
 private fun colorForNumber(num: Float, max: Float) = when {
     num >= max * 0.75 -> "&a"
@@ -33,6 +36,19 @@ object BonzoMask : TextHudFeature(
         "Hides the entire bonzo display after the immunity timer is over",
         "Hide Bonzo After IMM"
     )
+    private val SETTING_PROC_ALERT = addSwitch(
+        "procAlert",
+        false,
+        "Displays an alert whenever the bonzo mask is used",
+        "Bonzo Proc Alert"
+    )
+    private val SETTING_PROC_ALERT_TIME = addSlider(
+        "procAlertTime",
+        1.0,
+        0.0, 10.0,
+        "The amount of time the alert will display for (in seconds)",
+        "Bonzo Proct Alert Time"
+    )
     private const val IMMUNITY_TIME = 3 * 1000L
     private val cooldownItemRegex = "^Cooldown: (\\d+)s$".toRegex()
     private val maskRegex = "^Your( ⚚)? Bonzo's Mask saved your life!$".toRegex()
@@ -56,6 +72,11 @@ object BonzoMask : TextHudFeature(
 
             COOLDOWN_TIME = time
             cdStartedAt = System.currentTimeMillis() + (COOLDOWN_TIME * 1000L)
+
+            if (!SETTING_PROC_ALERT.get()) return@on
+            Scheduler.scheduleTask {
+                Alert.show("&9Bonzo Mask Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
+            }
         }
 
         on<RenderOverlayEvent> {
@@ -107,6 +128,19 @@ object SpiritMask : TextHudFeature(
         "Hides the entire spirit display after the immunity timer is over",
         "Hide Spirit After IMM"
     )
+    private val SETTING_PROC_ALERT = addSwitch(
+        "procAlert",
+        false,
+        "Displays an alert whenever the spirit mask is used",
+        "Spirit Proc Alert"
+    )
+    private val SETTING_PROC_ALERT_TIME = addSlider(
+        "procAlertTime",
+        1.0,
+        0.0, 10.0,
+        "The amount of time the alert will display for (in seconds)",
+        "Spirit Proct Alert Time"
+    )
     private const val IMMUNITY_TIME = 1 * 1000L
     private var COOLDOWN_TIME = 30 * 1000L
     private val maskRegex = "^Second Wind Activated! Your Spirit Mask saved your life!$".toRegex()
@@ -119,6 +153,11 @@ object SpiritMask : TextHudFeature(
 
             startedAt = System.currentTimeMillis() + IMMUNITY_TIME
             cdStartedAt = System.currentTimeMillis() + COOLDOWN_TIME
+
+            if (!SETTING_PROC_ALERT.get()) return@on
+            Scheduler.scheduleTask {
+                Alert.show("&fSpirit Mask Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
+            }
         }
 
         on<RenderOverlayEvent> {
@@ -169,6 +208,19 @@ object PhoenixTimer : TextHudFeature(
         "Hides the entire phoenix display after the immunity timer is over",
         "Hide Phoenix After IMM"
     )
+    private val SETTING_PROC_ALERT = addSwitch(
+        "procAlert",
+        false,
+        "Displays an alert whenever the phoenix pet is used",
+        "Phoenix Proc Alert"
+    )
+    private val SETTING_PROC_ALERT_TIME = addSlider(
+        "procAlertTime",
+        1.0,
+        0.0, 10.0,
+        "The amount of time the alert will display for (in seconds)",
+        "Phoenix Proct Alert Time"
+    )
     private const val IMMUNITY_TIME = 4 * 1000L
     private var COOLDOWN_TIME = 60 * 1000L
     private val maskRegex = "^Your Phoenix Pet saved you from certain death!$".toRegex()
@@ -181,6 +233,11 @@ object PhoenixTimer : TextHudFeature(
 
             startedAt = System.currentTimeMillis() + IMMUNITY_TIME
             cdStartedAt = System.currentTimeMillis() + COOLDOWN_TIME
+
+            if (!SETTING_PROC_ALERT.get()) return@on
+            Scheduler.scheduleTask {
+                Alert.show("&cPhoenix Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
+            }
         }
 
         on<RenderOverlayEvent> {
