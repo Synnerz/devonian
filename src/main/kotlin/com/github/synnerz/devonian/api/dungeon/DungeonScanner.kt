@@ -184,8 +184,13 @@ object DungeonScanner {
             if (currentRoom != null) DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
         }.setEnabled(Location.stateInArea("catacombs"))
 
+        var lastRoom: DungeonRoom? = null
         EventBus.on<ActionbarEvent> { event ->
             val room = currentRoom ?: return@on
+            if (room != lastRoom) {
+                lastRoom = room
+                return@on
+            }
             val match = secretRegex.find(event.message) ?: return@on
 
             val found = match.groupValues.getOrNull(1)?.toInt() ?: return@on

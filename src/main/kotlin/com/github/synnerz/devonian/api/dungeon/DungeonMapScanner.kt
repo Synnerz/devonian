@@ -16,6 +16,7 @@ import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
 import net.minecraft.world.level.saveddata.maps.MapId
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData
 import kotlin.math.PI
+import kotlin.math.max
 
 object DungeonMapScanner {
     private const val COLOR_SIZE = 16384
@@ -198,6 +199,9 @@ object DungeonMapScanner {
                     MapColors.CHECK_FAIL.color -> CheckmarkTypes.FAILED
                     MapColors.CHECK_UNKNOWN.color -> CheckmarkTypes.UNEXPLORED
                     else -> CheckmarkTypes.NONE
+                }
+                if (room.type == RoomTypes.TRAP && room.checkmark == CheckmarkTypes.WHITE) {
+                    room.secretsCompleted = max(room.secretsCompleted, 1)
                 }
             }
         }
