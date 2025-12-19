@@ -411,3 +411,7 @@ class KeyPressEvent(
     val scancode: Int,
     val underlying: KeyEvent,
 ) : Event()
+
+class RenderGuiEvent(
+    val screen: Screen
+) : CancellableEvent()
