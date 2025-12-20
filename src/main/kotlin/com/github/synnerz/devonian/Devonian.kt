@@ -213,6 +213,7 @@ object Devonian : ClientModInitializer {
         CustomLeapGui,
         NametagShadow,
         CustomHypeSound,
+        Deployables,
 
         // Debug
         CopyItem,

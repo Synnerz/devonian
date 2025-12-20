@@ -48,7 +48,8 @@
     "accessor.GuiGraphicsAccessor",
     "accessor.HeartTypeAccessor",
     "accessor.LevelLoadingScreenAccessor",
-    "accessor.LocalPlayerAccessor"
+    "accessor.LocalPlayerAccessor",
+    "accessor.ParticleAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
