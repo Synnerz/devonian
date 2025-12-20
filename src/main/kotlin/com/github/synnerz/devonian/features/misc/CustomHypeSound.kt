@@ -44,7 +44,7 @@ object CustomHypeSound : Feature(
             soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
 
             Config.set(KEY, soundRegistry)
-            ChatUtils.sendMessage("&aSuccessfully set etherwarp sound to &6$soundRegistry", true)
+            ChatUtils.sendMessage("&aSuccessfully set wither blade sound to &6$soundRegistry", true)
             1
         }
             .greedyString("sound")
