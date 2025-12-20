@@ -267,7 +267,7 @@ class DungeonMapBaseRenderer :
                         CheckmarkTypes.WHITE -> "&f"
                         CheckmarkTypes.NONE -> "&7"
                         CheckmarkTypes.UNEXPLORED ->
-                            if (room.explored) "&7"
+                            if (room.explored || options.dungeonStarted) "&7"
                             else "&f"
                     }
                 } else ""
@@ -280,7 +280,7 @@ class DungeonMapBaseRenderer :
                     CheckmarkTypes.WHITE -> "&f"
                     CheckmarkTypes.NONE -> "&7"
                     CheckmarkTypes.UNEXPLORED ->
-                        if (room.explored) "&7"
+                        if (room.explored || options.dungeonStarted) "&7"
                         else "&f"
                 }
                 text.add("$colorCode${
