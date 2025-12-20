@@ -31,6 +31,12 @@ object ScrollableTooltip : Feature(
         "Allows you to use Scroll to move the tooltip up/down",
         "Allow Vertical"
     )
+    val SETTING_LOCK_IN_PLACE = addSwitch(
+        "lockInPlace",
+        false,
+        "Allows you to lock in place the tooltip to always be at the customized position regardless of the underlying tooltip shift",
+        "Tooltip Lock In Place"
+    )
     private var scaleScroll = 1.0
     private var xo = 0.0
     private var yo = 0.0

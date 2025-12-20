@@ -30,6 +30,7 @@ public abstract class GuiGraphicsMixin {
         float scale = (float) ScrollableTooltip.INSTANCE.scale();
         double xoffset = ScrollableTooltip.INSTANCE.xoffset();
         double yoffset = ScrollableTooltip.INSTANCE.yoffset();
+        boolean lockInPlace = ScrollableTooltip.INSTANCE.getSETTING_LOCK_IN_PLACE().get();
 
         // Scale (zoom in)
         if (scale != 0f)
@@ -38,8 +39,12 @@ public abstract class GuiGraphicsMixin {
             scale = 1f;
 
         // Translate to offset
-        if (xoffset != 0d || yoffset != 0d)
+        if ((xoffset != 0d || yoffset != 0d) && !lockInPlace)
             pose().translate((float) xoffset, (float) yoffset);
+
+        if (lockInPlace) {
+            return original.call(instance, width, height, (int) (xoffset / scale), (int) (yoffset / scale), k, l);
+        }
 
         // TODO: fix the y value not being adjusted properly
         return original.call(instance, width, height, (int) (i / scale), (int) (j / scale), k, l);
