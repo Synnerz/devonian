@@ -42,6 +42,7 @@ object ScrollableTooltip : Feature(
     private var yo = 0.0
     private var holdingShift = false
     private var holdingCtrl = false
+    private var holdingAlt = false
 
     override fun initialize() {
         Config.set(KEY_NAME, JsonObject())
@@ -84,12 +85,16 @@ object ScrollableTooltip : Feature(
                 when {
                     holdingCtrl -> scaleScroll *= 1 + (0.1 * sign(delta))
                     holdingShift -> {
-                        if (SETTING_ALLOW_HORIZONTAL.get())
-                            xo += 9 * sign(delta)
+                        if (SETTING_ALLOW_HORIZONTAL.get()) {
+                            xo += if (holdingAlt) 4 * sign(delta)
+                            else 9 * sign(delta)
+                        }
                     }
                     else -> {
-                        if (SETTING_ALLOW_VERTICAL.get())
-                            yo += 9 * sign(delta)
+                        if (SETTING_ALLOW_VERTICAL.get()) {
+                            yo += if (holdingAlt) 4 * sign(delta)
+                            else 9 * sign(delta)
+                        }
                     }
                 }
 
@@ -102,6 +107,11 @@ object ScrollableTooltip : Feature(
                 holdingCtrl = true
                 return@on
             }
+            if (event.key == GLFW.GLFW_KEY_LEFT_ALT) {
+                holdingAlt = true
+                return@on
+            }
+
             if (event.key != GLFW.GLFW_KEY_LEFT_SHIFT) return@on
             holdingShift = true
         }
@@ -111,6 +121,11 @@ object ScrollableTooltip : Feature(
                 holdingCtrl = false
                 return@on
             }
+            if (event.key == GLFW.GLFW_KEY_LEFT_ALT) {
+                holdingAlt = false
+                return@on
+            }
+
             if (event.key != GLFW.GLFW_KEY_LEFT_SHIFT) return@on
             holdingShift = false
         }
