@@ -20,6 +20,8 @@ object CustomHypeSound : Feature(
     subcategory = "General"
 ) {
     private const val KEY = "witherBladeSound"
+    private const val KEY_VOLUME = "$KEY\$Volume"
+    private const val KEY_PITCH = "$KEY\$Pitch"
     private val soundOptions = listOf(
         "minecraft:entity.blaze.hurt",
         "minecraft:entity.experience_orb.pickup",
@@ -31,22 +33,32 @@ object CustomHypeSound : Feature(
         "minecraft:block.note_block.iron_xylophone",
     )
     private var soundEvent = SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value()
+    private var volume = 1f
+    private var pitch = 1f
     private val witherBlades = listOf("HYPERION", "VALKYRIE", "SCYLLA", "ASTRAEA")
     private var lastClick = -1
 
     override fun initialize() {
         Config.set(KEY, "minecraft:block.note_block.iron_xylophone")
+        Config.set(KEY_VOLUME, 1f)
+        Config.set(KEY_PITCH, 1f)
 
         DevonianCommand.command.subcommand("hypesound") { _, args ->
             if (args.isEmpty()) return@subcommand 0
-            val soundRegistry = args.first() as String
+            val argVolume = args.first() as Float
+            val argPitch = args.getOrNull(1) as? Float ?: 1f
+            val soundRegistry = args.getOrNull(2) as? String ?: "minecraft:block.note_block.iron_xylophone"
 
             soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
+            volume = argVolume
+            pitch = argPitch
 
             Config.set(KEY, soundRegistry)
             ChatUtils.sendMessage("&aSuccessfully set wither blade sound to &6$soundRegistry", true)
             1
         }
+            .float("volume", 0f, 1f)
+            .float("pitch", 0f, 1f)
             .greedyString("sound")
             .suggest(
                 "sound",
@@ -56,6 +68,8 @@ object CustomHypeSound : Feature(
         Config.onAfterLoad {
             val savedRegistry = Config.get<String>(KEY) ?: "minecraft:block.note_block.iron_xylophone"
             soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(savedRegistry))
+            volume = Config.get<Float>(KEY_VOLUME) ?: 1f
+            pitch = Config.get<Float>(KEY_PITCH) ?: 1f
         }
 
         on<SoundPlayEvent> { event ->
@@ -77,7 +91,7 @@ object CustomHypeSound : Feature(
                 minecraft.level?.playLocalSound(
                     event.x, event.y, event.z,
                     soundEvent, event.category,
-                    1f, 1f,
+                    volume, pitch,
                     false
                 )
             }
