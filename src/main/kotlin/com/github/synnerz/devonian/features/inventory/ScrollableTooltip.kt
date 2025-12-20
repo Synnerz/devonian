@@ -37,6 +37,12 @@ object ScrollableTooltip : Feature(
         "Allows you to lock in place the tooltip to always be at the customized position regardless of the underlying tooltip shift",
         "Tooltip Lock In Place"
     )
+    val SETTING_DONT_DIVIDE_BY_SCALE = addSwitch(
+        "dontDivideByScale",
+        false,
+        "Ignores the scaling factor whenever Lock In Place is enabled",
+        "Tooltip Ignore Scale"
+    )
     private var scaleScroll = 1.0
     private var xo = 0.0
     private var yo = 0.0

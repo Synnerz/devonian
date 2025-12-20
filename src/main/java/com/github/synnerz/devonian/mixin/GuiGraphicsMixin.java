@@ -43,7 +43,10 @@ public abstract class GuiGraphicsMixin {
             pose().translate((float) xoffset, (float) yoffset);
 
         if (lockInPlace) {
-            pose().translate((float) xoffset / scale, (float) yoffset / scale);
+            if (ScrollableTooltip.INSTANCE.getSETTING_DONT_DIVIDE_BY_SCALE().get())
+                pose().translate((float) xoffset, (float) yoffset);
+            else
+                pose().translate((float) xoffset / scale, (float) yoffset / scale);
             return original.call(instance, width, height, 0, 0, k, l);
         }
 
