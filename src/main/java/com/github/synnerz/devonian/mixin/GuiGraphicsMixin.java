@@ -43,7 +43,8 @@ public abstract class GuiGraphicsMixin {
             pose().translate((float) xoffset, (float) yoffset);
 
         if (lockInPlace) {
-            return original.call(instance, width, height, (int) (xoffset / scale), (int) (yoffset / scale), k, l);
+            pose().translate((float) xoffset / scale, (float) yoffset / scale);
+            return original.call(instance, width, height, 0, 0, k, l);
         }
 
         // TODO: fix the y value not being adjusted properly
