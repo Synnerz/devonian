@@ -127,23 +127,25 @@ object ItemAnimations : Feature(
 
     fun applyTransformations(pose: PoseStack) {
         if (!isEnabled()) return
-        val scale = getItemScale().toFloat()
-        val xo = SETTING_X_OFFSET.get()
-        val yo = SETTING_Y_OFFSET.get()
-        val zo = SETTING_Z_OFFSET.get()
 
         pose.mulPose(Axis.XP.rotationDegrees(SETTING_PITCH_OFFSET.get().toFloat()))
         pose.mulPose(Axis.YP.rotationDegrees(SETTING_YAW_OFFSET.get().toFloat()))
         pose.mulPose(Axis.ZP.rotationDegrees(SETTING_ROLL_OFFSET.get().toFloat()))
-        if (scale != 1f)
-            pose.scale(scale, scale, 1f)
 
-        if (xo > 0.0 || yo > 0.0 || zo > 0.0)
-            pose.translate(
-                SETTING_X_OFFSET.get().toFloat() / scale,
-                SETTING_Y_OFFSET.get().toFloat() / scale,
-                SETTING_Z_OFFSET.get().toFloat(),
-            )
+        val xo = SETTING_X_OFFSET.get()
+        val yo = SETTING_Y_OFFSET.get()
+        val zo = SETTING_Z_OFFSET.get()
+        if (xo != 0.0 || yo != 0.0 || zo != 0.0) pose.translate(
+            xo.toFloat(),
+            yo.toFloat(),
+            zo.toFloat(),
+        )
+    }
+
+    fun applyScale(pose: PoseStack) {
+        if (!isEnabled()) return
+        val scale = getItemScale().toFloat()
+        if (scale != 1f) pose.scale(scale, scale, scale)
     }
 
     private fun getCurrentSwingDuration(): Int {

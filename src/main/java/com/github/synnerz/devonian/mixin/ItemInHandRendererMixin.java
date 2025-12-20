@@ -7,6 +7,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -53,5 +56,40 @@ public class ItemInHandRendererMixin {
     private float devonian$itemAnimationsBob(LocalPlayer instance, float v, Operation<Float> original) {
         if (ItemAnimations.INSTANCE.disableReequip() || ItemAnimations.INSTANCE.disableSwing()) return 1f;
         return original.call(instance, v);
+    }
+
+    @Inject(
+        method = "renderPlayerArm",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderDispatcher;getPlayerRenderer(Lnet/minecraft/client/player/AbstractClientPlayer;)Lnet/minecraft/client/renderer/entity/player/AvatarRenderer;")
+    )
+    private void devonian$itemAnimations1(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, float f, float g, HumanoidArm humanoidArm, CallbackInfo ci) {
+        ItemAnimations.INSTANCE.applyScale(poseStack);
+    }
+
+    @Inject(
+        method = "renderItem",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/item/ItemStackRenderState;submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;III)V")
+    )
+    private void devonian$itemAnimations2(LivingEntity livingEntity, ItemStack itemStack, ItemDisplayContext itemDisplayContext, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, CallbackInfo ci) {
+        ItemAnimations.INSTANCE.applyScale(poseStack);
+    }
+
+    @Inject(
+        method = "renderMapHand",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/core/ClientAsset$Texture;texturePath()Lnet/minecraft/resources/ResourceLocation;")
+    )
+    private void devonian$itemAnimations3(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, HumanoidArm humanoidArm, CallbackInfo ci) {
+        ItemAnimations.INSTANCE.applyScale(poseStack);
+    }
+
+    @Inject(
+        method = "renderMap",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitCustomGeometry(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;Lnet/minecraft/client/renderer/SubmitNodeCollector$CustomGeometryRenderer;)V")
+    )
+    private void devonian$itemAnimations4(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, ItemStack itemStack, CallbackInfo ci) {
+        if (!ItemAnimations.INSTANCE.isEnabled()) return;
+        poseStack.translate(64f, 64f, 0f);
+        ItemAnimations.INSTANCE.applyScale(poseStack);
+        poseStack.translate(-64f, -64f, 0f);
     }
 }
