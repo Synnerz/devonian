@@ -86,10 +86,11 @@ object PacketLogger : TextHudFeature(
         val q = LinkedBlockingQueue<JsonDataObject>()
         queue = q
         ioThread = Thread({
+            writer.write("[\n")
             while (!Thread.currentThread().isInterrupted) {
                 try {
                     val data = q.poll(100, TimeUnit.MILLISECONDS)
-                    if (data != null) writer.write(data.toString() + '\n')
+                    if (data != null) writer.write(data.toString() + ",\n")
                 } catch (_: InterruptedException) {
                     Thread.currentThread().interrupt()
                     break
@@ -98,8 +99,9 @@ object PacketLogger : TextHudFeature(
 
             do {
                 val data = q.poll() ?: break
-                writer.write(data.toString() + '\n')
+                writer.write(data.toString() + ",\n")
             } while (true)
+            writer.write("]\n")
         }, "DevonianPacketLogger").also { it.start() }
 
         loggerEnabled.value = true
