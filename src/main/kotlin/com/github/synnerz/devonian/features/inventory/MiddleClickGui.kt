@@ -40,6 +40,14 @@ object MiddleClickGui : Feature(
         "Chest",
         "Large Chest",
     )
+    private val terminalGuis = listOf(
+        "^Click in order!$".toRegex(),
+        "^Select all the (.+?) items!$".toRegex(),
+        "^What starts with: '(.+?)'\\?$".toRegex(),
+        "^Change all to same color!$".toRegex(),
+        "^Correct all the panes!$".toRegex(),
+        "^Click the button on time!$".toRegex(),
+    )
     private val avoidItems = mutableSetOf(
         "Reforge Item",
         "Salvage Items",
@@ -72,6 +80,7 @@ object MiddleClickGui : Feature(
 
             val screenName = event.screen.title?.string ?: return@on
             if (avoidGuis.any { screenName.startsWith(it) } || blacklisted.any { screenName.startsWith(it) }) return@on
+            if (terminalGuis.any { it.matches(screenName) }) return@on
 
             val itemName = stack.customName?.string
             if (itemName != null && avoidItems.contains(itemName)) return@on
