@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api.events
 
+import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
@@ -223,7 +224,10 @@ object EventBus {
         underlyingEvent: SoundEvent,
     ): Boolean = SoundPlayEvent(soundEvent, pitch, volume, category, x, y, z, seed, underlyingEvent).post()
 
-    fun serverTicks(): Int = totalTicks
+    @JvmOverloads
+    fun serverTicks(usingPing: Boolean = false): Int =
+        if (usingPing) totalTicks + (Ping.getMedianPing() / 50.0 + 10.0).toInt()
+        else totalTicks
 
     private fun getNameFromData(list: List<SynchedEntityData.DataValue<*>>): Component? {
         val idx = when (list.size) {
