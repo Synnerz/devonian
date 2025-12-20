@@ -222,7 +222,13 @@ object Deployables : TextHudFeature("deployables") {
                             1 ->
                                 packet.xDist == 0f &&
                                 packet.yDist == 0f &&
-                                packet.zDist == 0f
+                                packet.zDist == 0f &&
+                                orbs.any {
+                                    val e = it.ent ?: return@any false
+                                    abs(e.x - packet.x) < 2.0 &&
+                                    abs(e.y + 1.0 - packet.y) < 2.0 &&
+                                    abs(e.z - packet.z) < 2.0
+                                }
 
                             4 ->
                                 packet.xDist == 0.3f &&
