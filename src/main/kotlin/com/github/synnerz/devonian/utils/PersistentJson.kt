@@ -1,9 +1,11 @@
 package com.github.synnerz.devonian.utils
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.GameUnloadEvent
 import com.google.gson.GsonBuilder
 import java.io.*
+import java.util.concurrent.TimeUnit
 
 abstract class PersistentJson(private val configFile: File) {
     private val afterLoadListeners = mutableListOf<() -> Unit>()
@@ -21,6 +23,8 @@ abstract class PersistentJson(private val configFile: File) {
         EventBus.on<GameUnloadEvent> {
             save()
         }
+
+        Scheduler.schedulePool.scheduleWithFixedDelay(::save, 5L, 5L, TimeUnit.MINUTES)
     }
 
     abstract fun onLoad(reader: InputStream)
