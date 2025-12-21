@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
@@ -69,7 +70,7 @@ object CreeperBeamsDing : Feature(
         }
 
         on<SoundPlayEvent> { event ->
-            if (DungeonScanner.currentRoom?.name != "Creeper Beams") return@on
+            if (DungeonScanner.currentRoom?.name != "Creeper Beams" || Dungeons.inBoss.value) return@on
             if (
                 SETTING_REMOVE_CREEPER_HURT.get() &&
                 (event.sound == "minecraft:entity.creeper.hurt" || event.sound == "minecraft:entity.creeper.primed")
