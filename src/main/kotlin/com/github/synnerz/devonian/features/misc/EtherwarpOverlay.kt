@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.barrl.utils.RendererLayers
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
@@ -9,6 +10,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
 import com.github.synnerz.devonian.utils.math.DDA
+import com.github.synnerz.devonian.utils.math.ShapeUtils
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.item.Items
@@ -24,6 +26,13 @@ object EtherwarpOverlay : Feature(
     "etherwarpOverlay",
     "Renders a box at the location where the etherwarp is going to be at.",
 ) {
+    private val SETTING_ETHER_WIRE_WIDTH = addSlider(
+        "wireWidth",
+        3.0,
+        0.0, 10.0,
+        "",
+        "Ether Wire Width",
+    )
     private val SETTING_ETHER_WIRE_COLOR = addColorPicker(
         "wireColor",
         Color(46, 221, 23, 160).rgb,
@@ -177,17 +186,36 @@ object EtherwarpOverlay : Feature(
                 hitResult.y - cameraPos.y,
                 hitResult.z - cameraPos.z,
                 if (failReason.isEmpty()) SETTING_ETHER_WIRE_COLOR.getColor() else SETTING_ETHER_FAIL_WIRE_COLOR.getColor(),
-                true
+                true,
+                SETTING_ETHER_WIRE_WIDTH.get(),
             )
 
-            Context.Immediate?.renderFilledShape(
-                outlineShape,
-                hitResult.x - cameraPos.x,
-                hitResult.y - cameraPos.y,
-                hitResult.z - cameraPos.z,
-                if (failReason.isEmpty()) SETTING_ETHER_FILL_COLOR.getColor() else SETTING_ETHER_FAIL_FILL_COLOR.getColor(),
-                true
-            )
+            event.ctx.matrices().pushPose()
+            event.ctx.matrices().translate(cameraPos.reverse())
+            val mat = event.ctx.matrices().last()
+
+            val fillColor = if (failReason.isEmpty()) SETTING_ETHER_FILL_COLOR.getColor() else SETTING_ETHER_FAIL_FILL_COLOR.getColor()
+
+            if (fillColor.alpha > 0) {
+                val layer = if (fillColor.alpha == 255) RendererLayers.QUADS_OPAQUE
+                    else RendererLayers.QUADS_TRANSLUCENT
+                val consumer = minecraft.renderBuffers().bufferSource().getBuffer(layer)
+
+                val faces = ShapeUtils.getFaces(outlineShape)
+                for (i in faces.indices step 3) {
+                    val x = (faces[i + 0] + hitResult.x).toDouble()
+                    val y = (faces[i + 1] + hitResult.y).toDouble()
+                    val z = (faces[i + 2] + hitResult.z).toDouble()
+                    var dir = cameraPos.subtract(x, y, z)
+                    dir = dir.scale(0.01 / dir.length())
+
+                    consumer
+                        .addVertex(mat, (x + dir.x).toFloat(), (y + dir.y).toFloat(), (z + dir.z).toFloat())
+                        .setColor(fillColor.rgb)
+                }
+            }
+
+            event.ctx.matrices().popPose()
         }
     }
 }
