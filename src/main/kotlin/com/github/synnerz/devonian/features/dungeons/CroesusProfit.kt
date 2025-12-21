@@ -45,6 +45,9 @@ object CroesusProfit : TextHudFeature(
         "POWER_DRAGON_SHARD" to "SHARD_POWER_DRAGON",
         "SCARF_SHARD" to "SHARD_SCARF",
         "NECROMANCERS_BROOCH" to "NECROMANCER_BROOCH",
+        "WITHER_SHIELD" to "WITHER_SHIELD_SCROLL",
+        "IMPLOSION" to "IMPLOSION_SCROLL",
+        "SHADOW_WARP" to "SHADOW_WARP_SCROLL",
     )
     private val chestsData = mapOf(
         "Wood" to ChestData("&fWood"),
