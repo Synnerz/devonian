@@ -111,12 +111,12 @@ object CustomLeapGui : Feature(
         val xo = 37.0
         val yo = 40.0
         val role = when (data.role) {
-            DungeonClass.Archer -> "§f[§6Archer§f]"
-            DungeonClass.Mage -> "§f[§bMage§f]"
-            DungeonClass.Berserk -> "§f[§cBerserk§f]"
-            DungeonClass.Tank -> "§f[§aTank§f]"
-            DungeonClass.Healer -> "§f[§dHealer§f]"
-            else -> "§f[§4UNKNOWN§f]"
+            DungeonClass.Archer -> "§7[§6Archer§7]"
+            DungeonClass.Mage -> "§7[§bMage§7]"
+            DungeonClass.Berserk -> "§7[§cBerserk§7]"
+            DungeonClass.Tank -> "§7[§aTank§7]"
+            DungeonClass.Healer -> "§7[§dHealer§7]"
+            else -> "§7[§4UNKNOWN§7]"
         }
         val outline = when (data.role) {
             DungeonClass.Archer -> Color(255, 170, 0, 150)
