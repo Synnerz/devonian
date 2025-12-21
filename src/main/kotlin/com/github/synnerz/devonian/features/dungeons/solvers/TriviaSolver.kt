@@ -49,7 +49,7 @@ object TriviaSolver : Feature(
         "What is the name of the person that upgrades pets?" to listOf("Kat"),
         "What is the name of the lady of the Nether?" to listOf("Elle"),
         "Which villager in the Village gives you a Rogue Sword?" to listOf("Jamie"),
-        "How many unique minions are there?" to listOf("59 Minions"),
+        "How many unique minions are there?" to listOf("60 Minions"),
         "Which of these enemies does not spawn in the Spider's Den?" to listOf(
             "Zombie Spider",
             "Cave Spider",
