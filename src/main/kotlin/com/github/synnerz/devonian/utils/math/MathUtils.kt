@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.utils.math
 
-import org.ejml.simple.SimpleMatrix
 import kotlin.math.*
 
 object MathUtils {
@@ -10,8 +9,8 @@ object MathUtils {
 
     fun polyRegression(dim: Int, x: DoubleArray, y: DoubleArray): DoubleArray? {
         if (x.size != y.size) throw IllegalArgumentException("unequal sized inputs")
-        val X = SimpleMatrix(Array(x.size) { i -> DoubleArray(dim + 1) { p -> x[i].pow(p) } })
-        val Y = SimpleMatrix(Array(y.size) { i -> doubleArrayOf(y[i]) })
+        val X = Matrix(Array(x.size) { i -> DoubleArray(dim + 1) { p -> x[i].pow(p) } })
+        val Y = Matrix(Array(y.size) { i -> doubleArrayOf(y[i]) })
 
         val XT = X.transpose()
         val XT_X = XT.mult(X)
@@ -20,7 +19,7 @@ object MathUtils {
         try {
             val INV_XT_X = XT_X.invert()
             val C = INV_XT_X.mult(XT_Y)
-            return DoubleArray(C.numRows) { C[it, 0] }
+            return DoubleArray(C.rows) { C.arr[it][0] }
         } catch (ignored: Exception) {
             return null
         }

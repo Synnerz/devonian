@@ -35,8 +35,6 @@ dependencies {
 	include modImplementation("com.github.Synnerz:barrl:1.21.10-SNAPSHOT")
 	// TODO: upload to modrinth
 	include modImplementation("com.github.Synnerz:talium:94dbc2c0bf")
-
-	embed "org.ejml:ejml-all:0.44.0"
 }
 
 processResources {
