@@ -86,17 +86,17 @@ object IceFillSolver : Feature(
     private var inIce = false
     private var iceRoom: DungeonRoom? = null
 
-    private fun onBlock(pos: BlockPos, state: BlockState): IcePlatform? {
-        return platforms.find {
-            it.contains(iceRoom!!, pos.x, pos.y, pos.z) &&
-            (
-                if (state.block == Blocks.PACKED_ICE) it.removeBlock(iceRoom!!, pos.x, pos.z)
-                else if (state.isAir) {
-                    it.reset(iceRoom!!)
-                    true
-                } else false
-            )
+    private fun onBlock(pos: BlockPos, state: BlockState): Pair<Boolean, IcePlatform>? {
+        platforms.forEach {
+            if (!it.contains(iceRoom!!, pos.x, pos.y, pos.z)) return@forEach
+            if (state.block == Blocks.PACKED_ICE) {
+                if (it.removeBlock(iceRoom!!, pos.x, pos.z)) return Pair(true, it)
+            } else if (state.isAir) {
+                it.reset(iceRoom!!)
+                return Pair(false, it)
+            }
         }
+        return null
     }
 
     override fun initialize() {
@@ -119,17 +119,23 @@ object IceFillSolver : Feature(
             when (val packet = event.packet) {
                 is ClientboundBlockUpdatePacket -> {
                     Scheduler.scheduleTask {
-                        onBlock(packet.pos, packet.blockState)?.solve(iceRoom!!, !SETTING_ALLOW_WALL_START.get())
+                        onBlock(packet.pos, packet.blockState)?.let {
+                            it.second.solve(iceRoom!!, !SETTING_ALLOW_WALL_START.get(), it.first)
+                        }
                     }
                 }
 
                 is ClientboundSectionBlocksUpdatePacket -> {
                     Scheduler.scheduleTask {
-                        val update = linkedSetOf<IcePlatform>()
+                        val update = linkedMapOf<IcePlatform, Boolean>()
                         packet.runUpdates { pos, state ->
-                            onBlock(pos, state)?.let { update.add(it) }
+                            onBlock(pos, state)?.let {
+                                update.merge(it.second, it.first, Boolean::and)
+                            }
                         }
-                        update.forEach { it.solve(iceRoom!!, !SETTING_ALLOW_WALL_START.get()) }
+                        update.forEach {
+                            it.key.solve(iceRoom!!, !SETTING_ALLOW_WALL_START.get(), it.value)
+                        }
                     }
                 }
             }
@@ -271,7 +277,7 @@ class IcePlatform(
         }
 
         reset(room)
-        solve(room, endOnStart)
+        solve(room, endOnStart, false)
     }
 
     fun reset(room: DungeonRoom) {
@@ -321,7 +327,7 @@ class IcePlatform(
         return true
     }
 
-    fun solve(room: DungeonRoom, endOnStart: Boolean) {
+    fun solve(room: DungeonRoom, endOnStart: Boolean, checkPlayer: Boolean) {
         var total = 0
         var odd = 0
         mutableBlocks.forEach {
@@ -337,6 +343,7 @@ class IcePlatform(
         if (abs(odd - even) >= 2) return
 
         val first = Devonian.minecraft.player?.let {
+            if (!checkPlayer) return@let null
             // ether sets height to +.05
             if (it.y - (end.y + 1) !in 0.0 .. 0.1) return@let null
             val wx = floor(it.x).toInt()
