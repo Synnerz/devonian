@@ -177,6 +177,9 @@ object DungeonScanner {
                 DungeonEvent.RoomLeave(currentRoom, lastIdx!!).post()
 
             currentRoom = rooms[jdx]
+            if (currentRoom?.explored == false) {
+                println("dv map: marking ${System.identityHashCode(currentRoom)} explored in tick ${currentRoom!!.comps}")
+            }
             currentRoom?.explored = true
 
             if (lastIdx == jdx) return@on
@@ -266,7 +269,10 @@ object DungeonScanner {
         }
 
         room1.update()
-        if (room2.explored) room1.explored = true
+        if (room2.explored) {
+            println("dv map: marking ${System.identityHashCode(room1)} explored in merge .${room1.comps} .${room2.comps}")
+            room1.explored = true
+        }
 
         room2.doors.forEach { it.rooms.remove(room2) }
     }
@@ -344,6 +350,7 @@ object DungeonScanner {
             var room = DungeonRoom(mutableListOf(pos), roofHeight).scan()
             addRoom(comp, room)
             if (room.type == RoomTypes.ENTRANCE) {
+                println("dv map: marking ${System.identityHashCode(room)} explored in entrance ${room.comps}")
                 room.explored = true
                 room.checkmark = CheckmarkTypes.NONE
                 foundEntrance = 0

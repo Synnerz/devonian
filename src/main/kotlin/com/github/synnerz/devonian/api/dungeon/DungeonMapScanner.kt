@@ -189,7 +189,13 @@ object DungeonMapScanner {
                 MapColors.ROOM_TRAP.color -> RoomTypes.TRAP
                 else -> RoomTypes.UNKNOWN
             }
-            if (!room.explored) room.explored = roomCol != MapColors.ROOM_UNOPENED.color
+            if (!room.explored) {
+                val explored = roomCol != MapColors.ROOM_UNOPENED.color
+                if (explored) {
+                    println("dv map: marking ${System.identityHashCode(room)} explored in map ${room.comps}")
+                }
+                room.explored = explored
+            }
 
             if (room.checkmark != CheckmarkTypes.GREEN) {
                 room.checkmark = if (roomCol == centerCol) CheckmarkTypes.NONE
