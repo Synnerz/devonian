@@ -42,6 +42,8 @@ object BossSlainTime : Feature(
 
         on<ChatEvent> { event ->
             if (event.matches(questCompletedChatRegex) == null) return@on
+            if (spawnedAtTicks == 0 || spawnedAtTime == 0L) return@on
+
             if (killedAtTicks == 0) killedAtTicks = serverTicks
             if (killedAtTime == 0L) killedAtTime = System.currentTimeMillis()
 
