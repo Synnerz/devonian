@@ -57,6 +57,7 @@ object Ping {
     }
 
     fun addSample(ping: Double, weight: Int, t: Double) {
+        if (ping > 1.0e6) return
         val sample = PingSample(t, ping, weight)
 
         pingSum.update { it + ping * weight }
