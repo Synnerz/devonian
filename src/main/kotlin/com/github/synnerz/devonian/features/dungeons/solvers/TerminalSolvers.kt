@@ -25,7 +25,7 @@ object TerminalSolvers : Feature(
     "Shows the correct slots to click to solve the current terminal",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Solvers"
+    subcategory = "Terminals"
 ) {
     private val SETTING_DISABLE_TOOLTIP = addSwitch(
         "disableTooltip",
