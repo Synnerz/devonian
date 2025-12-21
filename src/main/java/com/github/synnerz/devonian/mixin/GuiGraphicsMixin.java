@@ -1,15 +1,23 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers;
 import com.github.synnerz.devonian.features.inventory.ScrollableTooltip;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix3x2fStack;
 import org.joml.Vector2ic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(GuiGraphics.class)
 public abstract class GuiGraphicsMixin {
@@ -52,5 +60,16 @@ public abstract class GuiGraphicsMixin {
 
         // TODO: fix the y value not being adjusted properly
         return original.call(instance, width, height, (int) (i / scale), (int) (j / scale), k, l);
+    }
+
+    @Inject(
+            method = "renderTooltip",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void devonian$renderTooltip(Font font, List<ClientTooltipComponent> list, int i, int j, ClientTooltipPositioner clientTooltipPositioner, ResourceLocation resourceLocation, CallbackInfo ci) {
+        if (!TerminalSolvers.INSTANCE.disableTooltip()) return;
+
+        ci.cancel();
     }
 }

@@ -214,6 +214,7 @@ object Devonian : ClientModInitializer {
         NametagShadow,
         CustomHypeSound,
         Deployables,
+        TerminalSolvers,
 
         // Debug
         CopyItem,
