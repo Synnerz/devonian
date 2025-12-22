@@ -215,6 +215,7 @@ object Devonian : ClientModInitializer {
         CustomHypeSound,
         Deployables,
         TerminalSolvers,
+        RelicTimer,
 
         // Debug
         CopyItem,
