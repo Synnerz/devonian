@@ -34,7 +34,7 @@ object AutoRequeueDungeons : Feature(
                 return@on
             }
             if (Location.area != "catacombs" || event.matches(extraStatsRegex) == null) return@on
-            if (needsDowntime != null) {
+            if (!needsDowntime.isNullOrBlank()) {
                 ChatUtils.command("pc $needsDowntime needs downtime")
                 return@on
             }
