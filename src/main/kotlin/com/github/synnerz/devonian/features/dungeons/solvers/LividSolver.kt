@@ -31,7 +31,7 @@ object LividSolver : Feature(
     private val lividSpawnedRegex = "^\\[BOSS] Livid: I respect you for making it to here, but I'll be your undoing\\.$".toRegex()
     private val mapBlocks = mapOf(
         Blocks.WHITE_WOOL to "Vendetta",
-        Blocks.PINK_WOOL to "Crossed",
+        Blocks.MAGENTA_WOOL to "Crossed",
         Blocks.YELLOW_WOOL to "Arcade",
         Blocks.LIME_WOOL to "Smile",
         Blocks.GRAY_WOOL to "Doctor",
