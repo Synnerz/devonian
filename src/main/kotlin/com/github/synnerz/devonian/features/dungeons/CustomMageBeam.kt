@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.dungeons.solvers.BlazeSolver
@@ -45,10 +46,11 @@ object CustomMageBeam : Feature(
         "The time until the rendering line will disappear",
         "Beam Time To Fade"
     )
-    private val fireworkList = CopyOnWriteArrayList<FireworkParticleData>()
-    private var gatheredAt = -1
+    private val beamsData = CopyOnWriteArrayList<BeamParent>()
 
-    data class FireworkParticleData(val x: Double, val y: Double, val z: Double, val gatheredAt: Int)
+    data class BeamParent(val particles: CopyOnWriteArrayList<BeamChild> = CopyOnWriteArrayList(), var lastTick: Int = -1)
+
+    data class BeamChild(val x: Double, val y: Double, val z: Double)
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
@@ -62,39 +64,59 @@ object CustomMageBeam : Feature(
                 packet.yDist != 0f ||
                 packet.zDist != 0f ||
                 !packet.isOverrideLimiter ||
-                !packet.alwaysShow()
+                !packet.alwaysShow() ||
+                packet.maxSpeed != 0f
             ) return@on
 
-            if (gatheredAt != -1 && EventBus.serverTicks() - gatheredAt > 4) {
-                fireworkList.clear()
-                gatheredAt = -1
+            if (SETTING_ONLY_CANCEL_PARTICLES.get()) {
+                event.cancel()
                 return@on
             }
 
+            val ticks = EventBus.serverTicks()
+            val latest = beamsData.lastOrNull()
+
             event.cancel()
-            if (SETTING_ONLY_CANCEL_PARTICLES.get()) return@on
-            fireworkList.add(FireworkParticleData(packet.x, packet.y, packet.z, EventBus.serverTicks()))
-            gatheredAt = EventBus.serverTicks()
+
+            if (latest != null && ticks < latest.lastTick + 3) {
+                if (latest.particles.size == 7) latest.particles.removeLastOrNull()
+
+                latest.particles.add(BeamChild(packet.x, packet.y, packet.z))
+                latest.lastTick = ticks
+                return@on
+            }
+
+            val beam = BeamParent()
+            beam.particles.add(BeamChild(packet.x, packet.y, packet.z))
+            beam.lastTick = ticks
+            beamsData.add(beam)
         }
 
         on<RenderWorldEvent> { event ->
             if (SETTING_ONLY_CANCEL_PARTICLES.get()) return@on
-            val data1 = fireworkList.firstOrNull() ?: return@on
-            val data2 = fireworkList.lastOrNull() ?: return@on
-            if (data1 == data2) return@on
-            if (EventBus.serverTicks() - data2.gatheredAt > (SETTING_TIME_TO_FADE.get() / 0.05)) {
-                fireworkList.clear()
-                gatheredAt = -1
-                return@on
-            }
 
-            BlazeSolver.renderLine(
-                Vec3(data1.x, data1.y, data1.z),
-                Vec3(data2.x, data2.y, data2.z),
-                SETTING_START_COLOR.getColor(),
-                SETTING_END_COLOR.getColor(),
-                event.ctx
-            )
+            for (data in beamsData) {
+                val particles = data.particles
+
+                val current = particles.firstOrNull() ?: continue
+                val next = particles.lastOrNull() ?: continue
+
+                BlazeSolver.renderLine(
+                    Vec3(current.x, current.y, current.z),
+                    Vec3(next.x, next.y, next.z),
+                    SETTING_START_COLOR.getColor(),
+                    SETTING_END_COLOR.getColor(),
+                    event.ctx
+                )
+
+                if (EventBus.serverTicks() - data.lastTick > (SETTING_TIME_TO_FADE.get() / 0.05)) {
+                    beamsData.remove(data)
+                }
+            }
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        beamsData.clear()
     }
 }
