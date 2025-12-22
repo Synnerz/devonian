@@ -94,6 +94,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
 
                 return
             }
+            if (event.message != criteria) return
 
             Alert.show(message, 1500, false)
         }
