@@ -94,7 +94,9 @@ public abstract class AbstractContainerScreenMixin {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     private void devonian$renderContainer(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
-        if (new ContainerRenderEvent((ContainerScreen) Objects.requireNonNull(Devonian.INSTANCE.getMinecraft().screen), i, j, f, guiGraphics).post())
+        if (!(Devonian.INSTANCE.getMinecraft().screen instanceof ContainerScreen)) return;
+
+        if (new ContainerRenderEvent((ContainerScreen) Devonian.INSTANCE.getMinecraft().screen, i, j, f, guiGraphics).post())
             ci.cancel();
     }
 }

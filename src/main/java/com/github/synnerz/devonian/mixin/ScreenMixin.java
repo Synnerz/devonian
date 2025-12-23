@@ -30,6 +30,7 @@ public class ScreenMixin {
 
     @Inject(method = "renderWithTooltipAndSubtitles", at = @At("TAIL"))
     private void devonian$postRenderWithTooltip(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
-        new PostRenderGuiEvent(Objects.requireNonNull(Devonian.INSTANCE.getMinecraft().screen), i, j, f, guiGraphics).post();
+        if (Devonian.INSTANCE.getMinecraft().screen == null) return;
+        new PostRenderGuiEvent(Devonian.INSTANCE.getMinecraft().screen, i, j, f, guiGraphics).post();
     }
 }
