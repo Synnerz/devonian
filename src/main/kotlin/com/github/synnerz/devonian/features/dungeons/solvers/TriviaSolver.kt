@@ -29,7 +29,7 @@ object TriviaSolver : Feature(
         "What is the status of Livid?" to listOf("Master Necromancer"),
         "What is the status of Sadan?" to listOf("Necromancer Lord"),
         "What is the status of Maxor, Storm, Goldor, and Necron?" to listOf("The Wither Lords"),
-        "How many total Fairy Souls are there?" to listOf("266 Fairy Souls"),
+        "How many total Fairy Souls are there?" to listOf("267 Fairy Souls"),
         "How many Fairy Souls are there in Spider's Den?" to listOf("19 Fairy Souls"),
         "How many Fairy Souls are there in Spiders Den?" to listOf("19 Fairy Souls"),
         "How many Fairy Souls are there in The End?" to listOf("12 Fairy Souls"),
