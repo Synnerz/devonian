@@ -58,8 +58,12 @@ public abstract class GuiGraphicsMixin {
             return original.call(instance, width, height, 0, 0, k, l);
         }
 
+        var vec = original.call(instance, width, height, (int) (i / scale), (int) (j / scale), k, l);
+
+        ScrollableTooltip.INSTANCE.onRender(i, j, k, l);
+
         // TODO: fix the y value not being adjusted properly
-        return original.call(instance, width, height, (int) (i / scale), (int) (j / scale), k, l);
+        return vec;
     }
 
     @Inject(

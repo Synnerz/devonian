@@ -43,12 +43,19 @@ object ScrollableTooltip : Feature(
         "Ignores the scaling factor whenever Lock In Place is enabled",
         "Tooltip Ignore Scale"
     )
+    private val SETTING_RESET_TOOLTIP = addSwitch(
+        "resetTooltip",
+        false,
+        "Resets the x, y offset every time your cursor position changes",
+        "Tooltip Reset"
+    )
     private var scaleScroll = 1.0
     private var xo = 0.0
     private var yo = 0.0
     private var holdingShift = false
     private var holdingCtrl = false
     private var holdingAlt = false
+    private var lastEq = 0
 
     override fun initialize() {
         Config.set(KEY_NAME, JsonObject())
@@ -150,5 +157,17 @@ object ScrollableTooltip : Feature(
     fun yoffset(): Double {
         if (!isEnabled()) return 0.0
         return yo
+    }
+
+    fun onRender(x: Int, y: Int, xoffset: Int, yoffset: Int) {
+        val eq = x * 6 + y * 6 + xoffset * 6 + yoffset * 6
+        if (lastEq == eq) return
+
+        if (SETTING_RESET_TOOLTIP.get()) {
+            xo = 0.0
+            yo = 0.0
+        }
+
+        lastEq = eq
     }
 }
