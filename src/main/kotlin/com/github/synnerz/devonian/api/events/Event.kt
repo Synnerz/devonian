@@ -413,5 +413,19 @@ class KeyPressEvent(
 ) : Event()
 
 class RenderGuiEvent(
-    val screen: Screen
+    val screen: Screen,
+    val x: Int,
+    val y: Int,
+    val pticks: Float,
+    val ctx: GuiGraphics
+) : CancellableEvent()
+
+class PostRenderGuiEvent(
+    val screen: Screen,
+    val x: Int,
+    val y: Int,
+    val pticks: Float,
+    val ctx: GuiGraphics
+) : Event()
+
 ) : CancellableEvent()
