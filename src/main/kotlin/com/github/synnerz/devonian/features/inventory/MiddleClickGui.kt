@@ -20,6 +20,12 @@ object MiddleClickGui : Feature(
     subcategory = "Inventory",
 ) {
     private const val KEY_NAME = "mcgBlacklist"
+    private val SETTING_AVOID_TERMINAL = addSwitch(
+        "avoidClickingTerminals",
+        false,
+        "Avoids middle clicking terminal guis",
+        "Middle Click Avoid Terminals"
+    )
     private var blacklisted = mutableListOf<String>()
     private val keybind = KeyBindingHelper.registerKeyBinding(
         KeyMapping(
@@ -80,7 +86,7 @@ object MiddleClickGui : Feature(
 
             val screenName = event.screen.title?.string ?: return@on
             if (avoidGuis.any { screenName.startsWith(it) } || blacklisted.any { screenName.startsWith(it) }) return@on
-            if (terminalGuis.any { it.matches(screenName) }) return@on
+            if (SETTING_AVOID_TERMINAL.get() && terminalGuis.any { it.matches(screenName) }) return@on
 
             val itemName = stack.customName?.string
             if (itemName != null && avoidItems.contains(itemName)) return@on
