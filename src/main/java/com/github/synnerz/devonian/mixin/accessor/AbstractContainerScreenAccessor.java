@@ -19,4 +19,10 @@ public interface AbstractContainerScreenAccessor {
 
     @Accessor("topPos")
     int getTopPos();
+
+    @Accessor("leftPos")
+    void setLeft(int pos);
+
+    @Accessor("topPos")
+    void setTop(int pos);
 }
