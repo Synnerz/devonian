@@ -63,6 +63,7 @@
     "PlayerMixin",
     "accessor.AbstractArrowAccessor",
     "accessor.ClientboundEntityEventPacketAccessor",
+    "accessor.ClientboundGameEventPacket$TypeAccessor",
     "accessor.EntityAccessor"
   ]
 }

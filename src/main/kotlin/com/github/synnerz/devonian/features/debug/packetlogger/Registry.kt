@@ -33,6 +33,7 @@ object Registry {
         register(EntityDataPacket)
         register(ParticlePacket)
         register(AnimatePacket)
+        register(GameEventPacket)
 
         register(BlockInteractPacket)
     }
