@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.debug.packetlogger
 
+import com.github.synnerz.devonian.features.debug.packetlogger.c2s.*
 import com.github.synnerz.devonian.features.debug.packetlogger.s2c.*
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.PacketFlow
@@ -31,5 +32,8 @@ object Registry {
         register(SpawnEntityPacket)
         register(EntityDataPacket)
         register(ParticlePacket)
+        register(AnimatePacket)
+
+        register(BlockInteractPacket)
     }
 }
