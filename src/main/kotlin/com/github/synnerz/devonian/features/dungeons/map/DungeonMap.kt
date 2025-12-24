@@ -23,6 +23,7 @@ import net.minecraft.resources.ResourceLocation
 import org.joml.Matrix3x2f
 import java.awt.Color
 import kotlin.math.PI
+import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -112,6 +113,21 @@ object DungeonMap : HudFeature(
         "measured in room widths",
         "Map Padding",
         subcategory = "Style",
+    )
+    private val SETTING_MAP_BORDER = addDecimalSlider(
+        "border",
+        0.0,
+        0.0, 20.0,
+        "",
+        "Map Border Width",
+        subcategory = "Style",
+    )
+    private val SETTING_MAP_BORDER_COLOR = addColorPicker(
+        "borderColor",
+        Color(0).rgb,
+        "",
+        "Map Border Colo",
+        subcategory = "Colors",
     )
     private val SETTING_ROOM_ENTRANCE_COLOR = addColorPicker(
         "roomEntranceColor",
@@ -371,6 +387,7 @@ object DungeonMap : HudFeature(
                 DungeonMapRenderOptions(
                     mapOf(
                         DungeonMapColors.Background to SETTING_MAP_BACKGROUND_COLOR.getColor(),
+                        DungeonMapColors.Border to SETTING_MAP_BORDER_COLOR.getColor(),
 
                         DungeonMapColors.RoomEntrance to SETTING_ROOM_ENTRANCE_COLOR.getColor(),
                         DungeonMapColors.RoomNormal to SETTING_ROOM_NORMAL_COLOR.getColor(),
@@ -389,7 +406,7 @@ object DungeonMap : HudFeature(
                     ),
                     SETTING_ROOM_SIZE.get(), SETTING_DOOR_SIZE.get(),
                     floor.roomsW, floor.roomsH,
-                    SETTING_MAP_PADDING.get(),
+                    SETTING_MAP_PADDING.get(), ceil(SETTING_MAP_BORDER.get() * scale).toInt(),
                     SETTING_RENDER_CHECKMARK.get(), SETTING_RENDER_PUZZLE_ICON.get(),
                     SETTING_RENDER_ROOM_NAMES.get(), SETTING_RENDER_ROOM_NAMES_NOT_EFB.get(),
                     SETTING_RENDER_SECRET_COUNT.get(),

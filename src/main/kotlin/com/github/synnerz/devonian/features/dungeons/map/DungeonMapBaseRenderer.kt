@@ -56,6 +56,20 @@ class DungeonMapBaseRenderer :
         val options = param.options
         val colors = options.colors
 
+        if ((colors[DungeonMapColors.Background]?.alpha ?: 0) > 0) {
+            g.paint = colors[DungeonMapColors.Background]
+            g.fillRect(0, 0, w, h)
+        }
+
+        if (options.border > 0 && (colors[DungeonMapColors.Border]?.alpha ?: 0) > 0) {
+            g.paint = colors[DungeonMapColors.Border]
+            val lw = options.border
+            g.fillRect(0, 0, w, lw)
+            g.fillRect(0, lw, lw, h - lw)
+            g.fillRect(w - lw, lw, lw, h - lw)
+            g.fillRect(lw, h - lw, w - lw - lw, lw)
+        }
+
         fun colorForRoom(room: DungeonRoom): Color? {
             var col = if (!options.renderUnknownRooms && !room.explored) colors[DungeonMapColors.RoomUnknown]
             else when (room.type) {
@@ -159,11 +173,6 @@ class DungeonMapBaseRenderer :
                     cells.sumOf { it.cz / 2.0 } / cells.size + 0.5
                 )
             }
-        }
-
-        if ((colors[DungeonMapColors.Background]?.alpha ?: 0) > 0) {
-            g.paint = colors[DungeonMapColors.Background]
-            g.fillRect(0, 0, w, h)
         }
 
         val textToRender = mutableListOf<TextRenderParam>()

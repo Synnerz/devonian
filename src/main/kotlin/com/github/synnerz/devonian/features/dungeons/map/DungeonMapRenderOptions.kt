@@ -10,6 +10,7 @@ data class DungeonMapRenderOptions(
     val dungeonWidth: Int, // number of rooms
     val dungeonHeight: Int, // number of rooms
     val padding: Double,
+    val border: Int,
     val checkMark: Boolean,
     val puzzleIcon: Boolean,
     val roomName: Boolean,
@@ -28,6 +29,9 @@ data class DungeonMapRenderOptions(
 )
 
 enum class DungeonMapColors {
+    Background,
+    Border,
+
     RoomEntrance,
     RoomNormal, RoomMiniboss,
     RoomFairy, RoomBlood,
@@ -36,7 +40,6 @@ enum class DungeonMapColors {
     RoomYellow,
     RoomRare,
     RoomUnknown,
-    Background,
 
     DoorEntrance,
     DoorWither,
