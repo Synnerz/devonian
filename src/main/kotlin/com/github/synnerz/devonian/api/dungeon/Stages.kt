@@ -129,7 +129,7 @@ object Stages {
         Goldor = SplitStage("The Core entrance is opening!").withName("&8Goldor")
         Necron = SplitStage("[BOSS] Necron: You went further than any human before, congratulations.")
             .withName("&4Necron")
-        WitherKing = SplitStage("[BOSS] Wither King: You.. again?").withName("&0Wither King")
+        WitherKing = SplitStage("[BOSS] Wither King: You... again?").withName("&0Wither King")
 
         F7 = SequentialSplitStage(
             "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!",
