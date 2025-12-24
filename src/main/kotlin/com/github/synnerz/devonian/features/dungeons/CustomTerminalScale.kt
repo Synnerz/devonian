@@ -1,12 +1,10 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
-import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 import kotlin.math.roundToInt
 
 object CustomTerminalScale : Feature(
@@ -41,45 +39,37 @@ object CustomTerminalScale : Feature(
     private var oldScale = -1
 
     override fun initialize() {
-        on<PacketReceivedEvent> { event ->
-            val packet = event.packet
+        on<TickEvent> {
+            val screen = minecraft.screen
 
-            if (packet is ClientboundContainerClosePacket) {
-                if (oldScale == -1) return@on
-
-                minecraft.options.guiScale().set(oldScale)
+            if (screen == null && oldScale != -1) {
+                setScale(oldScale)
                 oldScale = -1
                 return@on
             }
-
-            if (packet !is ClientboundOpenScreenPacket) return@on
-            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
-
-            val title = packet.title.string
+            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7 || oldScale != -1) return@on
+            val title = screen?.title?.string ?: return@on
             val guiScale = minecraft.options.guiScale()
 
             if (validGuis.any { it.matches(title) }) {
                 oldScale = guiScale.get()
-                guiScale.set(SETTING_TERMINAL_SCALE.get().roundToInt())
+                setScale(SETTING_TERMINAL_SCALE.get().roundToInt())
                 return@on
             }
             if (!melodyRegex.matches(title)) return@on
 
             oldScale = guiScale.get()
-            guiScale.set(SETTING_TERMINAL_MELODY_SCALE.get().roundToInt())
-        }
-
-        on<PacketSentEvent> { event ->
-            val packet = event.packet
-            if (packet !is ServerboundContainerClosePacket) return@on
-            if (oldScale == -1) return@on
-
-            minecraft.options.guiScale().set(oldScale)
-            oldScale = -1
+            setScale(SETTING_TERMINAL_MELODY_SCALE.get().roundToInt())
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         oldScale = -1
+    }
+
+    private fun setScale(scale: Int) {
+        Scheduler.scheduleTask {
+            minecraft.options.guiScale().set(scale)
+        }
     }
 }
