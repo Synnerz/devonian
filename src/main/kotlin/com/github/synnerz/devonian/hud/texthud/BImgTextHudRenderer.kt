@@ -65,13 +65,25 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
         if (parent.hasObfuText) parent.markText()
     }
 
+    private var maxW = 0
+    private var maxH = 0
+    private var age = 0
     override fun onUpdateImage() {
         val params = parent.lastRenderParams
         val actualW = ceil(parent.lineWidth).toInt()
         val actualH = ceil(params.fontSize * (parent.lines.size + 1) + params.shadow.getSizeIncrease(params.fontSize)).toInt()
+        val scaleW = MathUtils.ceilPow2(actualW, 1)
+        val scaleH = MathUtils.ceilPow2(actualH, 2)
+        if (age > 0 && scaleW <= maxW && scaleH <= maxH) {
+            if (scaleW < maxW || scaleH < maxH) age--
+            else age = 10
+        } else {
+            maxW = scaleW
+            maxH = scaleH
+            age = 10
+        }
         renderer.update(
-            MathUtils.ceilPow2(actualW, 1),
-            MathUtils.ceilPow2(actualH, 2),
+            maxW, maxH,
             TextRenderer.RenderParams(
                 params,
                 parent.lines.map { it.data as StringParser.LayoutLineData },

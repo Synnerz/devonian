@@ -12,15 +12,15 @@ import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.ResourceLocation
 import org.joml.Matrix3x2f
 import java.awt.image.BufferedImage
+import java.util.concurrent.Executors
 import java.util.concurrent.Future
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
 
 abstract class BufferedImageRenderer<T>(val name: String) {
     protected val uploader = BufferedImageUploader(name)
     protected val dirtyImage = atomic<BufferedImage?>(null)
     protected val bimgProvider: BufferedImageFactory = BufferedImageFactoryImpl()
+    protected var running = false
+    protected var waiting: Triple<Int, Int, T>? = null
     protected var lastFuture: Future<*>? = null
     protected val mcid = ResourceLocation.fromNamespaceAndPath("devonian", "buffered_image/${name.lowercase()}")
     protected var valid = true
@@ -32,7 +32,11 @@ abstract class BufferedImageRenderer<T>(val name: String) {
     protected abstract fun drawImage(img: BufferedImage, param: T): BufferedImage
 
     fun update(w: Int, h: Int, param: T) {
-        lastFuture?.cancel(false)
+        if (running) {
+            waiting = Triple(w, h, param)
+            return
+        }
+        running = true
         lastFuture = pool.submit {
             try {
                 val img = bimgProvider.create(w, h)
@@ -41,6 +45,10 @@ abstract class BufferedImageRenderer<T>(val name: String) {
                 println("error trying to render BufferedImage in $name")
                 e.printStackTrace()
             }
+            running = false
+            val w = waiting ?: return@submit
+            waiting = null
+            update(w.first, w.second, w.third)
         }
     }
 
@@ -58,13 +66,13 @@ abstract class BufferedImageRenderer<T>(val name: String) {
     }
 
     fun draw(ctx: GuiGraphics, x: Float, y: Float, scale: Float = 1f) {
-        draw(ctx, x, y, uploader.w * scale, uploader.h * scale)
         uploadImage()
+        draw(ctx, x, y, uploader.w * scale, uploader.h * scale)
     }
 
     fun drawStretched(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float) {
-        draw(ctx, x, y, w, h)
         uploadImage()
+        draw(ctx, x, y, w, h)
     }
 
     private fun draw(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float) {
@@ -97,14 +105,8 @@ abstract class BufferedImageRenderer<T>(val name: String) {
     }
 
     companion object {
-        private var threadId = 0
-        val pool = ThreadPoolExecutor(
-            1, 2,
-            60, TimeUnit.SECONDS,
-            LinkedBlockingQueue()
-        ) { run ->
-            Thread(run, "Devonian BufferedImage Renderer-${threadId++}")
-        }
+        val pool = Executors.newVirtualThreadPerTaskExecutor()!!
+
         val pipeline = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation("devonian/buffered_image_textured_triangle_strip")
             .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, Mode.QUADS)
