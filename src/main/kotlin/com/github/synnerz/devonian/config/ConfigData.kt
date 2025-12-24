@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.config
 
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import java.awt.Color
 
@@ -16,6 +17,8 @@ open class ConfigData<T>(
     val description = description ?: ""
     val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
 
+    val state = BasicState(value)
+
     private val onChangeHook = mutableListOf<((T) -> Unit)>()
     open fun get() = value
 
@@ -23,6 +26,7 @@ open class ConfigData<T>(
         if (configName == null) return
         value = newVal
         Config.setConfig(configName, newVal)
+        state.value = newVal
         onChangeHook.forEach { it(newVal) }
     }
 

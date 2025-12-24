@@ -106,6 +106,54 @@ object StringUtils {
         }
     }
 
+    // "1:02:13.42"
+    fun formatClock(time: Long, decimals: Int): String {
+        if (time < 0L) return '-' + formatClock(-time, decimals)
+        val ms = time % 1000
+        var t = time / 1000
+        val s = t % 60
+        t /= 60
+        val m = t % 60
+        val h = t / 60
+
+        return buildString {
+            if (h > 0) {
+                append("$h:")
+                append("%02d:".format(m))
+                append("%02d".format(s))
+            } else if (m > 0) {
+                append("$m:")
+                append("%02d".format(s))
+            } else append(s)
+            if (decimals == 0) append('s')
+            else append("%.${decimals}f".format(ms / 1000.0).substring(1))
+        }
+    }
+
+    // "1h 2m 13.42s"
+    fun formatTime(time: Long, decimals: Int): String {
+        if (time < 0L) return '-' + formatTime(-time, decimals)
+        val ms = time % 1000
+        var t = time / 1000
+        val s = t % 60
+        t /= 60
+        val m = t % 60
+        val h = t / 60
+
+        return buildString {
+            if (h > 0) {
+                append("${h}h ")
+                append("%02dm ".format(m))
+                append("%02d".format(s))
+            } else if (m > 0) {
+                append("${m}m ")
+                append("%02d".format(s))
+            } else append(s)
+            append("%.${decimals}f".format(ms / 1000.0).substring(1))
+            append("s")
+        }
+    }
+
     private val camelCaseRegex = "[a-z]+|[A-Z](?:[a-z]+|[A-Z]*(?![a-z]))|[.\\d]+".toRegex()
     fun String.camelCaseToSentence(): String = camelCaseRegex.replace(this) {
         it.value.replaceFirstChar { it.uppercaseChar() } + " "

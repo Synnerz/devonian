@@ -106,6 +106,26 @@ object Serializer {
             obj.set("Lore_", arrUnf)
         }
 
+        stack.get(DataComponents.ENCHANTMENTS)?.let {
+            if (it.isEmpty) return@let
+            val ench = obj.getObject("Enchantments")
+            it.entrySet().forEach {
+                ench.set(it.key.registeredName, it.intValue)
+            }
+        }
+
+        stack.get(DataComponents.STORED_ENCHANTMENTS)?.let {
+            if (it.isEmpty) return@let
+            val ench = obj.getObject("EnchantmentsStored")
+            it.entrySet().forEach {
+                ench.set(it.key.registeredName, it.intValue)
+            }
+        }
+
+        stack.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE)?.let {
+            obj.set("forceEnchanted", it)
+        }
+
         stack.get(DataComponents.CUSTOM_DATA)?.let {
             val nbt = it.copyTag()
             obj.set("ExtraAttributes", serializeNBT(nbt))
