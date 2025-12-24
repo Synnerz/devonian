@@ -1,12 +1,11 @@
 package com.github.synnerz.devonian.features.inventory
 
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
-import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import kotlin.math.abs
 

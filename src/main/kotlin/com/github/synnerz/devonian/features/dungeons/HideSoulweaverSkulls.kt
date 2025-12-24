@@ -8,7 +8,7 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EquipmentSlot
-import java.util.UUID
+import java.util.*
 
 object HideSoulweaverSkulls : Feature(
     "hideSoulweaverSkulls",

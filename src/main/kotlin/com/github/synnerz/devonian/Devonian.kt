@@ -1,13 +1,20 @@
 package com.github.synnerz.devonian
 
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
+import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.HudManagerHider
+import com.github.synnerz.devonian.features.HudManagerInstructions
+import com.github.synnerz.devonian.features.HudManagerRenderer
 import com.github.synnerz.devonian.features.debug.CopyItem
+import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger
+import com.github.synnerz.devonian.features.debug.renderers.DungeonRoomComponentRenderer
 import com.github.synnerz.devonian.features.debug.renderers.RenderSlotIndex
 import com.github.synnerz.devonian.features.diana.BurrowGuesser
 import com.github.synnerz.devonian.features.diana.BurrowWaypoint
@@ -25,16 +32,12 @@ import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
-import com.github.synnerz.devonian.api.Location
-import com.github.synnerz.devonian.features.*
-import com.github.synnerz.devonian.features.debug.WAILA
-import com.github.synnerz.devonian.features.debug.renderers.DungeonRoomComponentRenderer
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import org.slf4j.LoggerFactory
-import java.util.UUID
+import java.util.*
 
 object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")

@@ -5,7 +5,6 @@ import com.github.synnerz.devonian.api.events.PacketReceivedEvent;
 import com.github.synnerz.devonian.api.events.PacketSentEvent;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.chat.Component;

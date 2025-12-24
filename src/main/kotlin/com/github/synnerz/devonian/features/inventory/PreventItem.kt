@@ -3,9 +3,9 @@ package com.github.synnerz.devonian.features.inventory
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.*
-import com.github.synnerz.devonian.api.Location
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource

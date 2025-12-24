@@ -9,9 +9,7 @@ import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
-import com.github.synnerz.devonian.utils.math.DDA
 import com.github.synnerz.devonian.utils.math.ShapeUtils
-import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.EmptyBlockGetter

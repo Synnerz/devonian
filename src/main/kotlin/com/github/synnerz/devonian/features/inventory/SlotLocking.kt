@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.inventory
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.GuiCloseEvent
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.api.events.GuiKeyUpEvent

@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.config.ui.talium
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.config.ConfigType
 import com.github.synnerz.talium.components.*

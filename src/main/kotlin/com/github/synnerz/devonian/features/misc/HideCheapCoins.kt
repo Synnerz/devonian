@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import java.util.UUID
+import java.util.*
 
 object HideCheapCoins : Feature(
     "hideCheapCoins",

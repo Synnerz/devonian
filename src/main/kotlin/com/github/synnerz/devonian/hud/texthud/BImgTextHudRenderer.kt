@@ -8,7 +8,6 @@ import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.GraphicsEnvironment
 import java.awt.RenderingHints
-import java.awt.image.RescaleOp
 import kotlin.math.ceil
 
 class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontListener {

@@ -1,17 +1,11 @@
 package com.github.synnerz.devonian.hud.texthud
 
-import com.github.synnerz.devonian.hud.texthud.StringParser.COLORS
-import java.awt.Color
-import java.awt.Font
-import java.awt.Graphics2D
-import java.awt.GraphicsEnvironment
-import java.awt.Shape
+import java.awt.*
 import java.awt.font.TextAttribute
 import java.awt.font.TextLayout
 import java.awt.geom.AffineTransform
 import java.text.AttributedCharacterIterator
 import java.text.AttributedString
-import java.util.function.Consumer
 import java.util.stream.Collectors
 
 object StringParser {

@@ -1,12 +1,7 @@
 package com.github.synnerz.devonian.features.inventory
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.events.GuiCloseEvent
-import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
-import com.github.synnerz.devonian.api.events.GuiKeyUpEvent
-import com.github.synnerz.devonian.api.events.PostRenderSlotsEvent
-import com.github.synnerz.devonian.api.events.QuickMoveItemEvent
-import com.github.synnerz.devonian.api.events.RenderSlotEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor

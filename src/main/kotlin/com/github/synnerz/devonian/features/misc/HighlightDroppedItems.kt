@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.client.renderer.entity.state.ItemClusterRenderState
 import net.minecraft.world.item.ItemStack
-import java.util.WeakHashMap
+import java.util.*
 
 object HighlightDroppedItems : Feature("highlightDroppedItems") {
     private val items = WeakHashMap<ItemStack, Int>()

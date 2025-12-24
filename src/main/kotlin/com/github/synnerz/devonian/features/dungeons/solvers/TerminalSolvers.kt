@@ -2,7 +2,10 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.api.events.GuiClickEvent
+import com.github.synnerz.devonian.api.events.GuiOpenEvent
+import com.github.synnerz.devonian.api.events.RenderSlotEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_CANCEL_WRONG_CLICKS
