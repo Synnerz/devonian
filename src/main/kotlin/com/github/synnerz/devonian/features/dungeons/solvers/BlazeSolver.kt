@@ -143,7 +143,7 @@ object BlazeSolver : Feature(
                 efficientPos = null
                 if (!hasSent) {
                     hasSent = true
-                    ChatUtils.command("pc Blaze done")
+                    if (SETTING_SEND_MSG.get()) ChatUtils.command("pc Blaze done")
                 }
                 return@on
             }
