@@ -143,12 +143,19 @@ object Dungeons {
         .zip(speedScore) { a, b -> a + b }
         .zip(bonusScore) { a, b -> a + b }
 
-    val _targetScore = floorState.zip(isPaul) { state, paul -> 40 - (1 + (if (floor.floorNum >= 6) 7 else 5) + (if (paul) 10 else 0)) }
+    val _targetScore = floorState.zip(isPaul) { floor, paul -> 40 - (1 + (if (floor.floorNum >= 6) 7 else 5) + (if (paul) 10 else 0)) }
     val minSecrets = _targetScore.zip(totalSecretsRequired) { score, secrets -> ceil(score * secrets / 40.0).toInt() }
     val remainingMinSecrets = minSecrets.zip(secretsFound) { total, found -> max(0, total - found) }
 
     fun initialize() {
         DungeonScanner.init()
+
+        DevonianCommand.command.subcommand("setfloor") { _, args ->
+            val f = FloorType.entries.find { it.shortName == args[2] } ?: return@subcommand 1
+            floor = f
+            floorState.value = f
+            return@subcommand 0
+        }
     }
 
     init {
