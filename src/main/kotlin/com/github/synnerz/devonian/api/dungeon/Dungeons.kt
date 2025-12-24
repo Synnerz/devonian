@@ -154,11 +154,11 @@ object Dungeons {
         M7Events.init()
 
         DevonianCommand.command.subcommand("setfloor") { _, args ->
-            val f = FloorType.entries.find { it.shortName == args[2] } ?: return@subcommand 1
+            val f = FloorType.entries.find { it.shortName == args[0] } ?: return@subcommand 1
             floor = f
             floorState.value = f
             return@subcommand 0
-        }
+        }.string("floor").suggest("floor", "E", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "M1", "M2", "M3", "M4", "M5", "M6", "M7")
     }
 
     init {

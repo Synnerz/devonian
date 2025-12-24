@@ -76,7 +76,7 @@ object DragonSpawnTimer : TextHudFeature(
         }.setEnabled(SETTING_WORLD.state)
     }
 
-    override fun getEditText(): List<String> = listOf((System.currentTimeMillis() % 5000L).toString())
+    override fun getEditText(): List<String> = listOf((5000L - (System.currentTimeMillis() % 5000L)).toString())
 
     override fun onWorldChange(event: WorldChangeEvent) {
         spawned.clear()

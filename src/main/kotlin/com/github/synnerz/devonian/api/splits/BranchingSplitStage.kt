@@ -37,7 +37,7 @@ class BranchingSplitStage : SplitStage {
     }
 
     override fun getSplits(format: TimeUnit.Format, force: TimeUnit?): List<String> {
-        if (!hasStarted()) return emptyList()
+        if (!hasStarted() && force == null) return emptyList()
         val list = getThisSplit(format, force)
         list.addAll(chosenChild?.getSplits(format, force) ?: emptyList())
         return list

@@ -117,11 +117,11 @@ object Stages {
         )
 
         Maxor = SplitStage().withName("&5Maxor")
-        Storm = SplitStage("[BOSS] Storm: Pathetic Maxor, just like expected.").withName("&9Storm")
-        S1 = TerminalSection(4, 1).also { it.withName("S1") }
-        S2 = TerminalSection(5, 2).also { it.withName("S2") }
-        S3 = TerminalSection(4, 3).also { it.withName("S3") }
-        S4 = TerminalSection(4, 4).also { it.withName("S4") }
+        Storm = SplitStage("[BOSS] Storm: Pathetic Maxor, just like expected.").withName("&9Storm").withLongTime()
+        S1 = TerminalSection(4, 1).also { it.withName("S1").withLongTime() }
+        S2 = TerminalSection(5, 2).also { it.withName("S2").withLongTime() }
+        S3 = TerminalSection(4, 3).also { it.withName("S3").withLongTime() }
+        S4 = TerminalSection(4, 4).also { it.withName("S4").withLongTime() }
         Terminals = SequentialSplitStage(
             "[BOSS] Goldor: Who dares trespass into my domain?",
             arrayOf(S1, S2, S3, S4),
