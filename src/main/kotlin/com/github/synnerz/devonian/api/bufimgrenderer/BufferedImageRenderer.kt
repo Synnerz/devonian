@@ -91,7 +91,9 @@ abstract class BufferedImageRenderer<T>(val name: String) {
     }
 
     fun dispose() {
-        uploader.texture.close()
+        try {
+            uploader.texture.close()
+        } catch (_: IllegalStateException) {}
     }
 
     companion object {

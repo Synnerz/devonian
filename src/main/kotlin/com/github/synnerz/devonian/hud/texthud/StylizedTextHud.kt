@@ -297,6 +297,7 @@ open class StylizedTextHud(
 
         fun recreateRenderers(bimg: Boolean) {
             instances.forEach {
+                if (it.renderer is BImgTextHudRenderer == bimg) return@forEach
                 it.renderer = getRenderer(it.name, bimg)
             }
         }

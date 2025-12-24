@@ -90,6 +90,7 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
     override fun dispose() {
         if (disposed) return
         disposed = true
+        renderer.dispose()
     }
 
     fun invalidate() {
