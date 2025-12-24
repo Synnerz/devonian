@@ -45,11 +45,6 @@ open class Feature @JvmOverloads constructor(
 
     init {
         Devonian.features.add(this)
-
-        createRequirements().reduce { a, v ->
-            if (a == null || v == null) a
-            else a.zip(v, Boolean::and)
-        }?.let { setEnabled(it) }
     }
 
     override fun add() {
@@ -58,6 +53,13 @@ open class Feature @JvmOverloads constructor(
 
     override fun remove() {
         children.forEach { it.unregister() }
+    }
+
+    fun preinitialize() {
+        createRequirements().reduce { a, v ->
+            if (a == null || v == null) a
+            else a.zip(v, Boolean::and)
+        }?.let { setEnabled(it) }
     }
 
     open fun initialize() {}

@@ -239,6 +239,7 @@ object Devonian : ClientModInitializer {
     )
 
     override fun onInitializeClient() {
+        featureInstances.forEach(Feature::preinitialize)
         featureInstances.forEach(Feature::initialize)
         ConfigGui.initialize()
         HudManager.initialize()
