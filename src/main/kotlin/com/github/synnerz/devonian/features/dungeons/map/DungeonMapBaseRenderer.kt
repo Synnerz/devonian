@@ -18,7 +18,7 @@ import kotlin.math.max
 
 class DungeonMapBaseRenderer :
     BufferedImageRenderer<DungeonMapRenderData>("dungeonMapBaseRenderer"), FontListener {
-    val cachedStrings = Collections.synchronizedMap(
+    val cachedStrings: MutableMap<CachedStringKey, CachedRenderedString> = Collections.synchronizedMap(
         object : LinkedHashMap<CachedStringKey, CachedRenderedString>(30) {
             override fun removeEldestEntry(eldest: Map.Entry<CachedStringKey?, CachedRenderedString?>?): Boolean = size > 36
         }
@@ -109,6 +109,60 @@ class DungeonMapBaseRenderer :
         val bImgOX = ((maxDim - options.dungeonWidth) / 2.0 + options.padding) * compToBImgFW
         val bImgOY = ((maxDim - options.dungeonHeight) / 2.0 + options.padding) * compToBImgFH
 
+        val doorOffset = (1.0 - options.doorWidth) * 0.5
+
+        fun drawDoor(cx1: Int, cz1: Int, cx2: Int, cz2: Int) {
+            if (cx1 > cx2 || cz1 > cz2) return drawDoor(cx2, cz2, cx1, cz1)
+            val cx: Double
+            val cz: Double
+            val cw: Double
+            val ch: Double
+            if (cx1 == cx2) {
+                cx = cx1 + doorOffset
+                cz = cz1 + roomRectOffset + options.roomWidth
+                cw = options.doorWidth
+                ch = roomRectOffset * 2.0
+            } else {
+                cx = cx1 + roomRectOffset + options.roomWidth
+                cz = cz1 + doorOffset
+                cw = roomRectOffset * 2.0
+                ch = options.doorWidth
+            }
+            val bx = (compToBImgFW * cx + bImgOX).toInt()
+            val bz = (compToBImgFH * cz + bImgOY).toInt()
+            val bw = ceil(compToBImgFW * cw).toInt()
+            val bh = ceil(compToBImgFH * ch).toInt()
+
+            g.fillRect(bx, bz, bw + 1, bh + 1)
+        }
+
+        doors.forEach { door ->
+            if (door == null) return@forEach
+            if (!options.renderUnknownRooms && door.rooms.all { !it.explored }) return@forEach
+            val color = when (door.type) {
+                DoorTypes.ENTRANCE -> colors[DungeonMapColors.DoorEntrance]
+                DoorTypes.WITHER -> colors[DungeonMapColors.DoorWither]
+                DoorTypes.BLOOD -> colors[DungeonMapColors.DoorBlood]
+                DoorTypes.NORMAL -> {
+                    if (!door.opened) return@forEach
+                    val room = door.rooms.minByOrNull {
+                        it.type.prio - (if (!it.explored && !options.renderUnknownRooms) 100 else 0)
+                    } ?: return@forEach
+
+                    if (!room.explored && door.holyShitFairyDoorPleaseStopFlashingSobs) colors[DungeonMapColors.DoorWither]
+                    else colorForRoom(room)
+                }
+            } ?: colors[DungeonMapColors.RoomNormal] ?: return@forEach
+
+            g.paint = color
+            drawDoor(
+                door.roomComp1.x,
+                door.roomComp1.z,
+                door.roomComp2.x,
+                door.roomComp2.z,
+            )
+        }
+
         fun drawRoom(x: Int, z: Int, w: Int, h: Int) {
             val cx = x + roomRectOffset
             val cz = z + roomRectOffset
@@ -119,7 +173,7 @@ class DungeonMapBaseRenderer :
             val bw = ceil(compToBImgFW * cw).toInt()
             val bh = ceil(compToBImgFH * ch).toInt()
 
-            g.fillRect(bx, bz, bw, bh)
+            g.fillRect(bx, bz, bw + 1, bh + 1)
         }
 
         fun drawRoomJoined(cx1: Int, cz1: Int, cx2: Int, cz2: Int) {
@@ -144,7 +198,7 @@ class DungeonMapBaseRenderer :
             val bw = ceil(compToBImgFW * cw).toInt()
             val bh = ceil(compToBImgFH * ch).toInt()
 
-            g.fillRect(bx, bz, bw, bh)
+            g.fillRect(bx, bz, bw + 1, bh + 1)
         }
 
         fun getCenterOf(
@@ -359,60 +413,6 @@ class DungeonMapBaseRenderer :
             }
         }
 
-        val doorOffset = (1.0 - options.doorWidth) * 0.5
-
-        fun drawDoor(cx1: Int, cz1: Int, cx2: Int, cz2: Int) {
-            if (cx1 > cx2 || cz1 > cz2) return drawDoor(cx2, cz2, cx1, cz1)
-            val cx: Double
-            val cz: Double
-            val cw: Double
-            val ch: Double
-            if (cx1 == cx2) {
-                cx = cx1 + doorOffset
-                cz = cz1 + roomRectOffset + options.roomWidth
-                cw = options.doorWidth
-                ch = roomRectOffset * 2.0
-            } else {
-                cx = cx1 + roomRectOffset + options.roomWidth
-                cz = cz1 + doorOffset
-                cw = roomRectOffset * 2.0
-                ch = options.doorWidth
-            }
-            val bx = (compToBImgFW * cx + bImgOX).toInt()
-            val bz = (compToBImgFH * cz + bImgOY).toInt()
-            val bw = ceil(compToBImgFW * cw).toInt()
-            val bh = ceil(compToBImgFH * ch).toInt()
-
-            g.fillRect(bx, bz, bw, bh)
-        }
-
-        doors.forEach { door ->
-            if (door == null) return@forEach
-            if (!options.renderUnknownRooms && door.rooms.all { !it.explored }) return@forEach
-            val color = when (door.type) {
-                DoorTypes.ENTRANCE -> colors[DungeonMapColors.DoorEntrance]
-                DoorTypes.WITHER -> colors[DungeonMapColors.DoorWither]
-                DoorTypes.BLOOD -> colors[DungeonMapColors.DoorBlood]
-                DoorTypes.NORMAL -> {
-                    if (!door.opened) return@forEach
-                    val room = door.rooms.minByOrNull {
-                        it.type.prio - (if (!it.explored && !options.renderUnknownRooms) 100 else 0)
-                    } ?: return@forEach
-
-                    if (!room.explored && door.holyShitFairyDoorPleaseStopFlashingSobs) colors[DungeonMapColors.DoorWither]
-                    else colorForRoom(room)
-                }
-            } ?: colors[DungeonMapColors.RoomNormal] ?: return@forEach
-
-            g.paint = color
-            drawDoor(
-                door.roomComp1.x,
-                door.roomComp1.z,
-                door.roomComp2.x,
-                door.roomComp2.z,
-            )
-        }
-
         if (textToRender.isNotEmpty()) {
             val fontSize = textToRender.minOf { it.key.size }
             val fontSizeF = fontSize.toFloat()
@@ -435,7 +435,7 @@ class DungeonMapBaseRenderer :
 
                     val w = width + options.stringShadow.getSizeIncrease(fontSizeF) + 5.0f
                     val h = fontSize * lines.size + ascent
-                    val img = bimgProvider.create(w.toInt(), h.toInt())
+                    val img = bimgProvider.create(w.toInt(), h)
 
                     TextRendererImpl.drawImage(img, TextRenderer.RenderParams(
                         StylizedTextHud.TextRenderParams(
