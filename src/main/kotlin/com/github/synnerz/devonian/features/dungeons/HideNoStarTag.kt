@@ -1,8 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -50,8 +48,6 @@ object HideNoStarTag : Feature(
                 val bloodName = mobName.substring(it + 1)
                 if (bloodExceptions.contains(bloodName)) return@on
             }
-
-            if (Dungeons.inBoss.value) ChatUtils.sendMessage("removing nametag $name")
 
             Scheduler.scheduleTask { world.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED) }
         }
