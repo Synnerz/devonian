@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.map
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
 import com.github.synnerz.devonian.api.dungeon.*
@@ -12,12 +13,14 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
+import com.github.synnerz.devonian.mixin.accessor.ScreenAccessor
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.TexturedQuadRenderState
 import com.github.synnerz.devonian.utils.math.MathUtils
 import com.mojang.blaze3d.textures.GpuTextureView
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.client.gui.components.PlayerFaceRenderer.*
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.resources.ResourceLocation
@@ -35,6 +38,19 @@ object DungeonMap : HudFeature(
     "catacombs",
     subcategory = "Toggle",
 ) {
+    private val SETTING_FUNNY = addButton(
+        {
+            Scheduler.scheduleTask {
+                minecraft.openChatScreen(ChatComponent.ChatMethod.COMMAND)
+                Scheduler.scheduleTask(2) {
+                    (minecraft.screen as ScreenAccessor?)?.insertText("/dv font Mojangles", true)
+                }
+            }
+        },
+        description = ":(",
+        displayName = "\"guys how do i change map font\"",
+        subcategory = "Style",
+    )
     private val SETTING_USE_PLAYER_HEADS = addSwitch(
         "playerHeads",
         false,
