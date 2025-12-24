@@ -95,7 +95,10 @@ object ArrowAlignSolver : Feature(
                 player.y in 100.0 .. 140.0 &&
                 player.z in 50.0 .. 125.0
 
-            if (!atDev) return@on
+            if (!atDev) {
+                solution = null
+                return@on
+            }
             if (solution != null) return@on
 
             val world = minecraft.level ?: return@on
