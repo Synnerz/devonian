@@ -3,11 +3,13 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.world.item.Items
@@ -20,6 +22,10 @@ object SpiritLeapKeys : Feature(
     "catacombs",
     subcategory = "QOL"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+    }
+
     private val keybinds = listOf(
         GLFW.GLFW_KEY_1, // archer
         GLFW.GLFW_KEY_2, // mage

@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 
 object RunSplits : TextHudFeature(
@@ -16,6 +17,10 @@ object RunSplits : TextHudFeature(
     "catacombs",
     subcategory = "HUD",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
+    }
+
     private val SETTING_SEND_ALL_END = addSwitch(
         "sendAllOnRunEnd",
         false,
@@ -51,7 +56,7 @@ object RunSplits : TextHudFeature(
             if (!isEditing) editTime = TimeUnit.EMPTY
             setLines(Stages.Clear.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]))
             draw(event.ctx)
-        }.setEnabled(Stages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
+        }
     }
 
     var editTime = TimeUnit.EMPTY

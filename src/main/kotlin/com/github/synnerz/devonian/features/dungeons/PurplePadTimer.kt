@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 
 object PurplePadTimer : TextHudFeature(
     "purplePadTimer",
@@ -13,6 +15,10 @@ object PurplePadTimer : TextHudFeature(
     "catacombs",
     subcategory = "HUD",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Storm.isActiveState)
+    }
+
     private val stormRegex = "^\\[BOSS] Storm: (ENERGY HEED MY CALL|THUNDER LET ME BE YOUR CATALYST!)$".toRegex()
     private var startedAt = 0
 

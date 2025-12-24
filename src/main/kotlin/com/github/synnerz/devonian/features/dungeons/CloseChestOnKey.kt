@@ -1,9 +1,11 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 
@@ -14,6 +16,10 @@ object CloseChestOnKey : Feature(
     "catacombs",
     subcategory = "QOL"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val keybinds get() = listOf(
         minecraft.options.keyUp, // w
         minecraft.options.keyLeft, // a
@@ -24,7 +30,6 @@ object CloseChestOnKey : Feature(
 
     override fun initialize() {
         on<GuiKeyDownEvent> { event ->
-            if (Dungeons.inBoss.value) return@on
             if (event.screen !is AbstractContainerScreen<*>) return@on
 
             val container = event.screen

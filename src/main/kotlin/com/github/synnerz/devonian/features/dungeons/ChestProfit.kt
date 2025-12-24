@@ -3,11 +3,13 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.SkyblockPrices
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
@@ -23,6 +25,10 @@ object ChestProfit : TextHudFeature(
     "catacombs",
     subcategory = "HUD",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.BossEnd.isActiveState)
+    }
+
     private val SETTING_USE_ESSENCE_PROFIT = addSwitch(
         "useEssenceProfit",
         true,

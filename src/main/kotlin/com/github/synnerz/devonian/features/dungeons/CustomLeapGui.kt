@@ -4,9 +4,11 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.effects.OutlineEffect
@@ -24,12 +26,17 @@ object CustomLeapGui : Feature(
     "catacombs",
     subcategory = "QOL"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+    }
+
     private const val CONTAINER_NAME = "Spirit Leap"
     private val closeChestKey get() = minecraft.options.keyInventory
     private val PRIMARY_COLOR = Color(25, 25, 25, 255)
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
     private var containerId = -1
 
+    val leapComparator = Comparator.comparing<LeapPlayer, Char> { it.role.singleLetter }.thenBy { it.name.lowercase() }
     data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val isDead: Boolean)
 
     override fun initialize() {
@@ -53,18 +60,18 @@ object CustomLeapGui : Feature(
             if (containerId == -1 || packet !is ClientboundContainerSetContentPacket) return@on
 
             val items = packet.items
-            var ids = 0
             background.clearChildren()
 
+            val slots = mutableListOf<LeapPlayer>()
             for (idx in 9..18) {
                 val itemStack = items.getOrNull(idx) ?: continue
                 if (itemStack.item != Items.PLAYER_HEAD) continue
                 val name = itemStack.customName?.string ?: continue
 
                 val data = Dungeons.players[name] ?: continue
-                create(LeapPlayer(idx, name, data.role, data.isDead), ids)
-                ids++
+                slots.add(LeapPlayer(idx, name, data.role, data.isDead))
             }
+            slots.sortedWith(leapComparator).forEachIndexed { i, v -> create(v, i) }
 
             containerId = -1
         }

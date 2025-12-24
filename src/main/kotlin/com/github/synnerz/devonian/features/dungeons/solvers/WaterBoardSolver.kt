@@ -5,9 +5,11 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import com.google.gson.Gson
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.world.level.block.Blocks
@@ -21,6 +23,10 @@ object WaterBoardSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     // TODO: optimize these since they are not the most optimal currently.
     @Suppress("unchecked_cast")
     private val solutionsData = Gson().fromJson(

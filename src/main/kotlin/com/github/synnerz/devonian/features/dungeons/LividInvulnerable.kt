@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 
 object LividInvulnerable : TextHudFeature(
     "lividInvulnerable",
@@ -13,6 +15,10 @@ object LividInvulnerable : TextHudFeature(
     "catacombs",
     subcategory = "HUD"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Dungeons.floorState.map { it.floorNum == 5 })
+    }
+
     private val lividRegex = "^\\[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows\\.$".toRegex()
     private var startedAt = 0
 

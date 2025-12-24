@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import java.util.concurrent.CopyOnWriteArrayList
 
 object PuzzlesDisplay : TextHudFeature(
@@ -14,6 +16,10 @@ object PuzzlesDisplay : TextHudFeature(
     "catacombs",
     subcategory = "HUD",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.hasFinishedState.map(Boolean::not))
+    }
+
     private val puzzleStates = mutableListOf("✦", "✔", "✖")
     private val puzzleStatesColores = mutableListOf("&6✦", "&a✔", "&c✖")
     private val puzzlesRegex = "^ ([\\w ]+): \\[(✦|✔|✖)\\] ?\\(?(\\w+)?\\)?\$".toRegex()

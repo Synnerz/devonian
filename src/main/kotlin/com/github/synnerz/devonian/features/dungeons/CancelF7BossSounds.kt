@@ -1,9 +1,11 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 
 object CancelF7BossSounds : Feature(
     "customF7Sounds",
@@ -12,9 +14,12 @@ object CancelF7BossSounds : Feature(
     "catacombs",
     subcategory = "Hiders",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.F7.isActiveState)
+    }
+
     override fun initialize() {
         on<SoundPlayEvent> { event ->
-            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
             if (event.volume >= 2f) {
                 event.cancel()
                 return@on

@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.devonian.api.ScreenUtils
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -10,6 +11,7 @@ import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SET
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.TerminalSlot
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.color
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.minecraft
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -24,6 +26,10 @@ object TerminalSolvers : Feature(
     "catacombs",
     subcategory = "Terminals"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
+    }
+
     private val SETTING_DISABLE_TOOLTIP = addSwitch(
         "disableTooltip",
         true,
@@ -85,17 +91,14 @@ object TerminalSolvers : Feature(
         }
 
         on<TickEvent> {
-            if (currentSolver == null) return@on
             currentSolver?.onTick()
         }
 
         on<RenderSlotEvent> { event ->
-            if (currentSolver == null) return@on
             currentSolver?.onRenderSlot(event)
         }
 
         on<GuiClickEvent> { event ->
-            if (currentSolver == null) return@on
             currentSolver?.onClick(event)
         }
     }

@@ -3,9 +3,11 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
@@ -19,10 +21,12 @@ object HideWitherKing : Feature(
     "catacombs",
     subcategory = "Hiders",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })
+    }
+
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
-            if (Dungeons.floor != FloorType.M7) return@on
-            if (!Dungeons.inBoss.value) return@on
             when (val packet = event.packet) {
                 is ClientboundAddEntityPacket -> {
                     if (packet.type != EntityType.ARMOR_STAND) return@on

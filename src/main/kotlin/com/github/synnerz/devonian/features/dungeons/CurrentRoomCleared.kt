@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
@@ -10,6 +11,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
+import com.github.synnerz.devonian.utils.BasicState
 
 object CurrentRoomCleared : Feature(
     "currentRoomClearedAlert",
@@ -18,6 +20,10 @@ object CurrentRoomCleared : Feature(
     "catacombs",
     subcategory = "HUD",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val SETTING_ONLY_KEY = addSwitch(
         "onlyKey",
         false,

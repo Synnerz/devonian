@@ -2,9 +2,11 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import kotlin.math.roundToInt
 
 object CustomTerminalScale : Feature(
@@ -14,6 +16,10 @@ object CustomTerminalScale : Feature(
     "catacombs",
     subcategory = "Terminals"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
+    }
+
     private val SETTING_TERMINAL_SCALE = addSlider(
         "terminalScale",
         0.0,

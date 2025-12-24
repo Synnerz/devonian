@@ -5,12 +5,14 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import java.awt.Color
 
 object TriviaSolver : Feature(
@@ -20,6 +22,10 @@ object TriviaSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val solutions = mapOf(
         "What is the status of The Watcher?" to listOf("Stalker"),
         "What is the status of Bonzo?" to listOf("New Necromancer"),

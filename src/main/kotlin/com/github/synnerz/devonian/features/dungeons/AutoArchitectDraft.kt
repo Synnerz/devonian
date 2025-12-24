@@ -1,11 +1,13 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
+import com.github.synnerz.devonian.utils.BasicState
 
 object AutoArchitectDraft : Feature(
     "AutoArchitectDraft",
@@ -14,6 +16,10 @@ object AutoArchitectDraft : Feature(
     "catacombs",
     subcategory = "QOL",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     // PUZZLE FAIL! DocilElm lost Tic Tac Toe! Yikes!
     // PUZZLE FAIL! DocilElm killed a Blaze in the wrong order! Yikes!
     private val puzzleFailedRegex = "^PUZZLE FAIL! (\\w{1,16}) .*$".toRegex()
@@ -22,7 +28,7 @@ object AutoArchitectDraft : Feature(
 
     override fun initialize() {
         DevonianCommand.command.subcommand("draft") { _, args ->
-            pickupDraft()
+            pickupDraft(false)
             1
         }
 
@@ -43,8 +49,8 @@ object AutoArchitectDraft : Feature(
         }
     }
 
-    private fun pickupDraft() {
-        Alert.show("Shitter", 1_000)
+    private fun pickupDraft(alert: Boolean = true) {
+        if (alert) Alert.show("Shitter", 1_000)
         ChatUtils.command("gfs architect's first draft 1")
     }
 }

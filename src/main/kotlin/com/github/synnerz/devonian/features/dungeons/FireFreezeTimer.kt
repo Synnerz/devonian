@@ -1,11 +1,13 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 
 object FireFreezeTimer : TextHudFeature(
     "fireFreezeTimer",
@@ -14,12 +16,15 @@ object FireFreezeTimer : TextHudFeature(
     "catacombs",
     subcategory = "HUD"
 ) {
-    private val professorRegex = "^\\[BOSS] The Professor: Oh\\? You found my Guardians' one weakness\\?$".toRegex()
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.F3.isActiveState)
+    }
+
     private var startedAt = -1
 
     override fun initialize() {
         on<ChatEvent> { event ->
-            if (event.matches(professorRegex) == null) return@on
+            if (event.message != "[BOSS] The Professor: Oh? You found my Guardians' one weakness?") return@on
             startedAt = EventBus.serverTicks() + 110
         }
 

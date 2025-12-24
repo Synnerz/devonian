@@ -3,9 +3,11 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.world.entity.monster.Silverfish
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
@@ -20,6 +22,10 @@ object IcePathSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val solutions = listOf(
         // y is always 66
         IcePathSolution(8, 9, 12, 9),

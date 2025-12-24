@@ -43,7 +43,7 @@ object AutoRequeueDungeons : Feature(
 
         on<WorldChangeEvent> {
             if (needsDowntime == null) return@on
-            ChatUtils.sendMessage("&aDowntime has been resetted.", true)
+            ChatUtils.sendMessage("&aDowntime has been reset.", true)
             needsDowntime = null
         }
     }

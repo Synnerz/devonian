@@ -17,8 +17,8 @@ open class Feature @JvmOverloads constructor(
     val configName: String,
     description: String = "",
     val category: Categories = Categories.MISC,
-    area: String? = null,
-    subarea: String? = null,
+    val area: String? = null,
+    val subarea: String? = null,
     // To avoid conflict, maybe change the position later ?
     displayName: String = configName.camelCaseToSentence(),
     cheeto: Boolean = false,
@@ -38,16 +38,18 @@ open class Feature @JvmOverloads constructor(
             }
         }
 
+    protected open fun createRequirements(): List<BasicState<Boolean>?> = listOf(
+        area?.let { Location.stateInArea(it.lowercase()) },
+        subarea?.let { Location.stateInSubarea(it.lowercase()) },
+    )
+
     init {
         Devonian.features.add(this)
 
-        setEnabled((
-            if (area == null) BasicState(true)
-            else Location.stateInArea(area.lowercase())
-        ).zip(
-            if (subarea == null) BasicState(true)
-            else Location.stateInSubarea(subarea.lowercase())
-        ) { a, b -> a && b })
+        createRequirements().reduce { a, v ->
+            if (a == null || v == null) a
+            else a.zip(v, Boolean::and)
+        }?.let { setEnabled(it) }
     }
 
     override fun add() {

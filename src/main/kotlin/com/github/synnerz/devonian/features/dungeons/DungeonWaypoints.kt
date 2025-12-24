@@ -6,12 +6,14 @@ import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import com.google.gson.Gson
 import java.awt.Color
 import java.util.*
@@ -24,6 +26,10 @@ object DungeonWaypoints : Feature(
     "catacombs",
     subcategory = "World",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.hasFinishedState.map(Boolean::not))
+    }
+
     private val SETTING_DISPLAY_TEXT = addSwitch(
         "displayText",
         false,
@@ -222,7 +228,6 @@ object DungeonWaypoints : Feature(
         }
 
         on<RenderWorldEvent> {
-            if (Dungeons.inBoss.value) return@on
             val id = roomID ?: return@on
             val currentRoom = DungeonScanner.currentRoom ?: return@on
             if (id != currentRoom.roomID) return@on

@@ -2,9 +2,11 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.WorldUtils
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.core.BlockPos
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
@@ -22,6 +24,10 @@ object SimonSaysSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.S1.isActiveState)
+    }
+
     private val SETTING_BLOCK_INCORRECT = addSelection(
         "blockClicks",
         0,

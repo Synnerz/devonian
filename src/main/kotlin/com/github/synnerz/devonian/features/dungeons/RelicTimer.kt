@@ -2,12 +2,14 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 
 object RelicTimer : TextHudFeature(
     "relicTimer",
@@ -16,6 +18,10 @@ object RelicTimer : TextHudFeature(
     "catacombs",
     subcategory = "HUD"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })
+    }
+
     private const val SPAWN_TICKS = 43
     private val necronRegex = "^\\[BOSS] Necron: All this, for nothing\\.\\.\\.$".toRegex()
     private var startedAt = -1
@@ -28,7 +34,7 @@ object RelicTimer : TextHudFeature(
         }
 
         on<RenderOverlayEvent> {
-            if (!Dungeons.inBoss.value || Dungeons.floor != FloorType.M7 || startedAt == -1) return@on
+            if (startedAt == -1) return@on
 
             val elapsedTime = (startedAt - EventBus.serverTicks()) * 0.05
             val time = "%.2fs".format(elapsedTime)

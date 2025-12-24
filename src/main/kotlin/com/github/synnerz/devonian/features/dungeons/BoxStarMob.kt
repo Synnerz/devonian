@@ -1,9 +1,11 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.minecraft.world.entity.EntityType
@@ -19,6 +21,10 @@ object BoxStarMob : Feature(
     "catacombs",
     subcategory = "World",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val SETTING_MOB_COLOR = addColorPicker(
         "mobColor",
         Color(0, 255, 255, 255).rgb,

@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
@@ -8,6 +9,7 @@ import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.block.Blocks
@@ -20,6 +22,10 @@ object LividSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.F5.isActiveState)
+    }
+
     private val SETTING_BOX_COLOR = addColorPicker(
         "boxColor",
         Color(0, 255, 255).rgb,
@@ -27,8 +33,6 @@ object LividSolver : Feature(
         "Livid Box Color",
     )
 
-    private val lividStartRegex = "^\\[BOSS] Livid: Welcome, you've arrived right on time\\. I am Livid, the Master of Shadows\\.$".toRegex()
-    private val lividSpawnedRegex = "^\\[BOSS] Livid: I respect you for making it to here, but I'll be your undoing\\.$".toRegex()
     private val mapBlocks = mapOf(
         Blocks.WHITE_WOOL to "Vendetta",
         Blocks.MAGENTA_WOOL to "Crossed",
@@ -40,24 +44,15 @@ object LividSolver : Feature(
         Blocks.BLUE_WOOL to "Scream",
         Blocks.RED_WOOL to "Hockey"
     )
-    var inBoss = false
     var started = false
     var currentLivid: String? = null
     var lividEnt: Entity? = null
 
     override fun initialize() {
         on<ChatEvent> { event ->
-            if (event.matches(lividSpawnedRegex) != null) {
-                started = true
-                return@on
-            }
-            event.matches(lividStartRegex) ?: return@on
-            inBoss = true
-            currentLivid = "Hockey"
+            if (event.message == "[BOSS] Livid: I respect you for making it to here, but I'll be your undoing.") started = true
         }
-
         on<PacketReceivedEvent> { event ->
-            if (!inBoss) return@on
             val packet = event.packet
             if (packet !is ClientboundSectionBlocksUpdatePacket) return@on
 
@@ -86,7 +81,7 @@ object LividSolver : Feature(
             matrixStack.pushPose()
             matrixStack.translate(cam.x, cam.y, cam.z)
 
-            Context.Companion.Immediate?.renderBox(
+            Context.Immediate?.renderBox(
                 entity.x - halfWidth, entity.y, entity.z - halfWidth,
                 width, entity.bbHeight.toDouble(),
                 SETTING_BOX_COLOR.getColor(), translate = false
@@ -97,9 +92,8 @@ object LividSolver : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        inBoss = false
         started = false
-        currentLivid = null
+        currentLivid = "Hockey"
         lividEnt = null
     }
 }

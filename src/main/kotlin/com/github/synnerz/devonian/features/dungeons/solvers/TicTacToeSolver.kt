@@ -5,9 +5,11 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.world.entity.decoration.ItemFrame
 import net.minecraft.world.item.MapItem
 import java.awt.Color
@@ -20,6 +22,10 @@ object TicTacToeSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val SETTING_SEND_MSG = addSwitch(
         "sendMsg",
         false,

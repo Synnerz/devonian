@@ -7,11 +7,13 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.core.BlockPos
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
@@ -30,6 +32,10 @@ object IceFillSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val SETTING_LINE_COLOR = addColorPicker(
         "lineColor",
         Color.GREEN.rgb,

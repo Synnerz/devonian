@@ -2,12 +2,14 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.EntityEquipmentEvent
 import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import net.minecraft.world.entity.Entity
@@ -24,6 +26,10 @@ object HideHealerOrbs : Feature(
     "catacombs",
     subcategory = "Hiders",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+    }
+
     private data class Key(val x: Int, val z: Int)
     private class Entry(val x: Double, val y: Double, val z: Double) {
         fun matches(x: Double, y: Double, z: Double): Boolean {

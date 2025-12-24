@@ -225,6 +225,7 @@ object Devonian : ClientModInitializer {
         HighlightSellableItems,
         InventoryScale,
         FPSDisplay,
+        SimonSaysProgressDisplay,
 
         // Debug
         CopyItem,

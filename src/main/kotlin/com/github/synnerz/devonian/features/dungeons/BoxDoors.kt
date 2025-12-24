@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.dungeon.WorldComponentPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
@@ -12,6 +13,7 @@ import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import kotlinx.atomicfu.atomic
 import java.awt.Color
 
@@ -22,6 +24,10 @@ object BoxDoors : Feature(
     "catacombs",
     subcategory = "World",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val SETTING_DOOR_LOCKED_WIRE_COLOR = addColorPicker(
         "lockedWireColor",
         Color(255, 0, 0).rgb,

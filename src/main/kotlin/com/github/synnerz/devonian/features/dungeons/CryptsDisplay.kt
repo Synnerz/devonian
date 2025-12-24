@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 
 object CryptsDisplay : TextHudFeature(
     "cryptsDisplay",
@@ -13,6 +15,10 @@ object CryptsDisplay : TextHudFeature(
     "catacombs",
     subcategory = "HUD",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+    }
+
     private val cryptsRegex = "^ Crypts: (\\d+)$".toRegex()
     private var cryptsCount = 0
 

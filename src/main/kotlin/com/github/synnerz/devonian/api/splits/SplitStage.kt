@@ -11,6 +11,7 @@ open class SplitStage {
     var startTime = TimeUnit.EMPTY
     var stopTime = TimeUnit.EMPTY
     val isActiveState = BasicState(false)
+    val hasFinishedState = BasicState(false)
     var name = ""
     var shortenTime = true
 
@@ -51,6 +52,7 @@ open class SplitStage {
         startTime = TimeUnit.EMPTY
         stopTime = TimeUnit.EMPTY
         isActiveState.value = false
+        hasFinishedState.value = false
 
         children.forEach { it.reset() }
     }
@@ -75,6 +77,7 @@ open class SplitStage {
 
     protected open fun _stop() {
         isActiveState.value = false
+        hasFinishedState.value = true
         stopTime = TimeUnit.now()
     }
 

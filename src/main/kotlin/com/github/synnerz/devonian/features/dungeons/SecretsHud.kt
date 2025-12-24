@@ -2,11 +2,13 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ActionbarEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 
 object SecretsHud : TextHudFeature(
@@ -16,6 +18,10 @@ object SecretsHud : TextHudFeature(
     "catacombs",
     subcategory = "HUD"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val secretsRegex = ".* (\\d+)/(\\d+) Secrets".toRegex()
     private val formattedSecretsRegex = "(§7\\d+/\\d+ Secrets)".toRegex()
 
@@ -30,7 +36,6 @@ object SecretsHud : TextHudFeature(
         }
 
         on<RenderOverlayEvent> {
-            if (Dungeons.inBoss.value) return@on
             draw(it.ctx)
         }
     }

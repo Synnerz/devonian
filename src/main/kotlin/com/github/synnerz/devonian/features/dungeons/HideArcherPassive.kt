@@ -16,7 +16,6 @@ object HideArcherPassive : Feature(
     "catacombs",
     subcategory = "Hiders",
 ) {
-
     override fun initialize() {
         on<EntityDataEvent> { event ->
             if (event.type != EntityType.ITEM) return@on

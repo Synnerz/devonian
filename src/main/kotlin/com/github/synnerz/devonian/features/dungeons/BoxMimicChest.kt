@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PostRenderTileEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.client.renderer.blockentity.state.ChestRenderState
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.state.properties.ChestType
@@ -17,6 +19,10 @@ object BoxMimicChest : Feature(
     "catacombs",
     subcategory = "World",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val SETTING_COLOR = addColorPicker(
         "color",
         Color(209, 29, 5, 160).rgb,

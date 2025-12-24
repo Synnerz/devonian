@@ -2,9 +2,11 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.LightTexture
@@ -31,6 +33,10 @@ object ArrowAlignSolver : Feature(
         "",
         "Block Incorrect Hits",
     )
+
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.F7.isActiveState, Stages.S3.hasFinishedState.map(Boolean::not))
+    }
 
     private fun shouldBlockClicks() = when (SETTING_BLOCK_INCORRECT.getCurrent()) {
         "Always" -> true
@@ -85,7 +91,7 @@ object ArrowAlignSolver : Feature(
     override fun initialize() {
         on<TickEvent> {
             val player = minecraft.player ?: return@on
-            atDev = Dungeons.floor.floorNum == 7 &&
+            atDev =
                 player.x in -2.0 .. 20.0 &&
                 player.y in 100.0 .. 140.0 &&
                 player.z in 50.0 .. 125.0

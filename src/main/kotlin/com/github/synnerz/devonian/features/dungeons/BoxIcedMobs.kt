@@ -3,9 +3,11 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.world.entity.EntityType
@@ -26,6 +28,10 @@ object BoxIcedMobs : Feature(
     "catacombs",
     subcategory = "World",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+    }
+
     private val SETTING_WIRE_COLOR = addColorPicker(
         "wireColor",
         Color(173, 216, 230, 255).rgb,

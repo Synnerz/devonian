@@ -1,11 +1,13 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 
@@ -16,6 +18,10 @@ object DungeonBreakerCharges : TextHudFeature(
     "catacombs",
     subcategory = "HUD",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+    }
+
     var colorCode = "&6"
     var charges = 20
     var displayStr = "&aCharges&f: ${colorCode}${charges}"

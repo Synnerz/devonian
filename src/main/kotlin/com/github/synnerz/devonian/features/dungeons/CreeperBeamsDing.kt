@@ -4,11 +4,13 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvents
@@ -20,6 +22,10 @@ object CreeperBeamsDing : Feature(
     "catacombs",
     subcategory = "QOL"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private const val KEY = "creeperBeamsDing"
     private val soundOptions = listOf(
         "minecraft:entity.blaze.hurt",
@@ -77,7 +83,7 @@ object CreeperBeamsDing : Feature(
         }
 
         on<SoundPlayEvent> { event ->
-            if (DungeonScanner.currentRoom?.name != "Creeper Beams" || Dungeons.inBoss.value) return@on
+            if (DungeonScanner.currentRoom?.name != "Creeper Beams") return@on
             if (
                 SETTING_REMOVE_CREEPER_HURT.get() &&
                 (event.sound == "minecraft:entity.creeper.hurt" || event.sound == "minecraft:entity.creeper.primed")

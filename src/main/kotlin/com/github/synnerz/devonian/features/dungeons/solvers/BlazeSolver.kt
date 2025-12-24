@@ -4,9 +4,11 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.world.entity.Entity
@@ -79,6 +81,11 @@ object BlazeSolver : Feature(
         "Color for the \"efficient\" block filled to stand at",
         "\"Efficient\" Blaze Block Filled Color",
     )
+
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val blazeHpRegex = "^\\[Lv15] ♨ Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
     private val entityList = ConcurrentHashMap<Int, Int>() // <entityId>: <MaxHP>
     var hasPlatform = false
