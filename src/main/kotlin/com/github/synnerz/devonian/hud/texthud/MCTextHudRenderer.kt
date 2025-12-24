@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.state.GuiTextRenderState
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import org.joml.Matrix3x2f
 
 class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
@@ -71,10 +72,17 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
             )
 
             if (parent.shadow == Shadow.Outline) {
+                fun cloneBlack(c: Component): Component {
+                    val comp = MutableComponent.create(c.contents)
+                    comp.withStyle(c.style.withColor(0))
+                    c.siblings.forEach { comp.append(cloneBlack(it)) }
+                    return comp
+                }
+                val black = cloneBlack(data.comp)
                 ctx.guiRenderState.submitText(
                     GuiTextRenderState(
                         font,
-                        data.comp.visualOrderText,
+                        black.visualOrderText,
                         mat,
                         x.toInt() - 1, y.toInt() + 2,
                         0xFF000000.toInt(),
@@ -86,7 +94,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                 ctx.guiRenderState.submitText(
                     GuiTextRenderState(
                         font,
-                        data.comp.visualOrderText,
+                        black.visualOrderText,
                         mat,
                         x.toInt() + 1, y.toInt() + 2,
                         0xFF000000.toInt(),
@@ -98,7 +106,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                 ctx.guiRenderState.submitText(
                     GuiTextRenderState(
                         font,
-                        data.comp.visualOrderText,
+                        black.visualOrderText,
                         mat,
                         x.toInt(), y.toInt() + 2 - 1,
                         0xFF000000.toInt(),
@@ -110,7 +118,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                 ctx.guiRenderState.submitText(
                     GuiTextRenderState(
                         font,
-                        data.comp.visualOrderText,
+                        black.visualOrderText,
                         mat,
                         x.toInt(), y.toInt() + 2 + 1,
                         0xFF000000.toInt(),
