@@ -3,6 +3,7 @@ package com.github.synnerz.devonian
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.TextConfig
@@ -61,6 +62,7 @@ import com.github.synnerz.devonian.hud.texthud.Alert
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -295,6 +297,13 @@ object Devonian : ClientModInitializer {
         Alert.initialize()
         PreventItem.initialize()
         Dungeons.initialize()
+
+        DevonianCommand.command.subcommand("sim") { _, args ->
+            val msg = args.joinToString(" ") { it.toString() }
+            ChatEvent(msg, Component.literal(msg)).post()
+            return@subcommand 1
+        }.greedyString("message")
+
         DevonianCommand.initialize()
     }
 }
