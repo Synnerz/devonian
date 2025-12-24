@@ -40,6 +40,13 @@ import com.github.synnerz.devonian.features.dungeons.clear.RunSplits
 import com.github.synnerz.devonian.features.dungeons.clear.ScoreAlert
 import com.github.synnerz.devonian.features.dungeons.clear.SecretsClickedBox
 import com.github.synnerz.devonian.features.dungeons.clear.SecretsHud
+import com.github.synnerz.devonian.features.dungeons.m7.DragonBoxes
+import com.github.synnerz.devonian.features.dungeons.m7.DragonHealth
+import com.github.synnerz.devonian.features.dungeons.m7.DragonHitCount
+import com.github.synnerz.devonian.features.dungeons.m7.DragonSpawnAlert
+import com.github.synnerz.devonian.features.dungeons.m7.DragonSpawnTimer
+import com.github.synnerz.devonian.features.dungeons.m7.HideDyingDragons
+import com.github.synnerz.devonian.features.dungeons.m7.RecolorDragons
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.features.dungeons.solvers.*
 import com.github.synnerz.devonian.features.end.*
@@ -248,6 +255,13 @@ object Devonian : ClientModInitializer {
         InventoryScale,
         FPSDisplay,
         SimonSaysProgressDisplay,
+        DragonBoxes,
+        DragonSpawnTimer,
+        DragonSpawnAlert,
+        RecolorDragons,
+        HideDyingDragons,
+        DragonHealth,
+        DragonHitCount,
 
         // Debug
         CopyItem,

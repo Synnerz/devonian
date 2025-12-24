@@ -33,6 +33,7 @@
     "MouseHandlerMixin",
     "MultiPlayerGameModeMixin",
     "NameTagFeatureRendererMixin",
+    "OverlayTextureMixin",
     "ParticleEngineMixin",
     "PlayerRendererMixin",
     "PlayerTabOverlayMixin",
@@ -58,6 +59,7 @@
   "mixins": [
     "AvatarMixin",
     "BlockEntityRenderDispatcherMixin",
+    "EnderDragonRendererMixin",
     "EntityMixin",
     "ItemCooldownsMixin",
     "PlayerMixin",

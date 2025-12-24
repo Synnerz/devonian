@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.dungeons.SecretsSound
+import com.github.synnerz.devonian.features.dungeons.m7.M7Events
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.State
 import com.github.synnerz.devonian.utils.StringUtils
@@ -150,6 +151,7 @@ object Dungeons {
 
     fun initialize() {
         DungeonScanner.init()
+        M7Events.init()
 
         DevonianCommand.command.subcommand("setfloor") { _, args ->
             val f = FloorType.entries.find { it.shortName == args[2] } ?: return@subcommand 1

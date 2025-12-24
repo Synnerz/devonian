@@ -3,7 +3,8 @@ package com.github.synnerz.devonian.utils
 abstract class Toggleable {
     @Volatile private var isRegistered = false
     @Volatile private var isActuallyRegistered = false
-    private var enabledState: State<Boolean>? = null
+    protected var enabledState: State<Boolean>? = null
+        private set
 
     protected abstract fun add()
     protected abstract fun remove()

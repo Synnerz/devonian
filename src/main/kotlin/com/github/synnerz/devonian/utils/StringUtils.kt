@@ -154,6 +154,23 @@ object StringUtils {
         }
     }
 
+    fun shortenNumber(num: Int): String {
+        if (num < 0) return '-' + shortenNumber(-num)
+        if (num < 1000) return num.toString()
+        var num = num / 1000.0
+        if (num < 10.0) return "%.2fK".format(num)
+        if (num < 100.0) return "%.1fK".format(num)
+        if (num < 1000.0) return "%.0fK".format(num)
+
+        num /= 1000.0
+        if (num < 10.0) return "%.2fM".format(num)
+        if (num < 100.0) return "%.1fM".format(num)
+        if (num < 1000.0) return "%.0fM".format(num)
+
+        num /= 1000.0
+        return "%.2fB".format(num)
+    }
+
     private val camelCaseRegex = "[a-z]+|[A-Z](?:[a-z]+|[A-Z]*(?![a-z]))|[.\\d]+".toRegex()
     fun String.camelCaseToSentence(): String = camelCaseRegex.replace(this) {
         it.value.replaceFirstChar { it.uppercaseChar() } + " "
