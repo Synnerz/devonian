@@ -309,6 +309,8 @@ object Dungeons {
         }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<ChatEvent> { event ->
+            Stages.Root.onChat(event.message)
+
             if (event.message == "[NPC] Mort: Here, I found this map when I first entered the dungeon.") {
                 started.value = true
                 DungeonEvent.RunStarted().post()
@@ -398,6 +400,7 @@ object Dungeons {
 
     private fun reset() {
         floor = FloorType.None
+        Stages.Root.reset()
 
         clearedPercent.value = 0
         timeElapsed.value = 0
