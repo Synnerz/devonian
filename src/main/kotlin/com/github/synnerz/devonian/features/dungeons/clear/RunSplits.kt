@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.dungeons
+package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler

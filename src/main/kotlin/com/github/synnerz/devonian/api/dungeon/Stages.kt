@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.splits.BranchingSplitStage
 import com.github.synnerz.devonian.api.splits.SequentialSplitStage
 import com.github.synnerz.devonian.api.splits.SplitStage
 import com.github.synnerz.devonian.features.dungeons.BossSplits
-import com.github.synnerz.devonian.features.dungeons.RunSplits
+import com.github.synnerz.devonian.features.dungeons.clear.RunSplits
 
 object Stages {
     val Root: SequentialSplitStage

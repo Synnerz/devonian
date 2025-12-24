@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.dungeons
+package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Scheduler
@@ -16,6 +16,7 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.google.gson.Gson
 import java.awt.Color
 import java.util.*
+import kotlin.collections.iterator
 import kotlin.math.abs
 
 object DungeonWaypoints : Feature(
