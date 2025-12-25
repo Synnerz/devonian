@@ -219,6 +219,7 @@ object Devonian : ClientModInitializer {
         CustomTerminalScale,
         ItemValue,
         CroesusHighlightUnopened,
+        CancelIncorrectSound,
 
         // Debug
         CopyItem,
