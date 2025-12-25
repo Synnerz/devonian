@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.api.events.TooltipRenderEvent;
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers;
 import com.github.synnerz.devonian.features.inventory.ScrollableTooltip;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -72,6 +73,10 @@ public abstract class GuiGraphicsMixin {
             cancellable = true
     )
     private void devonian$renderTooltip(Font font, List<ClientTooltipComponent> list, int i, int j, ClientTooltipPositioner clientTooltipPositioner, ResourceLocation resourceLocation, CallbackInfo ci) {
+        if (new TooltipRenderEvent(list, i, j).post()) {
+            ci.cancel();
+            return;
+        }
         if (!TerminalSolvers.INSTANCE.disableTooltip()) return;
 
         ci.cancel();

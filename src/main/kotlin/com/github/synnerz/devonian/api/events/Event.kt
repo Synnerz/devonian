@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.particle.Particle
@@ -435,4 +436,10 @@ class ContainerRenderEvent(
     val y: Int,
     val pticks: Float,
     val ctx: GuiGraphics
+) : CancellableEvent()
+
+class TooltipRenderEvent(
+    val lore: MutableList<ClientTooltipComponent>,
+    val x: Int,
+    val y: Int,
 ) : CancellableEvent()
