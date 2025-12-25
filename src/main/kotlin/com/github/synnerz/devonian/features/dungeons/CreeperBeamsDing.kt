@@ -52,7 +52,13 @@ object CreeperBeamsDing : Feature(
             if (args.isEmpty()) return@subcommand 0
             val soundRegistry = args.first() as String
 
-            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
+
+            val sound = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
+            if (sound == null) {
+                ChatUtils.sendMessage("&4Cannot find sound: &6$soundRegistry", true)
+                return@subcommand 0
+            }
+            soundEvent = sound
 
             Config.set(KEY, soundRegistry)
             ChatUtils.sendMessage("&aSuccessfully set creeper beams ding sound to &6$soundRegistry", true)
@@ -67,6 +73,7 @@ object CreeperBeamsDing : Feature(
         Config.onAfterLoad {
             val savedRegistry = Config.get<String>(KEY) ?: "minecraft:block.note_block.iron_xylophone"
             soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(savedRegistry))
+                ?: SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value()
         }
 
         on<SoundPlayEvent> { event ->

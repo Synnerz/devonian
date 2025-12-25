@@ -36,7 +36,13 @@ object EtherwarpSound : Feature(
             if (args.isEmpty()) return@subcommand 0
             val soundRegistry = args.first() as String
 
-            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
+
+            val sound = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
+            if (sound == null) {
+                ChatUtils.sendMessage("&4Cannot find sound: &6$soundRegistry", true)
+                return@subcommand 0
+            }
+            soundEvent = sound
 
             Config.set(KEY, soundRegistry)
             ChatUtils.sendMessage("&aSuccessfully set etherwarp sound to &6$soundRegistry", true)
@@ -51,6 +57,7 @@ object EtherwarpSound : Feature(
         Config.onAfterLoad {
             val savedRegistry = Config.get<String>(KEY) ?: "minecraft:entity.ender_dragon.hurt"
             soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(savedRegistry))
+                ?: SoundEvents.ENDER_DRAGON_HURT
         }
 
         on<SoundPlayEvent> { event ->

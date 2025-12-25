@@ -49,7 +49,12 @@ object CustomHypeSound : Feature(
             val argPitch = args.getOrNull(1) as? Float ?: 1f
             val soundRegistry = args.getOrNull(2) as? String ?: "minecraft:block.note_block.iron_xylophone"
 
-            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
+            val sound = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
+            if (sound == null) {
+                ChatUtils.sendMessage("&4Cannot find sound: &6$soundRegistry", true)
+                return@subcommand 0
+            }
+            soundEvent = sound
             volume = argVolume
             pitch = argPitch
 
@@ -68,6 +73,7 @@ object CustomHypeSound : Feature(
         Config.onAfterLoad {
             val savedRegistry = Config.get<String>(KEY) ?: "minecraft:block.note_block.iron_xylophone"
             soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(savedRegistry))
+                ?: SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value()
             volume = Config.get<Float>(KEY_VOLUME) ?: 1f
             pitch = Config.get<Float>(KEY_PITCH) ?: 1f
         }
