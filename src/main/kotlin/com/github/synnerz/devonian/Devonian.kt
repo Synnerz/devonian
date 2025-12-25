@@ -218,6 +218,7 @@ object Devonian : ClientModInitializer {
         RelicTimer,
         CustomTerminalScale,
         ItemValue,
+        CroesusHighlightUnopened,
 
         // Debug
         CopyItem,
