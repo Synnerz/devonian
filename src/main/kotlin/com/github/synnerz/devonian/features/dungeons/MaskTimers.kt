@@ -2,10 +2,12 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.features.dungeons.BonzoMask.SETTING_ONLY_SHOW_IN_BOSS
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import kotlin.math.roundToInt
@@ -49,6 +51,12 @@ object BonzoMask : TextHudFeature(
         "The amount of time the alert will display for (in seconds)",
         "Bonzo Proct Alert Time"
     )
+    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
+        "onlyShowInBoss",
+        false,
+        "Only displays the hud while inside of a dungeon boss room",
+        "Bonzo Only In Boss"
+    )
     private const val IMMUNITY_TIME = 3 * 1000L
     private val cooldownItemRegex = "^Cooldown: (\\d+)s$".toRegex()
     private val maskRegex = "^Your( ⚚)? Bonzo's Mask saved your life!$".toRegex()
@@ -81,6 +89,7 @@ object BonzoMask : TextHudFeature(
 
         on<RenderOverlayEvent> {
             if (SETTING_HIDE_AFTER_IM.get() && startedAt == -1L) return@on
+            if (SETTING_ONLY_SHOW_IN_BOSS.get() && !Dungeons.inBoss.value) return@on
 
             if (cdStartedAt == -1L) {
                 setLine("&9Bonzo's Mask&f: &l&aREADY")
@@ -141,6 +150,12 @@ object SpiritMask : TextHudFeature(
         "The amount of time the alert will display for (in seconds)",
         "Spirit Proct Alert Time"
     )
+    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
+        "onlyShowInBoss",
+        false,
+        "Only displays the hud while inside of a dungeon boss room",
+        "Spirit Only In Boss"
+    )
     private const val IMMUNITY_TIME = 1 * 1000L
     private var COOLDOWN_TIME = 30 * 1000L
     private val maskRegex = "^Second Wind Activated! Your Spirit Mask saved your life!$".toRegex()
@@ -162,6 +177,7 @@ object SpiritMask : TextHudFeature(
 
         on<RenderOverlayEvent> {
             if (SETTING_HIDE_AFTER_IM.get() && startedAt == -1L) return@on
+            if (SETTING_ONLY_SHOW_IN_BOSS.get() && !Dungeons.inBoss.value) return@on
 
             if (cdStartedAt == -1L) {
                 setLine("&fSpirit Mask&f: &l&aREADY")
@@ -221,6 +237,12 @@ object PhoenixTimer : TextHudFeature(
         "The amount of time the alert will display for (in seconds)",
         "Phoenix Proct Alert Time"
     )
+    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
+        "onlyShowInBoss",
+        false,
+        "Only displays the hud while inside of a dungeon boss room",
+        "Phoenix Only In Boss"
+    )
     private const val IMMUNITY_TIME = 4 * 1000L
     private var COOLDOWN_TIME = 60 * 1000L
     private val maskRegex = "^Your Phoenix Pet saved you from certain death!$".toRegex()
@@ -242,6 +264,7 @@ object PhoenixTimer : TextHudFeature(
 
         on<RenderOverlayEvent> {
             if (SETTING_HIDE_AFTER_IM.get() && startedAt == -1L) return@on
+            if (SETTING_ONLY_SHOW_IN_BOSS.get() && !Dungeons.inBoss.value) return@on
 
             if (cdStartedAt == -1L) {
                 setLine("&cPhoenix&f: &l&aREADY")
