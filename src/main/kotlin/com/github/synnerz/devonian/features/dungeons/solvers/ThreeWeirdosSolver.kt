@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 object ThreeWeirdosSolver : Feature(
     "threeWeirdosSolver",
@@ -56,7 +57,7 @@ object ThreeWeirdosSolver : Feature(
     private val WRONG_OUTLINE_COLOR = Color(255, 0, 0, 255)
     private val WRONG_FILLED_COLOR = Color(255, 0, 0, 80)
     private val entityList = ConcurrentHashMap<String, Int>()
-    val answers = mutableListOf<AnswerData>()
+    val answers = CopyOnWriteArrayList<AnswerData>()
     var enteredAt = -1
 
     data class AnswerData(
