@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -54,7 +55,7 @@ public class ItemInHandRendererMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getAttackStrengthScale(F)F")
     )
     private float devonian$itemAnimationsBob(LocalPlayer instance, float v, Operation<Float> original) {
-        if (ItemAnimations.INSTANCE.disableReequip() || ItemAnimations.INSTANCE.disableSwing()) return 1f;
+        if (ItemAnimations.INSTANCE.disableReequip() || ItemAnimations.INSTANCE.disableSwingBob()) return 1f;
         return original.call(instance, v);
     }
 
@@ -91,5 +92,59 @@ public class ItemInHandRendererMixin {
         poseStack.translate(64f, 64f, 0f);
         ItemAnimations.INSTANCE.applyScale(poseStack);
         poseStack.translate(-64f, -64f, 0f);
+    }
+
+    @ModifyVariable(
+        method = "renderPlayerArm",
+        at = @At(value = "STORE"),
+        ordinal = 4
+    )
+    private float devonian$itemAnimations5(float f) {
+        return ItemAnimations.INSTANCE.disableSwingTranslation() ? 0f : f;
+    }
+
+    @ModifyVariable(
+        method = "renderPlayerArm",
+        at = @At(value = "STORE"),
+        ordinal = 5
+    )
+    private float devonian$itemAnimations6(float f) {
+        return ItemAnimations.INSTANCE.disableSwingTranslation() ? 0f : f;
+    }
+
+    @ModifyVariable(
+        method = "renderPlayerArm",
+        at = @At(value = "STORE"),
+        ordinal = 6
+    )
+    private float devonian$itemAnimations7(float f) {
+        return ItemAnimations.INSTANCE.disableSwingTranslation() ? 0f : f;
+    }
+
+    @WrapOperation(
+        method = "renderTwoHandedMap",
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V", ordinal = 0)
+    )
+    private void devonian$itemAnimations8(PoseStack instance, float f, float g, float h, Operation<Void> original) {
+        if (ItemAnimations.INSTANCE.disableSwingTranslation()) return;
+        original.call(instance, f, g, h);
+    }
+
+    @WrapOperation(
+        method = "renderOneHandedMap",
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V", ordinal = 2)
+    )
+    private void devonian$itemAnimations9(PoseStack instance, float f, float g, float h, Operation<Void> original) {
+        if (ItemAnimations.INSTANCE.disableSwingTranslation()) return;
+        original.call(instance, f, g, h);
+    }
+
+    @WrapOperation(
+        method = "swingArm",
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V")
+    )
+    private void devonian$itemAnimations10(PoseStack instance, float f, float g, float h, Operation<Void> original) {
+        if (ItemAnimations.INSTANCE.disableSwingTranslation()) return;
+        original.call(instance, f, g, h);
     }
 }

@@ -9,7 +9,6 @@ import net.minecraft.world.effect.MobEffectUtil
 import net.minecraft.world.effect.MobEffects
 import kotlin.math.pow
 
-
 object ItemAnimations : Feature(
     "itemAnimations",
     subcategory = "Tweaks",
@@ -87,6 +86,12 @@ object ItemAnimations : Feature(
         "removes item bob when swapping items",
         "No Reequip Reset",
     )
+    private val SETTING_IN_PLACE_SWING = addSwitch(
+        "inplaceSwing",
+        false,
+        "swing animation only rotates item",
+        "In Place Swing Animation",
+    )
     private val SETTING_NO_SWING = addSwitch(
         "noSwing",
         false,
@@ -112,7 +117,11 @@ object ItemAnimations : Feature(
     }
 
     fun disableReequip() = isEnabled() && SETTING_NO_REEQUIP_RESET.get()
-    fun disableSwing(): Boolean {
+    fun disableSwingTranslation(): Boolean {
+        if (!isEnabled()) return false
+        return SETTING_IN_PLACE_SWING.get()
+    }
+    fun disableSwingRotation(): Boolean {
         if (!isEnabled()) return false
         if (SETTING_NO_SWING.get()) return true
         if (!SETTING_NO_SWING_TERM.get()) return false
@@ -120,6 +129,9 @@ object ItemAnimations : Feature(
         val held = minecraft.player?.mainHandItem ?: return false
         if (held.isEmpty) return false
         return ItemUtils.skyblockId(held) == "TERMINATOR"
+    }
+    fun disableSwingBob(): Boolean {
+        return disableSwingTranslation() || disableSwingRotation()
     }
 
     private fun getItemScale() = 2.0.pow(SETTING_SCALE.get())
@@ -164,12 +176,14 @@ object ItemAnimations : Feature(
     private var attackAnim = 0f
     private var prevAttackAnim = 0f
 
-    fun getSwingAnimation(pt: Float): Float {
-        if (disableSwing()) return 0f
-
+    private fun getActualSwingAnimation(pt: Float): Float {
         var d = attackAnim - prevAttackAnim
         if (d < 0.0) d++
         return prevAttackAnim + d * pt
+    }
+    fun getSwingAnimation(pt: Float): Float {
+        if (disableSwingRotation()) return 0f
+        return getActualSwingAnimation(pt)
     }
 
     fun onSwing() {
