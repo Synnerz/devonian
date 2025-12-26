@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api.events
 
+import com.github.synnerz.devonian.Devonian
 import com.mojang.blaze3d.vertex.PoseStack
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldExtractionContext
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
@@ -299,7 +300,9 @@ class RenderTickEvent : Event()
 
 @Threaded class ScoreboardEvent(message: String) : CriteriaEvent(message)
 
-@Ordered class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics, val screen: AbstractContainerScreen<*>) : CancellableEvent()
+@Ordered class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics, val screen: AbstractContainerScreen<*>) : CancellableEvent() {
+    fun isInventory(): Boolean = slot.container == Devonian.minecraft.player?.inventory
+}
 
 @Ordered class RenderHotbarSlotEvent(val item: ItemStack, val x: Int, val y: Int, val ctx: GuiGraphics) : CancellableEvent()
 
