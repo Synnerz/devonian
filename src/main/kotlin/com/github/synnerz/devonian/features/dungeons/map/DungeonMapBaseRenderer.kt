@@ -19,14 +19,15 @@ import kotlin.math.max
 class DungeonMapBaseRenderer :
     BufferedImageRenderer<DungeonMapRenderData>("dungeonMapBaseRenderer"), FontListener {
     val cachedStrings: MutableMap<CachedStringKey, CachedRenderedString> = Collections.synchronizedMap(
-        object : LinkedHashMap<CachedStringKey, CachedRenderedString>(30) {
+        object : LinkedHashMap<CachedStringKey, CachedRenderedString>(36) {
             override fun removeEldestEntry(eldest: Map.Entry<CachedStringKey?, CachedRenderedString?>?): Boolean = size > 36
         }
     )
     var cachedW = 0
     var cachedH = 0
+    var cachedSize = 0
 
-    data class CachedStringKey(val str: String, val size: Int, val shadow: StylizedTextHud.Shadow)
+    data class CachedStringKey(val str: String, val shadow: StylizedTextHud.Shadow)
 
     data class CachedRenderedString(
         val img: BufferedImage,
@@ -229,6 +230,18 @@ class DungeonMapBaseRenderer :
             }
         }
 
+        val decW = options.textSize * options.roomWidth
+        val bw = ceil(decW * compToBImgFW).toInt()
+        val bh = ceil(decW * compToBImgFH).toInt()
+        val fontSize = ceil(options.roomWidth * compToBImgFH * 0.25 * options.textSize).toInt()
+
+        if (bw != cachedW || bh != cachedH || fontSize != cachedSize) {
+            cachedStrings.clear()
+            cachedW = bw
+            cachedH = bh
+            cachedSize = fontSize
+        }
+
         val textToRender = mutableListOf<TextRenderParam>()
         rooms.forEach { room ->
             if (room == null) return@forEach
@@ -371,50 +384,21 @@ class DungeonMapBaseRenderer :
             }
 
             if (text.isNotEmpty()) {
-                val decW = options.textSize * options.roomWidth
                 val center = getCenterOf(cells, shape, options.textAlignment)
                 val decBox = BoundingBox(
                     center.first - decW * 0.5,
                     center.second - decW * 0.5,
                     decW, decW
                 )
-                val bw = ceil(decBox.w * compToBImgFW).toInt()
-                val bh = ceil(decBox.h * compToBImgFH).toInt()
-
-                if (bw != cachedW || bh != cachedH) {
-                    cachedStrings.clear()
-                    cachedW = bw
-                    cachedH = bh
-                }
 
                 val str = text.joinToString("\n")
+                val key = CachedStringKey(str, options.stringShadow)
 
-                var fontSize = StylizedTextHud.BASE_FONT_SIZE
-                val font = BImgTextHudRenderer.fontMainBase.deriveFont(Font.PLAIN, fontSize)
-                g.font = font
-
-                val lines = text.map { StringParser.processString(
-                    it,
-                    g,
-                    font, font, font,
-                    fontSize,
-                    noRender = true,
-                ) }
-                val width = lines.maxOf { it.width }
-                val (fontScale, _) = BoundingBox(
-                    0.0, 0.0,
-                    width.toDouble(), fontSize.toDouble() * lines.size
-                ).fitInside(decBox)
-
-                fontSize = ceil(fontSize * (fontScale * compToBImgFH).toFloat())
-
-                val key = CachedStringKey(str, fontSize.toInt(), options.stringShadow)
                 textToRender.add(TextRenderParam(decBox, key, text))
             }
         }
 
         if (textToRender.isNotEmpty()) {
-            val fontSize = textToRender.minOf { it.key.size }
             val fontSizeF = fontSize.toFloat()
             val font = BImgTextHudRenderer.fontMainBase.deriveFont(Font.PLAIN, fontSizeF)
             g.font = font
@@ -424,7 +408,7 @@ class DungeonMapBaseRenderer :
             textToRender.forEach { (decBox, key, text) ->
                 if (text.isEmpty()) return@forEach
 
-                val rendered = cachedStrings.getOrPut(CachedStringKey(key.str, fontSize, key.shadow)) {
+                val rendered = cachedStrings.getOrPut(CachedStringKey(key.str, key.shadow)) {
                     val lines = text.map { StringParser.processString(
                         it,
                         g,
