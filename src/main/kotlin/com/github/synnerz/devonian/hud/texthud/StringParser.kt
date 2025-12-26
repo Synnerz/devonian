@@ -3,13 +3,12 @@ package com.github.synnerz.devonian.hud.texthud
 import java.awt.*
 import java.awt.font.TextAttribute
 import java.awt.font.TextLayout
-import java.awt.geom.AffineTransform
 import java.text.AttributedCharacterIterator
 import java.text.AttributedString
 import java.util.stream.Collectors
 
 object StringParser {
-    private fun isColorCode(c: Char): Boolean {
+    fun isColorCode(c: Char): Boolean {
         return (c in '0'..'9') || (c in 'a'..'f')
     }
 
@@ -65,7 +64,7 @@ object StringParser {
         addAttribute(att, TextAttribute.FONT, f1, s, e)
     }
 
-    private val COLORS = mapOf(
+    val COLORS = mapOf(
         '0' to Color(0),
         '1' to Color(170),
         '2' to Color(43520),
@@ -97,7 +96,6 @@ object StringParser {
         f2: Font,
         f3: Font,
         fontSize: Float,
-        noRender: Boolean = false,
     ): LayoutLineData {
         var str = str
         str = "&f$str&r"
@@ -187,27 +185,15 @@ object StringParser {
         }
 
         val tyl = TextLayout(attStr.iterator, g.fontRenderContext)
-        val shapes = mutableListOf<Pair<Color, Shape>>()
-        if (!noRender) {
-            var x = 0.0
-            val frc = g.fontRenderContext
-            atts.forEach { v ->
-                if (!isColorCode(v.t)) return@forEach
-                if (v.s >= v.e) return@forEach
-
-                val tyl = TextLayout(attStr.getIterator(null, v.s, v.e), frc)
-                val shape = tyl.getOutline(AffineTransform.getTranslateInstance(x, 0.0))
-                x += tyl.advance
-                shapes.add(Pair(COLORS[v.t] ?: Color(-1), shape))
-            }
-        }
 
         return LayoutLineData(
             tyl.visibleAdvance,
             tyl.ascent,
             tyl.descent,
             o.isNotEmpty(),
-            shapes,
+            atts,
+            attStr,
+            null,
         )
     }
 
@@ -216,7 +202,9 @@ object StringParser {
         ascent: Float,
         descent: Float,
         hasObfuText: Boolean,
-        val shapes: List<Pair<Color, Shape>>,
+        val atts: List<AttrData>,
+        val attStr: AttributedString,
+        var shapes: List<Pair<Color, Shape>>?,
     ) : StylizedTextHud.LineData(
         width,
         ascent,
@@ -224,7 +212,7 @@ object StringParser {
         hasObfuText,
     )
 
-    internal class AttrData(val t: Char, val s: Int, val e: Int)
+    class AttrData(val t: Char, val s: Int, val e: Int)
 
     class ObfData internal constructor(val s: Int, val e: Int)
 }

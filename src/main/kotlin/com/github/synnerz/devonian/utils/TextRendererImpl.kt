@@ -2,11 +2,14 @@ package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactory
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
+import com.github.synnerz.devonian.hud.texthud.StringParser
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.hud.texthud.TextRenderer
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.RenderingHints
+import java.awt.Shape
+import java.awt.font.TextLayout
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.awt.image.RescaleOp
@@ -45,31 +48,46 @@ object TextRendererImpl {
 
         g.paint = Color(-1)
         val empty = AffineTransform.getTranslateInstance(0.0, 0.0)
-        param.lines.forEachIndexed { i, v ->
+        param.lines.forEachIndexed { i, line ->
             val y = i * rp.fontSize
             val x = when (rp.align) {
                 Align.Left -> 0f
-                Align.Right -> param.width - v.width
+                Align.Right -> param.width - line.width
                 Align.Center
-                    -> (param.width - v.width) * 0.5f
+                    -> (param.width - line.width) * 0.5f
             }
 
             if (rp.backdrop == Backdrop.Line) {
                 g.paint = Color(0, 0, 0, 64)
                 g.fillRect(
                     x.toInt(),
-                    (y + v.ascent - rp.fontSize).toInt(),
-                    ceil(v.width).toInt(),
-                    ceil(rp.fontSize + v.descent).toInt()
+                    (y + line.ascent - rp.fontSize).toInt(),
+                    ceil(line.width).toInt(),
+                    ceil(rp.fontSize + line.descent).toInt()
                 )
             }
 
-            tmpG.transform = AffineTransform.getTranslateInstance(x.toDouble(), y.toDouble() + v.ascent)
+            tmpG.transform = AffineTransform.getTranslateInstance(x.toDouble(), y.toDouble() + line.ascent)
+            if (line.shapes == null) {
+                val shapes = mutableListOf<Pair<Color, Shape>>()
+                var x = 0.0
+                val frc = g.fontRenderContext
+                line.atts.forEach { v ->
+                    if (!StringParser.isColorCode(v.t)) return@forEach
+                    if (v.s >= v.e) return@forEach
+
+                    val tyl = TextLayout(line.attStr.getIterator(null, v.s, v.e), frc)
+                    val shape = tyl.getOutline(AffineTransform.getTranslateInstance(x, 0.0))
+                    x += tyl.advance
+                    shapes.add(Pair(StringParser.COLORS[v.t] ?: Color(-1), shape))
+                }
+                line.shapes = shapes
+            }
             if (rp.shadow == Shadow.Outline) {
                 tmpG.translate(rp.fontSize * 0.1, 0.0)
                 val outlineColor = Color(0)
                 tmpG.stroke = BasicStroke(rp.fontSize * 0.1f)
-                v.shapes.forEach {
+                line.shapes!!.forEach {
                     tmpG.paint = outlineColor
                     tmpG.draw(it.second)
 
@@ -77,7 +95,7 @@ object TextRendererImpl {
                     tmpG.fill(it.second)
                 }
             } else {
-                v.shapes.forEach {
+                line.shapes!!.forEach {
                     tmpG.paint = it.first
                     tmpG.fill(it.second)
                 }
