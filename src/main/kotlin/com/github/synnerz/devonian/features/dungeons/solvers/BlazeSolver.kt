@@ -87,6 +87,7 @@ object BlazeSolver : Feature(
     var lastBlazes = 0
     var startedAt = 0
     var efficientPos: Triple<Int, Int, Int>? = null
+    var etherToPos: Triple<Int, Int, Int>? = null
     var hasSent = false
 
     data class BlazeEntity(val entity: Entity, val maxHP: Int)
@@ -100,10 +101,15 @@ object BlazeSolver : Feature(
             inBlaze = true
             hasPlatform = blockState.block == Blocks.COBBLESTONE
 
-            val rcomp = room.fromComp(10, 19) ?: return@on
+            val etherComp = room.fromComp(20, 11)
+            if (etherComp != null && hasPlatform)
+                etherToPos = Triple(etherComp.first, 85, etherComp.second)
+
+            val rcomp = room.fromComp(20, 11) ?: return@on
+
             efficientPos = Triple(
                 rcomp.first,
-                if (hasPlatform) 94 else 44,
+                if (hasPlatform) 103 else 53,
                 rcomp.second
             )
         }
@@ -116,6 +122,7 @@ object BlazeSolver : Feature(
             startedAt = 0
             lastBlazes = 0
             efficientPos = null
+            etherToPos = null
         }
 
         on<TickEvent> {
@@ -141,6 +148,7 @@ object BlazeSolver : Feature(
                 startedAt = 0
                 lastBlazes = 0
                 efficientPos = null
+                etherToPos = null
                 if (!hasSent) {
                     hasSent = true
                     if (SETTING_SEND_MSG.get()) ChatUtils.command("pc Blaze done")
@@ -168,6 +176,20 @@ object BlazeSolver : Feature(
 
         on<RenderWorldEvent> { event ->
             if (efficientPos != null) {
+                if (etherToPos != null && hasPlatform) {
+                    Context.Immediate?.renderFilledBox(
+                        etherToPos!!.first.toDouble(), etherToPos!!.second.toDouble(), etherToPos!!.third.toDouble(),
+                        color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor(),
+                        phase = true
+                    )
+
+                    Context.Immediate?.renderBox(
+                        etherToPos!!.first.toDouble(), etherToPos!!.second.toDouble(), etherToPos!!.third.toDouble(),
+                        color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor(),
+                        phase = true
+                    )
+                }
+
                 Context.Immediate?.renderFilledBox(
                     efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
                     color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor(),
@@ -271,6 +293,7 @@ object BlazeSolver : Feature(
         startedAt = 0
         lastBlazes = 0
         efficientPos = null
+        etherToPos = null
         blazes.clear()
         entityList.clear()
         hasSent = false
