@@ -220,6 +220,7 @@ object Devonian : ClientModInitializer {
         ItemValue,
         CroesusHighlightUnopened,
         CancelIncorrectSound,
+        PetDisplay,
 
         // Debug
         CopyItem,
