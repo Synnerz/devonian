@@ -224,6 +224,7 @@ object Devonian : ClientModInitializer {
         ShowSelectedPet,
         HighlightSellableItems,
         InventoryScale,
+        FPSDisplay,
 
         // Debug
         CopyItem,
