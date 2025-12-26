@@ -16,6 +16,7 @@ object BossSlainTime : Feature(
     private val questStartedRegex = "^Slay the boss!$".toRegex()
     private val questCompletedRegex = "^Boss slain!$".toRegex()
     private val questCompletedChatRegex = "^  SLAYER QUEST COMPLETE!$".toRegex()
+    private val questCompletedNoAutoStart = "^  NICE! SLAYER BOSS SLAIN!$".toRegex()
     private var serverTicks = 0
     private var spawnedAtTicks = 0
     private var spawnedAtTime = 0L
@@ -41,18 +42,25 @@ object BossSlainTime : Feature(
         }
 
         on<ChatEvent> { event ->
-            if (event.matches(questCompletedChatRegex) == null) return@on
-            if (spawnedAtTicks == 0 || spawnedAtTime == 0L) return@on
+            if (event.matches(questCompletedChatRegex) != null || event.matches(questCompletedNoAutoStart) != null) {
+                if (spawnedAtTicks == 0 || spawnedAtTime == 0L) return@on
 
-            if (killedAtTicks == 0) killedAtTicks = serverTicks
-            if (killedAtTime == 0L) killedAtTime = System.currentTimeMillis()
+                if (killedAtTicks == 0) killedAtTicks = serverTicks
+                if (killedAtTime == 0L) killedAtTime = System.currentTimeMillis()
 
-            val realTime = (killedAtTime - spawnedAtTime) / 1000
-            val serverTime = (killedAtTicks - spawnedAtTicks) * 0.05
+                val realTime = (killedAtTime - spawnedAtTime) / 1000
+                val serverTime = (killedAtTicks - spawnedAtTicks) * 0.05
 
-            // TODO: making this onDeath based might be better for accuracy
-            ChatUtils.sendMessage("&aBoss Took&f: &b${"%.2fs".format(realTime.toFloat())} &7- &b${"%.2fs".format(serverTime.toFloat())}", true)
-            reset()
+                // TODO: making this onDeath based might be better for accuracy
+                ChatUtils.sendMessage(
+                    "&aBoss Took&f: &b${"%.2fs".format(realTime.toFloat())} &7- &b${
+                        "%.2fs".format(
+                            serverTime.toFloat()
+                        )
+                    }", true
+                )
+                reset()
+            }
         }
 
         on<WorldChangeEvent> {
