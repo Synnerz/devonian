@@ -28,6 +28,7 @@ import com.github.synnerz.devonian.features.dungeons.clear.BoxIcedMobs
 import com.github.synnerz.devonian.features.dungeons.clear.BoxMimicChest
 import com.github.synnerz.devonian.features.dungeons.clear.BoxStarMob
 import com.github.synnerz.devonian.features.dungeons.clear.CloseChestOnKey
+import com.github.synnerz.devonian.features.dungeons.clear.ColorPortal
 import com.github.synnerz.devonian.features.dungeons.clear.CreeperBeamsDing
 import com.github.synnerz.devonian.features.dungeons.clear.CryptsDisplay
 import com.github.synnerz.devonian.features.dungeons.clear.CurrentRoomCleared
@@ -264,6 +265,7 @@ object Devonian : ClientModInitializer {
         HideDyingDragons,
         DragonHealth,
         DragonHitCount,
+        ColorPortal,
 
         // Debug
         CopyItem,
