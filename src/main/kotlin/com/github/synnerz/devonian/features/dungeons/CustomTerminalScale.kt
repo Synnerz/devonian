@@ -72,4 +72,8 @@ object CustomTerminalScale : Feature(
             minecraft.options.guiScale().set(scale)
         }
     }
+
+    fun shouldScale(title: String): Boolean {
+        return isEnabled() && (validGuis.any { it.matches(title) } || melodyRegex.matches(title))
+    }
 }
