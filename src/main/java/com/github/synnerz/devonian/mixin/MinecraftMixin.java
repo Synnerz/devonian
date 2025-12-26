@@ -33,10 +33,8 @@ public class MinecraftMixin {
             cancellable = true
     )
     private void devonian$setScreen(Screen screen, CallbackInfo ci) {
-        if (
-            this.screen != null && new GuiCloseEvent(this.screen).post() ||
-            screen != null && new GuiOpenEvent(screen).post()
-        ) ci.cancel();
+        if (screen == null && this.screen != null && new GuiCloseEvent(this.screen).post()) ci.cancel();
+        if (screen != null && new GuiOpenEvent(screen).post()) ci.cancel();
     }
 
     @WrapOperation(
