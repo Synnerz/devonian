@@ -198,6 +198,18 @@ object EventBus {
                 is ClientboundBlockUpdatePacket -> {
                     BlockUpdateEvent(packet.pos, packet.blockState).post()
                 }
+
+                is ClientboundOpenScreenPacket -> {
+                    ServerContainerOpen(packet.containerId, packet.title).post()
+                }
+
+                is ClientboundContainerClosePacket -> {
+                    ServerContainerClose(packet.containerId).post()
+                }
+
+                is ClientboundContainerSetContentPacket -> {
+                    ServerContainerSetContent(packet.containerId, packet.stateId, packet.items, packet.carriedItem).post()
+                }
             }
         }
 
@@ -205,6 +217,11 @@ object EventBus {
             when (val packet = event.packet) {
                 is ServerboundUseItemOnPacket -> {
                     BlockPlaceEvent(packet.hitResult, packet.hand).post()
+                }
+
+                is ServerboundContainerClosePacket -> {
+                    if (ClientContainerClose(packet.containerId).post())
+                        event.cancel()
                 }
             }
         }

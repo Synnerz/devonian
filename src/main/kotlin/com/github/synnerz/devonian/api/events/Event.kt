@@ -443,3 +443,29 @@ class TooltipRenderEvent(
     val x: Int,
     val y: Int,
 ) : CancellableEvent()
+
+class ServerContainerOpen(
+    val containerId: Int,
+    val title: Component
+) : Event()
+
+class ServerContainerClose(
+    val containerId: Int,
+) : Event()
+
+class ServerContainerSetContent(
+    val containerId: Int,
+    val stateId: Int,
+    val items: List<ItemStack>,
+    val carriedItem: ItemStack, // Item in current cursor
+) : Event() {
+    inline fun forEach(cb: (Int, ItemStack?) -> Unit) {
+        for (idx in items.indices) {
+            cb(idx, items.getOrNull(idx))
+        }
+    }
+}
+
+class ClientContainerClose(
+    val containerId: Int
+) : CancellableEvent()
