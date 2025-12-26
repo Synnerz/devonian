@@ -318,7 +318,7 @@ class IcePlatform(
         }
 
         val tail = sol.peekLast()
-        if (tail != null && head.x == wx && head.z == wz) {
+        if (tail != null && tail.x == wx && tail.z == wz) {
             sol.removeLast()
             return false
         }
