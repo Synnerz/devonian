@@ -22,6 +22,7 @@ import kotlin.math.abs
 
 object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
     private const val KEY_NAME = "KeyShortcuts"
+    private const val KEY_COOLDOWN = 10
     private val components = mutableListOf<UIRect>()
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
     private val main = UIRect(30.0, 17.5, 40.0, 65.0, parent = background).apply {
@@ -204,14 +205,14 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
     }
 
     fun onKeyPress(event: KeyEvent) {
-        if (lastTrigger != -1L && System.currentTimeMillis() - lastTrigger < 200) return
+        if (lastTrigger != -1L && System.currentTimeMillis() - lastTrigger < KEY_COOLDOWN) return
 
         bindsList.forEach { it.onKeyPress(event) }
         lastTrigger = System.currentTimeMillis()
     }
 
     fun onButtonPress(btnInfo: MouseButtonInfo) {
-        if (lastTrigger != -1L && System.currentTimeMillis() - lastTrigger < 200) return
+        if (lastTrigger != -1L && System.currentTimeMillis() - lastTrigger < KEY_COOLDOWN) return
 
         for (data in bindsList)
             data.onButtonPress(btnInfo)

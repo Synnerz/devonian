@@ -85,10 +85,7 @@ public class MouseHandlerMixin {
         return false;
     }
 
-    @Inject(
-            method = "onButton",
-            at = @At("TAIL")
-    )
+    @Inject(method = "onButton", at = @At("TAIL"))
     private void devonian$onButton(long l, MouseButtonInfo mouseButtonInfo, int i, CallbackInfo ci) {
         if (l != minecraft.getWindow().handle()) return;
         if (minecraft.screen != null) return;
