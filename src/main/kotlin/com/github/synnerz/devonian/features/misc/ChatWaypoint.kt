@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatChannelEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -58,7 +59,7 @@ object ChatWaypoint : Feature(
         val y = ys.toDouble()
         val z = zs.toDouble()
 
-        waypoints.add(TimedWaypoint(System.currentTimeMillis(), name, x, y, z))
+        Scheduler.scheduleTask { waypoints.add(TimedWaypoint(System.currentTimeMillis(), name, x, y, z)) }
         ChatUtils.sendMessage("&aSet waypoint at &b$x, $y, $z", true)
     }
 
@@ -73,8 +74,6 @@ object ChatWaypoint : Feature(
         on<ChatChannelEvent.CoopChatEvent> { event ->
             tryAddWaypoint(event.name, event.userMessage)
         }
-
-        on<WorldChangeEvent> { if (SETTING_CLEAR_WAYPOINTS_SWAP_SERVER.get()) waypoints.clear() }
 
         on<RenderWorldEvent> {
             waypoints.removeIf {
@@ -106,5 +105,10 @@ object ChatWaypoint : Feature(
                 System.currentTimeMillis() - it.created > 60000
             }
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        if (SETTING_CLEAR_WAYPOINTS_SWAP_SERVER.get())
+            waypoints.clear()
     }
 }
