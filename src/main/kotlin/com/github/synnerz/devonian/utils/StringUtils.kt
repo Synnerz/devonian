@@ -171,6 +171,21 @@ object StringUtils {
         return "%.2fB".format(num)
     }
 
+    // 677.9M -> 677_900_000
+    private val nonNumReg = "[^\\d.]".toRegex()
+    fun parseShortenedNumber(str: String): Int {
+        val factor = when (str.lastOrNull()) {
+            null -> return 0
+            'K' -> 1_000
+            'M' -> 1_000_000
+            'B' -> 1_000_000_000
+            else -> 1
+        }
+        val raw = str.replace(nonNumReg, "")
+        val base = raw.toDoubleOrNull() ?: return 0
+        return (base * factor).toInt()
+    }
+
     private val camelCaseRegex = "[a-z]+|[A-Z](?:[a-z]+|[A-Z]*(?![a-z]))|[.\\d]+".toRegex()
     fun String.camelCaseToSentence(): String = camelCaseRegex.replace(this) {
         it.value.replaceFirstChar { it.uppercaseChar() } + " "

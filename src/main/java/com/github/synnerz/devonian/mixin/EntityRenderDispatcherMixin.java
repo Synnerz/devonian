@@ -31,7 +31,7 @@ public class EntityRenderDispatcherMixin {
         cancellable = true
     )
     private void devonian$extractRenderEntity(Entity entity, float f, CallbackInfoReturnable<EntityRenderState> cir) {
-        ExtractRenderEntityEvent event = new ExtractRenderEntityEvent(entity);
+        ExtractRenderEntityEvent event = new ExtractRenderEntityEvent(entity, f);
         if (event.post()) {
             EntityRenderState noop = new EntityRenderState();
             noop.entityType = EntityType.AREA_EFFECT_CLOUD;

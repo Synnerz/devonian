@@ -110,7 +110,8 @@ class PostRenderEntityEvent(
  */
 
 class ExtractRenderEntityEvent(
-    val entity: Entity
+    val entity: Entity,
+    val pt: Float,
 ) : CancellableEvent()
 
 class GuiOpenEvent(

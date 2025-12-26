@@ -21,7 +21,7 @@ object RecolorDragons : Feature(
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
     }
 
-    val COLORS = M7Dragon.entries.map { (it.color.rgb and (0x00FFFFFF)) or (0xC0000000.toInt()) }.toIntArray()
+    val COLORS = M7Dragon.entries.map { (it.color.rgb and (0x00FFFFFF)) or (0xFF000000.toInt()) }.toIntArray()
 
     private var dragons = ConcurrentHashMap<Int, Int>()
 

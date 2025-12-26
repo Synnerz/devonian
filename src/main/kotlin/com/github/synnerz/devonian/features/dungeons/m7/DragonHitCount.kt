@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -16,7 +17,9 @@ import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import java.util.EnumSet
+import kotlin.math.abs
 import kotlin.math.min
 
 object DragonHitCount : Feature(
@@ -46,17 +49,12 @@ object DragonHitCount : Feature(
                 is ClientboundAddEntityPacket -> {
                     if (packet.type != EntityType.ENDER_DRAGON) return@on
                     val type = M7Dragon.entries.minBy {
-                        (it.path[0].x - packet.x) * (it.path[0].x - packet.x) +
-                        (it.path[0].y - packet.y) * (it.path[0].y - packet.y) +
-                        (it.path[0].z - packet.z) * (it.path[0].z - packet.z)
+                        abs(it.path[0].x - packet.x) +
+                        abs(it.path[0].y - packet.y) +
+                        abs(it.path[0].z - packet.z)
                     }
                     if (type != currType) return@on
                     currId = packet.id
-                }
-
-                is ClientboundRemoveEntitiesPacket -> {
-                    if (!packet.entityIds.contains(currId)) return@on
-                    end()
                 }
 
                 is ClientboundSoundPacket -> {
@@ -67,6 +65,15 @@ object DragonHitCount : Feature(
                     hits[hits.size - 1]++
                 }
             }
+        }
+
+        on<TickEvent> {
+            val id = currId
+            if (id == 0) return@on
+
+            val w = minecraft.level ?: return@on
+            val ent = w.getEntity(id) as? EnderDragon?
+            if (ent == null || ent.dragonDeathTime > 0) end()
         }
 
         on<ServerTickEvent> {

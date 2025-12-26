@@ -18,7 +18,7 @@ object BossSplits : TextHudFeature(
     subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Boss.isActiveState)
+        return super.createRequirements() + listOf(Stages.Boss.hasStartedState)
     }
 
     private val SETTING_SEND_ALL_END = addSwitch(

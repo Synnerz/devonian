@@ -10,6 +10,8 @@ enum class M7Dragon(
     val colorName: String,
     val color: Color,
     val textColor: String,
+    val particleX: Int,
+    val particleZ: Int,
     val chin: BlockPos,
     val path: Array<Vec3>,
     val box: AABB,
@@ -20,6 +22,7 @@ enum class M7Dragon(
         "Red",
         Color(255, 85, 85),
         "&c",
+        27, 59,
         BlockPos(32, 18, 59),
         arrayOf(
             Vec3(27.0, 14.0, 59.0),
@@ -66,6 +69,7 @@ enum class M7Dragon(
         "Green",
         Color(85, 255, 85),
         "&a",
+        27, 94,
         BlockPos(32, 19, 94),
         arrayOf(
             Vec3(27.0, 14.0, 94.0),
@@ -112,7 +116,8 @@ enum class M7Dragon(
         "Purple",
         Color(170, 0, 170),
         "&5",
-        BlockPos(56, 18, 128),
+        56, 125,
+        BlockPos(56, 18, 120),
         arrayOf(
             Vec3(56.0, 14.0, 125.0),
             Vec3(56.0, 14.0, 125.0),
@@ -158,6 +163,7 @@ enum class M7Dragon(
         "Blue",
         Color(85, 255, 255),
         "&b",
+        84, 94,
         BlockPos(79, 19, 94),
         arrayOf(
             Vec3(84.0, 14.0, 94.0),
@@ -206,6 +212,7 @@ enum class M7Dragon(
         "Orange",
         Color(255, 170, 0),
         "&6",
+        85, 56,
         BlockPos(80, 19, 56),
         arrayOf(
             Vec3(85.0, 14.0, 56.0),

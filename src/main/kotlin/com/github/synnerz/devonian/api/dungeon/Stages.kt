@@ -219,11 +219,16 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
             } else if (index == 2 && lastIndex == 0) {
                 deviceDone = true
             }
+
             when (type) {
                 "terminal" -> termsDone++
                 "lever" -> leversDone++
                 "device" -> deviceDone = true
             }
+
+            lastIgn = ign
+            lastIndex = index
+            lastType = type
         }
 
         if (

@@ -3,11 +3,12 @@ package com.github.synnerz.devonian.features.dungeons.m7
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent
+import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
-import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
+import net.minecraft.world.entity.decoration.ArmorStand
 
 object DragonHealth : Feature(
     "dragonHealth",
@@ -20,21 +21,47 @@ object DragonHealth : Feature(
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
     }
 
+    private data class Health(val x: Double, val y: Double, val z: Double, val str: String)
+
+    private val healths = mutableListOf<Health>()
+    private val nametagReg = "^﴾ [^\\sA-Za-z]* Withered Dragon ([\\d.,]+[KMB]?)/([\\d.,]+[KMB]?)❤ ﴿$".toRegex()
+
     override fun initialize() {
         on<ExtractRenderEntityEvent> { event ->
             val entity = event.entity as? EnderDragon ?: return@on
 
-            val hp = entity.health
-            val max = entity.maxHealth
-            if (hp <= 0f) return@on
-            Context.Immediate?.renderString(
-                StringUtils.colorForNumber(hp.toDouble(), max.toDouble()) + StringUtils.shortenNumber(hp.toInt()),
-                entity.x, entity.y + 2.0, entity.z,
-                8f,
-                backgroundBox = false,
-                increase = false,
-                phase = true,
+            if (entity.dragonDeathTime > 0) return@on
+
+            val tag = minecraft.level?.getEntity(entity.id + 8) as? ArmorStand? ?: return@on
+            val name = tag.name.string
+            val match = nametagReg.matchEntire(name) ?: return@on
+            val hp = match.groupValues.getOrNull(1) ?: return@on
+            // val hp = match.groupValues.getOrNull(1)?.let { StringUtils.parseShortenedNumber(it) } ?: return@on
+            // val maxHp = match.groupValues.getOrNull(2)?.let { StringUtils.parseShortenedNumber(it) } ?: return@on
+
+            val pos = entity.getPosition(event.pt)
+            healths.add(
+                Health(
+                    pos.x,
+                    pos.y + 2.0,
+                    pos.z,
+                    hp,
+                )
             )
+        }
+
+        on<RenderWorldEvent> {
+            healths.forEach {
+                Context.Immediate?.renderString(
+                    it.str,
+                    it.x, it.y, it.z,
+                    8f,
+                    backgroundBox = false,
+                    increase = false,
+                    phase = true,
+                )
+            }
+            healths.clear()
         }
     }
 }
