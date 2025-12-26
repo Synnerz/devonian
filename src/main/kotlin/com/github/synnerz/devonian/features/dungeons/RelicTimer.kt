@@ -22,7 +22,7 @@ object RelicTimer : TextHudFeature(
         return super.createRequirements() + listOf(Stages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })
     }
 
-    private const val SPAWN_TICKS = 43
+    private const val SPAWN_TICKS = 45
     private val necronRegex = "^\\[BOSS] Necron: All this, for nothing\\.\\.\\.$".toRegex()
     private var startedAt = -1
 
