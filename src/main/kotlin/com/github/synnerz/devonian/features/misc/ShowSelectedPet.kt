@@ -25,6 +25,7 @@ object ShowSelectedPet : Feature(
         "The highlight color to be used in show selected pet",
         "Selected Pet Color"
     )
+    private val petsMenuRegex = "^Pets(?: \\d+/\\d+)?$".toRegex()
     private var inPets = false
     private var currentPetSlot = -1
 
@@ -33,7 +34,7 @@ object ShowSelectedPet : Feature(
             val packet = event.packet
             if (packet is ClientboundOpenScreenPacket) {
                 val title = packet.title.string
-                inPets = title == "Pets"
+                inPets = petsMenuRegex.matches(title)
                 return@on
             }
 
