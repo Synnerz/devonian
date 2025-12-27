@@ -267,6 +267,7 @@ object Devonian : ClientModInitializer {
         DragonHitCount,
         ColorPortal,
         RemoveGlowEffect,
+        PartyFinderHighlight,
 
         // Debug
         CopyItem,

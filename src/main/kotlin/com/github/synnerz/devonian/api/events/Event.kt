@@ -451,7 +451,9 @@ class TooltipRenderEvent(
 class ServerContainerOpen(
     val containerId: Int,
     val title: Component
-) : Event()
+) : Event() {
+    fun string(): String = title.string
+}
 
 class ServerContainerClose(
     val containerId: Int,
