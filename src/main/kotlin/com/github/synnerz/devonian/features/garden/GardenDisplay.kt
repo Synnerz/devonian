@@ -79,16 +79,6 @@ object GardenDisplay : TextHudFeature(
             storedCompost = storedCompostMatch[0]
         }
 
-        on<WorldChangeEvent> {
-            nextVisitor = "unknown"
-            totalVisitors = "0"
-            jacobContest = "unknown"
-            organicMatter = "0"
-            fuel = "0"
-            timeLeft = "unknown"
-            storedCompost = "0"
-        }
-
         on<RenderOverlayEvent> { event ->
             setLines(
                 listOf(
@@ -103,6 +93,16 @@ object GardenDisplay : TextHudFeature(
             )
             draw(event.ctx)
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        nextVisitor = "unknown"
+        totalVisitors = "0"
+        jacobContest = "unknown"
+        organicMatter = "0"
+        fuel = "0"
+        timeLeft = "unknown"
+        storedCompost = "0"
     }
 
     override fun getEditText(): List<String> = listOf(

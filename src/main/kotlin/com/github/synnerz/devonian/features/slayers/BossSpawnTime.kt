@@ -39,10 +39,10 @@ object BossSpawnTime : Feature(
             ChatUtils.sendMessage("&aBoss Spawn Took&f: &b${"%.2fs".format(time.toFloat())} &7- &b${"%.2fs".format(ticks.toFloat())}", true)
             reset()
         }
+    }
 
-        on<WorldChangeEvent> {
-            reset()
-        }
+    override fun onWorldChange(event: WorldChangeEvent) {
+        return
     }
 
     private fun reset() {

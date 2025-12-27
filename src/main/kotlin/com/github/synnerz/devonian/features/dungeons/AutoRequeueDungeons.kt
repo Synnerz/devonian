@@ -40,11 +40,11 @@ object AutoRequeueDungeons : Feature(
             }
             ChatUtils.command("instancerequeue")
         }
+    }
 
-        on<WorldChangeEvent> {
-            if (needsDowntime == null) return@on
-            ChatUtils.sendMessage("&aDowntime has been reset.", true)
-            needsDowntime = null
-        }
+    override fun onWorldChange(event: WorldChangeEvent) {
+        if (needsDowntime == null) return
+        ChatUtils.sendMessage("&aDowntime has been reset.", true)
+        needsDowntime = null
     }
 }

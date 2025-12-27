@@ -46,11 +46,11 @@ object EyesPlacedDisplay : TextHudFeature(
             setLine(displayStr ?: "&dEyes Placed&f: &e0&f/&d8")
             draw(event.ctx)
         }
-
-        on<WorldChangeEvent> {
-            displayStr = null
-        }
     }
 
     override fun getEditText(): List<String> = listOf("&dEyes Placed&f: &d8&f/&d8")
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        displayStr = null
+    }
 }

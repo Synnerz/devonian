@@ -22,7 +22,7 @@ object PuzzlesDisplay : TextHudFeature(
 
     private val puzzleStates = mutableListOf("✦", "✔", "✖")
     private val puzzleStatesColores = mutableListOf("&6✦", "&a✔", "&c✖")
-    private val puzzlesRegex = "^ ([\\w ]+): \\[(✦|✔|✖)\\] ?\\(?(\\w+)?\\)?\$".toRegex()
+    private val puzzlesRegex = "^ ([\\w ]+): \\[(✦|✔|✖)] ?\\(?(\\w+)?\\)?$".toRegex()
     private val puzzlesCountRegex = "^Puzzles: \\((\\d+)\\)\$".toRegex()
     private var puzzlesCount = 0
     private var puzzles = mutableMapOf<String, Pair<Int, String>>()
@@ -54,12 +54,6 @@ object PuzzlesDisplay : TextHudFeature(
             }
         }
 
-        on<WorldChangeEvent> {
-            toDisplay.clear()
-            puzzlesCount = 0
-            puzzles.clear()
-        }
-
         on<RenderOverlayEvent> { event ->
             setLines(toDisplay.toList())
             draw(event.ctx)
@@ -71,4 +65,10 @@ object PuzzlesDisplay : TextHudFeature(
         "&d&lBoulder &6✦",
         "&d&lThree Weirdos &a✔"
     )
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        toDisplay.clear()
+        puzzlesCount = 0
+        puzzles.clear()
+    }
 }

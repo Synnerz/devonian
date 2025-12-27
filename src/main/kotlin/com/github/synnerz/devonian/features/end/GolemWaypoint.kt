@@ -74,12 +74,12 @@ object GolemWaypoint : Feature(
                 true
             )
         }
+    }
 
-        on<WorldChangeEvent> {
-            pos = null
-            delegateScan = false
-            currentStage = 0
-        }
+    override fun onWorldChange(event: WorldChangeEvent) {
+        pos = null
+        delegateScan = false
+        currentStage = 0
     }
 
     private fun findPos() {

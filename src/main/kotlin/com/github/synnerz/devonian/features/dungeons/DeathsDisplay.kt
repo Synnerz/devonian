@@ -30,16 +30,16 @@ object DeathsDisplay : TextHudFeature(
             deathCount = amount.toInt()
         }
 
-        on<WorldChangeEvent> {
-            deathCount = 0
-        }
-
         on<RenderOverlayEvent> { event ->
             val count = deathCount
             val format = if (count > 2) "&4" else "&c"
             setLine("&8&lDeaths&f: ${format}$count")
             draw(event.ctx)
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        deathCount = 0
     }
 
     override fun getEditText(): List<String> = listOf("&8&lDeaths&f: &43")

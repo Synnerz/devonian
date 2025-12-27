@@ -93,10 +93,10 @@ object SecretsClickedBox : Feature(
                 )
             }
         }
+    }
 
-        on<WorldChangeEvent> {
-            clickedBlock = null
-            wasLocked = false
-        }
+    override fun onWorldChange(event: WorldChangeEvent) {
+        clickedBlock = null
+        wasLocked = false
     }
 }

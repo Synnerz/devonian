@@ -25,15 +25,15 @@ object MilestoneDisplay : TextHudFeature(
             milestoneCount = milestonSymbols.indexOf(symb)
         }
 
-        on<WorldChangeEvent> {
-            milestoneCount = 0
-        }
-
         on<RenderOverlayEvent> { event ->
             val format = if (milestoneCount > 2) "&6" else "&c"
             setLine("&bMilestone&f: ${format}$milestoneCount")
             draw(event.ctx)
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        milestoneCount = 0
     }
 
     override fun getEditText(): List<String> = listOf("&bMilestone&f: &69")

@@ -46,13 +46,6 @@ object PestsDisplay : TextHudFeature(
             currentSpray = currentSprayMatch[0]
         }
 
-        on<WorldChangeEvent> {
-            pestsAlive = "0"
-            infestedPlots = "None"
-            bonusFortune = "INACTIVE"
-            currentSpray = "None"
-        }
-
         on<RenderOverlayEvent> { event ->
             setLines(
                 listOf(
@@ -65,6 +58,13 @@ object PestsDisplay : TextHudFeature(
             )
             draw(event.ctx)
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        pestsAlive = "0"
+        infestedPlots = "None"
+        bonusFortune = "INACTIVE"
+        currentSpray = "None"
     }
 
     override fun getEditText(): List<String> = listOf(

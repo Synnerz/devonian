@@ -30,15 +30,15 @@ object CryptsDisplay : TextHudFeature(
             cryptsCount = amount.toInt()
         }
 
-        on<WorldChangeEvent> {
-            cryptsCount = 0
-        }
-
         on<RenderOverlayEvent> { event ->
             val format = if (cryptsCount > 4) "&6" else "&c"
             setLine("&aCrypts&f: ${format}$cryptsCount")
             draw(event.ctx)
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        cryptsCount = 0
     }
 
     override fun getEditText(): List<String> = listOf("&aCrypts&f: &65")

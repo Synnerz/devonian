@@ -26,6 +26,7 @@ open class Feature @JvmOverloads constructor(
     val subcategory: String = "General",
     val isHidden: Boolean = false,
 ) : Toggleable() {
+    private var worldListener: EventListener<WorldChangeEvent>
     val minecraft = Devonian.minecraft
     val id = 256652 + Devonian.features.size
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
@@ -49,6 +50,7 @@ open class Feature @JvmOverloads constructor(
 
     override fun add() {
         children.forEach { it.register() }
+        worldListener.register()
     }
 
     override fun remove() {
@@ -307,12 +309,17 @@ open class Feature @JvmOverloads constructor(
     init {
         on<AreaEvent>(::onAreaChange)
         on<SubAreaEvent>(::onSubAreaChange)
-        on<WorldChangeEvent>(::onWorldChange)
+        worldListener = EventBus.on<WorldChangeEvent>(::triggerWorldChange, false)
     }
 
     open fun onAreaChange(event: AreaEvent) {}
 
     open fun onSubAreaChange(event: SubAreaEvent) {}
+
+    private fun triggerWorldChange(event: WorldChangeEvent) {
+        onWorldChange(event)
+        worldListener.unregister()
+    }
 
     open fun onWorldChange(event: WorldChangeEvent) {}
 }

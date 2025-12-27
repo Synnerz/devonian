@@ -47,12 +47,12 @@ object DungeonBreakerCharges : TextHudFeature(
             setLine(displayStr)
             draw(event.ctx)
         }
+    }
 
-        on<WorldChangeEvent> {
-            charges = 20
-            colorCode = "&6"
-            displayStr = "&aCharges&f: ${colorCode}${charges}"
-        }
+    override fun onWorldChange(event: WorldChangeEvent) {
+        charges = 20
+        colorCode = "&6"
+        displayStr = "&aCharges&f: ${colorCode}${charges}"
     }
 
     override fun getEditText(): List<String> = listOf("&aCharges&f: &620")

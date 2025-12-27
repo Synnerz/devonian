@@ -72,11 +72,11 @@ object InventoryHistoryLog : TextHudFeature(
             setLines(receipt.map { it.value.toString() })
             draw(event.ctx)
         }
+    }
 
-        on<WorldChangeEvent> {
-            worldSwap = true
-            Scheduler.scheduleServerTask(20) { worldSwap = false }
-        }
+    override fun onWorldChange(event: WorldChangeEvent) {
+        worldSwap = true
+        Scheduler.scheduleServerTask(20) { worldSwap = false }
     }
 
     private fun String.clearName(): String = this.replace(" ?§r§8 ?x\\d+".toRegex(), "").trim()
