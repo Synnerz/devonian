@@ -432,6 +432,7 @@ class DungeonMapBaseRenderer :
                         width,
                         lines.maxOfOrNull { it.descent } ?: 0f,
                         lines.maxOfOrNull { it.ascent } ?: 0f,
+                        true,
                     ))
 
                     CachedRenderedString(

@@ -43,8 +43,8 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
         if (cachedGraphics == null) {
             cachedGraphics = BufferedImageFactoryImpl.BLANK_IMAGE.createGraphics()
             cachedGraphics!!.font = fontMain
-            cachedGraphics!!.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-            cachedGraphics!!.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+            cachedGraphics!!.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF)
+            cachedGraphics!!.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF)
         }
 
         return StringParser.processString(

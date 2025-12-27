@@ -2,12 +2,13 @@ package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactory
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
+import com.github.synnerz.devonian.hud.texthud.BImgTextHudRenderer
 import com.github.synnerz.devonian.hud.texthud.StringParser
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.hud.texthud.TextRenderer
 import java.awt.BasicStroke
 import java.awt.Color
-import java.awt.RenderingHints
+import java.awt.RenderingHints.*
 import java.awt.Shape
 import java.awt.font.TextLayout
 import java.awt.geom.AffineTransform
@@ -22,8 +23,10 @@ object TextRendererImpl {
         val rp = param.renderParams
 
         val g = img.createGraphics()
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+        val aa = if (!param.noAAHint || BImgTextHudRenderer.fontMainName != "Mojangles") VALUE_ANTIALIAS_ON else VALUE_ANTIALIAS_OFF
+        g.setRenderingHint(KEY_ANTIALIASING, aa)
+        g.setRenderingHint(KEY_FRACTIONALMETRICS, VALUE_FRACTIONALMETRICS_ON)
+        if (rp.shadow == Shadow.Outline) g.setRenderingHint(KEY_STROKE_CONTROL, VALUE_STROKE_PURE)
         g.paint = Color(-1)
 
         val isDrop = rp.shadow == Shadow.Drop
@@ -31,8 +34,8 @@ object TextRendererImpl {
         val tmpImg = if (isDrop) bimgFactory.create(img.width, img.height) else img
         val tmpG = if (isDrop) {
             val tmp = tmpImg.createGraphics()
-            tmp.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-            tmp.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+            tmp.setRenderingHint(KEY_ANTIALIASING, aa)
+            tmp.setRenderingHint(KEY_FRACTIONALMETRICS, VALUE_FRACTIONALMETRICS_ON)
             tmp
         } else g
 
@@ -86,7 +89,7 @@ object TextRendererImpl {
             if (rp.shadow == Shadow.Outline) {
                 tmpG.translate(rp.fontSize * 0.1, 0.0)
                 val outlineColor = Color(0)
-                tmpG.stroke = BasicStroke(rp.fontSize * 0.1f)
+                tmpG.stroke = BasicStroke(((rp.fontSize * 0.1f).toInt() or 1).toFloat())
                 line.shapes!!.forEach {
                     tmpG.paint = outlineColor
                     tmpG.draw(it.second)

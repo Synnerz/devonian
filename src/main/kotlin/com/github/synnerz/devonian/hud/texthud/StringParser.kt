@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.hud.texthud
 
+import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import java.awt.*
 import java.awt.font.TextAttribute
 import java.awt.font.TextLayout
@@ -184,12 +185,12 @@ object StringParser {
             } else throw IllegalStateException("unknown attribute: " + v.t)
         }
 
-        val tyl = TextLayout(attStr.iterator, g.fontRenderContext)
+        val fm = g.fontMetrics
 
         return LayoutLineData(
-            tyl.visibleAdvance,
-            tyl.ascent,
-            tyl.descent,
+            fm.stringWidth(s).toFloat(),
+            fm.ascent.toFloat(),
+            fm.descent.toFloat(),
             o.isNotEmpty(),
             atts,
             attStr,
