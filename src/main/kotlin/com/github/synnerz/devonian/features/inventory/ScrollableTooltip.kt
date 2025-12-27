@@ -49,6 +49,7 @@ object ScrollableTooltip : Feature(
         "Resets the x, y offset every time your cursor position changes",
         "Tooltip Reset"
     )
+    private val SETTING_RESET_ALL = addButton(::reset, displayName = "Reset")
     private var scaleScroll = 1.0
     private var xo = 0.0
     private var yo = 0.0
@@ -142,6 +143,13 @@ object ScrollableTooltip : Feature(
             if (event.key != GLFW.GLFW_KEY_LEFT_SHIFT) return@on
             holdingShift = false
         }
+    }
+
+    private fun reset() {
+        scaleScroll = 1.0
+        xo = 0.0
+        yo = 0.0
+        lastEq = 0
     }
 
     fun scale(): Double {

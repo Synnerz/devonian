@@ -7,7 +7,6 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
-import com.github.synnerz.devonian.features.dungeons.BonzoMask.SETTING_ONLY_SHOW_IN_BOSS
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import kotlin.math.roundToInt
