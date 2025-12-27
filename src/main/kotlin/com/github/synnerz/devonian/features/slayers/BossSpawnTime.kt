@@ -42,7 +42,7 @@ object BossSpawnTime : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        return
+        reset()
     }
 
     private fun reset() {
