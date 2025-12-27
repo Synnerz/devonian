@@ -503,10 +503,10 @@ object DungeonMap : HudFeature(
                 compBounds.y, compBounds.y + compBounds.h
             ).toFloat()
 
-            var dxf = cos(-pos.r).toFloat() * SETTING_MARKER_SCALE.get().toFloat()
-            var dyf = sin(-pos.r).toFloat() * SETTING_MARKER_SCALE.get().toFloat()
-            var dxr = cos(-pos.r + PI / 2).toFloat() * SETTING_MARKER_SCALE.get().toFloat()
-            var dyr = sin(-pos.r + PI / 2).toFloat() * SETTING_MARKER_SCALE.get().toFloat()
+            var dxf = cos(-pos.r).toFloat() * SETTING_MARKER_SCALE.get().toFloat() * scale * 0.5f
+            var dyf = sin(-pos.r).toFloat() * SETTING_MARKER_SCALE.get().toFloat() * scale * 0.5f
+            var dxr = cos(-pos.r + PI / 2).toFloat() * SETTING_MARKER_SCALE.get().toFloat() * scale * 0.5f
+            var dyr = sin(-pos.r + PI / 2).toFloat() * SETTING_MARKER_SCALE.get().toFloat() * scale * 0.5f
             val u0: Float
             val v0: Float
             val u1: Float
