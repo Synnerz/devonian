@@ -66,3 +66,4 @@ object CustomSidebarColor : Feature("customSideBarColor", "Sets the color for sc
     )
 }
 object NametagShadow : Feature("nametagShadow", "Enables shadows on name tags", subcategory = "Tweaks")
+object RemoveGlowEffect : Feature("removeGlowEffect", "Removes the glowing effect of every entity", subcategory = "Hiders")

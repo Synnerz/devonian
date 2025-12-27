@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.features.misc.ChangeCrouchHeight;
 import com.github.synnerz.devonian.features.misc.DisableSwim;
+import com.github.synnerz.devonian.features.misc.RemoveGlowEffect;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,5 +37,11 @@ public class EntityMixin {
         Entity that = (Entity) (Object) this;
         if (!(that instanceof LocalPlayer)) return value;
         return false;
+    }
+
+    @Inject(method = "isCurrentlyGlowing", at = @At("HEAD"), cancellable = true)
+    private void devonian$isEntityGlowing(CallbackInfoReturnable<Boolean> cir) {
+        if (RemoveGlowEffect.INSTANCE.isEnabled())
+            cir.setReturnValue(false);
     }
 }

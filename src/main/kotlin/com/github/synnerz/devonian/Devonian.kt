@@ -266,6 +266,7 @@ object Devonian : ClientModInitializer {
         DragonHealth,
         DragonHitCount,
         ColorPortal,
+        RemoveGlowEffect,
 
         // Debug
         CopyItem,

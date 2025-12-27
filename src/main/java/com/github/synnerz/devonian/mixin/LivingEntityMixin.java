@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.api.events.EntityDeathEvent;
 import com.github.synnerz.devonian.features.misc.ItemAnimations;
+import com.github.synnerz.devonian.features.misc.RemoveGlowEffect;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -52,5 +54,11 @@ public abstract class LivingEntityMixin extends Entity {
         LivingEntity that = (LivingEntity) (Object) this;
         if (!(that instanceof LocalPlayer)) return;
         ItemAnimations.INSTANCE.onSwing();
+    }
+
+    @Inject(method = "isCurrentlyGlowing", at = @At("HEAD"), cancellable = true)
+    private void devonian$isLivingGlowing(CallbackInfoReturnable<Boolean> cir) {
+        if (RemoveGlowEffect.INSTANCE.isEnabled())
+            cir.setReturnValue(false);
     }
 }
