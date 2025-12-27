@@ -23,14 +23,29 @@ object WaterBoardSolver : Feature(
     "catacombs",
     subcategory = "Solvers",
 ) {
+    private val SETTING_SOLUTION_MODE = addSelection(
+        "solutionMode",
+        0,
+        listOf("Desco1", "Efficient"),
+        "Choose the waterboard solutions mode",
+        "WaterBoardSolver Mode"
+    )
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)
     }
 
-    // TODO: optimize these since they are not the most optimal currently.
     @Suppress("unchecked_cast")
     private val solutionsData = Gson().fromJson(
         this::class.java.getResourceAsStream("/assets/devonian/dungeons/WaterBoardSolutions.json")
+            ?.bufferedReader()
+            .use { it?.readText() },
+        Map::class.java
+    ) as Map<String, Map<String, Map<String, List<Double>>>>
+
+    // Thanks to FlameOfWar for sending me these which were made by Moody and PandaguinDK all credits to them
+    @Suppress("unchecked_cast")
+    private val efficientSolutionsData = Gson().fromJson(
+        this::class.java.getResourceAsStream("/assets/devonian/dungeons/EfficientWaterboardSolutions.json")
             ?.bufferedReader()
             .use { it?.readText() },
         Map::class.java
@@ -42,13 +57,13 @@ object WaterBoardSolver : Feature(
     private val SEA_LANTERN_MIDDLE = 15 to 27 // 77y
     private val PURPLE_WOOL = 15 to 19 // 57y
     private val leverPos = mapOf(
-        "minecraft:quartz_block" to (20 to 20),
-        "minecraft:gold_block" to (20 to 15),
-        "minecraft:coal_block" to (20 to 10),
-        "minecraft:diamond_block" to (10 to 20),
-        "minecraft:emerald_block" to (10 to 15),
-        "minecraft:hardened_clay" to (10 to 10),
-        "minecraft:water" to (15 to 5)
+        "quartz_block" to (20 to 20),
+        "gold_block" to (20 to 15),
+        "coal_block" to (20 to 10),
+        "diamond_block" to (10 to 20),
+        "emerald_block" to (10 to 15),
+        "hardened_clay" to (10 to 10),
+        "water" to (15 to 5)
     )
     private val woolOrder = listOf(
         Blocks.PURPLE_WOOL, // 10
@@ -120,7 +135,9 @@ object WaterBoardSolver : Feature(
 
             if (subvariant!!.length == 3) {
                 currentSolution = buildMap {
-                    val sol = solutionsData["$variant"]?.get(subvariant)
+                    val solutionMap = if (SETTING_SOLUTION_MODE.get() == 0) solutionsData else efficientSolutionsData
+
+                    val sol = solutionMap["$variant"]?.get(subvariant)
                     for (solution in sol!!)
                         put(solution.key, solution.value.toMutableList())
                 }
@@ -173,7 +190,7 @@ object WaterBoardSolver : Feature(
                 val v = entry.value
                 if (v != compPos) continue
 
-                if (k == "minecraft:water" && openedWaterAt == -1)
+                if (k == "water" && openedWaterAt == -1)
                     openedWaterAt = EventBus.serverTicks()
 
                 if (currentSolution == null) continue
@@ -205,7 +222,7 @@ object WaterBoardSolver : Feature(
             for (entry in currentSolution!!.entries) {
                 val name = entry.key
                 val arr = entry.value
-                val y = if (name == "minecraft:water") 60.0 else 61.0
+                val y = if (name == "water") 60.0 else 61.0
                 val compPos = leverPos[name] ?: return@on
                 val roomPos = room.fromComp(compPos.first, compPos.second) ?: return@on
 
