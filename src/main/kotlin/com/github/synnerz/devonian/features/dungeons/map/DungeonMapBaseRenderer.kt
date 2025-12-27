@@ -323,12 +323,11 @@ class DungeonMapBaseRenderer :
 
             if (
                 renderRoomInfo &&
-                options.roomName &&
                 (
                     !options.roomNameNotEFB ||
                     (room.type != RoomTypes.ENTRANCE && room.type != RoomTypes.FAIRY && room.type != RoomTypes.BLOOD)
                 ) &&
-                (options.puzzleName || room.type != RoomTypes.PUZZLE)
+                (if (room.type == RoomTypes.PUZZLE) options.puzzleName else options.roomName)
             ) room.name?.also { name ->
                 val colorCode = if (options.colorRoomName) when (room.type) {
                     RoomTypes.ENTRANCE,
