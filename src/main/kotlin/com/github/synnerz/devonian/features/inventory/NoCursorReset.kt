@@ -1,36 +1,34 @@
 package com.github.synnerz.devonian.features.inventory
 
-import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.Feature
 import kotlinx.atomicfu.atomic
-import net.minecraft.network.protocol.common.ClientboundPingPacket
-import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import net.minecraft.client.gui.screens.Screen
 
 object NoCursorReset : Feature(
     "noCursorReset",
     "Avoids resetting your cursor whenever navigating guis",
     subcategory = "Inventory",
 ) {
-    var closedGui = false
+    var lastScreen: Screen? = null
     var resetCursor = atomic(true)
 
     override fun initialize() {
-        on<PacketReceivedEvent> { event ->
-            val packet = event.packet
-
-            when (packet) {
-                is ClientboundContainerClosePacket -> {
-                    closedGui = true
-                }
-                is ClientboundOpenScreenPacket -> {
-                    if (closedGui) resetCursor.value = false
-                }
-                is ClientboundPingPacket -> {
-                    if (closedGui) Scheduler.scheduleTask { resetCursor.value = true }
-                    closedGui = false
-                }
+        on<TickEvent> {
+            val screen = minecraft.screen
+            if (lastScreen == null && screen != null) {
+                resetCursor.value = true
+                lastScreen = screen
+                return@on
+            }
+            if (lastScreen != null && screen != null && lastScreen != screen) {
+                resetCursor.value = false
+                return@on
+            }
+            if (lastScreen != null && screen == null) {
+                resetCursor.value = true
+                lastScreen = null
+                return@on
             }
         }
     }
