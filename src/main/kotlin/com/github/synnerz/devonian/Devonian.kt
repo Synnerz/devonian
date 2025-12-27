@@ -268,6 +268,7 @@ object Devonian : ClientModInitializer {
         ColorPortal,
         RemoveGlowEffect,
         PartyFinderHighlight,
+        ArmorDisplay,
 
         // Debug
         CopyItem,
