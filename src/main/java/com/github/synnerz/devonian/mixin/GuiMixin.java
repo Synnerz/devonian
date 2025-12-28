@@ -11,11 +11,13 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -206,5 +208,21 @@ public class GuiMixin {
         }
 
         instance.fill(i, j, k, l, CustomSidebarColor.INSTANCE.getSETTING_BODY_COLOR().get());
+    }
+
+    @WrapOperation(
+            method = "displayScoreboardSidebar",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIIZ)V"
+            )
+    )
+    private void devonian$sidebarDrawString(GuiGraphics instance, Font font, Component component, int i, int j, int k, boolean bl, Operation<Void> original) {
+        if (!SidebarTextShadow.INSTANCE.isEnabled()) {
+            original.call(instance, font, component, i, j, k, bl);
+            return;
+        }
+
+        original.call(instance, font, component, i, j, k, true);
     }
 }
