@@ -57,6 +57,7 @@ public class MouseHandlerMixin {
         at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V", shift = At.Shift.AFTER)
     )
     private void devonian$releaseMouseSetPosFix(CallbackInfo ci) {
+        if (!NoCursorReset.INSTANCE.isEnabled()) return;
         GLFW.glfwSetCursorPos(minecraft.getWindow().handle(), xpos, ypos);
         this.ignoreFirstMove = true;
     }
@@ -70,7 +71,7 @@ public class MouseHandlerMixin {
         )
     )
     private boolean devonian$setXCursorGrab(MouseHandler instance, double value) {
-        return false;
+        return !NoCursorReset.INSTANCE.isEnabled();
     }
 
     @WrapWithCondition(
@@ -82,7 +83,7 @@ public class MouseHandlerMixin {
         )
     )
     private boolean devonian$setYCursorGrab(MouseHandler instance, double value) {
-        return false;
+        return !NoCursorReset.INSTANCE.isEnabled();
     }
 
     @Inject(method = "onButton", at = @At("TAIL"))
