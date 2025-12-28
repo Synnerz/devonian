@@ -270,6 +270,7 @@ object Devonian : ClientModInitializer {
         PartyFinderHighlight,
         ArmorDisplay,
         SidebarTextShadow,
+        SharpShooterSolver,
 
         // Debug
         CopyItem,
