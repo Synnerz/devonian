@@ -10,10 +10,19 @@ object SelectedItemName : TextHudFeature(
     "Cancels the selected item name above hotbar and adds a custom one that is movable",
     subcategory = "Tweaks",
 ) {
+    private val SETTING_ONLY_HIDE = addSwitch(
+        "onlyHide",
+        false,
+        "Does not render a custom hud as well as stops the underlying text rendering",
+        "Selected Item Hide"
+    )
+
     fun onRender(ctx: GuiGraphics, ci: CallbackInfo) {
         if (!isEnabled()) return
 
         ci.cancel()
+        if (SETTING_ONLY_HIDE.get()) return
+
         // TODO: if possible, make fade in animation, it is done simply by adjusting the "l" as alpha to color
         val item = minecraft.player!!.mainHandItem!!
         val name = item.customName?.colorCodes() ?: item.itemName.string
