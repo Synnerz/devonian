@@ -37,6 +37,10 @@ object DevonianCommand {
         Config.load()
         1
     }
+    private val clearChat = command.subcommand("clearchat") { _, args ->
+        Devonian.minecraft.gui.chat.clearMessages(false)
+        1
+    }
 
     fun initialize() {
         command.register()
