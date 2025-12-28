@@ -32,8 +32,7 @@ class DungeonMapBaseRenderer :
     data class CachedRenderedString(
         val img: BufferedImage,
         val xo: Double, val yo: Double,
-        val wr: Double, val hr: Double,
-        val w: Double, val h: Double
+        val w: Double, val h: Double,
     )
 
     override fun onFontChange(f: Font) {
@@ -416,9 +415,9 @@ class DungeonMapBaseRenderer :
                     ) }
                     val width = lines.maxOf { it.width }
 
-                    val w = width + options.stringShadow.getSizeIncrease(fontSizeF) + 5.0f
+                    val w = ceil(width + options.stringShadow.getSizeIncrease(fontSizeF) + 5.0f).toInt()
                     val h = fontSize * lines.size + ascent
-                    val img = bimgProvider.create(w.toInt(), h)
+                    val img = bimgProvider.create(w, h)
 
                     TextRendererImpl.drawImage(img, TextRenderer.RenderParams(
                         StylizedTextHud.TextRenderParams(
@@ -437,10 +436,8 @@ class DungeonMapBaseRenderer :
                     CachedRenderedString(
                         img,
                         0.0, -ascent / 2.0,
-                        w.toDouble(),
-                        h.toDouble(),
                         width.toDouble(),
-                        fontSize * lines.size.toDouble()
+                        fontSize * lines.size.toDouble(),
                     )
                 }
 
@@ -456,12 +453,9 @@ class DungeonMapBaseRenderer :
 
                 val bx = (box.x + rendered.xo).toInt()
                 val bz = (box.y + rendered.yo).toInt()
-                val bw = ceil(rendered.wr).toInt()
-                val bh = ceil(rendered.hr).toInt()
                 g.drawImage(
                     rendered.img,
                     bx, bz,
-                    bw, bh,
                     null
                 )
             }
