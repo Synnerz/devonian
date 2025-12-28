@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.BlockUpdateEvent
 import com.github.synnerz.devonian.api.events.MultiBlockUpdateEvent
@@ -11,7 +12,6 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.state.BlockState
 import java.awt.Color
 import kotlin.math.abs
 
@@ -85,12 +85,16 @@ object SharpShooterSolver : Feature(
     }
 
     private fun onEmeraldBlock(bp: BlockPos) {
-        val isValid = emeraldPositions.find { it.x == bp.x && it.y == bp.y && it.z == bp.z }
-            ?: emeraldPositions.find { it.x == bp.x - 1 && it.y == bp.y && it.z == bp.z }
-            ?: emeraldPositions.find { it.x == bp.x - 2 && it.y == bp.y && it.z == bp.z }
-            ?: return
+        val blockAt = WorldUtils.getBlockState(bp.x, bp.y, bp.z)
+        var ox = 0
+        if (blockAt?.block != Blocks.EMERALD_BLOCK) {
+            val blockAt2 = WorldUtils.getBlockState(bp.x + 1, bp.y, bp.z)
+            ox = if (blockAt2?.block == Blocks.EMERALD_BLOCK) 1
+                else -1
+        }
+        emeraldPositions.find { it.x == bp.x + ox && it.y == bp.y && it.z == bp.z } ?: return
 
-        val pos = SolverPosition(isValid.x, isValid.y, isValid.z)
+        val pos = SolverPosition(bp.x + ox, bp.y, bp.z)
         if (whitelist.contains(pos)) return
 
         val player = minecraft.player ?: return
@@ -104,10 +108,7 @@ object SharpShooterSolver : Feature(
     }
 
     private fun onBlueTerracotta(blockPos: BlockPos) {
-        val cachedData = whitelist.find { it.x == blockPos.x && it.y == blockPos.y && it.z == blockPos.z }
-            ?: whitelist.find { it.x == blockPos.x - 1 && it.y == blockPos.y && it.z == blockPos.z }
-            ?: whitelist.find { it.x == blockPos.x - 2 && it.y == blockPos.y && it.z == blockPos.z }
-            ?: return
+        val cachedData = whitelist.find { it.x == blockPos.x && it.y == blockPos.y && it.z == blockPos.z } ?: return
         cachedData.hit = true
     }
 }
