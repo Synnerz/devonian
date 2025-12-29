@@ -28,6 +28,13 @@ object LividSolver : Feature(
         "",
         "Livid Box Color",
     )
+    private val SETTING_LINE_WIDTH = addSlider(
+        "lineWidth",
+        3.0,
+        1.0, 10.0,
+        "The line width of the box",
+        "Livid Line Width"
+    )
 
     private val mapBlocks = mapOf(
         Blocks.WHITE_WOOL to "Vendetta",
@@ -80,7 +87,9 @@ object LividSolver : Feature(
             Context.Immediate?.renderBox(
                 entity.x - halfWidth, entity.y, entity.z - halfWidth,
                 width, entity.bbHeight.toDouble(),
-                SETTING_BOX_COLOR.getColor(), translate = false
+                SETTING_BOX_COLOR.getColor(),
+                translate = false,
+                lineWidth = SETTING_LINE_WIDTH.get(),
             )
 
             matrixStack.popPose()
