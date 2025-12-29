@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
 import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 import net.minecraft.world.item.ItemStack
@@ -26,43 +27,56 @@ object ShowSelectedPet : Feature(
         "Selected Pet Color"
     )
     private val petsMenuRegex = "^Pets(?: \\(\\d+/\\d+\\))? ?\$".toRegex()
+    private const val SELECTED_PET_LORE = "Click to despawn!"
     private var inPets = false
     private var currentPetSlot = -1
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
-            if (packet is ClientboundOpenScreenPacket) {
-                val title = packet.title.string
-                inPets = petsMenuRegex.matches(title)
-                currentPetSlot = -1
-                return@on
-            }
+            when (packet) {
+                is ClientboundOpenScreenPacket -> {
+                    val title = packet.title.string
+                    inPets = petsMenuRegex.matches(title)
+                    currentPetSlot = -1
+                    return@on
+                }
 
-            if (packet is ClientboundContainerClosePacket) {
-                inPets = false
-                currentPetSlot = -1
-                return@on
-            }
+                is ClientboundContainerClosePacket -> {
+                    inPets = false
+                    currentPetSlot = -1
+                    return@on
+                }
 
-            if (packet !is ClientboundContainerSetContentPacket) return@on
+                is ClientboundContainerSetContentPacket -> {
+                    val items = packet.items
+                    val possiblyForge = items.getOrNull(10)
+                    if (possiblyForge != null && ItemUtils.skyblockId(possiblyForge) == "BEJEWELED_COLLAR") {
+                        inPets = false
+                        currentPetSlot = -1
+                        return@on
+                    }
+                    if (!inPets) return@on
 
-            val items = packet.items
-            val possiblyForge = items.getOrNull(10)
-            if (possiblyForge != null && ItemUtils.skyblockId(possiblyForge) == "BEJEWELED_COLLAR") {
-                inPets = false
-                currentPetSlot = -1
-                return@on
-            }
+                    for (idx in 0..<45) {
+                        val itemStack = items.getOrNull(idx) ?: continue
+                        if (!isSelectedPet(itemStack)) continue
 
-            for (idx in 0..<45) {
-                val itemStack = items.getOrNull(idx) ?: continue
-                if (itemStack.item != Items.PLAYER_HEAD || itemStack == ItemStack.EMPTY) continue
+                        currentPetSlot = idx
+                    }
+                }
 
-                val lore = ItemUtils.lore(itemStack) ?: return@on
-                if (!lore.any { it == "Click to despawn!" }) continue
+                is ClientboundContainerSetSlotPacket -> {
+                    if (!inPets) return@on
+                    val slot = packet.slot
+                    if (slot !in 0..<45) return@on
 
-                currentPetSlot = idx
+                    if (isSelectedPet(packet.item)) {
+                        currentPetSlot = slot
+                        return@on
+                    }
+                    if (slot == currentPetSlot) currentPetSlot = -1
+                }
             }
         }
 
@@ -87,5 +101,11 @@ object ShowSelectedPet : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         inPets = false
         currentPetSlot = -1
+    }
+
+    private fun isSelectedPet(itemStack: ItemStack): Boolean {
+        if (itemStack.item != Items.PLAYER_HEAD || itemStack == ItemStack.EMPTY) return false
+        val lore = ItemUtils.lore(itemStack) ?: return false
+        return lore.any { it == SELECTED_PET_LORE }
     }
 }
