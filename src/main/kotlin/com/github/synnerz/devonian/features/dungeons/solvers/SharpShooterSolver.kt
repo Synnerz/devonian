@@ -1,18 +1,15 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.events.BlockUpdateEvent
-import com.github.synnerz.devonian.api.events.MultiBlockUpdateEvent
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
 import java.awt.Color
+import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.math.abs
 
 object SharpShooterSolver : Feature(
@@ -22,6 +19,7 @@ object SharpShooterSolver : Feature(
     "catacombs",
     subcategory = "Solvers"
 ) {
+    private val deviceCompletedRegex = "^(\\w{1,16}) completed a device! \\(\\d/7\\)$".toRegex()
     private val emeraldPositions = listOf(
         SolverPosition(68, 130, 50),
         SolverPosition(66, 130, 50),
@@ -34,21 +32,30 @@ object SharpShooterSolver : Feature(
         SolverPosition(64, 126, 50),
     )
     private val basePosition = SolverPosition(63, 127, 35)
-    private val whitelist = mutableListOf<SolverPosition>()
+    private val whitelist = CopyOnWriteArraySet<SolverPosition>()
 
     private data class SolverPosition(val x: Int, val y: Int, val z: Int, var hit: Boolean = false)
 
     override fun initialize() {
+        on<ChatEvent> { event ->
+            event.matches(deviceCompletedRegex)?.let {
+                val playerName = minecraft.player?.name?.string ?: return@on
+                if (it[0] != playerName) return@on
+                if (whitelist.size >= 8) whitelist.clear()
+                return@on
+            }
+        }
+
         on<BlockUpdateEvent> { event ->
             if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
 
             val bp = event.blockPos
             if (event.blockState.block != Blocks.EMERALD_BLOCK) {
                 if (event.blockState.block == Blocks.BLUE_TERRACOTTA)
-                    Scheduler.scheduleTask { onBlueTerracotta(bp) }
+                    onBlueTerracotta(bp)
                 return@on
             }
-            Scheduler.scheduleTask { onEmeraldBlock(bp) }
+            onEmeraldBlock(bp)
         }
 
         on<MultiBlockUpdateEvent> { event ->
@@ -57,10 +64,10 @@ object SharpShooterSolver : Feature(
             event.forEach { blockPos, blockState ->
                 if (blockState.block != Blocks.EMERALD_BLOCK) {
                     if (blockState.block == Blocks.BLUE_TERRACOTTA)
-                        Scheduler.scheduleTask { onBlueTerracotta(blockPos) }
+                        onBlueTerracotta(blockPos)
                     return@forEach
                 }
-                Scheduler.scheduleTask { onEmeraldBlock(blockPos) }
+                onEmeraldBlock(blockPos)
             }
         }
 
@@ -102,7 +109,10 @@ object SharpShooterSolver : Feature(
         val y1 = player.y.toInt()
         val z1 = player.z.toInt()
         val dist = abs(basePosition.x - x1) + abs(basePosition.y - y1) + abs(basePosition.z - z1)
-        if (dist > 2) return
+        if (dist > 2) {
+            if (whitelist.isNotEmpty()) whitelist.clear()
+            return
+        }
 
         whitelist.add(pos)
     }
