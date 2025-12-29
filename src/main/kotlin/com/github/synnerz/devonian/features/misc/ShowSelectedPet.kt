@@ -25,7 +25,7 @@ object ShowSelectedPet : Feature(
         "The highlight color to be used in show selected pet",
         "Selected Pet Color"
     )
-    private val petsMenuRegex = "^Pets(?: \\d+/\\d+)?$".toRegex()
+    private val petsMenuRegex = "^Pets(?: \\(\\d+/\\d+\\))? ?\$".toRegex()
     private var inPets = false
     private var currentPetSlot = -1
 
