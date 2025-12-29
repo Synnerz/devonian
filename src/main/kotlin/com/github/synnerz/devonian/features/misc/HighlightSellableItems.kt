@@ -1,12 +1,12 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
+import net.minecraft.world.item.ItemStack
 import java.awt.Color
-import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.jvm.optionals.getOrNull
 
 object HighlightSellableItems : Feature(
@@ -39,7 +39,7 @@ object HighlightSellableItems : Feature(
     )
     private var inSellable = false
     private var scan = false
-    private val slotsToHighlight = CopyOnWriteArrayList<Int>()
+    private val slotsToHighlight = CopyOnWriteArraySet<Int>()
 
     override fun initialize() {
         on<ServerContainerOpen> { event ->
@@ -51,13 +51,13 @@ object HighlightSellableItems : Feature(
         on<ServerContainerClose> {
             inSellable = false
             scan = false
-            Scheduler.scheduleTask { slotsToHighlight.clear() }
+            slotsToHighlight.clear()
         }
 
         on<ClientContainerClose> {
             inSellable = false
             scan = false
-            Scheduler.scheduleTask { slotsToHighlight.clear() }
+            slotsToHighlight.clear()
         }
 
         on<ServerContainerSetContent> { event ->
@@ -67,23 +67,7 @@ object HighlightSellableItems : Feature(
                 if (idx < 54) return@forEach
                 if (itemStack == null || itemStack.isEmpty) return@forEach
 
-                val itemName = itemStack.customName?.string
-                if (itemName != null) {
-                    if (itemNames.contains(itemName.replace(" x\\d+".toRegex(), ""))) {
-                        Scheduler.scheduleTask { slotsToHighlight.add(idx) }
-                        return@forEach
-                    }
-                }
-
-                val extraAttributes = ItemUtils.extraAttributes(itemStack) ?: return@forEach
-                if (extraAttributes.getString("id").getOrNull() == "ICE_SPRAY_WAND") return@forEach
-
-                val baseStat = extraAttributes.getInt("baseStatBoostPercentage")
-
-                if (!baseStat.isPresent || baseStat.get() == 50) return@forEach
-                if (extraAttributes.getInt("upgrade_level").isPresent) return@forEach
-
-                Scheduler.scheduleTask { slotsToHighlight.add(idx) }
+                if (shouldHighlight(itemStack)) slotsToHighlight.add(idx)
             }
 
             scan = false
@@ -92,13 +76,13 @@ object HighlightSellableItems : Feature(
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (packet !is ClientboundContainerSetSlotPacket) return@on
+            if (!inSellable) return@on
             val slot = packet.slot
             val itemStack = packet.item
 
-            if (!slotsToHighlight.contains(slot)) return@on
-            if (!itemStack.isEmpty) return@on
-
-            Scheduler.scheduleTask { slotsToHighlight.remove(slot) }
+            if (slot < 54) return@on
+            slotsToHighlight.remove(slot)
+            if (shouldHighlight(itemStack)) slotsToHighlight.add(slot)
         }
 
         on<RenderSlotEvent> { event ->
@@ -116,5 +100,22 @@ object HighlightSellableItems : Feature(
         inSellable = false
         scan = false
         slotsToHighlight.clear()
+    }
+
+    private fun shouldHighlight(itemStack: ItemStack): Boolean {
+        if (itemStack.isEmpty) return false
+
+        val itemName = itemStack.customName?.string
+        if (itemName != null && itemNames.contains(itemName.replace(" x\\d+".toRegex(), "")))
+            return true
+
+        val extraAttributes = ItemUtils.extraAttributes(itemStack) ?: return false
+        if (extraAttributes.getString("id").getOrNull() == "ICE_SPRAY_WAND") return false
+
+        val baseStat = extraAttributes.getInt("baseStatBoostPercentage")
+        if (!baseStat.isPresent || baseStat.get() == 50) return false
+        if (extraAttributes.getInt("upgrade_level").isPresent) return false
+
+        return true
     }
 }

@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 import net.minecraft.world.item.Items
 import java.awt.Color
+import java.util.concurrent.CopyOnWriteArraySet
 
 object PartyFinderHighlight : Feature(
     "partyFinderHighlight",
@@ -24,8 +25,8 @@ object PartyFinderHighlight : Feature(
     private val requirementTooBadRegex = "^Complete previous floor first!$".toRegex()
     private val refreshCooldownRegex = "^Please wait a few seconds between refreshing!$".toRegex()
     private var isOnCd = false
-    private val whitelist = mutableListOf<Int>()
-    private val blacklist = mutableListOf<Int>()
+    private val whitelist = CopyOnWriteArraySet<Int>()
+    private val blacklist = CopyOnWriteArraySet<Int>()
     private var currentRole: String? = null
     private var inPF = false
     private var shouldScan = false
@@ -52,27 +53,24 @@ object PartyFinderHighlight : Feature(
         on<ServerContainerOpen> { event ->
             inPF = event.string() == "Party Finder"
             shouldScan = inPF
-            if (!shouldScan && (whitelist.isNotEmpty() || blacklist.isNotEmpty()))
-                Scheduler.scheduleTask {
-                    whitelist.clear()
-                    blacklist.clear()
-                }
+            if (!shouldScan && (whitelist.isNotEmpty() || blacklist.isNotEmpty())) {
+                whitelist.clear()
+                blacklist.clear()
+            }
         }
 
         on<ServerContainerClose> {
-            if (whitelist.isNotEmpty() || blacklist.isNotEmpty())
-                Scheduler.scheduleTask {
-                    whitelist.clear()
-                    blacklist.clear()
-                }
+            if (whitelist.isNotEmpty() || blacklist.isNotEmpty()) {
+                whitelist.clear()
+                blacklist.clear()
+            }
         }
 
         on<ClientContainerClose> {
-            if (whitelist.isNotEmpty() || blacklist.isNotEmpty())
-                Scheduler.scheduleTask {
-                    whitelist.clear()
-                    blacklist.clear()
-                }
+            if (whitelist.isNotEmpty() || blacklist.isNotEmpty()) {
+                whitelist.clear()
+                blacklist.clear()
+            }
         }
 
         on<ServerContainerSetContent> { event ->
@@ -97,10 +95,8 @@ object PartyFinderHighlight : Feature(
             val itemStack = packet.item
 
             if (blacklist.contains(slot) || whitelist.contains(slot)) {
-                Scheduler.scheduleTask {
-                    blacklist.remove(slot)
-                    whitelist.remove(slot)
-                }
+                blacklist.remove(slot)
+                whitelist.remove(slot)
             }
             if (itemStack.isEmpty) return@on
             if (itemStack.item != Items.PLAYER_HEAD) return@on
@@ -163,8 +159,8 @@ object PartyFinderHighlight : Feature(
         if (rolesIn.contains(currentRole)) canJoin = false
 
         if (canJoin)
-            Scheduler.scheduleTask { whitelist.add(idx) }
+            whitelist.add(idx)
         else
-            Scheduler.scheduleTask { blacklist.add(idx) }
+            blacklist.add(idx)
     }
 }
