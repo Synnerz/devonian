@@ -40,12 +40,20 @@ object ShowSelectedPet : Feature(
 
             if (packet is ClientboundContainerClosePacket) {
                 inPets = false
+                currentPetSlot = -1
                 return@on
             }
 
             if (packet !is ClientboundContainerSetContentPacket) return@on
 
             val items = packet.items
+            val possiblyForge = items.getOrNull(10)
+            if (possiblyForge != null && ItemUtils.skyblockId(possiblyForge) == "BEJEWELED_COLLAR") {
+                inPets = false
+                currentPetSlot = -1
+                return@on
+            }
+
             for (idx in 0..<45) {
                 val itemStack = items.getOrNull(idx) ?: continue
                 if (itemStack.item != Items.PLAYER_HEAD || itemStack == ItemStack.EMPTY) continue
@@ -62,6 +70,7 @@ object ShowSelectedPet : Feature(
             if (packet !is ServerboundContainerClosePacket) return@on
 
             inPets = false
+            currentPetSlot = -1
         }
 
         on<RenderSlotEvent> { event ->
@@ -76,5 +85,6 @@ object ShowSelectedPet : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         inPets = false
+        currentPetSlot = -1
     }
 }
