@@ -25,6 +25,7 @@ object SelectedItemName : TextHudFeature(
     override fun initialize() {
         on<SelectedItemRenderEvent> { event ->
             if (SelectedItemNameRender.isEnabled() || event.isCancelled()) return@on
+            event.cancel()
 
             // TODO: if possible, make fade in animation, it is done simply by adjusting the "l" as alpha to color
             val item = minecraft.player!!.mainHandItem!!
