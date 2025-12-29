@@ -186,27 +186,23 @@ object BlazeSolver : Feature(
                 if (etherToPos != null && hasPlatform) {
                     Context.Immediate?.renderFilledBox(
                         etherToPos!!.first.toDouble(), etherToPos!!.second.toDouble(), etherToPos!!.third.toDouble(),
-                        color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor(),
-                        phase = true
+                        color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor()
                     )
 
                     Context.Immediate?.renderBox(
                         etherToPos!!.first.toDouble(), etherToPos!!.second.toDouble(), etherToPos!!.third.toDouble(),
-                        color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor(),
-                        phase = true
+                        color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor()
                     )
                 }
 
                 Context.Immediate?.renderFilledBox(
                     efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
-                    color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor(),
-                    phase = true
+                    color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor()
                 )
 
                 Context.Immediate?.renderBox(
                     efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
-                    color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor(),
-                    phase = true
+                    color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor()
                 )
             }
             // yes i could make this dynamic, but why ?
@@ -253,8 +249,7 @@ object BlazeSolver : Feature(
             entity.x - 0.5, entity.y, entity.z - 0.5,
             0.9,
             entity.bbHeight.toDouble(),
-            outlineColor,
-            phase = true
+            outlineColor
         )
     }
 

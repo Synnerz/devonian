@@ -176,7 +176,7 @@ object IceFillSolver : Feature(
             val consumer = minecraft.renderBuffers().bufferSource().getBuffer(
                 RendererLayers.lines(
                     SETTING_LINE_WIDTH.get(),
-                    true,
+                    false,
                     SETTING_LINE_COLOR.getColor().alpha == 255
                 )
             )

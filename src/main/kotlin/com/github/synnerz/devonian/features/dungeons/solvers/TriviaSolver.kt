@@ -188,7 +188,7 @@ object TriviaSolver : Feature(
             Context.Immediate?.renderFilledBox(
                 realPos.first.toDouble(), 70.0, realPos.second.toDouble(),
                 Color(0, 255, 0, 80),
-                true
+                false
             )
         }
     }

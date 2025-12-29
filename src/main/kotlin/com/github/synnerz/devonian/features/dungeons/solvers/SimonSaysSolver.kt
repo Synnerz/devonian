@@ -168,7 +168,7 @@ object SimonSaysSolver : Feature(
                     pos.y + cam.y,
                     pos.z + cam.z,
                     wire,
-                    true,
+                    false,
                     SETTING_LINE_WIDTH.get()
                 )
                 Context.Immediate?.renderFilledShape(

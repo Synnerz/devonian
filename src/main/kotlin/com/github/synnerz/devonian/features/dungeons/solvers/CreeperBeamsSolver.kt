@@ -132,7 +132,7 @@ object CreeperBeamsSolver : Feature(
                 Context.Immediate?.renderBox(
                     solution.x1.toDouble(), solution.y1.toDouble(), solution.z1.toDouble(),
                     colorChoicesOutline[idx],
-                    true
+                    false
                 )
 
                 Context.Immediate?.renderFilledBox(
@@ -142,7 +142,7 @@ object CreeperBeamsSolver : Feature(
                 Context.Immediate?.renderBox(
                     solution.x2.toDouble(), solution.y2.toDouble(), solution.z2.toDouble(),
                     colorChoicesOutline[idx],
-                    true
+                    false
                 )
 
                 // TODO: make the renderLine from BlazeSolver into barrl or something

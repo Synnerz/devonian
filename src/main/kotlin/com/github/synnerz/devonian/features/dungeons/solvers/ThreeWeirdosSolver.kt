@@ -138,7 +138,7 @@ object ThreeWeirdosSolver : Feature(
                 Context.Immediate?.renderBox(
                     chestPos.first, 69.0, chestPos.second,
                     color = if (isCorrect) CORRECT_OUTLINE_COLOR else WRONG_OUTLINE_COLOR,
-                    true
+                    false
                 )
                 Context.Immediate?.renderFilledBox(
                     chestPos.first, 69.0, chestPos.second,
@@ -150,7 +150,7 @@ object ThreeWeirdosSolver : Feature(
                     entityPos.x - 0.5, entityPos.y, entityPos.z - 0.5,
                     0.8, 2.0,
                     if (isCorrect) CORRECT_OUTLINE_COLOR else WRONG_OUTLINE_COLOR,
-                    true
+                    false
                 )
                 Context.Immediate?.renderFilledBox(
                     entityPos.x - 0.5, entityPos.y, entityPos.z - 0.5,

@@ -72,7 +72,7 @@ object SharpShooterSolver : Feature(
                 Context.Immediate?.renderFilledBox(
                     it.x.toDouble(), it.y.toDouble(), it.z.toDouble(),
                     if (it.hit) Color(255, 0, 0, 80) else Color(0, 255, 0, 80),
-                    true
+                    false
                 )
             }
 

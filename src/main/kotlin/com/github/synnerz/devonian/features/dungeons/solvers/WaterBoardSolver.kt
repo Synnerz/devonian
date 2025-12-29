@@ -233,7 +233,7 @@ object WaterBoardSolver : Feature(
                     Context.Immediate?.renderBox(
                         roomPos.first.toDouble(), _y, roomPos.second.toDouble(),
                         if (idx == 0) FIRST_COLOR else SECOND_COLOR,
-                        true
+                        false
                     )
 
                     if (openedWaterAt == -1) {
@@ -243,7 +243,7 @@ object WaterBoardSolver : Feature(
                             title,
                             roomPos.first + 0.5, _y + 0.5, roomPos.second + 0.5,
                             increase = true,
-                            phase = true
+                            phase = false
                         )
                         continue
                     }
@@ -257,7 +257,7 @@ object WaterBoardSolver : Feature(
                         title,
                         roomPos.first + 0.5, _y + 0.5, roomPos.second + 0.5,
                         increase = true,
-                        phase = true
+                        phase = false
                     )
                 }
             }

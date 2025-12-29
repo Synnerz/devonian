@@ -163,24 +163,24 @@ object TeleportMazeSolver : Feature(
             Context.Immediate?.renderBox(
                 pos1.x.toDouble(), 69.0, pos1.z.toDouble(),
                 Color.GREEN,
-                true
+                false
             )
             Context.Immediate?.renderFilledBox(
                 pos1.x.toDouble(), 69.0, pos1.z.toDouble(),
                 Color(0, 255, 0, 80),
-                true
+                false
             )
             // less likely
             val pos2 = orderedPads.getOrNull(1) ?: return@on
             Context.Immediate?.renderBox(
                 pos2.x.toDouble(), 69.0, pos2.z.toDouble(),
                 Color.ORANGE,
-                true
+                false
             )
             Context.Immediate?.renderFilledBox(
                 pos2.x.toDouble(), 69.0, pos2.z.toDouble(),
                 Color(255, 165, 0, 80),
-                true
+                false
             )
 
             if (cells == null) return@on
@@ -190,12 +190,12 @@ object TeleportMazeSolver : Feature(
                     Context.Immediate?.renderBox(
                         pad.x.toDouble(), 69.0, pad.z.toDouble(),
                         Color.RED,
-                        true
+                        false
                     )
                     Context.Immediate?.renderFilledBox(
                         pad.x.toDouble(), 69.0, pad.z.toDouble(),
                         Color(255, 0, 0, 80),
-                        true
+                        false
                     )
                 }
             }

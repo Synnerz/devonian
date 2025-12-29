@@ -149,7 +149,7 @@ object TicTacToeSolver : Feature(
             Context.Immediate?.renderBox(
                 roomPos.first.toDouble(), bestMove.second.toDouble(), roomPos.second.toDouble(),
                 Color.GREEN,
-                true
+                false
             )
             Context.Immediate?.renderFilledBox(
                 roomPos.first.toDouble(), bestMove.second.toDouble(), roomPos.second.toDouble(),
