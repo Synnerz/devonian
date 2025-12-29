@@ -60,6 +60,11 @@ object InventoryScale : Feature(
 
                     minecraft.options.guiScale().set(oldScale)
                     oldScale = -1
+                } else if (oldScale != -1) {
+                    // failsafe to properly reset scale because we hard check for container-like screen
+                    // and the player can open book/sign and it'll break this
+                    minecraft.options.guiScale().set(oldScale)
+                    oldScale = -1
                 }
                 lastScreen = null
                 return@on
