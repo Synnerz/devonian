@@ -35,6 +35,7 @@ object ShowSelectedPet : Feature(
             if (packet is ClientboundOpenScreenPacket) {
                 val title = packet.title.string
                 inPets = petsMenuRegex.matches(title)
+                currentPetSlot = -1
                 return@on
             }
 
