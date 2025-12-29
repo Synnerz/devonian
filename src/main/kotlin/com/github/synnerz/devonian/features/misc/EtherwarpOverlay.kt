@@ -67,6 +67,12 @@ object EtherwarpOverlay : Feature(
         "Uses your camera position/look rather than the servers position/look",
         "Ether Use Smooth Position",
     )
+    private val SETTING_USE_PHASE = addSwitch(
+        "usePhase",
+        true,
+        "Whether to use phase (see through) in the block highlight",
+        "Ether Use Phase"
+    )
 
     private val validWeapons = mutableListOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
     var failReason = ""
@@ -184,7 +190,7 @@ object EtherwarpOverlay : Feature(
                 hitResult.y - cameraPos.y,
                 hitResult.z - cameraPos.z,
                 if (failReason.isEmpty()) SETTING_ETHER_WIRE_COLOR.getColor() else SETTING_ETHER_FAIL_WIRE_COLOR.getColor(),
-                true,
+                SETTING_USE_PHASE.get(),
                 SETTING_ETHER_WIRE_WIDTH.get(),
             )
 
