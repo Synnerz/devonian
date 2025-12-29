@@ -22,6 +22,8 @@ object PartyFinderHighlight : Feature(
     private val requirementLowCataRegex = "^Requires Catacombs Level \\d+!$".toRegex()
     private val requirementLowClassRegex = "^Requires a Class at Level \\d+!$".toRegex()
     private val requirementTooBadRegex = "^Complete previous floor first!$".toRegex()
+    private val refreshCooldownRegex = "^Please wait a few seconds between refreshing!$".toRegex()
+    private var isOnCd = false
     private val whitelist = mutableListOf<Int>()
     private val blacklist = mutableListOf<Int>()
     private var currentRole: String? = null
@@ -39,6 +41,10 @@ object PartyFinderHighlight : Feature(
         on<ChatEvent> { event ->
             event.matches(chatClassSwapRegex)?.let {
                 currentRole = it[0]
+                return@on
+            }
+            event.matches(refreshCooldownRegex)?.let {
+                isOnCd = true
                 return@on
             }
         }
@@ -108,8 +114,12 @@ object PartyFinderHighlight : Feature(
             val slot = ScreenUtils.cursorSlot(event.screen) ?: return@on
             if (slot.containerSlot != 46 || slot.container == minecraft.player?.inventory) return@on
 
-            blacklist.clear()
-            whitelist.clear()
+            Scheduler.scheduleServerTask(5) {
+                if (isOnCd) return@scheduleServerTask
+                blacklist.clear()
+                whitelist.clear()
+                isOnCd = false
+            }
         }
 
         on<RenderSlotEvent> { event ->
@@ -129,6 +139,7 @@ object PartyFinderHighlight : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         blacklist.clear()
         whitelist.clear()
+        isOnCd = false
     }
 
     private fun scanLore(lore: List<String>, idx: Int) {
