@@ -475,3 +475,7 @@ class ServerContainerSetContent(
 class ClientContainerClose(
     val containerId: Int
 ) : CancellableEvent()
+
+class SelectedItemRenderEvent(
+    val ctx: GuiGraphics
+) : CancellableEvent()

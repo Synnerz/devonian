@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.api.events.RenderHotbarSlotEvent;
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent;
+import com.github.synnerz.devonian.api.events.SelectedItemRenderEvent;
 import com.github.synnerz.devonian.features.misc.*;
 import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsAccessor;
 import com.github.synnerz.devonian.utils.TexturedQuadRenderState;
@@ -164,7 +165,8 @@ public class GuiMixin {
             cancellable = true
     )
     private void devonian$onRenderSelectedName(GuiGraphics guiGraphics, CallbackInfo ci) {
-        SelectedItemName.INSTANCE.onRender(guiGraphics, ci);
+        if (new SelectedItemRenderEvent(guiGraphics).post())
+            ci.cancel();
     }
 
     @Inject(
