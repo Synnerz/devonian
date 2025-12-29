@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ActionbarEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -31,7 +32,7 @@ object SecretsHud : TextHudFeature(
             val current = match[0].toIntOrNull() ?: return@on
             val maximum = match[1].toIntOrNull() ?: return@on
             val format = if (current == maximum) "&f" else "&7"
-            setLine("${format}${current}/&f${maximum}")
+            Scheduler.scheduleTask { setLine("${format}${current}/&f${maximum}") }
         }
 
         on<RenderOverlayEvent> {
