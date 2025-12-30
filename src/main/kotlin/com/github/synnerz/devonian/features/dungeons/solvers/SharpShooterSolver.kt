@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.*
@@ -55,7 +56,7 @@ object SharpShooterSolver : Feature(
                     onBlueTerracotta(bp)
                 return@on
             }
-            onEmeraldBlock(bp)
+            Scheduler.scheduleTask { onEmeraldBlock(bp) }
         }
 
         on<MultiBlockUpdateEvent> { event ->
@@ -67,7 +68,7 @@ object SharpShooterSolver : Feature(
                         onBlueTerracotta(blockPos)
                     return@forEach
                 }
-                onEmeraldBlock(blockPos)
+                Scheduler.scheduleTask { onEmeraldBlock(blockPos) }
             }
         }
 
@@ -109,10 +110,7 @@ object SharpShooterSolver : Feature(
         val y1 = player.y.toInt()
         val z1 = player.z.toInt()
         val dist = abs(basePosition.x - x1) + abs(basePosition.y - y1) + abs(basePosition.z - z1)
-        if (dist > 2) {
-            if (whitelist.isNotEmpty()) whitelist.clear()
-            return
-        }
+        if (dist > 2) return
 
         whitelist.add(pos)
     }
