@@ -8,7 +8,7 @@ import java.text.NumberFormat
 import java.util.*
 
 object StringUtils {
-    private val removeCodesRegex = "[\\u00a7&][0-9a-fk-or]".toRegex()
+    private val removeCodesRegex = "[\\u00a7&][0-9a-fk-or]".toRegex(RegexOption.IGNORE_CASE)
     private val romanValues = mapOf(
         'I' to 1,
         'V' to 5,
