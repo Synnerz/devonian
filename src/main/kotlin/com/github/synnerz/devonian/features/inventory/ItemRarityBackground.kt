@@ -41,6 +41,12 @@ object ItemRarityBackground : Feature(
         "",
         "Rarity Render Line Width"
     )
+    private val SETTING_RENDER_HOTBAR = addSwitch(
+        "renderHotbar",
+        true,
+        "Whether to also render the highlight in the hotbar",
+        "Rarity Render Hotbar"
+    )
     private val rarities = listOf(
         "COMMON" to TextColor.fromLegacyFormat(ChatFormatting.WHITE)!!.value,
         "UNCOMMON" to TextColor.fromLegacyFormat(ChatFormatting.GREEN)!!.value,
@@ -114,6 +120,7 @@ object ItemRarityBackground : Feature(
         }.prio = 0
 
         on<RenderHotbarSlotEvent> { event ->
+            if (!SETTING_RENDER_HOTBAR.get()) return@on
             render(event.x, event.y, event.item, event.ctx)
         }.prio = 0
     }
