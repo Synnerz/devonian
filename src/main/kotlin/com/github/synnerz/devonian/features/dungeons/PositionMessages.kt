@@ -9,8 +9,6 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import java.awt.Color
-import kotlin.math.ceil
-import kotlin.math.floor
 
 object PositionMessages : Feature(
     "positionMessages",
@@ -48,66 +46,47 @@ object PositionMessages : Feature(
         'a' to listOf(
             PosMsg(108.0, 120.0, 94.0, 1.5, "at ss!"),
             PosMsg(58.0, 109.0, 131.0, 1.5, "at ee2!"),
-            PosMsg(60.5, 132.0, 139.5, 1.5, "at ee2 high!"),
-            PosMsg(69.5, 109.0, 121.5, 0.4999, "at ee2 safe spot!"),
-            PosMsg(67.5, 109.0, 121.5, 0.4999, "at ee2 safe spot!"),
-            PosMsg(48.5, 109.0, 121.5, 0.4999, "at ee2 safe spot!"),
-            PosMsg(46.5, 109.0, 121.5, 0.4999, "at ee2 safe spot!"),
-            PosMsg(54.5, 65.0, 76.5, 7.5, "at mid!"),
-            PosMsg(54.5, 63.7, 114.5, 3.0, null),
+            PosMsg(60.0, 132.0, 140.0, 1.5, "at ee2 high!"),
+            PosMsg(69.0, 109.0, 122.0, 1.0, "at ee2 safe spot!"),
+            PosMsg(48.0, 109.0, 122.0, 1.0, "at ee2 safe spot!"),
+            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+            PosMsg(54.5, 63.7, 114.5, 2.0, null),
         ),
         'b' to listOf(
-            PosMsg(63.5, 127.0, 35.5, 1.5, "at i4!"),
-            PosMsg(54.5, 65.0, 76.5, 7.5, "at mid!"),
-            PosMsg(54.5, 63.7, 114.5, 3.0, null),
+            PosMsg(63.0, 127.0, 35.0, 1.5, "at i4!"),
+            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+            PosMsg(54.5, 63.7, 114.5, 2.0, null),
         ),
         'm' to listOf(
-            PosMsg(58.5, 123.0, 122.5, 0.3, "entering core!"),
-            PosMsg(54.5, 115.0, 50.5, 1.5, "at core!"),
-            PosMsg(54.5, 65.0, 76.5, 7.5, "at mid!"),
-            PosMsg(54.5, 63.7, 114.5, 3.0, null),
+            PosMsg(58.0, 123.0, 122.0, 0.3, "entering core!"),
+            PosMsg(54.0, 115.0, 51.0, 1.5, "at core!"),
+            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+            PosMsg(54.5, 63.7, 114.5, 2.0, null),
         ),
         't' to listOf(
-            PosMsg(54.5, 65.0, 76.5, 7.5, "at mid!"),
-            PosMsg(54.5, 63.7, 114.5, 3.0, null),
+            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+            PosMsg(54.5, 63.7, 114.5, 2.0, null),
         ),
         'h' to listOf(
             PosMsg(108.0, 120.0, 94.0, 1.5, "at ss!"),
             PosMsg(2.0, 109.0, 104.0, 1.5, "at ee3!"),
-            PosMsg(18.5, 121.0, 91.5, 0.45, "at ee3 safe spot!"),
-            PosMsg(18.5, 121.0, 92.5, 0.45, "at ee3 safe spot!"),
-            PosMsg(18.5, 121.0, 93.5, 0.45, "at ee3 safe spot!"),
-            PosMsg(18.5, 121.0, 94.5, 0.45, "at ee3 safe spot!"),
-            PosMsg(18.5, 121.0, 95.5, 0.45, "at ee3 safe spot!"),
-            PosMsg(18.5, 121.0, 96.5, 0.45, "at ee3 safe spot!"),
-            PosMsg(18.5, 121.0, 97.5, 0.45, "at ee3 safe spot!"),
-            PosMsg(18.5, 121.0, 98.5, 0.45, "at ee3 safe spot!"),
-            PosMsg(18.5, 121.0, 99.5, 0.45, "at ee3 safe spot!"),
-            PosMsg(-0.5, 120.0, 77.5, 1.5, "at arrows dev!"),
-            PosMsg(60.5, 132.0, 139.5, 1.5, "at levers dev!"),
-            PosMsg(54.5, 65.0, 76.5, 7.5, "at mid!"),
-            PosMsg(54.5, 5.0, 76.5, 3.0, "at p5!"),
-            PosMsg(54.5, 63.7, 114.5, 3.0, null),
+            PosMsg(18.0, 121.0, 99.0, 3.0, "at ee3 safe spot!"),
+            PosMsg(-1.0, 120.0, 77.0, 1.5, "at arrows dev!"),
+            PosMsg(60.0, 132.0, 140.0, 1.5, "at levers dev!"),
+            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+            PosMsg(54.5, 5.0, 74.0, 4.0, "at p5!"),
+            PosMsg(54.5, 63.7, 114.5, 2.0, null),
         )
     )
     private var currentPos: List<PosMsg>? = null
 
-    data class AxisBox(val minx: Double, val miny: Double, val minz: Double, val maxx: Double, val maxy: Double, val maxz: Double)
     data class PosMsg(
         val x: Double,
         val y: Double,
         val z: Double,
         val dist: Double = 1.0,
         val message: String?,
-        var sent: Boolean = false,
-        val box: AxisBox = AxisBox(
-            floor(x - dist),
-            floor(y - dist),
-            floor(z - dist),
-            ceil(x + dist),
-            ceil(y + dist),
-            ceil(z + dist)
-        )
+        var sent: Boolean = false
     )
 
     override fun initialize() {
@@ -129,7 +108,7 @@ object PositionMessages : Feature(
 
             val pos = minecraft.player ?: return@on
             val msg = currentPos?.find {
-                pos.distanceToSqr(it.x, it.y, it.z) <= it.dist
+                pos.distanceToSqr(it.x, it.y, it.z) <= (it.dist * it.dist) / 2
             } ?: return@on
             if (msg.sent) return@on
 
@@ -148,8 +127,8 @@ object PositionMessages : Feature(
                 if (SETTING_REMOVE_AT.get() && it.sent) return@forEach
 
                 Context.Immediate?.renderBox(
-                    it.x - it.dist / 2, it.y, it.z - it.dist / 2,
-                    it.dist * 2, 0.5,
+                    it.x, it.y, it.z,
+                    1.0, 0.5,
                     SETTING_RENDER_COLOR.getColor(),
                 )
             }
