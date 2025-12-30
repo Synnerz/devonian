@@ -68,3 +68,4 @@ object CustomSidebarColor : Feature("customSideBarColor", "Sets the color for sc
 object NametagShadow : Feature("nametagShadow", "Enables shadows on name tags", subcategory = "Tweaks")
 object RemoveGlowEffect : Feature("removeGlowEffect", "Removes the glowing effect of every entity", subcategory = "Hiders")
 object SidebarTextShadow : Feature("sidebarTextShadow", "Adds shadows to the text that is rendered in the sidebar", subcategory = "Tweaks")
+object AutoSprint : Feature("autoSprint", "Automatically sets the sprint key to true whenever you are walking", subcategory = "Tweaks")

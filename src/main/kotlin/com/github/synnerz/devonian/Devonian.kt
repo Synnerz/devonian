@@ -273,6 +273,7 @@ object Devonian : ClientModInitializer {
         SharpShooterSolver,
         SelectedItemNameRender,
         PositionMessages,
+        AutoSprint,
 
         // Debug
         CopyItem,
