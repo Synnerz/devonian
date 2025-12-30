@@ -272,6 +272,7 @@ object Devonian : ClientModInitializer {
         SidebarTextShadow,
         SharpShooterSolver,
         SelectedItemNameRender,
+        PositionMessages,
 
         // Debug
         CopyItem,
