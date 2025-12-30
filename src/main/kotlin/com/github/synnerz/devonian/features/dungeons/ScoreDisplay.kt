@@ -69,7 +69,9 @@ object ScoreDisplay : TextHudFeature(
         }
         val m = if (mimic) "&a&l✔" else "&c&l✘"
         val p = if (prince) "&a&l✔" else "&c&l✘"
-        val unfound = if (SETTING_SHOW_UNFOUND.get()) "&7Unfound: &a${Dungeons.totalRoomSecrets.value} " else ""
+        val unfound = if (SETTING_SHOW_UNFOUND.get())
+            "&7Unfound: &a${(Dungeons.totalSecretsRequired.value - Dungeons.totalRoomSecrets.value).coerceAtLeast(0)} "
+            else ""
         if (SETTING_ILLEGALMAP_FORMAT.get()) return listOf(
             "&7Secrets: &b$secrets&7-&e${remainingSecrets}&7-&c$totalSecrets &8| &7Score: $tierColor$score",
             "$unfound&7C: ${if (crypts >= 5) "&a" else "&c"}$crypts &8| &7M: $m &8| &7P: $p"
