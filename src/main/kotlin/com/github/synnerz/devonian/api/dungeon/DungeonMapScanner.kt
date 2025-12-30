@@ -189,7 +189,10 @@ object DungeonMapScanner {
                 MapColors.ROOM_TRAP.color -> RoomTypes.TRAP
                 else -> RoomTypes.UNKNOWN
             }
-            if (!room.explored) room.explored = roomCol != MapColors.ROOM_UNOPENED.color
+            if (!room.explored) {
+                room.explored = roomCol != MapColors.ROOM_UNOPENED.color
+                if (room.explored) Dungeons.totalRoomSecrets.value -= room.totalSecrets
+            }
 
             if (room.checkmark != CheckmarkTypes.GREEN) {
                 room.checkmark = if (roomCol == centerCol) CheckmarkTypes.NONE

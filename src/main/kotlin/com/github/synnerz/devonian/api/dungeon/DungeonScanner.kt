@@ -177,6 +177,8 @@ object DungeonScanner {
                 DungeonEvent.RoomLeave(currentRoom, lastIdx!!).post()
 
             currentRoom = rooms[jdx]
+            if (currentRoom != null && !currentRoom!!.explored)
+                Dungeons.totalRoomSecrets.value -= currentRoom!!.totalSecrets
             currentRoom?.explored = true
 
             if (lastIdx == jdx) return@on
@@ -391,6 +393,13 @@ object DungeonScanner {
             return@removeIf true
         }
 
-        if (availablePos.size != startLen) DungeonMap.redrawMap(rooms.toList(), doors.toList())
+        if (availablePos.size != startLen) {
+            DungeonMap.redrawMap(rooms.toList(), doors.toList())
+            Dungeons.totalRoomSecrets.value = 0
+            rooms.toSet().forEach {
+                if (it == null || it.explored) return@forEach
+                Dungeons.totalRoomSecrets.value += it.totalSecrets
+            }
+        }
     }
 }

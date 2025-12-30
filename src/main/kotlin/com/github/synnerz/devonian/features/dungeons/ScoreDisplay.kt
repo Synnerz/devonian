@@ -31,6 +31,12 @@ object ScoreDisplay : TextHudFeature(
         "",
         "Show Mimic/Prince State",
     )
+    private val SETTING_SHOW_UNFOUND = addSwitch(
+        "showUnFound",
+        true,
+        "Shows the unfound secrets in the current run",
+        "Score Display Unfound"
+    )
     private val SETTING_FORCE_PAUL = addSwitch(
         "paul",
         false,
@@ -63,9 +69,10 @@ object ScoreDisplay : TextHudFeature(
         }
         val m = if (mimic) "&a&l✔" else "&c&l✘"
         val p = if (prince) "&a&l✔" else "&c&l✘"
+        val unfound = if (SETTING_SHOW_UNFOUND.get()) "&7Unfound: &a${Dungeons.totalRoomSecrets.value} " else ""
         if (SETTING_ILLEGALMAP_FORMAT.get()) return listOf(
             "&7Secrets: &b$secrets&7-&e${remainingSecrets}&7-&c$totalSecrets &8| &7Score: $tierColor$score",
-            "&7Crypts: ${if (crypts >= 5) "&a" else "&c"}$crypts &8| &7M: $m &8| &7P: $p"
+            "$unfound&7C: ${if (crypts >= 5) "&a" else "&c"}$crypts &8| &7M: $m &8| &7P: $p"
         )
         val tier = when {
             score < 100 -> "D"

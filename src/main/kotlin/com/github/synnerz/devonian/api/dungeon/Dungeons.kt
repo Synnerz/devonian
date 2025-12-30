@@ -69,6 +69,7 @@ object Dungeons {
     val inBoss = BasicState(false)
     val bloodCleared = BasicState(false)
     val started = BasicState(false)
+    val totalRoomSecrets = BasicState(0)
 
     private fun fuckEntrance(score: State<Double>) =
         score.zip(floorState) { score, floor -> (score * (if (floor == FloorType.Entrance) 0.7 else 1.0)).toInt() }
