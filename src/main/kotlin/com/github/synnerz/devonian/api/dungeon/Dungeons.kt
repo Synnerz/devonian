@@ -422,6 +422,7 @@ object Dungeons {
         inBoss.value = false
         bloodCleared.value = false
         started.value = false
+        totalRoomSecrets.value = 0
 
         totalRoomHisto.clear()
     }

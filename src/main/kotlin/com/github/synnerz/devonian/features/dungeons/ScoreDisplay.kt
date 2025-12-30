@@ -57,6 +57,7 @@ object ScoreDisplay : TextHudFeature(
         secretsRequired: Int,
         totalSecrets: Int,
         remainingSecrets: Int,
+        totalRoomSecrets: Int,
         floor: FloorType
     ): List<String> {
         val tierColor = when {
@@ -70,7 +71,7 @@ object ScoreDisplay : TextHudFeature(
         val m = if (mimic) "&a&l✔" else "&c&l✘"
         val p = if (prince) "&a&l✔" else "&c&l✘"
         val unfound = if (SETTING_SHOW_UNFOUND.get())
-            "&7Unfound: &a${(Dungeons.totalSecretsRequired.value - Dungeons.totalRoomSecrets.value).coerceAtLeast(0)} "
+            "&7Unfound: &a${(totalSecrets - totalRoomSecrets).coerceAtLeast(0)} "
             else ""
         if (SETTING_ILLEGALMAP_FORMAT.get()) return listOf(
             "&7Secrets: &b$secrets&7-&e${remainingSecrets}&7-&c$totalSecrets &8| &7Score: $tierColor$score",
@@ -108,7 +109,7 @@ object ScoreDisplay : TextHudFeature(
         301,
         false, true, 4,
         54, 61, 61,
-        0,
+        0, 0,
         FloorType.M7
     )
 
@@ -126,6 +127,7 @@ object ScoreDisplay : TextHudFeature(
                     Dungeons.totalSecretsRequired.value,
                     Dungeons.totalSecrets.value,
                     Dungeons.remainingMinSecrets.value,
+                    Dungeons.totalRoomSecrets.value,
                     Dungeons.floor
                 )
             )
