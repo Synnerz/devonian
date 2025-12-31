@@ -12,12 +12,7 @@ object Stages {
     val Clear: SplitStage
 
     val BloodOpen = SplitStage().withName("&4Blood").withLongTime()
-    val FirstWatcherSpawn = SequentialSplitStage(
-        arrayOf(
-            SplitStage().withName("&cFirst Spawn").withLongTime(),
-            SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
-        )
-    )
+    val FirstWatcherSpawn = SplitStage().withName("&cFirst Spawn").withLongTime()
     val WatcherClear = SplitStage().withName("&cWatcher").withLongTime()
     val PortalEnter = SplitStage("[BOSS] The Watcher: You have proven yourself. You may pass.")
         .withName("&dPortal Enter").withLongTime()
@@ -61,7 +56,17 @@ object Stages {
                 SequentialSplitStage(
                     arrayOf(
                         BloodOpen,
-                        SplitStage("The BLOOD DOOR has been opened!", arrayOf(FirstWatcherSpawn, WatcherClear)),
+                        SplitStage(
+                            "The BLOOD DOOR has been opened!", arrayOf(
+                                SequentialSplitStage(
+                                    arrayOf(
+                                        FirstWatcherSpawn,
+                                        SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
+                                    )
+                                ),
+                                WatcherClear
+                            )
+                        ),
                         PortalEnter
                     )
                 ),
@@ -208,10 +213,12 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
                             else if (!Stages.S2.deviceDone) Stages.S2.deviceDone = true
                             else Stages.S3.deviceDone = true
                         }
+
                         2 -> {
                             if (!Stages.S3.deviceDone) Stages.S3.deviceDone = true
                             else Stages.S4.deviceDone = true
                         }
+
                         3 -> Stages.S4.deviceDone = true
                     }
                     return

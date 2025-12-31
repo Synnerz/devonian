@@ -19,8 +19,8 @@ object MathUtils {
         try {
             val INV_XT_X = XT_X.invert()
             val C = INV_XT_X.mult(XT_Y)
-            return DoubleArray(C.rows) { C.arr[it][0] }
-        } catch (ignored: Exception) {
+            return DoubleArray(C.rows) { C[it][0] }
+        } catch (_: Exception) {
             return null
         }
     }

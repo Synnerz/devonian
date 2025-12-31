@@ -81,6 +81,8 @@
 
     <form id="checkboxForm">
       <button type="button" onclick="selectAll()">Select All</button>
+      <button type="button" onclick="selectAllServerbound()">Select All Serverbound</button>
+      <button type="button" onclick="selectAllClientbound()">Select All Clientbound</button>
       <button type="button" onclick="deselectAll()">Deselect All</button>
       <div style="margin: 20px;">
         <div id="checkboxContainerServer"></div>
@@ -93,6 +95,16 @@
   <script>
     function selectAll() {
       const checkboxes = document.querySelectorAll('#checkboxForm input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = true);
+    }
+
+    function selectAllServerbound() {
+      const checkboxes = document.querySelectorAll('#checkboxContainerServer input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = true);
+    }
+
+    function selectAllClientbound() {
+      const checkboxes = document.querySelectorAll('#checkboxContainerClient input[type="checkbox"]');
       checkboxes.forEach(cb => cb.checked = true);
     }
 

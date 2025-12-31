@@ -67,4 +67,6 @@ class Matrix(val arr: Array<DoubleArray>, val rows: Int, val cols: Int) {
         return Matrix(inverse)
 
     }
+
+    operator fun get(i: Int) = arr[i]
 }

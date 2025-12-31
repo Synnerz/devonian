@@ -21,7 +21,7 @@ object HighlightSellableItems : Feature(
         "Sellable Highlight Color"
     )
     // yoink from skytils <https://github.com/Skytils/SkytilsMod/blob/618bc6d5c03fb026ebbd27ed45484d9fc698138a/mod/src/main/kotlin/gg/skytils/skytilsmod/features/impl/misc/ItemFeatures.kt#L222-L232>
-    private val itemNames = listOf(
+    private val itemNames = setOf(
         "Defuse Kit",
         "Lever",
         "Torch",
