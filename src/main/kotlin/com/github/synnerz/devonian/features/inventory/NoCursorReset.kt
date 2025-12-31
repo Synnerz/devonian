@@ -23,6 +23,7 @@ object NoCursorReset : Feature(
             }
             if (lastScreen != null && screen != null && lastScreen != screen) {
                 resetCursor.value = false
+                lastScreen = screen
                 return@on
             }
             if (lastScreen != null && screen == null) {
