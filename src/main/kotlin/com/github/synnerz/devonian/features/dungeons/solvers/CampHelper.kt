@@ -166,7 +166,7 @@ object CampHelper : Feature(
 
                 if (SETTING_SHOW_TIMER.get()) Context.Immediate?.renderString(
                     "%.2f".format(ttl * 0.05),
-                    x + w * 0.5, y - 1.0, z + w * 0.5,
+                    x, y - 1.0, z,
                 )
             }
         }
