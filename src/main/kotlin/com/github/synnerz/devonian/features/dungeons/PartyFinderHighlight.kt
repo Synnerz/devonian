@@ -25,6 +25,12 @@ object PartyFinderHighlight : Feature(
         "Ignores your own class (if dupe class it wont be red highlight)",
         "Party Finder Highlight Role"
     )
+    private val SETTING_IGNORE_CATA_REQUIREMENT = addSwitch(
+        "ignoreCataRequirement",
+        false,
+        "Ignores the cata level requirement",
+        "Party Finder Highlight Cata Level"
+    )
     private val whitelist = CopyOnWriteArrayList<Int>()
     private val blacklist = CopyOnWriteArrayList<Int>()
 
@@ -42,7 +48,8 @@ object PartyFinderHighlight : Feature(
                 if (
                     it.canJoin == PartyFinderListener.PartyFinderStatus.CAN_JOIN ||
                     it.canJoin == PartyFinderListener.PartyFinderStatus.LOW_ROLE && SETTING_IGNORE_ROLE_LEVEL.get() ||
-                    it.canJoin == PartyFinderListener.PartyFinderStatus.DUPE_CLASS && SETTING_IGNORE_OWN_ROLE.get()
+                    it.canJoin == PartyFinderListener.PartyFinderStatus.DUPE_CLASS && SETTING_IGNORE_OWN_ROLE.get() ||
+                    it.canJoin == PartyFinderListener.PartyFinderStatus.LOW_CATA && SETTING_IGNORE_CATA_REQUIREMENT.get()
                 ) {
                     whitelist.add(it.idx)
                     return@forEach
