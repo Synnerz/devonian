@@ -15,6 +15,6 @@ public class ClientCommonPacketListenerImplMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/PacketUtils;ensureRunningOnSameThread(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;Lnet/minecraft/network/PacketProcessor;)V", shift = At.Shift.AFTER)
     )
     private void devonian$clientThreadServerTick(ClientboundPingPacket clientboundPingPacket, CallbackInfo ci) {
-        new ClientThreadServerTickEvent().post();
+        if (clientboundPingPacket.getId() < 0) new ClientThreadServerTickEvent().post();
     }
 }
