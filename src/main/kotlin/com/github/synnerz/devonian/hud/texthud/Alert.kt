@@ -4,9 +4,11 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.BoundingBox
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.sounds.SoundEvents
+import kotlin.math.min
 
 object Alert : StylizedTextHud("internal_devonian_alert") {
     private val soundEvent = SoundEvents.ANVIL_PLACE
@@ -47,7 +49,7 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
 
         val f = getBounds().fitInside(bb).first.toFloat()
         if (f != 1f) {
-            scale *= f
+            scale = min(5f, scale * f)
             (renderer as? BImgTextHudRenderer)?.invalidate()
             super.update()
         }
@@ -67,6 +69,18 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
             if (t > clearTime) clearTime = 0L
             else draw(event.ctx)
         }
+
+        DevonianCommand.command.subcommand("alert") { _, args ->
+            show(
+                args[0] as String,
+                args.getOrNull(1) as Int? ?: 1000,
+                args.getOrNull(2) as Boolean? ?: true,
+            )
+            return@subcommand 1
+        }
+            .string("msg")
+            .integer("time", 0)
+            .bool("sound")
 
         anchor = Anchor.Center
         align = Align.Center
