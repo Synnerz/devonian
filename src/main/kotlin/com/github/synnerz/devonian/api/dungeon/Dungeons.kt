@@ -146,7 +146,7 @@ object Dungeons {
         .zip(speedScore) { a, b -> a + b }
         .zip(bonusScore) { a, b -> a + b }
 
-    val _targetScore = floorState.zip(isPaul) { floor, paul -> 40 - (1 + (if (floor.floorNum >= 6) 7 else 5) + (if (paul) 10 else 0)) }
+    val _targetScore = bonusScore_.map { 40 - it }
     val minSecrets = _targetScore.zip(totalSecretsRequired) { score, secrets -> ceil(score * secrets / 40.0).toInt() }
     val remainingMinSecrets = minSecrets.zip(secretsFound) { total, found -> max(0, total - found) }
 
