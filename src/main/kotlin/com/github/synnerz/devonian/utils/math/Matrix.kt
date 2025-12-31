@@ -5,6 +5,15 @@ class Matrix(val arr: Array<DoubleArray>, val rows: Int, val cols: Int) {
     constructor(rows: Int, cols: Int) : this(Array(rows) { DoubleArray(cols) }, rows, cols)
     constructor(arr: Array<DoubleArray>) : this(arr, arr.size, arr[0].size)
 
+    fun scale(f: Double) = apply {
+        for (r in 0 until rows) {
+            val row = arr[r]
+            for (c in 0 until cols) {
+                row[c] *= f
+            }
+        }
+    }
+
     fun transpose(): Matrix {
         val dst = Matrix(cols, rows)
         for (r in 0 until rows) {

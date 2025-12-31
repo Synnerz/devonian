@@ -35,6 +35,12 @@ data class ComponentPosition(val x: Int, val z: Int) {
 
     fun withWorld() = toWorld().let { WorldComponentPosition(it.x, it.z, x, z) }
 
+    fun toRoom() =
+        ComponentPosition(
+            x and (1.inv()),
+            z and (1.inv()),
+        )
+
     fun isValid() = x in 0 .. 10 && z in 0 .. 10
     fun isValidRoom() = (x and 1) == 0 && (z and 1) == 0
     fun isValidDoor() = ((x and 1) xor (z and 1)) == 1

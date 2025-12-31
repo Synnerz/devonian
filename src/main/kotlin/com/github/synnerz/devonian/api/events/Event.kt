@@ -34,6 +34,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
+import net.minecraft.world.phys.Vec3
 
 @Target(AnnotationTarget.CLASS)
 annotation class Threaded
@@ -332,6 +333,7 @@ class RenderTickEvent : Event()
 @Threaded class EntityEquipmentEvent(
     val entityId: Int,
     val type: EntityType<*>,
+    val spawnPos: Vec3,
     val slots: List<Pair<EquipmentSlot, ItemStack?>>
 ) : Event()
 

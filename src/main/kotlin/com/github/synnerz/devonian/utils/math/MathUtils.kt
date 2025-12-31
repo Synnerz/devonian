@@ -259,4 +259,78 @@ object MathUtils {
         val expr = (M1 * sqrt_sigma / 2) / (1 + M2 * sigma * exp(M3 * sqrt_sigma))
         return -1 - sigma - (2 / M1) * (1 - 1 / (1 + expr))
     }
+
+
+    fun fitLine3D(x: List<Double>, y: List<Double>, z: List<Double>): Array<DoubleArray> {
+        if (x.size != y.size || y.size != z.size) throw IllegalArgumentException("inputs not same size")
+
+        val mx = x.sum() / x.size
+        val my = y.sum() / y.size
+        val mz = z.sum() / z.size
+
+        val XT = Matrix(arrayOf(x.toDoubleArray(), y.toDoubleArray(), z.toDoubleArray()))
+        val PX = Matrix(Array(x.size) { doubleArrayOf(x[it] - mx, y[it] - my, z[it] - mz) })
+        val M = XT.mult(PX)
+
+        var b_k = Matrix(arrayOf(doubleArrayOf(1.0), doubleArrayOf(0.0), doubleArrayOf(0.0)))
+        var iter = 50
+        while (--iter >= 0) {
+            val v = M.mult(b_k)
+
+            val vx = v[0][0]
+            val vy = v[1][0]
+            val vz = v[2][0]
+            val l2norm = sqrt(vx * vx + vy * vy + vz * vz)
+            if (l2norm < 1e-12) break
+
+            val b_k1 = v.scale(1.0 / l2norm)
+
+            var diff = 0.0
+            for (r in 0 until 3) {
+                diff = max(diff, abs(b_k[r][0] - b_k1[r][0]))
+            }
+
+            b_k = b_k1
+
+            if (diff < 1e-10) break
+        }
+
+        return arrayOf(
+            doubleArrayOf(mx, b_k[0][0]),
+            doubleArrayOf(my, b_k[1][0]),
+            doubleArrayOf(mz, b_k[2][0]),
+        )
+    }
+
+    data class LinearRegressionResult(val r: Double, val b: Double, val a: Double)
+
+    fun linReg(x: List<Double>, y: List<Double>): LinearRegressionResult? {
+        if (x.size != y.size) throw IllegalArgumentException("inputs not same size")
+        if (x.size < 2) return null
+
+        val mx = x.sum() / x.size
+        val my = y.sum() / y.size
+
+        var xStd = 0.0
+        var yStd = 0.0
+        var r = 0.0
+        for (i in x.indices) {
+            val dx = (x[i] - mx)
+            val dy = (y[i] - my)
+            xStd += dx * dx
+            yStd += dy * dy
+            r += dx * dy
+        }
+
+        xStd = sqrt(xStd)
+        yStd = sqrt(yStd)
+        if (xStd == 0.0) return null
+        if (yStd == 0.0) return LinearRegressionResult(1.0, 0.0, my)
+        r /= (xStd * yStd)
+
+        val b = r * yStd / xStd
+        val a = my - b * mx
+
+        return LinearRegressionResult(r, b, a)
+    }
 }

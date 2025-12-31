@@ -18,6 +18,7 @@ import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.phys.Vec3
 import org.lwjgl.glfw.GLFW
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -31,6 +32,7 @@ object EventBus {
     private val teamRegex = "^team_(\\d+)$".toRegex()
     val events = ConcurrentHashMap<KClass<*>, MutableList<EventListener<Event>>>()
     private val entityTypes = mutableMapOf<Int, EntityType<*>>()
+    private val entityPos = mutableMapOf<Int, Vec3>()
 
     init {
         ClientEntityEvents.ENTITY_LOAD.register { entity, _ ->
@@ -47,6 +49,7 @@ object EventBus {
             WorldChangeEvent(mc, world).post()
             totalTicks = 0
             entityTypes.clear()
+            entityPos.clear()
         }
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
             ScreenMouseEvents.allowMouseClick(screen).register { _, event ->
@@ -163,6 +166,7 @@ object EventBus {
                     val id = packet.id
                     val type = packet.type
                     entityTypes[id] = type
+                    entityPos[id] = Vec3(packet.x, packet.y, packet.z)
                 }
 
                 is ClientboundSetEntityDataPacket -> {
@@ -184,10 +188,12 @@ object EventBus {
                 is ClientboundSetEquipmentPacket -> {
                     val id = packet.entity
                     val type = entityTypes[id] ?: return@on
+                    val pos = entityPos[id] ?: return@on
                     EntityEquipmentEvent(
                         id,
                         type,
-                        packet.slots.map { Pair(it.first, it.second) }
+                        pos,
+                        packet.slots.map { Pair(it.first, it.second) },
                     ).post()
                 }
 
