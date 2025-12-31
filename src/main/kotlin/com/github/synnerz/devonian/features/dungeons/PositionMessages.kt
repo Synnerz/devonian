@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import java.awt.Color
+import java.util.EnumMap
 
 object PositionMessages : Feature(
     "positionMessages",
@@ -42,40 +43,42 @@ object PositionMessages : Feature(
         "Position Messages Use All"
     )
     // TODO: make these customizable
-    private val positionList = mapOf(
-        'a' to listOf(
-            PosMsg(108.0, 120.0, 94.0, 1.5, "at ss!"),
-            PosMsg(58.0, 109.0, 131.0, 1.5, "at ee2!"),
-            PosMsg(60.0, 132.0, 140.0, 1.5, "at ee2 high!"),
-            PosMsg(69.0, 109.0, 122.0, 1.0, "at ee2 safe spot!"),
-            PosMsg(48.0, 109.0, 122.0, 1.0, "at ee2 safe spot!"),
-            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
-            PosMsg(54.5, 63.7, 114.5, 2.0, null),
-        ),
-        'b' to listOf(
-            PosMsg(63.0, 127.0, 35.0, 1.5, "at i4!"),
-            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
-            PosMsg(54.5, 63.7, 114.5, 2.0, null),
-        ),
-        'm' to listOf(
-            PosMsg(58.0, 123.0, 122.0, 0.3, "entering core!"),
-            PosMsg(54.0, 115.0, 51.0, 1.5, "at core!"),
-            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
-            PosMsg(54.5, 63.7, 114.5, 2.0, null),
-        ),
-        't' to listOf(
-            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
-            PosMsg(54.5, 63.7, 114.5, 2.0, null),
-        ),
-        'h' to listOf(
-            PosMsg(108.0, 120.0, 94.0, 1.5, "at ss!"),
-            PosMsg(2.0, 109.0, 104.0, 1.5, "at ee3!"),
-            PosMsg(18.0, 121.0, 99.0, 3.0, "at ee3 safe spot!"),
-            PosMsg(-1.0, 120.0, 77.0, 1.5, "at arrows dev!"),
-            PosMsg(60.0, 132.0, 140.0, 1.5, "at levers dev!"),
-            PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
-            PosMsg(54.5, 5.0, 74.0, 4.0, "at p5!"),
-            PosMsg(54.5, 63.7, 114.5, 2.0, null),
+    private val positionList = EnumMap(
+        mapOf(
+            DungeonClass.Archer to listOf(
+                PosMsg(108.0, 120.0, 94.0, 1.5, "at ss!"),
+                PosMsg(58.0, 109.0, 131.0, 1.5, "at ee2!"),
+                PosMsg(60.0, 132.0, 140.0, 1.5, "at ee2 high!"),
+                PosMsg(69.0, 109.0, 122.0, 1.0, "at ee2 safe spot!"),
+                PosMsg(48.0, 109.0, 122.0, 1.0, "at ee2 safe spot!"),
+                PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+                PosMsg(54.5, 63.7, 114.5, 2.0, null),
+            ),
+            DungeonClass.Berserk to listOf(
+                PosMsg(63.0, 127.0, 35.0, 1.5, "at i4!"),
+                PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+                PosMsg(54.5, 63.7, 114.5, 2.0, null),
+            ),
+            DungeonClass.Mage to listOf(
+                PosMsg(58.0, 123.0, 122.0, 0.3, "entering core!"),
+                PosMsg(54.0, 115.0, 51.0, 1.5, "at core!"),
+                PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+                PosMsg(54.5, 63.7, 114.5, 2.0, null),
+            ),
+            DungeonClass.Tank to listOf(
+                PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+                PosMsg(54.5, 63.7, 114.5, 2.0, null),
+            ),
+            DungeonClass.Healer to listOf(
+                PosMsg(108.0, 120.0, 94.0, 1.5, "at ss!"),
+                PosMsg(2.0, 109.0, 104.0, 1.5, "at ee3!"),
+                PosMsg(18.0, 121.0, 99.0, 3.0, "at ee3 safe spot!"),
+                PosMsg(-1.0, 120.0, 77.0, 1.5, "at arrows dev!"),
+                PosMsg(60.0, 132.0, 140.0, 1.5, "at levers dev!"),
+                PosMsg(54.0, 65.0, 76.0, 7.5, "at mid!"),
+                PosMsg(54.5, 5.0, 74.0, 4.0, "at p5!"),
+                PosMsg(54.5, 63.7, 114.5, 2.0, null),
+            ),
         )
     )
     private var currentPos: List<PosMsg>? = null
@@ -100,7 +103,7 @@ object PositionMessages : Feature(
                 return@on
             }
 
-            currentPos = positionList[playerData.role.singleLetter]
+            currentPos = positionList[playerData.role]
         }
 
         on<ServerTickEvent> { event ->
