@@ -46,6 +46,7 @@
     "accessor.CameraAccessor",
     "accessor.ChatComponentAccessor",
     "accessor.GlDeviceAccessor",
+    "accessor.GlTextureAccessor",
     "accessor.GuiAccessor",
     "accessor.GuiGraphicsAccessor",
     "accessor.HeartTypeAccessor",
