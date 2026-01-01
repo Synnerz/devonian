@@ -485,3 +485,8 @@ class ClientContainerClose(
 class SelectedItemRenderEvent(
     val ctx: GuiGraphics
 ) : CancellableEvent()
+
+class ItemPickupEvent(
+    val customName: String,
+    val entityId: Int,
+) : Event()

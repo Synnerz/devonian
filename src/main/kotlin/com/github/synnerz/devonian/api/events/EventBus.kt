@@ -18,6 +18,7 @@ import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.phys.Vec3
 import org.lwjgl.glfw.GLFW
 import java.util.*
@@ -33,6 +34,7 @@ object EventBus {
     val events = ConcurrentHashMap<KClass<*>, MutableList<EventListener<Event>>>()
     private val entityTypes = mutableMapOf<Int, EntityType<*>>()
     private val entityPos = mutableMapOf<Int, Vec3>()
+    private val itemEntities = mutableMapOf<Int, String>() // entityId: ItemStack CustomName
 
     init {
         ClientEntityEvents.ENTITY_LOAD.register { entity, _ ->
@@ -50,6 +52,7 @@ object EventBus {
             totalTicks = 0
             entityTypes.clear()
             entityPos.clear()
+            itemEntities.clear()
         }
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
             ScreenMouseEvents.allowMouseClick(screen).register { _, event ->
@@ -216,6 +219,13 @@ object EventBus {
                 is ClientboundContainerSetContentPacket -> {
                     ServerContainerSetContent(packet.containerId, packet.stateId, packet.items, packet.carriedItem).post()
                 }
+
+                is ClientboundRemoveEntitiesPacket -> {
+                    packet.entityIds.forEach { id ->
+                        val data = itemEntities[id] ?: return@forEach
+                        ItemPickupEvent(data, id).post()
+                    }
+                }
             }
         }
 
@@ -234,6 +244,15 @@ object EventBus {
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
             PostClientInit(client).post()
+        }
+
+        on<EntityJoinEvent> { event ->
+            val entity = event.entity
+            if (entity !is ItemEntity) return@on
+            Scheduler.scheduleTask {
+                val name = entity.item.customName?.string ?: return@scheduleTask
+                itemEntities[entity.id] = name
+            }
         }
     }
 
