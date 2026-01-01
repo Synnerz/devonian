@@ -100,7 +100,7 @@ public abstract class ConnectionMixin {
 
     @Inject(
         method = "sendPacket",
-        at = @At(value = "INVOKE", target = "Lio/netty/channel/EventLoop;execute(Ljava/lang/Runnable;)V"),
+        at = @At(value = "INVOKE", target = "Lio/netty/channel/EventLoop;execute(Ljava/lang/Runnable;)V", remap = false),
         cancellable = true
     )
     private void devonian$preSendPacket(Packet<?> packet, ChannelFutureListener channelFutureListener, boolean bl, CallbackInfo ci) {
