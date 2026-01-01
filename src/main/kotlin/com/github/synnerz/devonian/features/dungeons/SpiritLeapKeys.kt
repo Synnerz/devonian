@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW
 
 object SpiritLeapKeys : Feature(
     "spiritLeapKeys",
-    "Adds keys from 1-4(archer, mage, bers, healer/tank) to leap to the respective player class",
+    "Adds keys from 1-4 to leap to the respective player class",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "QOL"
@@ -32,26 +32,8 @@ object SpiritLeapKeys : Feature(
         GLFW.GLFW_KEY_3, // bers
         GLFW.GLFW_KEY_4, // healer/tank
     )
-    private val roleSorting = listOf(
-        "Archer",
-        "Mage",
-        "Berserk",
-        "Healer",
-        "Tank",
-    )
-    private val roleSorting2 = listOf(
-        "Archer",
-        "Mage",
-        "Berserk",
-        "Tank",
-        "Healer",
-    )
-    private val rolesList get() =
-        if (Dungeons.players[minecraft.player?.name?.string]?.role == DungeonClass.Healer)
-            roleSorting2
-        else
-            roleSorting
     private val playersData = mutableListOf<LeapPlayer>()
+    val leapComparator = Comparator.comparing<LeapPlayer, Char> { it.role.singleLetter }.thenBy { it.name.lowercase() }
     private var containerId = -1
 
     data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val isDead: Boolean)
@@ -78,6 +60,8 @@ object SpiritLeapKeys : Feature(
                 playersData.add(LeapPlayer(idx, name, data.role, data.isDead))
             }
 
+            playersData.sortWith(leapComparator)
+
             containerId = -1
         }
 
@@ -88,8 +72,7 @@ object SpiritLeapKeys : Feature(
             keybinds.forEachIndexed { idx, it ->
                 if (event.key != it) return@forEachIndexed
                 event.cancel()
-                val role = DungeonClass.from(rolesList[idx])
-                val data = playersData.firstOrNull { it.role == role && !it.isDead } ?: return@forEachIndexed
+                val data = playersData.getOrNull(idx) ?: return@on
                 val slot = data.slot
                 ScreenUtils.click(slot)
                 return@on
