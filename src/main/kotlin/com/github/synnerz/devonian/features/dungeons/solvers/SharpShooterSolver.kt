@@ -4,9 +4,11 @@ import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
 import java.awt.Color
@@ -20,6 +22,10 @@ object SharpShooterSolver : Feature(
     "catacombs",
     subcategory = "Solvers"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
+    }
+
     private val deviceCompletedRegex = "^(\\w{1,16}) completed a device! \\(\\d/7\\)$".toRegex()
     private val emeraldPositions = listOf(
         SolverPosition(68, 130, 50),
