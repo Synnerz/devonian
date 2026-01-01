@@ -98,6 +98,12 @@ object ItemAnimations : Feature(
         "removes swing animation entirely",
         "Disable Swing Animation",
     )
+    private val SETTING_NO_HAND_SWAY = addSwitch(
+        "noHandSway",
+        false,
+        "remove hand sway when moving mouse",
+        "No Hand Sway",
+    )
     private val SETTING_NO_SWING_TERM = addSwitch(
         "noSwingTerm",
         false,
@@ -120,6 +126,9 @@ object ItemAnimations : Feature(
     fun disableSwingTranslation(): Boolean {
         if (!isEnabled()) return false
         return SETTING_IN_PLACE_SWING.get()
+    }
+    fun disableHandSway(): Boolean {
+        return SETTING_NO_HAND_SWAY.get()
     }
     fun disableSwingRotation(): Boolean {
         if (!isEnabled()) return false
