@@ -12,7 +12,7 @@ object PartyFinderListener {
     private val TYPE_REGEX = "^Dungeon: (Master Mode )?(The Catacombs)$".toRegex()
     private val FLOOR_REGEX = "^Floor: Floor ([IV]+)$".toRegex()
     private val TAB_ROLE_REGEX = "^ (Healer|Tank|Mage|Berserk|Archer) (\\d+)(?:: [\\d.,]+%)?$".toRegex()
-    private val USER_ROLE_REGEX = "^ (\\w{1,16}): (Healer|Tank|Mage|Berserk|Archer) \\((\\d+)\\)$".toRegex()
+    val USER_ROLE_REGEX = "^ (\\w{1,16}): (Healer|Tank|Mage|Berserk|Archer) \\((\\d+)\\)$".toRegex()
     private val LOW_CATA_REGEX = "^Requires Catacombs Level \\d+!$".toRegex()
     private val LOW_ROLE_REGEX = "^Requires a Class at Level \\d+!$".toRegex()
     private val CANNOT_JOIN_REGEX = "^Complete previous floor first!$".toRegex()

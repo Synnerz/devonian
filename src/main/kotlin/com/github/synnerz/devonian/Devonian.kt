@@ -276,6 +276,7 @@ object Devonian : ClientModInitializer {
         AutoSprint,
         CampHelper,
         TerminalDisplay,
+        PartyFinderOverview,
 
         // Debug
         CopyItem,
