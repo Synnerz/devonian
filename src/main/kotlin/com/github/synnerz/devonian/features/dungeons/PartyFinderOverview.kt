@@ -42,8 +42,8 @@ object PartyFinderOverview : Feature(
         val level: Double,
         val secrets: Int,
         val averageSecrets: Double,
-        val personal_best_normal: Map<String, Map<String, String>>, // { s: { "floor_1": "1:15" }, s_plus: { "floor_1": "1:15" } }
-        val personal_best_master: Map<String, Map<String, String>>,
+        val personal_best_normal: Map<String, Map<String, String>>?, // { s: { "floor_1": "1:15" }, s_plus: { "floor_1": "1:15" } }
+        val personal_best_master: Map<String, Map<String, String>>?,
     )
 
     data class DungeonsApiResult(
@@ -98,11 +98,12 @@ object PartyFinderOverview : Feature(
                     }
                     if (l.string.contains("[") && l.string.contains("]")) return@forEach
                     val personalBestMap = if (p.isMasterMode) cache.data.personal_best_master else cache.data.personal_best_normal
+
                     val ( personalBest, type ) = when (SETTING_PB_MODE.get()) {
-                        1 -> personalBestMap["s"]?.get("floor_${p.floor}") to "S"
-                        2 -> personalBestMap["s_plus"]?.get("floor_${p.floor}") to "S+"
-                        else -> (personalBestMap["s_plus"]?.get("floor_${p.floor}")?.let { it to "S+" })
-                            ?: (personalBestMap["s"]?.get("floor_${p.floor}") to "S")
+                        1 -> personalBestMap?.get("s")?.get("floor_${p.floor}") to "S"
+                        2 -> personalBestMap?.get("s_plus")?.get("floor_${p.floor}") to "S+"
+                        else -> (personalBestMap?.get("s_plus")?.get("floor_${p.floor}")?.let { it to "S+" })
+                            ?: (personalBestMap?.get("s")?.get("floor_${p.floor}") to "S")
                     }
 
                     val mut = l.copy()
