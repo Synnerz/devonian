@@ -57,8 +57,8 @@ public class ItemInHandRendererMixin {
             at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lorg/joml/Quaternionfc;)V")
     )
     private boolean devonian$itemAnimationsNoHandSway(PoseStack instance, Quaternionfc quaternionfc) {
-            return !ItemAnimations.INSTANCE.disableHandSway();
-        }
+        return !ItemAnimations.INSTANCE.disableHandSway();
+    }
 
     @WrapOperation(
         method = "tick",
