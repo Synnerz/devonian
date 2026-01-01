@@ -201,7 +201,7 @@ object TeleportMazeSolver : Feature(
             }
         }
 
-        on<BlockPlaceEvent> { event ->
+        on<UseItemOnEvent> { event ->
             if (enteredAt == -1 || !inMaze) return@on
 
             val hitResult = event.blockHitResult

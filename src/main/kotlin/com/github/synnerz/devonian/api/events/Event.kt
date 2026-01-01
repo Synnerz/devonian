@@ -67,6 +67,10 @@ abstract class CancellableEvent : Event() {
     val packet: Packet<*>
 ) : CancellableEvent()
 
+class PrePacketSentEvent(
+    val packet: Packet<*>
+) : CancellableEvent()
+
 @Threaded class PacketReceivedEvent(
     val packet: Packet<*>
 ) : CancellableEvent()
@@ -354,7 +358,7 @@ class MultiBlockUpdateEvent(
     }
 }
 
-class BlockPlaceEvent(
+class UseItemOnEvent(
     val blockHitResult: BlockHitResult,
     val hand: InteractionHand
 ) : Event()
@@ -450,18 +454,18 @@ class TooltipRenderEvent(
     val y: Int,
 ) : CancellableEvent()
 
-class ServerContainerOpen(
+@Threaded class ServerContainerOpen(
     val containerId: Int,
     val title: Component
 ) : Event() {
     fun string(): String = title.string
 }
 
-class ServerContainerClose(
+@Threaded class ServerContainerClose(
     val containerId: Int,
 ) : Event()
 
-class ServerContainerSetContent(
+@Threaded class ServerContainerSetContent(
     val containerId: Int,
     val stateId: Int,
     val items: List<ItemStack>,

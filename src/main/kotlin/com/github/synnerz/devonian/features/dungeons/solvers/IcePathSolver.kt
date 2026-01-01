@@ -116,7 +116,7 @@ object IcePathSolver : Feature(
             }
         }
 
-        on<BlockPlaceEvent> { event ->
+        on<UseItemOnEvent> { event ->
             if (enteredAt == -1 || !inPath) return@on
 
             val hitResult = event.blockHitResult

@@ -359,7 +359,7 @@ object Dungeons {
             DungeonEvent.SecretPickup(player.x, player.y, player.z).post()
         }.setEnabled(Location.stateInArea("catacombs"))
 
-        EventBus.on<PacketSentEvent> { event ->
+        EventBus.on<PrePacketSentEvent> { event ->
             val packet = event.packet
             if (packet !is ServerboundUseItemOnPacket) return@on
 

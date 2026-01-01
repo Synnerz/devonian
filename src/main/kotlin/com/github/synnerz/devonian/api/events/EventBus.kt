@@ -219,10 +219,10 @@ object EventBus {
             }
         }
 
-        on<PacketSentEvent> { event ->
+        on<PrePacketSentEvent> { event ->
             when (val packet = event.packet) {
                 is ServerboundUseItemOnPacket -> {
-                    BlockPlaceEvent(packet.hitResult, packet.hand).post()
+                    UseItemOnEvent(packet.hitResult, packet.hand).post()
                 }
 
                 is ServerboundContainerClosePacket -> {

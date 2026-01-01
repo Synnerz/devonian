@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.BlockPlaceEvent
+import com.github.synnerz.devonian.api.events.UseItemOnEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -109,7 +109,7 @@ object BoulderSolver : Feature(
             }
         }
 
-        on<BlockPlaceEvent> { event ->
+        on<UseItemOnEvent> { event ->
             if (!inBoulder || currentSolution == null) return@on
             val hitResult = event.blockHitResult
             if (hitResult.type == HitResult.Type.MISS) return@on

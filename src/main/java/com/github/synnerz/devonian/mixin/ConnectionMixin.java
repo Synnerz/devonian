@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent;
 import com.github.synnerz.devonian.api.events.PacketSentEvent;
+import com.github.synnerz.devonian.api.events.PrePacketSentEvent;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.Connection;
@@ -95,5 +96,14 @@ public abstract class ConnectionMixin {
     )
     private void devonian$sendPacket(Packet<?> packet, ChannelFutureListener channelFutureListener, boolean bl, CallbackInfo ci) {
         if (new PacketSentEvent(packet).post()) ci.cancel();
+    }
+
+    @Inject(
+        method = "sendPacket",
+        at = @At(value = "INVOKE", target = "Lio/netty/channel/EventLoop;execute(Ljava/lang/Runnable;)V"),
+        cancellable = true
+    )
+    private void devonian$preSendPacket(Packet<?> packet, ChannelFutureListener channelFutureListener, boolean bl, CallbackInfo ci) {
+        if (new PrePacketSentEvent(packet).post()) ci.cancel();
     }
 }
