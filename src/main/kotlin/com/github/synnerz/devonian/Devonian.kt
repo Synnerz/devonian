@@ -278,6 +278,7 @@ object Devonian : ClientModInitializer {
         TerminalDisplay,
         PartyFinderOverview,
         HideCloakCreepers,
+        ArrowHitboxes,
 
         // Debug
         CopyItem,
