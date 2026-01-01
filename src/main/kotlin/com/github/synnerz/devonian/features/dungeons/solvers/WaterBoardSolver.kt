@@ -11,10 +11,11 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.google.gson.Gson
-import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import java.awt.Color
+import java.util.EnumMap
+import kotlin.math.roundToInt
 
 object WaterBoardSolver : Feature(
     "waterBoardSolver",
@@ -35,36 +36,41 @@ object WaterBoardSolver : Feature(
     }
 
     @Suppress("unchecked_cast")
-    private val solutionsData = Gson().fromJson(
+    private val solutionsData = (Gson().fromJson(
         this::class.java.getResourceAsStream("/assets/devonian/dungeons/WaterBoardSolutions.json")
             ?.bufferedReader()
             .use { it?.readText() },
         Map::class.java
-    ) as Map<String, Map<String, Map<String, List<Double>>>>
+    ) as Map<String, Map<String, Map<String, List<Double>>>>)
+        .mapValues { (_, subvariants) ->
+            subvariants.mapValues { (_, levers) ->
+                levers.entries.associateTo(EnumMap(Lever::class.java)) { (lever, times) ->
+                     Lever.from(lever) to times.map { (it * 20).roundToInt() }
+                }
+            }
+        }
 
     // Thanks to FlameOfWar for sending me these which were made by Moody and PandaguinDK all credits to them
     @Suppress("unchecked_cast")
-    private val efficientSolutionsData = Gson().fromJson(
+    private val efficientSolutionsData = (Gson().fromJson(
         this::class.java.getResourceAsStream("/assets/devonian/dungeons/EfficientWaterboardSolutions.json")
             ?.bufferedReader()
             .use { it?.readText() },
         Map::class.java
-    ) as Map<String, Map<String, Map<String, List<Double>>>>
+    ) as Map<String, Map<String, Map<String, List<Double>>>>)
+        .mapValues { (_, subvariants) ->
+            subvariants.mapValues { (_, levers) ->
+                levers.entries.associateTo(EnumMap(Lever::class.java)) { (lever, times) ->
+                    Lever.from(lever) to times.map { (it * 20).roundToInt() }
+                }
+            }
+        }
 
     // y is either 77 or 78
     private val TOP_LEFT_BLOCK = 16 to 26
     private val TOP_RIGHT_BLOCk = 14 to 26
     private val SEA_LANTERN_MIDDLE = 15 to 27 // 77y
     private val PURPLE_WOOL = 15 to 19 // 57y
-    private val leverPos = mapOf(
-        "quartz_block" to (20 to 20),
-        "gold_block" to (20 to 15),
-        "coal_block" to (20 to 10),
-        "diamond_block" to (10 to 20),
-        "emerald_block" to (10 to 15),
-        "hardened_clay" to (10 to 10),
-        "water" to (15 to 5)
-    )
     private val woolOrder = listOf(
         Blocks.PURPLE_WOOL, // 10
         Blocks.ORANGE_WOOL, // 1
@@ -77,8 +83,24 @@ object WaterBoardSolver : Feature(
     var inWaterBoard = false
     var variant: Int? = null
     var subvariant: String? = null
-    var currentSolution: Map<String, MutableList<Double>>? = null
+    var solution: MutableList<SolutionEntry>? = null
     var openedWaterAt = -1
+    private val solutionSort = Comparator.comparingInt<Pair<Lever, Int>> { it.second }.thenBy { it.first.ordinal }
+
+    data class SolutionEntry(val x: Int, val y: Int, val z: Int, val time: Int, val lever: Lever)
+    enum class Lever(val type: String, val x: Int, val y: Int, val z: Int) {
+        Quartz("quartz_block", 20, 61, 20),
+        Gold("gold_block", 20, 61, 15),
+        Coal("coal_block", 20, 61, 10),
+        Diamond("diamond_block", 10, 61, 20),
+        Emerald("emerald_block", 10, 61, 15),
+        Terracotta("hardened_clay", 10, 61, 10),
+        Water("water", 15, 60, 5);
+
+        companion object {
+            fun from(type: String) = entries.find { it.type == type }!!
+        }
+    }
 
     override fun initialize() {
         on<DungeonEvent.RoomEnter> {
@@ -119,10 +141,11 @@ object WaterBoardSolver : Feature(
             } ?: return@on
         }
 
-        on<ServerTickEvent> {
+        on<ClientThreadServerTickEvent> {
             if (!inWaterBoard || variant == null || subvariant?.length == 3) return@on
 
             val room = DungeonScanner.currentRoom ?: return@on
+            if (!room.hasRotation()) return@on
             subvariant = ""
 
             for (idx in woolOrder.indices) {
@@ -134,17 +157,19 @@ object WaterBoardSolver : Feature(
             }
 
             if (subvariant!!.length == 3) {
-                currentSolution = buildMap {
-                    val solutionMap = if (SETTING_SOLUTION_MODE.get() == 0) solutionsData else efficientSolutionsData
-
-                    val sol = solutionMap["$variant"]?.get(subvariant)
-                    for (solution in sol!!)
-                        put(solution.key, solution.value.toMutableList())
+                val solutionMap = if (SETTING_SOLUTION_MODE.get() == 0) solutionsData else efficientSolutionsData
+                val sol = solutionMap["$variant"]?.get(subvariant)
+                if (sol == null) ChatUtils.sendMessage("&4Unknown water board variant: $variant/$subvariant")
+                else {
+                    val arr = sol.flatMapTo(mutableListOf()) { (lever, times) -> times.map { lever to it } }
+                    arr.sortWith(solutionSort)
+                    solution = arr.mapTo(mutableListOf()) {
+                        val pos = room.fromComp(it.first.x, it.first.z) ?: return@on
+                        SolutionEntry(pos.first, it.first.y, pos.second, it.second, it.first)
+                    }
                 }
                 println("Devonian\$WaterBoard[variant=\"$variant\", subvariant=\"$subvariant\"]")
-            }
-            else
-                subvariant = null
+            } else subvariant = null
         }
 
         on<DungeonEvent.RoomLeave> {
@@ -152,25 +177,27 @@ object WaterBoardSolver : Feature(
             inWaterBoard = false
             variant = null
             subvariant = null
-            currentSolution = null
+            solution = null
         }
 
-        on<PacketSentEvent> { event ->
-            val packet = event.packet
-            if (packet !is ServerboundUseItemOnPacket) return@on
+        on<UseItemOnEvent> { event ->
             if (!inWaterBoard) return@on
-            val result = packet.hitResult
+            val result = event.blockHitResult
             val pos = result.blockPos
             val x = pos.x
             val y = pos.y
             val z = pos.z
 
-            WorldUtils.fromBlockTypeOrNull(x, y, z, Blocks.CHEST)?.let {
-                if (openedWaterAt == -1 || currentSolution == null) return@on
-                val room = DungeonScanner.currentRoom ?: return@on
-                val compPos = room.fromPos(x, z) ?: return@on
+            val room = DungeonScanner.currentRoom ?: return@on
+            val compPos = room.fromPos(x, z) ?: return@on
+
+            val state = WorldUtils.getBlockState(x, y, z) ?: return@on
+            if (state.block == Blocks.CHEST) {
+                if (openedWaterAt == -1) return@on
                 if (compPos.first != 15 || y != 56 || compPos.second != 22) return@on
-                if (currentSolution!!.values.any { it.isNotEmpty() } || !PuzzleTimers.isEnabled()) return@on
+
+                val sol = solution ?: return@on
+                if (sol.isNotEmpty() || !PuzzleTimers.isEnabled()) return@on
 
                 val time = (EventBus.serverTicks() - openedWaterAt) * 0.05
                 val seconds = "%.2fs".format(time)
@@ -180,99 +207,74 @@ object WaterBoardSolver : Feature(
                 return@on
             }
 
-            WorldUtils.fromBlockTypeOrNull(x, y, z, Blocks.LEVER) ?: return@on
+            if (state.block != Blocks.LEVER) return@on
 
-            val room = DungeonScanner.currentRoom ?: return@on
-            val compPos = room.fromPos(x, z) ?: return@on
+            if (
+                openedWaterAt == -1 &&
+                compPos.first == Lever.Water.x &&
+                compPos.second == Lever.Water.z &&
+                y == Lever.Water.y
+            ) openedWaterAt = EventBus.serverTicks()
 
-            for (entry in leverPos) {
-                val k = entry.key
-                val v = entry.value
-                if (v != compPos) continue
+            val sol = solution ?: return@on
 
-                if (k == "water" && openedWaterAt == -1)
-                    openedWaterAt = EventBus.serverTicks()
+            val idx = sol.indexOfFirst { it.x == x && it.y == y && it.z == z }
+            if (idx < 0) return@on
 
-                if (currentSolution == null) continue
+            val time = sol[idx].time
+            val remaining =
+                if (openedWaterAt == -1) time
+                else time - (EventBus.serverTicks() - openedWaterAt)
 
-                val solutionEntry = currentSolution?.get(k) ?: continue
-                if (solutionEntry.isEmpty()) continue
-                val time = solutionEntry.first()
-                val remaining =
-                    if (openedWaterAt == -1) time
-                    else time - ((EventBus.serverTicks() - openedWaterAt) * 0.05)
-
-                if (time <= 0) {
-                    solutionEntry.removeFirst()
-                    continue
-                }
-
-                if (remaining >= 1) continue
-
-                solutionEntry.removeFirst()
-            }
+            if (time <= 0 || remaining < 20) sol.removeAt(idx)
         }
 
         on<RenderWorldEvent> { event ->
-            if (!inWaterBoard || currentSolution == null || currentSolution!!.isEmpty()) return@on
+            if (!inWaterBoard) return@on
 
-            val room = DungeonScanner.currentRoom ?: return@on
-            val levers = mutableListOf<Pair<Int, Int>>()
+            val sol = solution ?: return@on
+            val levers = EnumMap<Lever, Int>(Lever::class.java)
 
-            for (entry in currentSolution!!.entries) {
-                val name = entry.key
-                val arr = entry.value
-                val y = if (name == "water") 60.0 else 61.0
-                val compPos = leverPos[name] ?: return@on
-                val roomPos = room.fromComp(compPos.first, compPos.second) ?: return@on
+            var lastX = 0.0
+            var lastY = 0.0
+            var lastZ = 0.0
+            sol.forEachIndexed { i, entry ->
+                val yo = levers.merge(entry.lever, 1, Int::plus)!! - 1
 
-                for (idx in arr.indices) {
-                    val time = arr[idx]
-                    val _y = y + (idx * 1)
+                val x = entry.x.toDouble()
+                val y = entry.y.toDouble() + yo
+                val z = entry.z.toDouble()
 
-                    Context.Immediate?.renderBox(
-                        roomPos.first.toDouble(), _y, roomPos.second.toDouble(),
-                        if (idx == 0) FIRST_COLOR else SECOND_COLOR,
-                        false
-                    )
+                Context.Immediate?.renderBox(
+                    x, y, z,
+                    if (i == 0) FIRST_COLOR else SECOND_COLOR,
+                    phase = false,
+                    lineWidth = 2.0,
+                )
 
-                    if (openedWaterAt == -1) {
-                        val title = if (time <= 0.0) "§aClick Now!" else "§e${time}s"
+                val remaining =
+                    if (openedWaterAt == -1) entry.time
+                    else entry.time - (EventBus.serverTicks() - openedWaterAt)
+                val title = if (remaining <= 0) "§aClick Now!" else "§e${"%.2fs".format(remaining * 0.05)}"
 
-                        Context.Immediate?.renderString(
-                            title,
-                            roomPos.first + 0.5, _y + 0.5, roomPos.second + 0.5,
-                            increase = true,
-                            phase = false
-                        )
-                        continue
-                    }
+                Context.Immediate?.renderString(
+                    title,
+                    x + 0.5,
+                    y + 0.5,
+                    z + 0.5,
+                )
 
-                    val remaining = time - ((EventBus.serverTicks() - openedWaterAt) * 0.05)
-                    val title = if (remaining <= 0.0) "§aClick Now!" else "§e${"%.2fs".format(remaining)}"
-                    if (levers.size < 2 && remaining <= 4.0 && !levers.contains(roomPos))
-                        levers.add(roomPos)
+                if (i in 1 .. 2) BlazeSolver.renderLine(
+                    Vec3(lastX, lastY, lastZ),
+                    Vec3(x + 0.5, y + 0.5, z + 0.5),
+                    if (i == 1) FIRST_COLOR else SECOND_COLOR,
+                    ctx = event.ctx,
+                )
 
-                    Context.Immediate?.renderString(
-                        title,
-                        roomPos.first + 0.5, _y + 0.5, roomPos.second + 0.5,
-                        increase = true,
-                        phase = false
-                    )
-                }
+                lastX = x + 0.5
+                lastY = y + 0.5
+                lastZ = z + 0.5
             }
-
-            // Render a line to the closest next lever
-            val lever1 = levers.getOrNull(0) ?: return@on
-            val lever2 = levers.getOrNull(1) ?: return@on
-
-            BlazeSolver.renderLine(
-                Vec3(lever1.first + 0.5, 61.5, lever1.second + 0.5),
-                Vec3(lever2.first + 0.5, 61.5, lever2.second + 0.5),
-                FIRST_COLOR,
-                SECOND_COLOR,
-                event.ctx,
-            )
         }
     }
 
@@ -280,7 +282,7 @@ object WaterBoardSolver : Feature(
         inWaterBoard = false
         variant = null
         subvariant = null
-        currentSolution = null
+        solution = null
         openedWaterAt = -1
     }
 }
