@@ -396,13 +396,13 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
         override fun onAfterRender(event: PostRenderSlotsEvent) {
             event.container.menu.slots.forEach { slot ->
-                if (slot.container == minecraft.player?.inventory) return
+                if (slot.container == minecraft.player?.inventory) return@forEach
 
-                val data = correctSlots.find { it.slot == slot.containerSlot } ?: return
+                val data = correctSlots.find { it.slot == slot.containerSlot } ?: return@forEach
 
                 val num = if (!SETTING_RUBIX_FORCE_POSITIVE.get() && data.clicks >= 3) data.clicks - 5
                 else data.clicks
-                val str = strings.getOrNull(num + 2) ?: return
+                val str = strings.getOrNull(num + 2) ?: return@forEach
 
                 event.ctx.drawCenteredString(minecraft.font, str, slot.x + 8, slot.y + 4, -1)
             }
