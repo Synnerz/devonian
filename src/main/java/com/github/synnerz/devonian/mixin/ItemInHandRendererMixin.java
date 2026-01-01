@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.features.misc.ItemAnimations;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Quaternionfc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -57,6 +59,14 @@ public class ItemInHandRendererMixin {
     private float devonian$itemAnimationsBob(LocalPlayer instance, float v, Operation<Float> original) {
         if (ItemAnimations.INSTANCE.disableReequip() || ItemAnimations.INSTANCE.disableSwingBob()) return 1f;
         return original.call(instance, v);
+    }
+
+    @WrapWithCondition(
+        method = "renderHandsWithItems",
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lorg/joml/Quaternionfc;)V")
+    )
+    private boolean devonian$itemAnimationsSway(PoseStack instance, Quaternionfc quaternionfc) {
+        return !ItemAnimations.INSTANCE.disableHandSway();
     }
 
     @Inject(

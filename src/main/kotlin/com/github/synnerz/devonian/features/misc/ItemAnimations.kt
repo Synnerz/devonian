@@ -104,6 +104,12 @@ object ItemAnimations : Feature(
         "removes swing animation from term",
         "Disable Terminator Swing",
     )
+    private val SETTING_NO_HAND_SWAY = addSwitch(
+        "noHandSway",
+        false,
+        "removes sway on item from turning",
+        "No Hand Sway",
+    )
 
     private fun resetSettings() {
         SETTING_X_OFFSET.set(0.0)
@@ -132,6 +138,9 @@ object ItemAnimations : Feature(
     }
     fun disableSwingBob(): Boolean {
         return disableSwingTranslation() || disableSwingRotation()
+    }
+    fun disableHandSway(): Boolean {
+        return isEnabled() && SETTING_NO_HAND_SWAY.get()
     }
 
     private fun getItemScale() = 2.0.pow(SETTING_SCALE.get())
