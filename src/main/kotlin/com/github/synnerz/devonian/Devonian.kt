@@ -277,6 +277,7 @@ object Devonian : ClientModInitializer {
         CampHelper,
         TerminalDisplay,
         PartyFinderOverview,
+        HideCloakCreepers,
 
         // Debug
         CopyItem,
