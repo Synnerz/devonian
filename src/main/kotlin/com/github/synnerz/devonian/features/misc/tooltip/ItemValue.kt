@@ -1,7 +1,6 @@
-package com.github.synnerz.devonian.features.misc
+package com.github.synnerz.devonian.features.misc.tooltip
 
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.events.TooltipRenderEvent
 import com.github.synnerz.devonian.features.Feature
@@ -14,13 +13,11 @@ import net.minecraft.util.FormattedCharSequence
 object ItemValue : Feature(
     "itemValue",
     "Shows the value of the currently hovered item in lore",
-    subcategory = "General"
+    subcategory = "Tooltip",
 ) {
     override fun initialize() {
         on<TooltipRenderEvent> { event ->
-            val screen = minecraft.screen ?: return@on
-            val slot = ScreenUtils.cursorSlot(screen) ?: return@on
-            val item = slot.item ?: return@on
+            val item = event.item ?: return@on
             val sbId = ItemUtils.skyblockId(item) ?: return@on
             val price = SkyblockPrices.sellPrice(sbId)
             if (price == 0f) return@on

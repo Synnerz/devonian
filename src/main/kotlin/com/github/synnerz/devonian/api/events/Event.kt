@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.api.events
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ScreenUtils
 import com.mojang.blaze3d.vertex.PoseStack
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldExtractionContext
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
@@ -453,7 +454,16 @@ class TooltipRenderEvent(
     val lore: MutableList<ClientTooltipComponent>,
     val x: Int,
     val y: Int,
-) : CancellableEvent()
+) : CancellableEvent() {
+    val slot: Slot?
+    val item: ItemStack?
+    val shift = Devonian.minecraft.player?.isShiftKeyDown ?: false
+    init {
+        val screen = Devonian.minecraft.screen
+        slot = screen?.let { ScreenUtils.cursorSlot(it) }
+        item = slot?.item
+    }
+}
 
 @Threaded class ServerContainerOpenEvent(
     val containerId: Int,

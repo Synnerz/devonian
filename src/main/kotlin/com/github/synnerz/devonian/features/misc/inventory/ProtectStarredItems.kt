@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.inventory
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.misc.inventory.PreventItem
 import net.minecraft.world.item.ItemStack
 
 object ProtectStarredItems : Feature("protectStarredItems", subcategory = "Inventory") {
