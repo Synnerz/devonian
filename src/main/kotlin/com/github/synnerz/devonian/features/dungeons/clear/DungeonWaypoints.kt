@@ -1,12 +1,14 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -109,6 +111,8 @@ object DungeonWaypoints : Feature(
     private var roomID: Int? = null
     private val waypoints = arrayOfNulls<MutableMap<WaypointType, MutableList<IntTriple>>?>(waypointsData.size)
     private var waitingRoom: DungeonRoom? = null
+    private var lastChestOp: Triple<MutableList<IntTriple>, IntTriple, Int>? = null
+    private var readdLockCD = 0
 
     private fun getWaypoints(id: Int? = roomID): MutableMap<WaypointType, MutableList<IntTriple>>? {
         val id = id ?: return null
@@ -180,16 +184,24 @@ object DungeonWaypoints : Feature(
         }
 
         on<ChatEvent> { event ->
-            // TODO: later on impl chest locked re-add "That chest is locked!"
-            val player = minecraft.player ?: return@on
-            val x = player.x
-            val z = player.z
+            when (event.message) {
+                "You found a Secret Redstone Key!" -> {
+                    Scheduler.scheduleTask {
+                        getWaypoints()?.get(WaypointType.REDSTONE)?.clear()
+                    }
+                }
 
-            event.matches("^You found a Secret Redstone Key!$".toRegex()) ?: return@on
+                "That chest is locked!" -> {
+                    val op = lastChestOp ?: return@on
+                    val t = EventBus.serverTicks()
+                    if (op.third < t) return@on
 
-            Scheduler.scheduleTask {
-                getWaypoints()?.get(WaypointType.REDSTONE)?.removeIf {
-                    abs(it.x - x.toInt()) + abs(it.z - z.toInt()) < 15
+                    readdLockCD = t + 11
+
+                    Scheduler.scheduleTask {
+                        lastChestOp = null
+                        op.first.add(op.second)
+                    }
                 }
             }
         }
@@ -200,8 +212,22 @@ object DungeonWaypoints : Feature(
                 event.isSkull -> WaypointType.ESSENCE
                 else -> WaypointType.CHEST
             }
-            getWaypoints()?.get(key)?.removeIf {
+
+            if (key == WaypointType.CHEST && readdLockCD > EventBus.serverTicks()) return@on
+
+            val waypoints = getWaypoints()?.get(key) ?: return@on
+            val idx = waypoints.indexOfFirst {
                 it.x == event.x.toInt() && it.y == event.y.toInt() && it.z == event.z.toInt()
+            }
+            if (idx < 0) return@on
+            val removed = waypoints.removeAt(idx)
+
+            if (key == WaypointType.CHEST) {
+                lastChestOp = Triple(
+                    waypoints,
+                    removed,
+                    EventBus.serverTicks() + (Ping.getMedianPing() / 50.0).toInt() + 10,
+                )
             }
         }
 
@@ -279,5 +305,7 @@ object DungeonWaypoints : Feature(
         roomID = null
         waypoints.fill(null)
         waitingRoom = null
+        lastChestOp = null
+        readdLockCD = 0
     }
 }
