@@ -46,21 +46,21 @@ object PartyFinderListener {
     )
 
     fun initialize() {
-        EventBus.on<ServerContainerOpen> { event ->
-            inPF = event.string() == "Party Finder"
+        EventBus.on<ServerContainerOpenEvent> { event ->
+            inPF = event.titleStr == "Party Finder"
             shouldScan = inPF
-            inGate = event.string() == "Catacombs Gate"
+            inGate = event.titleStr == "Catacombs Gate"
             if (!inPF && parties.isNotEmpty()) {
                 parties.clear()
                 PartyFinderEvent(parties).post()
             }
         }
 
-        EventBus.on<ServerContainerClose> {
+        EventBus.on<ServerContainerCloseEvent> {
             if (parties.isNotEmpty()) reset()
         }
 
-        EventBus.on<ClientContainerClose> {
+        EventBus.on<ClientContainerCloseEvent> {
             if (parties.isNotEmpty()) reset()
         }
 
@@ -83,7 +83,7 @@ object PartyFinderListener {
             shouldScan = true
         }
 
-        EventBus.on<ServerContainerSetContent> { event ->
+        EventBus.on<ServerContainerSetContentEvent> { event ->
             if (inGate) {
                 val starSlot = event.items.getOrNull(45) ?: return@on
                 val lore = ItemUtils.lore(starSlot) ?: return@on

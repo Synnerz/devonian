@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.api.bufimgrenderer
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.PostClientInit
+import com.github.synnerz.devonian.api.events.PostClientInitEvent
 import com.github.synnerz.devonian.mixin.accessor.GlTextureAccessor
 import com.mojang.blaze3d.opengl.GlStateManager
 import com.mojang.blaze3d.opengl.GlTexture
@@ -101,14 +101,14 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
     }
 
     fun upload(img: BufferedImage) {
-        if (RenderSystem.tryGetDevice() == null) EventBus.on<PostClientInit> { uploadImpl(img) }
+        if (RenderSystem.tryGetDevice() == null) EventBus.on<PostClientInitEvent> { uploadImpl(img) }
         else uploadImpl(img)
     }
 
     fun register(mcid: ResourceLocation) = apply {
         val texMng = Devonian.minecraft?.textureManager
         if (texMng != null) texMng.register(mcid, this)
-        else EventBus.on<PostClientInit> { event ->
+        else EventBus.on<PostClientInitEvent> { event ->
             event.minecraft.textureManager.register(mcid, this)
         }
     }

@@ -206,15 +206,15 @@ object EventBus {
                 }
 
                 is ClientboundOpenScreenPacket -> {
-                    ServerContainerOpen(packet.containerId, packet.title).post()
+                    ServerContainerOpenEvent(packet.containerId, packet.title, packet.title.string).post()
                 }
 
                 is ClientboundContainerClosePacket -> {
-                    ServerContainerClose(packet.containerId).post()
+                    ServerContainerCloseEvent(packet.containerId).post()
                 }
 
                 is ClientboundContainerSetContentPacket -> {
-                    ServerContainerSetContent(packet.containerId, packet.stateId, packet.items, packet.carriedItem).post()
+                    ServerContainerSetContentEvent(packet.containerId, packet.stateId, packet.items, packet.carriedItem).post()
                 }
             }
         }
@@ -226,14 +226,14 @@ object EventBus {
                 }
 
                 is ServerboundContainerClosePacket -> {
-                    if (ClientContainerClose(packet.containerId).post())
+                    if (ClientContainerCloseEvent(packet.containerId).post())
                         event.cancel()
                 }
             }
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
-            PostClientInit(client).post()
+            PostClientInitEvent(client).post()
         }
     }
 

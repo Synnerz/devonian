@@ -326,7 +326,7 @@ class RenderTickEvent : Event()
 ) : CancellableEvent()
 
 // while no, yes
-@Threaded class PostClientInit(val minecraft: Minecraft) : Event()
+@Threaded class PostClientInitEvent(val minecraft: Minecraft) : Event()
 
 @Threaded class NameChangeEvent(
     val entityId: Int,
@@ -455,18 +455,17 @@ class TooltipRenderEvent(
     val y: Int,
 ) : CancellableEvent()
 
-@Threaded class ServerContainerOpen(
+@Threaded class ServerContainerOpenEvent(
     val containerId: Int,
-    val title: Component
-) : Event() {
-    fun string(): String = title.string
-}
+    val title: Component,
+    val titleStr: String,
+) : Event()
 
-@Threaded class ServerContainerClose(
+@Threaded class ServerContainerCloseEvent(
     val containerId: Int,
 ) : Event()
 
-@Threaded class ServerContainerSetContent(
+@Threaded class ServerContainerSetContentEvent(
     val containerId: Int,
     val stateId: Int,
     val items: List<ItemStack>,
@@ -479,7 +478,7 @@ class TooltipRenderEvent(
     }
 }
 
-class ClientContainerClose(
+class ClientContainerCloseEvent(
     val containerId: Int
 ) : CancellableEvent()
 

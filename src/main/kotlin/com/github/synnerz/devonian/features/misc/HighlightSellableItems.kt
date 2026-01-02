@@ -42,25 +42,25 @@ object HighlightSellableItems : Feature(
     private val slotsToHighlight = CopyOnWriteArrayList<Int>()
 
     override fun initialize() {
-        on<ServerContainerOpen> { event ->
-            val title = event.title.string
+        on<ServerContainerOpenEvent> { event ->
+            val title = event.titleStr
             inSellable = title == "Trades" || title == "Booster Cookie" || title == "Ophelia"
             scan = inSellable
         }
 
-        on<ServerContainerClose> {
+        on<ServerContainerCloseEvent> {
             inSellable = false
             scan = false
             Scheduler.scheduleTask { slotsToHighlight.clear() }
         }
 
-        on<ClientContainerClose> {
+        on<ClientContainerCloseEvent> {
             inSellable = false
             scan = false
             Scheduler.scheduleTask { slotsToHighlight.clear() }
         }
 
-        on<ServerContainerSetContent> { event ->
+        on<ServerContainerSetContentEvent> { event ->
             if (!scan) return@on
 
             event.forEach { idx, itemStack ->
