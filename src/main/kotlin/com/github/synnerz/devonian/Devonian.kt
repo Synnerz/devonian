@@ -325,6 +325,7 @@ object Devonian : ClientModInitializer {
         RefillGFSCommands.initialize()
         CancelMessages.initialize()
         TitleMessages.initialize()
+        LogSearch.initialize()
         Config.onAfterLoad {
             featureInstances.forEach { feature ->
                 Config.getConfig<Boolean>(feature.configName)?.let {
