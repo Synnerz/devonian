@@ -21,7 +21,7 @@ object SecretsSound : Feature(
     override fun initialize() {
         on<DungeonEvent.SecretPickup> { playSound() }
         on<DungeonEvent.SecretClicked> { playSound() }
-        on<DungeonEvent.SecretBat> {
+        on<DungeonEvent.SecretBatSound> {
             it.cancel()
             playSound()
         }

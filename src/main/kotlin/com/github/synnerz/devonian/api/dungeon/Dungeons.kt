@@ -11,11 +11,10 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.State
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.item.ItemEntity
+import net.minecraft.world.entity.ambient.Bat
 import net.minecraft.world.entity.monster.Zombie
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.SkullBlockEntity
@@ -25,6 +24,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 object Dungeons {
+    private const val ITEM_DISTANCE = 4.2 * 4.2
     private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([IVXLCDM]+)?\\)$".toRegex()
     private val dungeonFloorRegex = "^ * ⏣ The Catacombs \\((\\w+)\\)$".toRegex()
     private val bossMessageRegex = "^\\[BOSS] (.+?): (.+?)$".toRegex()
@@ -336,7 +336,12 @@ object Dungeons {
         }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<EntityDeathEvent> { event ->
-            val entity = event.entity as LivingEntity
+            val entity = event.entity
+            if (entity is Bat) {
+                if (entity.maxHealth != 100f) return@on
+                DungeonEvent.SecretBat(entity.x, entity.y, entity.z).post()
+                return@on
+            }
             if (entity !is Zombie) return@on
             if (!entity.isBaby || entity.hasItemInSlot(EquipmentSlot.HEAD)) return@on
 
@@ -344,17 +349,13 @@ object Dungeons {
             DungeonEvent.MimicKilled().post()
         }.setEnabled(Location.stateInArea("catacombs"))
 
-        EventBus.on<PacketReceivedEvent> { event ->
-            val packet = event.packet
-            if (packet !is ClientboundTakeItemEntityPacket) return@on
-            val player = Devonian.minecraft.player ?: return@on
-
-            val itemId = packet.itemId
-            val entityIn = Devonian.minecraft.level?.getEntity(itemId) ?: return@on
-            if (entityIn !is ItemEntity) return@on
-            val itemStack = entityIn.item
-            val customName = itemStack.customName?.string ?: return@on
+        EventBus.on<ItemPickupEvent> { event ->
+            val customName = event.entity.item.customName?.string ?: return@on
             if (!DungeonEvent.SecretPickup.SECRET_ITEMS.contains(customName)) return@on
+            val minecraft = Devonian.minecraft
+            val player = minecraft.player ?: return@on
+            val dist = event.entity.distanceToSqr(player)
+            if (dist > ITEM_DISTANCE) return@on
 
             DungeonEvent.SecretPickup(player.x, player.y, player.z).post()
         }.setEnabled(Location.stateInArea("catacombs"))
@@ -394,8 +395,8 @@ object Dungeons {
 
         EventBus.on<SoundPlayEvent> { event ->
             if (event.volume != 0.1f) return@on
-            if (!DungeonEvent.SecretBat.SECRET_BATS.contains(event.sound)) return@on
-            val cancel = DungeonEvent.SecretBat(event.x, event.y, event.z).post()
+            if (!DungeonEvent.SecretBatSound.SECRET_BATS.contains(event.sound)) return@on
+            val cancel = DungeonEvent.SecretBatSound(event.x, event.y, event.z).post()
             if (!cancel) return@on
             event.cancel()
         }.setEnabled(Location.stateInArea("catacombs"))
