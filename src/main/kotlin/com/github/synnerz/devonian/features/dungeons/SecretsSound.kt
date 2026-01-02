@@ -23,7 +23,9 @@ object SecretsSound : Feature(
         on<DungeonEvent.SecretClicked> { playSound() }
         on<DungeonEvent.SecretBatSound> {
             it.cancel()
-            playSound()
+            Scheduler.scheduleTask {
+                playSound()
+            }
         }
 
         on<ChatEvent> { event ->
@@ -34,9 +36,9 @@ object SecretsSound : Feature(
 
     private fun playSound(declined: Boolean = false) {
         if (declined) {
-            Scheduler.scheduleTask { minecraft.player?.playSound(declineSound, 1f, 1f) }
+            minecraft.player?.playSound(declineSound, 1f, 1f)
             return
         }
-        Scheduler.scheduleTask { minecraft.player?.playSound(successSound, 1f, 2f) }
+        minecraft.player?.playSound(successSound, 1f, 2f)
     }
 }

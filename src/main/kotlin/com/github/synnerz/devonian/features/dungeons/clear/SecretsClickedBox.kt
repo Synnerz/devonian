@@ -53,7 +53,7 @@ object SecretsClickedBox : Feature(
             clickedBlock = BlockPos(it.x.toInt(), it.y.toInt(), it.z.toInt())
             val prevBlock = clickedBlock
             Scheduler.scheduleTask(20) {
-                if (clickedBlock != prevBlock) return@scheduleTask
+                if (clickedBlock !== prevBlock) return@scheduleTask
                 clickedBlock = null
                 wasLocked = false
             }

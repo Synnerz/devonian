@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
@@ -10,12 +12,13 @@ import com.github.synnerz.devonian.features.dungeons.m7.M7Events
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.State
 import com.github.synnerz.devonian.utils.StringUtils
+import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.world.entity.EquipmentSlot
-import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ambient.Bat
 import net.minecraft.world.entity.monster.Zombie
+import net.minecraft.world.item.alchemy.Potions
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.SkullBlockEntity
 import java.util.concurrent.ConcurrentHashMap
@@ -24,7 +27,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 object Dungeons {
-    private const val ITEM_DISTANCE = 4.2 * 4.2
     private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([IVXLCDM]+)?\\)$".toRegex()
     private val dungeonFloorRegex = "^ * ⏣ The Catacombs \\((\\w+)\\)$".toRegex()
     private val bossMessageRegex = "^\\[BOSS] (.+?): (.+?)$".toRegex()
@@ -350,12 +352,17 @@ object Dungeons {
         }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<ItemPickupEvent> { event ->
-            val customName = event.entity.item.customName?.string ?: return@on
-            if (!DungeonEvent.SecretPickup.SECRET_ITEMS.contains(customName)) return@on
+            val item = event.entity.item
+            val id = ItemUtils.skyblockId(item) ?: return@on
+
+            if (!DungeonEvent.SecretPickup.SECRET_ITEMS.contains(id)) return@on
+            if (id == "POTION") {
+                val type = item.get(DataComponents.POTION_CONTENTS)
+                if (type?.potion?.get() != Potions.HEALING) return@on
+            }
+
             val minecraft = Devonian.minecraft
             val player = minecraft.player ?: return@on
-            val dist = event.entity.distanceToSqr(player)
-            if (dist > ITEM_DISTANCE) return@on
 
             DungeonEvent.SecretPickup(player.x, player.y, player.z).post()
         }.setEnabled(Location.stateInArea("catacombs"))

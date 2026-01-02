@@ -487,7 +487,7 @@ class SelectedItemRenderEvent(
     val ctx: GuiGraphics
 ) : CancellableEvent()
 
-@Threaded class ItemPickupEvent(
+class ItemPickupEvent(
     val entity: ItemEntity,
     val entityId: Int,
 ) : Event()

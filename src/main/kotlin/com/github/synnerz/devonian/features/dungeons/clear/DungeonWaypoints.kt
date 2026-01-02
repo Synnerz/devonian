@@ -195,23 +195,19 @@ object DungeonWaypoints : Feature(
         }
 
         on<DungeonEvent.SecretClicked> { event ->
-            Scheduler.scheduleTask {
-                val key = when {
-                    event.isSkull && event.isRedstone -> WaypointType.REDSTONE
-                    event.isSkull -> WaypointType.ESSENCE
-                    else -> WaypointType.CHEST
-                }
-                getWaypoints()?.get(key)?.removeIf {
-                    it.x == event.x.toInt() && it.y == event.y.toInt() && it.z == event.z.toInt()
-                }
+            val key = when {
+                event.isSkull && event.isRedstone -> WaypointType.REDSTONE
+                event.isSkull -> WaypointType.ESSENCE
+                else -> WaypointType.CHEST
+            }
+            getWaypoints()?.get(key)?.removeIf {
+                it.x == event.x.toInt() && it.y == event.y.toInt() && it.z == event.z.toInt()
             }
         }
 
         on<DungeonEvent.SecretPickup> { event ->
-            Scheduler.scheduleTask {
-                getWaypoints()?.get(WaypointType.ITEM)?.removeIf {
-                    abs(it.x - event.x.toInt()) + abs(it.z - event.z.toInt()) < 8
-                }
+            getWaypoints()?.get(WaypointType.ITEM)?.removeIf {
+                abs(it.x - event.x.toInt()) + abs(it.z - event.z.toInt()) < 8
             }
         }
 

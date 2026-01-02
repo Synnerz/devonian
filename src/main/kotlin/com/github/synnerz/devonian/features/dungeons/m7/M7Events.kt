@@ -4,14 +4,15 @@ import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.Event
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.Threaded
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import java.util.EnumMap
 
 object M7Events {
-    class DragonSpawned(val dragon: M7Dragon, val isHigh: Boolean) : Event()
-    class DragonSpawned2(val dragon: M7Dragon, val isHigh: Boolean) : Event()
+    @Threaded class DragonSpawned(val dragon: M7Dragon, val isHigh: Boolean) : Event()
+    @Threaded class DragonSpawned2(val dragon: M7Dragon, val isHigh: Boolean) : Event()
 
     val cooldown = EnumMap<M7Dragon, Int>(M7Dragon::class.java)
 
