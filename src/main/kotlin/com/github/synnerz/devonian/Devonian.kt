@@ -53,6 +53,7 @@ import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.features.dungeons.solvers.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
+import com.github.synnerz.devonian.features.garden.GrowthStageTimer
 import com.github.synnerz.devonian.features.garden.PestsDisplay
 import com.github.synnerz.devonian.features.inventory.*
 import com.github.synnerz.devonian.features.misc.*
@@ -279,6 +280,7 @@ object Devonian : ClientModInitializer {
         PartyFinderOverview,
         HideCloakCreepers,
         ArrowHitboxes,
+        GrowthStageTimer,
 
         // Debug
         CopyItem,

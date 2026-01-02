@@ -186,6 +186,20 @@ object StringUtils {
         return (base * factor).toInt()
     }
 
+    // 1h 54m 21s -> 6861
+    fun parseTimer(str: String): Int {
+        return str.split(' ').sumOf {
+            if (it.isEmpty()) 0
+            else (it.dropLast(1).toIntOrNull() ?: 0) * when (it.last()) {
+                's', 'S' -> 1
+                'm', 'M' -> 60
+                'h', 'H' -> 3600
+                'd', 'D' -> 86400
+                else -> 0
+            }
+        }
+    }
+
     private val camelCaseRegex = "[a-z]+|[A-Z](?:[a-z]+|[A-Z]*(?![a-z]))|[.\\d]+".toRegex()
     fun String.camelCaseToSentence(): String = camelCaseRegex.replace(this) {
         it.value.replaceFirstChar { it.uppercaseChar() } + " "
