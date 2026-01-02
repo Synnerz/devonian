@@ -16,7 +16,10 @@ import java.util.concurrent.ConcurrentSkipListSet
 object Ping {
     private var didBeat = true
     private var lastBeat = 0.0
-    private val awaitingBlockUpdate = mutableMapOf<BlockPos, Double>()
+    // lazy fix
+    private val awaitingBlockUpdate = mutableMapOf<BlockPos, BlockEntry>()
+
+    private data class BlockEntry(val time: Double, val expire: Double = time + 1000.0, var used: Boolean = false)
 
     private val samples = ConcurrentLinkedQueue<PingSample>()
     private var pingSum = atomic(0.0)
@@ -88,7 +91,11 @@ object Ping {
                 }
 
                 is ServerboundUseItemOnPacket -> {
-                    awaitingBlockUpdate[packet.hitResult.blockPos] = getTimeMS()
+                    val t = getTimeMS()
+                    awaitingBlockUpdate.merge(packet.hitResult.blockPos, BlockEntry(t)) { t, u ->
+                        if (u.time > t.expire) u
+                        else t
+                    }
                 }
             }
         }
@@ -104,8 +111,10 @@ object Ping {
                 }
 
                 is ClientboundBlockUpdatePacket -> {
-                    val t = awaitingBlockUpdate.remove(packet.pos)
-                    if (t != null) addSample_(t, 1)
+                    val e = awaitingBlockUpdate[packet.pos] ?: return@on
+                    if (e.used) return@on
+                    addSample_(e.time, 1)
+                    e.used = true
                 }
 
                 is ClientboundPongResponsePacket -> {
