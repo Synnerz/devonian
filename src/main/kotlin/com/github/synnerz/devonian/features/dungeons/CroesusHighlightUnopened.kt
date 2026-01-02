@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
@@ -15,6 +14,7 @@ import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import java.awt.Color
+import java.util.concurrent.CopyOnWriteArraySet
 
 object CroesusHighlightUnopened : Feature(
     "croesusHighlightUnopened",
@@ -30,8 +30,8 @@ object CroesusHighlightUnopened : Feature(
         "Croesus Highlight Blacklist"
     )
     private var inCroesus = false
-    private val whitelist = mutableListOf<Int>()
-    private val blacklist = mutableListOf<Int>()
+    private val whitelist = CopyOnWriteArraySet<Int>()
+    private val blacklist = CopyOnWriteArraySet<Int>()
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
@@ -44,10 +44,8 @@ object CroesusHighlightUnopened : Feature(
             }
 
             if (packet is ClientboundContainerClosePacket) {
-                Scheduler.scheduleTask {
-                    blacklist.clear()
-                    whitelist.clear()
-                }
+                blacklist.clear()
+                whitelist.clear()
                 return@on
             }
 
@@ -63,12 +61,12 @@ object CroesusHighlightUnopened : Feature(
 
                 for (line in lore) {
                     if (line.contains("Opened Chest: ")) {
-                        Scheduler.scheduleTask { blacklist.add(idx) }
+                        blacklist.add(idx)
                         continue
                     }
                     if (line != "No chests opened yet!") continue
 
-                    Scheduler.scheduleTask { whitelist.add(idx) }
+                    whitelist.add(idx)
                 }
             }
 
@@ -79,10 +77,8 @@ object CroesusHighlightUnopened : Feature(
             val packet = event.packet
             if (packet !is ServerboundContainerClosePacket) return@on
 
-            Scheduler.scheduleTask {
-                blacklist.clear()
-                whitelist.clear()
-            }
+            blacklist.clear()
+            whitelist.clear()
         }
 
         on<RenderSlotEvent> { event ->
