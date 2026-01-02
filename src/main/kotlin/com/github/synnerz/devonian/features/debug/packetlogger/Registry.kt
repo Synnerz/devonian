@@ -34,6 +34,8 @@ object Registry {
         register(ParticlePacket)
         register(AnimatePacket)
         register(GameEventPacket)
+        register(RemoveEntitiesPacket)
+        register(TakeItemPacket)
 
         register(BlockInteractPacket)
     }
