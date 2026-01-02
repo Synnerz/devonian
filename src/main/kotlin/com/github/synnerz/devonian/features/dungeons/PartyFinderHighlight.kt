@@ -47,9 +47,9 @@ object PartyFinderHighlight : Feature(
             event.parties.forEach {
                 if (
                     it.canJoin == PartyFinderListener.PartyFinderStatus.CAN_JOIN ||
+                    it.canJoin == PartyFinderListener.PartyFinderStatus.LOW_CATA && SETTING_IGNORE_CATA_REQUIREMENT.get() ||
                     it.canJoin == PartyFinderListener.PartyFinderStatus.LOW_ROLE && SETTING_IGNORE_ROLE_LEVEL.get() ||
-                    it.canJoin == PartyFinderListener.PartyFinderStatus.DUPE_CLASS && SETTING_IGNORE_OWN_ROLE.get() ||
-                    it.canJoin == PartyFinderListener.PartyFinderStatus.LOW_CATA && SETTING_IGNORE_CATA_REQUIREMENT.get()
+                    it.canJoin == PartyFinderListener.PartyFinderStatus.DUPE_CLASS && SETTING_IGNORE_OWN_ROLE.get()
                 ) {
                     whitelist.add(it.idx)
                     return@forEach
