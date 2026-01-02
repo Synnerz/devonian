@@ -34,7 +34,7 @@ object EventBus {
     val events = ConcurrentHashMap<KClass<*>, MutableList<EventListener<Event>>>()
     private val entityTypes = mutableMapOf<Int, EntityType<*>>()
     private val entityPos = mutableMapOf<Int, Vec3>()
-    private val itemEntities = mutableMapOf<Int, String>() // entityId: ItemStack CustomName
+    private val itemEntities = mutableMapOf<Int, ItemEntity>() // entityId: itemEntity
 
     init {
         ClientEntityEvents.ENTITY_LOAD.register { entity, _ ->
@@ -250,8 +250,7 @@ object EventBus {
             val entity = event.entity
             if (entity !is ItemEntity) return@on
             Scheduler.scheduleTask {
-                val name = entity.item.customName?.string ?: return@scheduleTask
-                itemEntities[entity.id] = name
+                itemEntities[entity.id] = entity
             }
         }
     }

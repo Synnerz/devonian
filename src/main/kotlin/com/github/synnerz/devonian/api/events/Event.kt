@@ -29,6 +29,7 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockState
@@ -486,7 +487,7 @@ class SelectedItemRenderEvent(
     val ctx: GuiGraphics
 ) : CancellableEvent()
 
-class ItemPickupEvent(
-    val customName: String,
+@Threaded class ItemPickupEvent(
+    val entity: ItemEntity,
     val entityId: Int,
 ) : Event()
