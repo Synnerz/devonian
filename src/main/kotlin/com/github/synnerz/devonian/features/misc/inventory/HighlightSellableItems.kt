@@ -1,15 +1,21 @@
 package com.github.synnerz.devonian.features.misc.inventory
 
+import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.features.Feature
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
+import java.awt.Color
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.jvm.optionals.getOrNull
 
-object HighlightSellableItems : com.github.synnerz.devonian.features.Feature(
+object HighlightSellableItems : Feature(
     "highlightSellableItems",
     "Highlights sellable items whenever inside ophelia/trades/booster cookie gui",
     subcategory = "Inventory"
 ) {
     private val SETTING_HIGHLIGHT_COLOR = addColorPicker(
         "highlightColor",
-        _root_ide_package_.java.awt.Color.RED.rgb,
+        Color.RED.rgb,
         "The color to use for highlight sellable items",
         "Sellable Highlight Color"
     )
@@ -32,28 +38,28 @@ object HighlightSellableItems : com.github.synnerz.devonian.features.Feature(
     )
     private var inSellable = false
     private var scan = false
-    private val slotsToHighlight = _root_ide_package_.java.util.concurrent.CopyOnWriteArrayList<Int>()
+    private val slotsToHighlight = CopyOnWriteArrayList<Int>()
 
     override fun initialize() {
-        on<com.github.synnerz.devonian.api.events.ServerContainerOpenEvent> { event ->
+        on<ServerContainerOpenEvent> { event ->
             val title = event.titleStr
             inSellable = title == "Trades" || title == "Booster Cookie" || title == "Ophelia"
             scan = inSellable
         }
 
-        on<com.github.synnerz.devonian.api.events.ServerContainerCloseEvent> {
+        on<ServerContainerCloseEvent> {
             inSellable = false
             scan = false
-            _root_ide_package_.com.github.synnerz.devonian.api.Scheduler.scheduleTask { slotsToHighlight.clear() }
+            slotsToHighlight.clear()
         }
 
-        on<com.github.synnerz.devonian.api.events.ClientContainerCloseEvent> {
+        on<ClientContainerCloseEvent> {
             inSellable = false
             scan = false
-            _root_ide_package_.com.github.synnerz.devonian.api.Scheduler.scheduleTask { slotsToHighlight.clear() }
+            slotsToHighlight.clear()
         }
 
-        on<com.github.synnerz.devonian.api.events.ServerContainerSetContentEvent> { event ->
+        on<ServerContainerSetContentEvent> { event ->
             if (!scan) return@on
 
             event.forEach { idx, itemStack ->
@@ -63,12 +69,12 @@ object HighlightSellableItems : com.github.synnerz.devonian.features.Feature(
                 val itemName = itemStack.customName?.string
                 if (itemName != null) {
                     if (itemNames.contains(itemName.replace(" x\\d+".toRegex(), ""))) {
-                        _root_ide_package_.com.github.synnerz.devonian.api.Scheduler.scheduleTask { slotsToHighlight.add(idx) }
+                        slotsToHighlight.add(idx)
                         return@forEach
                     }
                 }
 
-                val extraAttributes = _root_ide_package_.com.github.synnerz.devonian.api.ItemUtils.extraAttributes(itemStack) ?: return@forEach
+                val extraAttributes = ItemUtils.extraAttributes(itemStack) ?: return@forEach
                 if (extraAttributes.getString("id").getOrNull() == "ICE_SPRAY_WAND") return@forEach
 
                 val baseStat = extraAttributes.getInt("baseStatBoostPercentage")
@@ -76,25 +82,25 @@ object HighlightSellableItems : com.github.synnerz.devonian.features.Feature(
                 if (!baseStat.isPresent || baseStat.get() == 50) return@forEach
                 if (extraAttributes.getInt("upgrade_level").isPresent) return@forEach
 
-                _root_ide_package_.com.github.synnerz.devonian.api.Scheduler.scheduleTask { slotsToHighlight.add(idx) }
+                slotsToHighlight.add(idx)
             }
 
             scan = false
         }
 
-        on<com.github.synnerz.devonian.api.events.PacketReceivedEvent> { event ->
+        on<PacketReceivedEvent> { event ->
             val packet = event.packet
-            if (packet !is net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket) return@on
+            if (packet !is ClientboundContainerSetSlotPacket) return@on
             val slot = packet.slot
             val itemStack = packet.item
 
             if (!slotsToHighlight.contains(slot)) return@on
             if (!itemStack.isEmpty) return@on
 
-            _root_ide_package_.com.github.synnerz.devonian.api.Scheduler.scheduleTask { slotsToHighlight.remove(slot) }
+            slotsToHighlight.remove(slot)
         }
 
-        on<com.github.synnerz.devonian.api.events.RenderSlotEvent> { event ->
+        on<RenderSlotEvent> { event ->
             if (!inSellable) return@on
             val slot = event.slot
             if (!event.isInventory()) return@on
@@ -105,7 +111,7 @@ object HighlightSellableItems : com.github.synnerz.devonian.features.Feature(
         }.prio = 30
     }
 
-    override fun onWorldChange(event: com.github.synnerz.devonian.api.events.WorldChangeEvent) {
+    override fun onWorldChange(event: WorldChangeEvent) {
         inSellable = false
         scan = false
         slotsToHighlight.clear()
