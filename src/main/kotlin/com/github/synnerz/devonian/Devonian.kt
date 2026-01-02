@@ -55,8 +55,31 @@ import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
 import com.github.synnerz.devonian.features.garden.GrowthStageTimer
 import com.github.synnerz.devonian.features.garden.PestsDisplay
-import com.github.synnerz.devonian.features.inventory.*
 import com.github.synnerz.devonian.features.misc.*
+import com.github.synnerz.devonian.features.misc.hiders.CancelMessages
+import com.github.synnerz.devonian.features.misc.hiders.DisableBlindness
+import com.github.synnerz.devonian.features.misc.hiders.DisableWorldLoadingScreen
+import com.github.synnerz.devonian.features.misc.hiders.HideCheapCoins
+import com.github.synnerz.devonian.features.misc.hiders.HideCloakCreepers
+import com.github.synnerz.devonian.features.misc.hiders.HideEntityFire
+import com.github.synnerz.devonian.features.misc.hiders.HideGroundedArrows
+import com.github.synnerz.devonian.features.misc.hiders.HideHypeHearts
+import com.github.synnerz.devonian.features.misc.hiders.HideOffhandSlotBackground
+import com.github.synnerz.devonian.features.misc.hiders.NoDeathAnimation
+import com.github.synnerz.devonian.features.misc.hiders.RemoveBlockBreakParticle
+import com.github.synnerz.devonian.features.misc.hiders.RemoveExplosionParticle
+import com.github.synnerz.devonian.features.misc.inventory.ArmorDisplay
+import com.github.synnerz.devonian.features.misc.inventory.InventoryHistoryLog
+import com.github.synnerz.devonian.features.misc.inventory.InventoryScale
+import com.github.synnerz.devonian.features.misc.inventory.ItemRarityBackground
+import com.github.synnerz.devonian.features.misc.inventory.MiddleClickGui
+import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset
+import com.github.synnerz.devonian.features.misc.inventory.PreventItem
+import com.github.synnerz.devonian.features.misc.inventory.ProtectItem
+import com.github.synnerz.devonian.features.misc.inventory.ProtectStarredItems
+import com.github.synnerz.devonian.features.misc.inventory.ScrollableTooltip
+import com.github.synnerz.devonian.features.misc.inventory.SlotBinding
+import com.github.synnerz.devonian.features.misc.inventory.SlotLocking
 import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
@@ -255,7 +278,7 @@ object Devonian : ClientModInitializer {
         CancelIncorrectSound,
         PetDisplay,
         ShowSelectedPet,
-        HighlightSellableItems,
+        _root_ide_package_.com.github.synnerz.devonian.features.misc.inventory.HighlightSellableItems,
         InventoryScale,
         FPSDisplay,
         SimonSaysProgressDisplay,

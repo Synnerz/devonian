@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.misc
+package com.github.synnerz.devonian.features.misc.hiders
 
 import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent
 import com.github.synnerz.devonian.features.Feature

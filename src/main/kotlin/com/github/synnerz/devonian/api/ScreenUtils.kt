@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.features.inventory.ProtectItem.minecraft
+import com.github.synnerz.devonian.features.misc.inventory.ProtectItem.minecraft
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen

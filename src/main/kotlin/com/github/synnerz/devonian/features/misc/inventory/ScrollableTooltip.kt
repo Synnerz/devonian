@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.inventory
+package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.minecraft.world.item.ItemStack
 import org.lwjgl.glfw.GLFW
+import kotlin.collections.iterator
 import kotlin.math.sign
 
 object ScrollableTooltip : Feature(

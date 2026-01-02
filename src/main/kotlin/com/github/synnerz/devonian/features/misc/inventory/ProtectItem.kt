@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.inventory
+package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils

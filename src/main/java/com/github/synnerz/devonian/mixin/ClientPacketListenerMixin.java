@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.api.events.ItemPickupEvent;
-import com.github.synnerz.devonian.features.misc.DisableWorldLoadingScreen;
+import com.github.synnerz.devonian.features.misc.hiders.DisableWorldLoadingScreen;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.multiplayer.ClientLevel;
