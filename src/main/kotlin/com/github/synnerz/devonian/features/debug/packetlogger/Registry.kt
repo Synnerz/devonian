@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.features.debug.packetlogger
 
 import com.github.synnerz.devonian.features.debug.packetlogger.c2s.BlockInteractPacket
+import com.github.synnerz.devonian.features.debug.packetlogger.c2s.SubTitleSetPacket
+import com.github.synnerz.devonian.features.debug.packetlogger.c2s.TitleSetPacket
 import com.github.synnerz.devonian.features.debug.packetlogger.s2c.*
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.PacketFlow
@@ -36,6 +38,8 @@ object Registry {
         register(GameEventPacket)
         register(RemoveEntitiesPacket)
         register(TakeItemPacket)
+        register(TitleSetPacket)
+        register(SubTitleSetPacket)
 
         register(BlockInteractPacket)
     }
