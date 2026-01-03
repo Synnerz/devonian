@@ -96,8 +96,12 @@ object PartyFinderOverview : Feature(
                         newLore.add(l.copy())
                         return@forEach
                     }
+                    val data = cache.data
+                    if (data == null) {
+                        newLore.add(l.copy())
+                        return@forEach
+                    }
                     if (l.string.contains("[") && l.string.contains("]")) return@forEach
-                    val data = cache.data ?: return@forEach
                     val personalBestMap = if (p.isMasterMode) data.personal_best_master else data.personal_best_normal
 
                     val ( personalBest, type ) = when (SETTING_PB_MODE.get()) {
