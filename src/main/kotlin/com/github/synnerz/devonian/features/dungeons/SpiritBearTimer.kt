@@ -1,0 +1,50 @@
+package com.github.synnerz.devonian.features.dungeons
+
+import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.MultiBlockUpdateEvent
+import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import net.minecraft.world.level.block.Blocks
+
+object SpiritBearTimer : TextHudFeature(
+    "spiritBearTimer",
+    "Displays a timer for whenever the Spirit Bear will spawn in floor 4",
+    Categories.DUNGEONS,
+    "catacombs",
+    subcategory = "HUD"
+) {
+    private var startedAt = 0
+
+    override fun initialize() {
+        on<MultiBlockUpdateEvent> { event ->
+            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 4) return@on
+
+            event.forEach { blockPos, blockState ->
+                if (blockPos.x != 7 || blockPos.y != 77 || blockPos.z != 34) return@forEach
+                if (blockState.block != Blocks.SEA_LANTERN) return@forEach
+                startedAt = EventBus.serverTicks() + 68
+            }
+        }
+
+        on<RenderOverlayEvent> { event ->
+            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 4) return@on
+            if (startedAt == 0) return@on
+
+            val time = (startedAt - EventBus.serverTicks()) * 0.05
+            val format = "&d%.2fs".format(time)
+
+            setLine(format)
+            draw(event.ctx)
+            if (time <= 0) startedAt = 0
+        }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        startedAt = 0
+    }
+
+    override fun getEditText(): List<String> = listOf("&d3.4s")
+}
