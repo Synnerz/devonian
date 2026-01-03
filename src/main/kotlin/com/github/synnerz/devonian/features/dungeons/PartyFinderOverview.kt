@@ -54,7 +54,7 @@ object PartyFinderOverview : Feature(
     )
 
     override fun initialize() {
-        Scheduler.schedulePool.scheduleWithFixedDelay(::onUpdate, 5L, 5L, TimeUnit.SECONDS)
+        Scheduler.schedulePool.scheduleWithFixedDelay(::onUpdate, 2L, 2L, TimeUnit.SECONDS)
 
         on<PartyFinderListener.PartyFinderEvent> { event ->
             members.clear()
