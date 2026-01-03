@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket
 
@@ -30,12 +31,11 @@ object TerminalHideCompletion : Feature(
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val text = when (val packet = event.packet) {
-                is ClientboundSetSubtitleTextPacket -> packet.text
-                is ClientboundSetTitleTextPacket -> packet.text
+                is ClientboundSetSubtitleTextPacket -> packet.text.string.clearCodes()
+                is ClientboundSetTitleTextPacket -> packet.text.string.clearCodes()
                 else -> null
             } ?: return@on
-            val title = text.string ?: return@on
-            val match = terminalTitleRegex.matchEntire(title)?.groupValues?.drop(1) ?: return@on
+            val match = terminalTitleRegex.matchEntire(text)?.groupValues?.drop(1) ?: return@on
             val player = minecraft.player ?: return@on
             val name = player.name.string
             if (SETTING_ONLY_SHOW_OWN.get() && match[0] == name) return@on
