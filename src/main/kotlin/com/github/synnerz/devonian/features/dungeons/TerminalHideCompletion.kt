@@ -1,9 +1,10 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket
 
@@ -14,6 +15,10 @@ object TerminalHideCompletion : Feature(
     "catacombs",
     subcategory = "Terminals"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
+    }
+
     private val SETTING_ONLY_SHOW_OWN = addSwitch(
         "onlyShowOwn",
         true,
@@ -29,7 +34,6 @@ object TerminalHideCompletion : Feature(
                 is ClientboundSetTitleTextPacket -> packet.text
                 else -> null
             } ?: return@on
-            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
             val title = text.string ?: return@on
             val match = terminalTitleRegex.matchEntire(title)?.groupValues?.drop(1) ?: return@on
             val player = minecraft.player ?: return@on
