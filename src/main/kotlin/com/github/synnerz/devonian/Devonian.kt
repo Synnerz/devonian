@@ -308,6 +308,7 @@ object Devonian : ClientModInitializer {
         GrowthStageTimer,
         TerminalHideCompletion,
         SpiritBearTimer,
+        SignEnterKey,
 
         // Debug
         CopyItem,

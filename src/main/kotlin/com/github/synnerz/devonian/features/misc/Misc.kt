@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.features.Feature
+import net.minecraft.network.chat.Component
 import java.awt.Color
 
 object RemoveFallingBlocks : Feature("removeFallingBlocks", subcategory = "Hiders")
@@ -69,3 +70,11 @@ object NametagShadow : Feature("nametagShadow", "Enables shadows on name tags", 
 object RemoveGlowEffect : Feature("removeGlowEffect", "Removes the glowing effect of every entity", subcategory = "Hiders")
 object SidebarTextShadow : Feature("sidebarTextShadow", "Adds shadows to the text that is rendered in the sidebar", subcategory = "Tweaks")
 object AutoSprint : Feature("autoSprint", "Automatically sets the sprint key to true whenever you are walking", subcategory = "Tweaks")
+object SignEnterKey : Feature("signEnterKey", "Whenever pressing enter inside specific signs it'll act as if you hit confirm button", subcategory = "Tweaks") {
+    fun shouldEnter(comps: List<Component>): Boolean {
+        if (!isEnabled()) return false
+        val lastComp = comps.lastOrNull() ?: return false
+        val str = lastComp.string.lowercase()
+        return str == "enter query" || str == "starting bid" || str == "per unit"
+    }
+}
