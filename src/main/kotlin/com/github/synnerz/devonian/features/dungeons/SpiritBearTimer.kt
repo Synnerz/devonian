@@ -1,12 +1,13 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.MultiBlockUpdateEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.world.level.block.Blocks
 
 object SpiritBearTimer : TextHudFeature(
@@ -16,11 +17,14 @@ object SpiritBearTimer : TextHudFeature(
     "catacombs",
     subcategory = "HUD"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.F4.isActiveState)
+    }
+
     private var startedAt = 0
 
     override fun initialize() {
         on<MultiBlockUpdateEvent> { event ->
-            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 4) return@on
 
             event.forEach { blockPos, blockState ->
                 if (blockPos.x != 7 || blockPos.y != 77 || blockPos.z != 34) return@forEach
@@ -30,7 +34,6 @@ object SpiritBearTimer : TextHudFeature(
         }
 
         on<RenderOverlayEvent> { event ->
-            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 4) return@on
             if (startedAt == 0) return@on
 
             val time = (startedAt - EventBus.serverTicks()) * 0.05
