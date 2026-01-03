@@ -306,6 +306,7 @@ object Devonian : ClientModInitializer {
         HideCloakCreepers,
         ArrowHitboxes,
         GrowthStageTimer,
+        TerminalHideCompletion,
 
         // Debug
         CopyItem,
