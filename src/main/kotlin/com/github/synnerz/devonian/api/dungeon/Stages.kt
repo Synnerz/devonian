@@ -172,7 +172,7 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
     var termsDone = 0
     var deviceDone = false
     var leversDone = 0
-    var gateDestroyed = false
+    var gateDestroyed = section != 4
     var lastIgn = ""
     var lastIndex = 0
     var lastType = ""
@@ -185,7 +185,7 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
         termsDone = 0
         deviceDone = false
         leversDone = 0
-        gateDestroyed = false
+        gateDestroyed = section != 4
         lastIgn = ""
         lastIndex = 0
         lastType = ""
@@ -225,12 +225,17 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
                 } else if (lastType == "device") deviceDone = false
             } else if (index == 2 && lastIndex == 0) {
                 deviceDone = true
+            } else if (index == 1 && type != "device") {
+                deviceDone = false
             }
 
             when (type) {
                 "terminal" -> termsDone++
                 "lever" -> leversDone++
-                "device" -> deviceDone = true
+                "device" -> {
+                    if (deviceDone && section == 2) Stages.S4.deviceDone = true
+                    deviceDone = true
+                }
             }
 
             lastIgn = ign
