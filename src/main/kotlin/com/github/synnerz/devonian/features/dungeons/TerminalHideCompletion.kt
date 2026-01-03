@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket
 
 object TerminalHideCompletion : Feature(
@@ -23,10 +24,13 @@ object TerminalHideCompletion : Feature(
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
-            val packet = event.packet
-            if (packet !is ClientboundSetTitleTextPacket) return@on
+            val text = when (val packet = event.packet) {
+                is ClientboundSetSubtitleTextPacket -> packet.text
+                is ClientboundSetTitleTextPacket -> packet.text
+                else -> null
+            } ?: return@on
             if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
-            val title = packet.text.string ?: return@on
+            val title = text.string ?: return@on
             val match = terminalTitleRegex.matchEntire(title)?.groupValues?.drop(1) ?: return@on
             val player = minecraft.player ?: return@on
             val name = player.name.string
