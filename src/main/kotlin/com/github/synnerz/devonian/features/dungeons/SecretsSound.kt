@@ -30,7 +30,9 @@ object SecretsSound : Feature(
 
         on<ChatEvent> { event ->
             event.matches(lockedChestRegex) ?: return@on
-            playSound(true)
+            Scheduler.scheduleTask {
+                playSound(true)
+            }
         }
     }
 
