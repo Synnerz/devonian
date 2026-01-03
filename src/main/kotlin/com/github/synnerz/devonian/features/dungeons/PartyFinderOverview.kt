@@ -50,7 +50,7 @@ object PartyFinderOverview : Feature(
         var timeTaken: Long,
         val success: Boolean,
         val status: String,
-        val data: UserDungeonsData
+        val data: UserDungeonsData?
     )
 
     override fun initialize() {
@@ -97,7 +97,8 @@ object PartyFinderOverview : Feature(
                         return@forEach
                     }
                     if (l.string.contains("[") && l.string.contains("]")) return@forEach
-                    val personalBestMap = if (p.isMasterMode) cache.data.personal_best_master else cache.data.personal_best_normal
+                    val data = cache.data ?: return@forEach
+                    val personalBestMap = if (p.isMasterMode) data.personal_best_master else data.personal_best_normal
 
                     val ( personalBest, type ) = when (SETTING_PB_MODE.get()) {
                         1 -> personalBestMap?.get("s")?.get("floor_${p.floor}") to "S"
@@ -108,10 +109,10 @@ object PartyFinderOverview : Feature(
 
                     val mut = l.copy()
                         .append(Component.literal(" (").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
-                        .append(Component.literal("${cache.data.level}").withStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)))
+                        .append(Component.literal("${data.level}").withStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)))
                         .append(Component.literal(") ").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
                         .append(Component.literal("[").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
-                        .append(Component.literal("${StringUtils.addCommas(cache.data.secrets)}/${"%.2f".format(cache.data.averageSecrets)}").withStyle(ChatFormatting.AQUA))
+                        .append(Component.literal("${StringUtils.addCommas(data.secrets)}/${"%.2f".format(data.averageSecrets)}").withStyle(ChatFormatting.AQUA))
                         .append(Component.literal("] ").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
                     if (personalBest != null) {
                         mut
