@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
+import org.lwjgl.glfw.GLFW
 
 @Target(AnnotationTarget.CLASS)
 annotation class Threaded
@@ -450,14 +451,14 @@ class ContainerRenderEvent(
     val ctx: GuiGraphics
 ) : CancellableEvent()
 
-class TooltipRenderEvent(
+@Ordered class TooltipRenderEvent(
     val lore: MutableList<ClientTooltipComponent>,
     val x: Int,
     val y: Int,
 ) : CancellableEvent() {
     val slot: Slot?
     val item: ItemStack?
-    val shift = Devonian.minecraft.player?.isShiftKeyDown ?: false
+    val shift = GLFW.glfwGetKey(Devonian.minecraft.window.handle(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS
     init {
         val screen = Devonian.minecraft.screen
         slot = screen?.let { ScreenUtils.cursorSlot(it) }
