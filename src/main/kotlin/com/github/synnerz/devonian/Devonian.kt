@@ -83,6 +83,7 @@ import com.github.synnerz.devonian.features.misc.inventory.SlotBinding
 import com.github.synnerz.devonian.features.misc.inventory.SlotLocking
 import com.github.synnerz.devonian.features.misc.tooltip.DungeonItemStats
 import com.github.synnerz.devonian.features.misc.tooltip.ItemValue
+import com.github.synnerz.devonian.features.misc.tooltip.RemoveGearScore
 import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
@@ -311,6 +312,7 @@ object Devonian : ClientModInitializer {
         SpiritBearTimer,
         SignEnterKey,
         DungeonItemStats,
+        RemoveGearScore,
 
         // Debug
         CopyItem,
