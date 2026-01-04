@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.utils
 
+import com.github.synnerz.devonian.mixin.accessor.ClientTextTooltipAccessor
 import net.minecraft.ChatFormatting
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.TextColor
@@ -154,6 +156,22 @@ object StringUtils {
         }
     }
 
+    fun formatDuration(time: Long): String {
+        if (time < 0) return '-' + formatDuration(-time)
+        val s = time / 1000L
+        if (s < 60) return "$s second${if (s == 1L) "" else "s"}"
+        val m = s / 60
+        if (m < 60) return "$m minute${if (m == 1L) "" else "s"}"
+        val h = m / 60
+        if (h < 24) return "$h hour${if (h == 1L) "" else "s"}"
+        val d = h / 24
+        if (d < 31) return "$d day${if (d == 1L) "" else "s"}"
+        val months = d / 30.5
+        if (months < 12) return "%.1f month${if (months >= 2.0) "s" else ""}".format(months)
+        val years = d / 365.0
+        return "%.1f year${if (years >= 2.0) "s" else ""}".format(years)
+    }
+
     fun shortenNumber(num: Int): String {
         if (num < 0) return '-' + shortenNumber(-num)
         if (num < 1000) return num.toString()
@@ -196,6 +214,17 @@ object StringUtils {
                 'h', 'H' -> 3600
                 'd', 'D' -> 86400
                 else -> 0
+            }
+        }
+    }
+
+    fun tooltipAsString(tooltip: ClientTooltipComponent): String? {
+        val tip = tooltip as? ClientTextTooltipAccessor ?: return null
+        val seq = tip.text
+        return buildString {
+            seq.accept { _, _, c ->
+                append(c.toChar())
+                return@accept true
             }
         }
     }
