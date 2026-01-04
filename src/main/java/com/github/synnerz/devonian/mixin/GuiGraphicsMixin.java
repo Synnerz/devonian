@@ -14,6 +14,7 @@ import org.joml.Matrix3x2fStack;
 import org.joml.Vector2ic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -23,6 +24,7 @@ import java.util.List;
 @Mixin(GuiGraphics.class)
 public abstract class GuiGraphicsMixin {
     @Shadow public abstract Matrix3x2fStack pose();
+    @Unique private boolean devonian$pushed = false;
 
     @WrapOperation(
             method = "renderTooltip",
@@ -41,6 +43,8 @@ public abstract class GuiGraphicsMixin {
         double yoffset = ScrollableTooltip.INSTANCE.yoffset();
         boolean lockInPlace = ScrollableTooltip.INSTANCE.getSETTING_LOCK_IN_PLACE().get();
 
+        pose().pushMatrix();
+        devonian$pushed = true;
         // Scale (zoom in)
         if (scale != 0f)
             pose().scale(scale, scale);
@@ -65,6 +69,14 @@ public abstract class GuiGraphicsMixin {
 
         // TODO: fix the y value not being adjusted properly
         return vec;
+    }
+
+    @Inject(method = "renderTooltip", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;popMatrix()Lorg/joml/Matrix3x2fStack;"))
+    private void deovnian$onPostRenderTooltip(Font font, List<ClientTooltipComponent> list, int i, int j, ClientTooltipPositioner clientTooltipPositioner, ResourceLocation resourceLocation, CallbackInfo ci) {
+        if (devonian$pushed) {
+            pose().popMatrix();
+            devonian$pushed = false;
+        }
     }
 
     @Inject(
