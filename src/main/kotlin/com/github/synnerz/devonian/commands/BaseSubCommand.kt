@@ -42,14 +42,12 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
                 }
             }
 
-            if (current == null) {
-                argBuilder.executes { ctx ->
-                    val args = commandArgs.map { (key, type) -> getArgument(ctx, key, type) }
-                    cb(ctx, args)
-                }
-            } else {
-                argBuilder.then(current)
+            argBuilder.executes { ctx ->
+                val args = commandArgs.map { (key, type) -> getArgument(ctx, key, type) }
+                cb(ctx, args)
             }
+
+            if (current != null) argBuilder.then(current)
 
             current = argBuilder
         }
@@ -148,12 +146,19 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
 
     private fun getArgument(ctx: CommandContext<FabricClientCommandSource>, name: String, type: ArgumentType<*>): Any {
         return when (type) {
-            is StringArgumentType -> StringArgumentType.getString(ctx, name)
-            is BoolArgumentType -> BoolArgumentType.getBool(ctx, name)
-            is DoubleArgumentType -> DoubleArgumentType.getDouble(ctx, name)
-            is FloatArgumentType -> FloatArgumentType.getFloat(ctx, name)
-            is LongArgumentType -> LongArgumentType.getLong(ctx, name)
-            else -> IntegerArgumentType.getInteger(ctx, name)
+            is StringArgumentType -> getOrNull<String>(ctx, name) ?: ""
+            is BoolArgumentType -> getOrNull<Boolean>(ctx, name) ?: false
+            is DoubleArgumentType -> getOrNull<Double>(ctx, name) ?: 0.0
+            is FloatArgumentType -> getOrNull<Float>(ctx, name) ?: 0f
+            is LongArgumentType -> getOrNull<Long>(ctx, name) ?: 0L
+            else -> getOrNull<Int>(ctx, name) ?: 0
         }
     }
+
+    private inline fun <reified T> getOrNull(ctx: CommandContext<FabricClientCommandSource>, name: String): T? =
+        try {
+            ctx.getArgument(name, T::class.java)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
 }
