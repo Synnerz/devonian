@@ -7,9 +7,9 @@ import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.UseItemOnEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.UseItemOnEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature

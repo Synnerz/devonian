@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset;
 import com.github.synnerz.devonian.features.misc.KeyShortcuts;
+import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;

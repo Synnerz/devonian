@@ -12,7 +12,6 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import org.lwjgl.glfw.GLFW
-import kotlin.collections.iterator
 import kotlin.math.sign
 
 object ScrollableTooltip : Feature(

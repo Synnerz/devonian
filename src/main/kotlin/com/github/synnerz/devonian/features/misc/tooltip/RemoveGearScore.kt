@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.features.misc.tooltip
 
+import com.github.synnerz.devonian.ClientTextTooltipStringAccessor
 import com.github.synnerz.devonian.api.events.TooltipRenderEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.ClientTextTooltipStringAccessor
 
 object RemoveGearScore : Feature(
     "removeGearScore",

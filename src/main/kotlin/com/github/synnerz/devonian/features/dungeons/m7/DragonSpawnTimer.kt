@@ -9,7 +9,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
-import java.util.EnumSet
+import java.util.*
 
 object DragonSpawnTimer : TextHudFeature(
     "dragonSpawnTimer",

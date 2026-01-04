@@ -14,7 +14,7 @@ import com.google.gson.Gson
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import java.awt.Color
-import java.util.EnumMap
+import java.util.*
 import kotlin.math.roundToInt
 
 object WaterBoardSolver : Feature(

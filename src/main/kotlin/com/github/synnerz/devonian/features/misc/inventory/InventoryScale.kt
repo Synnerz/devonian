@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.misc.inventory
 
-import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.dungeons.CustomTerminalScale
 import net.minecraft.client.gui.screens.Screen

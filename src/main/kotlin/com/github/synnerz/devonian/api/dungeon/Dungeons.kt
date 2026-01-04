@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler

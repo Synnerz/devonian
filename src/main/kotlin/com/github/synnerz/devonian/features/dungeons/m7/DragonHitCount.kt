@@ -12,13 +12,12 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
-import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
-import java.util.EnumSet
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.min
 

@@ -7,18 +7,13 @@ import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.ChatEvent
-import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.TickEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.google.gson.Gson
 import java.awt.Color
 import java.util.*
-import kotlin.collections.iterator
 import kotlin.math.abs
 
 object DungeonWaypoints : Feature(

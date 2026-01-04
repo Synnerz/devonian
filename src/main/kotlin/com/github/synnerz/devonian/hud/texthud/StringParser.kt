@@ -1,9 +1,7 @@
 package com.github.synnerz.devonian.hud.texthud
 
-import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import java.awt.*
 import java.awt.font.TextAttribute
-import java.awt.font.TextLayout
 import java.text.AttributedCharacterIterator
 import java.text.AttributedString
 import java.util.stream.Collectors
