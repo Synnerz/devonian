@@ -9,6 +9,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import org.lwjgl.glfw.GLFW
 import kotlin.collections.iterator
@@ -57,7 +58,7 @@ object ScrollableTooltip : Feature(
     private var holdingShift = false
     private var holdingCtrl = false
     private var holdingAlt = false
-    private var lastEq = 0
+    private var lastEq: Slot? = null
 
     override fun initialize() {
         Config.set(KEY_NAME, JsonObject())
@@ -150,7 +151,7 @@ object ScrollableTooltip : Feature(
         scaleScroll = 1.0
         xo = 0.0
         yo = 0.0
-        lastEq = 0
+        lastEq = null
     }
 
     fun scale(): Double {
@@ -169,8 +170,9 @@ object ScrollableTooltip : Feature(
     }
 
     fun onRender(x: Int, y: Int, xoffset: Int, yoffset: Int) {
-        val eq = x * 6 + y * 6 + xoffset * 6 + yoffset * 6
-        if (lastEq == eq) return
+        val screen = minecraft.screen ?: return
+        val eq = ScreenUtils.cursorSlot(screen) ?: return
+        if (lastEq === eq) return
 
         if (SETTING_RESET_TOOLTIP.get()) {
             xo = 0.0
