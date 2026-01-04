@@ -82,6 +82,7 @@ import com.github.synnerz.devonian.features.misc.inventory.ScrollableTooltip
 import com.github.synnerz.devonian.features.misc.inventory.SlotBinding
 import com.github.synnerz.devonian.features.misc.inventory.SlotLocking
 import com.github.synnerz.devonian.features.misc.tooltip.DungeonItemStats
+import com.github.synnerz.devonian.features.misc.tooltip.ItemAge
 import com.github.synnerz.devonian.features.misc.tooltip.ItemValue
 import com.github.synnerz.devonian.features.misc.tooltip.RemoveGearScore
 import com.github.synnerz.devonian.features.misc.tooltip.RemoveVanillaEnchants
@@ -315,6 +316,7 @@ object Devonian : ClientModInitializer {
         DungeonItemStats,
         RemoveGearScore,
         RemoveVanillaEnchants,
+        ItemAge,
 
         // Debug
         CopyItem,
