@@ -84,6 +84,7 @@ import com.github.synnerz.devonian.features.misc.inventory.SlotLocking
 import com.github.synnerz.devonian.features.misc.tooltip.DungeonItemStats
 import com.github.synnerz.devonian.features.misc.tooltip.ItemAge
 import com.github.synnerz.devonian.features.misc.tooltip.ItemValue
+import com.github.synnerz.devonian.features.misc.tooltip.PetXP
 import com.github.synnerz.devonian.features.misc.tooltip.RemoveGearScore
 import com.github.synnerz.devonian.features.misc.tooltip.RemoveVanillaEnchants
 import com.github.synnerz.devonian.features.slayers.BossSlainTime
@@ -317,6 +318,7 @@ object Devonian : ClientModInitializer {
         RemoveGearScore,
         RemoveVanillaEnchants,
         ItemAge,
+        PetXP,
 
         // Debug
         CopyItem,
