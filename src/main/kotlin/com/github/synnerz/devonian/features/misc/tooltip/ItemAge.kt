@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc.tooltip
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.TooltipRenderEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.ChatFormatting
@@ -127,5 +128,9 @@ object ItemAge : Feature(
                 event.lore.add(ClientTooltipComponent.create(formatted))
             }
         }.prio = 1
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        timestamps.clear()
     }
 }
