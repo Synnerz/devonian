@@ -81,6 +81,7 @@ import com.github.synnerz.devonian.features.misc.inventory.ProtectItem
 import com.github.synnerz.devonian.features.misc.inventory.ScrollableTooltip
 import com.github.synnerz.devonian.features.misc.inventory.SlotBinding
 import com.github.synnerz.devonian.features.misc.inventory.SlotLocking
+import com.github.synnerz.devonian.features.misc.tooltip.DungeonItemStats
 import com.github.synnerz.devonian.features.misc.tooltip.ItemValue
 import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
@@ -309,6 +310,7 @@ object Devonian : ClientModInitializer {
         TerminalHideCompletion,
         SpiritBearTimer,
         SignEnterKey,
+        DungeonItemStats,
 
         // Debug
         CopyItem,
