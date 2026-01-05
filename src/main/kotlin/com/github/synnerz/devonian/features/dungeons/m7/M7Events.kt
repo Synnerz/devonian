@@ -21,12 +21,14 @@ object M7Events {
             if (packet.xDist != 2f) return@on
             if (packet.yDist != 3f) return@on
             if (packet.zDist != 2f) return@on
+            if (packet.maxSpeed != 0f) return@on
             if (!packet.alwaysShow()) return@on
             if (!packet.isOverrideLimiter) return@on
 
             val x = packet.x.toInt()
             val y = packet.y.toInt()
             val z = packet.z.toInt()
+            if (packet.x % 1 != 0.0 || packet.z % 1 != 0.0) return@on
             val isHigh = when (y) {
                 19 -> false
                 27 -> true
@@ -35,7 +37,8 @@ object M7Events {
 
             val dragon = M7Dragon.entries.find { it.particleX == x && it.particleZ == z } ?: return@on
             val tick = EventBus.serverTicks()
-            if (tick - cooldown.getOrElse(dragon) { 0 } < 100) return@on
+            val cd = cooldown.getOrElse(dragon) { -1 }
+            if (cd != -1 && tick - cd < 100) return@on
 
             cooldown[dragon] = tick
             DragonSpawned(dragon, isHigh).post()
