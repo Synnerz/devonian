@@ -2,10 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.m7
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
-import com.github.synnerz.devonian.api.events.RenderOverlayEvent
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
@@ -42,28 +39,30 @@ object DragonSpawnTimer : TextHudFeature(
     override fun initialize() {
         on<M7Events.DragonSpawned> { event ->
             spawned.add(event.dragon)
-            ticks = 100
-        }
-
-        on<ClientThreadServerTickEvent> {
-            if (ticks <= 0) return@on
-            ticks--
-            if (ticks <= 0) spawned.clear()
+            ticks = EventBus.serverTicks() + 100
         }
 
         on<RenderOverlayEvent> { event ->
             if (ticks <= 0) return@on
 
-            setLine((ticks * 50).toString())
+            val time = (ticks - EventBus.serverTicks()) * 0.05
+            setLine("%.2fs".format(time))
             draw(event.ctx)
+
+            if (time <= 0) {
+                ticks = 0
+                spawned.clear()
+            }
         }.setEnabled(SETTING_HUD.state)
 
         on<RenderWorldEvent> {
             if (ticks <= 0) return@on
 
             spawned.forEach {
+                val time = (ticks - EventBus.serverTicks()) * 0.05
+
                 Context.Immediate?.renderString(
-                    (ticks * 50).toString(),
+                    "${it.textColor}${it.colorName} &f%.2fs".format(time),
                     it.chin.x.toDouble(),
                     it.chin.y + 2.0,
                     it.chin.z.toDouble(),
