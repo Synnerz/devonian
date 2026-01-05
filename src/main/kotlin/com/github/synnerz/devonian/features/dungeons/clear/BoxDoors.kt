@@ -193,10 +193,11 @@ object BoxDoors : Feature(
         )
     }
 
-    private fun isRoomUseful(room: DungeonRoom, excluding: DungeonRoom): Boolean {
+    private fun isRoomUseful(room: DungeonRoom, excluding: DungeonRoom, sanity: Int = 10): Boolean {
+        if (sanity <= 0) return true
         if (room === excluding) return false
         if (room.checkmark !== CheckmarkTypes.GREEN) return true
-        return room.doors.any { it.rooms.any { it !== room && it !== excluding && isRoomUseful(it, room) }}
+        return room.doors.any { it.rooms.any { it !== room && it !== excluding && isRoomUseful(it, room, sanity - 1) }}
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
