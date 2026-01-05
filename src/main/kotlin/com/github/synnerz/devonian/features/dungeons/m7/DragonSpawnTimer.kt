@@ -38,6 +38,7 @@ object DragonSpawnTimer : TextHudFeature(
 
     override fun initialize() {
         on<M7Events.DragonSpawned> { event ->
+            if (event.isHigh) return@on
             spawned.add(event.dragon)
             ticks = EventBus.serverTicks() + 100
         }
