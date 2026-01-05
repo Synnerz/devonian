@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.features.HudManagerInstructions
+import com.github.synnerz.devonian.features.HudManagerName
 import com.github.synnerz.devonian.features.HudManagerRenderer
 import com.github.synnerz.devonian.utils.Render2D
 import net.minecraft.client.gui.GuiGraphics
@@ -17,7 +18,8 @@ import org.lwjgl.glfw.GLFW
 import kotlin.math.min
 
 object HudManager : Screen(Component.literal("Devonian.HudManager")) {
-    private var selectedHud: HudFeature? = null
+    var selectedHud: HudFeature? = null
+        private set
     val huds = mutableListOf<HudFeature>()
     var isEditing = false
 
@@ -51,6 +53,8 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         HudManagerHider.y = window.guiScaledHeight / 4.0
         HudManagerRenderer.x = window.guiScaledWidth / 2.0
         HudManagerRenderer.y = window.guiScaledHeight * 3.0 / 8.0
+        HudManagerName.x = window.guiScaledWidth * 3.0 / 4.0
+        HudManagerName.y = window.guiScaledHeight / 2.0
     }
 
     override fun removed() {
