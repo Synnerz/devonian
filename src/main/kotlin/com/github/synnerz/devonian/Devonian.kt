@@ -270,6 +270,7 @@ object Devonian : ClientModInitializer {
         ItemAge,
         PetXP,
         HudManagerName,
+        CustomDungeonWaypoints,
 
         // Debug
         CopyItem,
