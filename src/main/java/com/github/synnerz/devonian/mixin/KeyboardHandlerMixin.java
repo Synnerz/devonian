@@ -2,12 +2,11 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.api.events.KeyPressEvent;
 import com.github.synnerz.devonian.features.misc.KeyShortcuts;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,9 +21,9 @@ public class KeyboardHandlerMixin {
 
     @Inject(method = "keyPress", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void devonian$onKeyPress(long l, int i, KeyEvent keyEvent, CallbackInfo ci, Window window) {
-        Screen screen = minecraft.screen;
-        if (screen != null || minecraft.level == null) return;
-        if (l != window.handle() || !InputConstants.isKeyDown(window, keyEvent.key())) return;
+        if (l != window.handle()) return;
+        if (minecraft.screen != null || minecraft.level == null) return;
+        if (i != GLFW.GLFW_PRESS) return;
 
         new KeyPressEvent(keyEvent.key(), keyEvent.scancode(), keyEvent).post();
         KeyShortcuts.INSTANCE.onKeyPress(keyEvent);

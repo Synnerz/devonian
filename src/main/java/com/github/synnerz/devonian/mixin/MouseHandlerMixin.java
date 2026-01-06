@@ -89,7 +89,8 @@ public class MouseHandlerMixin {
     @Inject(method = "onButton", at = @At("TAIL"))
     private void devonian$onButton(long l, MouseButtonInfo mouseButtonInfo, int i, CallbackInfo ci) {
         if (l != minecraft.getWindow().handle()) return;
-        if (minecraft.screen != null) return;
+        if (minecraft.screen != null || minecraft.level == null) return;
+        if (i != GLFW.GLFW_PRESS) return;
 
         KeyShortcuts.INSTANCE.onButtonPress(mouseButtonInfo);
     }
