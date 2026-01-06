@@ -474,15 +474,13 @@ object CustomDungeonWaypoints : Feature(
         val room = DungeonScanner.currentRoom ?: return
         val roomId = room.roomID ?: return
         if (currentParent == null || currentParent!!.id != roomId) return
-        val wtype = when (type) {
-            0 -> WaypointType.CHEST
-            1 -> WaypointType.BAT
-            2 -> WaypointType.ITEM
-            else -> null
-        } ?: return
 
         currentParent!!.waypoints.forEach {
-            if (it.type != wtype) return@forEach
+            if (
+                type == 0 && (it.type != WaypointType.CHEST && it.type != WaypointType.ESSENCE) ||
+                type == 1 && it.type != WaypointType.BAT ||
+                type == 2 && it.type != WaypointType.ITEM
+            ) return@forEach
             val pos = it.pos() ?: return@forEach
             if (it.clicked) return@forEach
             val dist = abs(pos.x - x.toInt()) + abs(pos.z - z.toInt())
