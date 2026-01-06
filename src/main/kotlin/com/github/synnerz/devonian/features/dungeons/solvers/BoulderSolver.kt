@@ -100,7 +100,7 @@ object BoulderSolver : Feature(
                 Context.Immediate?.renderBox(
                     it.first.toDouble(), 65.0, it.second.toDouble(),
                     color = OUTLINE_COLOR,
-                    phase = false
+                    phase = true
                 )
                 Context.Immediate?.renderFilledBox(
                     it.first.toDouble(), 65.0, it.second.toDouble(),
