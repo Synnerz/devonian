@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 object DragonSpawnTimer : TextHudFeature(
     "dragonSpawnTimer",
@@ -34,26 +35,34 @@ object DragonSpawnTimer : TextHudFeature(
     )
 
     private var spawned = EnumSet.noneOf(M7Dragon::class.java)
+    private val dragons = ConcurrentHashMap<String, Int>()
     private var ticks = 0
 
     override fun initialize() {
         on<M7Events.DragonSpawned> { event ->
-            if (event.isHigh) return@on
             spawned.add(event.dragon)
             ticks = EventBus.serverTicks() + 100
+            dragons[event.dragon.colorName] = EventBus.serverTicks() + 100
         }
 
         on<RenderOverlayEvent> { event ->
-            if (ticks <= 0) return@on
+            if (dragons.isEmpty()) return@on
 
-            val time = (ticks - EventBus.serverTicks()) * 0.05
-            setLine("%.2fs".format(time))
-            draw(event.ctx)
+            for (entry in dragons) {
+                val name = entry.key
+                val ticks = entry.value
 
-            if (time <= 0) {
-                ticks = 0
-                spawned.clear()
+                val time = (ticks - EventBus.serverTicks()) * 0.05
+                addLine("$name %.2fs".format(time))
+
+                if (time <= 0) {
+                    spawned.removeIf { it.colorName == name }
+                    dragons.remove(name)
+                    removeLine(hud.lines.size - 1)
+                }
             }
+
+            draw(event.ctx)
         }.setEnabled(SETTING_HUD.state)
 
         on<RenderWorldEvent> {
@@ -81,5 +90,6 @@ object DragonSpawnTimer : TextHudFeature(
     override fun onWorldChange(event: WorldChangeEvent) {
         spawned.clear()
         ticks = 0
+        dragons.clear()
     }
 }
