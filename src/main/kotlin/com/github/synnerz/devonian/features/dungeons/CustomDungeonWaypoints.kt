@@ -55,6 +55,12 @@ object CustomDungeonWaypoints : Feature(
         "Whether or not to see through walls the waypoints",
         "CDW Phase Mode"
     )
+    private val SETTING_TEXT_PHASE_MODE = addSwitch(
+        "textPhaseMode",
+        true,
+        "Whether or not to see through walls the waypoints' text",
+        "CDW Text Phase Mode"
+    )
     private const val KEY = "currentDungeonProfile"
     private val waypointFile = File(
         minecraft.gameDirectory,
@@ -202,7 +208,7 @@ object CustomDungeonWaypoints : Feature(
                         it.text!!,
                         pos.x + 0.5, pos.y + 1.5, pos.z + 0.5,
                         2f, true, false,
-                        SETTING_PHASE_MODE.get()
+                        SETTING_TEXT_PHASE_MODE.get()
                     )
                 }
                 if (it.type == WaypointType.TEXT) return@forEach
