@@ -300,7 +300,7 @@ object CustomDungeonWaypoints : Feature(
             "createbase" -> {
                 val waypointName1 = args.getOrNull(1) as? String?
                 val waypointName2 = args.getOrNull(2) as? String?
-                if (waypointName1 == null || waypointName2 == null) {
+                if (waypointName1.isNullOrEmpty() || waypointName2.isNullOrEmpty()) {
                     ChatUtils.sendMessage("&cCDW Invalid waypoint name", true)
                     return 0
                 }
