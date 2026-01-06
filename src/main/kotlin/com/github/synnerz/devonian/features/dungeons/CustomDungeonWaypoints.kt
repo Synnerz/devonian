@@ -61,6 +61,12 @@ object CustomDungeonWaypoints : Feature(
         "Whether or not to see through walls the waypoints' text",
         "CDW Text Phase Mode"
     )
+    private val SETTING_ORDERED_ETHERS = addSwitch(
+        "orederedEthers",
+        true,
+        "Displays numbers above each etherwarp type waypoint depending on when they were added to the list (first ether waypoint will display 1 etc)",
+        "CDW Ordered Ethers"
+    )
     private const val KEY = "currentDungeonProfile"
     private val waypointFile = File(
         minecraft.gameDirectory,
@@ -210,6 +216,17 @@ object CustomDungeonWaypoints : Feature(
                         2f, true, false,
                         SETTING_TEXT_PHASE_MODE.get()
                     )
+                } else if (it.type == WaypointType.ETHERWARP && SETTING_ORDERED_ETHERS.get()) {
+                    // TODO: make more efficient
+                    val idx = currentParent!!.waypoints.filter { f -> f.type == WaypointType.ETHERWARP }.indexOf(it)
+                    if (idx != -1) {
+                        Context.Immediate?.renderString(
+                            "${idx + 1}",
+                            pos.x + 0.5, pos.y + 1.5, pos.z + 0.5,
+                            2f, true, false,
+                            SETTING_TEXT_PHASE_MODE.get()
+                        )
+                    }
                 }
                 if (it.type == WaypointType.TEXT) return@forEach
 
