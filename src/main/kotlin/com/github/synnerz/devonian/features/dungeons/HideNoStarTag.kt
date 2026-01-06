@@ -28,7 +28,7 @@ object HideNoStarTag : Feature(
         "King Midas",
         "Deathmite",
 
-        "Akia", "Ilene", "Kari", "Lelani", "Steve", "Synestra", "Tyene", "Ussaea", "Yve", "Zana",
+        "Akia", "Ilene", "Kari", "Lelani", "Steve", "Synestra", "Tyene", "Ussaea", "Yve", "Zana", "Trisha", "Nymira"
     ) + bloodExceptions
     private val noStarTagRegex = "^(?:\\[Lv\\d+] )?[^\\sA-Za-z]* ?([A-Za-z ]+) [\\dkM.,/]+❤$".toRegex()
 
