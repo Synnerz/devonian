@@ -71,25 +71,27 @@ class DungeonMapBaseRenderer :
         }
 
         fun colorForRoom(room: DungeonRoom): Color? {
-            var col = if (!options.renderUnknownRooms && !room.explored) colors[DungeonMapColors.RoomUnknown]
-            else when (room.type) {
-                RoomTypes.ENTRANCE -> colors[DungeonMapColors.RoomEntrance]
-                RoomTypes.NORMAL -> when (room.clear) {
-                    ClearTypes.MOB,
-                    ClearTypes.OTHER
-                        -> colors[DungeonMapColors.RoomNormal]
+            var col =
+                if (!room.explored && (!options.renderUnknownRooms || room.name == null))
+                    colors[DungeonMapColors.RoomUnknown]
+                else when (room.type) {
+                    RoomTypes.ENTRANCE -> colors[DungeonMapColors.RoomEntrance]
+                    RoomTypes.NORMAL -> when (room.clear) {
+                        ClearTypes.MOB,
+                        ClearTypes.OTHER
+                            -> colors[DungeonMapColors.RoomNormal]
 
-                    ClearTypes.MINIBOSS -> colors[DungeonMapColors.RoomMiniboss]
+                        ClearTypes.MINIBOSS -> colors[DungeonMapColors.RoomMiniboss]
+                    }
+
+                    RoomTypes.FAIRY -> colors[DungeonMapColors.RoomFairy]
+                    RoomTypes.BLOOD -> colors[DungeonMapColors.RoomBlood]
+                    RoomTypes.PUZZLE -> colors[DungeonMapColors.RoomPuzzle]
+                    RoomTypes.TRAP -> colors[DungeonMapColors.RoomTrap]
+                    RoomTypes.YELLOW -> colors[DungeonMapColors.RoomYellow]
+                    RoomTypes.RARE -> colors[DungeonMapColors.RoomRare]
+                    RoomTypes.UNKNOWN -> colors[DungeonMapColors.RoomUnknown]
                 }
-
-                RoomTypes.FAIRY -> colors[DungeonMapColors.RoomFairy]
-                RoomTypes.BLOOD -> colors[DungeonMapColors.RoomBlood]
-                RoomTypes.PUZZLE -> colors[DungeonMapColors.RoomPuzzle]
-                RoomTypes.TRAP -> colors[DungeonMapColors.RoomTrap]
-                RoomTypes.YELLOW -> colors[DungeonMapColors.RoomYellow]
-                RoomTypes.RARE -> colors[DungeonMapColors.RoomRare]
-                RoomTypes.UNKNOWN -> colors[DungeonMapColors.RoomUnknown]
-            }
 
             if (col != null && options.dungeonStarted && !room.explored) col = Color(
                 (col.red * options.unknownRoomsDarkenFactor + 0.5).toInt(),
@@ -314,7 +316,7 @@ class DungeonMapBaseRenderer :
 
             val decoration =
                 (if (options.checkMark) {
-                    if (options.renderUnknownRooms && room.checkmark == CheckmarkTypes.UNEXPLORED) null
+                    if (options.renderUnknownRooms && room.checkmark == CheckmarkTypes.UNEXPLORED && room.name != null) null
                     else CHECKMARK[room.checkmark]
                 } else null) ?:
                 (if (renderRoomInfo && options.puzzleIcon) SPECIAL_ROOMS[room.name] else null)

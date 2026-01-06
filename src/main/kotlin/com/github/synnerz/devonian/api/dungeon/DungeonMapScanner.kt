@@ -180,7 +180,7 @@ object DungeonMapScanner {
                 MapColors.ROOM_ENTRANCE.color -> RoomTypes.ENTRANCE
                 MapColors.ROOM_BLOOD.color -> RoomTypes.BLOOD
                 MapColors.ROOM_UNOPENED.color ->
-                    if (room.type == RoomTypes.UNKNOWN) RoomTypes.NORMAL
+                    if (room.type == RoomTypes.UNKNOWN) RoomTypes.UNKNOWN
                     else room.type
                 MapColors.ROOM_BOSS.color -> RoomTypes.YELLOW
                 MapColors.ROOM_FAIRY.color -> RoomTypes.FAIRY
@@ -282,7 +282,6 @@ object DungeonMapScanner {
 
             if (roomSize == -1 && !scanMapDimensions(colors)) return@on
             Scheduler.scheduleTask {
-                if (!Dungeons.started.value) return@scheduleTask
                 updatePlayerIcons(mapState)
                 updateRooms(colors)
 
