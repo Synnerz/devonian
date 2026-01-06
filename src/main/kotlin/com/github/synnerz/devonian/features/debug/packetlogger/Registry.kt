@@ -40,6 +40,8 @@ object Registry {
         register(TakeItemPacket)
         register(TitleSetPacket)
         register(SubTitleSetPacket)
+        register(PingPacket)
+        register(SystemChatPacket)
 
         register(BlockInteractPacket)
     }
