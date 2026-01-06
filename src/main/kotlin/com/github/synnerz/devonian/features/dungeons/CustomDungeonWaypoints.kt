@@ -67,6 +67,12 @@ object CustomDungeonWaypoints : Feature(
         "Displays numbers above each etherwarp type waypoint depending on when they were added to the list (first ether waypoint will display 1 etc)",
         "CDW Ordered Ethers"
     )
+    private val SETTING_RENDER_TEXT = addSwitch(
+        "renderText",
+        true,
+        "Whether waypoints should render their text (not: if ordered ethers is enabled it will override this)",
+        "CDW Render Text"
+    )
     private const val KEY = "currentDungeonProfile"
     private val waypointFile = File(
         minecraft.gameDirectory,
@@ -209,7 +215,7 @@ object CustomDungeonWaypoints : Feature(
                 val camera = event.ctx.gameRenderer().mainCamera
                 val camPos = camera.position()
 
-                if (it.text != null) {
+                if (it.text != null && SETTING_RENDER_TEXT.get()) {
                     Context.Immediate?.renderString(
                         it.text!!,
                         pos.x + 0.5, pos.y + 1.5, pos.z + 0.5,
