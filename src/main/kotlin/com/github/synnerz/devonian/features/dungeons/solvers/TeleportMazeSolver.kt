@@ -83,6 +83,7 @@ object TeleportMazeSolver : Feature(
         var visited = false
         var correct = false
         var possible = false
+        var incorrect = false
     }
 
     override fun initialize() {
@@ -131,6 +132,7 @@ object TeleportMazeSolver : Feature(
                         it.visited = false
                         it.correct = false
                         it.possible = false
+                        it.incorrect = false
                     }
                     if (newPad.isEnd) return@scheduleBeforePacket
                 }
@@ -149,8 +151,9 @@ object TeleportMazeSolver : Feature(
                         (it.tz - newPad.tz).toDouble(),
                     )
                     val matches = dir.parallel(offset)
-                    it.correct = matches
+                    it.correct = matches && !it.incorrect
                     it.possible = it.possible || matches
+                    it.incorrect = it.incorrect || !matches
                 }
             }
         }
