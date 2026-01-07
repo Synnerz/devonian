@@ -80,7 +80,14 @@ object CampHelper : Feature(
 
     override fun initialize() {
         on<TickEvent> {
-            if (bloodComp != null) return@on
+            if (bloodComp != null) {
+                val w = minecraft.level ?: return@on
+                bloodStands.forEach { (id, v) ->
+                    if (v.ent?.isAlive != false) return@on
+                    v.ent = w.getEntity(id)
+                }
+                return@on
+            }
             bloodComp = DungeonScanner.rooms.find { it?.type == RoomTypes.BLOOD }?.comps?.getOrNull(0)?.toComponent()
             if (bloodComp != null) {
                 val w = minecraft.level ?: return@on
