@@ -143,6 +143,19 @@ object TerminalSolvers : Feature(
             currentSolver?.onAfterRender(event)
         }
 
+        on<DropItemEvent> { event ->
+            val slot = event.slot ?: return@on
+            if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot) == true) {
+                event.cancel()
+                minecraft.level?.playPlayerSound(
+                    PREVENTED_SOUND.value(),
+                    SoundSource.MASTER,
+                    1f, 0.5f,
+                )
+                return@on
+            }
+        }
+
         on<GuiClickEvent> { event ->
             val slot = ScreenUtils.cursorSlot(event.screen) ?: return@on
             if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot) == true) {
