@@ -272,6 +272,7 @@ object Devonian : ClientModInitializer {
         HudManagerName,
         CustomDungeonWaypoints,
         RunsLogger,
+        DragonStackAimer,
 
         // Debug
         CopyItem,

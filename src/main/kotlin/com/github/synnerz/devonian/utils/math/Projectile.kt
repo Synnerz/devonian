@@ -1,5 +1,10 @@
 package com.github.synnerz.devonian.utils.math
 
+import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
+import net.minecraft.world.entity.Pose
+import net.minecraft.world.phys.Vec3
+import java.util.BitSet
 import kotlin.math.*
 
 object Projectile {
@@ -110,5 +115,69 @@ object Projectile {
         }
 
         return ProjectileData(theta, (searchL + searchR) * 0.5, t)
+    }
+
+    fun aim(
+        ttl: Double,
+        path: Array<Vec3>,
+        prevBestTarget: Int,
+        err: Double,
+        g: Double,
+        v: Double,
+        d: Double,
+        h: Boolean,
+        xo: Double = 0.0,
+        yo: Double = 0.0,
+        zo: Double = 0.0,
+    ): Pair<Int, ProjectileData>? {
+        val visited = BitSet(path.size)
+        visited.set(prevBestTarget)
+        val p = Devonian.minecraft.player ?: return null
+        val pa = p as? LocalPlayerAccessor ?: return null
+        val x = pa.lastXClient + xo
+        val y = pa.lastYClient + yo + (if (p.pose == Pose.CROUCHING) 1.54f else p.eyeHeight)
+        val z = pa.lastZClient + zo
+
+        var bestI = prevBestTarget
+        var best = solve(
+            path[prevBestTarget].x - x,
+            path[prevBestTarget].y - y,
+            path[prevBestTarget].z - z,
+            err, g, v, d, h,
+        )
+        var bestO = abs(best.ticks - ttl - prevBestTarget)
+        if (bestO.isNaN()) bestO = Double.POSITIVE_INFINITY
+
+        var dir = 1
+        var swapped = false
+        var i = prevBestTarget
+        while (true) {
+            val next = i + dir
+            var shouldSwap = false
+            if (next in path.indices && !visited.get(next)) {
+                visited.set(next)
+                val data = solve(
+                    path[next].x - x,
+                    path[next].y - y,
+                    path[next].z - z,
+                    err, g, v, d, h,
+                )
+                val o = abs(data.ticks - ttl - next)
+                if (o < bestO) {
+                    bestI = next
+                    bestO = o
+                    best = data
+                    i = next
+                } else shouldSwap = true
+            } else shouldSwap = true
+
+            if (shouldSwap) {
+                if (swapped) break
+                swapped = true
+                dir = -dir
+            }
+        }
+
+        return Pair(if (bestO.isFinite()) bestI else 0, best)
     }
 }
