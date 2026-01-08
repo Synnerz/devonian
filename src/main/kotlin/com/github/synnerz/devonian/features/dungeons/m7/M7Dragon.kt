@@ -21,7 +21,7 @@ enum class M7Dragon(
         'r',
         "Red",
         Color(255, 85, 85),
-        "&c",
+        "§c",
         27, 59,
         BlockPos(32, 18, 59),
         arrayOf(
@@ -68,7 +68,7 @@ enum class M7Dragon(
         'g',
         "Green",
         Color(85, 255, 85),
-        "&a",
+        "§a",
         27, 94,
         BlockPos(32, 19, 94),
         arrayOf(
@@ -115,7 +115,7 @@ enum class M7Dragon(
         'p',
         "Purple",
         Color(170, 0, 170),
-        "&5",
+        "§5",
         56, 125,
         BlockPos(56, 18, 120),
         arrayOf(
@@ -162,7 +162,7 @@ enum class M7Dragon(
         'b',
         "Blue",
         Color(85, 255, 255),
-        "&b",
+        "§b",
         84, 94,
         BlockPos(79, 19, 94),
         arrayOf(
@@ -211,7 +211,7 @@ enum class M7Dragon(
         'o',
         "Orange",
         Color(255, 170, 0),
-        "&6",
+        "§6",
         85, 56,
         BlockPos(80, 19, 56),
         arrayOf(

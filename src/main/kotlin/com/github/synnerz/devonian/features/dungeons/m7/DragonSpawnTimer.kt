@@ -35,34 +35,31 @@ object DragonSpawnTimer : TextHudFeature(
     )
 
     private var spawned = EnumSet.noneOf(M7Dragon::class.java)
-    private val dragons = ConcurrentHashMap<String, Int>()
     private var ticks = 0
+    private var done = false
 
     override fun initialize() {
+        on<ChatEvent> { event ->
+            if (event.message == "[BOSS] Wither King: Incredible. You did what I couldn't do myself.") done = true
+        }
+
         on<M7Events.DragonSpawned> { event ->
+            if (done) return@on
             spawned.add(event.dragon)
             ticks = EventBus.serverTicks() + 100
-            dragons[event.dragon.colorName] = EventBus.serverTicks() + 100
         }
 
         on<RenderOverlayEvent> { event ->
-            if (dragons.isEmpty()) return@on
+            if (ticks <= 0) return@on
 
-            for (entry in dragons) {
-                val name = entry.key
-                val ticks = entry.value
-
-                val time = (ticks - EventBus.serverTicks()) * 0.05
-                addLine("$name %.2fs".format(time))
-
-                if (time <= 0) {
-                    spawned.removeIf { it.colorName == name }
-                    dragons.remove(name)
-                    removeLine(hud.lines.size - 1)
-                }
-            }
-
+            val time = (ticks - EventBus.serverTicks()) * 0.05
+            setLine("%.2fs".format(time))
             draw(event.ctx)
+
+            if (time <= 0) {
+                ticks = 0
+                spawned.clear()
+            }
         }.setEnabled(SETTING_HUD.state)
 
         on<RenderWorldEvent> {
@@ -72,7 +69,7 @@ object DragonSpawnTimer : TextHudFeature(
                 val time = (ticks - EventBus.serverTicks()) * 0.05
 
                 Context.Immediate?.renderString(
-                    "${it.textColor}${it.colorName} &f%.2fs".format(time),
+                    "${it.textColor}${it.colorName} §f%.2fs".format(time),
                     it.chin.x.toDouble(),
                     it.chin.y + 2.0,
                     it.chin.z.toDouble(),
@@ -90,6 +87,6 @@ object DragonSpawnTimer : TextHudFeature(
     override fun onWorldChange(event: WorldChangeEvent) {
         spawned.clear()
         ticks = 0
-        dragons.clear()
+        done = false
     }
 }
