@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.PacketUtils;
+import net.minecraft.network.protocol.common.ClientboundPingPacket;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 import net.minecraft.server.RunningOnDifferentThreadException;
@@ -60,7 +61,13 @@ public abstract class ConnectionMixin {
         if (packet instanceof ClientboundBundlePacket) {
             List<Packet<? super ClientGamePacketListener>> resend = new ArrayList<>();
 
+            boolean first = true;
             for (Packet<? super ClientGamePacketListener> subPacket : ((ClientboundBundlePacket) packet).subPackets()) {
+                if (first) {
+                    first = false;
+                    // fuck you hypixel
+                    if (subPacket instanceof ClientboundPingPacket) continue;
+                }
                 boolean c = new PacketReceivedEvent(subPacket).post();
                 if (!c) resend.add(subPacket);
                 cancel |= c;
