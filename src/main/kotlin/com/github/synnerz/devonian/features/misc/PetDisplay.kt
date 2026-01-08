@@ -14,8 +14,8 @@ object PetDisplay : TextHudFeature(
     private const val KEY_NAME = "petDisplay"
     private val equippedPetRegex = "^You summoned your ([\\w ]+)!$".toRegex()
     private val formattedEquppedRegex = "^§r§aYou summoned your §r([§\\w ]+)§r§a!$".toRegex()
-    private val autoPetRuleRegex = "^Autopet equipped your \\[Lvl \\d+] ([\\w ]+)! VIEW RULE$".toRegex()
-    private val formattedAutoRuleRegex = "^§r§cAutopet §eequipped your §7\\[Lvl \\d+] ([§\\w ]+)§e! §a§lVIEW RULE$".toRegex()
+    private val autoPetRuleRegex = "^Autopet equipped your \\[Lvl \\d+] ([\\w ]+)(?: .)?! VIEW RULE\$".toRegex()
+    private val formattedAutoRuleRegex = "^§r§cAutopet §eequipped your §7\\[Lvl \\d+] ([§\\w ]+)(?:§\\w .)?§e! §a§lVIEW RULE$".toRegex()
     private var currentPet: String? = ""
 
     override fun initialize() {
