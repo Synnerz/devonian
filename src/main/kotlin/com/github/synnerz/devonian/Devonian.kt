@@ -271,6 +271,7 @@ object Devonian : ClientModInitializer {
         PetXP,
         HudManagerName,
         CustomDungeonWaypoints,
+        RunsLogger,
 
         // Debug
         CopyItem,
