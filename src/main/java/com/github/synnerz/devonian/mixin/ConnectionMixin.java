@@ -66,7 +66,10 @@ public abstract class ConnectionMixin {
                 if (first) {
                     first = false;
                     // fuck you hypixel
-                    if (subPacket instanceof ClientboundPingPacket) continue;
+                    if (subPacket instanceof ClientboundPingPacket) {
+                        resend.add(subPacket);
+                        continue;
+                    }
                 }
                 boolean c = new PacketReceivedEvent(subPacket).post();
                 if (!c) resend.add(subPacket);
