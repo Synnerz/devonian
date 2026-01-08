@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.UseItemOnEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -197,6 +198,8 @@ object CustomDungeonWaypoints : Feature(
         }
 
         on<RenderWorldEvent> { event ->
+            if (Dungeons.inBoss.value) return@on
+
             currentParent?.waypoints?.forEach {
                 if (SETTING_REMOVE_ON_COLLECT.get() && it.clicked) return@forEach
 
@@ -468,7 +471,7 @@ object CustomDungeonWaypoints : Feature(
     }
 
     private fun onSecret(x: Double, y: Double, z: Double, type: Int) {
-        // TODO: ETHER, ESSENCE(doesn't seem to work), REDSTONE, LOCKED_CHEST, BLOCK_MINE
+        // TODO: ETHER, REDSTONE, LOCKED_CHEST, BLOCK_MINE
         if (!SETTING_REMOVE_ON_COLLECT.get()) return
         if (editMode) return
         val room = DungeonScanner.currentRoom ?: return
