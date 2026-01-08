@@ -9,11 +9,11 @@ data class BazaarData(
         val productId: String,
         val sellPrice: Float,
         val sellVolume: Int,
-        val sellMovingWeek: Int,
+        val sellMovingWeek: Long,
         val sellOrders: Int,
         val buyPrice: Float,
         val buyVolume: Int,
-        val buyMovingWeek: Int,
+        val buyMovingWeek: Long,
         val buyOrders: Int,
     )
 
