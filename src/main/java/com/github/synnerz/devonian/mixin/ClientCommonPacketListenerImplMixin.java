@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent;
+import com.github.synnerz.devonian.api.events.EventBus;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.network.protocol.common.ClientboundPingPacket;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +16,7 @@ public class ClientCommonPacketListenerImplMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/PacketUtils;ensureRunningOnSameThread(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;Lnet/minecraft/network/PacketProcessor;)V", shift = At.Shift.AFTER)
     )
     private void devonian$clientThreadServerTick(ClientboundPingPacket clientboundPingPacket, CallbackInfo ci) {
+        if (EventBus.INSTANCE.get_internalSkipPing().remove(clientboundPingPacket.getId())) return;
         if (clientboundPingPacket.getId() < 0) new ClientThreadServerTickEvent().post();
     }
 }

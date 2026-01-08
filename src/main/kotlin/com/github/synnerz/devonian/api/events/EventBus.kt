@@ -33,6 +33,7 @@ object EventBus {
     val events = ConcurrentHashMap<KClass<*>, MutableList<EventListener<Event>>>()
     private val entityTypes = mutableMapOf<Int, EntityType<*>>()
     private val entityPos = mutableMapOf<Int, Vec3>()
+    var _internalSkipPing = Collections.newSetFromMap<Int>(ConcurrentHashMap())
 
     init {
         ClientEntityEvents.ENTITY_LOAD.register { entity, _ ->
@@ -50,6 +51,7 @@ object EventBus {
             totalTicks = 0
             entityTypes.clear()
             entityPos.clear()
+            _internalSkipPing.clear()
         }
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
             ScreenMouseEvents.allowMouseClick(screen).register { _, event ->

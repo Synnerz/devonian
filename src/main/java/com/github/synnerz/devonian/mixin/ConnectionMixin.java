@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.Devonian;
+import com.github.synnerz.devonian.api.events.EventBus;
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent;
 import com.github.synnerz.devonian.api.events.PacketSentEvent;
 import com.github.synnerz.devonian.api.events.PrePacketSentEvent;
@@ -68,6 +69,7 @@ public abstract class ConnectionMixin {
                     // fuck you hypixel
                     if (subPacket instanceof ClientboundPingPacket) {
                         resend.add(subPacket);
+                        EventBus.INSTANCE.get_internalSkipPing().add(((ClientboundPingPacket) subPacket).getId());
                         continue;
                     }
                 }
