@@ -4,22 +4,14 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.*
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
-import net.minecraft.core.BlockPos
-import net.minecraft.network.protocol.game.ClientboundAwardStatsPacket
-import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
-import net.minecraft.network.protocol.game.ServerboundClientCommandPacket
-import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.network.protocol.ping.ClientboundPongResponsePacket
+import net.minecraft.network.protocol.ping.ServerboundPingRequestPacket
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
+import kotlin.math.min
 
 object Ping {
-    private var didBeat = true
-    private var lastBeat = 0.0
-    // lazy fix
-    private val awaitingBlockUpdate = mutableMapOf<BlockPos, BlockEntry>()
-
-    private data class BlockEntry(val time: Double, val expire: Double = time + 1000.0, var used: Boolean = false)
+    private var lastBeat = 0L
 
     private val samples = ConcurrentLinkedQueue<PingSample>()
     private var pingSum = atomic(0.0)
@@ -27,9 +19,7 @@ object Ping {
     private var medianMax = ConcurrentSkipListSet<PingSample> { a, b -> b.v.compareTo(a.v).let { if (it == 0) a.t.compareTo(b.t) else it } }
     private var medianMin = ConcurrentSkipListSet<PingSample> { a, b -> a.v.compareTo(b.v).let { if (it == 0) a.t.compareTo(b.t) else it } }
 
-    data class PingSample(val t: Double, val v: Double, val w: Int)
-
-    private fun getTimeMS(): Double = System.nanoTime() / 1.0e6
+    data class PingSample(val t: Long, val v: Double, val w: Int)
 
     fun getLastPing(): Double = samples.lastOrNull()?.v ?: 0.0
 
@@ -59,7 +49,7 @@ object Ping {
         }
     }
 
-    fun addSample(ping: Double, weight: Int, t: Double) {
+    fun addSample(ping: Double, weight: Int, t: Long) {
         if (ping > 1.0e6) return
         val sample = PingSample(t, ping, weight)
 
@@ -72,63 +62,37 @@ object Ping {
         rebalanceHeaps()
     }
 
-    private fun addSample_(from: Double, weight: Int) {
-        val t = getTimeMS()
-        addSample(t - from, weight, t)
-    }
-
     init {
         EventBus.on<PacketSentEvent> { event ->
             when (val packet = event.packet) {
-                is ServerboundClientCommandPacket -> {
-                    if (packet.action != ServerboundClientCommandPacket.Action.REQUEST_STATS) return@on
-                    val t = getTimeMS()
-                    if (!didBeat && lastBeat + 10_000.0 > t) event.cancel()
-                    else {
-                        lastBeat = t
-                        didBeat = false
-                    }
-                }
-
-                is ServerboundUseItemOnPacket -> {
-                    val t = getTimeMS()
-                    awaitingBlockUpdate.merge(packet.hitResult.blockPos, BlockEntry(t)) { t, u ->
-                        if (u.time > t.expire) u
-                        else t
-                    }
+                is ServerboundPingRequestPacket -> {
+                    lastBeat = System.currentTimeMillis()
                 }
             }
         }
 
         EventBus.on<PacketReceivedEvent> { event ->
             when (val packet = event.packet) {
-                is ClientboundAwardStatsPacket -> {
-                    if (didBeat) return@on
-                    if (lastBeat == 0.0) return@on
-
-                    addSample_(lastBeat, 10)
-                    didBeat = true
-                }
-
-                is ClientboundBlockUpdatePacket -> {
-                    val e = awaitingBlockUpdate[packet.pos] ?: return@on
-                    if (e.used) return@on
-                    addSample_(e.time, 1)
-                    e.used = true
-                }
-
                 is ClientboundPongResponsePacket -> {
-                    addSample((System.currentTimeMillis() - packet.time).toDouble(), 5, getTimeMS())
+                    val t = System.currentTimeMillis()
+                    val a = (System.nanoTime() - packet.time) * 1e-6
+                    val b = (t - packet.time).toDouble()
+                    if (a < 0.0 && b < 0.0) return@on
+
+                    val p = if (a < 0.0) b
+                        else if (b < 0.0) a
+                        else min(a, b)
+                    addSample(p, 1, t)
                 }
             }
         }
 
         EventBus.on<TickEvent> {
-            val t = getTimeMS()
+            val t = System.currentTimeMillis()
             var deltaPing = 0.0
             var deltaWeight = 0
 
-            while (samples.isNotEmpty() && samples.peek().t < t - 60_000.0) {
+            while (samples.isNotEmpty() && samples.peek().t < t - 60_000L) {
                 val sample = samples.poll()
                 if (sample != null) {
                     if (!medianMax.remove(sample)) medianMin.remove(sample)
@@ -143,15 +107,7 @@ object Ping {
                 rebalanceHeaps()
             }
 
-            if (
-                t - lastBeat > (if (didBeat) 5_000.0 else 10_000.0)
-            ) Devonian.minecraft.connection?.send(ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.REQUEST_STATS))
-        }
-
-        EventBus.on<WorldChangeEvent> {
-            didBeat = true
-            lastBeat = getTimeMS()
-            awaitingBlockUpdate.clear()
+            if (t - lastBeat > 1_000L) Devonian.minecraft.connection?.send(ServerboundPingRequestPacket(System.nanoTime()))
         }
     }
 }
