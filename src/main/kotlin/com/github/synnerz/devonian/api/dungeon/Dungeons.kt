@@ -44,6 +44,7 @@ object Dungeons {
 
     val players = linkedMapOf<String, DungeonPlayer>()
     val playerClasses = ConcurrentHashMap<String, DungeonClass>()
+    val selfClass = BasicState(DungeonClass.Unknown)
     private var needReset = true
 
     var floor = FloorType.None
@@ -235,6 +236,7 @@ object Dungeons {
                     val c = DungeonClass.from(role)
                     player.role = c
                     playerClasses[name] = c
+                    if (players.firstEntry().key == player.name) selfClass.value = c
 
                     val level = match.getOrNull(2)
                     if (level != null) player.classLevel = StringUtils.parseRoman(level)
@@ -262,8 +264,6 @@ object Dungeons {
             val area = event.area
             if (area == null || area != "Catacombs") {
                 if (!needReset) return@on
-                players.clear()
-                playerClasses.clear()
                 DungeonScanner.reset()
                 DungeonMapScanner.reset()
                 reset()
@@ -272,8 +272,6 @@ object Dungeons {
         }
 
         EventBus.on<WorldChangeEvent> {
-            players.clear()
-            playerClasses.clear()
             DungeonScanner.reset()
             DungeonMapScanner.reset()
             reset()
@@ -409,6 +407,10 @@ object Dungeons {
     }
 
     private fun reset() {
+        players.clear()
+        playerClasses.clear()
+        selfClass.value = DungeonClass.Unknown
+
         floor = FloorType.None
         Stages.Root.reset()
 

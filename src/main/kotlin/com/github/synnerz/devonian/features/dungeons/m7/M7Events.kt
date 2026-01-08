@@ -38,9 +38,9 @@ object M7Events {
             val dragon = M7Dragon.entries.find { it.particleX == x && it.particleZ == z } ?: return@on
             val tick = EventBus.serverTicks()
             val cd = cooldown.getOrElse(dragon) { -1 }
-            if (cd != -1 && tick - cd < 100) return@on
+            if (cd != -1 && tick < cd) return@on
 
-            cooldown[dragon] = tick
+            cooldown[dragon] = tick + 100
             DragonSpawned(dragon, isHigh).post()
         }.setEnabled(Stages.WitherKing.isActiveState)
 

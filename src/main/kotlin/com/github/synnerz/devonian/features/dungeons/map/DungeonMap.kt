@@ -486,9 +486,9 @@ object DungeonMap : HudFeature(
         val renderNames = SETTING_RENDER_NAMES.get() && shouldRenderName
 
         // shrugs
-        var idx = 0
-        Dungeons.players.forEach { (_, player) ->
-            val i = idx++
+        var idx = Dungeons.players.size
+        Dungeons.players.reversed().forEach { (_, player) ->
+            val i = --idx
             if (player.isDead) return@forEach
             val pos = player.getLerpedPosition() ?: return@forEach
 
