@@ -274,6 +274,7 @@ object Devonian : ClientModInitializer {
         RunsLogger,
         DragonStackAimer,
         RemoveHypixelScoreboard,
+        HideEmptyMessages,
 
         // Debug
         CopyItem,
