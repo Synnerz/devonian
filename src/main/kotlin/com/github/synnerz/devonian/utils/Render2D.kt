@@ -87,7 +87,7 @@ object Render2D {
         x1: Float, y1: Float,
         x2: Float, y2: Float,
         c: Color,
-        lw: Int = 1,
+        lw: Float = 1f,
     ) {
         val mat = Matrix3x2f(ctx.pose())
         var dx = y1 - y2

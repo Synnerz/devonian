@@ -15,6 +15,7 @@ import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
+import java.awt.Color
 import kotlin.math.min
 
 object HudManager : Screen(Component.literal("Devonian.HudManager")) {
@@ -48,7 +49,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         isEditing = true
         val window = minecraft?.window ?: return
         HudManagerInstructions.x = window.guiScaledWidth / 2.0
-        HudManagerInstructions.y = window.guiScaledHeight / 2.0
+        HudManagerInstructions.y = window.guiScaledHeight / 2.0 + 10.0
         HudManagerHider.x = window.guiScaledWidth / 2.0
         HudManagerHider.y = window.guiScaledHeight / 4.0
         HudManagerRenderer.x = window.guiScaledWidth / 2.0
@@ -129,14 +130,29 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
             if (hud.isVisibleEdit()) hud.sampleDraw(context, mouseX, mouseY, hud == selectedHud)
         }
 
-        val window = minecraft?.window
-        if (window != null) context.fill(0, 0, window.guiScaledWidth, window.guiScaledHeight, 0x80000000.toInt())
+        val window = minecraft?.window ?: return
+        context.fill(0, 0, window.guiScaledWidth, window.guiScaledHeight, 0x80000000.toInt())
         super.render(context, mouseX, mouseY, deltaTicks)
 
         Render2D.drawString(
             context,
             "Hud Manager",
             10, 10
+        )
+
+        Render2D.drawLine(
+            context,
+            window.guiScaledWidth * 0.5f, window.guiScaledHeight * 0.5f - 5f,
+            window.guiScaledWidth * 0.5f, window.guiScaledHeight * 0.5f + 5f,
+            Color.GREEN,
+            1f / window.guiScale,
+        )
+        Render2D.drawLine(
+            context,
+            window.guiScaledWidth * 0.5f - 5f, window.guiScaledHeight * 0.5f,
+            window.guiScaledWidth * 0.5f + 5f, window.guiScaledHeight * 0.5f,
+            Color.GREEN,
+            1f / window.guiScale,
         )
 
         for (hud in huds) {
