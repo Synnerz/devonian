@@ -75,13 +75,12 @@ object Ping {
             when (val packet = event.packet) {
                 is ClientboundPongResponsePacket -> {
                     val t = System.currentTimeMillis()
-                    val a = (System.nanoTime() - packet.time) * 1e-6
+                    val n = System.nanoTime()
+                    val a = (n - packet.time) * 1e-6
                     val b = (t - packet.time).toDouble()
-                    if (a < 0.0 && b < 0.0) return@on
+                    val c = (n / 1_000_000L - packet.time).toDouble()
 
-                    val p = if (a < 0.0) b
-                        else if (b < 0.0) a
-                        else min(a, b)
+                    val p = listOf(a, b, c).filter { it >= 0.0 }.minOrNull() ?: return@on
                     addSample(p, 1, t)
                 }
             }
