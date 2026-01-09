@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsAccessor;
 import com.github.synnerz.devonian.utils.TexturedQuadRenderState;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
@@ -19,18 +20,27 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.numbers.NumberFormat;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.scores.PlayerScoreEntry;
+import net.minecraft.world.scores.Scoreboard;
 import org.joml.Matrix3x2f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Arrays;
+import java.util.function.IntFunction;
+import java.util.stream.Stream;
 
 @Mixin(Gui.class)
 public class GuiMixin {
@@ -226,5 +236,32 @@ public class GuiMixin {
         }
 
         original.call(instance, font, component, i, j, k, true);
+    }
+
+    @Unique
+    private boolean removeHypixel = false;
+
+    @SuppressWarnings("unchecked")
+    @Inject(
+        method = "method_55439",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/PlayerScoreEntry;formatValue(Lnet/minecraft/network/chat/numbers/NumberFormat;)Lnet/minecraft/network/chat/MutableComponent;")
+    )
+    private void devonian$removeHypixelScoreboard(Scoreboard scoreboard, NumberFormat numberFormat, PlayerScoreEntry playerScoreEntry, CallbackInfoReturnable cir, @Local(name = "component2") Component component2) {
+        if (!RemoveHypixelScoreboard.INSTANCE.isEnabled()) return;
+        if (component2.getString().startsWith("www.hypixel")) removeHypixel = true;
+    }
+
+    @SuppressWarnings("unchecked")
+    @WrapOperation(
+        method = "displayScoreboardSidebar",
+        at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;toArray(Ljava/util/function/IntFunction;)[Ljava/lang/Object;")
+    )
+    private Object[] devonian$removeHypixelScoreboard(Stream instance, IntFunction<Object[]> intFunction, Operation<Object[]> original) {
+        Object[] arr = original.call(instance, intFunction);
+        if (removeHypixel) {
+            arr = Arrays.copyOfRange(arr, 0, Math.max(0, arr.length - 2));
+            removeHypixel = false;
+        }
+        return arr;
     }
 }

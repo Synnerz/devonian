@@ -82,3 +82,4 @@ object SignEnterKey : Feature(
         return GLFW.glfwGetKey(Devonian.minecraft.window.handle(), GLFW.GLFW_KEY_LEFT_SHIFT) != GLFW.GLFW_PRESS
     }
 }
+object RemoveHypixelScoreboard : Feature("removeHypixelScoreboard", "www.hypixel.net", subcategory = "Hiders")

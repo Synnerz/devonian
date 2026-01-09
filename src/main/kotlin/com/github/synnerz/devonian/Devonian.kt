@@ -273,6 +273,7 @@ object Devonian : ClientModInitializer {
         CustomDungeonWaypoints,
         RunsLogger,
         DragonStackAimer,
+        RemoveHypixelScoreboard,
 
         // Debug
         CopyItem,
