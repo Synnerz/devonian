@@ -24,7 +24,7 @@ object HideArcherPassive : Feature(
                 if (it.id != 8) return@forEach
                 val stack = it.value as? ItemStack ?: return@on
                 if (stack.isEmpty) return@on
-                if (stack.item === Items.BONE_MEAL) Scheduler.scheduleTask {
+                if (stack.item === Items.BONE_MEAL) Scheduler.scheduleAfterPacket {
                     minecraft.level?.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED)
                 }
             }

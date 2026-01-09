@@ -77,7 +77,7 @@ object HideHealerOrbs : Feature(
 
             if (!orbNames.any { event.name.startsWith(it) }) return@on
 
-            Scheduler.scheduleTask {
+            Scheduler.scheduleAfterPacket {
                 minecraft.level?.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED)
             }
         }
@@ -95,7 +95,7 @@ object HideHealerOrbs : Feature(
 
                 val id = data.getString("id").getOrNull() ?: return@on
 
-                if (orbIds.contains(id)) Scheduler.scheduleTask {
+                if (orbIds.contains(id)) Scheduler.scheduleAfterPacket {
                     val ent = minecraft.level?.getEntity(event.entityId)
                     if (ent != null) addQueue.add(Triple(ent.x, ent.y + 2.0, ent.z))
                     minecraft.level?.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED)

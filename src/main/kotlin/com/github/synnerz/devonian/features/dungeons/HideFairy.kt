@@ -30,7 +30,7 @@ object HideFairy : Feature(
                 if (item.isEmpty) return@on
 
                 val prof = item.get(DataComponents.PROFILE) ?: return@on
-                if (prof.partialProfile().id == fairyUUID) Scheduler.scheduleTask {
+                if (prof.partialProfile().id == fairyUUID) Scheduler.scheduleAfterPacket {
                     minecraft.level?.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED)
                 }
             }

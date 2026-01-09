@@ -31,7 +31,7 @@ object HideWitherKing : Feature(
                 is ClientboundAddEntityPacket -> {
                     if (packet.type != EntityType.ARMOR_STAND) return@on
                     if (packet.y !in 9.0 .. 25.0 || packet.z > 45.0) return@on
-                    Scheduler.scheduleTask(2) {
+                    Scheduler.scheduleAfterPacket {
                         minecraft.level?.removeEntity(packet.id, Entity.RemovalReason.DISCARDED)
                     }
                 }

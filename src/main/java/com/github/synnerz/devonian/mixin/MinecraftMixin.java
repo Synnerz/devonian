@@ -82,6 +82,14 @@ public class MinecraftMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketProcessor;processQueuedPackets()V")
     )
     private void devonian$schedulerBeforePacket(boolean bl, CallbackInfo ci) {
-        Scheduler.INSTANCE.internalListener();
+        Scheduler.INSTANCE.internalListenerBefore();
+    }
+
+    @Inject(
+        method = "runTick",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketProcessor;processQueuedPackets()V", shift = At.Shift.AFTER)
+    )
+    private void devonian$schedulerAfterPacket(boolean bl, CallbackInfo ci) {
+        Scheduler.INSTANCE.internalListenerAfter();
     }
 }

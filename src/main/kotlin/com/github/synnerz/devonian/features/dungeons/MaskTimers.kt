@@ -81,9 +81,7 @@ object BonzoMask : TextHudFeature(
             cdStartedAt = System.currentTimeMillis() + (COOLDOWN_TIME * 1000L)
 
             if (!SETTING_PROC_ALERT.get()) return@on
-            Scheduler.scheduleTask {
-                Alert.show("&9Bonzo Mask Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
-            }
+            Alert.show("&9Bonzo Mask Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
         }
 
         on<RenderOverlayEvent> {
@@ -169,9 +167,7 @@ object SpiritMask : TextHudFeature(
             cdStartedAt = System.currentTimeMillis() + COOLDOWN_TIME
 
             if (!SETTING_PROC_ALERT.get()) return@on
-            Scheduler.scheduleTask {
-                Alert.show("&fSpirit Mask Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
-            }
+            Alert.show("&fSpirit Mask Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
         }
 
         on<RenderOverlayEvent> {
@@ -256,9 +252,7 @@ object PhoenixTimer : TextHudFeature(
             cdStartedAt = System.currentTimeMillis() + COOLDOWN_TIME
 
             if (!SETTING_PROC_ALERT.get()) return@on
-            Scheduler.scheduleTask {
-                Alert.show("&cPhoenix Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
-            }
+            Alert.show("&cPhoenix Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
         }
 
         on<RenderOverlayEvent> {

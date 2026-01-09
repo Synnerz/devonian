@@ -49,7 +49,7 @@ object HideNoStarTag : Feature(
                 if (bloodExceptions.contains(bloodName)) return@on
             }
 
-            Scheduler.scheduleTask { world.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED) }
+            Scheduler.scheduleAfterPacket { world.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED) }
         }
     }
 }

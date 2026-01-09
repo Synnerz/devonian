@@ -281,7 +281,7 @@ object DungeonMapScanner {
             if (colors[0] != MapColors.EMPTY.color) lastMapId = mapId
 
             if (roomSize == -1 && !scanMapDimensions(colors)) return@on
-            Scheduler.scheduleTask {
+            Scheduler.scheduleAfterPacket {
                 updatePlayerIcons(mapState)
                 updateRooms(colors)
 

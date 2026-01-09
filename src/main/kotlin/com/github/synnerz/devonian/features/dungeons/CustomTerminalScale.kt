@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -69,9 +68,7 @@ object CustomTerminalScale : Feature(
     }
 
     private fun setScale(scale: Int) {
-        Scheduler.scheduleTask {
-            minecraft.options.guiScale().set(scale)
-        }
+        minecraft.options.guiScale().set(scale)
     }
 
     fun shouldScale(title: String): Boolean {

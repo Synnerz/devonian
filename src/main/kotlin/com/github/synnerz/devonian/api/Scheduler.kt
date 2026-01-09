@@ -16,6 +16,7 @@ object Scheduler {
     private var tickServer = atomic(0)
     private var taskId = atomic(0)
     private val beforePacketTasks = ConcurrentLinkedQueue<() -> Unit>()
+    private val afterPacketTasks = ConcurrentLinkedQueue<() -> Unit>()
 
     val schedulePool = Executors.newScheduledThreadPool(0)
 
@@ -52,10 +53,22 @@ object Scheduler {
         beforePacketTasks.offer(cb)
     }
 
-    fun internalListener() {
+    fun scheduleAfterPacket(cb: () -> Unit) {
+        afterPacketTasks.offer(cb)
+    }
+
+    fun internalListenerBefore() {
         var l = beforePacketTasks.size
         while (--l >= 0) {
             val cb = beforePacketTasks.poll() ?: break
+            cb()
+        }
+    }
+
+    fun internalListenerAfter() {
+        var l = afterPacketTasks.size
+        while (--l >= 0) {
+            val cb = afterPacketTasks.poll() ?: break
             cb()
         }
     }

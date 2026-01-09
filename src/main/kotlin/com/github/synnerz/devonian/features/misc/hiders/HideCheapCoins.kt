@@ -28,7 +28,7 @@ object HideCheapCoins : Feature(
                 if (stack.item !== Items.PLAYER_HEAD) return@on
 
                 val prof = stack.get(DataComponents.PROFILE) ?: return@on
-                if (prof.partialProfile().id == coinUUID) Scheduler.scheduleTask {
+                if (prof.partialProfile().id == coinUUID) Scheduler.scheduleAfterPacket {
                     minecraft.level?.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED)
                 }
             }

@@ -24,7 +24,7 @@ object RemoveDamageTag : Feature(
 
             if (!event.name.matches(damageTagRegex)) return@on
 
-            Scheduler.scheduleTask { world.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED) }
+            Scheduler.scheduleAfterPacket { world.removeEntity(event.entityId, Entity.RemovalReason.DISCARDED) }
         }
     }
 }
