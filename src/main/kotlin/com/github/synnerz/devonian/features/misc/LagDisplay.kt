@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
 
@@ -17,7 +17,7 @@ object LagDisplay : TextHudFeature("lagDisplay") {
     private var lastPacket = 0L
 
     override fun initialize() {
-        on<PacketReceivedEvent> {
+        on<ServerTickEvent> {
             lastPacket = System.currentTimeMillis()
         }
 
