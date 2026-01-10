@@ -37,6 +37,12 @@ object TerminalSolvers : Feature(
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
     }
 
+    private val SETTING_MIDDLE_CLICK = addSwitch(
+        "middleClick",
+        true,
+        "",
+        "Terminal Middle Click",
+    )
     private val SETTING_DISABLE_TOOLTIP = addSwitch(
         "disableTooltip",
         true,
@@ -73,12 +79,6 @@ object TerminalSolvers : Feature(
         "Cancels the wrong clicks inside of terminals",
         "Terminal Solver Cancel Clicks",
     )
-    // private val SETTING_CANCEL_LAG = addSwitch(
-    //     "cancelLag",
-    //     false,
-    //     "Cancels clicks that would've failed due to wrong window id",
-    //     "Terminal Solver Cancel Lag Clicks"
-    // )
     val SETTING_HIDE_DONE = addSwitch(
         "hideDone",
         true,
@@ -113,13 +113,23 @@ object TerminalSolvers : Feature(
     )
 
     private var currentSolver: TerminalData? = null
-    // private var lastClickWindowId = 0
 
     private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
-    // private val LAG_SOUND = SoundEvents.NOTE_BLOCK_BASEDRUM
 
     data class TerminalSlot(val slot: Int, val itemStack: ItemStack)
     data class RubixSlot(val slot: Int, val itemStack: ItemStack, val color: Int, val clicks: Int = 0)
+
+    private fun onInteractSlot(slot: Slot, event: CancellableEvent): Boolean {
+        return if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot) == true) {
+            event.cancel()
+            minecraft.level?.playPlayerSound(
+                PREVENTED_SOUND.value(),
+                SoundSource.MASTER,
+                1f, 0.5f,
+            )
+            true
+        } else false
+    }
 
     override fun initialize() {
         on<GuiOpenEvent> { event ->
@@ -145,47 +155,15 @@ object TerminalSolvers : Feature(
 
         on<DropItemEvent> { event ->
             val slot = event.slot ?: return@on
-            if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot) == true) {
-                event.cancel()
-                minecraft.level?.playPlayerSound(
-                    PREVENTED_SOUND.value(),
-                    SoundSource.MASTER,
-                    1f, 0.5f,
-                )
-                return@on
-            }
+            onInteractSlot(slot, event)
         }
 
-        on<GuiClickEvent> { event ->
-            val slot = ScreenUtils.cursorSlot(event.screen) ?: return@on
-            if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot) == true) {
+        on<PickupItemInventoryEvent> { event ->
+            if (onInteractSlot(event.slot, event)) return@on
+            if (SETTING_MIDDLE_CLICK.get() && currentSolver != TerminalData.RUBIX) {
                 event.cancel()
-                minecraft.level?.playPlayerSound(
-                    PREVENTED_SOUND.value(),
-                    SoundSource.MASTER,
-                    1f, 0.5f,
-                )
-                return@on
+                ScreenUtils.click(event.slot.index, false, "MIDDLE")
             }
-
-            // TODO: only cancel if last click was correct
-            /*
-            if (!SETTING_CANCEL_LAG.get()) return@on
-            val id = minecraft.player?.containerMenu?.containerId ?: return@on
-            if (currentSolver?.changesWindow != true) return@on
-
-            if (id != lastClickWindowId) {
-                lastClickWindowId = id
-                return@on
-            }
-
-            event.cancel()
-            minecraft.level?.playPlayerSound(
-                LAG_SOUND.value(),
-                SoundSource.MASTER,
-                1f, 0.5f,
-            )
-            */
         }
     }
 
@@ -465,7 +443,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun cancelClick(slot: Slot): Boolean {
-            return false
+            return !correctSlots.any { it.slot == slot.containerSlot }
         }
     };
 
