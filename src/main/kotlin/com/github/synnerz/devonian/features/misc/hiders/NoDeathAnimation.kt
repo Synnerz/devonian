@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.entity.monster.WitherSkeleton
 
@@ -24,6 +25,7 @@ object NoDeathAnimation : Feature(
     private val deadTags = mutableSetOf<Int>()
 
     private fun shouldHide(entity: LivingEntity): Boolean {
+        if (entity is EnderDragon) return false
         if (SETTING_HIDE_DEAD_NAMETAGS.get() && entity is ArmorStand && deadTags.contains(entity.id)) return true
 
         if (entity.isAlive && entity.health > 0f) return false
