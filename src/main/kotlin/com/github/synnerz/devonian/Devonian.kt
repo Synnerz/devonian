@@ -279,6 +279,7 @@ object Devonian : ClientModInitializer {
         DisableGlassPaneHighlight,
         HideUselessBossBar,
         WatcherBossBar,
+        HighlightBat,
 
         // Debug
         CopyItem,
