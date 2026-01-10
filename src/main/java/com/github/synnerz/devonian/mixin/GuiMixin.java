@@ -241,17 +241,15 @@ public class GuiMixin {
     @Unique
     private boolean removeHypixel = false;
 
-    @SuppressWarnings("unchecked")
     @Inject(
         method = "method_55439",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/PlayerScoreEntry;formatValue(Lnet/minecraft/network/chat/numbers/NumberFormat;)Lnet/minecraft/network/chat/MutableComponent;")
     )
-    private void devonian$removeHypixelScoreboard(Scoreboard scoreboard, NumberFormat numberFormat, PlayerScoreEntry playerScoreEntry, CallbackInfoReturnable cir, @Local(name = "component2") Component component2) {
+    private void devonian$removeHypixelScoreboard(Scoreboard scoreboard, NumberFormat numberFormat, PlayerScoreEntry playerScoreEntry, CallbackInfoReturnable cir, @Local(ordinal = 1) Component component2) {
         if (!RemoveHypixelScoreboard.INSTANCE.isEnabled()) return;
         if (component2.getString().startsWith("www.hypixel")) removeHypixel = true;
     }
 
-    @SuppressWarnings("unchecked")
     @WrapOperation(
         method = "displayScoreboardSidebar",
         at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;toArray(Ljava/util/function/IntFunction;)[Ljava/lang/Object;")
