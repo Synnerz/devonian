@@ -34,7 +34,7 @@ dependencies {
 
 	include modImplementation("com.github.Synnerz:barrl:1.21.10-SNAPSHOT")
 	// TODO: upload to modrinth
-	include modImplementation("com.github.Synnerz:talium:94dbc2c0bf")
+	include modImplementation("com.github.Synnerz:talium:c924391c41")
 }
 
 processResources {
