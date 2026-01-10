@@ -366,6 +366,10 @@ class UseItemOnEvent(
     val hand: InteractionHand
 ) : Event()
 
+class UseItemEvent(
+    val hand: InteractionHand
+) : Event()
+
 class ClientThreadServerTickEvent() : Event()
 
 /*

@@ -280,6 +280,7 @@ object Devonian : ClientModInitializer {
         HideUselessBossBar,
         WatcherBossBar,
         HighlightBat,
+        WitherShieldTimer,
 
         // Debug
         CopyItem,

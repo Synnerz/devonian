@@ -227,6 +227,10 @@ object EventBus {
                     UseItemOnEvent(packet.hitResult, packet.hand).post()
                 }
 
+                is ServerboundUseItemPacket -> {
+                    UseItemEvent(packet.hand).post()
+                }
+
                 is ServerboundContainerClosePacket -> {
                     if (ClientContainerCloseEvent(packet.containerId).post())
                         event.cancel()
