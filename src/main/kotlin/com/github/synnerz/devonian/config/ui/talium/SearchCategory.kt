@@ -45,12 +45,19 @@ class SearchCategory(rightPanel: UIBase) {
                 onSearch(text)
             previousText = text
         }
+
+        onResize { _, w ->
+            textScale = 2f / w.scaleFactor
+        }
     }
     private val categoryTitleBg = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
         setColor(ColorPalette.TERTIARY_COLOR)
     }
     private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, "Searching...", true, parent = categoryTitleBg).apply {
         setColor(ColorPalette.TEXT_COLOR)
+        onResize { _, w ->
+            textScale = 3f / w.scaleFactor
+        }
     }
     private val scrollableRect = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel)
 
@@ -120,7 +127,7 @@ class SearchCategory(rightPanel: UIBase) {
         components.add(
             Pair(
                 data,
-                createBase(0.0, scrollableRect).apply {
+                createBase(0.0, scrollableRect, if (data is ConfigData.FeatureSwitch) 0.0 else 5.0).apply {
                     addChild(createTitle(data.displayName))
                     addChild(createDescription(data.description))
                     addChild(
@@ -154,20 +161,25 @@ class SearchCategory(rightPanel: UIBase) {
         oldCategory = null
     }
 
-    private fun createBase(y: Double, parent: UIBase): UIRect =
-        UIRect(1.0, y, 98.0, 15.0, parent = parent).apply {
+    private fun createBase(y: Double, parent: UIBase, offset: Double): UIRect =
+        UIRect(1.0 + offset, y, 98.0 - offset, 15.0, parent = parent).apply {
             addEffects(OutlineEffect(1.0, ColorPalette.OUTLINE_COLOR))
         }
 
     private fun createTitle(text: String, parent: UIRect? = null): UIText =
         UIText(0.0, 2.0, 100.0, 25.0, text, true, parent).apply {
             setColor(ColorPalette.TEXT_COLOR)
+            onResize { _, w ->
+                textScale = 3f / w.scaleFactor
+            }
         }
 
     private fun createDescription(text: String, parent: UIRect? = null): UIWrappedText =
         UIWrappedText(2.0, 28.0, 75.0, 75.0, text, parent = parent).apply {
             setColor(ColorPalette.LIGHT_TEXT_COLOR)
-            textScale = 0.9f
+            onResize { _, w ->
+                textScale = 2f / w.scaleFactor
+            }
         }
 
     private fun createButton(
@@ -177,6 +189,9 @@ class SearchCategory(rightPanel: UIBase) {
         setColor(ColorPalette.TERTIARY_COLOR)
         addChild(UIText(0.0, 0.0, 100.0, 100.0, configData.btnTitle, true).apply {
             setColor(ColorPalette.TEXT_COLOR)
+            onResize { _, w ->
+                textScale = 3f / w.scaleFactor
+            }
         })
         onMouseRelease {
             if (!canTrigger()) return@onMouseRelease
@@ -253,6 +268,12 @@ class SearchCategory(rightPanel: UIBase) {
         configData: ConfigData.TextInput,
         parent: UIRect? = null
     ): UITextInput = object : UITextInput(80.0, 25.0, 15.0, 50.0, configData.get(), parent = parent) {
+        init {
+            onResize { _, w ->
+                textScale = 2f / w.scaleFactor
+            }
+        }
+
         override fun onFocus(event: UIFocusEvent) = apply {
             if (!canTrigger()) {
                 focused = false
@@ -280,6 +301,12 @@ class SearchCategory(rightPanel: UIBase) {
         parent: UIRect? = null
     ): UISelection =
         object : UISelection(80.0, 25.0, 15.0, 50.0, configData.get(), configData.options, parent = parent) {
+            init {
+                centerText.onResize { _, w ->
+                    centerText.textScale = 2f / w.scaleFactor
+                }
+            }
+
             override fun setOption(idx: Int) {
                 if (!canTrigger()) return
                 super.setOption(idx)
