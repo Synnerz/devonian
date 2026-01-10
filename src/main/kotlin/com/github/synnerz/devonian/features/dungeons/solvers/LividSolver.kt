@@ -37,6 +37,12 @@ object LividSolver : Feature(
         "The line width of the box",
         "Livid Line Width"
     )
+    private val SETTING_TRACER = addSwitch(
+        "tracer",
+        true,
+        "",
+        "Livid Tracer",
+    )
 
     private val mapBlocks = mapOf(
         Blocks.WHITE_WOOL to "Vendetta",
@@ -77,31 +83,25 @@ object LividSolver : Feature(
         on<RenderWorldEvent> { event ->
             if (!started) return@on
             val entity = lividEnt ?: return@on
-            val matrixStack = event.ctx.matrices()
 
+            val pos = entity.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
             val cam = event.ctx.worldState().cameraRenderState.pos
             val width = entity.bbWidth.toDouble()
             val halfWidth = width / 2.0
 
-            matrixStack.pushPose()
-            matrixStack.translate(cam.reverse())
-
             Context.Immediate?.renderBox(
-                entity.x - halfWidth, entity.y, entity.z - halfWidth,
+                pos.x - halfWidth, pos.y, pos.z - halfWidth,
                 width, entity.bbHeight.toDouble(),
                 SETTING_BOX_COLOR.getColor(),
-                translate = false,
                 lineWidth = SETTING_LINE_WIDTH.get(),
             )
             val look = event.ctx.worldState().cameraRenderState.orientation.transform(Vector3f(0f, 0f, -1f))
-            BlazeSolver.renderLine(
-                cam.add(entity.x, entity.y + 1.0, entity.z),
+            if (SETTING_TRACER.get()) BlazeSolver.renderLine(
+                Vec3(pos.x, pos.y + 1.0, pos.z),
                 cam.add(Vec3(look)),
                 SETTING_BOX_COLOR.getColor(),
                 ctx = event.ctx,
             )
-
-            matrixStack.popPose()
         }
     }
 
