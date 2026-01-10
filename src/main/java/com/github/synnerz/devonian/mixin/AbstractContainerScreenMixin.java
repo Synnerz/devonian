@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.api.events.*;
+import com.github.synnerz.devonian.features.misc.DisableGlassPaneHighlight;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,21 +13,30 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Mixin(value = AbstractContainerScreen.class, priority = 1002)
 public abstract class AbstractContainerScreenMixin {
     @Shadow
     @Final
     protected AbstractContainerMenu menu;
+
+    @Shadow
+    @Nullable
+    protected Slot hoveredSlot;
 
     @Inject(
         method = "slotClicked",
@@ -97,5 +107,54 @@ public abstract class AbstractContainerScreenMixin {
 
         if (new ContainerRenderEvent((ContainerScreen) Devonian.INSTANCE.getMinecraft().screen, i, j, f, guiGraphics).post())
             ci.cancel();
+    }
+
+    @Unique
+    private final Set<Item> panes = Set.of(
+        Items.GLASS_PANE,
+        Items.WHITE_STAINED_GLASS_PANE,
+        Items.ORANGE_STAINED_GLASS_PANE,
+        Items.MAGENTA_STAINED_GLASS_PANE,
+        Items.LIGHT_BLUE_STAINED_GLASS_PANE,
+        Items.YELLOW_STAINED_GLASS_PANE,
+        Items.LIME_STAINED_GLASS_PANE,
+        Items.PINK_STAINED_GLASS_PANE,
+        Items.GRAY_STAINED_GLASS_PANE,
+        Items.LIGHT_GRAY_STAINED_GLASS_PANE,
+        Items.CYAN_STAINED_GLASS_PANE,
+        Items.PURPLE_STAINED_GLASS_PANE,
+        Items.BLUE_STAINED_GLASS_PANE,
+        Items.BROWN_STAINED_GLASS_PANE,
+        Items.GREEN_STAINED_GLASS_PANE,
+        Items.RED_STAINED_GLASS_PANE,
+        Items.BLACK_STAINED_GLASS_PANE
+    );
+
+    @Inject(
+        method = "renderSlotHighlightBack",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V"),
+        cancellable = true
+    )
+    private void devonian$test1(GuiGraphics guiGraphics, CallbackInfo ci) {
+        if (!DisableGlassPaneHighlight.INSTANCE.isEnabled()) return;
+        assert hoveredSlot != null;
+        ItemStack item = hoveredSlot.getItem();
+        if (!panes.contains(item.getItem())) return;
+        if (!item.getHoverName().getString().isBlank()) return;
+        ci.cancel();
+    }
+
+    @Inject(
+        method = "renderSlotHighlightFront",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V"),
+        cancellable = true
+    )
+    private void devonian$test2(GuiGraphics guiGraphics, CallbackInfo ci) {
+        if (!DisableGlassPaneHighlight.INSTANCE.isEnabled()) return;
+        assert hoveredSlot != null;
+        ItemStack item = hoveredSlot.getItem();
+        if (!panes.contains(item.getItem())) return;
+        if (!item.getHoverName().getString().isBlank()) return;
+        ci.cancel();
     }
 }

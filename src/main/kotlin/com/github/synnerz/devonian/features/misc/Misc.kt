@@ -83,3 +83,4 @@ object SignEnterKey : Feature(
     }
 }
 object RemoveHypixelScoreboard : Feature("removeHypixelScoreboard", "www.hypixel.net", subcategory = "Hiders")
+object DisableGlassPaneHighlight : Feature("disableGlassPaneHighlight", subcategory = "Hiders")

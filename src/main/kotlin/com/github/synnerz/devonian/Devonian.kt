@@ -275,6 +275,7 @@ object Devonian : ClientModInitializer {
         DragonStackAimer,
         RemoveHypixelScoreboard,
         HideEmptyMessages,
+        DisableGlassPaneHighlight,
 
         // Debug
         CopyItem,
