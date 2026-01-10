@@ -31,6 +31,7 @@ object DungeonMapScanner {
     var mapHeight = -1
     private val unscannedDoors = mutableSetOf<ComponentPosition>()
     private var lastMapId: MapId? = null
+    private var swapCd = 0L
 
     fun reset() {
         roomSize = -1
@@ -49,6 +50,7 @@ object DungeonMapScanner {
         val id = lastMapId ?: return
         Devonian.minecraft.level?.overrideMapData(id, null)
         lastMapId = null
+        swapCd = System.currentTimeMillis() + 3000L
     }
 
     private enum class MapColors(val color: Byte) {
@@ -282,6 +284,7 @@ object DungeonMapScanner {
 
             if (roomSize == -1 && !scanMapDimensions(colors)) return@on
             Scheduler.scheduleAfterPacket {
+                if (System.currentTimeMillis() < swapCd) return@scheduleAfterPacket
                 updatePlayerIcons(mapState)
                 updateRooms(colors)
 
