@@ -90,22 +90,22 @@ object Ping {
             var deltaPing = 0.0
             var deltaWeight = 0
 
-            while (samples.isNotEmpty() && samples.peek().t < t - 60_000L) {
+            while (samples.isNotEmpty() && samples.peek().t < t - 30_000L) {
                 val sample = samples.poll()
                 if (sample != null) {
                     if (!medianMax.remove(sample)) medianMin.remove(sample)
-                    deltaPing += sample.v
+                    deltaPing += sample.v * sample.w
                     deltaWeight += sample.w
                 }
             }
 
             if (deltaWeight > 0) {
-                pingSum.update { it - deltaPing * deltaWeight }
+                pingSum.update { it - deltaPing }
                 weightSum.minusAssign(deltaWeight)
                 rebalanceHeaps()
             }
 
-            if (t - lastBeat > 1_000L) Devonian.minecraft.connection?.send(ServerboundPingRequestPacket(System.nanoTime()))
+            if (t - lastBeat > 2_000L) Devonian.minecraft.connection?.send(ServerboundPingRequestPacket(System.nanoTime()))
         }
     }
 }
