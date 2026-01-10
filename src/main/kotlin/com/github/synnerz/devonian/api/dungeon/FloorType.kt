@@ -10,11 +10,12 @@ enum class FloorType(
     val roomsH: Int,
     val longName: String = shortName,
     val requiredPercent: Double = 1.0,
-    val requiredSpeed: Int = 600
+    val requiredSpeed: Int = 600,
+    val bloodMobs: Int = floorNum + 12,
 ) {
     None(0, false, "", 0, 0, ""),
 
-    Entrance(0, false, "E", 4, 4, "Entrance", 0.3, 1200),
+    Entrance(0, false, "E", 4, 4, "Entrance", 0.3, 1200, 9),
 
     F1(1, false, "F1", 4, 5, requiredPercent = 0.3),
     F2(2, false, "F2", 5, 5, requiredPercent = 0.4),

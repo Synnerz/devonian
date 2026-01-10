@@ -53,6 +53,7 @@
     "accessor.GuiAccessor",
     "accessor.GuiGraphicsAccessor",
     "accessor.HeartTypeAccessor",
+    "accessor.LerpingBossEventAccessor",
     "accessor.LevelLoadingScreenAccessor",
     "accessor.LocalPlayerAccessor",
     "accessor.ParticleAccessor",

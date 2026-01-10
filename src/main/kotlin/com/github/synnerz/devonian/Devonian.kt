@@ -13,6 +13,7 @@ import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.features.HudManagerInstructions
 import com.github.synnerz.devonian.features.HudManagerName
 import com.github.synnerz.devonian.features.HudManagerRenderer
+import com.github.synnerz.devonian.features.bossbar.BossBarHealth
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger
@@ -276,6 +277,8 @@ object Devonian : ClientModInitializer {
         RemoveHypixelScoreboard,
         HideEmptyMessages,
         DisableGlassPaneHighlight,
+        HideUselessBossBar,
+        WatcherBossBar,
 
         // Debug
         CopyItem,
