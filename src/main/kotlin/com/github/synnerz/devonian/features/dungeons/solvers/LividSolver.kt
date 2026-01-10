@@ -9,6 +9,8 @@ import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.phys.Vec3
+import org.joml.Vector3f
 import java.awt.Color
 
 object LividSolver : Feature(
@@ -77,12 +79,12 @@ object LividSolver : Feature(
             val entity = lividEnt ?: return@on
             val matrixStack = event.ctx.matrices()
 
-            val cam = minecraft.gameRenderer.mainCamera.position.reverse()
+            val cam = event.ctx.worldState().cameraRenderState.pos
             val width = entity.bbWidth.toDouble()
             val halfWidth = width / 2.0
 
             matrixStack.pushPose()
-            matrixStack.translate(cam.x, cam.y, cam.z)
+            matrixStack.translate(cam.reverse())
 
             Context.Immediate?.renderBox(
                 entity.x - halfWidth, entity.y, entity.z - halfWidth,
@@ -90,6 +92,13 @@ object LividSolver : Feature(
                 SETTING_BOX_COLOR.getColor(),
                 translate = false,
                 lineWidth = SETTING_LINE_WIDTH.get(),
+            )
+            val look = event.ctx.worldState().cameraRenderState.orientation.transform(Vector3f(0f, 0f, -1f))
+            BlazeSolver.renderLine(
+                cam.add(entity.x, entity.y + 1.0, entity.z),
+                cam.add(Vec3(look)),
+                SETTING_BOX_COLOR.getColor(),
+                ctx = event.ctx,
             )
 
             matrixStack.popPose()
