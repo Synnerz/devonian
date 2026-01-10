@@ -4,11 +4,11 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.*
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
+import net.minecraft.Util
 import net.minecraft.network.protocol.ping.ClientboundPongResponsePacket
 import net.minecraft.network.protocol.ping.ServerboundPingRequestPacket
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
-import kotlin.math.min
 
 object Ping {
     private var lastBeat = 0L
@@ -75,10 +75,9 @@ object Ping {
             when (val packet = event.packet) {
                 is ClientboundPongResponsePacket -> {
                     val t = System.currentTimeMillis()
-                    val n = System.nanoTime()
-                    val a = (n - packet.time) * 1e-6
+                    val a = (System.nanoTime() - packet.time) * 1e-6
                     val b = (t - packet.time).toDouble()
-                    val c = (n / 1_000_000L - packet.time).toDouble()
+                    val c = (Util.getMillis() - packet.time).toDouble()
 
                     val p = listOf(a, b, c).filter { it >= 0.0 }.minOrNull() ?: return@on
                     addSample(p, 1, t)
