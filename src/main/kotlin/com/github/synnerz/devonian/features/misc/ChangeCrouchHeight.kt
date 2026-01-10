@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.CameraAccessor
 import com.github.synnerz.devonian.mixin.accessor.EntityAccessor
@@ -21,7 +22,7 @@ object ChangeCrouchHeight : Feature(
         "legacyHeight",
         true,
         "",
-        "Use 1.8.9 Crouch Height",
+        "Use 1.8.9 Crouch Height on legacy islands",
     )
     private val SETTING_CHANGE_ACTUAL_HEIGHT = addSwitch(
         "nonVisual",
@@ -55,7 +56,11 @@ object ChangeCrouchHeight : Feature(
         if (camera.entity == null) return false
         if (camera.entity !== minecraft.player) return false
 
-        val eye = if (SETTING_USE_189_HEIGHT.get()) getEyeHeight() else camera.entity.eyeHeight
+        val useLegacyHeight = SETTING_USE_189_HEIGHT.get() && when (Location.area) {
+            "galatea", "the park" -> false
+            else -> true
+        }
+        val eye = if (useLegacyHeight) getEyeHeight() else camera.entity.eyeHeight
         val isCrouching = camera.entity.pose == Pose.CROUCHING
         if (SETTING_INSTANT_CROUCH.get() && (isCrouching || wasCrouching)) {
             camera.eyeHeightOld = eye
