@@ -52,6 +52,9 @@ object CroesusHighlightUnopened : Feature(
             if (packet !is ClientboundContainerSetContentPacket) return@on
             if (!inCroesus) return@on
 
+            whitelist.clear()
+            blacklist.clear()
+
             val items = packet.items
             for (idx in 0..<45) {
                 val itemStack = items.getOrNull(idx) ?: continue
