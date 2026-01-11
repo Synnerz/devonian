@@ -43,6 +43,12 @@ object LividSolver : Feature(
         "",
         "Livid Tracer",
     )
+    private val SETTING_HIDE_WRONG_LIVID = addSwitch(
+        "hideWrongLivid",
+        false,
+        "hides the wrong livid and only displays the right one",
+        "Hide Wrong Livid"
+    )
 
     private val mapBlocks = mapOf(
         Blocks.WHITE_WOOL to "Vendetta",
@@ -55,6 +61,7 @@ object LividSolver : Feature(
         Blocks.BLUE_WOOL to "Scream",
         Blocks.RED_WOOL to "Hockey"
     )
+    private val lividNameRegex = "^\\w+ Livid$".toRegex()
     var started = false
     var currentLivid: String? = null
     var lividEnt: Entity? = null
@@ -63,6 +70,7 @@ object LividSolver : Feature(
         on<ChatEvent> { event ->
             if (event.message == "[BOSS] Livid: I respect you for making it to here, but I'll be your undoing.") started = true
         }
+
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (packet !is ClientboundSectionBlocksUpdatePacket) return@on
@@ -78,6 +86,15 @@ object LividSolver : Feature(
             val name = if (currentLivid == null) return@on else "$currentLivid Livid"
             val world = minecraft.level ?: return@on
             lividEnt = world.players().find { it.name.string.contains(name) }
+        }
+
+        on<ExtractRenderEntityEvent> { event ->
+            if (!SETTING_HIDE_WRONG_LIVID.get() || lividEnt == null) return@on
+            val name = event.entity.name?.string ?: return@on
+            if (!name.matches(lividNameRegex)) return@on
+            if (event.entity.id == lividEnt?.id) return@on
+
+            event.cancel()
         }
 
         on<RenderWorldEvent> { event ->
