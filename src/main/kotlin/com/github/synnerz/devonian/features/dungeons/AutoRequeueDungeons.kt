@@ -30,7 +30,7 @@ object AutoRequeueDungeons : Feature(
 
                 ChatUtils.sendMessage("&a${event.name} is ready", true)
                 if (needsDowntime.isEmpty()) requeue()
-            } else if (msg.startsWith("dt") || msg.startsWith("!dt")) {
+            } else if (msg == "dt" || msg == "!dt") {
                 if (needsDowntime.add(event.name)) {
                     ChatUtils.sendMessage("&bUser &6${event.name} &bneeds downtime", true)
                 }
