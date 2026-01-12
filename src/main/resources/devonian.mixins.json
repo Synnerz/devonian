@@ -43,6 +43,7 @@
     "PreparedTextBuilderMixin",
     "ScreenEffectRendererMixin",
     "ScreenMixin",
+    "WitherBossRendererMixin",
     "YggdrasilMinecraftSessionServiceMixin",
     "accessor.AbstractContainerScreenAccessor",
     "accessor.CameraAccessor",
