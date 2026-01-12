@@ -1,17 +1,81 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.client.renderer.entity.state.ItemClusterRenderState
+import net.minecraft.client.renderer.entity.state.ItemEntityRenderState
 import net.minecraft.world.item.ItemStack
+import java.awt.Color
 import java.util.*
+import kotlin.math.sin
 
 object HighlightDroppedItems : Feature("highlightDroppedItems") {
-    private val items = WeakHashMap<ItemStack, Int>()
+    private val SETTING_BOX = addSwitch(
+        "box",
+        false,
+        "box instead of outline",
+        "Item Highlight Box",
+    )
+    private val SETTING_LINE_WIDTH = addSlider(
+        "lineWidth",
+        1.0,
+        0.0, 10.0,
+        "",
+        "Item Box Line Width",
+    )
+    private val SETTING_BOX_ALPHA = addDecimalSlider(
+        "boxAlpha",
+        1.0,
+        0.0, 1.0,
+        "",
+        "Item Box Wire Alpha",
+    )
+    private val SETTING_FILL_ALPHA = addDecimalSlider(
+        "fillAlpha",
+        0.5,
+        0.0, 1.0,
+        "",
+        "Item Box Fill Alpha",
+    )
 
-    fun extractItemCluster(item: ItemStack, state: ItemClusterRenderState) {
-        if (state.outlineColor != 0) return
-        state.outlineColor = items.getOrPut(item) {
+    private val items = WeakHashMap<ItemStack, Int>()
+    private val deferredItems = mutableListOf<Pair<Triple<Double, Double, Double>, Int>>()
+
+    fun extractItemCluster(item: ItemStack, state: ItemEntityRenderState) {
+        val color = items.getOrPut(item) {
             item.customName?.siblings?.getOrNull(0)?.style?.color?.value ?: -1
         }
+        if (SETTING_BOX.get()) {
+            deferredItems.add(
+                Pair(
+                    Triple(
+                        state.x,
+                        state.y + sin(state.ageInTicks * 0.1 + state.bobOffset) * 0.1 + 0.1625,
+                        state.z
+                    ), color
+                )
+            )
+        } else if (state.outlineColor == 0) state.outlineColor = color
+    }
+
+    override fun initialize() {
+        on<RenderWorldEvent> {
+            deferredItems.forEach { (pos, col) ->
+                val (x, y, z) = pos
+                Context.Immediate?.renderFilledBox(
+                    x - 0.15, y, z - 0.15,
+                    0.3, 0.3,
+                    Color(col or ((SETTING_FILL_ALPHA.get() * 255.0).toInt() shl 24), true),
+                )
+                Context.Immediate?.renderBox(
+                    x - 0.15, y, z - 0.15,
+                    0.3, 0.3,
+                    Color(col or ((SETTING_BOX_ALPHA.get() * 255.0).toInt() shl 24), true),
+                    phase = true,
+                    lineWidth = SETTING_LINE_WIDTH.get(),
+                )
+            }
+            deferredItems.clear()
+        }.setEnabled(SETTING_BOX.state)
     }
 }

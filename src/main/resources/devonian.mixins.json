@@ -25,7 +25,7 @@
     "GuiGraphicsMixin",
     "GuiMixin",
     "InventoryScreenMixin",
-    "ItemClusterRenderStateMixin",
+    "ItemEntityRendererMixin",
     "ItemInHandRendererMixin",
     "KeyboardHandlerMixin",
     "KeyboardInputMixin",
