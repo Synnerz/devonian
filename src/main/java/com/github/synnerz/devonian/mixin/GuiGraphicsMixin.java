@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(GuiGraphics.class)
@@ -85,12 +86,6 @@ public abstract class GuiGraphicsMixin {
             cancellable = true
     )
     private void devonian$renderTooltip(Font font, List<ClientTooltipComponent> list, int i, int j, ClientTooltipPositioner clientTooltipPositioner, ResourceLocation resourceLocation, CallbackInfo ci) {
-        if (new TooltipRenderEvent(list, i, j).post()) {
-            ci.cancel();
-            return;
-        }
-        if (!TerminalSolvers.INSTANCE.disableTooltip()) return;
-
-        ci.cancel();
+        if (new TooltipRenderEvent(list instanceof ArrayList<?> ? list : new ArrayList<>(list), i, j).post()) ci.cancel();
     }
 }

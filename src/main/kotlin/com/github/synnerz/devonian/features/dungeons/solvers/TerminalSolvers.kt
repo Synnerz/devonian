@@ -141,6 +141,10 @@ object TerminalSolvers : Feature(
             currentSolver = null
         }
 
+        on<TooltipRenderEvent> { event ->
+            if (currentSolver != null) event.cancel()
+        }.setEnabled(SETTING_DISABLE_TOOLTIP.state)
+
         on<TickEvent> {
             currentSolver?.onTick()
         }
@@ -172,10 +176,6 @@ object TerminalSolvers : Feature(
         1 -> SETTING_SECOND_CORRECT_COLOR.get()
         2 -> SETTING_THIRD_CORRECT_COLOR.get()
         else -> SETTING_OTHER_CORRECT_COLOR.get()
-    }
-
-    fun disableTooltip(): Boolean {
-        return currentSolver != null && SETTING_DISABLE_TOOLTIP.get()
     }
 }
 
