@@ -51,13 +51,13 @@ public abstract class AbstractContainerScreenMixin {
         switch (clickType) {
             case PICKUP:
                 if (slot == null) event = new DropItemEvent(null, true, menu.getCarried(), true);
-                else event = new PickupItemInventoryEvent(slot, that, j == 1);
+                else event = new PickupItemInventoryEvent(slot, that, j == 1, false);
                 break;
             case THROW:
                 event = new DropItemEvent(slot, j != 0, slot == null ? ItemStack.EMPTY : slot.getItem(), true);
                 break;
             case PICKUP_ALL:
-                if (slot != null) event = new PickupItemInventoryEvent(slot, that, false);
+                if (slot != null) event = new PickupItemInventoryEvent(slot, that, false, true);
                 break;
             case QUICK_MOVE:
                 if (slot != null) event = new QuickMoveItemEvent(slot, that);

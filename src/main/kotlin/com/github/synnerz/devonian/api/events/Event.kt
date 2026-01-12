@@ -398,6 +398,8 @@ class PickupItemInventoryEvent(
     val screen: AbstractContainerScreen<*>,
     // is right click
     val isSplitItem: Boolean,
+    // is double click
+    val isAll: Boolean,
 ) : CancellableEvent()
 
 class QuickMoveItemEvent(

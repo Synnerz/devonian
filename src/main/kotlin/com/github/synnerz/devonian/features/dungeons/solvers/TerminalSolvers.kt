@@ -79,6 +79,12 @@ object TerminalSolvers : Feature(
         "Cancels the wrong clicks inside of terminals",
         "Terminal Solver Cancel Clicks",
     )
+    private val SETTING_CANCEL_NONCLICKS = addSwitch(
+        "cancelNonClicks",
+        false,
+        "Cancels hotkey swapping and pickup all behavior",
+        "Terminal Solver Cancel Non-Click Actions",
+    )
     val SETTING_HIDE_DONE = addSwitch(
         "hideDone",
         true,
@@ -163,12 +169,21 @@ object TerminalSolvers : Feature(
         }
 
         on<PickupItemInventoryEvent> { event ->
+            if (event.isAll && SETTING_CANCEL_NONCLICKS.get()) {
+                event.cancel()
+                return@on
+            }
+
             if (onInteractSlot(event.slot, event)) return@on
             if (SETTING_MIDDLE_CLICK.get() && currentSolver != TerminalData.RUBIX) {
                 event.cancel()
                 ScreenUtils.click(event.slot.index, false, "MIDDLE")
             }
         }
+
+        on<SwapItemEvent> { event ->
+            event.cancel()
+        }.setEnabled(SETTING_CANCEL_NONCLICKS.state)
     }
 
     fun color(idx: Int): Int = when (idx) {
