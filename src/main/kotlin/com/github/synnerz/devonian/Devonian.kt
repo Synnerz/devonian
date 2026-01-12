@@ -281,6 +281,7 @@ object Devonian : ClientModInitializer {
         WatcherBossBar,
         HighlightBat,
         WitherShieldTimer,
+        TerminalBreakdown,
 
         // Debug
         CopyItem,
