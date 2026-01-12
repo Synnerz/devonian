@@ -400,7 +400,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun cancelClick(slot: Slot): Boolean {
-            return false
+            return (correctSlots.find { it.slot == slot.containerSlot }?.clicks ?: 0) == 0
         }
     },
     RED_GREEN("^Correct all the panes!$".toRegex()) {
