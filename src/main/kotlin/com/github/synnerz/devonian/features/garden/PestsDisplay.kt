@@ -16,16 +16,20 @@ object PestsDisplay : TextHudFeature(
     private val infestedPlotsRegex = "^ Plots: ([\\d, ]+)$".toRegex()
     private val bonusFortuneRegex = "^ Bonus: ([\\w+☘]+) ?([\\dms ]+)?$".toRegex()
     private val currentSprayRegex = "^ Spray: (\\w+) ?\\(?([\\d,.ms ]+)?\\)?$".toRegex()
+    private val currentCooldownRegex = "^ Cooldown: ([\\dms ]+|READY|MAX PESTS)$".toRegex()
     private var pestsAlive = "0"
     private var infestedPlots = "None"
     private var bonusFortune = "INACTIVE"
     private var currentSpray = "None"
+    private var cooldown = "0s"
 
     override fun initialize() {
         on<TabUpdateEvent> { event ->
             val pestsAliveMatch = event.matches(pestsAliveRegex)
             if (pestsAliveMatch != null) {
                 pestsAlive = pestsAliveMatch[0]
+                val amount = pestsAlive.toIntOrNull() ?: return@on
+                if (amount == 0) infestedPlots = "None"
                 return@on
             }
 
@@ -38,6 +42,13 @@ object PestsDisplay : TextHudFeature(
             val bonusFortuneMatch = event.matches(bonusFortuneRegex)
             if (bonusFortuneMatch != null) {
                 bonusFortune = bonusFortuneMatch[0]
+                return@on
+            }
+
+            event.matches(currentCooldownRegex)?.let {
+                val cd = it[0]
+                val format = if (cd == "READY") "&a" else if (cd == "MAX PESTS") "&c" else "&e"
+                cooldown = "$format$cd"
                 return@on
             }
 
@@ -54,6 +65,7 @@ object PestsDisplay : TextHudFeature(
                     "&cInfested Plots&f: &c&l$infestedPlots",
                     "&eSpray&f: &b$currentSpray",
                     "&aBonus&f: &6$bonusFortune",
+                    "&fCooldown&f: &e$cooldown"
                 )
             )
             draw(event.ctx)
@@ -65,6 +77,7 @@ object PestsDisplay : TextHudFeature(
         infestedPlots = "None"
         bonusFortune = "INACTIVE"
         currentSpray = "None"
+        cooldown = "0s"
     }
 
     override fun getEditText(): List<String> = listOf(
@@ -72,6 +85,7 @@ object PestsDisplay : TextHudFeature(
         "&cAlive&f: &c&l0",
         "&cInfested Plots&f: &c&lNone",
         "&eSpray&f: &bNone",
-        "&aBonus&f: &6INACTIVE"
+        "&aBonus&f: &6INACTIVE",
+        "&fCooldown&f: &e0s"
     )
 }
