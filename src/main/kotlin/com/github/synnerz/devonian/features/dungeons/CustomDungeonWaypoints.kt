@@ -338,6 +338,10 @@ object CustomDungeonWaypoints : Feature(
 
     private fun onCommand(ctx: CommandContext<FabricClientCommandSource>, args: List<Any>): Int {
         if (args.isEmpty()) {
+            if (!isEnabled()) {
+                ChatUtils.sendMessage("&cCDW feature is not enabled.", true)
+                return 0
+            }
             editMode = !editMode
             ChatUtils.sendMessage("&bCDW Edit mode was ${if (editMode) "&aEnabled" else "&cDisabled"}", true)
             return 1
