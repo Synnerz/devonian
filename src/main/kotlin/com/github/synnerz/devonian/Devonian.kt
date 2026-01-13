@@ -32,7 +32,6 @@ import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.GardenDisplay
 import com.github.synnerz.devonian.features.garden.GrowthStageTimer
 import com.github.synnerz.devonian.features.garden.PestsDisplay
-import com.github.synnerz.devonian.features.inventory.MiddleClickGui
 import com.github.synnerz.devonian.features.inventory.ProtectStarredItems
 import com.github.synnerz.devonian.features.misc.*
 import com.github.synnerz.devonian.features.misc.hiders.*
