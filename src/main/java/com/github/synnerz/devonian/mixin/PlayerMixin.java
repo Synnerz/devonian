@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.api.Location;
 import com.github.synnerz.devonian.features.misc.DisableSwim;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -18,6 +19,7 @@ public class PlayerMixin {
     private void devonian$disableSwim(Player instance, Pose pose, Operation<Void> original) {
         if (
             DisableSwim.INSTANCE.isEnabled() &&
+            !Location.INSTANCE.getStateInLatestArea().getValue() &&
             pose == Pose.SWIMMING &&
             instance instanceof LocalPlayer
         ) return;

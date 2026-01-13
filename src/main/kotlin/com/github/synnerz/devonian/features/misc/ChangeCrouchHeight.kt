@@ -3,7 +3,6 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.CameraAccessor
-import com.github.synnerz.devonian.mixin.accessor.EntityAccessor
 import net.minecraft.client.Camera
 import net.minecraft.world.entity.Pose
 
@@ -39,14 +38,11 @@ object ChangeCrouchHeight : Feature(
 
     fun getEyeHeight(pose: Pose): Float {
         val player = minecraft.player ?: return 0f
-        return when (pose) {
-            Pose.CROUCHING -> 1.54f
-            // otherwise recursion
-            else -> (player as EntityAccessor).eyeHeightField
-        }
+        if (SETTING_USE_189_HEIGHT.get() && !Location.stateInLatestArea.value && pose == Pose.CROUCHING) return 1.54f
+        return player.getDimensions(pose).eyeHeight
     }
 
-    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get() && Location.area != null
+    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get() && !Location.stateInLatestArea.value
 
     private var wasCrouching = false
 
@@ -56,7 +52,7 @@ object ChangeCrouchHeight : Feature(
         if (camera.entity == null) return false
         if (camera.entity !== minecraft.player) return false
 
-        val eye = if (SETTING_USE_189_HEIGHT.get()) getEyeHeight() else camera.entity.eyeHeight
+        val eye = getEyeHeight()
         val isCrouching = camera.entity.pose == Pose.CROUCHING
         if (SETTING_INSTANT_CROUCH.get() && (isCrouching || wasCrouching)) {
             camera.eyeHeightOld = eye

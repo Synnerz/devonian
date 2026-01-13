@@ -34,7 +34,7 @@ public class EntityMixin {
         argsOnly = true
     )
     private boolean devonian$disableSwim(boolean value) {
-        if (!DisableSwim.INSTANCE.isEnabled() || Location.INSTANCE.getArea() == null) return value;
+        if (!DisableSwim.INSTANCE.isEnabled() || Location.INSTANCE.getStateInLatestArea().getValue()) return value;
         Entity that = (Entity) (Object) this;
         if (!(that instanceof LocalPlayer)) return value;
         return false;

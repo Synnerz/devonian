@@ -72,7 +72,6 @@
     "accessor.AbstractArrowAccessor",
     "accessor.ClientboundEntityEventPacketAccessor",
     "accessor.ClientboundGameEventPacket$TypeAccessor",
-    "accessor.ClientboundMoveEntityPacketAccessor",
-    "accessor.EntityAccessor"
+    "accessor.ClientboundMoveEntityPacketAccessor"
   ]
 }

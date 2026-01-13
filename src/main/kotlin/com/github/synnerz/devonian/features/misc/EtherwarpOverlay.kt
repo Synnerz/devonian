@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.barrl.utils.RendererLayers
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
@@ -137,7 +138,10 @@ object EtherwarpOverlay : Feature(
             } else {
                 val playerAccessor = player as LocalPlayerAccessor
                 px = playerAccessor.lastXClient
-                py = playerAccessor.lastYClient + if (player.isShiftKeyDown) 1.54f else 1.62f
+                py = playerAccessor.lastYClient +
+                    if (player.isShiftKeyDown)
+                        if (Location.stateInLatestArea.value) 1.27f else 1.54f
+                    else 1.62f
                 pz = playerAccessor.lastZClient
                 lookVec = player.calculateViewVector(playerAccessor.lastPitchClient, playerAccessor.lastYawClient)
             }
