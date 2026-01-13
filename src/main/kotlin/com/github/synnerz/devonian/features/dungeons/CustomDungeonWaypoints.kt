@@ -75,6 +75,7 @@ object CustomDungeonWaypoints : Feature(
         "CDW Render Text"
     )
     private const val KEY = "currentDungeonProfile"
+    private const val BOSS_ID = 1000 // 1000 + floor number for each roomId that is boss
     private val waypointFile = File(
         minecraft.gameDirectory,
         "config"
@@ -122,7 +123,7 @@ object CustomDungeonWaypoints : Feature(
         var text: String? = null,
         @Transient var clicked: Boolean = false,
     ) {
-        @Transient private var cachedPos: WorldWaypointPosition? = null
+        @Transient var cachedPos: WorldWaypointPosition? = null
 
         fun onRoomEnter(room: DungeonRoom) {
             if (cachedPos != null) return
@@ -197,8 +198,18 @@ object CustomDungeonWaypoints : Feature(
                 ?: ParentWaypoint(currentRoom!!, mutableListOf())
         }
 
+        on<DungeonEvent.BossRoomEnter> { event ->
+            currentRoom = BOSS_ID + event.floor.floorNum
+            currentParent = waypoints
+                .find { it.name == currentProfile.lowercase() }?.parents?.find { it.id == currentRoom }
+                ?: ParentWaypoint(currentRoom!!, mutableListOf())
+            currentParent?.waypoints?.forEach {
+                it.cachedPos = WorldWaypointPosition(it.cx, it.cy, it.cz)
+            }
+        }
+
         on<RenderWorldEvent> { event ->
-            if (Dungeons.inBoss.value) return@on
+            if (Dungeons.inBoss.value && currentRoom != null && currentRoom!! < BOSS_ID) return@on
 
             currentParent?.waypoints?.forEach {
                 if (SETTING_REMOVE_ON_COLLECT.get() && it.clicked) return@forEach
@@ -254,8 +265,11 @@ object CustomDungeonWaypoints : Feature(
 
             val bp = event.blockHitResult.blockPos ?: return@on
             val room = DungeonScanner.currentRoom ?: return@on
-            if (room.roomID != currentRoom) return@on
-            val comps = room.fromPos(bp.x, bp.z) ?: return@on
+            if (currentRoom!! < BOSS_ID && room.roomID != currentRoom) return@on
+            val isBoss = currentRoom!! > BOSS_ID
+            val comps =
+                if (isBoss) bp.x to bp.z
+                else room.fromPos(bp.x, bp.z) ?: return@on
 
             val profile = waypoints.find { it.name == currentProfile.lowercase() } ?: return@on
             var shouldAdd = currentParent != null && !profile.parents.contains(currentParent)
@@ -284,8 +298,17 @@ object CustomDungeonWaypoints : Feature(
                 }
             }
             if (!shouldAdd && InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_CONTROL)) {
-                if (currentParent!!.waypoints.removeIf { it.cx == pos.cx && it.cy == pos.cy && it.cz == pos.cz })
-                    profile.onRoomEnter(room)
+                if (currentParent!!.waypoints.removeIf { it.cx == pos.cx && it.cy == pos.cy && it.cz == pos.cz }) {
+                    if (!isBoss) profile.onRoomEnter(room)
+                    else {
+                        currentParent =
+                            waypoints.find { it.name == currentProfile.lowercase() }?.parents?.find { it.id > BOSS_ID }
+                        currentParent?.waypoints?.forEach {
+                            it.cachedPos = WorldWaypointPosition(it.cx, it.cy, it.cz)
+                        }
+                    }
+                    ChatUtils.sendMessage("&cCDW Removed &b$currentWaypointType &b[${pos.cx}, ${pos.cy}, ${pos.cz}]", true)
+                }
                 return@on
             }
 
@@ -293,6 +316,14 @@ object CustomDungeonWaypoints : Feature(
                 currentParent!!.waypoints.add(pos)
 
             if (shouldAdd) profile.parents.add(currentParent!!)
+            ChatUtils.sendMessage("&aCDW Added &b$currentWaypointType &b[${pos.cx}, ${pos.cy}, ${pos.cz}]", true)
+            if (isBoss) {
+                currentParent = waypoints.find { it.name == currentProfile.lowercase() }?.parents?.find { it.id >= BOSS_ID }
+                currentParent?.waypoints?.forEach {
+                    it.cachedPos = WorldWaypointPosition(it.cx, it.cy, it.cz)
+                }
+                return@on
+            }
             profile.onRoomEnter(room)
         }
 
