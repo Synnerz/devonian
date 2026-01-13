@@ -18,6 +18,7 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.Shapes
 import java.awt.Color
 import kotlin.math.hypot
 
@@ -25,6 +26,12 @@ object EtherwarpOverlay : Feature(
     "etherwarpOverlay",
     "Renders a box at the location where the etherwarp is going to be at.",
 ) {
+    private val SETTING_ALWAYS_FULL = addSwitch(
+        "alwaysFull",
+        false,
+        "",
+        "Always Render Full Block",
+    )
     private val SETTING_ETHER_WIRE_WIDTH = addSlider(
         "wireWidth",
         3.0,
@@ -182,11 +189,13 @@ object EtherwarpOverlay : Feature(
             val camera = event.ctx.gameRenderer().mainCamera
             val cameraPos = camera.position
 
-            val outlineShape = world.getBlockState(hitResult).getShape(
-                EmptyBlockGetter.INSTANCE,
-                hitResult,
-                CollisionContext.of(camera.entity)
-            )
+            val outlineShape =
+                if (SETTING_ALWAYS_FULL.get()) Shapes.block()
+                else  world.getBlockState(hitResult).getShape(
+                    EmptyBlockGetter.INSTANCE,
+                    hitResult,
+                    CollisionContext.of(camera.entity)
+                )
 
             Context.Immediate?.renderBoxShape(
                 outlineShape,
