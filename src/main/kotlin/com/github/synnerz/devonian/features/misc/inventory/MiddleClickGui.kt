@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.misc.inventory
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.api.events.PickupItemInventoryEvent
@@ -75,6 +76,7 @@ object MiddleClickGui : Feature(
         }
 
         on<PickupItemInventoryEvent> { event ->
+            if (Location.area == null) return@on
             if (event.isSplitItem) return@on
 
             val slot = event.slot
