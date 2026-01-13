@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.api.Location;
 import com.github.synnerz.devonian.features.misc.ChangeCrouchHeight;
 import com.github.synnerz.devonian.features.misc.DisableSwim;
 import com.github.synnerz.devonian.features.misc.RemoveGlowEffect;
@@ -33,7 +34,7 @@ public class EntityMixin {
         argsOnly = true
     )
     private boolean devonian$disableSwim(boolean value) {
-        if (!DisableSwim.INSTANCE.isEnabled()) return value;
+        if (!DisableSwim.INSTANCE.isEnabled() || Location.INSTANCE.getArea() == null) return value;
         Entity that = (Entity) (Object) this;
         if (!(that instanceof LocalPlayer)) return value;
         return false;
