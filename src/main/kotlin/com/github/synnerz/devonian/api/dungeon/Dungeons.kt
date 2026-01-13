@@ -330,7 +330,10 @@ object Dungeons {
             if (boss == DungeonBoss.Scarf && floor.floorNum != 2) return@on
 
             DungeonEvent.BossMessageEvent(boss, message).post()
-            if (boss != DungeonBoss.Watcher) inBoss.value = true
+            if (boss != DungeonBoss.Watcher) {
+                inBoss.value = true
+                DungeonEvent.BossRoomEnter(boss, floor).post()
+            }
             else if (message == "You have proven yourself. You may pass.") bloodCleared.value = true
         }.setEnabled(Location.stateInArea("catacombs"))
 

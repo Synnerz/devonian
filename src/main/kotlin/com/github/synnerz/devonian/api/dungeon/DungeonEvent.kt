@@ -13,6 +13,7 @@ abstract class DungeonEvent {
     // class BloodKeyDrop : Event() // maybe?
     class RoomEnter(val room: DungeonRoom, val idx: Int) : Event()
     class RoomLeave(val room: DungeonRoom?, val idx: Int) : Event()
+    class BossRoomEnter(val boss: DungeonBoss, val floor: FloorType) : Event()
     @Threaded class FloorEnter(val floorType: FloorType) : Event()
     @Threaded class BossMessageEvent(val boss: DungeonBoss, val message: String) : Event()
     class SecretClicked(val x: Double, val y: Double, val z: Double, val isSkull: Boolean = false, val isRedstone: Boolean = false) : Event() {
