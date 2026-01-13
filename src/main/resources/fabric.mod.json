@@ -18,6 +18,9 @@
 				"value": "com.github.synnerz.devonian.Devonian",
 				"adapter": "kotlin"
 			}
+		],
+		"modmenu": [
+			"com.github.synnerz.devonian.compat.ModMenu"
 		]
 	},
 	"mixins": ["devonian.mixins.json"],
@@ -28,5 +31,12 @@
 		"java": ">=21",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.gg/DgRsG2PZS9"
+			}
+		}
 	}
 }
