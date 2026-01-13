@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.CameraAccessor
 import com.github.synnerz.devonian.mixin.accessor.EntityAccessor
@@ -45,7 +46,7 @@ object ChangeCrouchHeight : Feature(
         }
     }
 
-    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get()
+    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get() && Location.area != null
 
     private var wasCrouching = false
 
