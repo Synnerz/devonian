@@ -75,6 +75,8 @@ object DianaDropTracker : TextHudFeature(
     }
 
     override fun initialize() {
+        loader.load()
+
         on<ChatEvent> { event ->
             val coinsMatch = event.matches(coinsDropCriteria)
             if (coinsMatch != null) {

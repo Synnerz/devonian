@@ -16,6 +16,8 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.ScreenAccessor
 import com.github.synnerz.devonian.utils.PersistentJson
+import com.github.synnerz.devonian.utils.PersistentJsonClass
+import com.google.gson.reflect.TypeToken
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
@@ -27,7 +29,7 @@ import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import java.io.File
 import java.io.FileWriter
-import java.util.Base64
+import java.util.*
 import kotlin.math.abs
 
 object CustomDungeonWaypoints : Feature(
@@ -76,13 +78,19 @@ object CustomDungeonWaypoints : Feature(
     )
     private const val KEY = "currentDungeonProfile"
     private const val BOSS_ID = 1000 // 1000 + floor number for each roomId that is boss
-    private val waypointFile = File(
-        minecraft.gameDirectory,
-        "config"
-    )
-        .resolve("devonian")
-        .resolve("customdungeonwaypoints.json")
-    private var waypoints = mutableListOf<WaypointProfile>()
+    private val waypointData = object : PersistentJsonClass<MutableList<WaypointProfile>>(
+        File(
+            minecraft.gameDirectory,
+            "config"
+        )
+            .resolve("devonian")
+            .resolve("customdungeonwaypoints.json"),
+        object : TypeToken<MutableList<WaypointProfile>>() {},
+    ) {
+        override fun onLoadDefault() {
+            data = mutableListOf(WaypointProfile("default", mutableListOf()))
+        }
+    }
     private var editMode = false
     private var currentProfile = "default"
     private var currentRoom: Int? = null
@@ -104,6 +112,7 @@ object CustomDungeonWaypoints : Feature(
             parents.forEach { it.reset() }
         }
     }
+
     data class ParentWaypoint(val id: Int, val waypoints: MutableList<ComponentWaypointPosition>) {
         fun onRoomEnter(room: DungeonRoom) {
             waypoints.forEach { it.onRoomEnter(room) }
@@ -114,6 +123,7 @@ object CustomDungeonWaypoints : Feature(
             waypoints.forEach { it.reset() }
         }
     }
+
     data class WorldWaypointPosition(val x: Int, val y: Int, val z: Int)
     data class ComponentWaypointPosition(
         val cx: Int,
@@ -123,7 +133,8 @@ object CustomDungeonWaypoints : Feature(
         var text: String? = null,
         @Transient var clicked: Boolean = false,
     ) {
-        @Transient var cachedPos: WorldWaypointPosition? = null
+        @Transient
+        var cachedPos: WorldWaypointPosition? = null
 
         fun onRoomEnter(room: DungeonRoom) {
             if (cachedPos != null) return
@@ -138,6 +149,7 @@ object CustomDungeonWaypoints : Feature(
             clicked = false
         }
     }
+
     enum class WaypointType(val shape: VoxelShape = Shapes.block()) {
         CHEST(Block.column(14.0, 0.0, 14.0)),
         ITEM(Block.column(8.0, 0.0, 8.0)),
@@ -157,50 +169,70 @@ object CustomDungeonWaypoints : Feature(
     override fun initialize() {
         Config.set(KEY, "default")
 
-        Config.onAfterLoad {
-            if (waypointFile.exists() && waypointFile.readText().isNotEmpty()) {
-                waypoints = PersistentJson.gson.fromJson(waypointFile.readText(), Array<WaypointProfile>::class.java).toMutableList()
-                currentProfile = waypoints.first().name
-            } else {
-                waypoints.add(WaypointProfile("default", mutableListOf()))
-            }
+        waypointData.load()
+        if (waypointData.data?.isEmpty() != false) waypointData.onLoadDefault()
 
+        Config.onAfterLoad {
             currentProfile = Config.get<String>(KEY) ?: "default"
+            if (waypointData.data!!.find { it.name == currentProfile } == null) {
+                waypointData.data!!.add(WaypointProfile(currentProfile, mutableListOf()))
+            }
         }
 
         Config.onPreSave {
             Config.set(KEY, currentProfile)
-
-            if (!waypointFile.exists()) {
-                waypointFile.parentFile.mkdirs()
-                waypointFile.createNewFile()
-            }
-
-            FileWriter(waypointFile).use { PersistentJson.gson.toJson(waypoints, it) }
         }
 
         DevonianCommand.command.subcommand("cdw", true, ::onCommand)
             .word("CommandType")
             .word("other1")
             .word("other2")
-            .suggest("CommandType", *listOf("import", "export", "profiles", "create", "createbase", "setprofile", "delprofile", "switch", "settext", "help").toTypedArray())
+            .suggest(
+                "CommandType",
+                *listOf(
+                    "import",
+                    "export",
+                    "profiles",
+                    "create",
+                    "createbase",
+                    "setprofile",
+                    "delprofile",
+                    "switch",
+                    "settext",
+                    "help"
+                ).toTypedArray()
+            )
         DevonianCommand.command.subcommand("dwc", true, ::onCommand)
             .word("CommandType")
             .word("other1")
             .word("other2")
-            .suggest("CommandType", *listOf("import", "export", "profiles", "create", "createbase", "setprofile", "delprofile", "switch", "settext", "help").toTypedArray())
+            .suggest(
+                "CommandType",
+                *listOf(
+                    "import",
+                    "export",
+                    "profiles",
+                    "create",
+                    "createbase",
+                    "setprofile",
+                    "delprofile",
+                    "switch",
+                    "settext",
+                    "help"
+                ).toTypedArray()
+            )
 
         on<DungeonEvent.RoomEnter> { event ->
-            waypoints.forEach { it.onRoomEnter(event.room) }
+            waypointData.data!!.forEach { it.onRoomEnter(event.room) }
             currentRoom = event.room.roomID
-            currentParent = waypoints
+            currentParent = waypointData.data!!
                 .find { it.name == currentProfile.lowercase() }?.parents?.find { it.id == currentRoom }
                 ?: ParentWaypoint(currentRoom!!, mutableListOf())
         }
 
         on<DungeonEvent.BossRoomEnter> { event ->
             currentRoom = BOSS_ID + event.floor.floorNum
-            currentParent = waypoints
+            currentParent = waypointData.data!!
                 .find { it.name == currentProfile.lowercase() }?.parents?.find { it.id == currentRoom }
                 ?: ParentWaypoint(currentRoom!!, mutableListOf())
             currentParent?.waypoints?.forEach {
@@ -271,7 +303,7 @@ object CustomDungeonWaypoints : Feature(
                 if (isBoss) bp.x to bp.z
                 else room.fromPos(bp.x, bp.z) ?: return@on
 
-            val profile = waypoints.find { it.name == currentProfile.lowercase() } ?: return@on
+            val profile = waypointData.data!!.find { it.name == currentProfile.lowercase() } ?: return@on
             var shouldAdd = currentParent != null && !profile.parents.contains(currentParent)
             if (currentParent == null) {
                 currentParent = ParentWaypoint(currentRoom!!, mutableListOf())
@@ -301,13 +333,18 @@ object CustomDungeonWaypoints : Feature(
                 if (currentParent!!.waypoints.removeIf { it.cx == pos.cx && it.cy == pos.cy && it.cz == pos.cz }) {
                     if (!isBoss) profile.onRoomEnter(room)
                     else {
-                        currentParent =
-                            waypoints.find { it.name == currentProfile.lowercase() }?.parents?.find { it.id > BOSS_ID }
+                        currentParent = waypointData.data!!
+                            .find { it.name == currentProfile.lowercase() }
+                            ?.parents
+                            ?.find { it.id > BOSS_ID }
                         currentParent?.waypoints?.forEach {
                             it.cachedPos = WorldWaypointPosition(it.cx, it.cy, it.cz)
                         }
                     }
-                    ChatUtils.sendMessage("&cCDW Removed &b$currentWaypointType &b[${pos.cx}, ${pos.cy}, ${pos.cz}]", true)
+                    ChatUtils.sendMessage(
+                        "&cCDW Removed &b$currentWaypointType &b[${pos.cx}, ${pos.cy}, ${pos.cz}]",
+                        true
+                    )
                 }
                 return@on
             }
@@ -318,7 +355,10 @@ object CustomDungeonWaypoints : Feature(
             if (shouldAdd) profile.parents.add(currentParent!!)
             ChatUtils.sendMessage("&aCDW Added &b$currentWaypointType &b[${pos.cx}, ${pos.cy}, ${pos.cz}]", true)
             if (isBoss) {
-                currentParent = waypoints.find { it.name == currentProfile.lowercase() }?.parents?.find { it.id >= BOSS_ID }
+                currentParent = waypointData.data!!
+                    .find { it.name == currentProfile.lowercase() }
+                    ?.parents
+                    ?.find { it.id >= BOSS_ID }
                 currentParent?.waypoints?.forEach {
                     it.cachedPos = WorldWaypointPosition(it.cx, it.cy, it.cz)
                 }
@@ -333,7 +373,7 @@ object CustomDungeonWaypoints : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        waypoints.forEach { it.reset() }
+        waypointData.data!!.forEach { it.reset() }
     }
 
     private fun onCommand(ctx: CommandContext<FabricClientCommandSource>, args: List<Any>): Int {
@@ -356,14 +396,19 @@ object CustomDungeonWaypoints : Feature(
                     return 0
                 }
 
-                waypoints.add(WaypointProfile(waypointName.lowercase(), mutableListOf()))
+                waypointData.data!!.add(WaypointProfile(waypointName.lowercase(), mutableListOf()))
                 currentProfile = waypointName.lowercase()
                 setCurrentParent()
-                ChatUtils.sendMessage("&bCDW Successfully created waypoint profile with name &a$waypointName &7(this profile has been set as the current one)", true)
+                ChatUtils.sendMessage(
+                    "&bCDW Successfully created waypoint profile with name &a$waypointName &7(this profile has been set as the current one)",
+                    true
+                )
             }
+
             "profiles" -> {
-                ChatUtils.sendMessage("&bCDW current profiles are&f: &a${waypoints.joinToString { it.name }}", true)
+                ChatUtils.sendMessage("&bCDW current profiles are&f: &a${waypointData.data!!.joinToString { it.name }}", true)
             }
+
             "createbase" -> {
                 val waypointName1 = args.getOrNull(1) as? String?
                 val waypointName2 = args.getOrNull(2) as? String?
@@ -371,7 +416,7 @@ object CustomDungeonWaypoints : Feature(
                     ChatUtils.sendMessage("&cCDW Invalid waypoint name", true)
                     return 0
                 }
-                val profile1 = waypoints.find { it.name == waypointName1 }
+                val profile1 = waypointData.data!!.find { it.name == waypointName1 }
                 if (profile1 == null) {
                     ChatUtils.sendMessage("&cCDW Profile \"$waypointName1\" does not exist", true)
                     return 0
@@ -379,12 +424,16 @@ object CustomDungeonWaypoints : Feature(
                 val profile2 = WaypointProfile(waypointName2.lowercase(), mutableListOf())
 
                 profile1.parents.forEach { profile2.parents.add(it) }
-                waypoints.add(profile2)
+                waypointData.data!!.add(profile2)
                 currentProfile = profile2.name
                 setCurrentParent()
 
-                ChatUtils.sendMessage("&bCDW Successfully created profile &a$waypointName2&b with base profile as &a$waypointName1 &7(this profile has been set as the current one)", true)
+                ChatUtils.sendMessage(
+                    "&bCDW Successfully created profile &a$waypointName2&b with base profile as &a$waypointName1 &7(this profile has been set as the current one)",
+                    true
+                )
             }
+
             "setprofile" -> {
                 val waypointName = args.getOrNull(1) as? String?
                 if (waypointName == null) {
@@ -395,23 +444,25 @@ object CustomDungeonWaypoints : Feature(
                 setCurrentParent()
                 ChatUtils.sendMessage("&bCDW Set profile to &a$waypointName", true)
             }
+
             "delprofile" -> {
                 val waypointName = args.getOrNull(1) as? String?
                 if (waypointName == null) {
                     ChatUtils.sendMessage("&cCDW Invalid waypoint name", true)
                     return 0
                 }
-                val profile = waypoints.indexOfFirst { it.name == waypointName }
+                val profile = waypointData.data!!.indexOfFirst { it.name == waypointName }
                 if (profile == -1) {
                     ChatUtils.sendMessage("&cCDW Seems like that profile does not exist", true)
                     return 0
                 }
 
-                waypoints.removeAt(profile)
+                waypointData.data!!.removeAt(profile)
                 currentProfile = "default"
                 currentParent = null
                 ChatUtils.sendMessage("&bCDW Successfully removed waypoint with profile name &a$waypointName", true)
             }
+
             "switch" -> {
                 val waypointType = args.getOrNull(1) as? String?
                 if (!waypointType.isNullOrEmpty()) {
@@ -431,6 +482,7 @@ object CustomDungeonWaypoints : Feature(
                 currentWaypointType = entries[nextIdx]
                 ChatUtils.sendMessage("&bCDW Set current waypoint type to &a$currentWaypointType", true)
             }
+
             "settext" -> {
                 if (textPos == null) {
                     ChatUtils.sendMessage("&cCDW There is not a previous shift + right click block in edit mode", true)
@@ -441,7 +493,8 @@ object CustomDungeonWaypoints : Feature(
                     ChatUtils.sendMessage("&cCDW Seems like you did not provide a correct text", true)
                     return 0
                 }
-                val data = currentParent?.waypoints?.find { it.cx == textPos!!.first && it.cy == textPos!!.second && it.cz == textPos!!.third }
+                val data =
+                    currentParent?.waypoints?.find { it.cx == textPos!!.first && it.cy == textPos!!.second && it.cz == textPos!!.third }
                 if (data == null) {
                     ChatUtils.sendMessage("&cCDW Could not find the waypoint to set Text at", true)
                     return 0
@@ -450,6 +503,7 @@ object CustomDungeonWaypoints : Feature(
                 textPos = null
                 ChatUtils.sendMessage("&aCDW Successfully set text &b$text", true)
             }
+
             "import" -> {
                 var encode = args.getOrNull(1) as? String?
                 if (encode.isNullOrEmpty()) encode = minecraft.keyboardHandler.clipboard
@@ -460,17 +514,18 @@ object CustomDungeonWaypoints : Feature(
                 val decoded = Base64.getDecoder().decode(encode)
                 val json = PersistentJson.gson.fromJson(decoded.toString(Charsets.UTF_8), WaypointProfile::class.java)
 
-                if (waypoints.any { it.name == json.name }) {
+                if (waypointData.data!!.any { it.name == json.name }) {
                     ChatUtils.sendMessage("&cCDW Cannot import profiles with similar names \"${json.name}\"", true)
                     return 0
                 }
-                waypoints.add(json)
+                waypointData.data!!.add(json)
                 ChatUtils.sendMessage("&aCDW Successfully added profile &a${json.name}", true)
             }
+
             "export" -> {
                 var waypointName = args.getOrNull(1) as? String?
                 if (waypointName.isNullOrEmpty()) waypointName = currentProfile
-                val profile = waypoints.find { it.name == waypointName.lowercase() }
+                val profile = waypointData.data!!.find { it.name == waypointName.lowercase() }
                 if (profile == null) {
                     ChatUtils.sendMessage("&cCDW No profile currently selected", true)
                     return 0
@@ -481,6 +536,7 @@ object CustomDungeonWaypoints : Feature(
                 minecraft.keyboardHandler.clipboard = encoded
                 ChatUtils.sendMessage("&bCDW Exported profile &a${profile.name}&b to clipboard", true)
             }
+
             else -> {
                 val title = "${ChatUtils.prefix} &b&lCustom Dungeon Waypoints Guide"
                 ChatUtils.sendMessage("${ChatUtils.centerTextPadding(title)}$title")
@@ -534,8 +590,10 @@ object CustomDungeonWaypoints : Feature(
     private fun setCurrentParent() {
         if (currentParent == null) return
 
-        currentParent = waypoints
-            .find { it.name == currentProfile.lowercase() }?.parents?.find { it.id == currentRoom }
+        currentParent = waypointData.data!!
+            .find { it.name == currentProfile.lowercase() }
+            ?.parents
+            ?.find { it.id == currentRoom }
             ?: ParentWaypoint(currentRoom!!, mutableListOf())
     }
 }

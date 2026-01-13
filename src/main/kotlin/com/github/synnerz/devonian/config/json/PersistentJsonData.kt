@@ -15,14 +15,20 @@ class PersistentJsonData(configFile: File) : PersistentJson(configFile), Persist
     private val jsonRoot = JsonObject()
     private var root = JsonDataObject(jsonRoot)
 
-    override fun onLoad(reader: InputStream) {
-        val savedData = reader.bufferedReader().use { JsonParser.parseReader(it).asJsonObject }
-        if (savedData.isEmpty) return
+    override fun onLoad(reader: InputStream): Boolean {
+        try {
+            val savedData = reader.bufferedReader().use { JsonParser.parseReader(it).asJsonObject }
+            if (savedData.isEmpty) return false
 
-        savedData.entrySet().forEach { (k, v) ->
-            jsonRoot.add(k, v)
+            savedData.entrySet().forEach { (k, v) ->
+                jsonRoot.add(k, v)
+            }
+            root = JsonDataObject(jsonRoot)
+
+            return true
+        } catch (_: Exception) {
+            return false
         }
-        root = JsonDataObject(jsonRoot)
     }
 
     override fun onSave(writer: OutputStream) {

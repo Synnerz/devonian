@@ -9,12 +9,10 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
-import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.PersistentJson
+import com.github.synnerz.devonian.utils.PersistentJsonClass
 import com.google.gson.reflect.TypeToken
 import java.io.File
-import java.io.FileWriter
 import java.time.LocalDateTime
 
 object RunsLogger : Feature(
@@ -24,13 +22,19 @@ object RunsLogger : Feature(
     "catacombs",
     subcategory = "QOL"
 ) {
-    private var dungeonsData = mutableMapOf<String, MutableMap<String, MutableList<RunStats>>>()
-    private val loggerFile = File(
-        minecraft.gameDirectory,
-        "config"
-    )
-        .resolve("devonian")
-        .resolve("runslogger.json")
+    private var dungeonsData = object : PersistentJsonClass<MutableMap<String, MutableMap<String, MutableList<RunStats>>>>(
+        File(
+            minecraft.gameDirectory,
+            "config"
+        )
+            .resolve("devonian")
+            .resolve("runslogger.json"),
+        object : TypeToken<MutableMap<String, MutableMap<String, MutableList<RunStats>>>>() {}
+    ) {
+        override fun onLoadDefault() {
+            data = mutableMapOf()
+        }
+    }
     private val floorStatsRegex = "^ *(Master Mode )?The Catacombs - Floor ([IV]+) Stats$".toRegex()
     private val teamScoreRegex = "^ *Team Score: (\\d+) \\((.{1,2})\\)(?: \\(NEW RECORD!\\))?$".toRegex()
     private val defeatedRegex = "^ *☠ Defeated [\\w, ]+ in ([\\dms ]+)( \\(NEW RECORD!\\))?$".toRegex()
@@ -58,27 +62,7 @@ object RunsLogger : Feature(
     )
 
     override fun initialize() {
-        Config.onAfterLoad {
-            if (loggerFile.exists()) {
-                val text = loggerFile.readText()
-                if (text.isNotEmpty()) {
-                    val obj: MutableMap<String, MutableMap<String, MutableList<RunStats>>> = PersistentJson.gson.fromJson(
-                        text,
-                        object : TypeToken<MutableMap<String, MutableMap<String, MutableList<RunStats>>>>() {}.type
-                    )
-                    dungeonsData = obj
-                }
-            }
-        }
-
-        Config.onPreSave {
-            if (!loggerFile.exists()) {
-                loggerFile.parentFile.mkdirs()
-                loggerFile.createNewFile()
-            }
-
-            FileWriter(loggerFile).use { PersistentJson.gson.toJson(dungeonsData, it) }
-        }
+        dungeonsData.load()
 
         DevonianCommand.command.subcommand("runslogger") { _, args ->
             val floor = args.getOrNull(0) as? String?
@@ -88,11 +72,11 @@ object RunsLogger : Feature(
                 return@subcommand 0
             }
             if (date.isNullOrEmpty()) {
-                ChatUtils.sendMessage("&cRunsLogger You did not set a valid date here are the current ones&7: &7${dungeonsData.keys.joinToString(", ")}", true)
+                ChatUtils.sendMessage("&cRunsLogger You did not set a valid date here are the current ones&7: &7${dungeonsData.data!!.keys.joinToString(", ")}", true)
                 return@subcommand 0
             }
 
-            val list = dungeonsData[date]?.get(floor)
+            val list = dungeonsData.data!![date]?.get(floor)
             if (list.isNullOrEmpty()) {
                 ChatUtils.sendMessage("&cRunsLogger list for date \"$date\" and floor \"$floor\" is empty", true)
                 return@subcommand 0
@@ -183,7 +167,7 @@ object RunsLogger : Feature(
                 return@on
             }
 
-            dungeonsData
+            dungeonsData.data!!
                 .getOrPut(currentDate) { mutableMapOf() }
                 .getOrPut(Dungeons.floor.shortName) { mutableListOf() }
                 .add(currentStat!!)

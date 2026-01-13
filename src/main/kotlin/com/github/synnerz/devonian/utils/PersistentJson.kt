@@ -27,12 +27,14 @@ abstract class PersistentJson(private val configFile: File) {
         Scheduler.schedulePool.scheduleWithFixedDelay(::save, 5L, 5L, TimeUnit.MINUTES)
     }
 
-    abstract fun onLoad(reader: InputStream)
+    abstract fun onLoad(reader: InputStream): Boolean
     open fun onLoadDefault() {}
 
     fun load() {
         if (configFile.exists()) {
-            FileInputStream(configFile).use { onLoad(it) }
+            FileInputStream(configFile).use {
+                if (!onLoad(it)) onLoadDefault()
+            }
         } else onLoadDefault()
 
         afterLoadListeners.forEach { it() }

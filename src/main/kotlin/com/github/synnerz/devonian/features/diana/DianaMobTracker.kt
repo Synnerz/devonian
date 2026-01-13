@@ -75,6 +75,8 @@ object DianaMobTracker : TextHudFeature(
     }
 
     override fun initialize() {
+        loader.load()
+
         on<ChatEvent> { event ->
             val match = event.matches(mobCriteria) ?: return@on
             val dropType = match[0]
