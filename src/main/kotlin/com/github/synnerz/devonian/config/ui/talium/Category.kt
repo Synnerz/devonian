@@ -30,7 +30,7 @@ open class Category(
     private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, category.displayName, true).apply {
         setColor(ColorPalette.TEXT_COLOR)
         onResize { _, w ->
-            textScale = 3f / w.scaleFactor
+            textScale = 4f / w.scaleFactor
         }
     }
     private var currentSubcategory = category.subcategories[0]
@@ -47,7 +47,7 @@ open class Category(
                     val text = UIText(0.0, 0.0, 100.0, 100.0, name, true, parent = this).apply {
                         setColor(ColorPalette.TEXT_COLOR)
                         onResize { _, w ->
-                            textScale = 2.5f / w.scaleFactor
+                            textScale = 3f / w.scaleFactor
                         }
                         // TODO: add a way to make the current sub category's text different color
                     }
