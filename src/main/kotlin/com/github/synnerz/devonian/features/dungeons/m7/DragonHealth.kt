@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.m7
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent
+import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -27,7 +27,7 @@ object DragonHealth : Feature(
     private val nametagReg = "^﴾ [^\\sA-Za-z]* Withered Dragon ([\\d.,]+[KMB]?)/([\\d.,]+[KMB]?)❤ ﴿$".toRegex()
 
     override fun initialize() {
-        on<ExtractRenderEntityEvent> { event ->
+        on<PreExtractRenderEntityEvent> { event ->
             val entity = event.entity as? EnderDragon ?: return@on
 
             if (entity.dragonDeathTime > 0) return@on

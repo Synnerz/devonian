@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.events.PostExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -49,14 +50,17 @@ object WitherHighlight : Feature(
 
     private val deferredWithers = mutableListOf<Triple<Double, Double, Double>>()
 
-    fun extractWither(wither: WitherBoss, state: WitherRenderState) {
-        if (wither.maxHealth == 300f) return
-        if (SETTING_BOX.get()) {
-            deferredWithers.add(Triple(state.x, state.y, state.z))
-        } else if (state.outlineColor == 0) state.outlineColor = SETTING_BOX_WIRE_COLOR.get() and 0xFFFFFF
-    }
-
     override fun initialize() {
+        on<PostExtractRenderEntityEvent> { event ->
+            val state = event.state as? WitherRenderState ?: return@on
+            val wither = event.entity as? WitherBoss ?: return@on
+
+            if (wither.maxHealth == 300f) return@on
+            if (SETTING_BOX.get()) {
+                deferredWithers.add(Triple(state.x, state.y, state.z))
+            } else if (state.outlineColor == 0) state.outlineColor = SETTING_BOX_WIRE_COLOR.get() and 0xFFFFFF
+        }
+
         on<RenderWorldEvent> {
             deferredWithers.forEach { (x, y, z) ->
                 Context.Immediate?.renderFilledBox(

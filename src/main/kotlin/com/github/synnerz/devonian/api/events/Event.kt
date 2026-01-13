@@ -117,10 +117,16 @@ class PostRenderEntityEvent(
 ) : Event()
  */
 
-class ExtractRenderEntityEvent(
+class PreExtractRenderEntityEvent(
     val entity: Entity,
     val pt: Float,
 ) : CancellableEvent()
+
+class PostExtractRenderEntityEvent(
+    val entity: Entity,
+    val state: EntityRenderState,
+    val pt: Float,
+) : Event()
 
 class GuiOpenEvent(
     val screen: Screen

@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent;
+import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent;
 import com.github.synnerz.devonian.api.events.PreRenderEntityEvent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -30,8 +30,8 @@ public class EntityRenderDispatcherMixin {
         at = @At("HEAD"),
         cancellable = true
     )
-    private void devonian$extractRenderEntity(Entity entity, float f, CallbackInfoReturnable<EntityRenderState> cir) {
-        ExtractRenderEntityEvent event = new ExtractRenderEntityEvent(entity, f);
+    private void devonian$preExtractRenderEntity(Entity entity, float f, CallbackInfoReturnable<EntityRenderState> cir) {
+        PreExtractRenderEntityEvent event = new PreExtractRenderEntityEvent(entity, f);
         if (event.post()) {
             EntityRenderState noop = new EntityRenderState();
             noop.entityType = EntityType.AREA_EFFECT_CLOUD;

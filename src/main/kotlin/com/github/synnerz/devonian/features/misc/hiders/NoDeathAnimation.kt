@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.misc.hiders
 
-import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent
+import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.LivingEntity
@@ -40,7 +40,7 @@ object NoDeathAnimation : Feature(
     }
 
     override fun initialize() {
-        on<ExtractRenderEntityEvent> { event ->
+        on<PreExtractRenderEntityEvent> { event ->
             val entity = event.entity as? LivingEntity ?: return@on
 
             if (shouldHide(entity)) event.cancel()

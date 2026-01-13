@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.m7
 
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent
+import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
@@ -19,7 +19,7 @@ object HideDyingDragons : Feature(
     }
 
     override fun initialize() {
-        on<ExtractRenderEntityEvent> { event ->
+        on<PreExtractRenderEntityEvent> { event ->
             if (event.entity !is EnderDragon) return@on
             if (event.entity.dragonDeathTime > 0) event.cancel()
         }

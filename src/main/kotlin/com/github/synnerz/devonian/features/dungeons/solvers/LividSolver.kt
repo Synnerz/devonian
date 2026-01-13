@@ -88,7 +88,7 @@ object LividSolver : Feature(
             lividEnt = world.players().find { it.name.string.contains(name) }
         }
 
-        on<ExtractRenderEntityEvent> { event ->
+        on<PreExtractRenderEntityEvent> { event ->
             if (!SETTING_HIDE_WRONG_LIVID.get() || lividEnt == null) return@on
             val name = event.entity.name?.string ?: return@on
             if (!name.matches(lividNameRegex)) return@on

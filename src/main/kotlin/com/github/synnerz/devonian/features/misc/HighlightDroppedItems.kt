@@ -1,9 +1,11 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.barrl.Context
+import com.github.synnerz.devonian.api.events.PostExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.client.renderer.entity.state.ItemEntityRenderState
+import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
 import java.awt.Color
 import java.util.*
@@ -41,24 +43,27 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
     private val items = WeakHashMap<ItemStack, Int>()
     private val deferredItems = mutableListOf<Pair<Triple<Double, Double, Double>, Int>>()
 
-    fun extractItemCluster(item: ItemStack, state: ItemEntityRenderState) {
-        val color = items.getOrPut(item) {
-            item.customName?.siblings?.getOrNull(0)?.style?.color?.value ?: -1
-        }
-        if (SETTING_BOX.get()) {
-            deferredItems.add(
-                Pair(
-                    Triple(
-                        state.x,
-                        state.y + sin(state.ageInTicks * 0.1 + state.bobOffset) * 0.1 + 0.1625,
-                        state.z
-                    ), color
-                )
-            )
-        } else if (state.outlineColor == 0) state.outlineColor = color
-    }
-
     override fun initialize() {
+        on<PostExtractRenderEntityEvent> { event ->
+            val state = event.state as? ItemEntityRenderState ?: return@on
+            val item = (event.entity as? ItemEntity)?.item ?: return@on
+
+            val color = items.getOrPut(item) {
+                item.customName?.siblings?.getOrNull(0)?.style?.color?.value ?: -1
+            }
+            if (SETTING_BOX.get()) {
+                deferredItems.add(
+                    Pair(
+                        Triple(
+                            state.x,
+                            state.y + sin(state.ageInTicks * 0.1 + state.bobOffset) * 0.1 + 0.1625,
+                            state.z
+                        ), color
+                    )
+                )
+            } else if (state.outlineColor == 0) state.outlineColor = color
+        }
+
         on<RenderWorldEvent> {
             deferredItems.forEach { (pos, col) ->
                 val (x, y, z) = pos

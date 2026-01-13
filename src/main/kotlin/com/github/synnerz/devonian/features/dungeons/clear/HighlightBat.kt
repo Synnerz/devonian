@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.ExtractRenderEntityEvent
+import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
@@ -28,7 +28,7 @@ object HighlightBat : Feature(
     )
 
     override fun initialize() {
-        on<ExtractRenderEntityEvent> { event ->
+        on<PreExtractRenderEntityEvent> { event ->
             val ent = event.entity as? Bat ?: return@on
 
             if (ent.maxHealth == 6f) return@on
