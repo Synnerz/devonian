@@ -55,6 +55,19 @@ object SimonSaysSolver : Feature(
         "",
         "Simon Says Line Width",
     )
+    private val SETTING_BLOCK_START_CLICK = addSwitch(
+        "blockStartClick",
+        false,
+        "Blocks the starting clicks that are above the threshold",
+        "Simon Says Block Start"
+    )
+    private val SETTING_MAX_START_CLICKS = addSlider(
+        "maxStartClicks",
+        3.0,
+        1.0, 10.0,
+        "Sets a limit for how many times you can click the start button",
+        "Simon Says Start Clicks"
+    )
     private val SETTING_COLOR_WIRE_1 = addColorPicker(
         "colorWire1",
         Color(0, 255, 0, 255).rgb,
@@ -116,6 +129,7 @@ object SimonSaysSolver : Feature(
     private var wasStartButtonLast = false
     private var hasButtons = false
     private var lastSolClick = 0
+    private var startClicks = 0
     var solutionTotal = 0
 
     private fun isValidButtonLocation(pos: BlockPos) = pos.y in 120 .. 123 && pos.z in 92 .. 95
@@ -188,6 +202,11 @@ object SimonSaysSolver : Feature(
             if (pos.x != 110) return@on
             wasStartButtonLast = pos.y == 121 && pos.z == 91
 
+            if (wasStartButtonLast && SETTING_BLOCK_START_CLICK.get()) {
+                if (startClicks++ >= SETTING_MAX_START_CLICKS.get().toInt() && shouldBlockClicks())
+                    event.cancel()
+            } else startClicks = 0
+
             if (solution.isEmpty()) return@on
             if (!isValidButtonLocation(pos)) return@on
 
@@ -255,5 +274,6 @@ object SimonSaysSolver : Feature(
         hasButtons = false
         lastSolClick = 0
         solutionTotal = 0
+        startClicks = 0
     }
 }
