@@ -15,7 +15,7 @@ import net.minecraft.network.chat.TextColor
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import org.joml.Matrix3x2f
-import java.util.IdentityHashMap
+import java.util.*
 import kotlin.math.roundToInt
 
 object ItemRarityBackground : Feature(

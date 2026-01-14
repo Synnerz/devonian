@@ -1,7 +1,10 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.PacketSentEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
 import net.minecraft.Util

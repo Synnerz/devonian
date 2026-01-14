@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.utils
 import net.minecraft.client.gui.components.LerpingBossEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.world.BossEvent
-import java.util.UUID
+import java.util.*
 
 class BossEventWrapper(val orig: LerpingBossEvent, var ov: Component) : LerpingBossEvent(
     null,

@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.DropItemEvent
 import com.github.synnerz.devonian.features.Feature
-import java.util.LinkedList
+import java.util.*
 
 object LimitDroppingItems : Feature(
     "limitDroppingItems",

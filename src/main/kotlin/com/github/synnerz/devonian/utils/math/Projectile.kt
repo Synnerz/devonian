@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import net.minecraft.world.entity.Pose
 import net.minecraft.world.phys.Vec3
-import java.util.BitSet
+import java.util.*
 import kotlin.math.*
 
 object Projectile {

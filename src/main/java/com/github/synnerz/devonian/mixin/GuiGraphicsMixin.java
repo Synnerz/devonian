@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.api.events.TooltipRenderEvent;
-import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers;
 import com.github.synnerz.devonian.features.misc.inventory.ScrollableTooltip;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

@@ -7,7 +7,6 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 object DragonSpawnTimer : TextHudFeature(
     "dragonSpawnTimer",
