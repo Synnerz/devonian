@@ -42,6 +42,7 @@ object Registry {
         register(SubTitleSetPacket)
         register(PingPacket)
         register(SystemChatPacket)
+        register(BundlePacket)
 
         register(BlockInteractPacket)
     }

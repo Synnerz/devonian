@@ -376,7 +376,9 @@ class UseItemEvent(
     val hand: InteractionHand
 ) : Event()
 
-class ClientThreadServerTickEvent() : Event()
+class ClientThreadServerTickEvent(
+    val action: Int,
+) : Event()
 
 /*
 class PreRenderTileEntityEvent(

@@ -17,6 +17,6 @@ public class ClientCommonPacketListenerImplMixin {
     )
     private void devonian$clientThreadServerTick(ClientboundPingPacket clientboundPingPacket, CallbackInfo ci) {
         if (EventBus.INSTANCE.get_internalSkipPing().remove(clientboundPingPacket.getId())) return;
-        if (clientboundPingPacket.getId() < 0) new ClientThreadServerTickEvent().post();
+        if (clientboundPingPacket.getId() < 0) new ClientThreadServerTickEvent(clientboundPingPacket.getId()).post();
     }
 }
