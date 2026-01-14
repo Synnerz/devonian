@@ -16,7 +16,7 @@ import org.lwjgl.glfw.GLFW
 
 object PreventPlacingPlayerHeads : Feature(
     "preventPlacingPlayerHeads",
-    "Stops Player Heads from being placeable.",
+    "Prevents head-like items which have a right click ability from being placeable. you can setup a blacklist keybind in controls to disable a certain item in case its preventing you from using it",
     subcategory = "Tweaks",
 ) {
     private const val KEY_NAME = "pphBlacklist"
@@ -47,8 +47,8 @@ object PreventPlacingPlayerHeads : Feature(
         on<BlockInteractEvent> { event ->
             if (minecraft.level?.getBlockState(event.pos) == null) return@on
             val itemStack = event.itemStack
-            val sbId = ItemUtils.skyblockId(itemStack)
-            if (sbId == null || itemStack.item != Items.PLAYER_HEAD) return@on
+            val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
+            if (itemStack.item != Items.PLAYER_HEAD) return@on
             val lore = ItemUtils.lore(itemStack) ?: return@on
             if (blacklisted.contains(sbId)) return@on
 
