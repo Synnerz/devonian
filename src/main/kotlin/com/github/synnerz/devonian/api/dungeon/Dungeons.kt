@@ -106,8 +106,7 @@ object Dungeons {
     }
     val roomClearScore = actualClearPercent.map { it * 60.0 }
 
-    private val discoveryScore_ = secretScore.zip(roomClearScore) { a, b -> a + b }
-    val exploreScore = fuckEntrance(discoveryScore_)
+    val exploreScore = fuckEntrance(secretScore).zip(fuckEntrance(roomClearScore), Int::plus)
 
     val deathPenalty = deaths.zip(hasSpirit) { deaths, spirit ->
         if (deaths == 0) 0
@@ -116,7 +115,7 @@ object Dungeons {
     val puzzlePenalty = completedPuzzles.zip(totalPuzzles) { completed, total ->
         10 * (total - completed)
     }
-    val totalPenalty = deathPenalty.zip(puzzlePenalty) { a, b -> a + b }
+    val totalPenalty = deathPenalty.zip(puzzlePenalty, Int::plus)
     private val skillScore_ = actualClearPercent.zip(totalPenalty) { clear, penalty ->
         max(20.0 + clear * 80.0 - penalty, 20.0)
     }
@@ -144,9 +143,9 @@ object Dungeons {
     }
     val bonusScore = fuckEntrance(bonusScore_)
 
-    val score = exploreScore.zip(skillScore) { a, b -> a + b }
-        .zip(speedScore) { a, b -> a + b }
-        .zip(bonusScore) { a, b -> a + b }
+    val score = exploreScore.zip(skillScore, Int::plus)
+        .zip(speedScore, Int::plus)
+        .zip(bonusScore, Int::plus)
 
     val _targetScore = bonusScore_.map { 40 - it }
     val minSecrets = _targetScore.zip(totalSecretsRequired) { score, secrets -> ceil(score * secrets / 40.0).toInt() }
