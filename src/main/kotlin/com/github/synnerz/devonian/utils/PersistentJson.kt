@@ -31,7 +31,7 @@ abstract class PersistentJson(private val configFile: File) {
     open fun onLoadDefault() {}
 
     fun load() {
-        if (configFile.exists()) {
+        if (configFile.exists() && configFile.readText().isNotEmpty()) {
             FileInputStream(configFile).use {
                 if (!onLoad(it)) onLoadDefault()
             }
