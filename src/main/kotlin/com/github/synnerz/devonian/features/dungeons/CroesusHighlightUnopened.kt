@@ -1,17 +1,9 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
-import com.github.synnerz.devonian.api.events.PacketSentEvent
-import com.github.synnerz.devonian.api.events.RenderSlotEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
-import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
-import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArraySet
@@ -34,54 +26,40 @@ object CroesusHighlightUnopened : Feature(
     private val blacklist = CopyOnWriteArraySet<Int>()
 
     override fun initialize() {
-        on<PacketReceivedEvent> { event ->
-            val packet = event.packet
-
-            if (packet is ClientboundOpenScreenPacket) {
-                val title = packet.title.string
-                inCroesus = title == "Croesus"
-                return@on
-            }
-
-            if (packet is ClientboundContainerClosePacket) {
-                blacklist.clear()
-                whitelist.clear()
-                return@on
-            }
-
-            if (packet !is ClientboundContainerSetContentPacket) return@on
-            if (!inCroesus) return@on
-
-            whitelist.clear()
-            blacklist.clear()
-
-            val items = packet.items
-            for (idx in 0..<45) {
-                val itemStack = items.getOrNull(idx) ?: continue
-                if (itemStack == ItemStack.EMPTY) continue
-                if (itemStack.item != Items.PLAYER_HEAD) continue
-                val lore = ItemUtils.lore(itemStack) ?: continue
-
-                for (line in lore) {
-                    if (line.contains("Opened Chest: ")) {
-                        blacklist.add(idx)
-                        continue
-                    }
-                    if (line != "No chests opened yet!") continue
-
-                    whitelist.add(idx)
-                }
-            }
-
-            inCroesus = false
+        on<ServerContainerOpenEvent> { event ->
+            inCroesus = event.titleStr == "Croesus"
         }
 
-        on<PacketSentEvent> { event ->
-            val packet = event.packet
-            if (packet !is ServerboundContainerClosePacket) return@on
-
+        on<ServerContainerCloseEvent> {
             blacklist.clear()
             whitelist.clear()
+        }
+
+        on<ClientContainerCloseEvent> {
+            blacklist.clear()
+            whitelist.clear()
+        }
+
+        on<ServerContainerSetSlotEvent> { event ->
+            if (event.slot == 0) {
+                blacklist.clear()
+                whitelist.clear()
+            }
+            if (event.slot > 45) return@on
+
+            val itemStack = event.itemStack
+            if (itemStack.item != Items.PLAYER_HEAD) return@on
+
+            val lore = ItemUtils.lore(itemStack) ?: return@on
+            for (line in lore) {
+                if (line.contains("Opened Chest: ")) {
+                    blacklist.add(event.slot)
+                    continue
+                }
+                if (line != "No chests opened yet!") continue
+
+                whitelist.add(event.slot)
+            }
         }
 
         on<RenderSlotEvent> { event ->
