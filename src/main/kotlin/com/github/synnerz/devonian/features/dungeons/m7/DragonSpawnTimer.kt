@@ -49,17 +49,22 @@ object DragonSpawnTimer : TextHudFeature(
             ticks = EventBus.serverTicks() + 100
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<ClientThreadServerTickEvent> {
             if (ticks <= 0) return@on
 
             val time = (ticks - EventBus.serverTicks()) * 0.05
             setLine("%.2fs".format(time))
-            draw(event.ctx)
 
             if (time <= 0) {
                 ticks = 0
                 spawned.clear()
             }
+        }.setEnabled(SETTING_HUD.state)
+
+        on<RenderOverlayEvent> { event ->
+            if (ticks <= 0) return@on
+
+            draw(event.ctx)
         }.setEnabled(SETTING_HUD.state)
 
         on<RenderWorldEvent> {

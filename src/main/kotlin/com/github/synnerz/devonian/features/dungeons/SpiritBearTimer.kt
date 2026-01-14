@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.MultiBlockUpdateEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -33,15 +34,21 @@ object SpiritBearTimer : TextHudFeature(
             }
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<ClientThreadServerTickEvent> {
             if (startedAt == 0) return@on
 
             val time = (startedAt - EventBus.serverTicks()) * 0.05
             val format = "&d%.2fs".format(time)
 
             setLine(format)
-            draw(event.ctx)
+
             if (time <= 0) startedAt = 0
+        }
+
+        on<RenderOverlayEvent> { event ->
+            if (startedAt == 0) return@on
+
+            draw(event.ctx)
         }
     }
 

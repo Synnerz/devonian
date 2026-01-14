@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.diana
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -106,7 +107,7 @@ object DianaDropTracker : TextHudFeature(
             }
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             setLines(
                 listOf(
                     "&9Griffin Feather&f: &b${loader.data?.griffinFeather ?: 0}",
@@ -128,6 +129,9 @@ object DianaDropTracker : TextHudFeature(
                     "&6Coins&f: &b${loader.data?.coins ?: 0}",
                 )
             )
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

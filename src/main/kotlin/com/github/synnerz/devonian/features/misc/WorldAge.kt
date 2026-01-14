@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object WorldAge : TextHudFeature(
@@ -8,10 +9,12 @@ object WorldAge : TextHudFeature(
     "Displays the current World's age."
 ) {
     override fun initialize() {
-        on<RenderOverlayEvent> { event ->
-            if (minecraft.level == null) return@on
+        on<TickEvent> {
+            val w = minecraft.level ?: return@on
+            setLine("&bDay&f: &6${w.dayTime / 24000}")
+        }
 
-            setLine("&bDay&f: &6${minecraft.level!!.dayTime / 24000}")
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

@@ -68,7 +68,7 @@ object Location {
                     val line = "${teamPrefix}${teamSuffix}"
                     if (!line.matches(subAreaRegex)) return@on
 
-                    changeSubarea(line)
+                    changeSubarea(line.drop(3))
                 }
             }
         }

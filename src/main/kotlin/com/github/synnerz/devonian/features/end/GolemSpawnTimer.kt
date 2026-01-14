@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.features.end
 
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
+import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -14,31 +16,27 @@ object GolemSpawnTimer : TextHudFeature(
     "the end"
 ) {
     private val golemSpawnRegex = "^The ground begins to shake as an End Stone Protector rises from below!$".toRegex()
-    var serverTicks = 0
     var remainingTime = 0
 
     override fun initialize() {
-        on<ServerTickEvent> {
-            serverTicks++
-        }
-
         on<ChatEvent> { event ->
             event.matches(golemSpawnRegex) ?: return@on
 
-            remainingTime = serverTicks + 400
+            remainingTime = EventBus.serverTicks() + 400
+        }
+
+        on<ClientThreadServerTickEvent> {
+            if (remainingTime == 0) return@on
+            val time = ((remainingTime - EventBus.serverTicks()) * 0.05).toInt()
+
+            setLine("&bGolem In&f: &a${time}s")
+
+            if (time <= 0) remainingTime = 0
         }
 
         on<RenderOverlayEvent> { event ->
             if (remainingTime == 0) return@on
-            val time = ((remainingTime - serverTicks) * 0.05).toInt()
 
-            if (time <= 0) {
-                remainingTime = 0
-                serverTicks = 0
-                return@on
-            }
-
-            setLine("&bGolem In&f: &a${time}s")
             draw(event.ctx)
         }
     }
@@ -46,7 +44,6 @@ object GolemSpawnTimer : TextHudFeature(
     override fun getEditText(): List<String> = listOf("&bGolem In&f: &a20s")
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        serverTicks = 0
         remainingTime = 0
     }
 }

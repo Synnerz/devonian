@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -33,17 +34,22 @@ object RelicTimer : TextHudFeature(
             startedAt = EventBus.serverTicks() + SPAWN_TICKS
         }
 
-        on<RenderOverlayEvent> {
+        on<ClientThreadServerTickEvent> {
             if (startedAt == -1) return@on
 
             val elapsedTime = (startedAt - EventBus.serverTicks()) * 0.05
             val time = "%.2fs".format(elapsedTime)
 
             setLine("&a${time}")
-            draw(it.ctx)
 
             if (elapsedTime <= 0)
                 startedAt = -1
+        }
+
+        on<RenderOverlayEvent> { event ->
+            if (startedAt == -1) return@on
+
+            draw(event.ctx)
         }
     }
 

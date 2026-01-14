@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
@@ -52,9 +53,13 @@ object RunSplits : TextHudFeature(
     }
 
     override fun initialize() {
+        on<ClientThreadServerTickEvent> {
+            setLines(Stages.Clear.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]))
+        }.setEnabled(SETTING_FORMAT.state.map { it == 1 })
+
         on<RenderOverlayEvent> { event ->
             if (!isEditing) editTime = TimeUnit.EMPTY
-            setLines(Stages.Clear.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]))
+            if (SETTING_FORMAT.get() != 1) setLines(Stages.Clear.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]))
             draw(event.ctx)
         }
     }

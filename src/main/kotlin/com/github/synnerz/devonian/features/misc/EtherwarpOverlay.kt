@@ -168,9 +168,9 @@ object EtherwarpOverlay : Feature(
                     px + lookVec.x * dist,
                     py + lookVec.y * dist,
                     pz + lookVec.z * dist,
-                    px + lookVec.x * maxDist,
-                    py + lookVec.y * maxDist,
-                    pz + lookVec.z * maxDist,
+                    lookVec.x * maxDist,
+                    lookVec.y * maxDist,
+                    lookVec.z * maxDist,
                     false,
                 )
                 if (hitResult == null) return@on

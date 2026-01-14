@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -25,9 +26,12 @@ object MilestoneDisplay : TextHudFeature(
             milestoneCount = milestonSymbols.indexOf(symb)
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             val format = if (milestoneCount > 2) "&6" else "&c"
             setLine("&bMilestone&f: ${format}$milestoneCount")
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

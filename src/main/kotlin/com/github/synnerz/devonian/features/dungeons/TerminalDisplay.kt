@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.dungeon.TerminalSection
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
@@ -32,7 +33,7 @@ object TerminalDisplay : TextHudFeature(
     }
 
     override fun initialize() {
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             val cur = Stages.Terminals.activeChild as TerminalSection
             if (SETTING_SIMPLE.get()) {
                 val color = if (cur.gateDestroyed) "&a" else "&c"
@@ -47,6 +48,9 @@ object TerminalDisplay : TextHudFeature(
                     )
                 )
             }
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

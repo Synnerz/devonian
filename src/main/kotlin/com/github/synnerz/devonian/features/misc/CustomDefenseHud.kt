@@ -34,9 +34,8 @@ object CustomDefenseHud : TextHudFeature(
         }
 
         on<RenderOverlayEvent> {
-            if (SETTING_ONLY_HIDE.get()) return@on
             draw(it.ctx)
-        }
+        }.setEnabled(SETTING_ONLY_HIDE.state.map(Boolean::not))
     }
 
     override fun getEditText(): List<String> = listOf("&a500❈")

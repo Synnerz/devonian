@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -31,16 +32,17 @@ object PurplePadTimer : TextHudFeature(
             triggered = true
         }
 
-        on<ServerTickEvent> {
-            if (startedAt == 0) return@on
+        on<ClientThreadServerTickEvent> {
+            if (startedAt <= 0) return@on
             startedAt--.coerceAtLeast(0)
+
+            val seconds = "%.2fs".format(startedAt * 0.05)
+            setLine("&d$seconds")
         }
 
         on<RenderOverlayEvent> {
             if (startedAt <= 0) return@on
-            val seconds = "%.2fs".format(startedAt * 0.05)
 
-            setLine("&d$seconds")
             draw(it.ctx)
         }
     }

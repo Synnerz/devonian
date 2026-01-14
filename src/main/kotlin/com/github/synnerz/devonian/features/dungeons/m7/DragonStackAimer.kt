@@ -66,6 +66,7 @@ object DragonStackAimer : TextHudFeature(
     private var done = false
     private var prevBest = 0
     private var data: Projectile.ProjectileData? = null
+    private var visible = false
 
     override fun initialize() {
         on<ChatEvent> { event ->
@@ -100,7 +101,8 @@ object DragonStackAimer : TextHudFeature(
             data = d
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<ClientThreadServerTickEvent> {
+            visible = false
             val remaining = ticks - EventBus.serverTicks()
             if (remaining <= 0) return@on
 
@@ -110,6 +112,12 @@ object DragonStackAimer : TextHudFeature(
             if (ttl < -1000) return@on
             if (ttl < 0) setLine("&bNOW")
             else setLine("${StringUtils.colorForNumber(ttl, 5000)}${ttl}")
+
+            visible = true
+        }.setEnabled(SETTING_HUD.state)
+
+        on<RenderOverlayEvent> { event ->
+            if (!visible) return@on
 
             draw(event.ctx)
         }.setEnabled(SETTING_HUD.state)

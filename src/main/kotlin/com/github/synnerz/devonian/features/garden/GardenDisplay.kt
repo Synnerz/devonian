@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.garden
 
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -79,7 +80,7 @@ object GardenDisplay : TextHudFeature(
             storedCompost = storedCompostMatch[0]
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             setLines(
                 listOf(
                     "&a&lGarden Display",
@@ -91,6 +92,9 @@ object GardenDisplay : TextHudFeature(
                     "&aStored Compost&f: &6$storedCompost",
                 )
             )
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

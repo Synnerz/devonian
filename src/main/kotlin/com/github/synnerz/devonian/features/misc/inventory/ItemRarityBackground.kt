@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
 import com.github.synnerz.devonian.api.events.RenderHotbarSlotEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.TexturedQuadRenderState
 import net.minecraft.ChatFormatting
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.TextColor
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import org.joml.Matrix3x2f
+import java.util.IdentityHashMap
 import kotlin.math.roundToInt
 
 object ItemRarityBackground : Feature(
@@ -70,11 +72,16 @@ object ItemRarityBackground : Feature(
         "a SHINY MYTHIC" to TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE)!!.value,
     )
 
+    private val cache = IdentityHashMap<ItemStack, Int>()
+
     private fun render(x: Int, y: Int, item: ItemStack, ctx: GuiGraphics) {
         if (item.isEmpty) return
 
-        val lore = ItemUtils.lore(item) ?: return
-        val rgb = findColor(lore) ?: return
+        val rgb = cache.getOrPut(item) {
+            val lore = ItemUtils.lore(item) ?: return@getOrPut -1
+            return@getOrPut findColor(lore) ?: -1
+        }
+        if (rgb == -1) return
         val opacity = (SETTING_RENDER_OPACITY.get() * 255.0).roundToInt()
         val color = rgb or (opacity shl 24)
         val lineWidth = SETTING_RENDER_LINE_WIDTH.get().roundToInt()
@@ -123,6 +130,10 @@ object ItemRarityBackground : Feature(
             if (!SETTING_RENDER_HOTBAR.get()) return@on
             render(event.x, event.y, event.item, event.ctx)
         }.prio = 0
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        cache.clear()
     }
 
     private fun findColor(lore: List<String>): Int? {

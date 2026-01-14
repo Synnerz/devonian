@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -28,15 +29,20 @@ object FireFreezeTimer : TextHudFeature(
             startedAt = EventBus.serverTicks() + 110
         }
 
-        on<RenderOverlayEvent> {
+        on<ClientThreadServerTickEvent> {
             if (startedAt == -1) return@on
             val time = (startedAt - EventBus.serverTicks()) * 0.05
             val seconds = "%.2fs".format(time)
 
             setLine("&bFF&f: &a$seconds")
-            draw(it.ctx)
 
             if (time <= 0) startedAt = -1
+        }
+
+        on<RenderOverlayEvent> {
+            if (startedAt == -1) return@on
+
+            draw(it.ctx)
         }
     }
 

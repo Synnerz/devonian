@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -54,8 +55,11 @@ object PuzzlesDisplay : TextHudFeature(
             }
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             setLines(toDisplay.toList())
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

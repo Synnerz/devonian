@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.garden
 
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -57,7 +58,7 @@ object PestsDisplay : TextHudFeature(
             currentSpray = currentSprayMatch[0]
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             setLines(
                 listOf(
                     "&4&lPests Display",
@@ -68,6 +69,9 @@ object PestsDisplay : TextHudFeature(
                     "&fCooldown&f: &e$cooldown"
                 )
             )
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

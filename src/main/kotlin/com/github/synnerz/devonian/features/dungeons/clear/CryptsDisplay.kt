@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -30,9 +31,12 @@ object CryptsDisplay : TextHudFeature(
             cryptsCount = amount.toInt()
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             val format = if (cryptsCount > 4) "&6" else "&c"
             setLine("&aCrypts&f: ${format}$cryptsCount")
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

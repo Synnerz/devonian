@@ -40,12 +40,9 @@ object EyesPlacedDisplay : TextHudFeature(
         }
 
         on<RenderOverlayEvent> { event ->
-            if (Location.subarea == null) return@on
-            if (!Location.subarea!!.contains("dragon's nest")) return@on
-
             setLine(displayStr ?: "&dEyes Placed&f: &e0&f/&d8")
             draw(event.ctx)
-        }
+        }.setEnabled(Location.stateInSubarea("dragon's nest"))
     }
 
     override fun getEditText(): List<String> = listOf("&dEyes Placed&f: &d8&f/&d8")

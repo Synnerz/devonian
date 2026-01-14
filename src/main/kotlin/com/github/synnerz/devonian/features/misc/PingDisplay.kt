@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
@@ -34,13 +35,16 @@ object PingDisplay : TextHudFeature("pingDisplay") {
             1
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             setLine("&aPing: ${formatPing(when (SETTING_PING_TYPE.getCurrent()) {
                 "Median" -> Ping.getMedianPing()
                 "Mean" -> Ping.getAveragePing()
                 "Instantaneous" -> Ping.getLastPing()
                 else -> Ping.getMedianPing()
             })}")
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

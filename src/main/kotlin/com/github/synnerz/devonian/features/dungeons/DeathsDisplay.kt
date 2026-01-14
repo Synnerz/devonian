@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -30,10 +31,13 @@ object DeathsDisplay : TextHudFeature(
             deathCount = amount.toInt()
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             val count = deathCount
             val format = if (count > 2) "&4" else "&c"
             setLine("&8&lDeaths&f: ${format}$count")
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -37,18 +38,19 @@ object GoldorFrenzyTimer : TextHudFeature(
             }
         }
 
-        on<ServerTickEvent> {
-            until = if (until > 1) until - 1 else 60
-        }
-
-        on<RenderOverlayEvent> { event ->
+        on<ClientThreadServerTickEvent> {
             if (!inGoldor) return@on
+            until = if (until > 1) until - 1 else 60
             setLine(
                 "%s%.2f".format(
                     StringUtils.colorForNumber(until, 60),
                     until * 0.05
                 )
             )
+        }
+
+        on<RenderOverlayEvent> { event ->
+            if (!inGoldor) return@on
             draw(event.ctx)
         }
     }

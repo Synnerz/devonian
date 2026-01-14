@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetContentEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -48,10 +49,12 @@ object GrowthStageTimer : TextHudFeature(
             }
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             if (finishTime < 0L) setLine(formatTime(-1))
             else setLine(formatTime(((finishTime - System.currentTimeMillis()) / 1000L).toInt()))
+        }
 
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.diana
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -97,7 +98,7 @@ object DianaMobTracker : TextHudFeature(
             }
         }
 
-        on<RenderOverlayEvent> { event ->
+        on<TickEvent> {
             setLines(
                 listOf(
                     "&aMinos Hunters&f: &b${loader.data?.minosHunter ?: 0}",
@@ -113,6 +114,9 @@ object DianaMobTracker : TextHudFeature(
                     "&6King Minos&f: &b${loader.data?.kingMinos ?: 0}",
                 )
             )
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
     }

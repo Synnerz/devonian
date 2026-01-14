@@ -42,36 +42,39 @@ object InventoryHistoryLog : TextHudFeature(
     override fun initialize() {
         on<TickEvent> {
             if (Location.area == null) return@on
-            receipt.entries.removeIf { --it.value.ttl <= 0 }
+            0.let {
+                receipt.entries.removeIf { --it.value.ttl <= 0 }
 
-            val inv = minecraft.player?.inventory ?: return@on
-            if (worldSwap) return@on
+                val inv = minecraft.player?.inventory ?: return@let
+                if (worldSwap) return@let
 
-            val newInv = mutableMapOf<String, Int>()
-            inv.forEachIndexed { i, v ->
-                if (i == 8) return@forEachIndexed
-                if (v.isEmpty) return@forEachIndexed
+                val newInv = mutableMapOf<String, Int>()
+                inv.forEachIndexed { i, v ->
+                    if (i == 8) return@forEachIndexed
+                    if (v.isEmpty) return@forEachIndexed
 
-                val name = v.customName?.colorCodes() ?: v.itemName.string
-                val count = v.count
-                newInv.merge(name.clearName(), count, Int::plus)
-                inventory?.merge(name.clearName(), -count, Int::plus)
+                    val name = v.customName?.colorCodes() ?: v.itemName.string
+                    val count = v.count
+                    newInv.merge(name.clearName(), count, Int::plus)
+                    inventory?.merge(name.clearName(), -count, Int::plus)
+                }
+
+                inventory?.forEach { (k, v) ->
+                    if (v == 0) return@forEach
+                    val q = -v
+                    val key = ItemizedDifference.Key(k, q > 0)
+                    receipt.getOrPut(key) { ItemizedDifference(k, 0) }.add(q)
+                }
+
+                inventory = newInv
             }
 
-            inventory?.forEach { (k, v) ->
-                if (v == 0) return@forEach
-                val q = -v
-                val key = ItemizedDifference.Key(k, q > 0)
-                receipt.getOrPut(key) { ItemizedDifference (k, 0) }.add(q)
-            }
-
-            inventory = newInv
+            setLines(receipt.map { it.value.toString() })
         }
 
         on<RenderOverlayEvent> { event ->
-            setLines(receipt.map { it.value.toString() })
             draw(event.ctx)
-        }
+        }.setEnabled(Location.stateInSkyblock)
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
@@ -79,7 +82,8 @@ object InventoryHistoryLog : TextHudFeature(
         Scheduler.scheduleServerTask(20) { worldSwap = false }
     }
 
-    private fun String.clearName(): String = this.replace(" ?§r§8 ?x\\d+".toRegex(), "").trim()
+    private val removeCountRegex = " ?§r§8 ?x\\d+".toRegex()
+    private fun String.clearName(): String = this.replace(removeCountRegex, "").trim()
 
     override fun getEditText(): List<String> = listOf("&c-100&r &eSocial Credit")
 }

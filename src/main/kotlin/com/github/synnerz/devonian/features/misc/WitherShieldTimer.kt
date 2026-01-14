@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
@@ -40,7 +41,7 @@ object WitherShieldTimer : TextHudFeature(
     }
 
     override fun initialize() {
-        on<RenderOverlayEvent> { event ->
+        on<ClientThreadServerTickEvent> {
             var str = "&aREADY"
             if (cooldown > 0) {
                 val ttl = useTime + cooldown - EventBus.serverTicks()
@@ -55,6 +56,9 @@ object WitherShieldTimer : TextHudFeature(
             }
 
             setLine("&6Shield: $str")
+        }
+
+        on<RenderOverlayEvent> { event ->
             draw(event.ctx)
         }
 
