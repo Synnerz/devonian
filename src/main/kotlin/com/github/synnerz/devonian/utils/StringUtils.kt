@@ -96,6 +96,15 @@ object StringUtils {
         }
     }
 
+    fun addCommasTruncate(number: Number): String {
+        return number.let {
+            NumberFormat.getNumberInstance(Locale.US).apply {
+                maximumFractionDigits = 0
+                minimumFractionDigits = 0
+            }.format(it)
+        }
+    }
+
     fun formatSeconds(seconds: Long): String {
         val s = seconds % 60
         val m = (seconds / 60) % 60
