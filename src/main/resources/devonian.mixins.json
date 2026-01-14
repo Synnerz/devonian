@@ -68,6 +68,7 @@
     "EnderDragonRendererMixin",
     "EntityMixin",
     "ItemCooldownsMixin",
+    "ItemStackMixin",
     "PlayerMixin",
     "accessor.AbstractArrowAccessor",
     "accessor.ClientboundEntityEventPacketAccessor",

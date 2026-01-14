@@ -285,6 +285,7 @@ object Devonian : ClientModInitializer {
         MelodyKeys,
         LowerNametags,
         LimitDroppingItems,
+        OldMasterStar,
 
         // Debug
         CopyItem,
