@@ -203,8 +203,14 @@ object SimonSaysSolver : Feature(
             wasStartButtonLast = pos.y == 121 && pos.z == 91
 
             if (wasStartButtonLast && SETTING_BLOCK_START_CLICK.get()) {
-                if (startClicks++ >= SETTING_MAX_START_CLICKS.get().toInt() && shouldBlockClicks())
+                if (startClicks++ >= SETTING_MAX_START_CLICKS.get().toInt() && shouldBlockClicks()) {
                     event.cancel()
+                    minecraft.level?.playPlayerSound(
+                        PREVENTED_SOUND.value(),
+                        SoundSource.MASTER,
+                        1f, 0.5f,
+                    )
+                }
             } else startClicks = 0
 
             if (solution.isEmpty()) return@on
