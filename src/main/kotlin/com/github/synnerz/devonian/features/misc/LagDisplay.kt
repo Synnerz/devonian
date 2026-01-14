@@ -14,7 +14,7 @@ object LagDisplay : TextHudFeature("lagDisplay") {
         "Lag Threshold",
     )
 
-    private var lastPacket = 0L
+    private var lastPacket = System.currentTimeMillis()
 
     override fun initialize() {
         on<ServerTickEvent> {
