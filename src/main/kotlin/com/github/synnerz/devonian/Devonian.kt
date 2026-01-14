@@ -284,6 +284,7 @@ object Devonian : ClientModInitializer {
         WitherHighlight,
         MelodyKeys,
         LowerNametags,
+        LimitDroppingItems,
 
         // Debug
         CopyItem,
