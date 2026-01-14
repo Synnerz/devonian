@@ -31,11 +31,15 @@ abstract class PersistentJson(private val configFile: File) {
     open fun onLoadDefault() {}
 
     fun load() {
-        if (configFile.exists() && configFile.readText().isNotEmpty()) {
-            FileInputStream(configFile).use {
-                if (!onLoad(it)) onLoadDefault()
-            }
-        } else onLoadDefault()
+        try {
+            if (configFile.exists()) {
+                FileInputStream(configFile).use {
+                    if (!onLoad(it)) onLoadDefault()
+                }
+            } else onLoadDefault()
+        } catch (_: Exception) {
+            onLoadDefault()
+        }
 
         afterLoadListeners.forEach { it() }
     }
