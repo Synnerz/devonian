@@ -19,13 +19,14 @@ object ItemValue : Feature(
         on<TooltipRenderEvent> { event ->
             val item = event.item ?: return@on
             val sbId = ItemUtils.skyblockId(item) ?: return@on
-            val price = SkyblockPrices.sellPrice(sbId)
+            var price = SkyblockPrices.sellPrice(sbId)
             if (price == 0f) return@on
+            price *= item.count
 
             val priceSequence = FormattedCharSequence.composite(
                 FormattedCharSequence.forward("Price", Style.EMPTY.withColor(ChatFormatting.GOLD)),
                 FormattedCharSequence.forward(": ", Style.EMPTY.withColor(ChatFormatting.WHITE)),
-                FormattedCharSequence.forward(StringUtils.addCommas(price), Style.EMPTY.withColor(ChatFormatting.YELLOW)),
+                FormattedCharSequence.forward(StringUtils.addCommasTruncate(price), Style.EMPTY.withColor(ChatFormatting.YELLOW)),
             )
 
             event.lore.add(
