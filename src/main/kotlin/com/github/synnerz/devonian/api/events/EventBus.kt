@@ -218,6 +218,10 @@ object EventBus {
                 is ClientboundContainerSetContentPacket -> {
                     ServerContainerSetContentEvent(packet.containerId, packet.stateId, packet.items, packet.carriedItem).post()
                 }
+
+                is ClientboundContainerSetSlotPacket -> {
+                    ServerContainerSetSlotEvent(packet.containerId, packet.stateId, packet.item, packet.slot).post()
+                }
             }
         }
 

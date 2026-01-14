@@ -503,6 +503,13 @@ class ContainerRenderEvent(
     }
 }
 
+@Threaded class ServerContainerSetSlotEvent(
+    val containerId: Int,
+    val stateId: Int,
+    val itemStack: ItemStack,
+    val slot: Int,
+) : Event()
+
 class ClientContainerCloseEvent(
     val containerId: Int
 ) : CancellableEvent()
