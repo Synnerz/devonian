@@ -148,28 +148,28 @@ object DungeonMap : HudFeature(
     )
     private val SETTING_ROOM_ENTRANCE_COLOR = addColorPicker(
         "roomEntranceColor",
-        Color(0, 123, 0).rgb,
+        Color(20, 133, 0).rgb,
         "",
         "Entrance Room Color",
         subcategory = "Colors",
     )
     private val SETTING_ROOM_NORMAL_COLOR = addColorPicker(
         "roomNormalColor",
-        Color(114, 67, 27).rgb,
+        Color(107, 58, 17).rgb,
         "",
         "Normal Room Color",
         subcategory = "Colors",
     )
     private val SETTING_ROOM_MINIBOSS_COLOR = addColorPicker(
         "roomMinibossColor",
-        Color(114, 67, 27).rgb,
+        Color(107, 58, 17).rgb,
         "(as in: has a miniboss, not yellow)",
         "Miniboss Room Color",
         subcategory = "Colors",
     )
     private val SETTING_ROOM_FAIRY_COLOR = addColorPicker(
         "roomFairyColor",
-        Color(239, 126, 163).rgb,
+        Color(224, 0, 255).rgb,
         "",
         "Fairy Room Color",
         subcategory = "Colors",
@@ -183,35 +183,35 @@ object DungeonMap : HudFeature(
     )
     private val SETTING_ROOM_PUZZLE_COLOR = addColorPicker(
         "roomPuzzleColor",
-        Color(176, 75, 213).rgb,
+        Color(117, 0, 133).rgb,
         "",
         "Puzzle Room Color",
         subcategory = "Colors",
     )
     private val SETTING_ROOM_TRAP_COLOR = addColorPicker(
         "roomTrapColor",
-        Color(213, 126, 50).rgb,
+        Color(216, 127, 51).rgb,
         "",
         "Trap Room Color",
         subcategory = "Colors",
     )
     private val SETTING_ROOM_YELLOW_COLOR = addColorPicker(
         "roomYellowColor",
-        Color(226, 226, 50).rgb,
+        Color(254, 223, 0).rgb,
         "",
         "Yellow Room Color",
         subcategory = "Colors",
     )
     private val SETTING_ROOM_RARE_COLOR = addColorPicker(
         "roomRareColor",
-        Color(0, 67, 27).rgb,
+        Color(255, 203, 89).rgb,
         "",
         "Rare Room Color",
         subcategory = "Colors",
     )
     private val SETTING_ROOM_UNKNOWN_COLOR = addColorPicker(
         "roomUnknownColor",
-        Color(64, 64, 64).rgb,
+        Color(65, 65, 65).rgb,
         "",
         "Unknown Room Color",
         subcategory = "Colors",
@@ -232,7 +232,7 @@ object DungeonMap : HudFeature(
     )
     private val SETTING_DOOR_ENTRANCE_COLOR = addColorPicker(
         "doorEntranceColor",
-        Color(0, 123, 0).rgb,
+        Color(20, 133, 0).rgb,
         "",
         "Entrance Door Color",
         subcategory = "Colors",
@@ -527,7 +527,7 @@ object DungeonMap : HudFeature(
                 u1 = (SKIN_HEAD_U + SKIN_HEAD_WIDTH).toFloat() / SKIN_TEX_WIDTH
                 v1 = (SKIN_HEAD_V + SKIN_HEAD_HEIGHT).toFloat() / SKIN_TEX_HEIGHT
                 maxDy = 4f
-                val skin = info.skin
+                val skin = info!!.skin
                 val rl = skin.body.texturePath()
                 textureView = Devonian.minecraft.textureManager.getTexture(rl).textureView
             } else {
