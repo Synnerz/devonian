@@ -35,7 +35,7 @@ dependencies {
 
 	include modImplementation("com.github.Synnerz:barrl:1.21.10-SNAPSHOT")
 	// TODO: upload to modrinth
-	include modImplementation("com.github.Synnerz:talium:026956a952")
+	include modImplementation("com.github.Synnerz:talium:bbedbbd8e6")
 
 	modApi("com.terraformersmc:modmenu:16.0.0")
 }
