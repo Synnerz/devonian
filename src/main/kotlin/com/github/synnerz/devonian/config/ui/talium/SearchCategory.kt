@@ -11,6 +11,8 @@ import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
 
 class SearchCategory(rightPanel: UIBase) {
+    private val NORMAL_TEXT_SCALE = 2.5f
+    private val DESCRIPTION_TEXT_SCALE = 2f
     private val components = mutableListOf<Pair<ConfigData<*>, UIRect>>()
     private val colorComponents = mutableListOf<UIColorPicker>()
     private var previousText = ""
@@ -47,7 +49,7 @@ class SearchCategory(rightPanel: UIBase) {
         }
 
         onResize { _, w ->
-            textScale = 2f / w.scaleFactor
+            textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
         }
     }
     private val categoryTitleBg = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
@@ -56,7 +58,7 @@ class SearchCategory(rightPanel: UIBase) {
     private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, "Searching...", true, parent = categoryTitleBg).apply {
         setColor(ColorPalette.TEXT_COLOR)
         onResize { _, w ->
-            textScale = 3f / w.scaleFactor
+            textScale = 2f / w.scaleFactor
         }
     }
     private val scrollableRect = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel)
@@ -170,7 +172,7 @@ class SearchCategory(rightPanel: UIBase) {
         UIText(0.0, 2.0, 100.0, 25.0, text, true, parent).apply {
             setColor(ColorPalette.TEXT_COLOR)
             onResize { _, w ->
-                textScale = 3f / w.scaleFactor
+                textScale = NORMAL_TEXT_SCALE / w.scaleFactor
             }
         }
 
@@ -178,7 +180,7 @@ class SearchCategory(rightPanel: UIBase) {
         UIWrappedText(2.0, 28.0, 75.0, 75.0, text, parent = parent).apply {
             setColor(ColorPalette.LIGHT_TEXT_COLOR)
             onResize { _, w ->
-                textScale = 2f / w.scaleFactor
+                textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
             }
         }
 
@@ -190,7 +192,7 @@ class SearchCategory(rightPanel: UIBase) {
         addChild(UIText(0.0, 0.0, 100.0, 100.0, configData.btnTitle, true).apply {
             setColor(ColorPalette.TEXT_COLOR)
             onResize { _, w ->
-                textScale = 3f / w.scaleFactor
+                textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
             }
         })
         onMouseRelease {
@@ -270,7 +272,7 @@ class SearchCategory(rightPanel: UIBase) {
     ): UITextInput = object : UITextInput(80.0, 25.0, 15.0, 50.0, configData.get(), parent = parent) {
         init {
             onResize { _, w ->
-                textScale = 2f / w.scaleFactor
+                textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
             }
         }
 
@@ -303,7 +305,7 @@ class SearchCategory(rightPanel: UIBase) {
         object : UISelection(80.0, 25.0, 15.0, 50.0, configData.get(), configData.options, parent = parent) {
             init {
                 centerText.onResize { _, w ->
-                    centerText.textScale = 2f / w.scaleFactor
+                    centerText.textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
                 }
             }
 
