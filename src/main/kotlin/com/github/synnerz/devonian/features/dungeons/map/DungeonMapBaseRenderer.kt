@@ -147,12 +147,16 @@ class DungeonMapBaseRenderer :
                 DoorTypes.BLOOD -> colors[DungeonMapColors.DoorBlood]
                 DoorTypes.NORMAL -> {
                     if (!door.opened) return@forEach
-                    val room = door.rooms.minByOrNull {
-                        it.type.prio - (if (!it.explored && !options.renderUnknownRooms) 100 else 0)
-                    } ?: return@forEach
+                    val data = colors[DungeonMapColors.DoorNormal]
+                    if (data != null) data
+                    else {
+                        val room = door.rooms.minByOrNull {
+                            it.type.prio - (if (!it.explored && !options.renderUnknownRooms) 100 else 0)
+                        } ?: return@forEach
 
-                    if (!room.explored && door.holyShitFairyDoorPleaseStopFlashingSobs) colors[DungeonMapColors.DoorWither]
-                    else colorForRoom(room)
+                        if (!room.explored && door.holyShitFairyDoorPleaseStopFlashingSobs) colors[DungeonMapColors.DoorWither]
+                        else colorForRoom(room)
+                    }
                 }
             } ?: colors[DungeonMapColors.RoomNormal] ?: return@forEach
 

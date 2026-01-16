@@ -237,6 +237,21 @@ object DungeonMap : HudFeature(
         "Entrance Door Color",
         subcategory = "Colors",
     )
+    // hear me out chick, i know it doesn't belong here but it's part of the colors
+    private val SETTING_NORMAL_DOOR_DYNAMIC = addSwitch(
+        "doorNormalDynamicColor",
+        true,
+        "If enabled, this will ignore the \"Normal Door Color\" and use the room's color for a more blend-in door way",
+        "Normal Door Dynamic Color",
+        subcategory = "Colors"
+    )
+    private val SETTING_NORMAL_DOOR_COLOR = addColorPicker(
+        "doorNormalColor",
+        Color(107, 58, 17).rgb,
+        "",
+        "Normal Door Color",
+        subcategory = "Colors"
+    )
     private val SETTING_ROOM_SIZE = addDecimalSlider(
         "roomSize",
         0.8,
@@ -406,25 +421,25 @@ object DungeonMap : HudFeature(
             DungeonMapRenderData(
                 rooms, doors,
                 DungeonMapRenderOptions(
-                    mapOf(
-                        DungeonMapColors.Background to SETTING_MAP_BACKGROUND_COLOR.getColor(),
-                        DungeonMapColors.Border to SETTING_MAP_BORDER_COLOR.getColor(),
-
-                        DungeonMapColors.RoomEntrance to SETTING_ROOM_ENTRANCE_COLOR.getColor(),
-                        DungeonMapColors.RoomNormal to SETTING_ROOM_NORMAL_COLOR.getColor(),
-                        DungeonMapColors.RoomMiniboss to SETTING_ROOM_MINIBOSS_COLOR.getColor(),
-                        DungeonMapColors.RoomFairy to SETTING_ROOM_FAIRY_COLOR.getColor(),
-                        DungeonMapColors.RoomBlood to SETTING_ROOM_BLOOD_COLOR.getColor(),
-                        DungeonMapColors.RoomPuzzle to SETTING_ROOM_PUZZLE_COLOR.getColor(),
-                        DungeonMapColors.RoomTrap to SETTING_ROOM_TRAP_COLOR.getColor(),
-                        DungeonMapColors.RoomYellow to SETTING_ROOM_YELLOW_COLOR.getColor(),
-                        DungeonMapColors.RoomRare to SETTING_ROOM_RARE_COLOR.getColor(),
-                        DungeonMapColors.RoomUnknown to SETTING_ROOM_UNKNOWN_COLOR.getColor(),
-
-                        DungeonMapColors.DoorWither to SETTING_DOOR_WITHER_COLOR.getColor(),
-                        DungeonMapColors.DoorBlood to SETTING_DOOR_BLOOD_COLOR.getColor(),
-                        DungeonMapColors.DoorEntrance to SETTING_DOOR_ENTRANCE_COLOR.getColor()
-                    ),
+                    buildMap {
+                        put(DungeonMapColors.Background, SETTING_MAP_BACKGROUND_COLOR.getColor())
+                        put(DungeonMapColors.Border, SETTING_MAP_BORDER_COLOR.getColor())
+                        put(DungeonMapColors.RoomEntrance, SETTING_ROOM_ENTRANCE_COLOR.getColor())
+                        put(DungeonMapColors.RoomNormal, SETTING_ROOM_NORMAL_COLOR.getColor())
+                        put(DungeonMapColors.RoomMiniboss, SETTING_ROOM_MINIBOSS_COLOR.getColor())
+                        put(DungeonMapColors.RoomFairy, SETTING_ROOM_FAIRY_COLOR.getColor())
+                        put(DungeonMapColors.RoomBlood, SETTING_ROOM_BLOOD_COLOR.getColor())
+                        put(DungeonMapColors.RoomPuzzle, SETTING_ROOM_PUZZLE_COLOR.getColor())
+                        put(DungeonMapColors.RoomTrap, SETTING_ROOM_TRAP_COLOR.getColor())
+                        put(DungeonMapColors.RoomYellow, SETTING_ROOM_YELLOW_COLOR.getColor())
+                        put(DungeonMapColors.RoomRare, SETTING_ROOM_RARE_COLOR.getColor())
+                        put(DungeonMapColors.RoomUnknown, SETTING_ROOM_UNKNOWN_COLOR.getColor())
+                        if (!SETTING_NORMAL_DOOR_DYNAMIC.get())
+                            put(DungeonMapColors.DoorNormal, SETTING_NORMAL_DOOR_COLOR.getColor())
+                        put(DungeonMapColors.DoorWither, SETTING_DOOR_WITHER_COLOR.getColor())
+                        put(DungeonMapColors.DoorBlood, SETTING_DOOR_BLOOD_COLOR.getColor())
+                        put(DungeonMapColors.DoorEntrance, SETTING_DOOR_ENTRANCE_COLOR.getColor())
+                    },
                     SETTING_ROOM_SIZE.get(), SETTING_DOOR_SIZE.get(),
                     floor.roomsW, floor.roomsH,
                     SETTING_MAP_PADDING.get(), ceil(SETTING_MAP_BORDER.get() * scale).toInt(),

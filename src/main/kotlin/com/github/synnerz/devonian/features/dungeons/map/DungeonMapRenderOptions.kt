@@ -41,6 +41,7 @@ enum class DungeonMapColors {
     RoomRare,
     RoomUnknown,
 
+    DoorNormal,
     DoorEntrance,
     DoorWither,
     DoorBlood;
