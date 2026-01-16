@@ -110,8 +110,8 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
 
     companion object {
         private val customFonts = linkedMapOf(
-            "CherryBombOne" to "/assets/devonian/CherryBombOne-Regular.ttf",
             "Mojangles" to "/assets/devonian/Mojangles.ttf",
+            "CherryBombOne" to "/assets/devonian/CherryBombOne-Regular.ttf",
         ).entries.associateTo(linkedMapOf()) { (name, path) ->
             name to Font.createFont(
                 Font.TRUETYPE_FONT, this::class.java.getResourceAsStream(path)!!
