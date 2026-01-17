@@ -372,7 +372,7 @@ class DungeonMapBaseRenderer :
 
             if (decoration == null && text.isEmpty()) return@forEach
 
-            if (decoration != null) {
+            if (decoration != null && !(options.roomNoFairyCheck && room.type == RoomTypes.FAIRY)) {
                 val decW = options.iconSize * options.roomWidth
                 val center = getCenterOf(cells, shape, options.iconAlignment)
                 val decBox = BoundingBox(

@@ -296,6 +296,13 @@ object DungeonMap : HudFeature(
         "Don't Render Names for Entrance/Fairy/Blood",
         subcategory = "Behavior",
     )
+    private val SETTING_RENDER_FAIRY_CHECK = addSwitch(
+        "dontRenderFairyCheckmark",
+        false,
+        "",
+        "Don't Render Fairy Checkmark",
+        subcategory = "Behavior"
+    )
     private val SETTING_RENDER_SECRET_COUNT = addSwitch(
         "renderSecretCount",
         false,
@@ -445,6 +452,7 @@ object DungeonMap : HudFeature(
                     SETTING_MAP_PADDING.get(), ceil(SETTING_MAP_BORDER.get() * scale).toInt(),
                     SETTING_RENDER_CHECKMARK.get(), SETTING_RENDER_PUZZLE_ICON.get(),
                     SETTING_RENDER_ROOM_NAMES.get(), SETTING_RENDER_ROOM_NAMES_NOT_EFB.get(),
+                    SETTING_RENDER_FAIRY_CHECK.get(),
                     SETTING_RENDER_SECRET_COUNT.get(),
                     SETTING_RENDER_PUZZLE_NAME.get(),
                     SETTING_ICON_SIZE.get(),

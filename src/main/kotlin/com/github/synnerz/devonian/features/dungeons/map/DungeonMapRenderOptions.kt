@@ -15,6 +15,7 @@ data class DungeonMapRenderOptions(
     val puzzleIcon: Boolean,
     val roomName: Boolean,
     val roomNameNotEFB: Boolean,
+    val roomNoFairyCheck: Boolean,
     val secretCount: Boolean,
     val puzzleName: Boolean,
     val iconSize: Double, // [0, 1]
