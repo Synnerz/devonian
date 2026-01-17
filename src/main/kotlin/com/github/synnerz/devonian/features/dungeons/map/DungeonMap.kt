@@ -289,11 +289,11 @@ object DungeonMap : HudFeature(
         "Render Room Names",
         subcategory = "Behavior",
     )
-    private val SETTING_RENDER_ROOM_NAMES_NOT_EFB = addSwitch(
+    private val SETTING_RENDER_ROOM_NAMES_NOT_EFBY = addSwitch(
         "dontRenderCommonRoomNames",
         false,
-        "",
-        "Don't Render Names for Entrance/Fairy/Blood",
+        "Avoids rendering the name for rooms Entrance/Fairy/Blood/Yellow",
+        "Don't Render Names for E/F/B/Y",
         subcategory = "Behavior",
     )
     private val SETTING_RENDER_FAIRY_CHECK = addSwitch(
@@ -451,7 +451,7 @@ object DungeonMap : HudFeature(
                     floor.roomsW, floor.roomsH,
                     SETTING_MAP_PADDING.get(), ceil(SETTING_MAP_BORDER.get() * scale).toInt(),
                     SETTING_RENDER_CHECKMARK.get(), SETTING_RENDER_PUZZLE_ICON.get(),
-                    SETTING_RENDER_ROOM_NAMES.get(), SETTING_RENDER_ROOM_NAMES_NOT_EFB.get(),
+                    SETTING_RENDER_ROOM_NAMES.get(), SETTING_RENDER_ROOM_NAMES_NOT_EFBY.get(),
                     SETTING_RENDER_FAIRY_CHECK.get(),
                     SETTING_RENDER_SECRET_COUNT.get(),
                     SETTING_RENDER_PUZZLE_NAME.get(),

@@ -14,7 +14,7 @@ data class DungeonMapRenderOptions(
     val checkMark: Boolean,
     val puzzleIcon: Boolean,
     val roomName: Boolean,
-    val roomNameNotEFB: Boolean,
+    val roomNameNotEFBY: Boolean,
     val roomNoFairyCheck: Boolean,
     val secretCount: Boolean,
     val puzzleName: Boolean,
