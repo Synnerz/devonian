@@ -11,7 +11,7 @@ object ScoreAlert : Feature(
     "Alerts on 270/300 score",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL",
+    subcategory = "Alerts",
 ) {
     private val SETTING_270 = addSwitch(
         "270",

@@ -18,7 +18,7 @@ object ColorPortal : Feature(
     "recolors blood portal based on score",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "Highlights",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.PortalEnter.isActiveState)

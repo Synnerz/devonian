@@ -11,7 +11,7 @@ object CancelF7BossSounds : Feature(
     "Cancels the boss sounds played in f7 boss fight",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Hiders",
+    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState)

@@ -15,7 +15,7 @@ object DragonSpawnAlert : Feature(
     "tags: priority",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD",
+    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)

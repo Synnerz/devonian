@@ -14,7 +14,7 @@ object TerminalBreakdown : Feature(
     "",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Terminals",
+    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState)

@@ -18,7 +18,7 @@ object PositionMessages : Feature(
     "Sends a party chat message if you're standing near a specified area for your Dungeon Class (f7 boss fight)",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL"
+    subcategory = "F7"
 ) {
     private val SETTING_RENDER_HIGHLIGHT = addSwitch(
         "renderHighlight",

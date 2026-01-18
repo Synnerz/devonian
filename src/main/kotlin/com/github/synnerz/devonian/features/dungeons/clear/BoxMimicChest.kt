@@ -17,7 +17,7 @@ object BoxMimicChest : Feature(
     "draws box around mimic chest",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "Highlights",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

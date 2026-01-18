@@ -13,7 +13,7 @@ object CurrentRoomName : TextHudFeature(
     "Displays the current dungeon room name you are in",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD",
+    subcategory = "Alerts",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.hasFinishedState.map(Boolean::not))

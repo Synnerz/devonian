@@ -16,7 +16,7 @@ object WitherHighlight : Feature(
     "",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState)

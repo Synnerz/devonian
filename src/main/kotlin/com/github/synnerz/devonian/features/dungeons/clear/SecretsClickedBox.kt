@@ -18,7 +18,7 @@ object SecretsClickedBox : Feature(
     "Highlights the secrets you have clicked surrounding them with a box, if a chest secret for example is locked the color will change to red.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "Highlights",
 ) {
     private val lockedChestRegex = "^That chest is locked!$".toRegex()
     private val SETTING_OUTLINE_SUCCESS_COLOR = addColorPicker(

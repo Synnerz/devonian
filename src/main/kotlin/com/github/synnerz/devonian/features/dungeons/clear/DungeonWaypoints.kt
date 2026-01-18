@@ -21,7 +21,7 @@ object DungeonWaypoints : Feature(
     "Highlights chest/items/bat spots where they would spawn at",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "Highlights",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.hasFinishedState.map(Boolean::not))

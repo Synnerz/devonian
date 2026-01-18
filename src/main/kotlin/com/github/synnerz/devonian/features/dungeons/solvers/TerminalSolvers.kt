@@ -31,7 +31,7 @@ object TerminalSolvers : Feature(
     "Shows the correct slots to click to solve the current terminal",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Terminals"
+    subcategory = "F7"
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

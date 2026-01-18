@@ -13,7 +13,7 @@ object DragonSpawnTimer : TextHudFeature(
     "",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD",
+    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
@@ -30,7 +30,6 @@ object DragonSpawnTimer : TextHudFeature(
         false,
         "",
         "Render Dragon Timer Under Chin",
-        subcategory = "World",
     )
 
     private var spawned = EnumSet.noneOf(M7Dragon::class.java)

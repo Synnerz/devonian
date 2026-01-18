@@ -14,7 +14,7 @@ object TerminalHideCompletion : Feature(
     "Hides the completed title during terminals",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Terminals"
+    subcategory = "F7"
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

@@ -12,7 +12,7 @@ object CustomTerminalScale : Feature(
     "Sets a different gui scale when you enter a terminal gui and re-sets it back to the original one once it's closed",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Terminals"
+    subcategory = "F7"
 ) {
     private val SETTING_TERMINAL_SCALE = addSlider(
         "terminalScale",

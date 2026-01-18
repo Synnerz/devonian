@@ -15,7 +15,7 @@ object DragonHealth : Feature(
     "renders hp of m7 dragon below it",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)

@@ -12,7 +12,7 @@ object HideDyingDragons : Feature(
     "",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Hiders",
+    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)

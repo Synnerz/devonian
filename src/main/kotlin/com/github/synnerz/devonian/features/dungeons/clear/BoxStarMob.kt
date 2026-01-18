@@ -19,7 +19,7 @@ object BoxStarMob : Feature(
     "Renders a box surrounding the star mobs in dungeons to complete a room.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "Highlights",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

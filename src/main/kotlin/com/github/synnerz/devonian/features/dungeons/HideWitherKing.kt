@@ -19,7 +19,7 @@ object HideWitherKing : Feature(
     "",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Hiders",
+    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })

@@ -24,7 +24,7 @@ object DragonStackAimer : TextHudFeature(
     "",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Solvers",
+    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(

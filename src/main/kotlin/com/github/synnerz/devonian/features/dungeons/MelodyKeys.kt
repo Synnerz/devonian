@@ -13,7 +13,7 @@ object MelodyKeys : Feature(
     "use 1-4 to click melody terminal buttons",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Terminals",
+    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

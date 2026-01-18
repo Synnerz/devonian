@@ -16,7 +16,7 @@ object DragonBoxes : Feature(
     "",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + Stages.WitherKing.isActiveState

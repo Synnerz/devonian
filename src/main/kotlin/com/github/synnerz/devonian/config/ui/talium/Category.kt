@@ -27,7 +27,7 @@ open class Category(
         setColor(ColorPalette.TERTIARY_COLOR)
     }
     private val scrollableRect = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel)
-    private val subcategoriesRect = mutableMapOf<String, UIScrollable>()
+    private val subcategoriesRect = mutableMapOf<String, Pair<UIScrollable, UIText>>()
     private var categoryButton: UIRect?
     private val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, category.displayName, true).apply {
         setColor(ColorPalette.TEXT_COLOR)
@@ -40,27 +40,34 @@ open class Category(
     init {
         val subCount = category.subcategories.size
         val subCatGap = 0.5
-        val subCatMargins = 1.0
+        val subCatMargins = 2.0
         val subCatWidth = (100.0 - subCatMargins * 2 - subCatGap * (subCount - 1)) / subCount
         category.subcategories.forEachIndexed { jdx, name ->
-            subcategoriesRect[name] = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel).apply { hide() }
+            val text = UIText(0.0, 0.0, 100.0, 100.0, name, true).apply {
+                if (jdx == 0) {
+                    setColor(ColorPalette.TEXT_COLOR)
+                    if (category.subcategories.size > 1) addEffect(UILineEffect())
+                } else setColor(ColorPalette.LIGHT_TEXT_COLOR)
+
+                onResize { _, w ->
+                    textScale = 2f / w.scaleFactor
+                }
+            }
+            subcategoriesRect[name] = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel).apply { hide() } to text
             subcategoryPanel.addChild(
                 UIRect(subCatMargins + (subCatWidth + subCatGap) * jdx, 2.5, subCatWidth, 95.0).apply {
-                    val text = UIText(0.0, 0.0, 100.0, 100.0, name, true, parent = this).apply {
-                        setColor(ColorPalette.TEXT_COLOR)
-                        onResize { _, w ->
-                            textScale = NORMAL_TEXT_SCALE / w.scaleFactor
-                        }
-                        // TODO: add a way to make the current sub category's text different color
-                    }
+                    addChild(text)
                     onMouseRelease { event ->
                         if (event.button != 0) return@onMouseRelease
-                        subcategoriesRect[currentSubcategory]?.hide()
+                        subcategoriesRect[currentSubcategory]?.second?.setColor(ColorPalette.LIGHT_TEXT_COLOR)
+                        subcategoriesRect[currentSubcategory]?.second?.removeEffects(UILineEffect::class.java)
+                        subcategoriesRect[currentSubcategory]?.first?.hide()
                         hideColorPickers()
                         currentSubcategory = name
-                        subcategoriesRect[currentSubcategory]?.unhide()
+                        subcategoriesRect[currentSubcategory]?.first?.unhide()
+                        subcategoriesRect[currentSubcategory]?.second?.setColor(ColorPalette.TEXT_COLOR)
+                        subcategoriesRect[currentSubcategory]?.second?.addEffect(UILineEffect())
                     }
-                    addEffect(OutlineEffect(0.5, ColorPalette.OUTLINE_COLOR))
                 }
             )
         }
@@ -114,7 +121,7 @@ open class Category(
 
                 val y = 1 + i * 17.0
 
-                components.add(createBase(y, scrollable, if (data is ConfigData.FeatureSwitch) 0.0 else 5.0).apply {
+                components.add(createBase(y, scrollable.first, if (data is ConfigData.FeatureSwitch) 0.0 else 5.0).apply {
                     addChild(createTitle(data.displayName))
                     addChild(createDescription(data.description))
                     addChild(
@@ -137,14 +144,14 @@ open class Category(
         categoryTitle.setColor(ColorPalette.TEXT_COLOR)
         scrollableRect.hide()
         subcategoryPanel.hide()
-        subcategoriesRect[currentSubcategory]?.hide()
+        subcategoriesRect[currentSubcategory]?.first?.hide()
     }
 
     fun unhide() {
         categoryTitle.setColor(ColorPalette.LIGHT_TEXT_COLOR)
         scrollableRect.unhide()
         subcategoryPanel.unhide()
-        subcategoriesRect[currentSubcategory]?.unhide()
+        subcategoriesRect[currentSubcategory]?.first?.unhide()
     }
 
     private fun createBase(y: Double, parent: UIBase, offset: Double): UIRect =

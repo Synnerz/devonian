@@ -13,7 +13,7 @@ object TerminalDisplay : TextHudFeature(
     "displays current terminals status (# done, gate, etc)",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD",
+    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

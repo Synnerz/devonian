@@ -26,7 +26,7 @@ object BoxIcedMobs : Feature(
     "Box mobs that are ice sprayed",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "World",
+    subcategory = "Highlights",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Root.isActiveState)

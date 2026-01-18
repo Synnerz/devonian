@@ -15,7 +15,7 @@ object GoldorFrenzyTimer : TextHudFeature(
     "timer until goldor damage tick",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD",
+    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState, Stages.Terminals.hasFinishedState.map(

@@ -17,7 +17,7 @@ class SearchCategory(rightPanel: UIBase) {
     private val colorComponents = mutableListOf<UIColorPicker>()
     private var previousText = ""
     private var oldCategory: Category? = null
-    private val searchPanel = UITextInput(32.5, 92.0, 35.0, 8.0, parent = rightPanel).apply {
+    private val searchPanel = UITextInput(23.75, 92.0, 52.5, 8.0, parent = rightPanel).apply {
         setColor(ColorPalette.TERTIARY_COLOR)
 
         onKeyType { event ->
@@ -51,6 +51,14 @@ class SearchCategory(rightPanel: UIBase) {
         onResize { _, w ->
             textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
         }
+    }
+    private val searchIcon = UIRect(72.25, 92.0, 4.0, 8.0, parent = rightPanel).apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+        addChild(UIText(0.0, 0.0, 100.0, 100.0, "\uD83D\uDD0E", true).apply {
+            onResize { _, w ->
+                textScale = NORMAL_TEXT_SCALE / w.scaleFactor
+            }
+        })
     }
     private val categoryTitleBg = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
         setColor(ColorPalette.TERTIARY_COLOR)

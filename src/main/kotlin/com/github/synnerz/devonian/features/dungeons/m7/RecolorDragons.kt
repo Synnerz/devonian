@@ -15,7 +15,7 @@ object RecolorDragons : Feature(
     "remove hurt color + color based on type",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL",
+    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
