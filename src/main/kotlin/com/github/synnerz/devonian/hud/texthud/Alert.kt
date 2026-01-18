@@ -19,17 +19,21 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
     fun show(text: String, durationMs: Int, playSound: Boolean = true) {
         Scheduler.scheduleTask {
             val mc = Devonian.minecraft
-            val window = mc.window
 
-            val lines = text.split('\n').map { "&c$it" }
+            if (durationMs > 0) {
+                val window = mc.window
 
-            x = window.guiScaledWidth * 0.5
-            y = window.guiScaledHeight * 0.5
-            clearLines()
-            setLines(lines)
-            needRescale = true
+                val lines = text.split('\n').map { "&c$it" }
 
-            clearTime = System.currentTimeMillis() + durationMs
+                x = window.guiScaledWidth * 0.5
+                y = window.guiScaledHeight * 0.5
+                clearLines()
+                setLines(lines)
+                needRescale = true
+
+                clearTime = System.currentTimeMillis() + durationMs
+            }
+
             if (playSound) mc?.player?.playSound(soundEvent, 1f, 1f)
         }
     }
