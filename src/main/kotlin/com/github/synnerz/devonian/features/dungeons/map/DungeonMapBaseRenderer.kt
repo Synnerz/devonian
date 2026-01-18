@@ -329,9 +329,13 @@ class DungeonMapBaseRenderer :
             if (
                 renderRoomInfo &&
                 (
-                    (room.type != RoomTypes.ENTRANCE && room.type != RoomTypes.FAIRY && room.type != RoomTypes.BLOOD && room.type != RoomTypes.YELLOW)
                     !options.roomNameNotEFB ||
-                    (room.type != RoomTypes.ENTRANCE && room.type != RoomTypes.FAIRY && room.type != RoomTypes.BLOOD)
+                    (
+                        room.type != RoomTypes.ENTRANCE &&
+                        room.type != RoomTypes.FAIRY &&
+                        room.type != RoomTypes.BLOOD &&
+                        room.type != RoomTypes.YELLOW
+                    )
                 ) &&
                 (!options.roomNameNotYellow || room.type != RoomTypes.YELLOW) &&
                 (if (room.type == RoomTypes.PUZZLE) options.puzzleName else options.roomName)
