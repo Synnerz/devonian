@@ -7,10 +7,13 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.*
 import com.github.synnerz.devonian.hud.texthud.*
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.TextRendererImpl
+import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.update
 import java.awt.Color
 import java.awt.Font
 import java.awt.image.BufferedImage
 import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
 import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -44,6 +47,9 @@ class DungeonMapBaseRenderer :
     }
 
     data class TextRenderParam(val box: BoundingBox, val key: CachedStringKey, val text: List<String>)
+
+    private val textHudPool = ConcurrentLinkedQueue<StylizedTextHud>()
+    val delegatedText = atomic(emptyList<StylizedTextHud>())
 
     override fun drawImage(img: BufferedImage, param: DungeonMapRenderData): BufferedImage {
         val g = img.createGraphics()
@@ -247,7 +253,7 @@ class DungeonMapBaseRenderer :
             cachedSize = fontSize
         }
 
-        val textToRender = mutableListOf<TextRenderParam>()
+        val textToRender = ArrayDeque<TextRenderParam>()
         rooms.forEach { room ->
             if (room == null) return@forEach
             if (room.doors.isEmpty() && room.name == null) return@forEach
@@ -409,67 +415,107 @@ class DungeonMapBaseRenderer :
         }
 
         if (textToRender.isNotEmpty()) {
-            val fontSizeF = fontSize.toFloat()
-            val font = BImgTextHudRenderer.fontMainBase.deriveFont(Font.PLAIN, fontSizeF)
-            g.font = font
-            g.paint = Color(-1)
-            val ascent = g.fontMetrics.ascent
+            if (options.delegateText) {
+                val delegate = ArrayList<StylizedTextHud>(textToRender.size)
 
-            textToRender.forEach { (decBox, key, text) ->
-                if (text.isEmpty()) return@forEach
+                textToRender.forEach { (decBox, _, text) ->
+                    if (text.isEmpty()) return@forEach
 
-                val rendered = cachedStrings.getOrPut(CachedStringKey(key.str, key.shadow)) {
-                    val lines = text.map { StringParser.processString(
-                        it,
-                        g,
-                        font, font, font,
-                        fontSizeF
-                    ) }
-                    val width = lines.maxOf { it.width }
-
-                    val w = ceil(width + options.stringShadow.getSizeIncrease(fontSizeF) + 5.0f).toInt()
-                    val h = fontSize * lines.size + ascent
-                    val img = bimgProvider.create(w, h)
-
-                    TextRendererImpl.drawImage(img, TextRenderer.RenderParams(
-                        StylizedTextHud.TextRenderParams(
+                    val hud = textHudPool.poll() ?: StylizedTextHud(
+                        "internal_map_room_text",
+                        StaticProvider(
+                            0.0, 0.0, 1f,
+                            StylizedTextHud.Anchor.Center,
                             StylizedTextHud.Align.Center,
                             options.stringShadow,
                             StylizedTextHud.Backdrop.None,
-                            fontSizeF,
                         ),
-                        lines,
-                        width,
-                        lines.maxOfOrNull { it.descent } ?: 0f,
-                        lines.maxOfOrNull { it.ascent } ?: 0f,
-                        true,
-                    ))
-
-                    CachedRenderedString(
-                        img,
-                        0.0, -ascent / 2.0,
-                        width.toDouble(),
-                        fontSize * lines.size.toDouble(),
+                        MCTextHudRenderer("internal_map_room_text_renderer"),
+                        false,
                     )
+
+                    hud.x = ((decBox.x + decBox.w * 0.5) * compToBImgFW + bImgOX) / param.renderScale
+                    hud.y = ((decBox.y + decBox.h * 0.5) * compToBImgFH + bImgOY) / param.renderScale
+                    hud.scale = fontSize / StylizedTextHud.BASE_FONT_SIZE / param.renderScale
+                    hud.shadow = options.stringShadow
+
+                    hud.setLines(text)
+
+                    delegate.add(hud)
                 }
 
-                val box = BoundingBox(
-                    0.0, 0.0,
-                    rendered.w, rendered.h
-                ).centerInside(BoundingBox(
-                    decBox.x * compToBImgFW + bImgOX,
-                    decBox.y * compToBImgFH + bImgOY,
-                    decBox.w * compToBImgFW,
-                    decBox.h * compToBImgFH
-                ))
+                delegatedText.update { old ->
+                    old.forEach { textHudPool.add(it) }
+                    delegate
+                }
+            } else {
+                val fontSizeF = fontSize.toFloat()
+                val font = BImgTextHudRenderer.fontMainBase.deriveFont(Font.PLAIN, fontSizeF)
+                g.font = font
+                g.paint = Color(-1)
+                val ascent = g.fontMetrics.ascent
 
-                val bx = (box.x + rendered.xo).toInt()
-                val bz = (box.y + rendered.yo).toInt()
-                g.drawImage(
-                    rendered.img,
-                    bx, bz,
-                    null
-                )
+                textToRender.forEach { (decBox, key, text) ->
+                    if (text.isEmpty()) return@forEach
+
+                    val rendered = cachedStrings.getOrPut(key) {
+                        val lines = text.map {
+                            StringParser.processString(
+                                it,
+                                g,
+                                font, font, font,
+                                fontSizeF
+                            )
+                        }
+                        val width = lines.maxOf { it.width }
+
+                        val w = ceil(width + options.stringShadow.getSizeIncrease(fontSizeF) + 5.0f).toInt()
+                        val h = fontSize * lines.size + ascent
+                        val img = bimgProvider.create(w, h)
+
+                        TextRendererImpl.drawImage(
+                            img, TextRenderer.RenderParams(
+                                StylizedTextHud.TextRenderParams(
+                                StylizedTextHud.Align.Center,
+                                options.stringShadow,
+                                StylizedTextHud.Backdrop.None,
+                                fontSizeF,
+                            ),
+                            lines,
+                            width,
+                            lines.maxOfOrNull { it.descent } ?: 0f,
+                            lines.maxOfOrNull { it.ascent } ?: 0f,
+                            true,
+                        ))
+
+                        CachedRenderedString(
+                            img,
+                            0.0, -ascent / 2.0,
+                            width.toDouble(),
+                            fontSize * lines.size.toDouble(),
+                        )
+                    }
+
+                    val box = BoundingBox(
+                        0.0, 0.0,
+                        rendered.w, rendered.h
+                    ).centerInside(
+                        BoundingBox(
+                            decBox.x * compToBImgFW + bImgOX,
+                            decBox.y * compToBImgFH + bImgOY,
+                            decBox.w * compToBImgFW,
+                            decBox.h * compToBImgFH
+                        )
+                    )
+
+                    val bx = (box.x + rendered.xo).toInt()
+                    val bz = (box.y + rendered.yo).toInt()
+                    g.drawImage(
+                        rendered.img,
+                        bx, bz,
+                        null
+                    )
+                }
             }
         }
 

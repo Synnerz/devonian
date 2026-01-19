@@ -388,6 +388,13 @@ object DungeonMap : HudFeature(
         "Hidden Room Darken Factor",
         subcategory = "Style",
     )
+    private val SETTING_MC_TEXT = addSwitch(
+        "mcText",
+        false,
+        "may negatively impact performance",
+        "Use MC Font Renderer",
+        subcategory = "Style",
+    )
 
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Dungeons.inBoss.map(Boolean::not))
@@ -471,8 +478,10 @@ object DungeonMap : HudFeature(
                     SETTING_COLOR_ROOM_TEXT.get(),
                     SETTING_RENDER_HIDDEN_ROOMS.get(),
                     Dungeons.started.value,
-                    SETTING_HIDDEN_ROOM_DARKEN.get()
-                )
+                    SETTING_HIDDEN_ROOM_DARKEN.get(),
+                    SETTING_MC_TEXT.get(),
+                ),
+                window.guiScale,
             )
         )
     }
@@ -493,7 +502,17 @@ object DungeonMap : HudFeature(
     override fun drawImpl(ctx: GuiGraphics) {
         var floor = Dungeons.floor
         if (floor == FloorType.None) floor = FloorType.M7
-        mapRenderer.draw(ctx, x.toFloat(), y.toFloat(), (1.0 / minecraft.window.guiScale).toFloat())
+
+        ctx.pose()
+            .pushMatrix()
+            .translate(x.toFloat(), y.toFloat())
+
+        mapRenderer.draw(ctx, 0f, 0f, (1.0 / minecraft.window.guiScale).toFloat())
+        if (SETTING_MC_TEXT.get()) {
+            mapRenderer.delegatedText.value.forEach {
+                it.draw(ctx)
+            }
+        }
 
         val bounds = getBounds()
 
@@ -501,8 +520,8 @@ object DungeonMap : HudFeature(
         val boundsOX = (floor.maxDim - floor.roomsW) / 2.0 + SETTING_MAP_PADDING.get()
         val boundsOY = (floor.maxDim - floor.roomsH) / 2.0 + SETTING_MAP_PADDING.get()
         val compBounds = BoundingBox(
-            bounds.x + boundsOX / totalMaxDim * bounds.w,
-            bounds.y + boundsOY / totalMaxDim * bounds.h,
+            boundsOX / totalMaxDim * bounds.w,
+            boundsOY / totalMaxDim * bounds.h,
             floor.maxDim / totalMaxDim * bounds.w,
             floor.maxDim / totalMaxDim * bounds.h
         )
@@ -558,7 +577,7 @@ object DungeonMap : HudFeature(
                 u1 = (SKIN_HEAD_U + SKIN_HEAD_WIDTH).toFloat() / SKIN_TEX_WIDTH
                 v1 = (SKIN_HEAD_V + SKIN_HEAD_HEIGHT).toFloat() / SKIN_TEX_HEIGHT
                 maxDy = 4f
-                val skin = info!!.skin
+                val skin = info.skin
                 val rl = skin.body.texturePath()
                 textureView = Devonian.minecraft.textureManager.getTexture(rl).textureView
             } else {
@@ -648,6 +667,8 @@ object DungeonMap : HudFeature(
                 )
             }
         }
+
+        ctx.pose().popMatrix()
     }
 
     override fun initialize() {

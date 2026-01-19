@@ -28,6 +28,7 @@ data class DungeonMapRenderOptions(
     val renderUnknownRooms: Boolean,
     val dungeonStarted: Boolean,
     val unknownRoomsDarkenFactor: Double, // [0, 1]
+    val delegateText: Boolean,
 )
 
 enum class DungeonMapColors {

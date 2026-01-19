@@ -16,9 +16,10 @@ open class StylizedTextHud(
         Backdrop.None
     ),
     renderer: IStylizedTextHudRenderer = getRenderer(name),
+    overrideRenderer: Boolean = true,
 ) : ITextHud, DataProvider by data {
     init {
-        instances.add(this)
+        if (overrideRenderer) instances.add(this)
         renderer.parent = this
     }
 
