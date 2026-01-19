@@ -25,6 +25,7 @@
     "GlDeviceMixin",
     "GuiGraphicsMixin",
     "GuiMixin",
+    "GuiTextRenderStateMixin",
     "InventoryScreenMixin",
     "ItemInHandRendererMixin",
     "KeyboardHandlerMixin",
