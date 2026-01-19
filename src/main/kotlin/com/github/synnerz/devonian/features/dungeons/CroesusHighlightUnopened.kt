@@ -52,7 +52,7 @@ object CroesusHighlightUnopened : Feature(
 
             val lore = ItemUtils.lore(itemStack) ?: return@on
             for (line in lore) {
-                if (line.contains("Opened Chest: ")) {
+                if (line.contains("Opened Chest: ") || line.contains("No more chests to open!")) {
                     blacklist.add(event.slot)
                     continue
                 }
