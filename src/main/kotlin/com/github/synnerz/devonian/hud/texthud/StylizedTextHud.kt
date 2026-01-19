@@ -94,6 +94,7 @@ open class StylizedTextHud(
 
         val currentParams = TextRenderParams(align, shadow, backdrop, fontSize)
         if (currentParams != lastRenderParams) markImage()
+        if (currentParams.shadow != lastRenderParams.shadow) markText()
         lastRenderParams = currentParams
 
         lineWidth = 0f
