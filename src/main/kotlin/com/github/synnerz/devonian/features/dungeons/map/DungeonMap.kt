@@ -38,6 +38,13 @@ object DungeonMap : HudFeature(
     "catacombs",
     subcategory = "Toggle",
 ) {
+    private val SETTING_MC_TEXT = addSwitch(
+        "mcText",
+        false,
+        "may negatively impact performance",
+        "Use MC Font Renderer",
+        subcategory = "Style",
+    )
     private val SETTING_FUNNY = addButton(
         {
             Scheduler.scheduleTask {
@@ -386,13 +393,6 @@ object DungeonMap : HudFeature(
         0.0, 1.0,
         "factor by which to darken hidden rooms",
         "Hidden Room Darken Factor",
-        subcategory = "Style",
-    )
-    private val SETTING_MC_TEXT = addSwitch(
-        "mcText",
-        false,
-        "may negatively impact performance",
-        "Use MC Font Renderer",
         subcategory = "Style",
     )
 
