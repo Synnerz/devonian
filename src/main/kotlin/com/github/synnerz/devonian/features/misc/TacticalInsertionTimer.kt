@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import net.minecraft.world.InteractionHand
 
 object TacticalInsertionTimer : TextHudFeature(
     "tacticalInsertionTimer",
@@ -15,7 +16,7 @@ object TacticalInsertionTimer : TextHudFeature(
         on<SoundPlayEvent> { event ->
             if (event.sound != "minecraft:item.flintandsteel.use" || event.pitch != 0.74603176f) return@on
             if (timer != -1) return@on
-            val heldItem = minecraft.player?.mainHandItem ?: return@on
+            val heldItem = minecraft.player?.getItemInHand(InteractionHand.MAIN_HAND) ?: return@on
             val sbId = ItemUtils.skyblockId(heldItem) ?: return@on
             if (sbId != "TACTICAL_INSERTION") return@on
 
