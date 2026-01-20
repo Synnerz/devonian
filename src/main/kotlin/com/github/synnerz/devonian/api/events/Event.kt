@@ -333,6 +333,17 @@ class RenderTickEvent : Event()
     val underlyingEvent: SoundEvent,
 ) : CancellableEvent()
 
+class ClientSoundPlayeEvent(
+    val sound: String,
+    val pitch: Float,
+    val volume: Float,
+    val category: SoundSource,
+    val x: Double,
+    val y: Double,
+    val z: Double,
+    val underlyingEvent: SoundEvent,
+) : CancellableEvent()
+
 // while no, yes
 @Threaded class PostClientInitEvent(val minecraft: Minecraft) : Event()
 
