@@ -15,7 +15,7 @@ object TacticalInsertionTimer : TextHudFeature(
     override fun initialize() {
         on<SoundPlayEvent> { event ->
             if (event.sound != "minecraft:item.flintandsteel.use" || event.pitch != 0.74603176f) return@on
-            if (timer != -1) return@on
+            if (timer != 0) return@on
             val heldItem = minecraft.player?.getItemInHand(InteractionHand.MAIN_HAND) ?: return@on
             val sbId = ItemUtils.skyblockId(heldItem) ?: return@on
             if (sbId != "TACTICAL_INSERTION") return@on
