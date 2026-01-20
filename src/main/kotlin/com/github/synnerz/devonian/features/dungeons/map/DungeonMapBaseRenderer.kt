@@ -62,10 +62,10 @@ class DungeonMapBaseRenderer :
         val options = param.options
         val colors = options.colors
 
-        if ((colors[DungeonMapColors.Background]?.alpha ?: 0) > 0) {
-            g.paint = colors[DungeonMapColors.Background]
-            g.fillRect(0, 0, w, h)
-        }
+        // if ((colors[DungeonMapColors.Background]?.alpha ?: 0) > 0) {
+        //     g.paint = colors[DungeonMapColors.Background]
+        //     g.fillRect(0, 0, w, h)
+        // }
 
         if (options.border > 0 && (colors[DungeonMapColors.Border]?.alpha ?: 0) > 0) {
             g.paint = colors[DungeonMapColors.Border]

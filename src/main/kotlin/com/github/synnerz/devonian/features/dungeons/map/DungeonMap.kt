@@ -16,13 +16,16 @@ import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.mixin.accessor.ScreenAccessor
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.BoundingBox
+import com.github.synnerz.devonian.utils.QuadRenderState
 import com.github.synnerz.devonian.utils.TexturedQuadRenderState
 import com.github.synnerz.devonian.utils.math.MathUtils
 import com.mojang.blaze3d.textures.GpuTextureView
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.client.gui.components.PlayerFaceRenderer.*
+import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.render.TextureSetup
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.ResourceLocation
 import org.joml.Matrix3x2f
 import java.awt.Color
@@ -395,6 +398,13 @@ object DungeonMap : HudFeature(
         "Hidden Room Darken Factor",
         subcategory = "Style",
     )
+    private val SETTING_ROTATE = addSwitch(
+        "rotate",
+        false,
+        "text rotates too :) (it is upside down)",
+        "Rotate Map Around Player",
+        subcategory = "Behavior",
+    )
 
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Dungeons.inBoss.map(Boolean::not))
@@ -503,17 +513,6 @@ object DungeonMap : HudFeature(
         var floor = Dungeons.floor
         if (floor == FloorType.None) floor = FloorType.M7
 
-        ctx.pose()
-            .pushMatrix()
-            .translate(x.toFloat(), y.toFloat())
-
-        mapRenderer.draw(ctx, 0f, 0f, (1.0 / minecraft.window.guiScale).toFloat())
-        if (SETTING_MC_TEXT.get()) {
-            mapRenderer.delegatedText.value.forEach {
-                it.draw(ctx)
-            }
-        }
-
         val bounds = getBounds()
 
         val totalMaxDim = floor.maxDim + SETTING_MAP_PADDING.get() * 2
@@ -525,6 +524,60 @@ object DungeonMap : HudFeature(
             floor.maxDim / totalMaxDim * bounds.w,
             floor.maxDim / totalMaxDim * bounds.h
         )
+
+        ctx.pose()
+            .pushMatrix()
+            .translate(x.toFloat(), y.toFloat())
+
+        val bgColor = SETTING_MAP_BACKGROUND_COLOR.getColor()
+        if (bgColor.alpha > 0) {
+            ctx.guiRenderState.submitGuiElement(
+                QuadRenderState(
+                    RenderPipelines.GUI,
+                    Matrix3x2f(ctx.pose()),
+                    0f, 0f,
+                    bounds.w.toFloat(), bounds.h.toFloat(),
+                    SETTING_MAP_BACKGROUND_COLOR.get(),
+                    ctx.scissorStack.peek(),
+                )
+            )
+        }
+
+        if (SETTING_ROTATE.get()) {
+            ctx.scissorStack.push(
+                ScreenRectangle(
+                    ceil(x).toInt(),
+                    ceil(y).toInt(),
+                    bounds.w.toInt(),
+                    bounds.h.toInt(),
+                )
+            )
+
+            val pos = Dungeons.players.firstEntry()?.value?.getLerpedPosition()
+            if (pos != null) {
+                val px = MathUtils.rescale(
+                    pos.x,
+                    0.0, floor.maxDim * 2.0,
+                    compBounds.x, compBounds.x + compBounds.w
+                ).toFloat()
+                val py = MathUtils.rescale(
+                    pos.z,
+                    0.0, floor.maxDim * 2.0,
+                    compBounds.y, compBounds.y + compBounds.h
+                ).toFloat()
+                ctx.pose()
+                    .translate((bounds.w * 0.5).toFloat(), (bounds.h * 0.5).toFloat())
+                    .rotate((pos.r - PI * 0.5).toFloat())
+                    .translate(-px, -py)
+            }
+        }
+
+        mapRenderer.draw(ctx, 0f, 0f, (1.0 / minecraft.window.guiScale).toFloat())
+        if (SETTING_MC_TEXT.get()) {
+            mapRenderer.delegatedText.value.forEach {
+                it.draw(ctx)
+            }
+        }
 
         val holdingLeap = minecraft.player!!.mainHandItem.let {
             listOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP").contains(ItemUtils.skyblockId(it))
@@ -667,6 +720,8 @@ object DungeonMap : HudFeature(
                 )
             }
         }
+
+        if (SETTING_ROTATE.get()) ctx.scissorStack.pop()
 
         ctx.pose().popMatrix()
     }
