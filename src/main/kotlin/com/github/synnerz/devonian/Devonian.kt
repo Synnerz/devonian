@@ -283,6 +283,7 @@ object Devonian : ClientModInitializer {
         LimitDroppingItems,
         OldMasterStar,
         NoBonzoStaffSound,
+        TacticalInsertionTimer,
 
         // Debug
         CopyItem,
