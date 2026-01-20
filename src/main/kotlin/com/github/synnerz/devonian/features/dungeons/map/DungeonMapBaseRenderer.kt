@@ -339,8 +339,7 @@ class DungeonMapBaseRenderer :
                     (
                         room.type != RoomTypes.ENTRANCE &&
                         room.type != RoomTypes.FAIRY &&
-                        room.type != RoomTypes.BLOOD &&
-                        room.type != RoomTypes.YELLOW
+                        room.type != RoomTypes.BLOOD
                     )
                 ) &&
                 (!options.roomNameNotYellow || room.type != RoomTypes.YELLOW) &&
