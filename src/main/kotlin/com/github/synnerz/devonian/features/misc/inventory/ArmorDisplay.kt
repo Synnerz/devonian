@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.misc.inventory
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.utils.BoundingBox
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.utils.render.Render2D
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.core.Holder
 import net.minecraft.world.entity.EquipmentSlot

@@ -1,6 +1,7 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.utils.render
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics

@@ -16,8 +16,8 @@ import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.mixin.accessor.ScreenAccessor
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.BoundingBox
-import com.github.synnerz.devonian.utils.QuadRenderState
-import com.github.synnerz.devonian.utils.TexturedQuadRenderState
+import com.github.synnerz.devonian.utils.render.states.QuadRenderState
+import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.github.synnerz.devonian.utils.math.MathUtils
 import com.mojang.blaze3d.textures.GpuTextureView
 import net.minecraft.client.gui.GuiGraphics

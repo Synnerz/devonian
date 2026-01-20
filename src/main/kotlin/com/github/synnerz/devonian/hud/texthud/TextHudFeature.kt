@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.config.NullableHudData
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.utils.BoundingBox
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW

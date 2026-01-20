@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.utils.render.Render2D
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import com.mojang.blaze3d.platform.InputConstants

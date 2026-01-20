@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.utils.render.states
 
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.VertexConsumer

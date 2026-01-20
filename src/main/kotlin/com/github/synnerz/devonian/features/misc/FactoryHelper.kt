@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.events.GuiCloseEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.utils.render.Render2D
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.world.item.Items

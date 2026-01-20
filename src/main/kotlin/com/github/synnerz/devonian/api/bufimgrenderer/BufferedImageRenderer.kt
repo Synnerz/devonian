@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.api.bufimgrenderer
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.utils.TexturedQuadRenderState
+import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat.Mode

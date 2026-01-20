@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.hud.texthud
 
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
-import com.github.synnerz.devonian.utils.TextRendererImpl
+import com.github.synnerz.devonian.utils.render.TextRendererImpl
 import java.awt.image.BufferedImage
 
 class TextRenderer(name: String) : BufferedImageRenderer<TextRenderer.RenderParams>(name) {

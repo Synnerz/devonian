@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.api.events.RenderHotbarSlotEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.TexturedQuadRenderState
+import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.TextureSetup

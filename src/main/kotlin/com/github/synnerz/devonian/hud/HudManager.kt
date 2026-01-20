@@ -8,7 +8,7 @@ import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.features.HudManagerInstructions
 import com.github.synnerz.devonian.features.HudManagerName
 import com.github.synnerz.devonian.features.HudManagerRenderer
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.utils.render.Render2D
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.KeyEvent

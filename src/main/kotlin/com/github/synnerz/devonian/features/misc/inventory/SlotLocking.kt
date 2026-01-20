@@ -8,7 +8,7 @@ import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
-import com.github.synnerz.devonian.utils.Render2D
+import com.github.synnerz.devonian.utils.render.Render2D
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper

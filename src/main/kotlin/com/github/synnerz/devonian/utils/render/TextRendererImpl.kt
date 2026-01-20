@@ -1,14 +1,14 @@
-package com.github.synnerz.devonian.utils
+package com.github.synnerz.devonian.utils.render
 
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactory
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
 import com.github.synnerz.devonian.hud.texthud.BImgTextHudRenderer
 import com.github.synnerz.devonian.hud.texthud.StringParser
-import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import com.github.synnerz.devonian.hud.texthud.TextRenderer
 import java.awt.BasicStroke
 import java.awt.Color
-import java.awt.RenderingHints.*
+import java.awt.RenderingHints
 import java.awt.Shape
 import java.awt.font.TextLayout
 import java.awt.geom.AffineTransform
@@ -23,23 +23,26 @@ object TextRendererImpl {
         val rp = param.renderParams
 
         val g = img.createGraphics()
-        val aa = if (!param.noAAHint || BImgTextHudRenderer.fontMainName != "Mojangles") VALUE_ANTIALIAS_ON else VALUE_ANTIALIAS_OFF
-        g.setRenderingHint(KEY_ANTIALIASING, aa)
-        g.setRenderingHint(KEY_FRACTIONALMETRICS, VALUE_FRACTIONALMETRICS_ON)
-        if (rp.shadow == Shadow.Outline) g.setRenderingHint(KEY_STROKE_CONTROL, VALUE_STROKE_PURE)
+        val aa = if (!param.noAAHint || BImgTextHudRenderer.fontMainName != "Mojangles") RenderingHints.VALUE_ANTIALIAS_ON else RenderingHints.VALUE_ANTIALIAS_OFF
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa)
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
+        if (rp.shadow == StylizedTextHud.Shadow.Outline) g.setRenderingHint(
+            RenderingHints.KEY_STROKE_CONTROL,
+            RenderingHints.VALUE_STROKE_PURE
+        )
         g.paint = Color(-1)
 
-        val isDrop = rp.shadow == Shadow.Drop
+        val isDrop = rp.shadow == StylizedTextHud.Shadow.Drop
 
         val tmpImg = if (isDrop) bimgFactory.create(img.width, img.height) else img
         val tmpG = if (isDrop) {
             val tmp = tmpImg.createGraphics()
-            tmp.setRenderingHint(KEY_ANTIALIASING, aa)
-            tmp.setRenderingHint(KEY_FRACTIONALMETRICS, VALUE_FRACTIONALMETRICS_ON)
+            tmp.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa)
+            tmp.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
             tmp
         } else g
 
-        if (rp.backdrop == Backdrop.Full) {
+        if (rp.backdrop == StylizedTextHud.Backdrop.Full) {
             g.paint = Color(0, 0, 0, 64)
             g.fillRect(
                 0,
@@ -54,13 +57,13 @@ object TextRendererImpl {
         param.lines.forEachIndexed { i, line ->
             val y = i * rp.fontSize
             val x = when (rp.align) {
-                Align.Left -> 0f
-                Align.Right -> param.width - line.width
-                Align.Center
+                StylizedTextHud.Align.Left -> 0f
+                StylizedTextHud.Align.Right -> param.width - line.width
+                StylizedTextHud.Align.Center
                     -> (param.width - line.width) * 0.5f
             }
 
-            if (rp.backdrop == Backdrop.Line) {
+            if (rp.backdrop == StylizedTextHud.Backdrop.Line) {
                 g.paint = Color(0, 0, 0, 64)
                 g.fillRect(
                     x.toInt(),
@@ -86,7 +89,7 @@ object TextRendererImpl {
                 }
                 line.shapes = shapes
             }
-            if (rp.shadow == Shadow.Outline) {
+            if (rp.shadow == StylizedTextHud.Shadow.Outline) {
                 tmpG.translate(rp.fontSize * 0.1, 0.0)
                 val outlineColor = Color(0)
                 tmpG.stroke = BasicStroke(((rp.fontSize * 0.1f).toInt() or 1).toFloat())

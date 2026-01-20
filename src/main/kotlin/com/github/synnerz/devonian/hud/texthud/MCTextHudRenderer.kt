@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.Companion.BASE_FONT_SIZE
 import com.github.synnerz.devonian.GuiTextRenderStateAccessor
-import com.github.synnerz.devonian.utils.QuadRenderState
+import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 import net.minecraft.client.gui.GuiGraphics
