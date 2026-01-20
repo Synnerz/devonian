@@ -16,6 +16,13 @@ object WitherShieldTimer : TextHudFeature(
     "",
     subcategory = "General",
 ) {
+    private val SETTING_HIDE_READY = addSwitch(
+        "hideReady",
+        false,
+        "",
+        "Hide if Ready",
+    )
+
     private var useTime = 0
     private var cooldown = 0
     private var isCooldownPending = false
@@ -53,6 +60,8 @@ object WitherShieldTimer : TextHudFeature(
         }
 
         on<RenderOverlayEvent> { event ->
+            if (SETTING_HIDE_READY.get() && cooldown == 0) return@on
+
             draw(event.ctx)
         }
 
