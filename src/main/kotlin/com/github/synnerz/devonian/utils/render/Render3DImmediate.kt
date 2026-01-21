@@ -26,14 +26,16 @@ object Render3DImmediate : IRender3D {
     ) {
         if (color.alpha == 0) return
 
+        var x = ox
+        var y = oy
+        var z = oz
         if (translate) {
-            poseStack.pushPose()
-            poseStack.translate(camera.pos.reverse())
+            x -= camera.pos.x
+            y -= camera.pos.y
+            z -= camera.pos.z
         }
 
-        Render3DState.renderFilledShape(shape, ox, oy, oz, color, phase)
-
-        if (translate) poseStack.popPose()
+        Render3DState.renderFilledShape(shape, x, y, z, color, phase)
     }
 
     override fun renderWireframeShape(
