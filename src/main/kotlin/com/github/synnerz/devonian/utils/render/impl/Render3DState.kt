@@ -122,12 +122,14 @@ object Render3DState {
         var y = y
         var z = z
         var w = w
+        var wz = wz
         var h = h
         if (!phase) {
             x -= 0.003
             y -= 0.003
             z -= 0.003
             w += 0.006
+            wz += 0.006
             h += 0.006
         }
 
