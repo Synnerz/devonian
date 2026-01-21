@@ -324,15 +324,7 @@ class DungeonMapBaseRenderer :
                 }
             }
 
-            val decoration =
-                (if (options.checkMark) {
-                    if (options.renderUnknownRooms && room.checkmark == CheckmarkTypes.UNEXPLORED && room.name != null) null
-                    else CHECKMARK[room.checkmark]
-                } else null) ?:
-                (if (renderRoomInfo && options.puzzleIcon) SPECIAL_ROOMS[room.name] else null)
-            val text = mutableListOf<String>()
-
-            if (
+            val renderName =
                 renderRoomInfo &&
                 (
                     !options.roomNameNotEFB ||
@@ -344,7 +336,16 @@ class DungeonMapBaseRenderer :
                 ) &&
                 (!options.roomNameNotYellow || room.type != RoomTypes.YELLOW) &&
                 (if (room.type == RoomTypes.PUZZLE) options.puzzleName else options.roomName)
-            ) room.name?.also { name ->
+
+            val decoration =
+                (if (options.checkMark || (renderName && room.name == null && room.checkmark != CheckmarkTypes.UNEXPLORED)) {
+                    if (options.renderUnknownRooms && room.checkmark == CheckmarkTypes.UNEXPLORED && room.name != null) null
+                    else CHECKMARK[room.checkmark]
+                } else null) ?:
+                (if (renderRoomInfo && options.puzzleIcon) SPECIAL_ROOMS[room.name] else null)
+            val text = mutableListOf<String>()
+
+            if (renderName) room.name?.also { name ->
                 val colorCode = if (options.colorRoomName) when (room.type) {
                     RoomTypes.ENTRANCE,
                     RoomTypes.FAIRY,
