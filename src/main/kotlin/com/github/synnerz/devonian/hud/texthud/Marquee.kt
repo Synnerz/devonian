@@ -40,10 +40,11 @@ class Marquee(name: String, data: DataProvider) : StylizedTextHud(name, data) {
     }
 
     override fun renderText(ctx: GuiGraphics) {
+        val h = getHeight()
         ctx.scissorStack.push(
             ScreenRectangle(
-                ceil(actualX).toInt(), ceil(y).toInt(),
-                (maxLen * scale).toInt(), getHeight().toInt()
+                ceil(actualX).toInt(), ceil(y - h).toInt(),
+                (maxLen * scale).toInt(), (h * 3.0).toInt()
             )
         )
         super.renderText(ctx)
