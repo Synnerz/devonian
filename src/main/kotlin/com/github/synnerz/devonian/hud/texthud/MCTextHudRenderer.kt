@@ -1,12 +1,12 @@
 package com.github.synnerz.devonian.hud.texthud
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.GuiTextRenderStateAccessor
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.Companion.BASE_FONT_SIZE
-import com.github.synnerz.devonian.GuiTextRenderStateAccessor
-import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
+import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.state.GuiTextRenderState
 import net.minecraft.client.renderer.RenderPipelines
@@ -14,8 +14,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.contents.PlainTextContents
 import org.joml.Matrix3x2f
-import java.util.IdentityHashMap
-import java.util.Optional
+import java.util.*
 
 class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
     override fun onUpdateLine(

@@ -7,10 +7,10 @@ import com.github.synnerz.devonian.config.NullableHudData
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.utils.BoundingBox
+import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.Render2D.height
 import com.github.synnerz.devonian.utils.render.Render2D.width
-import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
 import java.awt.Color

@@ -6,8 +6,7 @@ import com.mojang.blaze3d.platform.DepthTestFunction
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.client.renderer.RenderPipelines
-import java.util.Collections
-import java.util.IdentityHashMap
+import java.util.*
 
 object Render3DPipelines {
     @JvmStatic
