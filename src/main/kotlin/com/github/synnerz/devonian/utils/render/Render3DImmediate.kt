@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.world.phys.shapes.VoxelShape
 import java.awt.Color
 
-/** *
+/**
  * handles early exits (i.a. alpha == 0)
  * handles camera translation viz. `translate`
  * then delegates to `Render3DState` to render

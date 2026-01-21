@@ -5,6 +5,7 @@ import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Vector3f
 import java.awt.Color
+import kotlin.math.sqrt
 
 interface IRender3D {
     fun renderFilledShape(
@@ -163,6 +164,73 @@ interface IRender3D {
             phase,
             translate,
             c1,
+        )
+    }
+
+    fun renderWaypoint(
+        x: Double,
+        y: Double,
+        z: Double,
+        color: Color,
+        phase: Boolean = false,
+        translate: Boolean = true,
+
+        lineWidth: Double = 1.0,
+        centered: Boolean = false,
+
+        title: String? = null,
+        showTitleFarther: Double = 10.0,
+        textScale: Float = 1f,
+        textMaxDist: Double = 8.0,
+        textColor: Color = Color.WHITE,
+        textBackgroundBox: Color = Color(0, true),
+
+        beacon: Boolean = true,
+        beaconMaxY: Double = 320.0,
+        beaconH: Double = beaconMaxY - y,
+
+    ) {
+        if (color.alpha == 0) return
+
+        if (!centered) return renderWaypoint(
+            x + 0.5, y, z + 0.5,
+            color, phase, translate,
+            lineWidth, true,
+            title, showTitleFarther, textScale, textMaxDist, textColor, textBackgroundBox,
+            beacon, beaconMaxY, beaconH,
+        )
+
+        val pos = Devonian.minecraft.player ?: return
+        val dx = x - pos.x
+        val dy = y + 2 - pos.y
+        val dz = z - pos.z
+
+        renderFilledBox(
+            x, y, z,
+            1.0, 1.0,
+            Color(color.red, color.green, color.blue, color.alpha / 3),
+            phase, translate,
+            centered = true,
+        )
+        renderWireframeBox(
+            x, y, z,
+            1.0, 1.0,
+            color, lineWidth,
+            phase, translate,
+            centered = true,
+        )
+        if (beacon) renderBeam(
+            x, y + 1, z,
+            color, phase, translate,
+            h = beaconH,
+        )
+
+        val dist = sqrt(dx * dx + dy * dy + dz * dz)
+        if (dist > showTitleFarther) renderString(
+            title ?: "%.2fm".format(dist),
+            x, y + 2, z,
+            textScale, textMaxDist, textColor, textBackgroundBox,
+            phase, translate,
         )
     }
 
