@@ -23,6 +23,7 @@
     "FogRendererMixin",
     "FontMixin",
     "GameRendererMixin",
+    "GlCommandEncoderMixin",
     "GlDeviceMixin",
     "GuiGraphicsMixin",
     "GuiMixin",
@@ -31,6 +32,7 @@
     "ItemInHandRendererMixin",
     "KeyboardHandlerMixin",
     "KeyboardInputMixin",
+    "LevelRendererMixin",
     "LightningBoltRendererMixin",
     "LivingEntityMixin",
     "LocalPlayerMixin",
@@ -57,6 +59,7 @@
     "accessor.HeartTypeAccessor",
     "accessor.LerpingBossEventAccessor",
     "accessor.LevelLoadingScreenAccessor",
+    "accessor.LevelRendererAccessor",
     "accessor.LocalPlayerAccessor",
     "accessor.ParticleAccessor",
     "accessor.ScreenAccessor"

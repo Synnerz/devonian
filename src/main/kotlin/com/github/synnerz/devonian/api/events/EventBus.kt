@@ -2,7 +2,10 @@ package com.github.synnerz.devonian.api.events
 
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.mixin.accessor.LevelRendererAccessor
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
+import com.github.synnerz.devonian.utils.render.impl.Render3DState
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
@@ -43,7 +46,15 @@ object EventBus {
             post(EntityLeaveEvent(entity))
         }
         ClientTickEvents.START_CLIENT_TICK.register { post(TickEvent(it)) }
-        WorldRenderEvents.END_MAIN.register { post(RenderWorldEvent(it)) }
+        WorldRenderEvents.START_MAIN.register {
+            Render3DState.camera = it.worldState().cameraRenderState
+            Render3DImmediate.camera = it.worldState().cameraRenderState
+
+            (it.worldRenderer() as? LevelRendererAccessor)?.let { Render3DState.bufferSource = it.renderBuffers.bufferSource() }
+        }
+        WorldRenderEvents.END_MAIN.register {
+            post(RenderWorldEvent(it))
+        }
         ClientLifecycleEvents.CLIENT_STARTED.register { post(GameLoadEvent(it)) }
         ClientLifecycleEvents.CLIENT_STOPPING.register { post(GameUnloadEvent(it)) }
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world ->
