@@ -61,6 +61,18 @@ object EtherwarpOverlay : Feature(
         "",
         "Ether Fail Fill Color",
     )
+    private val SETTING_WIRE_PHASE = addSwitch(
+        "usePhase",
+        true,
+        "Whether to use phase (see through) in the block highlight",
+        "Ether Wire Phase"
+    )
+    private val SETTING_FILL_PHASE = addSwitch(
+        "fillPhase",
+        true,
+        "Whether to use phase (see through) in the block highlight",
+        "Ether Fill Phase"
+    )
     private val SETTING_ETHER_USING_CANCEL_INTERACT = addSwitch(
         "usingCI",
         false,
@@ -72,12 +84,6 @@ object EtherwarpOverlay : Feature(
         false,
         "Uses your camera position/look rather than the servers position/look",
         "Ether Use Smooth Position",
-    )
-    private val SETTING_USE_PHASE = addSwitch(
-        "usePhase",
-        true,
-        "Whether to use phase (see through) in the block highlight",
-        "Ether Use Phase"
     )
 
     private val validWeapons = mutableListOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
@@ -201,7 +207,7 @@ object EtherwarpOverlay : Feature(
                 hitResult.z.toDouble(),
                 if (failReason.isEmpty()) SETTING_ETHER_WIRE_COLOR.getColor() else SETTING_ETHER_FAIL_WIRE_COLOR.getColor(),
                 SETTING_ETHER_WIRE_WIDTH.get(),
-                SETTING_USE_PHASE.get(),
+                SETTING_WIRE_PHASE.get(),
             )
             Render3DImmediate.renderFilledShape(
                 outlineShape,
@@ -209,7 +215,7 @@ object EtherwarpOverlay : Feature(
                 hitResult.y.toDouble(),
                 hitResult.z.toDouble(),
                 if (failReason.isEmpty()) SETTING_ETHER_FILL_COLOR.getColor() else SETTING_ETHER_FAIL_FILL_COLOR.getColor(),
-                false,
+                SETTING_FILL_PHASE.get(),
             )
         }
     }
