@@ -21,7 +21,7 @@ object Location {
     fun stateInArea(vararg area: String?) = stateArea.map { area.contains(it) }
     fun stateInSubarea(vararg subarea: String?) = stateSubarea.map { subarea.contains(it) }
 
-    private fun changeArea(loc: String) {
+    fun changeArea(loc: String) {
         val old = area
         val l = loc.lowercase()
         if (old === l) return
@@ -31,7 +31,7 @@ object Location {
         stateArea.value = l
     }
 
-    private fun changeSubarea(loc: String) {
+    fun changeSubarea(loc: String) {
         val old = subarea
         val l = loc.lowercase()
         if (old == l) return

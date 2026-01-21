@@ -30,6 +30,7 @@ object Dungeons {
     private val dungeonFloorRegex = "^ * ⏣ The Catacombs \\((\\w+)\\)$".toRegex()
     private val bossMessageRegex = "^\\[BOSS] (.+?): (.+?)$".toRegex()
     private val disconnectRegex = "^ ☠ (\\w+) disconnected and became a ghost\\.$".toRegex()
+    private val reconnectRegex = "^ ☠ (\\w+) reconnected\\.$".toRegex()
 
     private val clearedPercentRegex = "^Cleared: (\\d+)% \\(\\d+\\)$".toRegex()
     private val timeElapsedRegex = "^Time Elapsed: (?:(\\d+)h)? ?(?:(\\d+)m)? ?(\\d+)s$".toRegex()
@@ -42,6 +43,9 @@ object Dungeons {
     private val discoveriesRegex = "^Discoveries: (\\d+)$".toRegex()
     private val puzzleNameRegex = "^ ([\\w ]+): \\[([✦✔✖])] ?\\(?(\\w+)?\\)?$".toRegex()
     private val puzzlesCountRegex = "^Puzzles: \\((\\d+)\\)$".toRegex()
+
+    private var wasInDungeons = false
+    private val attemptGuessState = BasicState(false)
 
     val players = linkedMapOf<String, DungeonPlayer>()
     val playerClasses = ConcurrentHashMap<String, DungeonClass>()
@@ -69,10 +73,11 @@ object Dungeons {
     val mimicKilled = BasicState(false)
     val princeKilled = BasicState(false)
     val isPaul = BasicState(false)
+    val totalRoomSecrets = BasicState(0)
+
     val inBoss = BasicState(false)
     val bloodCleared = BasicState(false)
     val started = BasicState(false)
-    val totalRoomSecrets = BasicState(0)
 
     private fun fuckEntrance(score: State<Double>) =
         score.zip(floorState) { score, floor -> (score * (if (floor == FloorType.Entrance) 0.7 else 1.0)).toInt() }
@@ -262,13 +267,17 @@ object Dungeons {
 
         EventBus.on<AreaEvent> { event ->
             val area = event.area
-            if (area == null || area != "Catacombs") {
+            if (area == "kuudra") wasInDungeons = false
+            if (area == null || area != "catacombs") {
                 if (!needReset) return@on
                 DungeonScanner.reset()
                 DungeonMapScanner.reset()
                 reset()
                 needReset = false
-            } else needReset = true
+            } else {
+                needReset = true
+                wasInDungeons = true
+            }
         }
 
         EventBus.on<WorldChangeEvent> {
@@ -315,6 +324,7 @@ object Dungeons {
 
             if (event.message == "[NPC] Mort: Here, I found this map when I first entered the dungeon.") {
                 started.value = true
+                wasInDungeons = false
                 DungeonEvent.RunStarted().post()
                 return@on
             }
@@ -327,6 +337,7 @@ object Dungeons {
 
             event.matches(disconnectRegex)?.let {
                 Scheduler.scheduleTask {
+                    if (it[0] == Devonian.minecraft.gameProfile.name) wasInDungeons = true
                     players.remove(it[0])?.let { p ->
                         players[it[0]] = p
                     }
@@ -416,9 +427,46 @@ object Dungeons {
             if (!cancel) return@on
             event.cancel()
         }.setEnabled(Location.stateInArea("catacombs"))
+
+        EventBus.on<ChatEvent> { event ->
+            val (name) = event.matches(reconnectRegex) ?: return@on
+            if (name != Devonian.minecraft.gameProfile.name) return@on
+
+            // kuudra uses the same message
+            // this also means if you crash and rejoin this will fail
+            if (!wasInDungeons) return@on
+
+            attemptGuessState.value = true
+            started.value = true
+            needReset = true
+            Stages.Clear.start()
+            Location.changeArea("catacombs")
+        }
+
+        EventBus.on<DungeonEvent.BossMessageEvent> { event ->
+            inBoss.value = event.boss != DungeonBoss.Watcher
+            bloodCleared.value = event.boss != DungeonBoss.Watcher
+            if (event.boss != DungeonBoss.Watcher) attemptGuessState.value = false
+            when (event.boss) {
+                DungeonBoss.Watcher -> Stages.WatcherClear.start()
+                DungeonBoss.Bonzo -> Stages.F1.start()
+                DungeonBoss.Scarf -> Stages.F2.start()
+                DungeonBoss.Professor -> Stages.F3.start()
+                DungeonBoss.Thorn -> Stages.F4.start()
+                DungeonBoss.Livid -> Stages.F5.start()
+                DungeonBoss.Sadan -> Stages.F6.start()
+                DungeonBoss.Maxor -> Stages.Maxor.start()
+                DungeonBoss.Storm -> Stages.Storm.start()
+                DungeonBoss.Goldor -> Stages.Goldor.start()
+                DungeonBoss.Necron -> Stages.Necron.start()
+                DungeonBoss.WitherKing -> Stages.WitherKing.start()
+            }
+        }.setEnabled(attemptGuessState)
     }
 
     private fun reset() {
+        attemptGuessState.value = false
+
         players.clear()
         playerClasses.clear()
         selfClass.value = DungeonClass.Unknown

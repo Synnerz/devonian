@@ -15,7 +15,9 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.update
 import java.awt.Color
+import kotlin.math.min
 
 object BoxDoors : Feature(
     "boxDoors",
@@ -121,7 +123,7 @@ object BoxDoors : Feature(
             }
             match = event.matches(witherDoorRegex)
             if (match != null) {
-                witherKeys.decrementAndGet()
+                witherKeys.update { min(it - 1, 0) }
                 return@on
             }
         }

@@ -57,7 +57,7 @@ object GolemWaypoint : Feature(
         on<SubAreaEvent> { event ->
             if (!delegateScan) return@on
             val subarea = event.subarea ?: return@on
-            if (!subarea.contains("Dragon's Nest")) return@on
+            if (!subarea.contains("dragon's nest")) return@on
 
             findPos()
             delegateScan = false
