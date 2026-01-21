@@ -270,6 +270,10 @@ object Render3DVertex {
                         pz = z
                         pc = c
                     }
+
+                    override fun endBatch() {
+                        first = true
+                    }
                 }
             )
         }

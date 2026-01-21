@@ -261,5 +261,7 @@ interface IRender3D {
         )
 
         fun submit(p: Vec3, c: Color) = submit(p.x, p.y, p.z, c)
+
+        fun endBatch()
     }
 }
