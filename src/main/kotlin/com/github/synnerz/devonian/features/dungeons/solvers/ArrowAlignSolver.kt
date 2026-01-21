@@ -137,14 +137,13 @@ object ArrowAlignSolver : Feature(
         }
 
         on<PacketReceivedEvent> { event ->
-            if (!atDev) return@on
             val packet = event.packet as? ClientboundSetEntityDataPacket ?: return@on
             val entId = packet.id
             val map = frameIds.value ?: return@on
             val frameId = map[entId] ?: return@on
 
             packet.packedItems.forEach {
-                if (it.id != 9) return@forEach
+                if (it.id != 10) return@forEach
                 val r = it.value as? Int ?: return@forEach
                 val d: Int
                 synchronized(frameState) {
