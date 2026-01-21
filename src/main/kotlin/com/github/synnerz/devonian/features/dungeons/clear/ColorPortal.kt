@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
@@ -11,6 +10,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import java.awt.Color
 
 object ColorPortal : Feature(
@@ -104,11 +104,11 @@ object ColorPortal : Feature(
                 else -> SETTING_PLUS_COLOR.getColor()
             }
 
-            Context.Immediate?.renderFilledBox(
+            Render3DImmediate.renderFilledBox(
                 x, 69.0, z,
                 wx, 4.0, color,
                 phase = false,
-                widthZ = wz,
+                wz = wz,
             )
         }
     }

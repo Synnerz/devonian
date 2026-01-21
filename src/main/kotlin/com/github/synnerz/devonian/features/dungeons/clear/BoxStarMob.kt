@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.minecraft.world.entity.EntityType
@@ -180,16 +180,15 @@ object BoxStarMob : Feature(
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 
                 val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
-                Context.Immediate?.renderBox(
-                    pos.x - 0.4,
+                Render3DImmediate.renderWireframeBox(
+                    pos.x,
                     pos.y,
-                    pos.z - 0.4,
-                    0.8,
-                    data.height,
+                    pos.z,
+                    0.8, data.height,
                     data.color,
                     phase = SETTING_PHASE.get(),
-                    translate = true,
-                    lineWidth = SETTING_LINE_WIDTH.get()
+                    lineWidth = SETTING_LINE_WIDTH.get(),
+                    centered = true,
                 )
                 false
             }

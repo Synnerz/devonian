@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
@@ -9,6 +8,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.math.MathUtils
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
@@ -207,24 +207,22 @@ object BoxIcedMobs : Feature(
                 val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
                 val w = ent.bbWidth + 0.2
                 val h = ent.bbHeight + 0.2
-                Context.Immediate?.renderBox(
-                    pos.x - w * 0.5,
+                Render3DImmediate.renderWireframeBox(
+                    pos.x,
                     pos.y,
-                    pos.z - w * 0.5,
-                    w,
-                    h,
+                    pos.z,
+                    w, h,
                     SETTING_WIRE_COLOR.getColor(),
-                    translate = true,
-                    lineWidth = SETTING_LINE_WIDTH.get()
+                    lineWidth = SETTING_LINE_WIDTH.get(),
+                    centered = true,
                 )
-                Context.Immediate?.renderFilledBox(
-                    pos.x - w * 0.5,
+                Render3DImmediate.renderFilledBox(
+                    pos.x,
                     pos.y,
-                    pos.z - w * 0.5,
-                    w,
-                    h,
+                    pos.z,
+                    w, h,
                     SETTING_FILL_COLOR.getColor(),
-                    translate = true
+                    centered = true,
                 )
             }
         }

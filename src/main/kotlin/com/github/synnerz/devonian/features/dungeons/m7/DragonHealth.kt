@@ -1,12 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons.m7
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import net.minecraft.world.entity.decoration.ArmorStand
 
@@ -52,12 +52,10 @@ object DragonHealth : Feature(
 
         on<RenderWorldEvent> {
             healths.forEach {
-                Context.Immediate?.renderString(
+                Render3DImmediate.renderString(
                     it.str,
                     it.x, it.y, it.z,
                     8f,
-                    backgroundBox = false,
-                    increase = false,
                     phase = true,
                 )
             }

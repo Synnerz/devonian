@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
@@ -13,6 +12,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import java.awt.Color
 
 object TriviaSolver : Feature(
@@ -180,15 +180,17 @@ object TriviaSolver : Feature(
             // Should never happen but just in case
             val room = DungeonScanner.currentRoom ?: return@on
             val realPos = room.fromComp(pos.first, pos.second) ?: return@on
-            Context.Immediate?.renderBox(
+            Render3DImmediate.renderWireframeBox(
                 realPos.first.toDouble(), 70.0, realPos.second.toDouble(),
+                1.0, 1.0,
                 Color.GREEN,
-                true
+                phase = true,
             )
-            Context.Immediate?.renderFilledBox(
+            Render3DImmediate.renderFilledBox(
                 realPos.first.toDouble(), 70.0, realPos.second.toDouble(),
+                1.0, 1.0,
                 Color(0, 255, 0, 80),
-                false
+                phase = false,
             )
         }
     }

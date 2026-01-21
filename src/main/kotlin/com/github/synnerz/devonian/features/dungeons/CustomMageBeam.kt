@@ -1,14 +1,13 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.barrl.utils.RendererLayers
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.math.MathUtils
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.common.ClientboundPingPacket
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
-import org.joml.Vector3f
 import java.awt.Color
 import java.util.BitSet
 import java.util.concurrent.ConcurrentHashMap
@@ -286,41 +285,18 @@ object CustomMageBeam : Feature(
             }
         }
 
-        on<RenderWorldEvent> { event ->
-            val consumer = minecraft.renderBuffers().bufferSource().getBuffer(
-                RendererLayers.lines(
-                    SETTING_LINE_WIDTH.get(),
-                    false,
-                    SETTING_START_COLOR.getColor().alpha == 255 && SETTING_END_COLOR.getColor().alpha == 255
-                )
-            )
-            val camPos = event.ctx.worldState().cameraRenderState.pos ?: return@on
-            event.ctx.matrices().pushPose()
-            event.ctx.matrices().translate(camPos.reverse())
-            val mat = event.ctx.matrices().last()
-
-            renderedBeams.forEach {
-                val x1 = it.x0.toFloat()
-                val y1 = it.y0.toFloat()
-                val z1 = it.z0.toFloat()
-                val x2 = it.x1.toFloat()
-                val y2 = it.y1.toFloat()
-                val z2 = it.z1.toFloat()
-
-                val normalized = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
-
-                consumer
-                    .addVertex(mat, x1, y1, z1)
-                    .setColor(SETTING_START_COLOR.get())
-                    .setNormal(mat, normalized)
-
-                consumer
-                    .addVertex(mat, x2, y2, z2)
-                    .setColor(SETTING_END_COLOR.get())
-                    .setNormal(mat, normalized)
+        on<RenderWorldEvent> {
+            val c0 = SETTING_START_COLOR.getColor()
+            val c1 = SETTING_END_COLOR.getColor()
+            Render3DImmediate.renderLines(c0.alpha == 255 && c1.alpha == 255, SETTING_LINE_WIDTH.get()) {
+                renderedBeams.forEach {
+                    submit(
+                        it.x0, it.y0, it.z0,
+                        it.x1, it.y1, it.z1,
+                        c0, c1,
+                    )
+                }
             }
-
-            event.ctx.matrices().popPose()
         }.setEnabled(SETTING_ONLY_CANCEL_PARTICLES.state.map(Boolean::not))
     }
 

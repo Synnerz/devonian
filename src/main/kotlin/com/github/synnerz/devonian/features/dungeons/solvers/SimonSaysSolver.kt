@@ -1,12 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.BlockPos
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
@@ -162,8 +162,7 @@ object SimonSaysSolver : Feature(
             }
         }
 
-        on<RenderWorldEvent> { event ->
-            val cam = event.ctx.gameRenderer().mainCamera.position.reverse()
+        on<RenderWorldEvent> {
             solution.forEachIndexed { i, pos ->
                 val wire = when (i) {
                     0 -> SETTING_COLOR_WIRE_1.getColor()
@@ -176,20 +175,20 @@ object SimonSaysSolver : Feature(
                     else -> SETTING_COLOR_FILL_3.getColor()
                 }
 
-                Context.Immediate?.renderBoxShape(
+                Render3DImmediate.renderWireframeShape(
                     BUTTON_SHAPE,
-                    pos.x + cam.x,
-                    pos.y + cam.y,
-                    pos.z + cam.z,
+                    pos.x.toDouble(),
+                    pos.y.toDouble(),
+                    pos.z.toDouble(),
                     wire,
+                    SETTING_LINE_WIDTH.get(),
                     false,
-                    SETTING_LINE_WIDTH.get()
                 )
-                Context.Immediate?.renderFilledShape(
+                Render3DImmediate.renderFilledShape(
                     BUTTON_SHAPE,
-                    pos.x + cam.x,
-                    pos.y + cam.y,
-                    pos.z + cam.z,
+                    pos.x.toDouble(),
+                    pos.y.toDouble(),
+                    pos.z.toDouble(),
                     fill,
                     false,
                 )

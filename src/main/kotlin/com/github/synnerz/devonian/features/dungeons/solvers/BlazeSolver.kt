@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
@@ -9,13 +8,10 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
-import net.minecraft.client.renderer.RenderType
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.phys.Vec3
-import org.joml.Vector3f
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -181,56 +177,58 @@ object BlazeSolver : Feature(
             entityList[entityId] = maxHp
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             if (efficientPos != null) {
                 if (etherToPos != null && hasPlatform) {
-                    Context.Immediate?.renderFilledBox(
+                    Render3DImmediate.renderWireframeBox(
                         etherToPos!!.first.toDouble(), etherToPos!!.second.toDouble(), etherToPos!!.third.toDouble(),
-                        color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor()
+                        1.0, 1.0,
+                        color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor()
                     )
 
-                    Context.Immediate?.renderBox(
+                    Render3DImmediate.renderFilledBox(
                         etherToPos!!.first.toDouble(), etherToPos!!.second.toDouble(), etherToPos!!.third.toDouble(),
-                        color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor()
+                        1.0, 1.0,
+                        color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor()
                     )
                 }
 
-                Context.Immediate?.renderFilledBox(
+                Render3DImmediate.renderWireframeBox(
                     efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
-                    color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor()
-                )
-
-                Context.Immediate?.renderBox(
-                    efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
+                    1.0, 1.0,
                     color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor()
                 )
+
+                Render3DImmediate.renderFilledBox(
+                    efficientPos!!.first.toDouble(), efficientPos!!.second.toDouble(), efficientPos!!.third.toDouble(),
+                    1.0, 1.0,
+                    color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor()
+                )
             }
+
+            val c1 = SETTING_COLOR_FIRST_OUTLINE.getColor()
+            val c2 = SETTING_COLOR_SECOND_OUTLINE.getColor()
+            val c3 = SETTING_COLOR_THIRD_OUTLINE.getColor()
+
             // yes i could make this dynamic, but why ?
             // it is pointless if we only need 3 entries
-            val blaze = blazes.getOrNull(0) ?: return@on
-            highlightBlaze(blaze.entity, SETTING_COLOR_FIRST_OUTLINE.getColor(), SETTING_COLOR_FIRST_FILLED.getColor())
+            val blaze1 = blazes.getOrNull(0)?.entity ?: return@on
+            highlightBlaze(blaze1, c1, SETTING_COLOR_FIRST_FILLED.getColor())
 
-            val blaze2 = blazes.getOrNull(1) ?: return@on
-            highlightBlaze(blaze2.entity, SETTING_COLOR_SECOND_OUTLINE.getColor(), SETTING_COLOR_SECOND_FILLED.getColor())
+            val blaze2 = blazes.getOrNull(1)?.entity ?: return@on
+            highlightBlaze(blaze2, c2, SETTING_COLOR_SECOND_FILLED.getColor())
 
-            renderLine(
-                blaze.entity.position().add(0.0, 0.8, 0.0),
-                blaze2.entity.position().add(0.0, 0.8, 0.0),
-                SETTING_COLOR_FIRST_OUTLINE.getColor(),
-                SETTING_COLOR_SECOND_OUTLINE.getColor(),
-                event.ctx,
-            )
+            val blaze3 = blazes.getOrNull(2)?.entity
+            if (blaze3 != null) highlightBlaze(blaze3, c3, SETTING_COLOR_THIRD_FILLED.getColor())
 
-            val blaze3 = blazes.getOrNull(2) ?: return@on
-            highlightBlaze(blaze3.entity, SETTING_COLOR_THIRD_OUTLINE.getColor(), SETTING_COLOR_THIRD_FILLED.getColor())
+            Render3DImmediate.renderLines(c1.alpha and c2.alpha and c3.alpha == 255) {
+                val p1 = blaze1.position().add(0.0, 0.8, 0.0)
+                val p2 = blaze2.position().add(0.0, 0.8, 0.0)
+                val p3 = blaze3?.position()?.add(0.0, 0.8, 0.0)
 
-            renderLine(
-                blaze2.entity.position().add(0.0, 0.8, 0.0),
-                blaze3.entity.position().add(0.0, 0.8, 0.0),
-                SETTING_COLOR_SECOND_OUTLINE.getColor(),
-                SETTING_COLOR_THIRD_OUTLINE.getColor(),
-                event.ctx,
-            )
+                submit(p1, p2, c1, c2)
+                if (p3 != null) submit(p2, p3, c2, c3)
+            }
         }
     }
 
@@ -239,54 +237,20 @@ object BlazeSolver : Feature(
         outlineColor: Color = Color.GREEN,
         filledColor: Color = Color(0, 255, 0, 80)
     ) {
-        Context.Immediate?.renderFilledBox(
-            entity.x - 0.5, entity.y, entity.z - 0.5,
+        Render3DImmediate.renderWireframeBox(
+            entity.x, entity.y, entity.z,
             0.9,
             entity.bbHeight.toDouble(),
-            filledColor
+            outlineColor,
+            centered = true,
         )
-        Context.Immediate?.renderBox(
-            entity.x - 0.5, entity.y, entity.z - 0.5,
+        Render3DImmediate.renderFilledBox(
+            entity.x, entity.y, entity.z,
             0.9,
             entity.bbHeight.toDouble(),
-            outlineColor
+            filledColor,
+            centered = true,
         )
-    }
-
-    fun renderLine(
-        pos1: Vec3,
-        pos2: Vec3,
-        colorStart: Color = Color.CYAN,
-        colorEnd: Color = colorStart,
-        ctx: WorldRenderContext,
-    ) {
-        if (colorStart.alpha == 0 || colorEnd.alpha == 0) return
-
-        val x1 = pos1.x.toFloat()
-        val x2 = pos2.x.toFloat()
-        val y1 = pos1.y.toFloat()
-        val y2 = pos2.y.toFloat()
-        val z1 = pos1.z.toFloat()
-        val z2 = pos2.z.toFloat()
-
-        val normalized = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
-        val consumer = minecraft.renderBuffers().bufferSource().getBuffer(RenderType.LINES)
-        val camPos = ctx.worldState().cameraRenderState.pos ?: return
-        ctx.matrices().pushPose()
-        ctx.matrices().translate(camPos.reverse())
-        val mat = ctx.matrices().last()
-
-        consumer
-            .addVertex(mat, x1, y1, z1)
-            .setColor(colorStart.rgb)
-            .setNormal(mat, normalized)
-
-        consumer
-            .addVertex(mat, x2, y2, z2)
-            .setColor(colorEnd.rgb)
-            .setNormal(mat, normalized)
-
-        ctx.matrices().popPose()
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {

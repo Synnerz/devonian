@@ -33,7 +33,6 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	include modImplementation("com.github.Synnerz:barrl:1.21.10-SNAPSHOT")
 	// TODO: upload to modrinth
 	include modImplementation("com.github.Synnerz:talium:4fbf96b664")
 

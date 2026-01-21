@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
@@ -14,6 +13,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.HitResult
 import java.awt.Color
@@ -97,13 +97,15 @@ object BoulderSolver : Feature(
         on<RenderWorldEvent> {
             if (currentSolution == null) return@on
             currentSolution?.forEach {
-                Context.Immediate?.renderBox(
+                Render3DImmediate.renderWireframeBox(
                     it.first.toDouble(), 65.0, it.second.toDouble(),
+                    1.0, 1.0,
                     color = OUTLINE_COLOR,
                     phase = true
                 )
-                Context.Immediate?.renderFilledBox(
+                Render3DImmediate.renderFilledBox(
                     it.first.toDouble(), 65.0, it.second.toDouble(),
+                    1.0, 1.0,
                     color = FILLED_COLOR
                 )
             }

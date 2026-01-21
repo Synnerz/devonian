@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.ChatEvent
@@ -8,6 +7,7 @@ import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.EmptyBlockGetter
 import net.minecraft.world.phys.shapes.CollisionContext
@@ -65,8 +65,7 @@ object SecretsClickedBox : Feature(
         }
 
         on<RenderWorldEvent> {
-            if (clickedBlock == null) return@on
-            val immediate = Context.Immediate ?: return@on
+            val pos = clickedBlock ?: return@on
             val camera = minecraft.gameRenderer.mainCamera
             val blockShape = minecraft.level?.getBlockState(clickedBlock!!)
                 ?.getShape(
@@ -74,24 +73,23 @@ object SecretsClickedBox : Feature(
                     clickedBlock!!,
                     CollisionContext.of(camera.entity)
                 ) ?: return@on
-            val aabb = blockShape.toAabbs().map { it.move(clickedBlock!!) }
 
-            aabb.forEach {
-                val pos = it.inflate(0.001)
-                immediate.renderFilledBox(
-                    pos.minX, pos.minY, pos.minZ,
-                    pos.maxX - pos.minX, pos.maxY - pos.minY,
-                    if (wasLocked) SETTING_FILLED_FAILED_COLOR.getColor() else SETTING_FILLED_SUCCESS_COLOR.getColor(),
-                    true
-                )
-
-                immediate.renderBox(
-                    pos.minX, pos.minY, pos.minZ,
-                    pos.maxX - pos.minX, pos.maxY - pos.minY,
-                    if (wasLocked) SETTING_OUTLINE_FAILED_COLOR.getColor() else SETTING_OUTLINE_SUCCESS_COLOR.getColor(),
-                    true
-                )
-            }
+            Render3DImmediate.renderWireframeShape(
+                blockShape,
+                pos.x.toDouble(),
+                pos.y.toDouble(),
+                pos.z.toDouble(),
+                if (wasLocked) SETTING_OUTLINE_FAILED_COLOR.getColor() else SETTING_OUTLINE_SUCCESS_COLOR.getColor(),
+                phase = true,
+            )
+            Render3DImmediate.renderFilledShape(
+                blockShape,
+                pos.x.toDouble(),
+                pos.y.toDouble(),
+                pos.z.toDouble(),
+                if (wasLocked) SETTING_FILLED_FAILED_COLOR.getColor() else SETTING_FILLED_SUCCESS_COLOR.getColor(),
+                phase = false,
+            )
         }
     }
 

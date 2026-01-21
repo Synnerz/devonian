@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.debug.renderers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import java.awt.Color
 
 object DungeonRoomComponentRenderer : Feature(
@@ -39,21 +39,21 @@ object DungeonRoomComponentRenderer : Feature(
 
             val rotated = room.fromPos(hitResult.x, hitResult.z) ?: return@on
 
-            Context.Immediate?.renderBox(
+            Render3DImmediate.renderWireframeBox(
                 hitResult.x.toDouble(),
                 hitResult.y.toDouble(),
                 hitResult.z.toDouble(),
+                1.0, 1.0,
                 Color.RED,
-                true,
                 lineWidth = 3.0,
+                true,
             )
-            Context.Immediate?.renderString(
+            Render3DImmediate.renderString(
                 "(${rotated.first}, ${hitResult.y}, ${rotated.second})",
                 hitResult.x + 0.5,
                 hitResult.y + 1.5,
                 hitResult.z + 0.5,
                 phase = true,
-                increase = true,
             )
         }
     }

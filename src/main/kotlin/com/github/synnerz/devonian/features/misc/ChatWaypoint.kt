@@ -1,12 +1,12 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatChannelEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import java.awt.Color
 import kotlin.math.sqrt
 
@@ -84,22 +84,21 @@ object ChatWaypoint : Feature(
                 val distance = sqrt(dx * dx + dy * dy + dz * dz)
                 if (distance < 5) return@removeIf true
 
-                Context.Immediate?.renderWaypoint(
+                Render3DImmediate.renderWaypoint(
                     it.x,
                     it.y,
                     it.z,
                     SETTING_WAYPOINT_COLOR.getColor(),
                     title = "%.2fm".format(distance),
-                    increase = true,
+                    textScale = 2f, textMaxDist = 20.0, textBackgroundBox = Color.BLACK,
                     phase = true
                 )
-                if (SETTING_SHOW_SENDER_NAME.get()) Context.Immediate?.renderString(
+                if (SETTING_SHOW_SENDER_NAME.get()) Render3DImmediate.renderString(
                     it.by,
                     it.x,
                     it.y + 1,
                     it.z,
-                    backgroundBox = true,
-                    increase = true,
+                    scale = 2f, maxDist = 20.0, backgroundBox = Color.BLACK,
                     phase = true
                 )
                 System.currentTimeMillis() - it.created > 60000

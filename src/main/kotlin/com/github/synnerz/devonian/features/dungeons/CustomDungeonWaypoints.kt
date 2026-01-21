@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
@@ -17,6 +16,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.ScreenAccessor
 import com.github.synnerz.devonian.utils.PersistentJson
 import com.github.synnerz.devonian.utils.PersistentJsonClass
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import com.google.gson.reflect.TypeToken
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.brigadier.context.CommandContext
@@ -261,31 +261,31 @@ object CustomDungeonWaypoints : Feature(
                 val camPos = camera.position()
 
                 if (it.text != null && SETTING_RENDER_TEXT.get()) {
-                    Context.Immediate?.renderString(
+                    Render3DImmediate.renderString(
                         it.text!!,
                         pos.x + 0.5, pos.y + 1.5, pos.z + 0.5,
-                        2f, true, false,
-                        SETTING_TEXT_PHASE_MODE.get()
+                        2f,
+                        phase = SETTING_TEXT_PHASE_MODE.get()
                     )
                 } else if (it.type == WaypointType.ETHERWARP && SETTING_ORDERED_ETHERS.get()) {
                     // TODO: make more efficient
                     val idx = currentParent!!.waypoints.filter { f -> f.type == WaypointType.ETHERWARP }.indexOf(it)
                     if (idx != -1) {
-                        Context.Immediate?.renderString(
+                        Render3DImmediate.renderString(
                             "${idx + 1}",
                             pos.x + 0.5, pos.y + 1.5, pos.z + 0.5,
-                            2f, true, false,
-                            SETTING_TEXT_PHASE_MODE.get()
+                            2f,
+                            phase = SETTING_TEXT_PHASE_MODE.get()
                         )
                     }
                 }
                 if (it.type == WaypointType.TEXT) return@forEach
 
-                Context.Immediate?.renderBoxShape(
+                Render3DImmediate.renderWireframeShape(
                     it.type.shape,
                     pos.x - camPos.x, pos.y - camPos.y, pos.z - camPos.z,
                     color,
-                    SETTING_PHASE_MODE.get(),
+                    phase = SETTING_PHASE_MODE.get(),
                     lineWidth = SETTING_LINE_WIDTH.get()
                 )
             }

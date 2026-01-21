@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
@@ -10,6 +9,7 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import java.awt.Color
@@ -135,27 +135,31 @@ object ThreeWeirdosSolver : Feature(
                 val isCorrect = it.isCorrect
 
                 // Render chest highlight
-                Context.Immediate?.renderBox(
+                Render3DImmediate.renderWireframeBox(
                     chestPos.first, 69.0, chestPos.second,
+                    1.0, 1.0,
                     color = if (isCorrect) CORRECT_OUTLINE_COLOR else WRONG_OUTLINE_COLOR,
-                    false
+                    phase = false,
                 )
-                Context.Immediate?.renderFilledBox(
+                Render3DImmediate.renderFilledBox(
                     chestPos.first, 69.0, chestPos.second,
+                    1.0, 1.0,
                     color = if (isCorrect) CORRECT_FILLED_COLOR else WRONG_FILLED_COLOR
                 )
 
                 // Render entity highlight
-                Context.Immediate?.renderBox(
-                    entityPos.x - 0.5, entityPos.y, entityPos.z - 0.5,
+                Render3DImmediate.renderWireframeBox(
+                    entityPos.x, entityPos.y, entityPos.z,
                     0.8, 2.0,
                     if (isCorrect) CORRECT_OUTLINE_COLOR else WRONG_OUTLINE_COLOR,
-                    false
+                    phase = false,
+                    centered = true,
                 )
-                Context.Immediate?.renderFilledBox(
-                    entityPos.x - 0.5, entityPos.y, entityPos.z - 0.5,
+                Render3DImmediate.renderFilledBox(
+                    entityPos.x, entityPos.y, entityPos.z,
                     0.8, 2.0,
-                    if (isCorrect) CORRECT_FILLED_COLOR else WRONG_FILLED_COLOR
+                    if (isCorrect) CORRECT_FILLED_COLOR else WRONG_FILLED_COLOR,
+                    centered = true,
                 )
             }
         }

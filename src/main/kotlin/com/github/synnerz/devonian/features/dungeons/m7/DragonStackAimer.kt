@@ -1,19 +1,16 @@
 package com.github.synnerz.devonian.features.dungeons.m7
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
-import com.github.synnerz.devonian.features.dungeons.solvers.BlazeSolver
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.math.Projectile
-import net.minecraft.world.phys.Vec3
-import org.joml.Vector3f
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import java.awt.Color
 import java.util.*
 import kotlin.math.cos
@@ -122,7 +119,7 @@ object DragonStackAimer : TextHudFeature(
             draw(event.ctx)
         }.setEnabled(SETTING_HUD.state)
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             if (ticks <= 0) return@on
 
             val d = data ?: return@on
@@ -132,7 +129,7 @@ object DragonStackAimer : TextHudFeature(
             val z = 50.0 * sin(d.phi) * sin(d.theta)
             val w = 1.0
 
-            Context.Immediate?.renderFilledBox(
+            Render3DImmediate.renderFilledBox(
                 x - w * 0.5,
                 y - w * 0.5,
                 z - w * 0.5,
@@ -141,13 +138,11 @@ object DragonStackAimer : TextHudFeature(
                 phase = true,
                 translate = false,
             )
-            val cam = event.ctx.worldState().cameraRenderState.pos
-            val look = event.ctx.worldState().cameraRenderState.orientation.transform(Vector3f(0f, 0f, -1f))
-            BlazeSolver.renderLine(
-                cam.add(x, y, z),
-                cam.add(Vec3(look)),
+            Render3DImmediate.renderTracer(
+                x, y, z,
                 SETTING_TRACER_COLOR.getColor(),
-                ctx = event.ctx,
+                relative = true,
+                phase = true,
             )
         }
     }

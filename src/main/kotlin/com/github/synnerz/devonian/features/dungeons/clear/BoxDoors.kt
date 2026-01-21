@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Stages
@@ -14,6 +13,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
 import java.awt.Color
@@ -180,18 +180,20 @@ object BoxDoors : Feature(
     }
 
     private fun drawDoor(comp: WorldComponentPosition, wire: Color, fill: Color) {
-        Context.Immediate?.renderBox(
-            comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,
+        Render3DImmediate.renderWireframeBox(
+            comp.wx + 0.5, 69.0, comp.wz + 0.5,
             3.0, 4.0,
             wire,
-            true, true,
-            SETTING_DOOR_LINE_WIDTH.get()
+            SETTING_DOOR_LINE_WIDTH.get(),
+            true,
+            centered = true,
         )
-        Context.Immediate?.renderFilledBox(
-            comp.wx - 1.5 + 0.5, 69.0, comp.wz - 1.5 + 0.5,
+        Render3DImmediate.renderFilledBox(
+            comp.wx + 0.5, 69.0, comp.wz + 0.5,
             3.0, 4.0,
             fill,
-            false, true
+            false,
+            centered = true,
         )
     }
 

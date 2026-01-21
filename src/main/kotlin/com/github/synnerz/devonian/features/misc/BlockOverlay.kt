@@ -1,10 +1,9 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.barrl.utils.RendererLayers
 import com.github.synnerz.devonian.api.events.BeforeBlockOutlineEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.math.ShapeUtils
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.level.EmptyBlockGetter
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
@@ -13,7 +12,6 @@ import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import org.joml.Vector3f
 import java.awt.Color
 
 object BlockOverlay : Feature(
@@ -100,74 +98,24 @@ object BlockOverlay : Feature(
             }
         }
 
-        on<RenderWorldEvent> { event ->
-            val EXPAND = 0.01
-
+        on<RenderWorldEvent> {
             val shape = harharImLosingMyFuckingSanity ?: return@on
             harharImLosingMyFuckingSanity = null
             val isFirstPerson = minecraft.options.cameraType.isFirstPerson
 
-            val camPos = event.ctx.worldState().cameraRenderState.pos ?: return@on
-            event.ctx.matrices().pushPose()
-            event.ctx.matrices().translate(camPos.reverse())
-            val mat = event.ctx.matrices().last()
-
-            if (SETTING_FILL_COLOR.getColor().alpha > 0) {
-                val layer = if (if (SETTING_DYNAMIC_PHASE.get()) isFirstPerson else SETTING_FILL_PHASE.get()) {
-                    if (SETTING_FILL_COLOR.getColor().alpha == 255) RendererLayers.QUADS_OPAQUE_ESP
-                    else RendererLayers.QUADS_TRANSLUCENT_ESP
-                } else {
-                    if (SETTING_FILL_COLOR.getColor().alpha == 255) RendererLayers.QUADS_OPAQUE
-                    else RendererLayers.QUADS_TRANSLUCENT
-                }
-                val consumer = minecraft.renderBuffers().bufferSource().getBuffer(layer)
-
-                val faces = ShapeUtils.getFaces(shape)
-                for (i in faces.indices step 3) {
-                    val x = faces[i + 0] + offset.x
-                    val y = faces[i + 1] + offset.y
-                    val z = faces[i + 2] + offset.z
-                    var dir = camPos.subtract(x, y, z)
-                    dir = dir.scale(EXPAND / dir.length())
-
-                    consumer
-                        .addVertex(mat, (x + dir.x).toFloat(), (y + dir.y).toFloat(), (z + dir.z).toFloat())
-                        .setColor(SETTING_FILL_COLOR.get())
-                }
-            }
-
-            if (SETTING_WIRE_COLOR.getColor().alpha > 0) {
-                val consumer = minecraft.renderBuffers().bufferSource().getBuffer(
-                    RendererLayers.lines(
-                        SETTING_WIRE_WIDTH.get(),
-                        if (SETTING_DYNAMIC_PHASE.get()) isFirstPerson else SETTING_WIRE_PHASE.get(),
-                        SETTING_WIRE_COLOR.getColor().alpha == 255
-                    )
-                )
-
-                shape.forAllEdges { x1, y1, z1, x2, y2, z2 ->
-                    val x1 = (x1 + offset.x).toFloat()
-                    val y1 = (y1 + offset.y).toFloat()
-                    val z1 = (z1 + offset.z).toFloat()
-                    val x2 = (x2 + offset.x).toFloat()
-                    val y2 = (y2 + offset.y).toFloat()
-                    val z2 = (z2 + offset.z).toFloat()
-
-                    val normalized = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
-
-                    consumer
-                        .addVertex(mat, x1, y1, z1)
-                        .setColor(SETTING_WIRE_COLOR.get())
-                        .setNormal(mat, normalized)
-
-                    consumer
-                        .addVertex(mat, x2, y2, z2)
-                        .setColor(SETTING_WIRE_COLOR.get())
-                        .setNormal(mat, normalized)
-                }
-            }
-
-            event.ctx.matrices().popPose()
+            Render3DImmediate.renderWireframeShape(
+                shape,
+                offset.x, offset.y, offset.z,
+                SETTING_WIRE_COLOR.getColor(),
+                SETTING_WIRE_WIDTH.get(),
+                if (SETTING_DYNAMIC_PHASE.get()) isFirstPerson else SETTING_WIRE_PHASE.get(),
+            )
+            Render3DImmediate.renderFilledShape(
+                shape,
+                offset.x, offset.y, offset.z,
+                SETTING_FILL_COLOR.getColor(),
+                if (SETTING_DYNAMIC_PHASE.get()) isFirstPerson else SETTING_FILL_PHASE.get(),
+            )
         }
     }
 }

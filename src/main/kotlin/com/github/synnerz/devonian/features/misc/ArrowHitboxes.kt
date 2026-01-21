@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.events.PreRenderEntityEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.client.renderer.entity.state.ArrowRenderState
 import java.awt.Color
 
@@ -38,20 +38,18 @@ object ArrowHitboxes : Feature(
 
             val w = state.boundingBoxWidth
             val h = state.boundingBoxHeight
-            Context.Immediate?.renderBox(
-                state.x - w * 0.5,
-                state.y,
-                state.z - w * 0.5,
+            Render3DImmediate.renderWireframeBox(
+                state.x, state.y, state.z,
                 w.toDouble(), h.toDouble(),
                 SETTING_WIRE_COLOR.getColor(),
-                lineWidth = SETTING_LINE_WIDTH.get(),
+                SETTING_LINE_WIDTH.get(),
+                centered = true,
             )
-            Context.Immediate?.renderFilledBox(
-                state.x - w * 0.5,
-                state.y,
-                state.z - w * 0.5,
+            Render3DImmediate.renderFilledBox(
+                state.x, state.y, state.z,
                 w.toDouble(), h.toDouble(),
                 SETTING_FILL_COLOR.getColor(),
+                centered = true,
             )
         }
     }

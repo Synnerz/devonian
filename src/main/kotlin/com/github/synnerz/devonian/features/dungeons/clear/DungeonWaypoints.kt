@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
@@ -11,6 +10,7 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import com.google.gson.Gson
 import java.awt.Color
 import java.util.*
@@ -268,21 +268,23 @@ object DungeonWaypoints : Feature(
                     WaypointType.UNKNOWN -> Color.YELLOW
                 }
                 data.value.forEach { pos ->
-                    Context.Immediate?.renderBox(
+                    Render3DImmediate.renderWireframeBox(
                         pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(),
+                        1.0, 1.0,
                         outlineColor,
                         phase = true
                     )
-                    Context.Immediate?.renderFilledBox(
+                    Render3DImmediate.renderFilledBox(
                         pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(),
+                        1.0, 1.0,
                         filledColor,
                         phase = true
                     )
                     if (SETTING_DISPLAY_TEXT.get()) {
-                        Context.Immediate?.renderString(
+                        Render3DImmediate.renderString(
                             data.key.key.replaceFirstChar { it.uppercaseChar() },
                             pos.x + 0.5, pos.y + 1.0, pos.z + 0.5,
-                            increase = true,
+                            scale = 2f, maxDist = 20.0,
                             phase = true
                         )
                     }

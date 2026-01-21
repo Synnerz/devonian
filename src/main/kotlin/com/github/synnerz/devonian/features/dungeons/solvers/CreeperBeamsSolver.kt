@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
@@ -9,9 +8,9 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.phys.Vec3
 import java.awt.Color
 
 object CreeperBeamsSolver : Feature(
@@ -118,40 +117,51 @@ object CreeperBeamsSolver : Feature(
             solutionList.clear()
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             if (solutionList.isEmpty()) return@on
             for (idx in solutionList.indices) {
                 if (idx >= 4) break
                 val solution = solutionList[idx]
                 if (solution.blacklisted) continue
 
-                Context.Immediate?.renderFilledBox(
+                Render3DImmediate.renderWireframeBox(
                     solution.x1.toDouble(), solution.y1.toDouble(), solution.z1.toDouble(),
+                    1.0, 1.0,
+                    colorChoicesOutline[idx],
+                    phase = true,
+                )
+                Render3DImmediate.renderFilledBox(
+                    solution.x1.toDouble(), solution.y1.toDouble(), solution.z1.toDouble(),
+                    1.0, 1.0,
                     colorChoicesFilled[idx]
                 )
-                Context.Immediate?.renderBox(
-                    solution.x1.toDouble(), solution.y1.toDouble(), solution.z1.toDouble(),
-                    colorChoicesOutline[idx],
-                    false
-                )
 
-                Context.Immediate?.renderFilledBox(
+                Render3DImmediate.renderWireframeBox(
                     solution.x2.toDouble(), solution.y2.toDouble(), solution.z2.toDouble(),
+                    1.0, 1.0,
+                    colorChoicesOutline[idx],
+                    phase = true,
+                )
+                Render3DImmediate.renderFilledBox(
+                    solution.x2.toDouble(), solution.y2.toDouble(), solution.z2.toDouble(),
+                    1.0, 1.0,
                     colorChoicesFilled[idx]
                 )
-                Context.Immediate?.renderBox(
-                    solution.x2.toDouble(), solution.y2.toDouble(), solution.z2.toDouble(),
-                    colorChoicesOutline[idx],
-                    false
-                )
+            }
 
-                // TODO: make the renderLine from BlazeSolver into barrl or something
-                BlazeSolver.renderLine(
-                    Vec3(solution.x1 + 0.5, solution.y1 + 0.5, solution.z1 + 0.5),
-                    Vec3(solution.x2 + 0.5, solution.y2 + 0.5, solution.z2 + 0.5),
-                    colorChoicesOutline[idx],
-                    ctx = event.ctx,
-                )
+            Render3DImmediate.renderLines(true) {
+                for (idx in solutionList.indices) {
+                    if (idx >= 4) break
+                    val solution = solutionList[idx]
+                    if (solution.blacklisted) continue
+
+                    val color = colorChoicesOutline[idx]
+                    submit(
+                        solution.x1 + 0.5, solution.y1 + 0.5, solution.z1 + 0.5,
+                        solution.x2 + 0.5, solution.y2 + 0.5, solution.z2 + 0.5,
+                        color
+                    )
+                }
             }
         }
 

@@ -1,7 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
-import com.github.synnerz.barrl.utils.RendererLayers
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
@@ -14,12 +12,12 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.BlockPos
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
-import org.joml.Vector3f
 import java.awt.Color
 import java.util.*
 import kotlin.math.abs
@@ -147,7 +145,7 @@ object IceFillSolver : Feature(
             }
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             if (!inIce) return@on
 
             platforms.forEach {
@@ -157,65 +155,40 @@ object IceFillSolver : Feature(
                 val start = sol.first
                 val end = sol.last
 
-                Context.Immediate?.renderBox(
+                Render3DImmediate.renderWireframeBox(
                     start.x.toDouble(),
                     start.y.toDouble(),
                     start.z.toDouble(),
+                    1.0, 1.0,
                     SETTING_BOX1_COLOR.getColor(),
                     lineWidth = SETTING_LINE_WIDTH.get(),
                 )
-                if (start !== end) Context.Immediate?.renderBox(
+                if (start !== end) Render3DImmediate.renderWireframeBox(
                     end.x.toDouble(),
                     end.y.toDouble(),
                     end.z.toDouble(),
+                    1.0, 1.0,
                     SETTING_BOX2_COLOR.getColor(),
                     lineWidth = SETTING_LINE_WIDTH.get(),
                 )
             }
 
-            val consumer = minecraft.renderBuffers().bufferSource().getBuffer(
-                RendererLayers.lines(
-                    SETTING_LINE_WIDTH.get(),
-                    false,
-                    SETTING_LINE_COLOR.getColor().alpha == 255
-                )
-            )
-            val camPos = event.ctx.worldState().cameraRenderState.pos ?: return@on
-            event.ctx.matrices().pushPose()
-            event.ctx.matrices().translate(camPos.reverse())
-            val mat = event.ctx.matrices().last()
+            val color = SETTING_LINE_COLOR.getColor()
+            Render3DImmediate.renderLineStrip(color.alpha == 255, SETTING_LINE_WIDTH.get()) {
+                platforms.forEach {
+                    val sol = it.solution ?: return@forEach
 
-            platforms.forEach {
-                val sol = it.solution ?: return@forEach
-
-                var p: Coord? = null
-                sol.forEach { curr ->
-                    val prev = p
-                    p = curr
-                    if (prev == null) return@forEach
-
-                    val x1 = prev.x + 0.5f
-                    val y1 = prev.y + 1.1f
-                    val z1 = prev.z + 0.5f
-                    val x2 = curr.x + 0.5f
-                    val y2 = curr.y + 1.1f
-                    val z2 = curr.z + 0.5f
-
-                    val normalized = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
-
-                    consumer
-                        .addVertex(mat, x1, y1, z1)
-                        .setColor(SETTING_LINE_COLOR.get())
-                        .setNormal(mat, normalized)
-
-                    consumer
-                        .addVertex(mat, x2, y2, z2)
-                        .setColor(SETTING_LINE_COLOR.get())
-                        .setNormal(mat, normalized)
+                    sol.forEach { pos ->
+                        submit(
+                            pos.x + 0.5,
+                            pos.y + 1.1,
+                            pos.z + 0.5,
+                            color,
+                        )
+                    }
+                    endBatch()
                 }
             }
-
-            event.ctx.matrices().popPose()
         }
     }
 

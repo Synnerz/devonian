@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.events.PostExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.client.renderer.entity.state.ItemEntityRenderState
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
@@ -67,17 +67,19 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
         on<RenderWorldEvent> {
             deferredItems.forEach { (pos, col) ->
                 val (x, y, z) = pos
-                Context.Immediate?.renderFilledBox(
-                    x - 0.15, y, z - 0.15,
-                    0.3, 0.3,
-                    Color(col or ((SETTING_FILL_ALPHA.get() * 255.0).toInt() shl 24), true),
-                )
-                Context.Immediate?.renderBox(
-                    x - 0.15, y, z - 0.15,
+                Render3DImmediate.renderWireframeBox(
+                    x, y, z,
                     0.3, 0.3,
                     Color(col or ((SETTING_BOX_ALPHA.get() * 255.0).toInt() shl 24), true),
                     phase = true,
                     lineWidth = SETTING_LINE_WIDTH.get(),
+                    centered = true,
+                )
+                Render3DImmediate.renderFilledBox(
+                    x, y, z,
+                    0.3, 0.3,
+                    Color(col or ((SETTING_FILL_ALPHA.get() * 255.0).toInt() shl 24), true),
+                    centered = true,
                 )
             }
             deferredItems.clear()

@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.diana
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.events.*
@@ -8,6 +7,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.renderer.RenderType
@@ -144,7 +144,7 @@ object BurrowGuesser : Feature(
         val weightT = 3 * weight / sqrt(dx0 * dx0 + dy0 * dy0 + dz0 * dz0)
         // val distance = weightT * 1.9
 
-        guessPos.value = PositionTime(0, poly[0](weightT) - 0.5, poly[1](weightT) - 1.0, poly[2](weightT) - 0.5)
+        guessPos.value = PositionTime(0, poly[0](weightT), poly[1](weightT) - 1.0, poly[2](weightT))
         particlePath.value = DoubleArray(300) {
             val i = it / 3
             val o = it % 3
@@ -176,8 +176,8 @@ object BurrowGuesser : Feature(
         val comb =
             MathUtils.binomial(L, MIN_CHAIN_LENGTH) -
             (
-                if (L - L2 < MIN_CHAIN_LENGTH) 0
-                else MathUtils.binomial(L - L2, MIN_CHAIN_LENGTH)
+            if (L - L2 < MIN_CHAIN_LENGTH) 0
+            else MathUtils.binomial(L - L2, MIN_CHAIN_LENGTH)
             )
         val rand = IntArray(L - 1) { it }
         var start = 0
@@ -296,11 +296,11 @@ object BurrowGuesser : Feature(
             }
 
             if (spadeUsePositions.any {
-                t < it.t &&
-                (x - it.x).pow(2) +
-                (y - it.y).pow(2) +
-                (z - it.z).pow(2) < 4
-            }) possibleStartingParticles.add(part)
+                    t < it.t &&
+                    (x - it.x).pow(2) +
+                    (y - it.y).pow(2) +
+                    (z - it.z).pow(2) < 4
+                }) possibleStartingParticles.add(part)
             else unclaimedParticles.add(part)
 
             ransac()
@@ -372,26 +372,30 @@ object BurrowGuesser : Feature(
             BurrowManager.burrows.forEach {
                 if (it.type.empirical) return@forEach
 
-                renderWaypoint(
+                Render3DImmediate.renderWaypoint(
                     it.x, it.y, it.z,
                     when (it.type) {
                         BurrowManager.BurrowType.GUESS -> SETTING_GUESS_COLOR.getColor()
                         BurrowManager.BurrowType.OLD_GUESS -> SETTING_OLD_GUESS_COLOR.getColor()
                         else -> Color(0, true)
                     },
-                    it.type.displayName,
-                    increase = true,
-                    phase = true
+                    phase = true,
+                    title = it.type.displayName,
+                    textScale = 2f, textMaxDist = 20.0, textBackgroundBox = Color.BLACK,
+                    beacon = SETTING_RENDER_BEAM.get(),
+                    centered = false,
                 )
             }
 
             val guess = guessPos.value
-            if (guess != null) renderWaypoint(
+            if (guess != null) Render3DImmediate.renderWaypoint(
                 guess.x, guess.y, guess.z,
                 SETTING_GUESS_COLOR.getColor(),
-                BurrowManager.BurrowType.GUESS.displayName,
-                increase = true,
-                phase = true
+                phase = true,
+                title = BurrowManager.BurrowType.GUESS.displayName,
+                textScale = 2f, textMaxDist = 20.0, textBackgroundBox = Color.BLACK,
+                beacon = SETTING_RENDER_BEAM.get(),
+                centered = true,
             )
 
             val consumer = minecraft.renderBuffers().bufferSource().getBuffer(RenderType.LINES)
@@ -429,36 +433,5 @@ object BurrowGuesser : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         fullReset()
-    }
-
-    private fun renderWaypoint(
-        x: Double, y: Double, z: Double,
-        color: Color,
-        title: String? = null,
-        increase: Boolean = false,
-        phase: Boolean = false
-    ) {
-        if (color.alpha == 0) return
-
-        val ctx = Context.Immediate ?: return
-        val pos = minecraft.player ?: return
-        val dx = x - pos.x
-        val dy = y + 2 - pos.y
-        val dz = z - pos.z
-
-        ctx.renderFilledBox(x, y, z, Color(color.red, color.green, color.blue, color.alpha / 3), phase)
-        ctx.renderBox(x, y, z, color, phase)
-        if (SETTING_RENDER_BEAM.get()) ctx.renderBeam(x, y + 1, z, color, phase)
-
-        val dist = sqrt(dx * dx + dy * dy + dz * dz)
-        if (dist > 10.0) ctx.renderString(
-            title ?: "%.2fm".format(dist),
-            x + 0.5,
-            y + 2.0,
-            z + 0.5,
-            backgroundBox = true,
-            increase = increase,
-            phase = phase
-        )
     }
 }

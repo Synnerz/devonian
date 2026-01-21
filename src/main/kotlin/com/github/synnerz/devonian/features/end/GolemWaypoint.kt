@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.end
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
@@ -9,6 +8,7 @@ import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.SkullBlock
 import java.awt.Color
@@ -66,12 +66,12 @@ object GolemWaypoint : Feature(
         on<RenderWorldEvent> {
             if (pos == null) return@on
 
-            Context.Immediate?.renderWaypoint(
+            Render3DImmediate.renderWaypoint(
                 pos!!.x.toDouble(), pos!!.y.toDouble(), pos!!.z.toDouble(),
                 Color.CYAN,
-                "§6${golemStages[currentStage]} §7($currentStage)",
-                true,
-                true
+                phase = true,
+                title = "§6${golemStages[currentStage]} §7($currentStage)",
+                textScale = 2f, textMaxDist = 20.0, textBackgroundBox = Color.BLACK,
             )
         }
     }

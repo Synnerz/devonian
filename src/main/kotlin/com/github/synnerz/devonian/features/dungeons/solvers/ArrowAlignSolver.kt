@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.LightTexture
@@ -183,12 +183,11 @@ object ArrowAlignSolver : Feature(
 
         on<RenderWorldEvent> {
             if (!atDev) return@on
-            val ctx = Context.Immediate ?: return@on
 
             val textRenderer = minecraft.font
             val consumer = minecraft.renderBuffers().bufferSource()
             val layer = Font.DisplayMode.NORMAL
-            val camPos = ctx.camera.position
+            val camPos = Render3DImmediate.camera.pos
 
             val scale = 0.03f
             val quat = Quaternionf(0.0, -0.7071067811865476, 0.0, 0.7071067811865476)
@@ -205,10 +204,10 @@ object ArrowAlignSolver : Feature(
                     val dy = y + 0.5 - camPos.y
                     val dz = z + 0.5 - camPos.z
 
-                    ctx.stacks.pushPose()
-                    ctx.stacks.translate(dx, dy, dz)
-                    ctx.stacks.last().rotate(quat)
-                    ctx.stacks.scale(-scale, -scale, -scale)
+                    Render3DImmediate.poseStack.pushPose()
+                    Render3DImmediate.poseStack.translate(dx, dy, dz)
+                    Render3DImmediate.poseStack.last().rotate(quat)
+                    Render3DImmediate.poseStack.scale(-scale, -scale, -scale)
 
                     textRenderer.drawInBatch(
                         s,
@@ -216,7 +215,7 @@ object ArrowAlignSolver : Feature(
                         0f,
                         0xFFFFFFFF.toInt(),
                         true,
-                        ctx.stacks.last().pose(),
+                        Render3DImmediate.poseStack.last().pose(),
                         consumer,
                         layer,
                         0,
@@ -224,7 +223,7 @@ object ArrowAlignSolver : Feature(
                     )
 
                     consumer.endBatch()
-                    ctx.stacks.popPose()
+                    Render3DImmediate.poseStack.popPose()
                 }
             }
         }

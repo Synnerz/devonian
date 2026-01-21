@@ -1,12 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PostRenderTileEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.client.renderer.blockentity.state.ChestRenderState
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.state.properties.ChestType
@@ -43,7 +43,7 @@ object BoxMimicChest : Feature(
 
         on<RenderWorldEvent> {
             hahaSilly.forEach {
-                Context.Immediate?.renderFilledBox(
+                Render3DImmediate.renderFilledBox(
                     it.x + 0.05, it.y + 0.0, it.z + 0.05,
                     0.9, 0.9,
                     SETTING_COLOR.getColor(),

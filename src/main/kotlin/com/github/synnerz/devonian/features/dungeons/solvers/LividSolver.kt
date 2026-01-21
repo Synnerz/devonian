@@ -1,16 +1,14 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.phys.Vec3
-import org.joml.Vector3f
 import java.awt.Color
 
 object LividSolver : Feature(
@@ -97,27 +95,22 @@ object LividSolver : Feature(
             event.cancel()
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             if (!started) return@on
             val entity = lividEnt ?: return@on
 
             val pos = entity.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
-            val cam = event.ctx.worldState().cameraRenderState.pos
-            val width = entity.bbWidth.toDouble()
-            val halfWidth = width / 2.0
 
-            Context.Immediate?.renderBox(
-                pos.x - halfWidth, pos.y, pos.z - halfWidth,
-                width, entity.bbHeight.toDouble(),
+            Render3DImmediate.renderWireframeBox(
+                pos.x, pos.y, pos.z,
+                entity.bbWidth.toDouble(), entity.bbHeight.toDouble(),
                 SETTING_BOX_COLOR.getColor(),
                 lineWidth = SETTING_LINE_WIDTH.get(),
+                centered = true,
             )
-            val look = event.ctx.worldState().cameraRenderState.orientation.transform(Vector3f(0f, 0f, -1f))
-            if (SETTING_TRACER.get()) BlazeSolver.renderLine(
-                Vec3(pos.x, pos.y + 1.0, pos.z),
-                cam.add(Vec3(look)),
+            if (SETTING_TRACER.get()) Render3DImmediate.renderTracer(
+                pos.x, pos.y + 1.0, pos.z,
                 SETTING_BOX_COLOR.getColor(),
-                ctx = event.ctx,
             )
         }
     }

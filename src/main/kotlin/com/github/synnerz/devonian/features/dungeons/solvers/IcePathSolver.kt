@@ -8,9 +8,9 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.entity.monster.Silverfish
 import net.minecraft.world.phys.HitResult
-import net.minecraft.world.phys.Vec3
 import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.math.abs
@@ -103,16 +103,17 @@ object IcePathSolver : Feature(
             currentSolution.remove(firstSolution)
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             if (currentSolution.isEmpty() || wasCompleted) return@on
 
-            currentSolution.forEachIndexed { idx, sol ->
-                BlazeSolver.renderLine(
-                    Vec3(sol.x1 + 0.5, 67.5, sol.z1 + 0.5),
-                    Vec3(sol.x2 + 0.5, 67.5, sol.z2 + 0.5),
-                    if (idx == 0) Color.GREEN else Color.RED,
-                    ctx = event.ctx,
-                )
+            Render3DImmediate.renderLines(true) {
+                currentSolution.forEachIndexed { idx, sol ->
+                    submit(
+                        sol.x1 + 0.5, 67.5, sol.z1 + 0.5,
+                        sol.x2 + 0.5, 67.5, sol.z2 + 0.5,
+                        if (idx == 0) Color.GREEN else Color.RED,
+                    )
+                }
             }
         }
 

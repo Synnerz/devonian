@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.Scheduler
@@ -15,6 +14,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.ClientboundMoveEntityPacketAccessor
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.math.MathUtils
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
@@ -151,21 +151,23 @@ object CampHelper : Feature(
                 val w = 1.0
                 val h = 2.0
 
-                Context.Immediate?.renderFilledBox(
-                    x - w * m * 0.5,
-                    y + (h - h * m) * 0.5,
-                    z - w * m * 0.5,
-                    w * m, h * m,
-                    SETTING_FILL_COLOR.getColor(),
-                )
-                Context.Immediate?.renderBox(
-                    x - w * 0.5, y, z - w * 0.5,
+                Render3DImmediate.renderWireframeBox(
+                    x, y, z,
                     w, h,
                     SETTING_WIRE_COLOR.getColor(),
                     lineWidth = SETTING_LINE_WIDTH.get(),
+                    centered = true,
+                )
+                Render3DImmediate.renderFilledBox(
+                    x,
+                    y + (h - h * m) * 0.5,
+                    z,
+                    w * m, h * m,
+                    SETTING_FILL_COLOR.getColor(),
+                    centered = true,
                 )
 
-                if (SETTING_SHOW_TIMER.get()) Context.Immediate?.renderString(
+                if (SETTING_SHOW_TIMER.get()) Render3DImmediate.renderString(
                     "%.2f".format(ttl * 0.05),
                     x, y - 1.0, z,
                 )

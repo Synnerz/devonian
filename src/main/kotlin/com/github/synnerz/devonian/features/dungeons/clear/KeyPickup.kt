@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
@@ -11,6 +10,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.component.DataComponents
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.EntityType
@@ -153,28 +153,26 @@ object KeyPickup : Feature(
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 
                 val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
-                Context.Immediate?.renderBox(
-                    pos.x - 0.5,
+                Render3DImmediate.renderWireframeBox(
+                    pos.x,
                     pos.y + 1.2,
-                    pos.z - 0.5,
-                    1.0,
-                    1.0,
+                    pos.z,
+                    1.0, 1.0,
                     SETTING_KEY_WIRE_COLOR.getColor(),
                     phase = true,
-                    translate = true,
-                    lineWidth = SETTING_KEY_LINE_WIDTH.get()
+                    lineWidth = SETTING_KEY_LINE_WIDTH.get(),
+                    centered = true,
                 )
-                Context.Immediate?.renderFilledBox(
-                    pos.x - 0.5,
+                Render3DImmediate.renderFilledBox(
+                    pos.x,
                     pos.y + 1.2,
-                    pos.z - 0.5,
-                    1.0,
-                    1.0,
+                    pos.z,
+                    1.0, 1.0,
                     SETTING_KEY_FILL_COLOR.getColor(),
                     phase = false,
-                    translate = true
+                    centered = true,
                 )
-                false
+                return@removeIf false
             }
         }
     }

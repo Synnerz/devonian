@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
@@ -10,6 +9,7 @@ import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import java.awt.Color
 import java.util.*
 
@@ -109,7 +109,7 @@ object PositionMessages : Feature(
             currentPos = positionList[playerData.role]
         }
 
-        on<ServerTickEvent> { event ->
+        on<ServerTickEvent> {
             if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
 
             val pos = minecraft.player ?: return@on
@@ -132,7 +132,7 @@ object PositionMessages : Feature(
             currentPos?.forEach {
                 if (SETTING_REMOVE_AT.get() && it.sent) return@forEach
 
-                Context.Immediate?.renderBox(
+                Render3DImmediate.renderWireframeBox(
                     it.x, it.y, it.z,
                     1.0, 0.5,
                     SETTING_RENDER_COLOR.getColor(),
@@ -141,7 +141,7 @@ object PositionMessages : Feature(
             specialPos.forEach {
                 val ( x, y, z ) = it
 
-                Context.Immediate?.renderBox(
+                Render3DImmediate.renderFilledBox(
                     x, y, z,
                     1.0, 1.05,
                     SETTING_RENDER_COLOR.getColor(),

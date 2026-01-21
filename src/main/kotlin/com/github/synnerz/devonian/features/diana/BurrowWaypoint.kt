@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.diana
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket
@@ -83,7 +83,7 @@ object BurrowWaypoint : Feature(
             BurrowManager.burrows.forEach {
                 if (!it.type.empirical) return@forEach
 
-                Context.Immediate?.renderWaypoint(
+                Render3DImmediate.renderWaypoint(
                     it.x, it.y, it.z,
                     when (it.type) {
                         BurrowManager.BurrowType.START -> SETTING_START_COLOR.getColor()
@@ -91,9 +91,11 @@ object BurrowWaypoint : Feature(
                         BurrowManager.BurrowType.TREASURE -> SETTING_TREAURE_COLOR.getColor()
                         else -> Color(0, true)
                     },
-                    it.type.displayName,
-                    increase = true,
-                    phase = true
+                    phase = true,
+                    title = it.type.displayName,
+                    textScale = 2f, textMaxDist = 20.0, textBackgroundBox = Color.BLACK,
+                    beacon = true,
+                    centered = false,
                 )
             }
         }

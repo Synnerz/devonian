@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.dungeons.m7
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import java.util.*
 
 object DragonSpawnTimer : TextHudFeature(
@@ -71,14 +71,12 @@ object DragonSpawnTimer : TextHudFeature(
             spawned.forEach {
                 val time = (ticks - EventBus.serverTicks()) * 0.05
 
-                Context.Immediate?.renderString(
+                Render3DImmediate.renderString(
                     "${it.textColor}${it.colorName} §f%.2fs".format(time),
                     it.chin.x.toDouble(),
                     it.chin.y + 2.0,
                     it.chin.z.toDouble(),
                     10f,
-                    backgroundBox = false,
-                    increase = false,
                     phase = true,
                 )
             }

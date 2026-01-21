@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
@@ -10,6 +9,7 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket
 import net.minecraft.world.phys.HitResult
 import java.awt.Color
@@ -168,14 +168,16 @@ object TeleportMazeSolver : Feature(
                     else return@forEach
                 val colorFill = Color(color.red, color.green, color.blue, 80)
 
-                Context.Immediate?.renderBox(
+                Render3DImmediate.renderWireframeBox(
                     it.x.toDouble(), 69.0, it.z.toDouble(),
+                    1.0, 1.0,
                     color,
                     phase = false,
                     lineWidth = 2.0,
                 )
-                Context.Immediate?.renderFilledBox(
+                Render3DImmediate.renderFilledBox(
                     it.x.toDouble(), 69.0, it.z.toDouble(),
+                    1.0, 1.0,
                     colorFill,
                     phase = false,
                 )

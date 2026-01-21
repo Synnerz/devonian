@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.barrl.Context
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
@@ -10,9 +9,9 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import com.google.gson.Gson
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.phys.Vec3
 import java.awt.Color
 import java.util.*
 import kotlin.math.roundToInt
@@ -229,7 +228,7 @@ object WaterBoardSolver : Feature(
             if (time <= 0 || remaining < 20) sol.removeAt(idx)
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             if (!inWaterBoard) return@on
 
             val sol = solution ?: return@on
@@ -245,8 +244,9 @@ object WaterBoardSolver : Feature(
                 val y = entry.y.toDouble() + yo
                 val z = entry.z.toDouble()
 
-                Context.Immediate?.renderBox(
+                Render3DImmediate.renderWireframeBox(
                     x, y, z,
+                    1.0, 1.0,
                     if (i == 0) FIRST_COLOR else SECOND_COLOR,
                     phase = false,
                     lineWidth = 2.0,
@@ -257,18 +257,17 @@ object WaterBoardSolver : Feature(
                     else entry.time - (EventBus.serverTicks() - openedWaterAt)
                 val title = if (remaining <= 0) "§aClick Now!" else "§e${"%.2fs".format(remaining * 0.05)}"
 
-                Context.Immediate?.renderString(
+                Render3DImmediate.renderString(
                     title,
                     x + 0.5,
                     y + 0.5,
                     z + 0.5,
                 )
 
-                if (i in 1 .. 2) BlazeSolver.renderLine(
-                    Vec3(lastX, lastY, lastZ),
-                    Vec3(x + 0.5, y + 0.5, z + 0.5),
+                if (i in 1 .. 2) Render3DImmediate.renderLine(
+                    lastX, lastY, lastZ,
+                    x + 0.5, y + 0.5, z + 0.5,
                     if (i == 1) FIRST_COLOR else SECOND_COLOR,
-                    ctx = event.ctx,
                 )
 
                 lastX = x + 0.5
