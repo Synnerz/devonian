@@ -19,6 +19,7 @@ open class Feature @JvmOverloads constructor(
     val category: Categories = Categories.MISC,
     val area: String? = null,
     val subarea: String? = null,
+    searchTags: Set<String> = emptySet(),
     // To avoid conflict, maybe change the position later ?
     displayName: String = configName.camelCaseToSentence(),
     cheeto: Boolean = false,
@@ -31,7 +32,7 @@ open class Feature @JvmOverloads constructor(
     private val style = Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian config $id"))
     private var displayed = false
     val children = mutableListOf<Toggleable>()
-    val configSwitch = addFeatureSwitch(description, displayName, cheeto, isHidden)
+    val configSwitch = addFeatureSwitch(description, displayName, searchTags, cheeto, isHidden)
         .also {
             it.onChange {
                 setRegistered(it)
@@ -87,6 +88,7 @@ open class Feature @JvmOverloads constructor(
     protected fun addFeatureSwitch(
         description: String? = null,
         displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
         cheeto: Boolean = false,
         isHidden: Boolean = this.isHidden,
     ): ConfigData.FeatureSwitch {
@@ -96,6 +98,7 @@ open class Feature @JvmOverloads constructor(
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
             subcategory,
+            searchTags,
             isHidden,
         ).also {
             if (isInternal) return@also
@@ -110,6 +113,7 @@ open class Feature @JvmOverloads constructor(
         value: Boolean,
         description: String? = null,
         displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
         cheeto: Boolean = false,
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
@@ -121,6 +125,7 @@ open class Feature @JvmOverloads constructor(
             (if (cheeto) "§4Warning: use at your own risk. " else "") + (description ?: ""),
             (if (cheeto) "§c" else "") + (displayName ?: configName.camelCaseToSentence()),
             subcategory,
+            searchTags,
             isHidden,
         ).also {
             Config.registerCategory(it, category, subcategory)
@@ -135,6 +140,7 @@ open class Feature @JvmOverloads constructor(
         min: Double, max: Double,
         description: String? = null,
         displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
     ): ConfigData.Slider<Double> {
@@ -146,6 +152,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            searchTags,
             isHidden,
         ).also {
             Config.registerCategory(it, category, subcategory)
@@ -160,6 +167,7 @@ open class Feature @JvmOverloads constructor(
         min: Double, max: Double,
         description: String? = null,
         displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
     ): ConfigData.DecimalSlider<Double> {
@@ -171,6 +179,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            searchTags,
             isHidden,
         ).also {
             Config.registerCategory(it, category, subcategory)
@@ -184,6 +193,7 @@ open class Feature @JvmOverloads constructor(
         buttonTitle: String = "Click!",
         description: String? = null,
         displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
     ): ConfigData.Button {
@@ -194,6 +204,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            searchTags,
             isHidden,
         ).also {
             Config.registerCategory(it, category, subcategory)
@@ -207,6 +218,7 @@ open class Feature @JvmOverloads constructor(
         value: String = "",
         description: String? = null,
         displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
     ): ConfigData.TextInput {
@@ -217,6 +229,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            searchTags,
             isHidden,
         ).also {
             Config.registerCategory(it, category, subcategory)
@@ -230,6 +243,7 @@ open class Feature @JvmOverloads constructor(
         options: List<String>,
         description: String? = null,
         displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
     ): ConfigData.Selection {
@@ -241,6 +255,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            searchTags,
             isHidden,
         ).also {
             Config.registerCategory(it, category, subcategory)
@@ -253,6 +268,7 @@ open class Feature @JvmOverloads constructor(
         value: Int, // argb
         description: String? = null,
         displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
     ): ConfigData.ColorPicker {
@@ -263,6 +279,7 @@ open class Feature @JvmOverloads constructor(
             description,
             displayName,
             subcategory,
+            searchTags,
             isHidden,
         ).also {
             Config.registerCategory(it, category, subcategory)

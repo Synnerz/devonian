@@ -105,7 +105,8 @@ class SearchCategory(rightPanel: UIBase) {
     }
 
     private fun matchesConfig(config: ConfigData<*>, str: String): Boolean {
-        return config.displayName.contains(str, ignoreCase = true) || config.description.contains(str, ignoreCase = true)
+        val tags = str.split(' ').map { it.lowercase().replace(ConfigData.searchStripReg, "") }
+        return tags.any { config.searchTags.contains(it) }
     }
 
     // shit workaround to prevent the player from opening

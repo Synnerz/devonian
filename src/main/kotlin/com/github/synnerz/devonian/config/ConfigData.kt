@@ -12,10 +12,13 @@ open class ConfigData<T>(
     description: String? = null,
     displayName: String? = null,
     val subcategory: String = "General",
+    searchTags: Set<String> = emptySet(),
     val isHidden: Boolean = false,
 ) {
     val description = description ?: ""
     val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
+    val searchTags = (searchTags + this.description.split(' ') + this.displayName.split(' '))
+        .map { it.lowercase().replace(searchStripReg, "") }.toSet()
 
     val state = BasicState(value)
 
@@ -52,6 +55,7 @@ open class ConfigData<T>(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
     ) : ConfigData<Boolean>(
         configName,
@@ -61,7 +65,8 @@ open class ConfigData<T>(
         description,
         displayName,
         subcategory,
-        isHidden
+        searchTags,
+        isHidden,
     )
 
     class FeatureSwitch(
@@ -70,6 +75,7 @@ open class ConfigData<T>(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
     ) : Switch(
         configName,
@@ -78,6 +84,7 @@ open class ConfigData<T>(
         description,
         displayName,
         subcategory,
+        searchTags,
         isHidden,
     ) {
         val subconfigs = mutableListOf<ConfigData<*>>()
@@ -92,8 +99,19 @@ open class ConfigData<T>(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
-    ) : ConfigData<T>(configName, ConfigType.SLIDER, value, parent, description, displayName, subcategory, isHidden)
+    ) : ConfigData<T>(
+        configName,
+        ConfigType.SLIDER,
+        value,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        searchTags,
+        isHidden
+    )
 
     class DecimalSlider<T : Number>(
         configName: String,
@@ -104,8 +122,19 @@ open class ConfigData<T>(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
-    ) : ConfigData<T>(configName, ConfigType.DECIMALSLIDER, value, parent, description, displayName, subcategory, isHidden)
+    ) : ConfigData<T>(
+        configName,
+        ConfigType.DECIMALSLIDER,
+        value,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        searchTags,
+        isHidden,
+    )
 
     class Button(
         val onClick: () -> Unit,
@@ -114,8 +143,19 @@ open class ConfigData<T>(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
-    ) : ConfigData<Unit>(null, ConfigType.BUTTON, Unit, parent, description, displayName, subcategory, isHidden)
+    ) : ConfigData<Unit>(
+        null,
+        ConfigType.BUTTON,
+        Unit,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        searchTags,
+        isHidden
+    )
 
     class TextInput(
         configName: String,
@@ -124,8 +164,19 @@ open class ConfigData<T>(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
-    ) : ConfigData<String>(configName, ConfigType.TEXTINPUT, value, parent, description, displayName, subcategory, isHidden)
+    ) : ConfigData<String>(
+        configName,
+        ConfigType.TEXTINPUT,
+        value,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        searchTags,
+        isHidden,
+    )
 
     class Selection(
         configName: String,
@@ -135,8 +186,19 @@ open class ConfigData<T>(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
-    ) : ConfigData<Int>(configName, ConfigType.SELECTION, value, parent, description, displayName, subcategory, isHidden) {
+    ) : ConfigData<Int>(
+        configName,
+        ConfigType.SELECTION,
+        value,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        searchTags,
+        isHidden,
+    ) {
         fun getCurrent(): String = options[get()]
     }
 
@@ -147,8 +209,19 @@ open class ConfigData<T>(
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
-    ) : ConfigData<Int>(configName, ConfigType.COLORPICKER, value, parent, description, displayName, subcategory, isHidden) {
+    ) : ConfigData<Int>(
+        configName,
+        ConfigType.COLORPICKER,
+        value,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        searchTags,
+        isHidden,
+    ) {
         private var color = Color(value, true)
         fun getColor(): Color = color
 
@@ -156,5 +229,9 @@ open class ConfigData<T>(
             super.set(newVal)
             color = Color(newVal, true)
         }
+    }
+
+    companion object {
+        val searchStripReg = "[^a-z0-9]".toRegex(RegexOption.IGNORE_CASE)
     }
 }

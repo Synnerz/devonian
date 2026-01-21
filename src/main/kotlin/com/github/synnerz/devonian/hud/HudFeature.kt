@@ -24,13 +24,26 @@ abstract class HudFeature(
     category: Categories = Categories.MISC,
     area: String? = null,
     subarea: String? = null,
+    searchTags: Set<String> = emptySet(),
     protected val legacyName: String = configName[0].uppercase() + configName.substring(1),
     displayName: String = configName.camelCaseToSentence(),
     cheeto: Boolean = false,
     isInternal: Boolean = false,
     subcategory: String = "General",
     isHidden: Boolean = false,
-) : Feature(configName, description, category, area, subarea, displayName, cheeto, isInternal, subcategory, isHidden) {
+) : Feature(
+    configName,
+    description,
+    category,
+    area,
+    subarea,
+    searchTags,
+    displayName,
+    cheeto,
+    isInternal,
+    subcategory,
+    isHidden
+) {
     var x = 10.0
     var y = 10.0
     var scale = 1f
