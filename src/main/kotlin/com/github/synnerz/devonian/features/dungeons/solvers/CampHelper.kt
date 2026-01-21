@@ -83,7 +83,7 @@ object CampHelper : Feature(
             if (bloodComp != null) {
                 val w = minecraft.level ?: return@on
                 bloodStands.forEach { (id, v) ->
-                    if (v.ent?.isAlive != false) return@on
+                    if (v.ent?.isAlive != false) return@forEach
                     v.ent = w.getEntity(id)
                 }
                 return@on
