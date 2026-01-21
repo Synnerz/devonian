@@ -18,7 +18,7 @@ open class ConfigData<T>(
     val description = description ?: ""
     val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
     val searchTags = (searchTags + this.description.split(' ') + this.displayName.split(' '))
-        .map { it.lowercase().replace(searchStripReg, "") }.toSet()
+        .map { it.lowercase().replace(searchStripReg, "") }
 
     val state = BasicState(value)
 

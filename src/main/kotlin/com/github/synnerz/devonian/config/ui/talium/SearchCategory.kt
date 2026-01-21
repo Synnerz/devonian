@@ -9,6 +9,7 @@ import com.github.synnerz.talium.effects.OutlineEffect
 import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
+import kotlin.math.max
 
 class SearchCategory(rightPanel: UIBase) {
     private val NORMAL_TEXT_SCALE = 2.5f
@@ -77,17 +78,27 @@ class SearchCategory(rightPanel: UIBase) {
     }
 
     private fun onSearch(str: String) {
-        val shownFeats = Config.features.filterTo(mutableSetOf()) { matchesConfig(it, str) }
-        val shownSubConfigs = Config.features.associateWith { it.subconfigs.filterTo(mutableSetOf()) { matchesConfig(it, str) } }
+        val shownFeats = Config.features.associateWith {
+            matchesConfig(it, str)
+        }
+        val shownSubConfigs = Config.features.associateWith {
+            it.subconfigs.associateWith {
+                matchesConfig(it, str)
+            }
+        }
+        val featOrdering = shownSubConfigs.entries.associate {
+            it.key to max(shownFeats[it.key] ?: 0, it.value.entries.maxOfOrNull { it.value } ?: 0)
+        }
 
         var idx = 0
-        components.forEach { (data, comp) ->
+        components.sortedBy {
+            -featOrdering[if (it.first is ConfigData.FeatureSwitch) it.first else it.first.parent]!!
+        }.forEach { (data, comp) ->
             val show = if (data is ConfigData.FeatureSwitch) {
-                shownFeats.contains(data) ||
-                shownSubConfigs[data]!!.isNotEmpty()
+                featOrdering[data]!! > 0
             } else {
-                shownFeats.contains(data.parent) ||
-                shownSubConfigs[data.parent]!!.contains(data)
+                shownFeats[data.parent]!! > 0 ||
+                shownSubConfigs[data.parent]!![data]!! > 0
             }
             if (show) {
                 val i = idx++
@@ -104,9 +115,9 @@ class SearchCategory(rightPanel: UIBase) {
         categoryTitle.text = "Searching \"$str\""
     }
 
-    private fun matchesConfig(config: ConfigData<*>, str: String): Boolean {
+    private fun matchesConfig(config: ConfigData<*>, str: String): Int {
         val tags = str.split(' ').map { it.lowercase().replace(ConfigData.searchStripReg, "") }
-        return tags.any { config.searchTags.contains(it) }
+        return tags.count { s -> config.searchTags.any { it.contains(s) } }
     }
 
     // shit workaround to prevent the player from opening
