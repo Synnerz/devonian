@@ -131,7 +131,12 @@ object DungeonMapScanner {
         decorations.forEach { dec ->
             if (dec.type == MapDecorationTypes.FRAME) return@forEach
 
-            val player = playerIter.next().value
+
+            var player = playerIter.next().value
+            while (player.isDead) {
+                if (playerIter.hasNext()) player = playerIter.next().value
+                else return
+            }
 
             val x = MathUtils.rescale(
                 (dec.x + 126.0) * 0.5,

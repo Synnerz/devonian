@@ -29,6 +29,7 @@ object Dungeons {
     private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([IVXLCDM]+)?\\)$".toRegex()
     private val dungeonFloorRegex = "^ * ⏣ The Catacombs \\((\\w+)\\)$".toRegex()
     private val bossMessageRegex = "^\\[BOSS] (.+?): (.+?)$".toRegex()
+    private val disconnectRegex = "^ ☠ (\\w+) disconnected and became a ghost\\.$".toRegex()
 
     private val clearedPercentRegex = "^Cleared: (\\d+)% \\(\\d+\\)$".toRegex()
     private val timeElapsedRegex = "^Time Elapsed: (?:(\\d+)h)? ?(?:(\\d+)m)? ?(\\d+)s$".toRegex()
@@ -321,6 +322,15 @@ object Dungeons {
             if (event.message == "A Prince falls. +1 Bonus Score") {
                 princeKilled.value = true
                 DungeonEvent.PrinceKilled().post()
+                return@on
+            }
+
+            event.matches(disconnectRegex)?.let {
+                Scheduler.scheduleTask {
+                    players.remove(it[0])?.let { p ->
+                        players[it[0]] = p
+                    }
+                }
                 return@on
             }
 
