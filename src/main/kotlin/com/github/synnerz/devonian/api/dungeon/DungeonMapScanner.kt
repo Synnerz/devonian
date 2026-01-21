@@ -191,7 +191,9 @@ object DungeonMapScanner {
                     else room.type
                 MapColors.ROOM_BOSS.color -> RoomTypes.YELLOW
                 MapColors.ROOM_FAIRY.color -> RoomTypes.FAIRY
-                MapColors.ROOM_NORMAL.color -> RoomTypes.NORMAL
+                MapColors.ROOM_NORMAL.color ->
+                    if (room.type == RoomTypes.RARE) RoomTypes.RARE
+                    else RoomTypes.NORMAL
                 MapColors.ROOM_PUZZLE.color -> RoomTypes.PUZZLE
                 MapColors.ROOM_TRAP.color -> RoomTypes.TRAP
                 else -> RoomTypes.UNKNOWN
