@@ -284,6 +284,7 @@ object Devonian : ClientModInitializer {
         OldMasterStar,
         NoBonzoStaffSound,
         TacticalInsertionTimer,
+        PreventDroppingHotbar,
 
         // Debug
         CopyItem,
