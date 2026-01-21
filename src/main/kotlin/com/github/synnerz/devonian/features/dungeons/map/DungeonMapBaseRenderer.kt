@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.api.dungeon.WorldComponentPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.*
 import com.github.synnerz.devonian.hud.texthud.*
 import com.github.synnerz.devonian.utils.BoundingBox
-import com.github.synnerz.devonian.utils.render.TextRendererImpl
+import com.github.synnerz.devonian.utils.render.impl.TextRendererImpl
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
 import java.awt.Color

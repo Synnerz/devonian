@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.utils.render
+package com.github.synnerz.devonian.utils.render.impl
 
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactory
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
