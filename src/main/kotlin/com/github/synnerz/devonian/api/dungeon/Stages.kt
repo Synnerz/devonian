@@ -172,7 +172,7 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
     var termsDone = 0
     var deviceDone = false
     var leversDone = 0
-    var gateDestroyed = section != 4
+    var gateDestroyed = section == 4
     var lastIgn = ""
     var lastIndex = 0
     var lastType = ""
@@ -185,7 +185,7 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
         termsDone = 0
         deviceDone = false
         leversDone = 0
-        gateDestroyed = section != 4
+        gateDestroyed = section == 4
         lastIgn = ""
         lastIndex = 0
         lastType = ""
