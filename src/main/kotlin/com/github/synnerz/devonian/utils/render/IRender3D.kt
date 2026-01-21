@@ -99,7 +99,7 @@ interface IRender3D {
         opaque: Boolean = false,
         lineWidth: Double = 1.0,
         phase: Boolean = false,
-        translate: Boolean = false,
+        translate: Boolean = true,
         supplier: LinesBuilder.() -> Unit,
     )
 
@@ -107,7 +107,7 @@ interface IRender3D {
         opaque: Boolean = false,
         lineWidth: Double = 1.0,
         phase: Boolean = false,
-        translate: Boolean = false,
+        translate: Boolean = true,
         supplier: VertexBuilder.() -> Unit,
     )
 
@@ -117,7 +117,7 @@ interface IRender3D {
         c0: Color,
         lineWidth: Double = 1.0,
         phase: Boolean = false,
-        translate: Boolean = false,
+        translate: Boolean = true,
         c1: Color = c0,
     ) = renderLines(c0.alpha == 255 && c1.alpha == 255, lineWidth, phase, translate) {
         submit(x0, y0, z0, x1, y1, z1, c0, c1)
@@ -129,7 +129,7 @@ interface IRender3D {
         c0: Color,
         lineWidth: Double = 1.0,
         phase: Boolean = false,
-        translate: Boolean = false,
+        translate: Boolean = true,
         c1: Color = c0,
     ) = renderLines(c0.alpha == 255 && c1.alpha == 255, lineWidth, phase, translate) {
         submit(p0, p1, c0, c1)
@@ -145,7 +145,7 @@ interface IRender3D {
         lineWidth: Double = 1.0,
         relative: Boolean = false,
         phase: Boolean = false,
-        translate: Boolean = false,
+        translate: Boolean = true,
         c1: Color = c0,
     ) {
         val cam = Devonian.minecraft.gameRenderer.levelRenderState.cameraRenderState
