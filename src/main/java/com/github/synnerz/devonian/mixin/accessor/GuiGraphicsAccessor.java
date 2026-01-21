@@ -14,5 +14,7 @@ public interface GuiGraphicsAccessor {
     TextureAtlas getGuiSprites();
 
     @Invoker("getSpriteScaling")
-    GuiSpriteScaling invokeSpriteScaling(TextureAtlasSprite sprite);
+    static GuiSpriteScaling invokeSpriteScaling(TextureAtlasSprite sprite) {
+        throw new IllegalStateException();
+    }
 }

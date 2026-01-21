@@ -131,7 +131,7 @@ public class GuiMixin {
         }
         GuiGraphicsAccessor accessor = (GuiGraphicsAccessor) instance;
         TextureAtlasSprite sprite = accessor.getGuiSprites().getSprite(resourceLocation);
-        GuiSpriteScaling scaling = accessor.invokeSpriteScaling(sprite);
+        GuiSpriteScaling scaling = GuiGraphicsAccessor.invokeSpriteScaling(sprite);
         TextureSetup texture = TextureSetup.singleTexture(
             minecraft.getTextureManager().getTexture(
                 accessor.getGuiSprites().getSprite(resourceLocation).atlasLocation()
