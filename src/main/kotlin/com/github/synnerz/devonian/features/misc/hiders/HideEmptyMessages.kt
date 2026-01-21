@@ -9,7 +9,7 @@ object HideEmptyMessages : Feature(
 ) {
     override fun initialize() {
         on<ChatEvent> { event ->
-            if (event.message.isBlank()) event.cancel();
+            if (event.message.isBlank()) event.cancel()
         }
     }
 }
