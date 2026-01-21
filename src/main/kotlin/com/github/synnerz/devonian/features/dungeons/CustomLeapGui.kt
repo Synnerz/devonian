@@ -13,7 +13,6 @@ import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.effects.OutlineEffect
 import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
-import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 import net.minecraft.world.item.Items
@@ -35,6 +34,7 @@ object CustomLeapGui : Feature(
     private val PRIMARY_COLOR = Color(25, 25, 25, 255)
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
     private var containerId = -1
+    private val playerList = mutableListOf<LeapPlayer>()
 
     val leapComparator = Comparator.comparing<LeapPlayer, Char> { it.role.singleLetter }.thenBy { it.name.lowercase() }
     data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val isDead: Boolean)
@@ -57,23 +57,24 @@ object CustomLeapGui : Feature(
                 containerId = packet.containerId
                 return@on
             }
-            if (containerId == -1 || packet !is ClientboundContainerSetContentPacket) return@on
+        }
 
-            val items = packet.items
-            background.clearChildren()
+        on<ServerContainerSetSlotEvent> { event ->
+            if (containerId == -1) return@on
 
-            val slots = mutableListOf<LeapPlayer>()
-            for (idx in 9..18) {
-                val itemStack = items.getOrNull(idx) ?: continue
-                if (itemStack.item != Items.PLAYER_HEAD) continue
-                val name = itemStack.customName?.string ?: continue
-
-                val data = Dungeons.players[name] ?: continue
-                slots.add(LeapPlayer(idx, name, data.role, data.isDead))
+            val idx = event.slot
+            if (idx !in 9..18) return@on
+            if (idx == 17) {
+                playerList.sortedWith(leapComparator).forEachIndexed { i, v -> create(v, i) }
+                playerList.clear()
+                return@on
             }
-            slots.sortedWith(leapComparator).forEachIndexed { i, v -> create(v, i) }
+            val itemStack = event.itemStack
+            if (itemStack.item != Items.PLAYER_HEAD) return@on
+            val name = itemStack.customName?.string ?: return@on
 
-            containerId = -1
+            val data = Dungeons.players[name] ?: return@on
+            playerList.add(LeapPlayer(idx, name, data.role, data.isDead))
         }
 
         on<PacketSentEvent> { event ->
