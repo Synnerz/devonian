@@ -75,11 +75,17 @@ object EtherwarpOverlay : Feature(
         "Uses your camera position/look rather than the servers position/look",
         "Ether Use Smooth Position",
     )
-    private val SETTING_USE_PHASE = addSwitch(
+    private val SETTING_WIRE_PHASE = addSwitch(
         "usePhase",
         true,
-        "Whether to use phase (see through) in the block highlight",
-        "Ether Use Phase"
+        "Whether to use phase (see through) for wire in the block highlight",
+        "Ether Wire Phase"
+    )
+    private val SETTING_FILL_PHASE = addSwitch(
+        "fillPhase",
+        false,
+        "Whether to use phase (see through) for fill in the block highlight",
+        "Ether Fill Phase",
     )
 
     private val validWeapons = mutableListOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
@@ -203,7 +209,7 @@ object EtherwarpOverlay : Feature(
                 hitResult.y - cameraPos.y,
                 hitResult.z - cameraPos.z,
                 if (failReason.isEmpty()) SETTING_ETHER_WIRE_COLOR.getColor() else SETTING_ETHER_FAIL_WIRE_COLOR.getColor(),
-                SETTING_USE_PHASE.get(),
+                SETTING_WIRE_PHASE.get(),
                 SETTING_ETHER_WIRE_WIDTH.get(),
             )
 
@@ -214,8 +220,13 @@ object EtherwarpOverlay : Feature(
             val fillColor = if (failReason.isEmpty()) SETTING_ETHER_FILL_COLOR.getColor() else SETTING_ETHER_FAIL_FILL_COLOR.getColor()
 
             if (fillColor.alpha > 0) {
-                val layer = if (fillColor.alpha == 255) RendererLayers.QUADS_OPAQUE
+                val layer = if (SETTING_FILL_PHASE.get()) {
+                    if (SETTING_ETHER_FILL_COLOR.getColor().alpha == 255) RendererLayers.QUADS_OPAQUE_ESP
+                    else RendererLayers.QUADS_TRANSLUCENT_ESP
+                } else {
+                    if (SETTING_ETHER_FILL_COLOR.getColor().alpha == 255) RendererLayers.QUADS_OPAQUE
                     else RendererLayers.QUADS_TRANSLUCENT
+                }
                 val consumer = minecraft.renderBuffers().bufferSource().getBuffer(layer)
 
                 val faces = ShapeUtils.getFaces(outlineShape)
