@@ -4,11 +4,13 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.ServerTickEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import java.awt.Color
 import java.util.*
@@ -20,6 +22,10 @@ object PositionMessages : Feature(
     "catacombs",
     subcategory = "F7"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.F7.isActiveState)
+    }
+
     private val SETTING_RENDER_HIGHLIGHT = addSwitch(
         "renderHighlight",
         true,
@@ -44,47 +50,43 @@ object PositionMessages : Feature(
         "Use all the positional messages not only the current selected class ones",
         "Position Messages Use All"
     )
+
     // TODO: make these customizable
     private val positionList = EnumMap(
         mapOf(
             DungeonClass.Archer to listOf(
-                PosMsg(108.0, 120.0, 94.0, 1.5, "at ss!"),
-                PosMsg(58.0, 109.0, 131.0, 1.5, "at ee2!"),
-                PosMsg(60.0, 132.0, 140.0, 1.5, "at ee2 high!"),
-                PosMsg(69.0, 109.0, 122.0, 1.0, "at ee2 safe spot!"),
-                PosMsg(48.0, 109.0, 122.0, 1.0, "at ee2 safe spot!"),
-                PosMsg(54.0, 65.0, 76.0, 33.0, "at mid!"),
+                PosMsg(108.5, 120.0, 94.5, 1.5, "at ss!"),
+                PosMsg(58.5, 109.0, 131.5, 1.5, "at ee2!"),
+                PosMsg(60.5, 132.0, 140.5, 1.5, "at ee2 high!"),
+                PosMsg(69.5, 109.0, 122.5, 1.0, "at ee2 safe spot!"),
+                PosMsg(48.5, 109.0, 122.5, 1.0, "at ee2 safe spot!"),
+                PosMsg(54.5, 65.0, 76.5, 33.0, "at mid!"),
             ),
             DungeonClass.Berserk to listOf(
-                PosMsg(63.0, 127.0, 35.0, 3.0, "at i4!"),
-                PosMsg(54.0, 65.0, 76.0, 33.0, "at mid!"),
+                PosMsg(63.5, 127.0, 35.5, 3.0, "at i4!"),
+                PosMsg(54.5, 65.0, 76.5, 33.0, "at mid!"),
             ),
             DungeonClass.Mage to listOf(
-                PosMsg(58.0, 123.0, 122.0, 0.3, "entering core!"),
-                PosMsg(54.0, 115.0, 51.0, 1.5, "at core!"),
-                PosMsg(54.0, 65.0, 76.0, 33.0, "at mid!"),
+                PosMsg(58.5, 123.0, 122.5, 0.3, "entering core!"),
+                PosMsg(54.5, 115.0, 51.5, 1.5, "at core!"),
+                PosMsg(54.5, 65.0, 76.5, 33.0, "at mid!"),
             ),
             DungeonClass.Tank to listOf(
-                PosMsg(54.0, 65.0, 76.0, 33.0, "at mid!"),
+                PosMsg(54.5, 65.0, 76.5, 33.0, "at mid!"),
             ),
             DungeonClass.Healer to listOf(
-                PosMsg(108.0, 120.0, 94.0, 1.5, "at ss!"),
-                PosMsg(2.0, 109.0, 104.0, 1.5, "at ee3!"),
-                PosMsg(18.0, 121.0, 99.0, 3.0, "at ee3 safe spot!"),
-                PosMsg(1.0, 120.0, 77.0, 3.0, "at arrows dev!"),
-                PosMsg(60.0, 132.0, 140.0, 1.5, "at levers dev!"),
-                PosMsg(54.0, 65.0, 76.0, 33.0, "at mid!"),
-                PosMsg(54.0, 5.0, 76.0, 8.0, "at p5!"),
+                PosMsg(108.5, 120.0, 94.5, 1.5, "at ss!"),
+                PosMsg(2.5, 109.0, 104.5, 1.5, "at ee3!"),
+                PosMsg(18.5, 121.0, 99.5, 3.0, "at ee3 safe spot!"),
+                PosMsg(1.5, 120.0, 77.5, 3.0, "at arrows dev!"),
+                PosMsg(60.5, 132.0, 140.5, 1.5, "at levers dev!"),
+                PosMsg(54.5, 65.0, 76.5, 33.0, "at mid!"),
+                PosMsg(54.5, 5.0, 76.5, 8.0, "at p5!"),
             ),
+            DungeonClass.Unknown to emptyList(),
         )
     )
-    private val specialPos = listOf(
-        listOf(53.0, 63.0, 113.0),
-        listOf(55.0, 63.0, 113.0),
-        listOf(55.0, 63.0, 115.0),
-        listOf(53.0, 63.0, 115.0),
-    )
-    private var currentPos: List<PosMsg>? = null
+    private var currentPos: MutableList<PosMsg>? = null
 
     data class PosMsg(
         val x: Double,
@@ -92,43 +94,36 @@ object PositionMessages : Feature(
         val z: Double,
         val dist: Double = 1.0,
         val message: String?,
-        var sent: Boolean = false
-    )
+    ) {
+        var sent = false
+    }
 
     override fun initialize() {
-        on<ServerTickEvent> {
-            if (currentPos != null) return@on
-            val playerName = minecraft.player?.name?.string
-            val playerData = Dungeons.players[playerName] ?: return@on
-            if (playerData.role == DungeonClass.Unknown || playerData.isDead) return@on
-            if (SETTING_USE_ALL.get()) {
-                currentPos = positionList.values.flatten()
-                return@on
+        on<TickEvent> {
+            if (currentPos == null) {
+                val player = Dungeons.players.firstEntry()?.value ?: return@on
+                if (player.role == DungeonClass.Unknown || player.isDead) return@on
+                currentPos = if (SETTING_USE_ALL.get()) positionList.values.flatMapTo(mutableListOf()) {
+                    it.map { it.copy() }
+                } else positionList[player.role]?.mapTo(mutableListOf()) { it.copy() }
             }
 
-            currentPos = positionList[playerData.role]
-        }
-
-        on<ServerTickEvent> {
-            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
-
-            val pos = minecraft.player ?: return@on
-            val msg = currentPos?.find {
-                pos.distanceToSqr(it.x + 0.5, it.y, it.z + 0.5) <= it.dist
-            } ?: return@on
-            if (msg.sent) return@on
-
-            Scheduler.scheduleTask {
-                if (msg.message == null) return@scheduleTask
-                ChatUtils.say("/pc ${msg.message}")
+            val player = minecraft.player ?: return@on
+            val pos = currentPos ?: return@on
+            var msg: String? = null
+            pos.forEach {
+                if (it.sent) return@forEach
+                if (player.distanceToSqr(it.x, it.y, it.z) > it.dist) return@forEach
+                it.sent = true
+                msg = it.message
             }
-            msg.sent = true
+
+            if (msg != null) Scheduler.scheduleTask {
+                ChatUtils.say("/pc $msg)")
+            }
         }
 
         on<RenderWorldEvent> {
-            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
-            if (!SETTING_RENDER_HIGHLIGHT.get()) return@on
-
             currentPos?.forEach {
                 if (SETTING_REMOVE_AT.get() && it.sent) return@forEach
 
@@ -136,18 +131,10 @@ object PositionMessages : Feature(
                     it.x, it.y, it.z,
                     1.0, 0.5,
                     SETTING_RENDER_COLOR.getColor(),
+                    centered = true,
                 )
             }
-            specialPos.forEach {
-                val ( x, y, z ) = it
-
-                Render3DImmediate.renderFilledBox(
-                    x, y, z,
-                    1.0, 1.05,
-                    SETTING_RENDER_COLOR.getColor(),
-                )
-            }
-        }
+        }.setEnabled(SETTING_RENDER_HIGHLIGHT.state)
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {

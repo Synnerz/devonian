@@ -94,7 +94,8 @@ class DropItemEvent @JvmOverloads constructor(
 ) : CancellableEvent()
 
 class TickEvent(
-    val minecraft: Minecraft
+    val minecraft: Minecraft,
+    val tick: Int,
 ) : Event()
 
 class RenderWorldEvent(

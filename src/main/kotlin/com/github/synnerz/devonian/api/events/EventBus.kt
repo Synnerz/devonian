@@ -32,6 +32,7 @@ import kotlin.reflect.full.hasAnnotation
 
 object EventBus {
     var totalTicks = 0
+    var clientTicks = 0
     private val teamRegex = "^team_(\\d+)$".toRegex()
     val events = ConcurrentHashMap<KClass<*>, MutableList<EventListener<Event>>>()
     private val entityTypes = mutableMapOf<Int, EntityType<*>>()
@@ -45,7 +46,7 @@ object EventBus {
         ClientEntityEvents.ENTITY_UNLOAD.register { entity, _ ->
             post(EntityLeaveEvent(entity))
         }
-        ClientTickEvents.START_CLIENT_TICK.register { post(TickEvent(it)) }
+        ClientTickEvents.START_CLIENT_TICK.register { post(TickEvent(it, clientTicks++)) }
         WorldRenderEvents.START_MAIN.register {
             Render3DState.camera = it.worldState().cameraRenderState
             Render3DImmediate.camera = it.worldState().cameraRenderState
