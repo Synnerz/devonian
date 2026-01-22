@@ -31,6 +31,7 @@ abstract class HudFeature(
     isInternal: Boolean = false,
     subcategory: String = "General",
     isHidden: Boolean = false,
+    subcategories: List<String> = emptyList(),
 ) : Feature(
     configName,
     description,
@@ -42,7 +43,8 @@ abstract class HudFeature(
     cheeto,
     isInternal,
     subcategory,
-    isHidden
+    isHidden,
+    subcategories,
 ) {
     var x = 10.0
     var y = 10.0

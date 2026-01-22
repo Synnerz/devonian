@@ -26,6 +26,7 @@ open class Feature @JvmOverloads constructor(
     val isInternal: Boolean = false,
     val subcategory: String = "General",
     val isHidden: Boolean = false,
+    val subcategories: List<String> = emptyList(),
 ) : Toggleable() {
     val minecraft = Devonian.minecraft
     val id = 256652 + Devonian.features.size
@@ -102,6 +103,7 @@ open class Feature @JvmOverloads constructor(
             isHidden,
         ).also {
             if (isInternal) return@also
+            subcategories.forEach { s -> Config.registerCategory(it, category, s) }
             Config.registerCategory(it, category, subcategory)
             Config.features.add(it)
         }

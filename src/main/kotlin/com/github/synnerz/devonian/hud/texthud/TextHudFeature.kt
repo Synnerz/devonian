@@ -25,6 +25,7 @@ abstract class TextHudFeature(
     isInternal: Boolean = false,
     subcategory: String = "General",
     isHidden: Boolean = false,
+    subcategories: List<String> = emptyList(),
 ) : HudFeature(
     configName,
     description,
@@ -38,6 +39,7 @@ abstract class TextHudFeature(
     isInternal,
     subcategory,
     isHidden,
+    subcategories,
 ), DataProvider, ITextHud {
     abstract fun getEditText(): List<String>
 
