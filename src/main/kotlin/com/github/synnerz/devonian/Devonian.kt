@@ -287,6 +287,7 @@ object Devonian : ClientModInitializer {
             TacticalInsertionTimer,
             PreventDroppingHotbar,
             BlessingsDisplay,
+            TerminalProtection,
 
             // Debug
             CopyItem,
