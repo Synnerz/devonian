@@ -11,28 +11,25 @@ object RefillGFSCommands {
     fun initialize() {
         DevonianCommand.command.subcommand("pearls") { _, args ->
             val inv = inventory ?: return@subcommand 0
-            val amount = inv.sumOf { if (ItemUtils.skyblockId(it) == "ENDER_PEARL") it.count else 0 }
-            val total = 16 - amount
-            if (total == 0) return@subcommand 1
-            ChatUtils.command("gfs ender pearl $total")
+            val amount = inv.sumOf { if (ItemUtils.skyblockId(it) == "ENDER_PEARL") 16 - it.count else 0 }
+            if (amount == 0) return@subcommand 1
+            ChatUtils.command("gfs ender pearl $amount")
             1
         }
 
         DevonianCommand.command.subcommand("leaps") { _, args ->
             val inv = inventory ?: return@subcommand 0
-            val amount = inv.sumOf { if (ItemUtils.skyblockId(it) == "SPIRIT_LEAP") it.count else 0 }
-            val total = 16 - amount
-            if (total == 0) return@subcommand 1
-            ChatUtils.command("gfs spirit leap $total")
+            val amount = inv.sumOf { if (ItemUtils.skyblockId(it) == "SPIRIT_LEAP") 16 - it.count else 0 }
+            if (amount == 0) return@subcommand 1
+            ChatUtils.command("gfs spirit leap $amount")
             1
         }
 
         DevonianCommand.command.subcommand("superbooms") { _, args ->
             val inv = inventory ?: return@subcommand 0
-            val amount = inv.sumOf { if (ItemUtils.skyblockId(it) == "SUPERBOOM_TNT") it.count else 0 }
-            val total = 64 - amount
-            if (total == 0) return@subcommand 1
-            ChatUtils.command("gfs superboom tnt $total")
+            val amount = inv.sumOf { if (ItemUtils.skyblockId(it) == "SUPERBOOM_TNT") 64 - it.count else 0 }
+            if (amount == 0) return@subcommand 1
+            ChatUtils.command("gfs superboom tnt $amount")
             1
         }
     }
