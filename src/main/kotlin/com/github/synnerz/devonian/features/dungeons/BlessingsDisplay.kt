@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabFooterEvent
@@ -32,7 +33,9 @@ object BlessingsDisplay : TextHudFeature(
                 else -> "&e"
             }
 
-            blessings["$format$type"] = number
+            Scheduler.scheduleTask {
+                blessings["$format$type"] = number
+            }
         }
 
         on<ClientThreadServerTickEvent> {
