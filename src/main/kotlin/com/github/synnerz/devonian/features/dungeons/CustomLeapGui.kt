@@ -29,14 +29,29 @@ object CustomLeapGui : Feature(
         return super.createRequirements() + listOf(Stages.Root.isActiveState)
     }
 
+    // TODO: integrate keybinds here instead of being standalone (maybe)
+    //  also implement different type of scales since people don't like current sizes ):
+    private val SETTING_PLAYER_SORTING = addSelection(
+        "playerSorting",
+        0,
+        listOf("a-z", "z-a", "a-z name", "z-a name"),
+        "Sorting order for CustomLeapGui",
+        "Custom Leap Sorting"
+    )
     private const val CONTAINER_NAME = "Spirit Leap"
     private val closeChestKey get() = minecraft.options.keyInventory
     private val PRIMARY_COLOR = Color(25, 25, 25, 255)
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
     private var containerId = -1
     private val playerList = mutableListOf<LeapPlayer>()
+    private val sortingComparators = listOf(
+        compareBy<LeapPlayer> { it.role.singleLetter }.thenBy { it.name.lowercase() },
+        compareByDescending<LeapPlayer> { it.role.singleLetter }.thenByDescending { it.name.lowercase() },
+        compareBy { it.name.lowercase() },
+        compareByDescending { it.name.lowercase() },
+    )
 
-    val leapComparator = Comparator.comparing<LeapPlayer, Char> { it.role.singleLetter }.thenBy { it.name.lowercase() }
+    val leapComparator get() = sortingComparators[SETTING_PLAYER_SORTING.get()]
     data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val isDead: Boolean)
 
     override fun initialize() {
