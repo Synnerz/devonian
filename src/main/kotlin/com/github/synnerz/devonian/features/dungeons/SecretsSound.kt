@@ -9,7 +9,7 @@ import net.minecraft.sounds.SoundEvents
 
 object SecretsSound : Feature(
     "secretsSound",
-    "Plays a sound whenever you click, pick up (a secret) or kill a bat (This also plays an anvil sound whenever the chest is locked)",
+    "Plays a sound whenever you click, pick up (a secret) or kill a bat (This also plays an anvil sound whenever the chest is locked).",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "QOL",

@@ -23,6 +23,7 @@ import kotlin.math.hypot
 object EtherwarpOverlay : Feature(
     "etherwarpOverlay",
     "Renders a box at the location where the etherwarp is going to be at.",
+    subcategory = "General",
 ) {
     private val SETTING_ALWAYS_FULL = addSwitch(
         "alwaysFull",

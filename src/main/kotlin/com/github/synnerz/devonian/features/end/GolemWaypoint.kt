@@ -17,9 +17,9 @@ import java.awt.Color
 //  change this to be packet based instead later on.
 object GolemWaypoint : Feature(
     "golemWaypoint",
-    "Sets a waypoint to where the golem should spawn",
+    "Sets a waypoint to where the golem should spawn.",
     Categories.END,
-    "the end"
+    "the end",
 ) {
     private var protectorRegex = "^ Protector: (\\w+)$".toRegex()
     private val golemStages = listOf("Resting", "Dormant", "Agitated", "Disturbed", "Awakening", "Summoned")

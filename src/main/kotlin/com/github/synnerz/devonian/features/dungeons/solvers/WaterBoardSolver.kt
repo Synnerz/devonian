@@ -18,16 +18,17 @@ import kotlin.math.roundToInt
 
 object WaterBoardSolver : Feature(
     "waterBoardSolver",
-    "Highlights the most \"efficient\" levers to flick at the specified time to get a one flow solution in water board puzzle",
+    "Highlights the most \"efficient\" levers to flick at the specified time to get a one flow solution in water board puzzle.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("wb", "puzzle"),
 ) {
     private val SETTING_SOLUTION_MODE = addSelection(
         "solutionMode",
         0,
         listOf("Desco1", "Efficient"),
-        "Choose the waterboard solutions mode",
+        "Choose the waterboard solutions mode.",
         "WaterBoardSolver Mode"
     )
     override fun createRequirements(): List<BasicState<Boolean>?> {

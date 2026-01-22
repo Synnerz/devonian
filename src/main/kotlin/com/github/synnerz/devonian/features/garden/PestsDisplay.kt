@@ -11,7 +11,7 @@ object PestsDisplay : TextHudFeature(
     "pestsDisplay",
     "Displays all your Garden's current Pests stats.",
     Categories.GARDEN,
-    "garden"
+    "garden",
 ) {
     private val pestsAliveRegex = "^ Alive: ([\\d,.]+)$".toRegex()
     private val infestedPlotsRegex = "^ Plots: ([\\d, ]+)$".toRegex()

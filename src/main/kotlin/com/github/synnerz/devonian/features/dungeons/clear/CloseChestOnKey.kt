@@ -10,10 +10,10 @@ import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 
 object CloseChestOnKey : Feature(
     "closeChestOnKey",
-    "Closes a secret chest whenever you hit WASD (or rather moving) and shift keys",
+    "Closes a secret chest whenever you hit WASD (or whatever you use for movement) or the crouch key.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL"
+    subcategory = "QOL",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

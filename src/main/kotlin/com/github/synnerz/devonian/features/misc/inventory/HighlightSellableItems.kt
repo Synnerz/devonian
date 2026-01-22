@@ -10,14 +10,15 @@ import kotlin.jvm.optionals.getOrNull
 
 object HighlightSellableItems : Feature(
     "highlightSellableItems",
-    "Highlights sellable items whenever inside ophelia/trades/booster cookie gui",
-    subcategory = "Inventory"
+    "Highlights sellable items whenever inside ophelia/trades/booster cookie gui.",
+    subcategory = "Inventory",
+    searchTags = setOf("npc", "trash", "garbage"),
 ) {
     private val SETTING_HIGHLIGHT_COLOR = addColorPicker(
         "highlightColor",
         Color.RED.rgb,
-        "The color to use for highlight sellable items",
-        "Sellable Highlight Color"
+        "The color to use for highlight sellable items.",
+        "Sellable Highlight Color",
     )
     // yoink from skytils <https://github.com/Skytils/SkytilsMod/blob/618bc6d5c03fb026ebbd27ed45484d9fc698138a/mod/src/main/kotlin/gg/skytils/skytilsmod/features/impl/misc/ItemFeatures.kt#L222-L232>
     private val itemNames = setOf(

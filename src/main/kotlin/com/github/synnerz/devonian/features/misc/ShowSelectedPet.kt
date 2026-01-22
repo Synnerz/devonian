@@ -9,13 +9,13 @@ import java.awt.Color
 object ShowSelectedPet : Feature(
     "showSelectedPet",
     "Highlights the selected pet while inside of pets menu",
-    subcategory = "General"
+    subcategory = "General",
 ) {
     private val SETTING_HIGHLIGHT_COLOR = addColorPicker(
         "highlightColor",
         Color.CYAN.rgb,
-        "The highlight color to be used in show selected pet",
-        "Selected Pet Color"
+        "The highlight color to be used in show selected pet.",
+        "Selected Pet Color",
     )
     private val petsMenuRegex = "^Pets(?: \\(\\d+/\\d+\\))? ?\$".toRegex()
     private var inPets = false

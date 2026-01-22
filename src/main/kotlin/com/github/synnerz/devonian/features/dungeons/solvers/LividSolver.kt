@@ -13,7 +13,7 @@ import java.awt.Color
 
 object LividSolver : Feature(
     "lividSolver",
-    "Highlights the correct livid in F5/M5",
+    "Highlights the correct livid in F5/M5.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
@@ -44,7 +44,7 @@ object LividSolver : Feature(
     private val SETTING_HIDE_WRONG_LIVID = addSwitch(
         "hideWrongLivid",
         false,
-        "hides the wrong livid and only displays the right one",
+        "hides the wrong livids and only displays the right one",
         "Hide Wrong Livid"
     )
 

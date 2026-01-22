@@ -18,10 +18,11 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 object BlazeSolver : Feature(
     "blazeSolver",
-    "Highlights the correct blaze to shoot in blaze puzzle",
+    "Highlights the correct blaze to shoot in blaze puzzle.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("higher", "lower", "puzzle"),
 ) {
     private val SETTING_SEND_MSG = addSwitch(
         "sendMsg",

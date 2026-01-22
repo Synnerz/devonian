@@ -8,7 +8,7 @@ import com.github.synnerz.devonian.hud.texthud.Alert
 
 object ScoreAlert : Feature(
     "scoreAlert",
-    "Alerts on 270/300 score",
+    "Alerts on 270/300 score.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Alerts",

@@ -7,7 +7,7 @@ import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 
 object HideHypeHearts : Feature(
     "hideHypeHearts",
-    "hides hearts from healing from wither shield",
+    "hides heart particles from healing with wither shield",
     subcategory = "Hiders",
 ) {
     override fun initialize() {

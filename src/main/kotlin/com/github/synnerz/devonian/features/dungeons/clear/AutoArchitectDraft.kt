@@ -11,10 +11,11 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object AutoArchitectDraft : Feature(
     "AutoArchitectDraft",
-    "Automatically sends the gfs command whenever YOU fail a puzzle",
+    "Automatically sends the gfs command whenever YOU fail a puzzle.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "QOL",
+    searchTags = setOf("fail", "puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

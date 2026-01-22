@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.features.Feature
 
 object RemoveGearScore : Feature(
     "removeGearScore",
+    "Removes the gear score stat from the top of dungeon items.",
     subcategory = "Tooltip",
 ) {
     override fun initialize() {

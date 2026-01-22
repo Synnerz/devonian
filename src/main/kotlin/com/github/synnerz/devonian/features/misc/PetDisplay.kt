@@ -8,8 +8,8 @@ import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 
 object PetDisplay : TextHudFeature(
     "petDisplay",
-    "Shows the currently equipped pet in hud",
-    subcategory = "General"
+    "Shows the currently equipped pet in hud.",
+    subcategory = "General",
 ) {
     private const val KEY_NAME = "petDisplay"
     private val equippedPetRegex = "^You summoned your ([\\w ]+)(?: ✦)?!\$".toRegex()

@@ -8,10 +8,12 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object CancelF7BossSounds : Feature(
     "customF7Sounds",
-    "Cancels the boss sounds played in f7 boss fight",
+    "Mutes the loud boss sounds played in f7 boss fight.",
     Categories.DUNGEONS,
     "catacombs",
+    displayName = "Cancel F7 Boss Sounds",
     subcategory = "F7",
+    searchTags = setOf("mute", "quiet"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState)

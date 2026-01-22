@@ -29,6 +29,7 @@ object IceFillSolver : Feature(
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)
@@ -62,7 +63,7 @@ object IceFillSolver : Feature(
     private val SETTING_ALLOW_WALL_START = addSwitch(
         "fastSolution",
         false,
-        "allows the solution to start along the wall",
+        "allows the solution to start anywhere",
         "Fast Solution",
     )
 

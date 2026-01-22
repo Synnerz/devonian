@@ -16,10 +16,12 @@ import net.minecraft.sounds.SoundEvents
 
 object CreeperBeamsDing : Feature(
     "creeperBeamsDing",
-    "Plays a ding sound whenever you hit a lantern in creeper beams room",
+    "Plays a ding sound whenever you hit a lantern in creeper beams room. " +
+    "Change sound using `/dv creeperBeamsSound`.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL"
+    subcategory = "QOL",
+    searchTags = setOf("sound"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)
@@ -39,13 +41,13 @@ object CreeperBeamsDing : Feature(
     private val SETTING_REMOVE_CREEPER_HURT = addSwitch(
         "removeCreeperHurt",
         false,
-        "Removes the sounds that the creeper makes whenever you successfully connect two lanterns",
+        "Removes the sounds that the creeper makes whenever you successfully connect two lanterns.",
         "Remove Creeper Hurt"
     )
     private val SETTING_REMOVE_EXPLOSION = addSwitch(
         "removeExplosion",
         false,
-        "Removes the explosion sound whenever the puzzle is completed",
+        "Removes the explosion sound whenever the puzzle is completed.",
         "Remove Explosion Sound"
     )
     private var soundEvent = SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value()

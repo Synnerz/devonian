@@ -15,10 +15,11 @@ import java.awt.Color
 
 object CreeperBeamsSolver : Feature(
     "creeperBeamsSolver",
-    "Highlights the correct blocks to hit whenever doing the creeper beams puzzle",
+    "Highlights the correct blocks to hit whenever doing the creeper beams puzzle.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

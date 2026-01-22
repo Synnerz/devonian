@@ -13,10 +13,11 @@ import java.util.*
 
 object DragonBoxes : Feature(
     "dragonBoxes",
-    "",
+    "Renders boxes around the wither king dragon statues.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "M7",
+    searchTags = setOf("statue"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + Stages.WitherKing.isActiveState
@@ -34,6 +35,7 @@ object DragonBoxes : Feature(
         true,
         "currently only lb waypoints",
         "Dragon Waypoints",
+        searchTags = setOf("last", "breath"),
     )
 
     private var alive = EnumSet.allOf(M7Dragon::class.java)

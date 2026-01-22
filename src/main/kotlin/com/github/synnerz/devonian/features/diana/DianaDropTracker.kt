@@ -12,9 +12,11 @@ import java.io.File
 
 object DianaDropTracker : TextHudFeature(
     "dianaDropTracker",
-    "Tracks the drops you got during the diana event",
+    "Tracks the drops you got during the diana event. " +
+    "`/dv rsdianadroptracker`",
     Categories.DIANA,
-    "hub"
+    "hub",
+    searchTags = setOf("loot", "profit"),
 ) {
     private val rareDropCriteria =
         "^RARE DROP! (?:You dug out a )?([-() \\w]+)(?: \\(\\+\\d+ . Magic Find\\))?!?$".toRegex()

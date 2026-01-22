@@ -11,9 +11,10 @@ import org.lwjgl.glfw.GLFW.*
 
 object CopyItem : Feature(
     "copyItem",
-    "Ctrl-C",
+    "Ctrl-C when hovering over an item to copy it to the clipboard.",
     Categories.DEBUG,
     subcategory = "Utils",
+    searchTags = setOf("nbt", "debug"),
 ) {
     override fun initialize() {
         on<GuiKeyDownEvent> { event ->

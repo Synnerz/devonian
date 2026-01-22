@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object CryptsDisplay : TextHudFeature(
     "cryptsDisplay",
-    "Displays the current amount of Crypts killed.",
+    "Displays the current number of Crypts killed.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "HUD",

@@ -12,36 +12,37 @@ import kotlin.math.sqrt
 
 object ChatWaypoint : Feature(
     "chatWaypoint",
-    "Renders a waypoint at the location where a player sent in Party/Coop chat. (You can send coordinates for other people by doing /devonian sendcoords)",
+    "Renders a waypoint at the location where a player sent in Party/Coop chat. (You can send coordinates for other people by running /dv sendcoords).",
+    subcategory = "General",
 ) {
     private val SETTING_ALL_CHAT = addSwitch(
         "allChat",
         true,
-        "Grab waypoints from all chat",
+        "Grab waypoints from all chat.",
         "from All Chat",
     )
     private val SETTING_OWN_WAYPOINTS = addSwitch(
         "ownWaypoints",
         true,
-        "Display waypoints you send",
+        "Display waypoints you send.",
         "Show Own Waypoints",
     )
     private val SETTING_CLEAR_WAYPOINTS_SWAP_SERVER = addSwitch(
         "waypointDementia",
         true,
-        "Clear waypoints on server swap",
+        "Clear waypoints on server swap.",
         "Waypoint Dementia",
     )
     private val SETTING_WAYPOINT_COLOR = addColorPicker(
         "waypointColor",
         Color.CYAN.rgb,
-        "Color of waypoints",
+        "Color of waypoints.",
         "Waypoint Color",
     )
     private val SETTING_SHOW_SENDER_NAME = addSwitch(
         "showSenderName",
         true,
-        "Show sender name with waypoint",
+        "Show sender name with waypoint.",
         "Show Sender Name",
     )
 

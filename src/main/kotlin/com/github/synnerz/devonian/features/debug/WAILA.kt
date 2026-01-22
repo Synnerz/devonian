@@ -14,9 +14,10 @@ import kotlin.math.PI
 
 object WAILA : Feature(
     "waila",
-    "/dv waila",
+    "`/dv waila` to copy the entities you are looking at to your clipboard.",
     Categories.DEBUG,
     subcategory = "Utils",
+    searchTags = setOf("entity", "copy", "nbt"),
 ) {
     override fun initialize() {
         DevonianCommand.command.subcommand("waila") { _, _ ->

@@ -15,10 +15,11 @@ import java.awt.Color
 
 object ColorPortal : Feature(
     "colorPortal",
-    "recolors blood portal based on score",
+    "Recolors blood portal based on score.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",
+    searchTags = setOf("score"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.PortalEnter.isActiveState)

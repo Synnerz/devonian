@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.features.Feature
 
 object WardrobeKeybinds : Feature(
     "wardrobeKeybinds",
-    "Whenever inside of wardrobe gui it will allow you to press the hotbar 1-9 keys to switch through your wardrobes",
+    "Whenever inside of wardrobe gui it will allow you to press the hotbar 1-9 keys to switch through your wardrobes.",
     subcategory = "General",
 ) {
     override fun initialize() {

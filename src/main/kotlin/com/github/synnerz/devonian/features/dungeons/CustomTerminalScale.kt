@@ -9,24 +9,24 @@ import kotlin.math.roundToInt
 
 object CustomTerminalScale : Feature(
     "customTerminalScale",
-    "Sets a different gui scale when you enter a terminal gui and re-sets it back to the original one once it's closed",
+    "Changes GUI scale when inside of a terminal.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "F7"
+    subcategory = "F7",
 ) {
     private val SETTING_TERMINAL_SCALE = addSlider(
         "terminalScale",
         0.0,
         0.0, 5.0,
         "0 = auto",
-        "Terminal Gui Scale"
+        "Terminal Gui Scale",
     )
     private val SETTING_TERMINAL_MELODY_SCALE = addSlider(
         "terminalMelodyScale",
         0.0,
         0.0, 5.0,
         "0 = auto",
-        "Terminal Melody Gui Scale"
+        "Terminal Melody Gui Scale",
     )
     private val validGuis = listOf(
         "Click in order!".toRegex(),

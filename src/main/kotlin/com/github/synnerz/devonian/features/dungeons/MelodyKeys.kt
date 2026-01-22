@@ -14,6 +14,7 @@ object MelodyKeys : Feature(
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "F7",
+    searchTags = setOf("terminal"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

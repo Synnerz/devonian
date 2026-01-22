@@ -30,10 +30,11 @@ import kotlin.math.roundToInt
 
 object CampHelper : Feature(
     "campHelper",
-    "",
+    "Predicts where blood mobs will spawn.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("blood"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WatcherClear.isActiveState)

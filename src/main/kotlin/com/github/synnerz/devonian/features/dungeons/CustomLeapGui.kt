@@ -20,10 +20,10 @@ import java.awt.Color
 
 object CustomLeapGui : Feature(
     "customLeapGui",
-    "Changes the gui from the spirit leap to a custom one",
+    "Changes the gui from the spirit leap to a custom one.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL"
+    subcategory = "QOL",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Root.isActiveState)
@@ -36,7 +36,7 @@ object CustomLeapGui : Feature(
         0,
         listOf("a-z", "z-a", "a-z name", "z-a name"),
         "Sorting order for CustomLeapGui",
-        "Custom Leap Sorting"
+        "Custom Leap Sorting",
     )
     private const val CONTAINER_NAME = "Spirit Leap"
     private val closeChestKey get() = minecraft.options.keyInventory

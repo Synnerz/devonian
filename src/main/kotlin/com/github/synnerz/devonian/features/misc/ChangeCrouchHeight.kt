@@ -8,13 +8,15 @@ import net.minecraft.world.entity.Pose
 
 object ChangeCrouchHeight : Feature(
     "changeCrouchHeight",
-    "All changes are visual only",
+    "All changes are visual only, unless otherwise listed.",
+    displayName = "Change Crouch",
     subcategory = "Tweaks",
+    searchTags = setOf("sneak"),
 ) {
     private val SETTING_INSTANT_CROUCH = addSwitch(
         "instantCrouch",
         true,
-        "",
+        "removes animation from sneaking",
         "Instant Crouch",
     )
     private val SETTING_USE_189_HEIGHT = addSwitch(
@@ -26,7 +28,7 @@ object ChangeCrouchHeight : Feature(
     private val SETTING_CHANGE_ACTUAL_HEIGHT = addSwitch(
         "nonVisual",
         false,
-        "non visual",
+        "NON VISUAL. Will ban if you spam jump under slabs etc.",
         "Change Actual Crouch Height",
         cheeto = true,
     )

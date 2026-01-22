@@ -22,7 +22,7 @@ object TerminalDisplay : TextHudFeature(
     private val SETTING_SIMPLE = addSwitch(
         "simple",
         true,
-        "",
+        "Only shows the total progress, e.g. 3/7.",
         "Simple Mode",
     )
 

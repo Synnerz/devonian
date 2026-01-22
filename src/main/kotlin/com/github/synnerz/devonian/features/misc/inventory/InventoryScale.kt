@@ -10,8 +10,8 @@ import kotlin.math.roundToInt
 
 object InventoryScale : Feature(
     "inventoryScale",
-    "Changes the scale of inventory related guis whenever opening them",
-    subcategory = "Inventory"
+    "Changes the scale of inventory related guis whenever opening them.",
+    subcategory = "Inventory",
 ) {
     private val SETTING_SCALE = addSlider(
         "scale",

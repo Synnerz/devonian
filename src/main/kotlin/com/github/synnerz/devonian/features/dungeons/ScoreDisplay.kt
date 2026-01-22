@@ -19,6 +19,7 @@ object ScoreDisplay : TextHudFeature(
         false,
         "§4OVERRIDES OTHER SETTINGS",
         "IllegalMap Score Style",
+        searchTags = setOf("mapinfo"),
     )
     private val SETTING_SHOW_SECRETS = addSwitch(
         "showSecrets",
@@ -35,14 +36,15 @@ object ScoreDisplay : TextHudFeature(
     private val SETTING_SHOW_UNFOUND = addSwitch(
         "showUnFound",
         true,
-        "Shows the unfound secrets in the current run",
+        "Shows the unfound secrets in the current run.",
         "Score Display Unfound"
     )
     private val SETTING_FORCE_PAUL = addSwitch(
         "paul",
         false,
-        "",
+        "Affects all score-related calculations.",
         "Force Paul",
+        searchTags = setOf("score"),
     ).also {
         it.onChange { v ->
             Dungeons.isPaul.value = v

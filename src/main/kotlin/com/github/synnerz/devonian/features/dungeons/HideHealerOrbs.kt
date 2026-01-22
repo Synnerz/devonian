@@ -21,7 +21,7 @@ import kotlin.math.abs
 
 object HideHealerOrbs : Feature(
     "hideHealerOrbs",
-    "",
+    "Hides the power orbs mobs drop when killed by/with help from healer.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Hiders",

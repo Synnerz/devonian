@@ -15,7 +15,8 @@ import java.awt.Color
 
 object SecretsClickedBox : Feature(
     "secretsClickedBox",
-    "Highlights the secrets you have clicked surrounding them with a box, if a chest secret for example is locked the color will change to red.",
+    "Highlights the secrets you have clicked surrounding them with a box. " +
+    "If a chest secret is locked the color will change to red.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",
@@ -25,25 +26,25 @@ object SecretsClickedBox : Feature(
         "outlineSuccessColor",
         Color(0, 255, 255, 255).rgb,
         "",
-        "Clicked Block Outline Color"
+        "Clicked Block Outline Color",
     )
     private val SETTING_FILLED_SUCCESS_COLOR = addColorPicker(
         "filledSuccessColor",
         Color(0, 255, 255, 50).rgb,
         "",
-        "Clicked Block Filled Color"
+        "Clicked Block Filled Color",
     )
     private val SETTING_OUTLINE_FAILED_COLOR = addColorPicker(
         "outlineFailedColor",
         Color(255, 0, 0, 255).rgb,
         "",
-        "Locked Block Outline Color"
+        "Locked Chest Outline Color",
     )
     private val SETTING_FILLED_FAILED_COLOR = addColorPicker(
         "filledFailedColor",
         Color(255, 0, 0, 50).rgb,
         "",
-        "Locked Block Filled Color"
+        "Locked Chest Filled Color",
     )
     var clickedBlock: BlockPos? = null
     var wasLocked = false

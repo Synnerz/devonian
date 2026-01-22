@@ -1,19 +1,23 @@
-package com.github.synnerz.devonian.features.dungeons
+package com.github.synnerz.devonian.features.dungeons.m7
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
 
 object RelicTimer : TextHudFeature(
     "relicTimer",
-    "Displays a timer that tells you when the relics are going to spawn in M7",
+    "Displays a timer that tells you when the relics are going to spawn in M7.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD"
+    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })

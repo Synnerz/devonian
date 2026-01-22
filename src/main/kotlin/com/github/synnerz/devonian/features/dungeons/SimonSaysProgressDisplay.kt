@@ -12,7 +12,8 @@ object SimonSaysProgressDisplay : TextHudFeature(
     "display stage of ss, must have solver on",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD",
+    subcategory = "F7",
+    searchTags = setOf("ee2", "ss"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.S1.isActiveState)

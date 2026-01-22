@@ -17,10 +17,11 @@ import kotlin.math.floor
 
 object TicTacToeSolver : Feature(
     "ticTacToeSolver",
-    "Highlights the most \"efficient\" button to press to complete the tictactoe puzzle",
+    "Highlights the most \"efficient\" button to press to complete the tictactoe puzzle.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("ttt", "puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 object AutoRequeueDungeons : Feature(
     "autoRequeueDungeons",
-    "Automatically calls the /instancerequeue command at the end of a run.",
+    "Automatically runs the /instancerequeue command at the end of a run.",
     Categories.DUNGEONS,
     subcategory = "QOL",
 ) {

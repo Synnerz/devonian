@@ -10,10 +10,11 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object LividInvulnerable : TextHudFeature(
     "lividInvulnerable",
-    "Displays a timer when livid's invl phase is over",
+    "Displays a timer for livid's invulnerability.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD"
+    subcategory = "HUD",
+    searchTags = setOf("f5", "m5"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Dungeons.floorState.map { it.floorNum == 5 })

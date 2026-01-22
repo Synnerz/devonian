@@ -17,10 +17,10 @@ import java.util.*
 
 object PositionMessages : Feature(
     "positionMessages",
-    "Sends a party chat message if you're standing near a specified area for your Dungeon Class (f7 boss fight)",
+    "Sends a party chat message if you're standing near a specified area for your Dungeon Class (f7 boss fight).",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "F7"
+    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState)
@@ -29,26 +29,26 @@ object PositionMessages : Feature(
     private val SETTING_RENDER_HIGHLIGHT = addSwitch(
         "renderHighlight",
         true,
-        "Renders a box around the area for the positional message",
-        "Position Messages Render"
+        "Renders a box around the area for the positional message.",
+        "Position Messages Render",
     )
     private val SETTING_RENDER_COLOR = addColorPicker(
         "renderColor",
         Color.CYAN.rgb,
-        "The color of the box",
-        "Position Messages Render Color"
+        "The color of the box.",
+        "Position Messages Render Color",
     )
     private val SETTING_REMOVE_AT = addSwitch(
         "removeRenderAt",
         false,
-        "Removes the highlight around the positional message if you have already sent the message",
-        "Position Messages Remove Highlight"
+        "Removes the highlight around the positional message if you have already sent the message.",
+        "Position Messages Remove Highlight",
     )
     private val SETTING_USE_ALL = addSwitch(
         "useAll",
         false,
-        "Use all the positional messages not only the current selected class ones",
-        "Position Messages Use All"
+        "Use all the positional messages not only the current selected class ones.",
+        "Position Messages Use All",
     )
 
     // TODO: make these customizable

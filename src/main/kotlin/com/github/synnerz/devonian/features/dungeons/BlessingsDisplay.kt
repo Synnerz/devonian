@@ -14,7 +14,8 @@ object BlessingsDisplay : TextHudFeature(
     "Displays the blessings in the current dungeon run",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD"
+    subcategory = "HUD",
+    searchTags = setOf("power"),
 ) {
     private val blessingRegex = "^Blessing of (\\w+) ([IVX]+)$".toRegex()
     private val blessings = mutableMapOf<String, Int>()

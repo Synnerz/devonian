@@ -15,6 +15,7 @@ object HighlightBat : Feature(
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",
+    searchTags = setOf("secrets"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

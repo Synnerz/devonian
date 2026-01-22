@@ -12,9 +12,11 @@ import java.io.File
 
 object DianaMobTracker : TextHudFeature(
     "dianaMobTracker",
-    "Tracks the mobs you killed during the diana event",
+    "Tracks the mobs you killed during the diana event. " +
+    "`/dv rsdianamobtracker`",
     Categories.DIANA,
-    "hub"
+    "hub",
+    searchTags = setOf("inquis"),
 ) {
     private val mobCriteria = "^(?:Woah|Yikes|Oi|Danger|Good Grief|Uh oh|Oh)! You dug out a? ?([\\w ]+)!$".toRegex()
     private val mobNames = listOf(

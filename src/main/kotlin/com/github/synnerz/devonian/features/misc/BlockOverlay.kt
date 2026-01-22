@@ -16,13 +16,13 @@ import java.awt.Color
 
 object BlockOverlay : Feature(
     "blockOverlay",
-    "Adds a more customizable Block Overlay.",
+    "Adds a more customizable Block Overlay (highlighting the block you are looking at).",
     subcategory = "Tweaks",
 ) {
     private val SETTING_BOX_ENTITY = addSwitch(
         "boxEntity",
         false,
-        "Highlights any entity you are looking at",
+        "Highlights any entity you are looking at.",
         "Highlight Entity",
     )
     private val SETTING_WIRE_COLOR = addColorPicker(
@@ -59,8 +59,8 @@ object BlockOverlay : Feature(
     private val SETTING_DYNAMIC_PHASE = addSwitch(
         "dynamicPhase",
         false,
-        "Sets the phase to false if you're in third person, otherwise it is always set to true",
-        "Dynamic Phase"
+        "Sets the phase to false if you're in third person, otherwise it is always set to true.",
+        "Dynamic Phase",
     )
 
     private var harharImLosingMyFuckingSanity: VoxelShape? = null

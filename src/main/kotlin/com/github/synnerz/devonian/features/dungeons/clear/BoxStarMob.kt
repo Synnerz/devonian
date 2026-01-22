@@ -16,10 +16,13 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 object BoxStarMob : Feature(
     "boxStarMob",
-    "Renders a box surrounding the star mobs in dungeons to complete a room.",
+    "Highlights (most) starred mobs in dungeons. " +
+    "(There is a single rare room with a starred cave spider that does not get boxed.) " +
+    "(And minibosses are always highlighted regardless of star.)",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",
+    searchTags = setOf("starred", "mobs"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

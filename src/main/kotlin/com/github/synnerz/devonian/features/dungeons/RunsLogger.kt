@@ -17,10 +17,10 @@ import java.time.LocalDateTime
 
 object RunsLogger : Feature(
     "runsLogger",
-    "Logs your completed dungeon runs (note: it will not work if you do not have ShowExtraStats)",
+    "Logs your completed dungeon runs (note: it will not work if you do not have ShowExtraStats enabled).",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL"
+    subcategory = "QOL",
 ) {
     private var dungeonsData = object : PersistentJsonClass<MutableMap<String, MutableMap<String, MutableList<RunStats>>>>(
         File(

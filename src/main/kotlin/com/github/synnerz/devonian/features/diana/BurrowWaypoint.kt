@@ -14,26 +14,27 @@ import kotlin.math.floor
 
 object BurrowWaypoint : Feature(
     "burrowWaypoint",
-    "Adds a waypoint with the type of burrow whenever the particles are detected",
+    "Adds a waypoint with the type of burrow whenever the particles are detected.",
     Categories.DIANA,
-    "hub"
+    "hub",
+    searchTags = setOf("diana"),
 ) {
     private val SETTING_START_COLOR = addColorPicker(
         "startColor",
         Color.GREEN.rgb,
-        "Color of Start burrows",
+        "Color of Start burrows.",
         "Start Burrow Color",
     )
     private val SETTING_MOB_COLOR = addColorPicker(
         "mobColor",
         Color.RED.rgb,
-        "Color of Mob burrows",
+        "Color of Mob burrows.",
         "Mob Burrow Color",
     )
     private val SETTING_TREAURE_COLOR = addColorPicker(
         "treasureColor",
         Color.YELLOW.rgb,
-        "Color of Treasure burrows",
+        "Color of Treasure burrows.",
         "Treasure Burrow Color",
     )
 

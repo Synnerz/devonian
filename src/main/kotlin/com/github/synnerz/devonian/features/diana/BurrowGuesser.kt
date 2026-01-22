@@ -23,38 +23,39 @@ import kotlin.random.Random
 // & https://github.com/PerseusPotter/chicktils/blob/master/modules/diana.js
 object BurrowGuesser : Feature(
     "burrowGuesser",
-    "Whenever right clicking on a spade, it will attempt to guess where the location will be a",
+    "Whenever right clicking on a spade, it will attempt to guess where the location will be at.",
     Categories.DIANA,
-    "hub"
+    "hub",
+    searchTags = setOf("diana", "spade"),
 ) {
     private val SETTING_GUESS_COLOR = addColorPicker(
         "guessColor",
         Color.BLUE.rgb,
-        "Color of current guess",
+        "Color of current guess.",
         "Guess Color",
     )
     private val SETTING_RENDER_BEAM = addSwitch(
         "renderBeam",
         true,
-        "Whether to render the beacon beam",
+        "Whether to render the beacon beam.",
         "Render Beam"
-    )
-    private val SETTING_OLD_GUESS_COLOR = addColorPicker(
-        "oldGuessColor",
-        Color(82, 14, 125).rgb,
-        "Color of old guess",
-        "Old Guess Color",
     )
     private val SETTING_REMEMBER_PREVIOUS_GUESSES = addSwitch(
         "storeGuesses",
         true,
-        "Remember locations of previous guesses",
+        "Remember locations of previous guesses.",
         "Remember Guesses",
+    )
+    private val SETTING_OLD_GUESS_COLOR = addColorPicker(
+        "oldGuessColor",
+        Color(82, 14, 125).rgb,
+        "Color of previous guesses.",
+        "Old Guess Color",
     )
     private val SETTING_PARTICLE_PATH_COLOR = addColorPicker(
         "particlePathColor",
         0,
-        "Color of path of particles",
+        "Color of path of particles.",
         "Particle Path Color",
     )
 
@@ -397,8 +398,8 @@ object BurrowGuesser : Feature(
 
             val color = SETTING_PARTICLE_PATH_COLOR.getColor()
             Render3DImmediate.renderLineStrip(color.alpha == 255, phase = true) {
-            val path = particlePath.value
-            for (i in path.indices step 3) {
+                val path = particlePath.value
+                for (i in path.indices step 3) {
                     submit(path[i + 0], path[i + 1], path[i + 2], color)
                 }
             }

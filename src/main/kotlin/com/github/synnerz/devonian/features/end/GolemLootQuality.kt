@@ -10,9 +10,9 @@ import kotlin.math.min
 
 object GolemLootQuality : Feature(
     "golemLootQuality",
-    "Shows your loot quality for the Golem and whether you could roll for a Tier Booster Core/Legendary Golem Pet/Epic Golem Pet",
+    "Shows your loot quality for the Golem and whether you could roll for a Tier Booster Core/Legendary Golem Pet/Epic Golem Pet.",
     Categories.END,
-    "the end"
+    "the end",
 ) {
     private val positionQuality = listOf(
         200,

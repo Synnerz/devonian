@@ -3,7 +3,11 @@ package com.github.synnerz.devonian.features.misc.hiders
 import com.github.synnerz.devonian.api.events.PreRenderEntityEvent
 import com.github.synnerz.devonian.features.Feature
 
-object HideEntityFire : Feature("hideEntityFire", subcategory = "Hiders") {
+object HideEntityFire : Feature(
+    "hideEntityFire",
+    "Do not render entities as being on fire.",
+    subcategory = "Hiders",
+) {
     override fun initialize() {
         on<PreRenderEntityEvent> { event ->
             event.entityState.displayFireAnimation = false

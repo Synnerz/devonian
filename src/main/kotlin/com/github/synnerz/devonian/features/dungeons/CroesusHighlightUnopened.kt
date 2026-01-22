@@ -10,16 +10,16 @@ import java.util.concurrent.CopyOnWriteArraySet
 
 object CroesusHighlightUnopened : Feature(
     "croesusHighlightUnopened",
-    "Highlights the chests in croesus that are not yet opened",
+    "Highlights the chests in croesus that are not yet opened.",
     Categories.DUNGEONS,
     "Dungeon Hub",
-    subcategory = "QOL"
+    subcategory = "QOL",
 ) {
     private val SETTING_HIDE_BLACKLISTED = addSwitch(
         "hideBlacklisted",
         false,
-        "Hides the croesus chests that have been opened",
-        "Croesus Highlight Blacklist"
+        "Hides the croesus chests that have been opened.",
+        "Croesus Hide Opened",
     )
     private var inCroesus = false
     private val whitelist = CopyOnWriteArraySet<Int>()

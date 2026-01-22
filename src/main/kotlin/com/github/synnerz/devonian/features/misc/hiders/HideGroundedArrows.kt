@@ -4,7 +4,11 @@ import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractArrowAccessor
 
-object HideGroundedArrows : Feature("hideGroundedArrows", subcategory = "Hiders") {
+object HideGroundedArrows : Feature(
+    "hideGroundedArrows",
+    "Prevents arrows stuck in the ground from rendering.",
+    subcategory = "Hiders",
+) {
     override fun initialize() {
         on<PreExtractRenderEntityEvent> { event ->
             val arrow = event.entity as? AbstractArrowAccessor ?: return@on

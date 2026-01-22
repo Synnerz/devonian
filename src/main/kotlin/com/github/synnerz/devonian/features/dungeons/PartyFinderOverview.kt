@@ -21,17 +21,18 @@ import java.util.concurrent.TimeUnit
 
 object PartyFinderOverview : Feature(
     "partyFinderOverview",
-    "Customizes the tooltip for party finder parties so they show more information (only parties you can join currently)",
+    "Customizes the tooltip for party finder parties so they show more information (only parties you can join currently).",
     Categories.DUNGEONS,
-    subcategory = "QOL"
+    subcategory = "QOL",
+    searchTags = setOf("pf"),
 ) {
     private const val DUNGEONS_API = "https://dungeons.docilelm.workers.dev/?name="
     private val SETTING_PB_MODE = addSelection(
         "pbMode",
         0,
         listOf("Both", "S", "S+"),
-        "The pb mode to use whenever displaying personal best time for the current floor. \"Both\" = if S+ does not exist it'll default to S",
-        "Party Finder Overview PB"
+        "The pb mode to use whenever displaying personal best time for the current floor. \"Both\" = if S+ does not exist it'll default to S.",
+        "Party Finder Overview PB",
     )
     private val members = CopyOnWriteArrayList<String>()
     private val cachedMembers = ConcurrentHashMap<String, DungeonsApiResult>()

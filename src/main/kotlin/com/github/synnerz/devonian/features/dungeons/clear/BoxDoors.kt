@@ -21,10 +21,11 @@ import kotlin.math.min
 
 object BoxDoors : Feature(
     "boxDoors",
-    "Draws boxes around doors.",
+    "Draws boxes around doors in dungeons.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",
+    searchTags = setOf("wither", "blood", "highlight"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)
@@ -57,13 +58,14 @@ object BoxDoors : Feature(
     private val SETTING_RENDER_NORMAL_DOORS = addSwitch(
         "renderNormalDoors",
         true,
-        "Highlights normal doorways not only the wither/blood ones",
+        "Highlights normal doorways, not only the wither/blood ones",
         "Highlight Normal Doors",
     )
     private val SETTING_HIDE_NORMAL_DOOR_GREEN = addSwitch(
         "hideNormalDoorGreen",
         true,
-        "Don't box normal doors when the room it leads to is not useful",
+        "Don't box normal doors when the room it leads to is not useful." +
+        "Currently, a room is 'useful' if it does not have a green check or leads to a room without a green check.",
         "Hide Useless Doors",
     )
     private val SETTING_DOOR_NORMAL_WIRE_COLOR = addColorPicker(
@@ -88,7 +90,8 @@ object BoxDoors : Feature(
     private val SETTING_RENDER_HIDDEN_DOORS = addSwitch(
         "renderUnknownDoors",
         false,
-        "Whether to highlight the doors that are in rooms that have not been explored yet",
+        "Whether to highlight the doors that are in rooms that have not been explored yet." +
+        "Only applies to wither/blood doors.",
         "Highlight Unknown Doors",
         cheeto = true,
     )

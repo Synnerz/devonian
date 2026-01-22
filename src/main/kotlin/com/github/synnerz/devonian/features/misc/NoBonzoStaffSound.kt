@@ -6,8 +6,9 @@ import com.github.synnerz.devonian.features.Feature
 
 object NoBonzoStaffSound : Feature(
     "noBonzoStaffSound",
-    "Removes the bonzo staff sounds",
-    subcategory = "General"
+    "Removes the bonzo staff sounds.",
+    subcategory = "General",
+    searchTags = setOf("mute", "quiet"),
 ) {
     private val bonzoFireworks = listOf(
         "minecraft:entity.firework_rocket.blast_far",

@@ -12,6 +12,7 @@ object LowerNametags : Feature(
     "lowerNametags",
     "lower nametags of mobs",
     subcategory = "Tweaks",
+    searchTags = setOf("giant", "health"),
 ) {
     private val cache = mutableMapOf<Int, Double>()
     private val grace = mutableMapOf<Int, Int>()

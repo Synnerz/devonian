@@ -26,28 +26,28 @@ object ItemRarityBackground : Feature(
         "renderOpacity",
         1.0,
         0.0, 1.0,
-        "How transparent the rarity background will be",
-        "Rarity Render Opacity"
+        "Opacity of the rarity background.",
+        "Rarity Render Opacity",
     )
     private val SETTING_RENDER_MODE = addSelection(
         "renderMode",
         0,
         listOf("Outlines", "Solid", "Circle", "Line + Solid"),
-        "The render mode the rarity background will use",
-        "Rarity Render Mode"
+        "The render mode the rarity background will use.",
+        "Rarity Render Mode",
     )
     private val SETTING_RENDER_LINE_WIDTH = addSlider(
         "renderLineWidth",
         1.0,
         1.0, 5.0,
         "",
-        "Rarity Render Line Width"
+        "Rarity Render Line Width",
     )
     private val SETTING_RENDER_HOTBAR = addSwitch(
         "renderHotbar",
         true,
-        "Whether to also render the highlight in the hotbar",
-        "Rarity Render Hotbar"
+        "Whether to also render the highlight in the hotbar.",
+        "Rarity Render Hotbar",
     )
     private val rarities = listOf(
         "COMMON" to TextColor.fromLegacyFormat(ChatFormatting.WHITE)!!.value,

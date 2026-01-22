@@ -20,26 +20,26 @@ import java.awt.Color
 
 object SlotBinding : Feature(
     "slotBinding",
-    "Bind a slot to another slot (with keybind in controls) so you can shift + left click on it to swap each others' items around",
+    "Bind a slot to another slot (with keybind in controls) so you can shift + left click on it to swap each others' items around.",
     subcategory = "Inventory",
 ) {
     private val SETTING_BOUND_LINES = addSwitch(
         "boundLines",
         true,
-        "Draws outline on the bound slots",
+        "Draws outline on the bound slots.",
         "Bound Outline",
     )
     private val SETTING_POINTING_LINE_MODE = addSelection(
         "pointingLineMode",
         0,
         listOf("None", "Always", "Shifting"),
-        "The mode to use for displaying lines between two binds",
+        "The mode to use for displaying lines between two binds.",
         "Pointing Line Mode",
     )
     private val SETTING_PROTECT = addSwitch(
         "protect",
         true,
-        "",
+        "Prevent items in bound slots from being moved normally.",
         "Protect Bound Slots",
     )
 

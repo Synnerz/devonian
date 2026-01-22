@@ -5,7 +5,12 @@ import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
 
-object LagDisplay : TextHudFeature("lagDisplay") {
+object LagDisplay : TextHudFeature(
+    "lagDisplay",
+    "Shows how long ago the last server tick was.",
+    subcategory = "General",
+    searchTags = setOf("zzz"),
+) {
     private val SETTING_THRESH = addSlider(
         "thresh",
         300.0,

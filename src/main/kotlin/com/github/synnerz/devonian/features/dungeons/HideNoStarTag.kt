@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EntityType
 
 object HideNoStarTag : Feature(
     "hideNoStarTag",
-    "Hides name tag of mobs that do not have star in their name tag",
+    "Hides name tag of mobs that do not have star in their name tag.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Hiders",

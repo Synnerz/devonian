@@ -8,7 +8,13 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.contents.PlainTextContents
 
-object BossBarHealth : Feature("bossBarShowHealth", subcategory = "Tweaks") {
+object BossBarHealth : Feature(
+    "bossBarShowHealth",
+    "Shows the hp as a percentage in the boss bar, e.g. 'Maxor - 25.0%'. " +
+    "There is not an option for showing health as a number.",
+    subcategory = "Tweaks",
+    searchTags = setOf("hp"),
+) {
     private val STYLE1 = Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)
     private val STYLE2 = Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)
 

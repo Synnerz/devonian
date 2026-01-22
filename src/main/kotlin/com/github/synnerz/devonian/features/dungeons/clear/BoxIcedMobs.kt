@@ -23,10 +23,11 @@ import kotlin.math.PI
 
 object BoxIcedMobs : Feature(
     "boxIcedMobs",
-    "Box mobs that are ice sprayed",
+    "Box mobs that are ice sprayed. Detection is calculated client side so it is affected by lag/ping.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",
+    searchTags = setOf("spray"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Root.isActiveState)

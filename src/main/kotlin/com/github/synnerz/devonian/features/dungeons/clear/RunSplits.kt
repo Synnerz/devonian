@@ -13,10 +13,11 @@ import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 
 object RunSplits : TextHudFeature(
     "runSplits",
-    "Displays how long your party has take to complete Blood Rush, Blood Open & Boss Enter",
+    "Displays how long your party has take to complete Blood Rush, Blood Open & Boss Enter.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "HUD",
+    searchTags = setOf("dungeons", "timer"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
@@ -25,7 +26,7 @@ object RunSplits : TextHudFeature(
     private val SETTING_SEND_ALL_END = addSwitch(
         "sendAllOnRunEnd",
         false,
-        "Sends all of the splits in chat whenever the run ends",
+        "Sends all of the splits in chat whenever the run ends.",
         "Run Splits Send All End",
     )
     private val SETTING_FORMAT = addSelection(

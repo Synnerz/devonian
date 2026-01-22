@@ -12,10 +12,11 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object DragonSpawnAlert : Feature(
     "dragonSpawnAlert",
-    "tags: priority",
+    "alerts with dragon spawning",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "M7",
+    searchTags = setOf("priority", "dragprio"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
@@ -24,7 +25,7 @@ object DragonSpawnAlert : Feature(
     private val SETTING_ONLY_SPLIT = addSwitch(
         "onlySplit",
         false,
-        "",
+        "Only sends an alert for the first dragon.",
         "Only Alert Split",
     )
     private val SETTING_ALERT_TIME = addSlider(

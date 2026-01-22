@@ -17,6 +17,7 @@ object BossSplits : TextHudFeature(
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "HUD",
+    searchTags = setOf("timer"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Boss.hasStartedState)
@@ -25,7 +26,7 @@ object BossSplits : TextHudFeature(
     private val SETTING_SEND_ALL_END = addSwitch(
         "sendAllOnRunEnd",
         false,
-        "Sends all of the splits in chat whenever the run ends",
+        "Sends all of the splits in chat whenever the run ends.",
         "Boss Splits Send All End",
     )
     private val SETTING_FORMAT = addSelection(

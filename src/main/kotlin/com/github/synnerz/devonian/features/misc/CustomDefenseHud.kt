@@ -10,14 +10,14 @@ import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 
 object CustomDefenseHud : TextHudFeature(
     "customDefenseHud",
-    "Allows you to move the defense that appears in action bar (above your hotbar)",
-    subcategory = "General"
+    "Allows you to move the defense that appears in action bar (above your hotbar).",
+    subcategory = "General",
 ) {
     private val SETTING_ONLY_HIDE = addSwitch(
         "onlyHide",
         false,
-        "Hides the action bar defense as well as the custom hud",
-        "Only Hide Defense"
+        "Hides the action bar defense as well as the custom hud.",
+        "Only Hide Defense",
     )
     private val defenseRegex = ".* ([\\d,]+)❈ Defense .*".toRegex()
     private val formattedDefenseRegex = " *§a[\\d,]+§a❈ Defense *".toRegex()

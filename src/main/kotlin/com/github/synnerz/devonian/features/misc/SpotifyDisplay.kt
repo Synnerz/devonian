@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 object SpotifyDisplay : TextHudFeature(
     "spotifyDisplay",
-    "shows current song playing, only Windows with Spotify app"
+    "shows current song playing, only Windows with Spotify app",
 ) {
     private val SETTING_HIDE_NOT_OPEN = addSwitch(
         "hideClosed",

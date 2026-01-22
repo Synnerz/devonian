@@ -17,20 +17,20 @@ import org.lwjgl.glfw.GLFW
 
 object SpiritLeapKeys : Feature(
     "spiritLeapKeys",
-    "Adds keys from 1-4 to leap to the respective player class",
+    "Adds keys from 1-4 to leap to the respective player class.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL"
+    subcategory = "QOL",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Root.isActiveState)
     }
 
     private val keybinds = listOf(
-        GLFW.GLFW_KEY_1, // archer
-        GLFW.GLFW_KEY_2, // mage
-        GLFW.GLFW_KEY_3, // bers
-        GLFW.GLFW_KEY_4, // healer/tank
+        GLFW.GLFW_KEY_1,
+        GLFW.GLFW_KEY_2,
+        GLFW.GLFW_KEY_3,
+        GLFW.GLFW_KEY_4,
     )
     private val playersData = mutableListOf<LeapPlayer>()
     val leapComparator = Comparator.comparing<LeapPlayer, Char> { it.role.singleLetter }.thenBy { it.name.lowercase() }

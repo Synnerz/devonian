@@ -17,10 +17,11 @@ import kotlin.math.*
 
 object TeleportMazeSolver : Feature(
     "teleportMazeSolver",
-    "Highlights the correct teleport pad to use inside the teleport maze puzzle",
+    "Highlights the correct teleport pad to use inside the teleport maze puzzle.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("tp", "puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

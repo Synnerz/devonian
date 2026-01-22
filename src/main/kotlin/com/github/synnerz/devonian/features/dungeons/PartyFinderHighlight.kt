@@ -10,27 +10,28 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 object PartyFinderHighlight : Feature(
     "partyFinderHighlight",
-    "Highlights a party finder party if you meet the requirements to join it",
+    "Highlights a party finder party if you meet the requirements to join it.",
     Categories.DUNGEONS,
-    subcategory = "QOL"
+    subcategory = "QOL",
+    searchTags = setOf("pf"),
 ) {
+    private val SETTING_IGNORE_CATA_REQUIREMENT = addSwitch(
+        "ignoreCataRequirement",
+        false,
+        "Ignores the cata level requirement.",
+        "Party Finder Highlight Cata Level",
+    )
     private val SETTING_IGNORE_ROLE_LEVEL = addSwitch(
         "ignoreRoleLevel",
         false,
-        "Ignores the class level requirement",
-        "Party Finder Highlight Role Level"
+        "Ignores the class level requirement.",
+        "Party Finder Highlight Role Level",
     )
     private val SETTING_IGNORE_OWN_ROLE = addSwitch(
         "ignoreOwnRole",
         false,
-        "Ignores your own class (if dupe class it wont be red highlight)",
-        "Party Finder Highlight Role"
-    )
-    private val SETTING_IGNORE_CATA_REQUIREMENT = addSwitch(
-        "ignoreCataRequirement",
-        false,
-        "Ignores the cata level requirement",
-        "Party Finder Highlight Cata Level"
+        "Ignores your own class (if dupe class it wont be red highlight).",
+        "Party Finder Highlight Role",
     )
     private val whitelist = CopyOnWriteArrayList<Int>()
     private val blacklist = CopyOnWriteArrayList<Int>()

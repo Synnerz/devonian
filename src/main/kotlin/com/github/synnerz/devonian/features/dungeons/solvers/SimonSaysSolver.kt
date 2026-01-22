@@ -19,10 +19,11 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 object SimonSaysSolver : Feature(
     "simonSaysSolver",
-    "Highlights the correct buttons to press",
+    "Highlights the correct buttons to press.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Solvers",
+    subcategory = "F7",
+    searchTags = setOf("device"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.S1.isActiveState)
@@ -39,13 +40,13 @@ object SimonSaysSolver : Feature(
         "blockLag",
         0.0,
         0.0, 10.0,
-        "blocks clicks if the previous click was within this number of server ticks",
+        "Blocks clicks if the previous click was within this number of server ticks.",
         "Block Clicks if Lagging",
     )
     private val SETTING_CHIME_ON_CLICK = addSwitch(
         "chime",
         false,
-        "plays sound if correct button was clicked",
+        "Plays sound if correct button was clicked.",
         "Chime on Correct Button",
     )
     private val SETTING_LINE_WIDTH = addSlider(
@@ -58,15 +59,15 @@ object SimonSaysSolver : Feature(
     private val SETTING_BLOCK_START_CLICK = addSwitch(
         "blockStartClick",
         false,
-        "Blocks the starting clicks that are above the threshold",
-        "Simon Says Block Start"
+        "Blocks the starting clicks that are above the threshold.",
+        "Simon Says Block Start",
     )
     private val SETTING_MAX_START_CLICKS = addSlider(
         "maxStartClicks",
         3.0,
         1.0, 10.0,
-        "Sets a limit for how many times you can click the start button",
-        "Simon Says Start Clicks"
+        "Sets a limit for how many times you can click the start button.",
+        "Simon Says Start Clicks",
     )
     private val SETTING_COLOR_WIRE_1 = addColorPicker(
         "colorWire1",

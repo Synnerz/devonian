@@ -11,14 +11,15 @@ import kotlin.math.abs
 
 object InventoryHistoryLog : TextHudFeature(
     "inventoryHistoryLog",
-    "Displays the items changed, removed or added to your inventory",
+    "Displays the items changed, removed, or added to your inventory.",
     subcategory = "Inventory",
+    searchTags = setOf("pickup"),
 ) {
     private val SETTING_ITEM_DISPLAY_TIME = addSlider(
         "itemDisplayTime",
         4.0,
         0.0, 30.0,
-        "Duration (in seconds) for entries to stay",
+        "Duration (in seconds) for entries to stay.",
         "Item Display Time",
     )
 

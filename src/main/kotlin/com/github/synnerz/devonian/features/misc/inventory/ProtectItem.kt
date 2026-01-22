@@ -23,6 +23,7 @@ object ProtectItem : Feature(
     "protectItem",
     "Protects an item, so you can no longer accidentally throw it away or sell it.",
     subcategory = "Inventory",
+    searchTags = setOf("prevent"),
 ) {
     private const val KEY_NAME = "protectedItems"
     private var lockedList = mutableSetOf<String>()

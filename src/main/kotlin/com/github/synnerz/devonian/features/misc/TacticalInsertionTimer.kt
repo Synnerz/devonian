@@ -7,8 +7,8 @@ import net.minecraft.world.InteractionHand
 
 object TacticalInsertionTimer : TextHudFeature(
     "tacticalInsertionTimer",
-    "Displays a 3 second timer whenever you right click Tactical Insertion",
-    subcategory = "General"
+    "Displays a 3 second timer whenever you right click Tactical Insertion.",
+    subcategory = "General",
 ) {
     private var timer = 0
 

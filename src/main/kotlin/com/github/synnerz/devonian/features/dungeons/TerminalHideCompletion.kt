@@ -11,10 +11,11 @@ import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket
 
 object TerminalHideCompletion : Feature(
     "terminalHideCompletion",
-    "Hides the completed title during terminals",
+    "Hides the completed title during terminals.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "F7"
+    subcategory = "F7",
+    searchTags = setOf("title"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
@@ -23,8 +24,8 @@ object TerminalHideCompletion : Feature(
     private val SETTING_ONLY_SHOW_OWN = addSwitch(
         "onlyShowOwn",
         true,
-        "Only shows the completed title by you",
-        "Terminal Title Only Own"
+        "Only shows the completed title by you.",
+        "Terminal Title Only Own",
     )
     private val terminalTitleRegex = "^(\\w{1,16}) (?:activated a (?:terminal|lever)|completed a device)! \\(\\d+/\\d+\\)$".toRegex()
 

@@ -20,8 +20,9 @@ import java.awt.Color
 
 object SlotLocking : Feature(
     "slotLocking",
-    "Lock a slot in your inventory to not be able to throw or move the item in that specific slot",
+    "Lock a slot in your inventory to not be able to throw or move the item in that specific slot.",
     subcategory = "Inventory",
+    searchTags = setOf("protect", "prevent", "item"),
 ) {
     private val SETTING_LOCKED_SLOT_COLOR = addColorPicker(
         "slotColor",

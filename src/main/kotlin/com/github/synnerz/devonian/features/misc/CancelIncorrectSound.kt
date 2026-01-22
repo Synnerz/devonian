@@ -5,8 +5,9 @@ import com.github.synnerz.devonian.features.Feature
 
 object CancelIncorrectSound : Feature(
     "cancelIncorrectSound",
-    "Cancels the enderman teleport sound you get whenever you click on a wrong button or out of mana",
-    subcategory = "General"
+    "Cancels the enderman teleport sound you get whenever you click on a wrong button or out of mana.",
+    subcategory = "General",
+    searchTags = setOf("mute"),
 ) {
     override fun initialize() {
         on<SoundPlayEvent> { event ->

@@ -23,7 +23,11 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
 import kotlin.math.*
 
-object Deployables : TextHudFeature("deployables") {
+object Deployables : TextHudFeature(
+    "deployables",
+    "Show the current deployable you are being buffed by.",
+    subcategory = "General",
+) {
     private val SETTING_HUD = addSwitch(
         "hud",
         true,

@@ -16,7 +16,7 @@ import org.lwjgl.glfw.GLFW
 
 object PreventPlacingPlayerHeads : Feature(
     "preventPlacingPlayerHeads",
-    "Prevents head-like items which have a right click ability from being placeable. you can setup a blacklist keybind in controls to disable a certain item in case its preventing you from using it",
+    "Prevents head-like items which have a right click ability from being placeable. You can setup a blacklist keybind in controls to disable a certain item in case its preventing you from using it.",
     subcategory = "Tweaks",
 ) {
     private const val KEY_NAME = "pphBlacklist"

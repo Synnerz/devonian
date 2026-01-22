@@ -16,39 +16,39 @@ import kotlin.math.sign
 
 object ScrollableTooltip : Feature(
     "scrollableTooltip",
-    "Allows you to use CTRL + Scroll to zoom in/out on a tooltip",
-    subcategory = "Inventory"
+    "Allows you to use CTRL + Scroll to zoom in/out on a tooltip.",
+    subcategory = "Inventory",
 ) {
     private const val KEY_NAME = "scrollableTooltip"
     private val SETTING_ALLOW_HORIZONTAL = addSwitch(
         "allowHorizontal",
         true,
-        "Allows you to use Shift + Scroll to move the tooltip sideways (left/right)",
-        "Allow Horizontal"
+        "Allows you to use Shift + Scroll to move the tooltip sideways (left/right).",
+        "Allow Horizontal",
     )
     private val SETTING_ALLOW_VERTICAL = addSwitch(
         "allowVertical",
         true,
-        "Allows you to use Scroll to move the tooltip up/down",
-        "Allow Vertical"
+        "Allows you to use Scroll to move the tooltip up/down.",
+        "Allow Vertical",
     )
     val SETTING_LOCK_IN_PLACE = addSwitch(
         "lockInPlace",
         false,
-        "Allows you to lock in place the tooltip to always be at the customized position regardless of the underlying tooltip shift",
-        "Tooltip Lock In Place"
+        "Allows you to lock in place the tooltip to always be at the customized position regardless of the underlying tooltip shift.",
+        "Tooltip Lock In Place",
     )
     val SETTING_DONT_DIVIDE_BY_SCALE = addSwitch(
         "dontDivideByScale",
         false,
-        "Ignores the scaling factor whenever Lock In Place is enabled",
-        "Tooltip Ignore Scale"
+        "Ignores the scaling factor whenever Lock In Place is enabled.",
+        "Tooltip Ignore Scale",
     )
     private val SETTING_RESET_TOOLTIP = addSwitch(
         "resetTooltip",
-        false,
-        "Resets the x, y offset every time your cursor position changes",
-        "Tooltip Reset"
+        true,
+        "Resets the x, y offset every time you hover over a new item.",
+        "Tooltip Reset",
     )
     private val SETTING_RESET_ALL = addButton(::reset, displayName = "Reset")
     private var scaleScroll = 1.0

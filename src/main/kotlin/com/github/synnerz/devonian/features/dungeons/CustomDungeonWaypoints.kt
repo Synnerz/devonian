@@ -33,7 +33,7 @@ import kotlin.math.abs
 
 object CustomDungeonWaypoints : Feature(
     "customDungeonWaypoints",
-    "Enables custom dungeon waypoints do /dv cdw help or /dv dwc help",
+    "Enables custom dungeon waypoints do /dv cdw help or /dv dwc help.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",
@@ -41,39 +41,39 @@ object CustomDungeonWaypoints : Feature(
     private val SETTING_REMOVE_ON_COLLECT = addSwitch(
         "removeOnCollect",
         true,
-        "Removes the secret waypoints that you've already collected/clicked/killed/etherwarped onto",
-        "CDW Remove Collected"
+        "Removes the secret waypoints that you've already collected/clicked/killed/etherwarped onto.",
+        "CDW Remove Collected",
     )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
         3.0,
         1.0, 10.0,
-        "Line width for each outline",
-        "CDW Line Width"
+        "Line width for each outline.",
+        "CDW Line Width",
     )
     private val SETTING_PHASE_MODE = addSwitch(
         "phaseMode",
         false,
-        "Whether or not to see through walls the waypoints",
-        "CDW Phase Mode"
+        "Whether or not to see through walls the waypoints.",
+        "CDW Phase Mode",
     )
     private val SETTING_TEXT_PHASE_MODE = addSwitch(
         "textPhaseMode",
         true,
-        "Whether or not to see through walls the waypoints' text",
-        "CDW Text Phase Mode"
+        "Whether or not to see through walls the waypoints' text.",
+        "CDW Text Phase Mode",
     )
     private val SETTING_ORDERED_ETHERS = addSwitch(
         "orederedEthers",
         true,
-        "Displays numbers above each etherwarp type waypoint depending on when they were added to the list (first ether waypoint will display 1 etc)",
-        "CDW Ordered Ethers"
+        "Displays numbers above each etherwarp type waypoint depending on when they were added to the list (first ether waypoint will display 1 etc).",
+        "CDW Ordered Ethers",
     )
     private val SETTING_RENDER_TEXT = addSwitch(
         "renderText",
         true,
-        "Whether waypoints should render their text (not: if ordered ethers is enabled it will override this)",
-        "CDW Render Text"
+        "Whether waypoints should render their text (not: if ordered ethers is enabled it will override this).",
+        "CDW Render Text",
     )
     private const val KEY = "currentDungeonProfile"
     private const val BOSS_ID = 1000 // 1000 + floor number for each roomId that is boss

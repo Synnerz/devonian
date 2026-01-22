@@ -28,10 +28,10 @@ import kotlin.math.abs
 // this fk noob
 object TerminalSolvers : Feature(
     "terminalSolvers",
-    "Shows the correct slots to click to solve the current terminal",
+    "Shows the correct slots to click to solve the current terminal.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "F7"
+    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
@@ -40,67 +40,67 @@ object TerminalSolvers : Feature(
     private val SETTING_MIDDLE_CLICK = addSwitch(
         "middleClick",
         true,
-        "",
+        "change left clicks into middle clicks",
         "Terminal Middle Click",
     )
     private val SETTING_DISABLE_TOOLTIP = addSwitch(
         "disableTooltip",
         true,
-        "Disables the tooltip whenever inside a terminal",
+        "Disables the tooltip whenever inside a terminal.",
         "Disable Terminal Tooltip",
     )
     private val SETTING_CORRECT_COLOR = addColorPicker(
         "correctColor",
         0xFF4F8F2F.toInt(),
-        "The correct color for terminal solver",
+        "The correct color for terminal solver.",
         "Terminal Solver Correct Color",
     )
     private val SETTING_SECOND_CORRECT_COLOR = addColorPicker(
         "secondCorrectColor",
         0xFFB5A12E.toInt(),
-        "The second correct color for terminal solver",
+        "The second correct color for terminal solver.",
         "Terminal Solver Second Correct Color",
     )
     private val SETTING_THIRD_CORRECT_COLOR = addColorPicker(
         "thirdCorrectColor",
         0xFFB86A2E.toInt(),
-        "The third correct color for terminal solver",
+        "The third correct color for terminal solver.",
         "Terminal Solver Third Correct Color",
     )
     private val SETTING_OTHER_CORRECT_COLOR = addColorPicker(
         "otherColor",
         0xFF8F2E2E.toInt(),
-        "The other color for terminal solver",
+        "The other color for terminal solver.",
         "Terminal Solver Other Color",
     )
     private val SETTING_CANCEL_WRONG_CLICKS = addSwitch(
         "cancelWrongClicks",
         true,
-        "Cancels the wrong clicks inside of terminals",
+        "Cancels the wrong clicks inside of terminals.",
         "Terminal Solver Cancel Clicks",
     )
     private val SETTING_CANCEL_NONCLICKS = addSwitch(
         "cancelNonClicks",
         false,
-        "Cancels hotkey swapping and pickup all behavior",
+        "Cancels hotkey swapping and pickup all behavior.",
         "Terminal Solver Cancel Non-Click Actions",
     )
     val SETTING_HIDE_DONE = addSwitch(
         "hideDone",
         true,
-        "Hides the already clicked slot items or the ones that are not a solution",
+        "Hides the already clicked slot items or the ones that are not a solution.",
         "Terminal Solver Hide Complete",
     )
     val SETTING_HIDE_ITEMS = addSwitch(
         "hideItems",
         true,
-        "Hides all items in the 'Starts With'/'Select All' terminals",
+        "Hides all items in the 'Starts With'/'Select All' terminals.",
         "Terminal Solver Hide Items",
     )
     val SETTING_RED_GREEN_DISABLE_RENDER = addSwitch(
         "redGreen",
         false,
-        "toggle to specifically disable custom renderer for red/green solver",
+        "Toggle to specifically disable custom renderer for red/green solver.",
         "Correct All Terminal Vanilla Renderer",
     )
 
@@ -108,13 +108,13 @@ object TerminalSolvers : Feature(
     val SETTING_RENDER_NUMBERS = addSwitch(
         "renderNumbers",
         true,
-        "Whether to render the numbers from Numbers terminal in the slots or not",
+        "Whether to render the numbers from Numbers terminal in the slots or not.",
         "Terminal Solver Render Numbers",
     )
     val SETTING_RUBIX_FORCE_POSITIVE = addSwitch(
         "rubixPositive",
         false,
-        "effectively always shows the clicks required as positive, doesn't affect selecting fastest solution",
+        "Effectively always shows the clicks required as positive, doesn't affect selecting fastest solution.",
         "Rubix Show Left Click Count",
     )
 

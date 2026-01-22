@@ -12,7 +12,7 @@ import java.util.*
 
 object HideFairy : Feature(
     "hideFairy",
-    "",
+    "Hides healer's fairy.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Hiders",

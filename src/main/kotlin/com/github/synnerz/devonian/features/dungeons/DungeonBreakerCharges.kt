@@ -13,7 +13,7 @@ import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 
 object DungeonBreakerCharges : TextHudFeature(
     "dungeonBreakerDisplay",
-    "Displays the amount of charges left",
+    "Displays the amount of charges left.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "HUD",

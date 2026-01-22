@@ -11,7 +11,7 @@ import kotlin.jvm.optionals.getOrNull
 
 object DungeonItemStats : Feature(
     "dungeonItemStats",
-    "show item quality/floor obtained in tooltips",
+    "show item quality/floor obtained in tooltips.",
     subcategory = "Tooltip",
 ) {
     private val SETTING_STYLE = addSelection(

@@ -9,7 +9,7 @@ object PreventPlacingWeapons : Feature(
     "Prevents placing weapons that are placeable.",
     subcategory = "Tweaks",
 ) {
-    val weaponIds = mutableListOf(
+    val weaponIds = setOf(
         "FLOWER_OF_TRUTH",
         "BOUQUET_OF_LIES",
         "MOODY_GRAPPLESHOT",
@@ -18,14 +18,14 @@ object PreventPlacingWeapons : Feature(
         "WEIRD_TUBA",
         "WEIRDER_TUBA",
         "PUMPKIN_LAUNCHER",
-        "FIRE_FREEZE_STAFF"
+        "FIRE_FREEZE_STAFF",
     )
 
     override fun initialize() {
         on<BlockInteractEvent> { event ->
             if (minecraft.level?.getBlockState(event.pos) == null) return@on
             val itemId = ItemUtils.skyblockId(event.itemStack) ?: return@on
-            if (!weaponIds.any { it == itemId }) return@on
+            if (!weaponIds.contains(itemId)) return@on
 
             event.cancel()
         }

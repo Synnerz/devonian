@@ -16,6 +16,7 @@ object HideSoulweaverSkulls : Feature(
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Hiders",
+    searchTags = setOf("gloves"),
 ) {
     private val skullUUID = UUID.fromString("2134ab1c-7c78-30e1-8513-a6346c2344fd")
 

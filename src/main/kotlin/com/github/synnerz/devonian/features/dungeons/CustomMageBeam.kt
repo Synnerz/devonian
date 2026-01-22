@@ -28,13 +28,13 @@ object CustomMageBeam : Feature(
     "(has the unfortunate side effect of delaying all non-mage beam firework particles by 1 tick)",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL"
+    subcategory = "QOL",
 ) {
     private val SETTING_ONLY_CANCEL_PARTICLES = addSwitch(
         "onlyCancelParticles",
         false,
-        "Whether to just cancel the particles and not render a custom line for the beam",
-        "Only Cancel Particles"
+        "Whether to just cancel the particles and not render a custom line for the beam.",
+        "Only Cancel Particles",
     )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
@@ -46,21 +46,21 @@ object CustomMageBeam : Feature(
     private val SETTING_START_COLOR = addColorPicker(
         "startColor",
         Color.CYAN.rgb,
-        "The starting color for the line",
-        "Beam Start Color"
+        "The starting color for the line.",
+        "Beam Start Color",
     )
     private val SETTING_END_COLOR = addColorPicker(
         "endColor",
         Color.CYAN.rgb,
-        "The ending color for the line",
-        "Beam End Color"
+        "The ending color for the line.",
+        "Beam End Color",
     )
     private val SETTING_TIME_TO_FADE = addSlider(
         "timeToFade",
         3.0,
         0.0, 5.0,
-        "The time until the rendering line will disappear",
-        "Beam Time To Fade"
+        "The time until the rendering line will disappear.",
+        "Beam Time To Fade",
     )
 
     private val beamParticles = ConcurrentHashMap<Int, ArrayDeque<ClientboundLevelParticlesPacket>>()

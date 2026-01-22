@@ -8,10 +8,11 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object FireFreezeTimer : TextHudFeature(
     "fireFreezeTimer",
-    "",
+    "Shows timer until fire freeze should be used in F3 (??) or M3.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD"
+    subcategory = "HUD",
+    searchTags = setOf("professor", "f3", "m3"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F3.isActiveState)

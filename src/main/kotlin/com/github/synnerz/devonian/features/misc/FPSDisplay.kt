@@ -6,8 +6,8 @@ import com.github.synnerz.devonian.utils.StringUtils
 
 object FPSDisplay : TextHudFeature(
     "fpsDisplay",
-    "Displays your frames per seconds in a hud",
-    subcategory = "General"
+    "Displays your frames per seconds in a hud.",
+    subcategory = "General",
 ) {
     private val fpsLimit get() = minecraft.options.framerateLimit()
 

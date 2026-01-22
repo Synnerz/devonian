@@ -17,10 +17,11 @@ import kotlin.math.abs
 
 object SharpShooterSolver : Feature(
     "sharpShooterSolver",
-    "Highlights the block you've already hit in section 4 goldor phase f7 (i4 helper)",
+    "Highlights the block you've already hit for 4th device.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Solvers"
+    subcategory = "F7",
+    searchTags = setOf("i4", "device"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

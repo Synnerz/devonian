@@ -17,7 +17,8 @@ import org.lwjgl.glfw.GLFW
 
 object MiddleClickGui : Feature(
     "middleClickGui",
-    "Cancels your left clicks and turns it into a middle clicks on certain guis",
+    "Cancels your left clicks and turns it into a middle clicks on certain guis. " +
+    "Keybind in controls to blacklist a gui.",
     subcategory = "Inventory",
 ) {
     private const val KEY_NAME = "mcgBlacklist"

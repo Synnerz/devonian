@@ -29,7 +29,7 @@ object WatcherBossBar : Feature(
     private val SETTING_HIDE_NOT_BLOOD = addSwitch(
         "hideNotBlood",
         true,
-        "hides if not in blood",
+        "",
         "Hide When Not In Blood",
     )
 

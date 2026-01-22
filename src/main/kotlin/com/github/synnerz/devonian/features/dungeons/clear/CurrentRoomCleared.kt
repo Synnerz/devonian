@@ -15,7 +15,7 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object CurrentRoomCleared : Feature(
     "currentRoomClearedAlert",
-    "",
+    "Sends an alert whenever the current room is cleared (gains a checkmark).",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Alerts",
@@ -41,7 +41,7 @@ object CurrentRoomCleared : Feature(
         "noBloodAlert",
         false,
         "",
-        "No Blood Room Alert"
+        "No Blood Room Alert",
     )
 
     private var lastRoom: DungeonRoom? = null

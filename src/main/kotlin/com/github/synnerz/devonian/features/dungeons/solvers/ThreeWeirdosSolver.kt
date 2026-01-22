@@ -18,10 +18,11 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 object ThreeWeirdosSolver : Feature(
     "threeWeirdosSolver",
-    "Highlights the correct chest in the three weirdos puzzle room as well as changing the color of the text in chat",
+    "Highlights the correct chest in the three weirdos puzzle room as well as changing the color of the text in chat.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("3w", "puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

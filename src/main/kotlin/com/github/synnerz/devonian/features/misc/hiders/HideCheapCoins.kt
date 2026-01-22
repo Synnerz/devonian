@@ -12,6 +12,7 @@ import java.util.*
 
 object HideCheapCoins : Feature(
     "hideCheapCoins",
+    "Prevents coins from coin talismans from rendering.",
     subcategory = "Hiders",
 ) {
     private val coinUUID = UUID.fromString("b330b74f-2e3b-3fb6-9143-a1f0e63fad59")

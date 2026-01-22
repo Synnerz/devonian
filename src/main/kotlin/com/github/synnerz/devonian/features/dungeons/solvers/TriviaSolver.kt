@@ -17,10 +17,11 @@ import java.awt.Color
 
 object TriviaSolver : Feature(
     "triviaSolver",
-    "Highlights the correct answer block and chat message for quiz puzzle",
+    "Highlights the correct answer block and chat message for quiz puzzle.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("quiz", "puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

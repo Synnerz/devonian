@@ -5,8 +5,9 @@ import com.github.synnerz.devonian.features.Feature
 
 object NoCursorReset : Feature(
     "noCursorReset",
-    "Avoids resetting your cursor whenever navigating guis",
+    "Avoids resetting your cursor whenever navigating guis.",
     subcategory = "Inventory",
+    searchTags = setOf("keep"),
 ) {
     private var lastOpen = -1
     private var lastClose = -1

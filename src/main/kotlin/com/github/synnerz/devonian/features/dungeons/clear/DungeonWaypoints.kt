@@ -18,10 +18,11 @@ import kotlin.math.abs
 
 object DungeonWaypoints : Feature(
     "dungeonWaypoints",
-    "Highlights chest/items/bat spots where they would spawn at",
+    "Highlights chest/items/bat spots where they would spawn at.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",
+    searchTags = setOf("secrets"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.hasFinishedState.map(Boolean::not))
@@ -30,67 +31,67 @@ object DungeonWaypoints : Feature(
     private val SETTING_DISPLAY_TEXT = addSwitch(
         "displayText",
         false,
-        "Whether to display a text at the location of the waypoint",
+        "Whether to display a text at the location of the waypoint.",
         "Dungeon Waypoints Text",
     )
     private val SETTING_CHEST_OUTLINE = addColorPicker(
         "chestOutline",
         Color(0, 255, 0, 255).rgb,
-        "The color of the highlight outline for chest waypoints",
+        "The color of the highlight outline for chest waypoints.",
         "Dungeon Waypoints Chest Outline",
     )
     private val SETTING_CHEST_FILLED = addColorPicker(
         "chestFilled",
         Color(0, 255, 0, 80).rgb,
-        "The color of the highlight filled for chest waypoints",
+        "The color of the highlight filled for chest waypoints.",
         "Dungeon Waypoints Chest Filled",
     )
     private val SETTING_ITEM_OUTLINE = addColorPicker(
         "itemOutline",
         Color(0, 0, 255, 255).rgb,
-        "The color of the highlight outline for item waypoints",
+        "The color of the highlight outline for item waypoints.",
         "Dungeon Waypoints Item Outline",
     )
     private val SETTING_ITEM_FILLED = addColorPicker(
         "itemFilled",
         Color(0, 0, 255, 80).rgb,
-        "The color of the highlight filled for item waypoints",
+        "The color of the highlight filled for item waypoints.",
         "Dungeon Waypoints Item Filled",
     )
     private val SETTING_ESSENCE_OUTLINE = addColorPicker(
         "essenceOutline",
         Color(255, 0, 255, 255).rgb,
-        "The color of the highlight outline for essence waypoints",
+        "The color of the highlight outline for essence waypoints.",
         "Dungeon Waypoints Essence Outline",
     )
     private val SETTING_ESSENCE_FILLED = addColorPicker(
         "essenceFilled",
         Color(255, 0, 255, 80).rgb,
-        "The color of the highlight filled for essence waypoints",
+        "The color of the highlight filled for essence waypoints.",
         "Dungeon Waypoints Essence Filled",
     )
     private val SETTING_BAT_OUTLINE = addColorPicker(
         "batOutline",
         Color(0, 255, 150, 255).rgb,
-        "The color of the highlight outline for bat waypoints",
+        "The color of the highlight outline for bat waypoints.",
         "Dungeon Waypoints Bat Outline",
     )
     private val SETTING_BAT_FILLED = addColorPicker(
         "batFilled",
         Color(0, 255, 150, 80).rgb,
-        "The color of the highlight filled for bat waypoints",
+        "The color of the highlight filled for bat waypoints.",
         "Dungeon Waypoints Bat Filled",
     )
     private val SETTING_REDSTONE_OUTLINE = addColorPicker(
         "redstoneOutline",
         Color(255, 0, 0, 255).rgb,
-        "The color of the highlight outline for redstone key waypoints",
+        "The color of the highlight outline for redstone key waypoints.",
         "Dungeon Waypoints Redstone Outline",
     )
     private val SETTING_REDSTONE_FILLED = addColorPicker(
         "redstoneFilled",
         Color(255, 0, 0, 80).rgb,
-        "The color of the highlight filled for redstone key waypoints",
+        "The color of the highlight filled for redstone key waypoints.",
         "Dungeon Waypoints Redstone Filled",
     )
     private val waypointsData = Gson().fromJson(

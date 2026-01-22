@@ -12,7 +12,7 @@ import net.minecraft.util.FormattedCharSequence
 
 object ItemValue : Feature(
     "itemValue",
-    "Shows the value of the currently hovered item in lore",
+    "Shows the value of the currently hovered item in lore.",
     subcategory = "Tooltip",
 ) {
     override fun initialize() {

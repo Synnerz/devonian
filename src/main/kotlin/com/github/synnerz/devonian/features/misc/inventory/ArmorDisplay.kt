@@ -13,26 +13,26 @@ import java.awt.Color
 
 object ArmorDisplay : HudFeature(
     "armorDisplay",
-    "Displays the current armor you are wearing in a hud",
-    subcategory = "Inventory"
+    "Displays the current armor you are wearing in a hud.",
+    subcategory = "Inventory",
 ) {
     private val SETTING_DRAW_BORDER = addSwitch(
         "drawBorder",
         true,
-        "Whether to draw border around the armor display slots",
-        "Armor Display Border"
+        "Whether to draw border around the armor display slots.",
+        "Armor Display Border",
     )
     private val SETTING_DRAW_BACKGROUND = addSwitch(
         "drawBackground",
         true,
-        "Whether to draw background around the armor display slots",
-        "Armor Display Background"
+        "Whether to draw background around the armor display slots.",
+        "Armor Display Background",
     )
     private val SETTING_DRAW_BARRIER = addSwitch(
         "drawBarrier",
         false,
-        "Whether to draw a barrier whenever the armor display slot is empty",
-        "Armor Display Barrier"
+        "Whether to draw a barrier whenever the armor display slot is empty.",
+        "Armor Display Barrier",
     )
     private val backgroundSlotColor = Color(100, 100, 100, 150)
     private val borderSlotColor = Color(50, 50, 50, 150)

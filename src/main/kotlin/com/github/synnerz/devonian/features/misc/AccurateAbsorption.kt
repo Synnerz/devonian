@@ -12,12 +12,16 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-object AccurateAbsorption : Feature("accurateAbsorption", subcategory = "Tweaks") {
+object AccurateAbsorption : Feature(
+    "accurateAbsorption",
+    "Changes absorption hearts to accurately reflect the amount of absorption you have.",
+    subcategory = "Tweaks",
+) {
     private val SETTING_MAX_ABSORPTION_HEARTS = addSlider(
         "maxAbsorptionHearts",
         40.0,
         0.0, 100.0,
-        "1 = half a heart, for things like mastiff wish",
+        "1 = half a heart, caps maximum # of hearts for things like mastiff wish",
         "Max Absorption Hearts",
     )
 

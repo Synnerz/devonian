@@ -9,10 +9,11 @@ import net.minecraft.world.level.block.Blocks
 
 object SpiritBearTimer : TextHudFeature(
     "spiritBearTimer",
-    "Displays a timer for whenever the Spirit Bear will spawn in floor 4",
+    "Displays a timer for whenever the Spirit Bear will spawn.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD"
+    subcategory = "HUD",
+    searchTags = setOf("f4", "m4"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F4.isActiveState)

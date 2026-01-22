@@ -10,10 +10,10 @@ import net.minecraft.sounds.SoundSource
 
 object TerminalProtection : Feature(
     "terminalProtection",
-    "Allows you to set a threshold for when you should be able to start clicking terminal slots",
+    "Allows you to set a threshold for when you should be able to start clicking terminal slots.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "F7"
+    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
@@ -24,7 +24,7 @@ object TerminalProtection : Feature(
         400.0,
         100.0, 700.0,
         "\"lowest current safe value is 400 - ping\" - LegendaryJG",
-        "Terminal Protection Threshold"
+        "Terminal Protection Threshold",
     )
     private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
     private val terminalGuis = listOf(

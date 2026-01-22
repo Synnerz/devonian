@@ -23,7 +23,8 @@ object ArrowAlignSolver : Feature(
     "s3 dev",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "Solvers",
+    subcategory = "F7",
+    searchTags = setOf("device"),
 ) {
     private val SETTING_BLOCK_INCORRECT = addSelection(
         "blockClicks",

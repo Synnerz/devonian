@@ -10,9 +10,9 @@ import kotlin.math.round
 
 object GolemDPS : Feature(
     "golemDps",
-    "Tells you how much DPS you did during the Golem fight",
+    "Tells you how much DPS you did during the Golem fight.",
     Categories.END,
-    "the end"
+    "the end",
 ) {
     private val golemSpawnRegex = "^BEWARE - An End Stone Protector has risen!$".toRegex()
     private val golemKilledRegex = "^ *END STONE PROTECTOR DOWN!$".toRegex()

@@ -16,8 +16,9 @@ import net.minecraft.sounds.SoundEvents
 
 object CustomHypeSound : Feature(
     "customHypeSound",
-    "Changes the explosion sound made from wither blades to a custom one",
-    subcategory = "General"
+    "Changes the explosion sound made from wither blades to a custom one. " +
+    "`/dv hypesound`",
+    subcategory = "General",
 ) {
     private const val KEY = "witherBladeSound"
     private const val KEY_VOLUME = "$KEY\$Volume"

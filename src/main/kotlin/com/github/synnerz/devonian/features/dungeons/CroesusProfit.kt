@@ -17,21 +17,21 @@ import kotlin.math.roundToInt
 
 object CroesusProfit : TextHudFeature(
     "croesusProfit",
-    "Shows the profit of the current chest(s) opened in croesus",
+    "Shows the profit of the current chest(s) opened in croesus.",
     Categories.DUNGEONS,
     "Dungeon Hub",
-    subcategory = "HUD"
+    subcategory = "HUD",
 ) {
     private val SETTING_USE_ESSENCE_PROFIT = addSwitch(
         "useEssenceProfit",
         true,
-        "Whether to use Wither/Undead essence for profit",
+        "Whether to use Wither/Undead essence for profit.",
         "Croesus Profit Essence",
     )
     private val SETTING_COMPACT_MODE = addSwitch(
         "compactMode",
         false,
-        "Compact mode stops showing the entire item list and only shows the chest name with its profit",
+        "Compact mode stops showing the entire item list and only shows the chest name with its profit.",
         "Croesus Profit Compact Mode",
     )
     private val chestRegex = "^(?:Master )?Catacombs - Floor [IV]+$".toRegex()

@@ -7,10 +7,11 @@ import com.github.synnerz.devonian.features.Feature
 
 object NoAbilityCdSound : Feature(
     "noAbilityCdSound",
-    "Removes the ability cooldown sound in dungeons",
+    "Removes the ability cooldown sound in dungeons.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Hiders",
+    searchTags = setOf("mute"),
 ) {
     val SETTING_NO_MESSAGE = addSwitch(
         "noMessage",

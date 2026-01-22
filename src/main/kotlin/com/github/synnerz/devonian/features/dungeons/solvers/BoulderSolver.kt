@@ -22,10 +22,12 @@ import kotlin.math.abs
 
 object BoulderSolver : Feature(
     "boulderSolver",
-    "Highlights the blocks you should click to successfully solve the Boulder puzzle",
+    "Highlights the blocks you should click to successfully solve the Boulder puzzle. " +
+    "Hint: yes you can click signs.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Solvers",
+    searchTags = setOf("puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

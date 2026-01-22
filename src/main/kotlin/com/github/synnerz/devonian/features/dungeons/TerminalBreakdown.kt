@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object TerminalBreakdown : Feature(
     "terminalBreakdown",
-    "",
+    "Displays breakdown how many terms/devs/levers each person got.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "F7",

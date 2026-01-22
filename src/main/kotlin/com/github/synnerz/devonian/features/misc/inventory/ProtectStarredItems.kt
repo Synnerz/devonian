@@ -4,7 +4,12 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.item.ItemStack
 
-object ProtectStarredItems : Feature("protectStarredItems", subcategory = "Inventory") {
+object ProtectStarredItems : Feature(
+    "protectStarredItems",
+    "Protects dropping/selling or otherwise losing starred items.",
+    subcategory = "Inventory",
+    searchTags = setOf("prevent"),
+) {
     override fun initialize() {
         on<PreventItem.SlotEvent> { event ->
             if (!event.losesItem) return@on

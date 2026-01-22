@@ -36,7 +36,7 @@ import kotlin.math.sin
 
 object DungeonMap : HudFeature(
     "dungeonMap",
-    "Dungeon Map",
+    "",
     Categories.DUNGEON_MAP,
     "catacombs",
     subcategory = "Toggle",
@@ -137,7 +137,7 @@ object DungeonMap : HudFeature(
         "padding",
         0.0,
         0.0, 2.0,
-        "measured in room widths",
+        "empty space around the outside of the map, measured in room widths",
         "Map Padding",
         subcategory = "Style",
     )
@@ -153,7 +153,7 @@ object DungeonMap : HudFeature(
         "borderColor",
         Color(0).rgb,
         "",
-        "Map Border Colo",
+        "Map Border Color",
         subcategory = "Colors",
     )
     private val SETTING_ROOM_ENTRANCE_COLOR = addColorPicker(

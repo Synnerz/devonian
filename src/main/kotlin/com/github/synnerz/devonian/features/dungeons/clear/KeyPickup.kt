@@ -23,10 +23,12 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 object KeyPickup : Feature(
     "keyPickup",
-    "",
+    "Highlights wither/blood keys & alerts when they are picked up.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",
+    searchTags = setOf("highlight", "alert", "dropped", "wither", "blood"),
+    subcategories = listOf("Alerts"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)
@@ -54,21 +56,24 @@ object KeyPickup : Feature(
     private val SETTING_KEY_PICKUP_TITLE = addSwitch(
         "pickupTitle",
         true,
-        "",
+        "Shows an alert whenever a key is picked up.",
         "Key Pickup Title",
+        subcategory = "Alerts",
     )
     private val SETTING_KEY_PICKUP_SOUND = addSwitch(
         "pickupSound",
         true,
-        "",
+        "Plays the vault open sound whenever the key is picked up.",
         "Key Pickup Sound",
+        subcategory = "Alerts",
     )
     private val SETTING_KEY_PICKUP_TIME = addSlider(
         "pickupTime",
         1.0,
         0.0, 10.0,
-        "The amount of time (in seconds) the title will be in screen",
+        "The amount of time (in seconds) the title will be in screen.",
         "Key Pickup Time",
+        subcategory = "Alerts",
     )
 
     private val pickupSound = SoundEvents.VAULT_OPEN_SHUTTER

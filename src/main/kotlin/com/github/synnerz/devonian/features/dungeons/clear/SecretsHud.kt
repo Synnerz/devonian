@@ -13,10 +13,10 @@ import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 
 object SecretsHud : TextHudFeature(
     "secretsHud",
-    "Shows the current room's secrets data",
+    "Shows the current room's secret count.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD"
+    subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)

@@ -16,6 +16,7 @@ object RecolorDragons : Feature(
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "M7",
+    searchTags = setOf("hurt"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)

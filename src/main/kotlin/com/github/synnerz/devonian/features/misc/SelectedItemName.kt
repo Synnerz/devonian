@@ -7,7 +7,8 @@ import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 
 object SelectedItemNameRender : Feature(
     "selectedItemNameRender",
-    "Does not render a custom hud as well as stops the underlying text rendering",
+    "Does not render a custom hud.",
+    displayName = "HideSelectedItemName",
     subcategory = "Tweaks"
 ) {
     override fun initialize() {
@@ -19,7 +20,7 @@ object SelectedItemNameRender : Feature(
 
 object SelectedItemName : TextHudFeature(
     "selectedItemName",
-    "Cancels the selected item name above hotbar and adds a custom one that is movable",
+    "Replaces the selected item name with a custom HUD.",
     subcategory = "Tweaks",
 ) {
     override fun initialize() {

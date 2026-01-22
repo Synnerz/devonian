@@ -14,7 +14,7 @@ import java.awt.Color
 
 object BoxMimicChest : Feature(
     "boxMimicChest",
-    "draws box around mimic chest",
+    "Draws a box around mimic chest.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Highlights",

@@ -12,6 +12,7 @@ object PrinceKilled : Feature(
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "QOL",
+    searchTags = setOf("party"),
 ) {
     private var messageSent = false
 

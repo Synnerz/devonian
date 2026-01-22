@@ -18,7 +18,7 @@ import kotlin.math.sin
 
 object DragonStackAimer : TextHudFeature(
     "dragonStackAimer",
-    "",
+    "Shows where to aim for arrow stack or arch/bers.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "M7",
@@ -47,7 +47,7 @@ object DragonStackAimer : TextHudFeature(
     private val SETTING_AIM_COLOR = addColorPicker(
         "aimColor",
         Color(0, 255, 255).rgb,
-        "these names are terrible so: color of the box you should look at",
+        "color of the box you should look at",
         "Aim Color",
     )
     private val SETTING_TRACER_COLOR = addColorPicker(

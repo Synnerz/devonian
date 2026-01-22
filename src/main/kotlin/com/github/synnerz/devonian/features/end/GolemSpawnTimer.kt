@@ -6,9 +6,9 @@ import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object GolemSpawnTimer : TextHudFeature(
     "golemSpawnTimer",
-    "Displays a timer whenever the Golem has hit stage 5 of 20 seconds (according to wiki)",
+    "Displays a timer for 20 seconds whenever the Golem has hit stage 5.",
     Categories.END,
-    "the end"
+    "the end",
 ) {
     private val golemSpawnRegex = "^The ground begins to shake as an End Stone Protector rises from below!$".toRegex()
     var remainingTime = 0

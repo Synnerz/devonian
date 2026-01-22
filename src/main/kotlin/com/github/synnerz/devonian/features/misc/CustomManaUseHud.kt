@@ -11,15 +11,15 @@ import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 
 object CustomManaUseHud : TextHudFeature(
     "customManaUseHud",
-    "Allows you to move the mana used \"18 Mana (Instant Transmission)\" that appears in action bar (above your hotbar)",
-    subcategory = "General"
+    "Allows you to move the mana used \"18 Mana (Instant Transmission)\" that appears in action bar (above your hotbar).",
+    subcategory = "General",
 ) {
     // TODO: whenever SecretsHud is enabled it will conflict with this and actually send the mana usage action message
     private val SETTING_ONLY_HIDE = addSwitch(
         "onlyHide",
         false,
-        "Hides the action bar mana use as well as the custom hud",
-        "Only Hide Mana Use"
+        "Hides the action bar mana use as well as the custom hud.",
+        "Only Hide Mana Use",
     )
     private val manaUseRegex = ".*-(\\d+) Mana \\(([\\w ]+)\\).*".toRegex()
     private val formattedManaUseRegex = " *§b-\\d+ Mana \\(§\\w[\\w ]+§\\w\\) *".toRegex()

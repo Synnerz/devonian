@@ -7,7 +7,8 @@ import com.github.synnerz.devonian.utils.StringUtils
 
 object PreviousLobby : Feature(
     "previousLobby",
-    "Alerts you whenever you join the same server (lobby) and tells you how long its been since you were last seen in it, if the time is above 60s it will be removed (from the list) after the alert."
+    "Alerts you whenever you join the same server (lobby) and tells you how long its been since you were last seen in it.",
+    searchTags = setOf("server", "visited"),
 ) {
     private val lobbySwapRegex = "^Sending to server (\\w+)\\.\\.\\.$".toRegex()
     val previousLobbyList = mutableMapOf<String, Long>()

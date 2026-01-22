@@ -9,9 +9,9 @@ import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
 object EyesPlacedDisplay : TextHudFeature(
     "eyesPlaced",
-    "Displays the amount of eyes placed whenever in the Dragon's Nest",
+    "Displays the amount of eyes placed whenever in the Dragon's Nest.",
     Categories.END,
-    "the end"
+    "the end",
 ) {
     private val eyesPlacedRegex = "^ Eyes placed: (\\d+)/(\\d+)".toRegex()
     private val dragonSpawnedRegex = "^ Dragon spawned!$".toRegex()

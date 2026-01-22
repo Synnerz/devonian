@@ -11,7 +11,10 @@ import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 import net.minecraft.world.item.Items
 
-object QuiverDisplay : TextHudFeature("quiverDisplay") {
+object QuiverDisplay : TextHudFeature(
+    "quiverDisplay",
+    searchTags = setOf("arrow"),
+) {
     private val SETTING_COLOR_AMOUNT = addSwitch(
         "colorAmount",
         false,

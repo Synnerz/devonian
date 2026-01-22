@@ -25,35 +25,38 @@ fun colorForNumberReverse(num: Float, max: Float) = when {
 
 object BonzoMask : TextHudFeature(
     "bonzoMaskTimer",
-    "Displays the immunity time as well as the cooldown for bonzo mask",
+    "Displays the immunity time as well as the cooldown for bonzo mask.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD"
+    subcategory = "HUD",
+    subcategories = listOf("Alerts"),
 ) {
     private val SETTING_HIDE_AFTER_IM = addSwitch(
         "hideAfterImm",
         false,
-        "Hides the entire bonzo display after the immunity timer is over",
-        "Hide Bonzo After IMM"
+        "Hides the entire bonzo display after the immunity timer is over.",
+        "Hide Bonzo After IMM",
+    )
+    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
+        "onlyShowInBoss",
+        false,
+        "Only displays the hud while inside of a dungeon boss room.",
+        "Bonzo Only In Boss",
     )
     private val SETTING_PROC_ALERT = addSwitch(
         "procAlert",
         false,
-        "Displays an alert whenever the bonzo mask is used",
-        "Bonzo Proc Alert"
+        "Displays an alert whenever the bonzo mask is used.",
+        "Bonzo Proc Alert",
+        subcategory = "Alerts",
     )
     private val SETTING_PROC_ALERT_TIME = addSlider(
         "procAlertTime",
         1.0,
         0.0, 10.0,
-        "The amount of time the alert will display for (in seconds)",
-        "Bonzo Proct Alert Time"
-    )
-    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
-        "onlyShowInBoss",
-        false,
-        "Only displays the hud while inside of a dungeon boss room",
-        "Bonzo Only In Boss"
+        "The amount of time the alert will display for (in seconds).",
+        "Bonzo Proct Alert Time",
+        subcategory = "Alerts",
     )
     private const val IMMUNITY_TIME = 3 * 1000L
     private val cooldownItemRegex = "^Cooldown: (\\d+)s$".toRegex()
@@ -122,35 +125,38 @@ object BonzoMask : TextHudFeature(
 
 object SpiritMask : TextHudFeature(
     "spiritMaskTimer",
-    "Displays the immunity time as well as the cooldown for spirit mask",
+    "Displays the immunity time as well as the cooldown for spirit mask.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD"
+    subcategory = "HUD",
+    subcategories = listOf("Alerts"),
 ) {
     private val SETTING_HIDE_AFTER_IM = addSwitch(
         "hideAfterImm",
         false,
-        "Hides the entire spirit display after the immunity timer is over",
-        "Hide Spirit After IMM"
+        "Hides the entire spirit display after the immunity timer is over.",
+        "Hide Spirit After IMM",
+    )
+    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
+        "onlyShowInBoss",
+        false,
+        "Only displays the hud while inside of a dungeon boss room.",
+        "Spirit Only In Boss",
     )
     private val SETTING_PROC_ALERT = addSwitch(
         "procAlert",
         false,
-        "Displays an alert whenever the spirit mask is used",
-        "Spirit Proc Alert"
+        "Displays an alert whenever the spirit mask is used.",
+        "Spirit Proc Alert",
+        subcategory = "Alerts",
     )
     private val SETTING_PROC_ALERT_TIME = addSlider(
         "procAlertTime",
         1.0,
         0.0, 10.0,
-        "The amount of time the alert will display for (in seconds)",
-        "Spirit Proct Alert Time"
-    )
-    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
-        "onlyShowInBoss",
-        false,
-        "Only displays the hud while inside of a dungeon boss room",
-        "Spirit Only In Boss"
+        "The amount of time the alert will display for (in seconds).",
+        "Spirit Proct Alert Time",
+        subcategory = "Alerts",
     )
     private const val IMMUNITY_TIME = 1 * 1000L
     private var COOLDOWN_TIME = 30 * 1000L
@@ -207,35 +213,38 @@ object SpiritMask : TextHudFeature(
 
 object PhoenixTimer : TextHudFeature(
     "phoenixTimer",
-    "Displays the immunity time as well as the cooldown for phoenix pet",
+    "Displays the immunity time as well as the cooldown for phoenix pet.",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "HUD"
+    subcategory = "HUD",
+    subcategories = listOf("Alerts"),
 ) {
     private val SETTING_HIDE_AFTER_IM = addSwitch(
         "hideAfterImm",
         false,
-        "Hides the entire phoenix display after the immunity timer is over",
-        "Hide Phoenix After IMM"
+        "Hides the entire phoenix display after the immunity timer is over.",
+        "Hide Phoenix After IMM",
+    )
+    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
+        "onlyShowInBoss",
+        false,
+        "Only displays the hud while inside of a dungeon boss room.",
+        "Phoenix Only In Boss",
     )
     private val SETTING_PROC_ALERT = addSwitch(
         "procAlert",
         false,
-        "Displays an alert whenever the phoenix pet is used",
-        "Phoenix Proc Alert"
+        "Displays an alert whenever the phoenix pet is used.",
+        "Phoenix Proc Alert",
+        subcategory = "Alerts",
     )
     private val SETTING_PROC_ALERT_TIME = addSlider(
         "procAlertTime",
         1.0,
         0.0, 10.0,
-        "The amount of time the alert will display for (in seconds)",
-        "Phoenix Proct Alert Time"
-    )
-    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
-        "onlyShowInBoss",
-        false,
-        "Only displays the hud while inside of a dungeon boss room",
-        "Phoenix Only In Boss"
+        "The amount of time the alert will display for (in seconds).",
+        "Phoenix Proct Alert Time",
+        subcategory = "Alerts",
     )
     private const val IMMUNITY_TIME = 4 * 1000L
     private var COOLDOWN_TIME = 60 * 1000L

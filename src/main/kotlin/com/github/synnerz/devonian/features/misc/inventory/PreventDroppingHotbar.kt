@@ -6,8 +6,9 @@ import com.github.synnerz.devonian.features.Feature
 
 object PreventDroppingHotbar : Feature(
     "preventDroppingHotbar",
-    "",
+    "Prevent dropping items from the hotbar.",
     subcategory = "Inventory",
+    searchTags = setOf("protect"),
 ) {
     override fun initialize() {
         on<PreventItem.SlotEvent> { event ->
