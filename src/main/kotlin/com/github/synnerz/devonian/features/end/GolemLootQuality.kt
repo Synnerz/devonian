@@ -71,9 +71,9 @@ object GolemLootQuality : Feature(
             val placementQuality = positionQuality.getOrNull(yourPosition - 1) ?: return@on
             val quality = placementQuality + (50 * yourDamage / firstDamage) + min(zealotKills, 100)
 
-            val tbc = if (quality >= 250) "&a\uD83D\uDDF8" else "&cx"
-            val legPet = if (quality >= 235) "&a\uD83D\uDDF8" else "&cx"
-            val epicPet = if (quality >= 220) "&a\uD83D\uDDF8" else "&cx"
+            val tbc = if (quality >= 250) "&a&l✔&r" else "&c&l✘&r"
+            val legPet = if (quality >= 235) "&a&l✔&r" else "&c&l✘&r"
+            val epicPet = if (quality >= 220) "&a&l✔&r" else "&c&l✘&r"
 
             Scheduler.scheduleServerTask(20) {
                 ChatUtils.sendMessage("&bGolem loot quality &6$quality &cTBC &b[$tbc&b] | &6LegPet &b[$legPet&b] | &5EpicPet &b[$epicPet&b]", true)
