@@ -8,15 +8,12 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
-import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.atomicfu.atomic
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket
-import org.joml.Vector3f
 import java.awt.Color
 import java.util.*
 import kotlin.math.*
@@ -368,7 +365,7 @@ object BurrowGuesser : Feature(
             }
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             BurrowManager.burrows.forEach {
                 if (it.type.empirical) return@forEach
 
@@ -398,36 +395,13 @@ object BurrowGuesser : Feature(
                 centered = true,
             )
 
-            val consumer = minecraft.renderBuffers().bufferSource().getBuffer(RenderType.LINES)
-            val camPos = event.ctx.worldState().cameraRenderState.pos ?: return@on
-            val stack = PoseStack()
-            stack.pushPose()
-            stack.translate(camPos.reverse())
-
+            val color = SETTING_PARTICLE_PATH_COLOR.getColor()
+            Render3DImmediate.renderLineStrip(color.alpha == 255, phase = true) {
             val path = particlePath.value
             for (i in path.indices step 3) {
-                if (i == 0) continue
-                val x1 = path[i - 3].toFloat()
-                val y1 = path[i - 2].toFloat()
-                val z1 = path[i - 1].toFloat()
-                val x2 = path[i + 0].toFloat()
-                val y2 = path[i + 1].toFloat()
-                val z2 = path[i + 2].toFloat()
-
-                val normalized = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
-
-                consumer
-                    .addVertex(stack.last(), x1, y1, z1)
-                    .setColor(SETTING_PARTICLE_PATH_COLOR.get())
-                    .setNormal(stack.last(), normalized)
-
-                consumer
-                    .addVertex(stack.last(), x2, y2, z2)
-                    .setColor(SETTING_PARTICLE_PATH_COLOR.get())
-                    .setNormal(stack.last(), normalized)
+                    submit(path[i + 0], path[i + 1], path[i + 2], color)
+                }
             }
-
-            stack.popPose()
         }
     }
 
