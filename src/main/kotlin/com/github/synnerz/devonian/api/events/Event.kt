@@ -310,6 +310,8 @@ class RenderTickEvent : Event()
 
 @Threaded class TabAddEvent(message: String) : CriteriaEvent(message)
 @Threaded class TabUpdateEvent(message: String) : CriteriaEvent(message)
+@Threaded class TabFooterEvent(message: String) : CriteriaEvent(message)
+@Threaded class TabHeaderEvent(message: String) : CriteriaEvent(message)
 
 @Threaded class ServerTickEvent(val ticks: Int) : Event()
 

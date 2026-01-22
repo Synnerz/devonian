@@ -141,6 +141,11 @@ object EventBus {
                     return@on
                 }
 
+                is ClientboundTabListPacket -> {
+                    packet.footer.string.split("\n").forEach { TabFooterEvent(it).post() }
+                    packet.header.string.split("\n").forEach { TabHeaderEvent(it).post() }
+                }
+
                 is ClientboundPingPacket -> {
                     if (packet.id >= 0) return@on
                     totalTicks++
