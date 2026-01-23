@@ -22,8 +22,16 @@ object SpiritBearTimer : TextHudFeature(
     private var startedAt = 0
 
     override fun initialize() {
-        on<MultiBlockUpdateEvent> { event ->
+        on<BlockUpdateEvent> { event ->
+            val blockPos = event.blockPos
+            val blockState = event.blockState
 
+            if (blockPos.x != 7 || blockPos.y != 77 || blockPos.z != 34) return@on
+            if (blockState.block != Blocks.SEA_LANTERN) return@on
+            startedAt = EventBus.serverTicks() + 68
+        }
+
+        on<MultiBlockUpdateEvent> { event ->
             event.forEach { blockPos, blockState ->
                 if (blockPos.x != 7 || blockPos.y != 77 || blockPos.z != 34) return@forEach
                 if (blockState.block != Blocks.SEA_LANTERN) return@forEach

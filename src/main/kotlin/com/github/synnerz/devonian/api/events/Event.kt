@@ -368,12 +368,12 @@ class EntityInteractEvent(
     val entity: Entity
 ) : CancellableEvent()
 
-class BlockUpdateEvent(
+@Threaded class BlockUpdateEvent(
     val blockPos: BlockPos,
     val blockState: BlockState
 ) : Event()
 
-class MultiBlockUpdateEvent(
+@Threaded class MultiBlockUpdateEvent(
     val packet: ClientboundSectionBlocksUpdatePacket
 ) : Event() {
     fun forEach(cb: (BlockPos, BlockState) -> Unit) {
