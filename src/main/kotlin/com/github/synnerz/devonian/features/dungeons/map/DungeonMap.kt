@@ -126,6 +126,82 @@ object DungeonMap : HudFeature(
         "Marker Scale",
         subcategory = "Markers",
     )
+    private val SETTING_PRESET_HYPIXEL_COLORS = addButton(
+        {
+            SETTING_ROOM_ENTRANCE_COLOR.set(Color(0, 124, 0, 255).rgb)
+            SETTING_ROOM_NORMAL_COLOR.set(Color(114, 67, 27, 255).rgb)
+            SETTING_ROOM_MINIBOSS_COLOR.set(Color(114, 67, 27, 255).rgb)
+            SETTING_NORMAL_DOOR_COLOR.set(Color(114, 67, 27, 255).rgb)
+            SETTING_ROOM_PUZZLE_COLOR.set(Color(178, 76, 216, 255).rgb)
+            SETTING_ROOM_YELLOW_COLOR.set(Color(229, 229, 51, 255).rgb)
+            SETTING_ROOM_FAIRY_COLOR.set(Color(242, 127, 165, 255).rgb)
+            SETTING_ROOM_BLOOD_COLOR.set(Color(255, 0, 0, 255).rgb)
+            SETTING_ROOM_TRAP_COLOR.set(Color(216, 127, 51, 255).rgb)
+            SETTING_ROOM_UNKNOWN_COLOR.set(Color(65, 65, 65, 255).rgb)
+            SETTING_DOOR_WITHER_COLOR.set(Color(0, 0, 0, 255).rgb)
+        },
+        "Set",
+        "",
+        "Hypixel Colors",
+        subcategory = "Colors",
+    )
+    private val SETTING_PRESET_LEGALMAP_COLORS = addButton(
+        {
+            SETTING_ROOM_ENTRANCE_COLOR.set(Color(20, 133, 0, 255).rgb)
+            SETTING_ROOM_NORMAL_COLOR.set(Color(107, 58, 17, 255).rgb)
+            SETTING_ROOM_MINIBOSS_COLOR.set(Color(107, 58, 17, 255).rgb)
+            SETTING_NORMAL_DOOR_COLOR.set(Color(92, 52, 14, 255).rgb)
+            SETTING_ROOM_PUZZLE_COLOR.set(Color(117, 0, 133, 255).rgb)
+            SETTING_ROOM_YELLOW_COLOR.set(Color(254, 223, 0, 255).rgb)
+            SETTING_ROOM_FAIRY_COLOR.set(Color(224, 0, 255, 255).rgb)
+            SETTING_ROOM_BLOOD_COLOR.set(Color(255, 0, 0, 255).rgb)
+            SETTING_ROOM_TRAP_COLOR.set(Color(216, 127, 51, 255).rgb)
+            SETTING_ROOM_UNKNOWN_COLOR.set(Color(65, 65, 65, 255).rgb)
+            SETTING_DOOR_WITHER_COLOR.set(Color(0, 0, 0, 255).rgb)
+        },
+        "Set",
+        "",
+        "LegalMap Colors",
+        subcategory = "Colors",
+    )
+    private val SETTING_PRESET_BETTERMAP_COLORS = addButton(
+        {
+            SETTING_ROOM_ENTRANCE_COLOR.set(Color(0, 123, 0, 255).rgb)
+            SETTING_ROOM_NORMAL_COLOR.set(Color(107, 58, 17, 255).rgb)
+            SETTING_ROOM_MINIBOSS_COLOR.set(Color(85, 51, 19).rgb)
+            SETTING_NORMAL_DOOR_COLOR.set(Color(85, 51, 19, 255).rgb)
+            SETTING_ROOM_PUZZLE_COLOR.set(Color(176, 75, 213, 255).rgb)
+            SETTING_ROOM_YELLOW_COLOR.set(Color(226, 226, 50, 255).rgb)
+            SETTING_ROOM_FAIRY_COLOR.set(Color(239, 126, 163, 255).rgb)
+            SETTING_ROOM_BLOOD_COLOR.set(Color(255, 0, 0, 255).rgb)
+            SETTING_ROOM_TRAP_COLOR.set(Color(213, 126, 50, 255).rgb)
+            SETTING_ROOM_UNKNOWN_COLOR.set(Color(64, 64, 64, 255).rgb)
+            SETTING_DOOR_WITHER_COLOR.set(Color(0, 0, 0, 255).rgb)
+        },
+        "Set",
+        "",
+        "BetterMap Colors",
+        subcategory = "Colors",
+    )
+    private val SETTING_PRESET_CATLAS_COLORS = addButton(
+        {
+            SETTING_ROOM_ENTRANCE_COLOR.set(Color(20, 133, 0, 255).rgb)
+            SETTING_ROOM_NORMAL_COLOR.set(Color(107, 58, 17, 255).rgb)
+            SETTING_ROOM_MINIBOSS_COLOR.set(Color(107, 58, 17, 255).rgb)
+            SETTING_NORMAL_DOOR_COLOR.set(Color(92, 52, 14, 255).rgb)
+            SETTING_ROOM_PUZZLE_COLOR.set(Color(117, 0, 133, 255).rgb)
+            SETTING_ROOM_YELLOW_COLOR.set(Color(254, 223, 0, 255).rgb)
+            SETTING_ROOM_FAIRY_COLOR.set(Color(224, 0, 255, 255).rgb)
+            SETTING_ROOM_BLOOD_COLOR.set(Color(255, 0, 0, 255).rgb)
+            SETTING_ROOM_TRAP_COLOR.set(Color(216, 127, 51, 255).rgb)
+            SETTING_ROOM_UNKNOWN_COLOR.set(Color(65, 65, 65, 255).rgb)
+            SETTING_DOOR_WITHER_COLOR.set(Color(0, 0, 0, 255).rgb)
+        },
+        "Set",
+        "jokes on you, it is the same as LegalMap",
+        "Catlas Colors",
+        subcategory = "Colors",
+    )
     private val SETTING_MAP_BACKGROUND_COLOR = addColorPicker(
         "backgroundColor",
         0,
