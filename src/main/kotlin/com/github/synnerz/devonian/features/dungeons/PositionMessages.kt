@@ -119,7 +119,7 @@ object PositionMessages : Feature(
             }
 
             if (msg != null) Scheduler.scheduleTask {
-                ChatUtils.say("/pc $msg)")
+                ChatUtils.say("/pc $msg")
             }
         }
 
