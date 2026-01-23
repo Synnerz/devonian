@@ -3,19 +3,20 @@ package com.github.synnerz.devonian.utils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.GameUnloadEvent
+import com.github.synnerz.devonian.config.PersistentObject
 import com.google.gson.GsonBuilder
 import java.io.*
 import java.util.concurrent.TimeUnit
 
-abstract class PersistentJson(private val configFile: File) {
+abstract class PersistentJson(private val configFile: File) : PersistentObject {
     private val afterLoadListeners = mutableListOf<() -> Unit>()
     private val preSaveListeners = mutableListOf<() -> Unit>()
 
-    fun onAfterLoad(cb: () -> Unit) {
+    override fun onAfterLoad(cb: () -> Unit) {
         afterLoadListeners.add(cb)
     }
 
-    fun onPreSave(cb: () -> Unit) {
+    override fun onPreSave(cb: () -> Unit) {
         preSaveListeners.add(cb)
     }
 
@@ -30,7 +31,7 @@ abstract class PersistentJson(private val configFile: File) {
     abstract fun onLoad(reader: InputStream): Boolean
     open fun onLoadDefault() {}
 
-    fun load() {
+    override fun load() {
         try {
             if (configFile.exists()) {
                 FileInputStream(configFile).use {
@@ -50,7 +51,7 @@ abstract class PersistentJson(private val configFile: File) {
      * - Saves all the json into a file
      * - Note: must call during game shutdown
      */
-    fun save() {
+    override fun save() {
         if (!configFile.parentFile.exists()) configFile.parentFile?.mkdirs()
 
         preSaveListeners.forEach { it() }

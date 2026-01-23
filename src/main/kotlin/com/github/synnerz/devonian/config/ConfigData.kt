@@ -41,6 +41,10 @@ open class ConfigData<T>(
                 val savedValue = Config.getConfig(configName, value) ?: return@onAfterLoad
                 set(savedValue)
             }
+
+            Config.onPreSave {
+                Config.setConfig(configName, value)
+            }
         }
     }
 
