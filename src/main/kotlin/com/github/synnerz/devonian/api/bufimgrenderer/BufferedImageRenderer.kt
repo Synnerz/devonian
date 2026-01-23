@@ -52,7 +52,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         }
     }
 
-    private fun uploadImage() {
+    protected fun uploadImage() {
         val bimg = dirtyImage.getAndSet(null)
         if (bimg != null) {
             uploader.upload(bimg)
@@ -75,7 +75,11 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         draw(ctx, x, y, w, h)
     }
 
-    private fun draw(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float) {
+    protected fun draw(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float) {
+        draw(ctx, x, y, w, h, 0f, 0f, 1f, 1f)
+    }
+
+    protected fun draw(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float, u0: Float, v0: Float, u1: Float, v1: Float) {
         if (Devonian.minecraft.options.hideGui) return
         if (uploader.texId == -1) return
         if (!valid) return
@@ -90,8 +94,8 @@ abstract class BufferedImageRenderer<T>(val name: String) {
                 y,
                 x + w,
                 y + h,
-                0f, 0f,
-                1f, 1f,
+                u0, v0,
+                u1, v1,
                 0xFFFFFFFF.toInt(),
                 ctx.scissorStack.peek()
             )
