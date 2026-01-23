@@ -130,17 +130,13 @@ object Render3DVertex {
         color: Color,
         backgroundBox: Color,
     ) {
-        var x = x
-        var y = y
-        var z = z
+        var scale = scale
 
         val offset = -textRenderer.width(str) * 0.5f
         val dist = x * x + y * y + z * z
         if (dist > maxDist * maxDist) {
-            val f = maxDist / sqrt(dist)
-            x *= f
-            y *= f
-            z *= f
+            val f = sqrt(dist) / maxDist
+            scale = (scale * f).toFloat()
         }
 
         stack.pushPose()

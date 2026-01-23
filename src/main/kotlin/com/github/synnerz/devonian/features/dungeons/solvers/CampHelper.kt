@@ -171,6 +171,7 @@ object CampHelper : Feature(
                 if (SETTING_SHOW_TIMER.get()) Render3DImmediate.renderString(
                     "%.2f".format(ttl * 0.05),
                     x, y - 1.0, z,
+                    maxDist = 24.0,
                 )
             }
         }
