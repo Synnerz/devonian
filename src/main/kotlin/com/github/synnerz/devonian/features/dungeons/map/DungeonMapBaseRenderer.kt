@@ -346,7 +346,7 @@ class DungeonMapBaseRenderer :
                     ) && (!options.roomNoCheckName || !renderName)
                 ) {
                     if (options.renderUnknownRooms && room.checkmark == CheckmarkTypes.UNEXPLORED && room.name != null) null
-                    else CHECKMARK[room.checkmark]
+                    else CHECKMARK[options.iconStyle][room.checkmark]
                 } else null) ?:
                 (if (renderRoomInfo && options.puzzleIcon) SPECIAL_ROOMS[room.name] else null)
             val text = mutableListOf<String>()
@@ -530,13 +530,15 @@ class DungeonMapBaseRenderer :
     }
 
     companion object {
-        val CHECKMARK = mapOf(
-            CheckmarkTypes.NONE to null,
-            CheckmarkTypes.WHITE to getImg("checks/whiteCheck.png")!!,
-            CheckmarkTypes.GREEN to getImg("checks/greenCheck.png")!!,
-            CheckmarkTypes.FAILED to getImg("checks/failedRoom.png")!!,
-            CheckmarkTypes.UNEXPLORED to getImg("checks/questionMark.png")!!,
-        )
+        val CHECKMARK = listOf("illegalmap", "neu", "vanillaNew", "vanillaOld").map {
+            mapOf(
+                CheckmarkTypes.NONE to null,
+                CheckmarkTypes.WHITE to getImg("checks/$it/whiteCheck.png")!!,
+                CheckmarkTypes.GREEN to getImg("checks/$it/greenCheck.png")!!,
+                CheckmarkTypes.FAILED to getImg("checks/$it/failedRoom.png")!!,
+                CheckmarkTypes.UNEXPLORED to getImg("checks/$it/questionMark.png")!!,
+            )
+        }.toTypedArray()
         val SPECIAL_ROOMS = mapOf(
             "Creeper Beams" to getImg("puzzles/creeper.png")!!,
             "Three Weirdos" to getImg("puzzles/chest.png")!!,

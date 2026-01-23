@@ -11,6 +11,7 @@ data class DungeonMapRenderOptions(
     val dungeonHeight: Int, // number of rooms
     val padding: Double,
     val border: Int,
+    val iconStyle: Int,
     val checkMark: Boolean,
     val puzzleIcon: Boolean,
     val roomName: Boolean,
