@@ -12,7 +12,6 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.PersistentJsonClass
 import com.google.gson.reflect.TypeToken
-import java.io.File
 import java.time.LocalDateTime
 
 object RunsLogger : Feature(
@@ -23,12 +22,7 @@ object RunsLogger : Feature(
     subcategory = "QOL",
 ) {
     private var dungeonsData = object : PersistentJsonClass<MutableMap<String, MutableMap<String, MutableList<RunStats>>>>(
-        File(
-            minecraft.gameDirectory,
-            "config"
-        )
-            .resolve("devonian")
-            .resolve("runslogger.json"),
+        "devonian/runslogger.json",
         object : TypeToken<MutableMap<String, MutableMap<String, MutableList<RunStats>>>>() {}
     ) {
         override fun onLoadDefault() {

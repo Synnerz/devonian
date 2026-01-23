@@ -5,13 +5,15 @@ import com.github.synnerz.devonian.config.PersistentData
 import com.github.synnerz.devonian.utils.PersistentJson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 
 // TODO: add auto backup type system
 
-class PersistentJsonData(configFile: File) : PersistentJson(configFile), PersistentData {
+class PersistentJsonData(
+    fileName: String,
+    saveBackups: Boolean = true
+) : PersistentJson(fileName, saveBackups), PersistentData {
     private val jsonRoot = JsonObject()
     private var root = JsonDataObject(jsonRoot)
 

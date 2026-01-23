@@ -1,9 +1,7 @@
 package com.github.synnerz.devonian.api
 
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.PersistentJsonClass
 import kotlinx.coroutines.launch
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 object SkyblockPrices {
@@ -13,14 +11,11 @@ object SkyblockPrices {
         val lastSave: Long
     )
 
-    private val pricesFile = File(
-        Devonian.minecraft.gameDirectory,
-        "config"
-    )
-        .resolve("devonian")
-        .resolve("prices.json")
-
-    private val loader = object : PersistentJsonClass<PriceData>(pricesFile, PriceData::class.java) {
+    private val loader = object : PersistentJsonClass<PriceData>(
+        "devonian/prices.json",
+        PriceData::class.java,
+        false
+    ) {
         override fun onLoadDefault() {
             data = PriceData(BazaarData(true, 0L, mapOf()), mapOf(), 0L)
         }

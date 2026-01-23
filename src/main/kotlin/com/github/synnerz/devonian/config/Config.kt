@@ -1,17 +1,10 @@
 package com.github.synnerz.devonian.config
 
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.config.json.PersistentJsonData
 import com.github.synnerz.devonian.hud.texthud.DataProvider
-import java.io.File
 import java.util.*
 
-val configFile = File(
-    Devonian.minecraft.gameDirectory,
-    "config"
-).resolve("devonianConfig.json")
-
-val jsonLoader = PersistentJsonData(configFile)
+val jsonLoader = PersistentJsonData("devonianConfig.json")
 
 object Config : PersistentData by jsonLoader {
     val configRoot: DataObject

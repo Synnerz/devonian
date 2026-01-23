@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.utils
 
 import com.google.gson.reflect.TypeToken
-import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -10,11 +9,11 @@ open class PersistentJsonClass<T : Any> : PersistentJson {
     private val type: TypeToken<T>?
     var data: T? = null
 
-    constructor(configFile: File, clazz: Class<T>) : super(configFile) {
+    constructor(fileName: String, clazz: Class<T>, saveBackups: Boolean = true) : super(fileName, saveBackups) {
         this.clazz = clazz
         type = null
     }
-    constructor(configFile: File, type: TypeToken<T>) : super(configFile) {
+    constructor(fileName: String, type: TypeToken<T>, saveBackups: Boolean = true) : super(fileName, saveBackups) {
         clazz = null
         this.type = type
     }

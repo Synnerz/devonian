@@ -27,7 +27,6 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
-import java.io.File
 import java.util.*
 import kotlin.math.abs
 
@@ -78,12 +77,7 @@ object CustomDungeonWaypoints : Feature(
     private const val KEY = "currentDungeonProfile"
     private const val BOSS_ID = 1000 // 1000 + floor number for each roomId that is boss
     private val waypointData = object : PersistentJsonClass<MutableList<WaypointProfile>>(
-        File(
-            minecraft.gameDirectory,
-            "config"
-        )
-            .resolve("devonian")
-            .resolve("customdungeonwaypoints.json"),
+        "devonian/customdungeonwaypoints.json",
         object : TypeToken<MutableList<WaypointProfile>>() {},
     ) {
         override fun onLoadDefault() {

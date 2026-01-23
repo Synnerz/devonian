@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.diana
 
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
@@ -8,7 +7,6 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.PersistentJsonClass
-import java.io.File
 
 object DianaMobTracker : TextHudFeature(
     "dianaMobTracker",
@@ -32,14 +30,11 @@ object DianaMobTracker : TextHudFeature(
         "Sphinx",
         "King Minos"
     )
-    private val statsFile = File(
-        Devonian.minecraft.gameDirectory,
-        "config"
-    )
-        .resolve("devonian")
-        .resolve("dianamobtracker.json")
 
-    private val loader = object : PersistentJsonClass<DianaMobData>(statsFile, DianaMobData::class.java) {
+    private val loader = object : PersistentJsonClass<DianaMobData>(
+        "devonian/dianamobtracker.json",
+        DianaMobData::class.java
+    ) {
         override fun onLoadDefault() {
             data = DianaMobData()
         }
