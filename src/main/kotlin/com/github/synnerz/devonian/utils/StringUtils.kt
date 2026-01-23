@@ -46,6 +46,38 @@ object StringUtils {
         return total + lastValue
     }
 
+    private val romanNums = listOf("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX").let { r0to9 ->
+        listOf("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC").flatMap { pre ->
+            r0to9.map { pre + it }
+        }
+    }.toTypedArray()
+
+    fun formatRoman(num: Int): String {
+        if (num < 0) return '-' + formatRoman(-num)
+        if (num < romanNums.size) return romanNums[num]
+        return buildString {
+            append("M".repeat(num / 1000))
+            var num = num % 1000
+            if (num >= 900) {
+                num -= 900
+                append("CM")
+            }
+            if (num >= 500) {
+                num -= 500
+                append("D")
+            }
+            if (num >= 400) {
+                num -= 400
+                append("CD")
+            }
+            while (num >= 100) {
+                num -= 100
+                append("C")
+            }
+            append(romanNums[num])
+        }
+    }
+
     fun colorForNumber(num: Double, max: Double) = when {
         num >= max * 0.75 -> "§2"
         num >= max * 0.50 -> "§e"
