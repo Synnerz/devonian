@@ -335,10 +335,16 @@ class DungeonMapBaseRenderer :
                     )
                 ) &&
                 (!options.roomNameNotYellow || room.type != RoomTypes.YELLOW) &&
-                (if (room.type == RoomTypes.PUZZLE) options.puzzleName else options.roomName)
+                (if (room.type == RoomTypes.PUZZLE) options.puzzleName else options.roomName) &&
+                room.name != null
 
             val decoration =
-                (if (options.checkMark || (renderName && room.name == null && room.checkmark != CheckmarkTypes.UNEXPLORED)) {
+                (if (
+                    (
+                        options.checkMark ||
+                        (renderName && room.checkmark != CheckmarkTypes.UNEXPLORED)
+                    ) && (!options.roomNoCheckName || !renderName)
+                ) {
                     if (options.renderUnknownRooms && room.checkmark == CheckmarkTypes.UNEXPLORED && room.name != null) null
                     else CHECKMARK[room.checkmark]
                 } else null) ?:
@@ -365,7 +371,7 @@ class DungeonMapBaseRenderer :
                 } else ""
                 name.replace("\u200B", "- ").split(" ").forEach { text.add("$colorCode$it")}
             }
-            if (renderRoomInfo && options.secretCount && room.totalSecrets > 0) {
+            if (renderRoomInfo && options.secretCount && room.totalSecrets > (if (options.no1Secret) 1 else 0)) {
                 val colorCode = when (room.checkmark) {
                     CheckmarkTypes.FAILED -> "&c"
                     CheckmarkTypes.GREEN -> "&a"

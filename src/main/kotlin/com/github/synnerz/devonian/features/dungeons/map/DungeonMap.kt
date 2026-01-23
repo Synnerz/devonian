@@ -78,35 +78,35 @@ object DungeonMap : HudFeature(
     private val SETTING_RENDER_NAMES = addSwitch(
         "renderNames",
         true,
-        "Render player names above marker",
+        "Render player names above marker.",
         "Render Names",
         subcategory = "Markers",
     )
     private val SETTING_RENDER_NAMES_ONLY_LEAP = addSwitch(
         "namesRequireLeap",
         false,
-        "Only render player names when holding leap",
+        "Only render player names when holding leap.",
         "Render Names When Holding Leap",
         subcategory = "Markers",
     )
     private val SETTING_USE_CLASS_NAME = addSwitch(
         "useClassName",
         true,
-        "Render the class name instead of the player name",
+        "Render the class name instead of the player name.",
         "Render Class Name",
         subcategory = "Markers",
     )
     private val SETTING_COLOR_NAME_BY_CLASS = addSwitch(
         "colorNameClass",
         true,
-        "Colors the player names by their respective class",
+        "Colors the player names by their respective class.",
         "Color Player Names",
         subcategory = "Markers",
     )
     private val SETTING_COLOR_MARKER_BY_CLASS = addSwitch(
         "colorMarkerClass",
         true,
-        "Colors the player marker by their respective class",
+        "Colors the player marker by their respective class.",
         "Color Player Markers",
         subcategory = "Markers",
     )
@@ -251,7 +251,7 @@ object DungeonMap : HudFeature(
     private val SETTING_NORMAL_DOOR_DYNAMIC = addSwitch(
         "doorNormalDynamicColor",
         true,
-        "If enabled, this will ignore the \"Normal Door Color\" and use the room's color for a more blend-in door way",
+        "If enabled, this will ignore the \"Normal Door Color\" and use the room's color for a more blend-in door way.",
         "Normal Door Dynamic Color",
         subcategory = "Colors"
     )
@@ -302,14 +302,14 @@ object DungeonMap : HudFeature(
     private val SETTING_RENDER_ROOM_NAMES_NOT_EFB = addSwitch(
         "dontRenderCommonRoomNames",
         false,
-        "Avoids rendering the name for rooms Entrance/Fairy/Blood",
+        "Avoids rendering the name for rooms Entrance/Fairy/Blood.",
         "Don't Render Names for Entrance/Fairy/Blood",
         subcategory = "Behavior",
     )
     private val SETTING_DONT_RENDER_YELLOW_NAME = addSwitch(
         "dontRenderYellowName",
         false,
-        "Avoids rendering Yellow room's name",
+        "Avoids rendering Yellow room's name.",
         "Don't Render Yellow Room Name",
         subcategory = "Behavior"
     )
@@ -320,11 +320,25 @@ object DungeonMap : HudFeature(
         "Don't Render Fairy Checkmark",
         subcategory = "Behavior"
     )
+    private val SETTING_DONT_RENDER_CHECK_IF_NAME = addSwitch(
+        "dontRenderCheckIfName",
+        false,
+        "Avoids rendering checkmarks if the room name is also being rendered.",
+        "Don't Render Checkmark and Name",
+        subcategory = "Behavior",
+    )
     private val SETTING_RENDER_SECRET_COUNT = addSwitch(
         "renderSecretCount",
         false,
         "(we dont actually track or sync secrets right now)",
         "Render Secret Count",
+        subcategory = "Behavior",
+    )
+    private val SETTING_DONT_RENDER_SECRET_1 = addSwitch(
+        "dontRenderSecret1",
+        false,
+        "Avoids rendering the secret count if the room only has 1 secret.",
+        "Don't Render 1 Secret Count",
         subcategory = "Behavior",
     )
     private val SETTING_RENDER_PUZZLE_NAME = addSwitch(
@@ -346,7 +360,7 @@ object DungeonMap : HudFeature(
         "iconAlign",
         DungeonMapRoomInfoAlignment.Center.ordinal,
         DungeonMapRoomInfoAlignment.entries.map { it.str },
-        "Alignment of the icon with respect to the room layout",
+        "Alignment of the icon with respect to the room layout.",
         "Icon Alignment",
         subcategory = "Style",
     )
@@ -377,7 +391,7 @@ object DungeonMap : HudFeature(
     private val SETTING_COLOR_ROOM_TEXT = addSwitch(
         "colorRoomName",
         true,
-        "Change color of room name based on the room checkmark",
+        "Change color of room name based on the room checkmark.",
         "Color Room Name",
         subcategory = "Style",
     )
@@ -478,7 +492,9 @@ object DungeonMap : HudFeature(
                     SETTING_RENDER_ROOM_NAMES.get(), SETTING_RENDER_ROOM_NAMES_NOT_EFB.get(),
                     SETTING_DONT_RENDER_YELLOW_NAME.get(),
                     SETTING_RENDER_FAIRY_CHECK.get(),
+                    SETTING_DONT_RENDER_CHECK_IF_NAME.get(),
                     SETTING_RENDER_SECRET_COUNT.get(),
+                    SETTING_DONT_RENDER_SECRET_1.get(),
                     SETTING_RENDER_PUZZLE_NAME.get(),
                     SETTING_ICON_SIZE.get(),
                     DungeonMapRoomInfoAlignment.from(SETTING_ICON_ALIGNMENT.getCurrent()),
