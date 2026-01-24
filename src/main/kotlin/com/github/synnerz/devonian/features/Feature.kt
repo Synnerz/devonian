@@ -21,7 +21,7 @@ open class Feature @JvmOverloads constructor(
     val subarea: String? = null,
     searchTags: Set<String> = emptySet(),
     // To avoid conflict, maybe change the position later ?
-    displayName: String = configName.camelCaseToSentence(),
+    val displayName: String = configName.camelCaseToSentence(),
     cheeto: Boolean = false,
     val isInternal: Boolean = false,
     val subcategory: String = "General",
