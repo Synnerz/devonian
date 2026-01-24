@@ -287,6 +287,7 @@ object Devonian : ClientModInitializer {
             BlessingsDisplay,
             TerminalProtection,
             PestKillsTracker,
+            PestDropTracker,
 
             // Debug
             CopyItem,
