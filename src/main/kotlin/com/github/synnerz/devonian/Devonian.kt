@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.garden.GardenEvents
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.TextConfig
@@ -322,6 +323,7 @@ object Devonian : ClientModInitializer {
         Alert.initialize()
         PreventItem.initialize()
         Dungeons.initialize()
+        GardenEvents.initialize()
 
         DevonianCommand.command.subcommand("sim") { _, args ->
             val msg = args.joinToString(" ") { it.toString() }
