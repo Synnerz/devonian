@@ -5,6 +5,8 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ActionbarEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 
@@ -21,6 +23,8 @@ object ActionbarParser : Feature(
     private var updateCount = 0
 
     override fun initialize() {
+        Stats.entries.forEach { it.initialize() }
+
         on<ActionbarEvent> { event ->
             val str = event.text.string
 
@@ -122,6 +126,28 @@ object ActionbarParser : Feature(
                 searchTags = hideTags,
             ) {},
         ) {
+            val SETTING_ALWAYS_SHOW = custom.addSwitch(
+                "alwaysShow",
+                true,
+                "Render the hud even when defense is not listed in the actionbar.",
+                "Always Show",
+            ).also {
+                Config.categories[custom.category]!![it.subcategory]!!.also { arr ->
+                    arr.add(arr.size - 2, arr.removeLast())
+                }
+            }
+            var ignore = 0
+
+            override fun initialize() {
+                on<WorldChangeEvent> {
+                    ignore = updateCount
+                }
+            }
+
+            override fun shouldShow(): Boolean =
+                if (SETTING_ALWAYS_SHOW.get()) ignore != updateCount
+                else super.shouldShow()
+
             override fun modifyStringHud(str: String): String = str.dropLast(" Defense".length)
         },
         Mana(
@@ -184,6 +210,28 @@ object ActionbarParser : Feature(
                 searchTags = hideTags,
             ) {},
         ) {
+            val SETTING_ALWAYS_SHOW = custom.addSwitch(
+                "alwaysShow",
+                true,
+                "Render the hud even when true defense is not listed in the actionbar.",
+                "Always Show",
+            ).also {
+                Config.categories[custom.category]!![it.subcategory]!!.also { arr ->
+                    arr.add(arr.size - 2, arr.removeLast())
+                }
+            }
+            var ignore = 0
+
+            override fun initialize() {
+                on<WorldChangeEvent> {
+                    ignore = updateCount
+                }
+            }
+
+            override fun shouldShow(): Boolean =
+                if (SETTING_ALWAYS_SHOW.get()) ignore != updateCount
+                else super.shouldShow()
+
             override fun modifyStringHud(str: String): String = str.dropLast(" True Defense".length)
         },
         SkillXP(
@@ -337,8 +385,10 @@ object ActionbarParser : Feature(
             ) {},
         );
 
+        open fun initialize() {}
+
         var updated = 0
-        fun shouldShow(): Boolean = updated >= updateCount
+        open fun shouldShow(): Boolean = updated >= updateCount
 
         open fun modifyStringHud(str: String): String = str
         open fun modifyStringVanilla(str: String): String = str
