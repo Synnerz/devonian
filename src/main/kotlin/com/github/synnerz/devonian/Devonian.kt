@@ -26,9 +26,7 @@ import com.github.synnerz.devonian.features.dungeons.m7.*
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.features.dungeons.solvers.*
 import com.github.synnerz.devonian.features.end.*
-import com.github.synnerz.devonian.features.garden.GardenDisplay
-import com.github.synnerz.devonian.features.garden.GrowthStageTimer
-import com.github.synnerz.devonian.features.garden.PestsDisplay
+import com.github.synnerz.devonian.features.garden.*
 import com.github.synnerz.devonian.features.misc.*
 import com.github.synnerz.devonian.features.misc.hiders.*
 import com.github.synnerz.devonian.features.misc.inventory.*
@@ -288,6 +286,7 @@ object Devonian : ClientModInitializer {
             PreventDroppingHotbar,
             BlessingsDisplay,
             TerminalProtection,
+            PestKillsTracker,
 
             // Debug
             CopyItem,
