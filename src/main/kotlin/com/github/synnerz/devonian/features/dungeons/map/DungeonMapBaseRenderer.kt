@@ -335,15 +335,14 @@ class DungeonMapBaseRenderer :
                     )
                 ) &&
                 (!options.roomNameNotYellow || room.type != RoomTypes.YELLOW) &&
-                (if (room.type == RoomTypes.PUZZLE) options.puzzleName else options.roomName) &&
-                room.name != null
+                (if (room.type == RoomTypes.PUZZLE) options.puzzleName else options.roomName)
 
             val decoration =
                 (if (
                     (
                         options.checkMark ||
-                        (renderName && room.checkmark != CheckmarkTypes.UNEXPLORED)
-                    ) && (!options.roomNoCheckName || !renderName)
+                        (renderName && room.name == null && room.checkmark != CheckmarkTypes.UNEXPLORED)
+                    ) && (!options.roomNoCheckName || !renderName || room.name == null)
                 ) {
                     if (options.renderUnknownRooms && room.checkmark == CheckmarkTypes.UNEXPLORED && room.name != null) null
                     else CHECKMARK[options.iconStyle][room.checkmark]
