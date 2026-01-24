@@ -288,6 +288,7 @@ object Devonian : ClientModInitializer {
             PestDropTracker,
             ActionbarParser,
             *ActionbarParser.Stats.entries.flatMap { listOf(it.custom, it.hide) }.toTypedArray(),
+            ChatEmotes,
 
             // Debug
             CopyItem,
