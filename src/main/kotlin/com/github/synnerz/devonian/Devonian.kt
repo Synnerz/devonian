@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
+import com.github.synnerz.devonian.features.misc.ActionbarParser
 import com.github.synnerz.devonian.features.bossbar.BossBarHealth
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.WAILA
@@ -210,9 +211,6 @@ object Devonian : ClientModInitializer {
             FixObfuscatedText,
             CustomMageBeam,
             CustomSidebarColor,
-            SecretsHud,
-            CustomDefenseHud,
-            CustomManaUseHud,
             CroesusProfit,
             WardrobeKeybinds,
             FireFreezeTimer,
@@ -288,6 +286,8 @@ object Devonian : ClientModInitializer {
             TerminalProtection,
             PestKillsTracker,
             PestDropTracker,
+            ActionbarParser,
+            *ActionbarParser.Stats.entries.flatMap { listOf(it.custom, it.hide) }.toTypedArray(),
 
             // Debug
             CopyItem,
