@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.features.Feature
 
 object ChatEmotes : Feature(
     "chatEmotes",
-    "works same way as /emotes in hypixel does - :java: -> :coffee:",
+    "works same way as /emotes in hypixel does - :java: -> ☕",
 ) {
     private val emoticons = linkedMapOf(
         "(?<=\\s|^)<3(?=\\s|$)".toRegex() to "❤",
@@ -16,7 +16,7 @@ object ChatEmotes : Feature(
         "star" to "✮",
         "yes" to "✔",
         "no" to "✖",
-        "java" to ":coffee:",
+        "java" to "☕",
         "arrow" to "➜",
         "shrug" to "¯\\_(ツ)_/¯",
         "tableflip" to "(╯°□°）╯︵ ┻━┻",
@@ -42,17 +42,17 @@ object ChatEmotes : Feature(
     )
 
     fun modifyMessage(str: String): String {
-        var str = str
+        var message = str
 
         emoticons.forEach { (k, v) ->
-            str = str.replace(k, v)
+            message = message.replace(k, v)
         }
 
-        str = str.replace(emoteRegex) { match ->
+        message = message.replace(emoteRegex) { match ->
             val key = match.groupValues.getOrNull(1)
             key?.let { emoteMap[it] } ?: match.value
         }
 
-        return str
+        return message
     }
 }
