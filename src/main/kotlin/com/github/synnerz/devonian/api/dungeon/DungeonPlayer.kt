@@ -12,6 +12,7 @@ data class DungeonPlayer(
     var role: DungeonClass,
     var classLevel: Int,
     var isDead: Boolean,
+    var isDisconnected: Boolean = false,
     var entity: Player? = null,
     var position: PlayerComponentPosition? = null,
     var updateTime: Double? = null,

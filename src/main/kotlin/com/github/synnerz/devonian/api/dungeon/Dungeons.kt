@@ -238,6 +238,7 @@ object Dungeons {
                 if (role == "DEAD") player.isDead = true
                 else {
                     player.isDead = false
+                    player.isDisconnected = false
                     val c = DungeonClass.from(role)
                     player.role = c
                     playerClasses[name] = c
@@ -340,6 +341,7 @@ object Dungeons {
                     if (it[0] == Devonian.minecraft.gameProfile.name) wasInDungeons = true
                     players.remove(it[0])?.let { p ->
                         players[it[0]] = p
+                        p.isDisconnected = true
                     }
                 }
                 return@on

@@ -131,9 +131,8 @@ object DungeonMapScanner {
         decorations.forEach { dec ->
             if (dec.type == MapDecorationTypes.FRAME) return@forEach
 
-
             var player = playerIter.next().value
-            while (player.isDead) {
+            while (player.isDisconnected) {
                 if (playerIter.hasNext()) player = playerIter.next().value
                 else return
             }
