@@ -8,12 +8,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionfc;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -22,6 +24,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemInHandRenderer.class)
 public class ItemInHandRendererMixin {
+    @Shadow
+    private ItemStack mainHandItem;
+
     @WrapOperation(
         method = "renderHandsWithItems",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getAttackAnim(F)F")
@@ -49,6 +54,8 @@ public class ItemInHandRendererMixin {
         )
     )
     private void devonian$itemAnimations(float f, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, LocalPlayer localPlayer, int i, CallbackInfo ci) {
+        if (mainHandItem.isEmpty() && !ItemAnimations.INSTANCE.affectHand()) return;
+        if (mainHandItem.has(DataComponents.MAP_ID) && !ItemAnimations.INSTANCE.affectMap()) return;
         ItemAnimations.INSTANCE.applyTransformations(poseStack);
     }
 
@@ -74,6 +81,7 @@ public class ItemInHandRendererMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderDispatcher;getPlayerRenderer(Lnet/minecraft/client/player/AbstractClientPlayer;)Lnet/minecraft/client/renderer/entity/player/AvatarRenderer;")
     )
     private void devonian$itemAnimations1(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, float f, float g, HumanoidArm humanoidArm, CallbackInfo ci) {
+        if (!ItemAnimations.INSTANCE.affectHand()) return;
         ItemAnimations.INSTANCE.applyScale(poseStack);
     }
 
@@ -90,6 +98,7 @@ public class ItemInHandRendererMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/core/ClientAsset$Texture;texturePath()Lnet/minecraft/resources/ResourceLocation;")
     )
     private void devonian$itemAnimations3(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, HumanoidArm humanoidArm, CallbackInfo ci) {
+        if (!ItemAnimations.INSTANCE.affectMap()) return;
         ItemAnimations.INSTANCE.applyScale(poseStack);
     }
 
@@ -99,6 +108,7 @@ public class ItemInHandRendererMixin {
     )
     private void devonian$itemAnimations4(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, ItemStack itemStack, CallbackInfo ci) {
         if (!ItemAnimations.INSTANCE.isEnabled()) return;
+        if (!ItemAnimations.INSTANCE.affectMap()) return;
         poseStack.translate(64f, 64f, 0f);
         ItemAnimations.INSTANCE.applyScale(poseStack);
         poseStack.translate(-64f, -64f, 0f);

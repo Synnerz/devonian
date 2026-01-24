@@ -67,6 +67,18 @@ object ItemAnimations : Feature(
         "",
         "Item Size",
     )
+    private val SETTING_CHANGE_HAND = addSwitch(
+        "changeHand",
+        true,
+        "Should the above transformations affect an empty hand.",
+        "Change Empty Hand",
+    )
+    private val SETTING_CHANGE_HOLDING_MAP = addSwitch(
+        "changeMap",
+        true,
+        "Should the above transformations affect holding a map.",
+        "Change Holding Map",
+    )
     private val SETTING_SWING_SPEED = addDecimalSlider(
         "swingSpeed",
         0.0,
@@ -142,6 +154,8 @@ object ItemAnimations : Feature(
     fun disableHandSway(): Boolean {
         return isEnabled() && SETTING_NO_HAND_SWAY.get()
     }
+    fun affectHand(): Boolean = SETTING_CHANGE_HAND.get()
+    fun affectMap(): Boolean = SETTING_CHANGE_HOLDING_MAP.get()
 
     private fun getItemScale() = 2.0.pow(SETTING_SCALE.get())
     private fun getSwingSpeed() = 2.0.pow(SETTING_SWING_SPEED.get())
