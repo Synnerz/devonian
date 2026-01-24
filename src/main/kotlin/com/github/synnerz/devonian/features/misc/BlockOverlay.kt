@@ -77,7 +77,10 @@ object BlockOverlay : Feature(
                 HitResult.Type.ENTITY -> {
                     if (!SETTING_BOX_ENTITY.get()) return@on
                     val entity = (hit as? EntityHitResult)?.entity ?: return@on
-                    Shapes.create(entity.boundingBox)
+                    harharImLosingMyFuckingSanity = Shapes.create(
+                        -entity.bbWidth * 0.5, 0.0, -entity.bbWidth * 0.5,
+                        entity.bbWidth * 0.5, entity.bbHeight.toDouble(), entity.bbWidth * 0.5,
+                    )
                     offset = entity.getPosition(event.renderContext.tickCounter().getGameTimeDeltaPartialTick(false))
                 }
 
