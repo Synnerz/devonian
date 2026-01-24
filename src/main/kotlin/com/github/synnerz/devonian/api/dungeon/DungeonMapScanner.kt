@@ -50,7 +50,7 @@ object DungeonMapScanner {
         val id = lastMapId ?: return
         Devonian.minecraft.level?.overrideMapData(id, null)
         lastMapId = null
-        swapCd = System.currentTimeMillis() + 3000L
+        swapCd = System.currentTimeMillis() + 6000L
     }
 
     private enum class MapColors(val color: Byte) {
