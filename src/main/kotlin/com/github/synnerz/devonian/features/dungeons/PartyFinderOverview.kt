@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WebRequests
 import com.github.synnerz.devonian.api.dungeon.PartyFinderListener
 import com.github.synnerz.devonian.api.events.ServerTickEvent
@@ -17,7 +16,6 @@ import net.minecraft.network.chat.Style
 import net.minecraft.world.item.component.ItemLore
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.TimeUnit
 
 object PartyFinderOverview : Feature(
     "partyFinderOverview",
@@ -55,8 +53,6 @@ object PartyFinderOverview : Feature(
     )
 
     override fun initialize() {
-        Scheduler.schedulePool.scheduleWithFixedDelay(::onUpdate, 2L, 2L, TimeUnit.SECONDS)
-
         on<PartyFinderListener.PartyFinderEvent> { event ->
             members.clear()
             parties.clear()
@@ -72,6 +68,7 @@ object PartyFinderOverview : Feature(
 
                 it.members.forEach { m -> members.add(m.name) }
             }
+            if (members.isNotEmpty()) onUpdate()
         }
 
         on<ServerTickEvent> { event ->
@@ -140,15 +137,18 @@ object PartyFinderOverview : Feature(
         if (members.isEmpty()) return
 
         WebRequests.ioScope.launch {
-            val username = members.removeFirstOrNull() ?: return@launch
-            val cachedData = cachedMembers[username]
-            if (cachedData != null && System.currentTimeMillis() - cachedData.timeTaken <= (1000 * 60) * 20) return@launch
+            val results = members.filter {
+                val cachedData = cachedMembers[it]
+                cachedData == null ||
+                System.currentTimeMillis() - cachedData.timeTaken >= (1000 * 60 * 60) * 24
+            }.map { it to WebRequests.get("${DUNGEONS_API}$it") }
 
-            val response = WebRequests.get("${DUNGEONS_API}$username")
-            val data = PersistentJson.gson.fromJson(response, DungeonsApiResult::class.java)
-            data.timeTaken = System.currentTimeMillis()
+            results.forEach { (name, response) ->
+                val data = PersistentJson.gson.fromJson(response, DungeonsApiResult::class.java)
+                data.timeTaken = System.currentTimeMillis()
 
-            cachedMembers[username] = data
+                cachedMembers[name] = data
+            }
         }
     }
 }
