@@ -1,9 +1,6 @@
 package com.github.synnerz.devonian.api.dungeon
 
-import com.github.synnerz.devonian.api.splits.BranchingSplitStage
-import com.github.synnerz.devonian.api.splits.SequentialSplitStage
-import com.github.synnerz.devonian.api.splits.SplitStage
-import com.github.synnerz.devonian.api.splits.TimeUnit
+import com.github.synnerz.devonian.api.splits.*
 import com.github.synnerz.devonian.features.dungeons.BossSplits
 import com.github.synnerz.devonian.features.dungeons.clear.RunSplits
 
@@ -60,25 +57,35 @@ object Stages {
                         BranchingSplitStage(
                             arrayOf(
                                 SplitStage(
-                                    "The BLOOD DOOR has been opened!", arrayOf(
-                                        SequentialSplitStage(
+                                    "The BLOOD DOOR has been opened!",
+                                    arrayOf(
+                                        InsulatingStage(
                                             arrayOf(
-                                                FirstWatcherSpawn,
-                                                SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
+                                                SequentialSplitStage(
+                                                    arrayOf(
+                                                        FirstWatcherSpawn,
+                                                        SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
+                                                    )
+                                                ),
+                                                WatcherClear
                                             )
-                                        ),
-                                        WatcherClear
+                                        )
                                     )
                                 ),
                                 SplitStage(
-                                    "^\\[BOSS] The Watcher: .+?$".toRegex(), arrayOf(
-                                        SequentialSplitStage(
+                                    "^\\[BOSS] The Watcher: .+?$".toRegex(),
+                                    arrayOf(
+                                        InsulatingStage(
                                             arrayOf(
-                                                FirstWatcherSpawn,
-                                                SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
+                                                SequentialSplitStage(
+                                                    arrayOf(
+                                                        FirstWatcherSpawn,
+                                                        SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
+                                                    )
+                                                ),
+                                                WatcherClear
                                             )
-                                        ),
-                                        WatcherClear
+                                        )
                                     )
                                 ),
                             )
