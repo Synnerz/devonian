@@ -16,7 +16,7 @@ import kotlin.math.sign
 
 object ScrollableTooltip : Feature(
     "scrollableTooltip",
-    "Allows you to use CTRL + Scroll to zoom in/out on a tooltip.",
+    "Allows you to use move a tooltip.",
     subcategory = "Inventory",
 ) {
     private const val KEY_NAME = "scrollableTooltip"
@@ -31,6 +31,12 @@ object ScrollableTooltip : Feature(
         true,
         "Allows you to use Scroll to move the tooltip up/down.",
         "Allow Vertical",
+    )
+    private val SETTING_ALLOW_SCALE = addSwitch(
+        "allowScale",
+        true,
+        "Allows you to use Control + Scroll to scale the tooltip.",
+        "Allow Scaling",
     )
     val SETTING_LOCK_IN_PLACE = addSwitch(
         "lockInPlace",
@@ -98,7 +104,11 @@ object ScrollableTooltip : Feature(
                 if (itemStack == ItemStack.EMPTY) return@register true
 
                 when {
-                    holdingCtrl -> scaleScroll *= 1 + (0.1 * sign(delta))
+                    holdingCtrl -> {
+                        if (SETTING_ALLOW_SCALE.get()) {
+                            scaleScroll *= 1 + (0.1 * sign(delta))
+                        }
+                    }
                     holdingShift -> {
                         if (SETTING_ALLOW_HORIZONTAL.get()) {
                             xo += if (holdingAlt) 4 * sign(delta)
