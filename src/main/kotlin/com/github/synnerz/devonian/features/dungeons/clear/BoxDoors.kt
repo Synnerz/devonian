@@ -17,6 +17,7 @@ import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
 import java.awt.Color
+import java.util.*
 import kotlin.math.min
 
 object BoxDoors : Feature(
@@ -169,8 +170,15 @@ object BoxDoors : Feature(
                     if (it.type !== DoorTypes.NORMAL && it.type !== DoorTypes.ENTRANCE) return@forEach
                     if (
                         SETTING_HIDE_NORMAL_DOOR_GREEN.get() &&
-                        it.rooms.all { !isRoomUseful(it, room) }
-                    ) return@on
+                        it.rooms.all {
+                            it === room ||
+                            !isRoomUseful(
+                                it,
+                                Collections.newSetFromMap<DungeonRoom>(IdentityHashMap())
+                                    .also { it.add(room) }
+                            )
+                        }
+                    ) return@forEach
 
                     drawDoor(
                         it.comp,
@@ -200,11 +208,16 @@ object BoxDoors : Feature(
         )
     }
 
-    private fun isRoomUseful(room: DungeonRoom, excluding: DungeonRoom, sanity: Int = 10): Boolean {
-        if (sanity <= 0) return true
-        if (room === excluding) return false
+    private fun isRoomUseful(room: DungeonRoom, visited: MutableSet<DungeonRoom>): Boolean {
+        if (room.type == RoomTypes.ENTRANCE) return false
         if (room.checkmark !== CheckmarkTypes.GREEN) return true
-        return room.doors.any { it.rooms.any { it !== room && it !== excluding && isRoomUseful(it, room, sanity - 1) }}
+        return room.doors.any {
+            it.rooms.any {
+                it !== room &&
+                visited.add(it) &&
+                isRoomUseful(it, visited)
+            }
+        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
