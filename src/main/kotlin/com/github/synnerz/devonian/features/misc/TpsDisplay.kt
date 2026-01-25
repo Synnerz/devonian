@@ -43,10 +43,10 @@ object TpsDisplay : TextHudFeature("tpsDisplay") {
     private val minTree = TreeSet<Sample>(Comparator.comparingInt { it.value })
     private val maxTree = TreeSet<Sample>(Comparator.comparingInt { -it.value })
 
-    private var lastCur = 0
+    var lastCur = 0
     private var lastMin = 0
     private var lastMax = 0
-    private var lastAvg = 0.0
+    var lastAvg = 0.0
 
     override fun initialize() {
         DevonianCommand.command.subcommand("tps") { _, _ ->

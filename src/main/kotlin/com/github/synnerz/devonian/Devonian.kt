@@ -291,6 +291,7 @@ object Devonian : ClientModInitializer {
             ActionbarParser,
             *ActionbarParser.Stats.entries.flatMap { listOf(it.custom, it.hide) }.toTypedArray(),
             ChatEmotes,
+            PartyCommands,
 
             // Debug
             CopyItem,
