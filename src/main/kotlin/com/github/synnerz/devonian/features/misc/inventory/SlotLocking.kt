@@ -1,20 +1,27 @@
 package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
+import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
 import com.github.synnerz.devonian.api.events.GuiCloseEvent
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.api.events.GuiKeyUpEvent
+import com.github.synnerz.devonian.api.events.PostRenderSlotsEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
 import com.github.synnerz.devonian.utils.render.Render2D
+import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
+import net.minecraft.client.gui.render.TextureSetup
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
+import org.joml.Matrix3x2f
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 
@@ -24,6 +31,13 @@ object SlotLocking : Feature(
     subcategory = "Inventory",
     searchTags = setOf("protect", "prevent", "item"),
 ) {
+    private val SETTING_STYLE = addSelection(
+        "style",
+        0,
+        listOf("Lock Icon", "Box"),
+        "",
+        "Locked Slot Style",
+    )
     private val SETTING_LOCKED_SLOT_COLOR = addColorPicker(
         "slotColor",
         Color.RED.rgb,
@@ -109,6 +123,42 @@ object SlotLocking : Feature(
             } else {
                 Render2D.drawWireRect(event.ctx, slot.x, slot.y, 16, 16, SETTING_LOCKED_SLOT_COLOR.getColor(), lw = 2)
             }
-        }.prio = 10
+        }.apply {
+            prio = 10
+            setEnabled(SETTING_STYLE.state.map { it == 1 })
+        }
+
+        on<PostRenderSlotsEvent> { event ->
+            val lock = TextureSetup.singleTexture(lockUploader.textureView)
+            val inv = minecraft.player?.inventory
+            val mat = Matrix3x2f(event.ctx.pose())
+
+            event.container.menu.slots.forEach { slot ->
+                if (slot.container !== inv) return@forEach
+                if (lockedSlots.getOrNull(slot.containerSlot) != true) return@forEach
+
+                event.ctx.guiRenderState.submitGuiElement(
+                    TexturedQuadRenderState(
+                        BufferedImageRenderer.pipeline,
+                        lock,
+                        mat,
+                        slot.x + 0f, slot.y + 0f,
+                        slot.x + 16f, slot.y + 16f,
+                        0f, 0f,
+                        1f, 1f,
+                        0x66FFFFFF,
+                        event.ctx.scissorStack.peek(),
+                    )
+                )
+            }
+        }.apply {
+            prio = 1
+            setEnabled(SETTING_STYLE.state.map { it == 0 })
+        }
     }
+
+    // from sba
+    private val mcidLock = ResourceLocation.fromNamespaceAndPath("devonian", "slot_locking_lock")!!
+    private val lockUploader = BufferedImageUploader.fromResource("/assets/devonian/lock.png")!!
+        .register(mcidLock)
 }
