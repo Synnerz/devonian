@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.api.dungeon
 import com.github.synnerz.devonian.api.splits.BranchingSplitStage
 import com.github.synnerz.devonian.api.splits.SequentialSplitStage
 import com.github.synnerz.devonian.api.splits.SplitStage
+import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.features.dungeons.BossSplits
 import com.github.synnerz.devonian.features.dungeons.clear.RunSplits
 
@@ -134,7 +135,14 @@ object Stages {
         Goldor = SplitStage("The Core entrance is opening!").withName("&8Goldor")
         Necron = SplitStage("[BOSS] Necron: You went further than any human before, congratulations.")
             .withName("&4Necron")
-        WitherKing = SplitStage("[BOSS] Wither King: You... again?").withName("&0Wither King")
+        WitherKing = object : SplitStage("[BOSS] Necron: All this, for nothing...") {
+            override fun getThisSplit(format: TimeUnit.Format, force: TimeUnit?): MutableList<String> {
+                if (Dungeons.floor == FloorType.F7) return mutableListOf()
+                return super.getThisSplit(format, force)
+            }
+        }.also {
+            it.withName("&0Wither King")
+        }
 
         F7 = SequentialSplitStage(
             "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!",
