@@ -312,6 +312,93 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
         private val correctSlots = mutableListOf<TerminalSlot>()
 
+        private val legacyNames = mapOf(
+            "Grass" to "Grass Block",
+            "Redstone Dust" to "Redstone",
+            "Empty Map" to "Map",
+            "Oak Planks" to "Oak Wood Planks",
+            "Spruce Planks" to "Spruce Wood Planks",
+            "Birch Planks" to "Birch Wood Planks",
+            "Jungle Planks" to "Jungle Wood Planks",
+            "Acacia Planks" to "Acacia Wood Planks",
+            "Dark Oak Planks" to "Dark Oak Wood Planks",
+            "Tall Grass" to "Double Tallgrass",
+            "Brown Mushroom" to "Mushroom",
+            "Red Mushroom" to "Mushroom",
+            "Brick Slab" to "Bricks Slab",
+            "Stone Brick Slab" to "Stone Bricks Slab",
+            "Oak Slab" to "Oak Wood Slab",
+            "Spruce Slab" to "Spruce Wood Slab",
+            "Birch Slab" to "Birch Wood Slab",
+            "Jungle Slab" to "Jungle Wood Slab",
+            "Acacia Slab" to "Acacia Wood Slab",
+            "Dark Oak Slab" to "Dark Oak Wood Slab",
+            "Mossy Cobblestone" to "Mossy Stone",
+            "Oak Stairs" to "Oak Wood Stairs",
+            "Spruce Stairs" to "Spruce Wood Stairs",
+            "Birch Stairs" to "Birch Wood Stairs",
+            "Jungle Stairs" to "Jungle Wood Stairs",
+            "Acacia Stairs" to "Acacia Wood Stairs",
+            "Dark Oak Stairs" to "Dark Oak Wood Stairs",
+            "Oak Pressure Plate" to "Wooden Pressure Plate",
+            "Light Weighted Pressure Plate" to "Weighted Pressure Plate (Light)",
+            "Heavy Weighted Pressure Plate" to "Weighted Pressure Plate (Heavy)",
+            "Oak Button" to "Button",
+            "Stone Button" to "Button",
+            "White Carpet" to "Carpet",
+            "Black Terracotta" to "Black Stained Clay",
+            "Red Terracotta" to "Red Stained Clay",
+            "Green Terracotta" to "Green Stained Clay",
+            "Brown Terracotta" to "Brown Stained Clay",
+            "Blue Terracotta" to "Blue Stained Clay",
+            "Purple Terracotta" to "Purple Stained Clay",
+            "Cyan Terracotta" to "Cyan Stained Clay",
+            "Light Gray Terracotta" to "Light Gray Stained Clay",
+            "Gray Terracotta" to "Gray Stained Clay",
+            "Pink Terracotta" to "Pink Stained Clay",
+            "Lime Terracotta" to "Lime Stained Clay",
+            "Yellow Terracotta" to "Yellow Stained Clay",
+            "Light Blue Terracotta" to "Light Blue Stained Clay",
+            "Magenta Terracotta" to "Magenta Stained Clay",
+            "Orange Terracotta" to "Orange Stained Clay",
+            "White Terracotta" to "White Stained Clay",
+            "Terracotta" to "Hardened Clay",
+            "Nether Portal" to "Portal",
+            "White Wool" to "Wool",
+            "Block of Lapis Lazuli" to "Lapis Lazuli Block",
+            "Red Bed" to "Bed",
+            "White Bed" to "Bed",
+            "Oak Trapdoor" to "Wooden Trapdoor",
+            "Infested Stone" to "Stone Monster Egg",
+            "Infested Cobblestone" to "Cobblestone Monster Egg",
+            "Infested Stone Bricks" to "Stone Brick Monster Egg",
+            "Infested Mossy Stone Bricks" to "Mossy Stone Brick Monster Egg",
+            "Infested Cracked Stone Bricks" to "Cracked Stone Brick Monster Egg",
+            "Infested Chiseled Stone Bricks" to "Chiseled Stone Brick Monster Egg",
+            "Enchanting Table" to "Enchantment Table",
+            "Chipped Anvil" to "Slightly Damaged Anvil",
+            "Damaged Anvil" to "Very Damaged Anvil",
+            "Daylight Detector" to "Daylight Sensor",
+            "Quartz Pillar" to "Pillar Quartz Block",
+            "Wheat Seeds" to "Seeds",
+            "Chainmail Helmet" to "Chain Helmet",
+            "Chainmail Chestplate" to "Chain Chestplate",
+            "Chainmail Leggings" to "Chain Leggings",
+            "Chainmail Boots" to "Chain Boots",
+            "Oak Boat" to "Boat",
+            "Milk Bucket" to "Milk",
+            "Sugar Cane" to "Sugar Canes",
+            "Raw Cod" to "Raw Fish",
+            "Tropical Fish" to "Clownfish",
+            "Cooked Cod" to "Cooked Fish",
+            "Red Dye" to "Rose Red",
+            "Green Dye" to "Cactus Green",
+            "Yellow Dye" to "Dandelion Yellow",
+            "Glistering Melon Slice" to "Glistering Melon",
+            "Player Head" to "Head",
+            "Golden Horse Armor" to "Gold Horse Armor",
+        )
+
         override fun onTick() {
             val screen = minecraft.screen ?: return
             val toFind = title.matchEntire(screen.title.string)?.groupValues?.drop(1)?.getOrNull(0) ?: return
@@ -322,7 +409,8 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             items.forEachIndexed { idx, item ->
                 if (item.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return@forEachIndexed
 
-                val name = item.customName?.string ?: item.itemName.string
+                var name = item.customName?.string ?: item.itemName.string
+                name = legacyNames[name] ?: name
                 if (!name.startsWith(toFind, ignoreCase = true)) return@forEachIndexed
 
                 correctSlots.add(TerminalSlot(idx, item))
