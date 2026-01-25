@@ -6,6 +6,7 @@ import net.minecraft.world.phys.Vec3
 import java.awt.Color
 
 enum class M7Dragon(
+    val displayName: String,
     val singleLetter: Char,
     val colorName: String,
     val color: Color,
@@ -18,6 +19,7 @@ enum class M7Dragon(
     val waypoints: Array<BlockPos>,
 ) {
     POWER(
+        "Power",
         'r',
         "Red",
         Color(255, 85, 85),
@@ -65,6 +67,7 @@ enum class M7Dragon(
         ),
     ),
     APEX(
+        "Apex",
         'g',
         "Green",
         Color(85, 255, 85),
@@ -112,6 +115,7 @@ enum class M7Dragon(
         ),
     ),
     SOUL(
+        "Soul",
         'p',
         "Purple",
         Color(170, 0, 170),
@@ -159,6 +163,7 @@ enum class M7Dragon(
         ),
     ),
     ICE(
+        "Ice",
         'b',
         "Blue",
         Color(85, 255, 255),
@@ -206,6 +211,7 @@ enum class M7Dragon(
         ),
     ),
     FLAME(
+        "Flame",
         'o',
         "Orange",
         Color(255, 170, 0),
