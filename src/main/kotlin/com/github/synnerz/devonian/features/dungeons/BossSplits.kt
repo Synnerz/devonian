@@ -37,11 +37,16 @@ object BossSplits : TextHudFeature(
         "Time Format",
     )
 
+    private fun getSplits(force: TimeUnit? = null): List<String> {
+        return Stages.Boss.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()], force) +
+            Stages.Root.getThisSplit(TimeUnit.Format.entries[SETTING_FORMAT.get()], force)
+    }
+
     fun onFloorEnd() {
         if (!isEnabled()) return
         if (!SETTING_SEND_ALL_END.get()) return
         Scheduler.scheduleServerTask(2) {
-            Stages.Boss.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]).forEach {
+            getSplits().forEach {
                 ChatUtils.sendMessage(it.replaceCodes())
             }
         }
@@ -49,12 +54,12 @@ object BossSplits : TextHudFeature(
 
     override fun initialize() {
         on<ClientThreadServerTickEvent> {
-            setLines(Stages.Boss.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]))
+            setLines(getSplits())
         }.setEnabled(SETTING_FORMAT.state.map { it == 1 })
 
         on<RenderOverlayEvent> { event ->
             if (!isEditing) editTime = TimeUnit.EMPTY
-            if (SETTING_FORMAT.get() != 1) setLines(Stages.Boss.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]))
+            if (SETTING_FORMAT.get() != 1) setLines(getSplits())
             draw(event.ctx)
         }
     }
@@ -68,7 +73,7 @@ object BossSplits : TextHudFeature(
         val old = Stages.BossFloor.chosenChild
 
         Stages.BossFloor.chosenChild = floors[i]
-        val txt = Stages.Boss.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()], editTime)
+        val txt = getSplits(editTime)
         Stages.BossFloor.chosenChild = old
 
         return txt
