@@ -56,6 +56,7 @@ object DragonHealth : Feature(
                     it.str,
                     it.x, it.y, it.z,
                     8f,
+                    maxDist = 100.0,
                     phase = true,
                 )
             }

@@ -82,6 +82,7 @@ object DragonSpawnTimer : TextHudFeature(
                     it.chin.y + 2.0,
                     it.chin.z.toDouble(),
                     10f,
+                    maxDist = 100.0,
                     phase = true,
                 )
             }
