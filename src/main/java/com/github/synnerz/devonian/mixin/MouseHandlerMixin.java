@@ -3,6 +3,9 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.features.misc.KeyShortcuts;
 import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.input.MouseButtonInfo;
@@ -18,9 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MouseHandler.class)
 public class MouseHandlerMixin {
     @Shadow @Final private Minecraft minecraft;
-
-    @Shadow
-    private boolean ignoreFirstMove;
 
     @Shadow
     private double xpos;
@@ -52,14 +52,18 @@ public class MouseHandlerMixin {
         return NoCursorReset.INSTANCE.shouldReset();
     }
 
-    @Inject(
+    @WrapOperation(
         method = "releaseMouse",
-        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V", shift = At.Shift.AFTER)
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V")
     )
-    private void devonian$releaseMouseSetPosFix(CallbackInfo ci) {
-        if (!NoCursorReset.INSTANCE.isEnabled()) return;
-        GLFW.glfwSetCursorPos(minecraft.getWindow().handle(), xpos, ypos);
-        this.ignoreFirstMove = true;
+    private void devonian$releaseMouseSetPosFix(Window window, int i, double d, double e, Operation<Void> original) {
+        if (!NoCursorReset.INSTANCE.isEnabled()) {
+            original.call(window, i, d, e);
+            return;
+        }
+        GLFW.glfwSetInputMode(window.handle(), 208897, i);
+        GLFW.glfwSetCursorPos(window.handle(), xpos, ypos);
+        // ignoreFirstMove = true;
     }
 
     @WrapWithCondition(
