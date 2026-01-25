@@ -23,6 +23,12 @@ object SlotBinding : Feature(
     "Bind a slot to another slot (with keybind in controls) so you can shift + left click on it to swap each others' items around.",
     subcategory = "Inventory",
 ) {
+    private val SETTING_PROTECT = addSwitch(
+        "protect",
+        true,
+        "Prevent items in bound slots from being moved normally.",
+        "Protect Bound Slots",
+    )
     private val SETTING_BOUND_LINES = addSwitch(
         "boundLines",
         true,
@@ -36,11 +42,18 @@ object SlotBinding : Feature(
         "The mode to use for displaying lines between two binds.",
         "Pointing Line Mode",
     )
-    private val SETTING_PROTECT = addSwitch(
-        "protect",
-        true,
-        "Prevent items in bound slots from being moved normally.",
-        "Protect Bound Slots",
+    private val SETTING_SAME_COLOR = addSwitch(
+        "useSameColor",
+        false,
+        "Use the same color (the one below) for all bound slots, rather than " +
+        "selecting a color based on hotbar slot.",
+        "Use Same Color",
+    )
+    private val SETTING_FIXED_COLOR = addColorPicker(
+        "fixedColor",
+        Color(0, 0, 0).rgb,
+        "Only used when 'Use Same Color' is enabled.",
+        "Bound Slot Color",
     )
 
     private const val KEY_NAME = "slotsBound1"
@@ -73,6 +86,7 @@ object SlotBinding : Feature(
     )
 
     private fun colorFor(idx: Int, other: Int): Color {
+        if (SETTING_SAME_COLOR.get()) return SETTING_FIXED_COLOR.getColor()
         return slotColors.getOrElse(idx) { slotColors[other] }
     }
 
@@ -264,7 +278,7 @@ object SlotBinding : Feature(
                 (event.mouseX - cont.leftPos).toFloat(), (event.mouseY - cont.topPos).toFloat(),
                 Color.GREEN,
             )
-        }.prio = 0
+        }.prio = 2
     }
 
     fun setToFront(idx1: Int, idx2: Int) {
