@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian
 
+import com.github.synnerz.devonian.api.HypixelModApi
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Dungeons
@@ -325,6 +326,7 @@ object Devonian : ClientModInitializer {
         PreventItem.initialize()
         Dungeons.initialize()
         GardenEvents.initialize()
+        HypixelModApi.initialize()
 
         DevonianCommand.command.subcommand("sim") { _, args ->
             val msg = args.joinToString(" ") { it.toString() }
