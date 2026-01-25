@@ -164,11 +164,14 @@ object TerminalSolvers : Feature(
         }
 
         on<DropItemEvent> { event ->
+            if (currentSolver == null) return@on
             val slot = event.slot ?: return@on
             onInteractSlot(slot, event)
         }
 
         on<PickupItemInventoryEvent> { event ->
+            if (currentSolver == null) return@on
+
             if (event.isAll && SETTING_CANCEL_NONCLICKS.get()) {
                 event.cancel()
                 return@on
@@ -182,6 +185,7 @@ object TerminalSolvers : Feature(
         }
 
         on<SwapItemEvent> { event ->
+            if (currentSolver == null) return@on
             event.cancel()
         }.setEnabled(SETTING_CANCEL_NONCLICKS.state)
     }
@@ -460,6 +464,13 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         override fun cancelClick(slot: Slot): Boolean {
             return !correctSlots.any { it.slot == slot.containerSlot }
         }
+    },
+    MELODY("^Click the button on time!$".toRegex()) {
+        override val changesWindow: Boolean = false
+
+        override fun onTick() {}
+
+        override fun cancelClick(slot: Slot): Boolean = false
     };
 
     companion object {
