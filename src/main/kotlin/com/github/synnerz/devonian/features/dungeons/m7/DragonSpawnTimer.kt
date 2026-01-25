@@ -71,6 +71,11 @@ object DragonSpawnTimer : TextHudFeature(
             spawned.forEach {
                 val time = (ticks - EventBus.serverTicks()) * 0.05
 
+                if (time <= 0) {
+                    ticks = 0
+                    spawned.clear()
+                }
+
                 Render3DImmediate.renderString(
                     "${it.textColor}${it.colorName} §f%.2fs".format(time),
                     it.chin.x.toDouble(),
