@@ -57,15 +57,30 @@ object Stages {
                 SequentialSplitStage(
                     arrayOf(
                         BloodOpen,
-                        SplitStage(
-                            "The BLOOD DOOR has been opened!", arrayOf(
-                                SequentialSplitStage(
-                                    arrayOf(
-                                        FirstWatcherSpawn,
-                                        SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
+                        BranchingSplitStage(
+                            arrayOf(
+                                SplitStage(
+                                    "The BLOOD DOOR has been opened!", arrayOf(
+                                        SequentialSplitStage(
+                                            arrayOf(
+                                                FirstWatcherSpawn,
+                                                SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
+                                            )
+                                        ),
+                                        WatcherClear
                                     )
                                 ),
-                                WatcherClear
+                                SplitStage(
+                                    "^\\[BOSS] The Watcher: .+?$".toRegex(), arrayOf(
+                                        SequentialSplitStage(
+                                            arrayOf(
+                                                FirstWatcherSpawn,
+                                                SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
+                                            )
+                                        ),
+                                        WatcherClear
+                                    )
+                                ),
                             )
                         ),
                         PortalEnter
