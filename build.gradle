@@ -23,6 +23,7 @@ repositories {
 	maven { url = "https://api.modrinth.com/maven" }
 	maven { url = "https://jitpack.io" }
 	maven { url = "https://maven.terraformersmc.com" }
+	maven { url = "https://repo.hypixel.net/repository/Hypixel/" }
 }
 
 dependencies {
@@ -35,6 +36,7 @@ dependencies {
 
 	// TODO: upload to modrinth
 	include modImplementation("com.github.Synnerz:talium:4fbf96b664")
+	modImplementation "net.hypixel:mod-api:1.0.1"
 
 	modApi("com.terraformersmc:modmenu:16.0.0")
 }
