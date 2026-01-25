@@ -30,7 +30,8 @@
 		"minecraft": "~1.21.5",
 		"java": ">=21",
 		"fabric-api": "*",
-		"fabric-language-kotlin": "*"
+		"fabric-language-kotlin": "*",
+		"hypixel-mod-api": ">=1.0.1"
 	},
 	"custom": {
 		"modmenu": {
