@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.HypixelModApi
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Party
@@ -45,6 +46,7 @@ import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
+import com.github.synnerz.devonian.utils.OpenEditor
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
@@ -343,6 +345,22 @@ object Devonian : ClientModInitializer {
             ChatEvent(msg, Component.literal(msg)).post()
             return@subcommand 1
         }.greedyString("message")
+
+        DevonianCommand.command.subcommand("testme") { _, _ ->
+            OpenEditor.edit(
+                listOf(
+                    "please edit this text",
+                    "maybe even try adding new ones",
+                    "maybe try deleting a line",
+                )
+            ) {
+                ChatUtils.sendMessage("you typed in the following lines:")
+                it.forEach {
+                    ChatUtils.sendMessage(it)
+                }
+            }
+            return@subcommand 1
+        }
 
         DevonianCommand.initialize()
     }
