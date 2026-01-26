@@ -11,7 +11,15 @@ object RefillGFSCommands {
     fun initialize() {
         DevonianCommand.command.subcommand("pearls") { _, args ->
             val inv = inventory ?: return@subcommand 0
-            var amount = inv.sumOf { if (ItemUtils.skyblockId(it) == "ENDER_PEARL") 16 - it.count else 0 }
+            var hasMax = false
+            var amount = inv.sumOf {
+                if (ItemUtils.skyblockId(it) == "ENDER_PEARL") {
+                    if (it.count == 16) hasMax = true
+                    16 - it.count
+                }
+                else 0
+            }
+            if (hasMax) return@subcommand 0
             if (amount <= 0) amount = 16
             ChatUtils.command("gfs ender pearl $amount")
             1
@@ -19,7 +27,15 @@ object RefillGFSCommands {
 
         DevonianCommand.command.subcommand("leaps") { _, args ->
             val inv = inventory ?: return@subcommand 0
-            var amount = inv.sumOf { if (ItemUtils.skyblockId(it) == "SPIRIT_LEAP") 16 - it.count else 0 }
+            var hasMax = false
+            var amount = inv.sumOf {
+                if (ItemUtils.skyblockId(it) == "SPIRIT_LEAP") {
+                    if (it.count == 16) hasMax = true
+                    16 - it.count
+                }
+                else 0
+            }
+            if (hasMax) return@subcommand 0
             if (amount <= 0) amount = 16
             ChatUtils.command("gfs spirit leap $amount")
             1
@@ -27,7 +43,15 @@ object RefillGFSCommands {
 
         DevonianCommand.command.subcommand("superbooms") { _, args ->
             val inv = inventory ?: return@subcommand 0
-            var amount = inv.sumOf { if (ItemUtils.skyblockId(it) == "SUPERBOOM_TNT") 64 - it.count else 0 }
+            var hasMax = false
+            var amount = inv.sumOf {
+                if (ItemUtils.skyblockId(it) == "SUPERBOOM_TNT") {
+                    if (it.count == 64) hasMax = true
+                    64 - it.count
+                }
+                else 0
+            }
+            if (hasMax) return@subcommand 0
             if (amount <= 0) amount = 64
             ChatUtils.command("gfs superboom tnt $amount")
             1
