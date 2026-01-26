@@ -99,7 +99,7 @@ enum class DungeonClass(
         "dungeonColorCode$name",
         initialColorCode,
         null,
-        "Color code for anything related to the $name class. Use & instead of §.",
+        "Color code for anything related to the $name class. Use & instead of the section symbol.",
         "$name Color Code",
         "Dungeon Colors",
     ).also {
