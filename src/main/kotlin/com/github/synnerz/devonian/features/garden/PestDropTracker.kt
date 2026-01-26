@@ -93,21 +93,20 @@ object PestDropTracker : TextHudFeature(
             loader.data?.apply {
                 if (event.isRare) {
                     when (event.name.trim()) {
-                        "Compacted Wild Rose" -> compactedWildRose += event.amount
                         "Enchanted Brown Mushroom Block" -> compactBrownMushroom += event.amount
                         "Enchanted Red Mushroom Block" -> compactRedMushroom += event.amount
                         "Enchanted Cookie" -> compactCookie += event.amount
                         "Enchanted Melon" -> compactMelon += event.amount
                         "Enchanted Baked Potato" -> compactPotato += event.amount
-                        // these below are untested
                         "Enchanted Golden Carrot" -> compactCarrot += event.amount
-                        "Enchanted Polished Pumpkin" -> compactPupmkin += event.amount
                         "Enchanted Sugar Cane" -> compactSugarCane += event.amount
                         "Enchanted Cactus" -> compactCactus += event.amount
                         "Enchanted Hay Bale" -> compactWheat += event.amount
+                        "Polished Pumpkin" -> compactPupmkin += event.amount
+                        "Mutant Nether Wart" -> compactNetherWart += event.amount
+                        "Compacted Wild Rose" -> compactedWildRose += event.amount
                         "Compacted Moonflower" -> compactedMoonflower += event.amount
                         "Compacted Sunflower" -> compactedSunflower += event.amount
-                        "Mutant Nether Wart" -> compactNetherWart += event.amount
                     }
                     return@apply
                 }
