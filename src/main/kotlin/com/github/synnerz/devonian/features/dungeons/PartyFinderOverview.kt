@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WebRequests
+import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.PartyFinderListener
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.config.Categories
@@ -36,6 +37,13 @@ object PartyFinderOverview : Feature(
         true,
         "Shows the missing classes at the bottom of the tooltip",
         "Party Finder Overview Missing"
+    )
+    private val SETTING_COMPACT_MODE = addSelection(
+        "compactModes",
+        0,
+        listOf("NONE", "Style1", "Style2"),
+        "If enabled, it'll compact most of the party finder data from the users",
+        "Party Finder Overview Compact"
     )
     private val members = CopyOnWriteArrayList<String>()
     private val cachedMembers = ConcurrentHashMap<String, DungeonsApiResult>()
@@ -124,13 +132,35 @@ object PartyFinderOverview : Feature(
                             ?: (personalBestMap?.get("s")?.get("floor_${p.floor}") to "S")
                     }
 
-                    val mut = l.copy()
-                        .append(ChatUtils.literal(buildString {
-                            append(" &8(&6${data.level}&8) &8[&3${StringUtils.addCommas(data.secrets)} &7| &b${"%.2f".format(data.averageSecrets)}&8]")
-                            if (personalBest == null) append(" &8[&cNO PB&8]")
-                            else if (SETTING_PB_MODE.get() == 0) append(" &8[&a$type $personalBest&8]")
-                            else append(" &8[&a$personalBest&8]")
-                        }))
+                    val mut = when (SETTING_COMPACT_MODE.get()) {
+                        1 -> {
+                            ChatUtils.literal(buildString {
+                                val role = DungeonClass.from(match[1])
+                                val roleCode = role.colorCode
+                                append("&8[$roleCode${role.singleLetter.uppercase()}&8] $roleCode${match[0]} &8[&e${match[2]} &7| &6${data.level.toInt()}&8] &8[&3${StringUtils.shortenNumber(data.secrets)} &7| &b${"%.1f".format(data.averageSecrets)}&8]")
+                                if (personalBest == null) append(" &8[&cNO PB&8]")
+                                else append(" &8[&a$personalBest&8]")
+                            })
+                        }
+                        2 -> {
+                            ChatUtils.literal(buildString {
+                                val role = DungeonClass.from(match[1])
+                                val roleCode = role.colorCode
+                                append("&8[$roleCode${role.singleLetter.uppercase()} &e${match[2]}&8] $roleCode${match[0]} &8[&6${data.level.toInt()} &7| &3${StringUtils.shortenNumber(data.secrets)} &7| &b${"%.1f".format(data.averageSecrets)}&8]")
+                                if (personalBest == null) append(" &cNO PB")
+                                else append(" &a$personalBest")
+                            })
+                        }
+                        else -> {
+                            l.copy()
+                                .append(ChatUtils.literal(buildString {
+                                    append(" &8(&6${data.level}&8) &8[&3${StringUtils.addCommas(data.secrets)} &7| &b${"%.2f".format(data.averageSecrets)}&8]")
+                                    if (personalBest == null) append(" &8[&cNO PB&8]")
+                                    else if (SETTING_PB_MODE.get() == 0) append(" &8[&a$type $personalBest&8]")
+                                    else append(" &8[&a$personalBest&8]")
+                                }))
+                        }
+                    }
 
                     newLore.add(mut)
                 }
