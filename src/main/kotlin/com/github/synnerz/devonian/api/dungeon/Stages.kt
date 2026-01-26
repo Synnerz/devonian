@@ -145,7 +145,7 @@ object Stages {
             )
         )
 
-        Storm = SplitStage(
+        Storm = SequentialSplitStage(
             "[BOSS] Storm: Pathetic Maxor, just like expected.",
             arrayOf(
                 StormLightning,
