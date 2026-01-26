@@ -21,6 +21,7 @@ object PartyFinderListener {
     private val CHAT_ROLE_REGEX = "^You have selected the (Healer|Tank|Mage|Berserk|Archer) Dungeon Class!$".toRegex()
     private val CHAT_REFRESH_CD_REGEX = "^Please wait a few seconds between refreshing!$".toRegex()
     private val CHAT_REFRESHING_REGEX = "^Refreshing\\.\\.\\.$".toRegex()
+    private val roles = listOf("Healer", "Tank", "Mage", "Berserk", "Archer")
     private val parties = CopyOnWriteArrayList<PartyFinderData>()
     private val oldParties = CopyOnWriteArrayList<PartyFinderData>()
     private var inPF = false
@@ -28,7 +29,7 @@ object PartyFinderListener {
     private var shouldScan = false
     private var currentRole: String? = null
 
-    class PartyFinderEvent(
+    @Threaded class PartyFinderEvent(
         val parties: CopyOnWriteArrayList<PartyFinderData>
     ) : Event()
 
@@ -39,6 +40,7 @@ object PartyFinderListener {
         var idx: Int,
         var isMasterMode: Boolean = false,
         val members: MutableList<PartyFinderMember> = mutableListOf(),
+        val missingRoles: MutableList<String> = mutableListOf(),
         // maybe we need this data later or something idk commenting for now
 //        var note: String = "Empty",
 //        var requiredLevel: Int = -1,
@@ -103,6 +105,7 @@ object PartyFinderListener {
 
                 val lore = ItemUtils.lore(itemStack) ?: return@forEach
                 var currentData: PartyFinderData? = null
+                val currentRoles = mutableSetOf<String>()
 
                 for (line in lore) {
                     if (currentData == null) {
@@ -130,6 +133,7 @@ object PartyFinderListener {
 
                     val (username, role, level) = USER_ROLE_REGEX.matchEntire(line)?.groupValues?.drop(1) ?: continue
 
+                    currentRoles.add(role)
                     currentData.members.add(
                         PartyFinderMember(
                             username,
@@ -142,6 +146,7 @@ object PartyFinderListener {
                 if (currentData?.members?.any { it.role == currentRole } == true) {
                     currentData.canJoin.add(PartyFinderStatus.DUPE_CLASS)
                 }
+                currentData?.missingRoles?.addAll(roles - currentRoles)
 
                 if (currentData == null) return@forEach
 
@@ -167,6 +172,8 @@ object PartyFinderListener {
         currentRole = null
         PartyFinderEvent(parties).post()
     }
+
+    fun currentRole(): String? = currentRole
 
     enum class PartyFinderStatus {
         CANNOT_JOIN, // SHOULD be, hasn't completed previous floor
