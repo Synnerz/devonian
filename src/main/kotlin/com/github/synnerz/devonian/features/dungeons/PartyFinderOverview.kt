@@ -9,11 +9,9 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.PersistentJson
 import com.github.synnerz.devonian.utils.StringUtils
 import kotlinx.coroutines.launch
-import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.Style
 import net.minecraft.world.item.component.ItemLore
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -127,18 +125,12 @@ object PartyFinderOverview : Feature(
                     }
 
                     val mut = l.copy()
-                        .append(Component.literal(" (").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
-                        .append(Component.literal("${data.level}").withStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)))
-                        .append(Component.literal(") ").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
-                        .append(Component.literal("[").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
-                        .append(Component.literal("${StringUtils.addCommas(data.secrets)}/${"%.2f".format(data.averageSecrets)}").withStyle(ChatFormatting.AQUA))
-                        .append(Component.literal("] ").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
-                    if (personalBest != null) {
-                        mut
-                            .append(Component.literal("[").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
-                            .append(Component.literal("$type $personalBest").withStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)))
-                            .append(Component.literal("]").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)))
-                    }
+                        .append(ChatUtils.literal(buildString {
+                            append(" &8(&6${data.level}&8) &8[&3${StringUtils.addCommas(data.secrets)} &7| &b${"%.2f".format(data.averageSecrets)}&8]")
+                            if (personalBest == null) append(" &8[&cNO PB&8]")
+                            else if (SETTING_PB_MODE.get() == 0) append(" &8[&a$type $personalBest&8]")
+                            else append(" &8[&a$personalBest&8]")
+                        }))
 
                     newLore.add(mut)
                 }
