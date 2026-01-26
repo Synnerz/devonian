@@ -30,7 +30,7 @@ object MiddleClickGui : Feature(
             Devonian.keybindCategory
         )
     )
-    private val avoidGuis = mutableListOf(
+    private val avoidGuis = listOf(
         "Wardrobe",
         "Drill Anvil",
         "Anvil",
@@ -50,9 +50,10 @@ object MiddleClickGui : Feature(
         "^Correct all the panes!$".toRegex(),
         "^Click the button on time!$".toRegex(),
     )
-    private val avoidItems = mutableSetOf(
+    private val avoidItems = setOf(
         "Reforge Item",
         "Salvage Items",
+        "Experience Bottles",
     )
 
     override fun initialize() {
