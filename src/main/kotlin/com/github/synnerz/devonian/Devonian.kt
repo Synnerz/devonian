@@ -39,6 +39,7 @@ import com.github.synnerz.devonian.features.dungeons.solvers.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.*
 import com.github.synnerz.devonian.features.misc.*
+import com.github.synnerz.devonian.features.misc.chat.MutePartySpam
 import com.github.synnerz.devonian.features.misc.hiders.*
 import com.github.synnerz.devonian.features.misc.inventory.*
 import com.github.synnerz.devonian.features.misc.tooltip.*
@@ -301,6 +302,7 @@ object Devonian : ClientModInitializer {
             *ActionbarParser.Stats.entries.flatMap { listOf(it.custom, it.hide) }.toTypedArray(),
             ChatEmotes,
             PartyCommands,
+            MutePartySpam,
 
             // Debug
             CopyItem,
