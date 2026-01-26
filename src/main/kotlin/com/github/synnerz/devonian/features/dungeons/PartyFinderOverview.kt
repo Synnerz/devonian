@@ -42,7 +42,6 @@ object PartyFinderOverview : Feature(
     private val members = CopyOnWriteArrayList<String>()
     private val cachedMembers = ConcurrentHashMap<String, DungeonsApiResult>()
     private val parties = CopyOnWriteArrayList<PartyFinderListener.PartyFinderData>()
-    private val roles = listOf("Healer", "Tank", "Mage", "Berserk", "Archer")
 
     data class UserDungeonsData(
         val cataXP: Double,
