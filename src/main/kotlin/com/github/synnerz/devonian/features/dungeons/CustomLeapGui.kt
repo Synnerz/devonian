@@ -80,8 +80,14 @@ object CustomLeapGui : Feature(
             val idx = event.slot
             if (idx !in 9..18) return@on
             if (idx == 17) {
-                playerList.sortedWith(leapComparator).forEachIndexed { i, v -> create(v, i) }
+                val list = playerList.sortedWith(leapComparator)
                 playerList.clear()
+                Scheduler.scheduleTask {
+                    list.forEachIndexed { i, v -> create(v, i) }
+                    background.scaledResolution?.let {
+                        background.propagateResize(background, it)
+                    }
+                }
                 return@on
             }
             val itemStack = event.itemStack
@@ -92,12 +98,12 @@ object CustomLeapGui : Feature(
             playerList.add(LeapPlayer(idx, name, data.role, data.isDead))
         }
 
-        on<PacketSentEvent> { event ->
+        on<PrePacketSentEvent> { event ->
             val packet = event.packet
             if (packet !is ServerboundContainerClosePacket) return@on
 
             containerId = -1
-            Scheduler.scheduleTask { background.clearChildren() }
+            background.clearChildren()
         }
 
         on<RenderGuiEvent> { event ->
@@ -131,39 +137,35 @@ object CustomLeapGui : Feature(
         // TODO: add customizable sorting
         val r = idx / 2
         val c = idx % 2
-        val xo = 37.0
-        val yo = 40.0
-        val role = when (data.role) {
-            DungeonClass.Archer -> "§7[§6Archer§7]"
-            DungeonClass.Mage -> "§7[§bMage§7]"
-            DungeonClass.Berserk -> "§7[§cBerserk§7]"
-            DungeonClass.Tank -> "§7[§aTank§7]"
-            DungeonClass.Healer -> "§7[§dHealer§7]"
-            else -> "§7[§4UNKNOWN§7]"
-        }
-        val outline = when (data.role) {
-            DungeonClass.Archer -> Color(255, 170, 0, 150)
-            DungeonClass.Mage -> Color(85, 255, 255, 150)
-            DungeonClass.Berserk -> Color(255, 85, 85, 150)
-            DungeonClass.Tank -> Color(77, 231, 77, 150)
-            DungeonClass.Healer -> Color(255, 85, 255, 150)
-            else -> Color(170, 0, 0, 150)
-        }
-        val outlineHover = when (data.role) {
-            DungeonClass.Archer -> Color(255, 170, 0, 255)
-            DungeonClass.Mage -> Color(85, 255, 255, 255)
-            DungeonClass.Berserk -> Color(255, 85, 85, 255)
-            DungeonClass.Tank -> Color(77, 231, 77, 255)
-            DungeonClass.Healer -> Color(255, 85, 255, 255)
-            else -> Color(170, 0, 0, 255)
-        }
 
-        UIRect(15.0 + c * xo, 10.0 + r * yo, 35.0, 35.0, parent = background).apply {
+        val w = 40.0
+        val h = 30.0
+        val gapX = 1.0
+        val gapY = 2.0
+
+        val xo = (100.0 - w - w - gapX) * 0.5
+        val yo = (100.0 - h - h - gapY) * 0.5
+        val x = xo + (w + gapX) * c
+        val y = yo + (h + gapY) * r
+
+        val role = "§7[${data.role.colorCode}${data.role.name}§7]"
+        val outlineHover = data.role.color
+        val outline = outlineHover.let { Color(it.red, it.green, it.blue, 150) }
+
+        UIRect(x, y, w, h, parent = background).apply {
             val outlineEffect = OutlineEffect(1.5, outline)
             setColor(PRIMARY_COLOR)
             addEffect(outlineEffect)
-            addChild(UIText(0.0, 35.0, 100.0, 9.0, data.name, true).apply { textScale = 3f })
-            addChild(UIText(0.0, 50.0, 100.0, 9.0, role, true).apply { textScale = 2.5f })
+            addChild(UIText(0.0, 35.0, 100.0, 16.0, data.name, true).apply {
+                onResize { _, w ->
+                    textScale = 6f / w.scaleFactor
+                }
+            })
+            addChild(UIText(0.0, 60.0, 100.0, 16.0, role, true).apply {
+                onResize { _, w ->
+                    textScale = 5f / w.scaleFactor
+                }
+            })
 
             onMouseEnter { outlineEffect.color = outlineHover }
             onMouseLeave { outlineEffect.color = outline }
