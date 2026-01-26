@@ -8,6 +8,7 @@ import java.util.EnumSet
 
 object OpenEditor {
     private val isWindows = System.getProperty("os.name").startsWith("Windows")
+    private val isMac = System.getProperty("os.name").contains("mac", ignoreCase = true)
     private val permSet = EnumSet.of(
         PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
         PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE,
@@ -30,7 +31,8 @@ object OpenEditor {
 
             val editProc = ProcessBuilder(
                 if (isWindows) listOf("cmd.exe", "/s", "/c", "start", "/B", "/WAIT", "\"\"", "\"$tmpPath\"")
-                else listOf("editor", "\"$tmpPath\"")
+                else if (isMac) listOf("open", "\"$tmpPath\"")
+                else listOf("xdg-open", "\"$tmpPath\"")
             ).start()
             editProc.waitFor()
 
