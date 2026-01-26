@@ -34,7 +34,7 @@ object RefillGFSCommands {
                 amount += it.count
             }
             if (amount == 0) stacks = 1
-            val remaining = stacks * 64 - amount
+            val remaining = stacks * 16 - amount
             if (remaining > 0) ChatUtils.command("gfs spirit leap $remaining")
             1
         }
