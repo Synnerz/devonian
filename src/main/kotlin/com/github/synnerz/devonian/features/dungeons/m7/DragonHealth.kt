@@ -52,10 +52,11 @@ object DragonHealth : Feature(
         on<ScoreboardEvent> { event ->
             val match = event.matches(scoreboardReg) ?: return@on
             val type = match.getOrNull(0) ?: return@on
-            val health = match.getOrNull(1) ?: return@on
+            var health = match.getOrNull(1) ?: return@on
             val dragon = M7Dragon.entries.find { it.displayName == type } ?: return@on
             val id = dragons[dragon] ?: return@on
-            dragonHealths[id] = health.dropLast(1)
+            if (health.endsWith("❤")) health = health.dropLast(1)
+            dragonHealths[id] = health
         }
 
         on<PreExtractRenderEntityEvent> { event ->
