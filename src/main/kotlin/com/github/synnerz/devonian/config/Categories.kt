@@ -4,6 +4,7 @@ enum class Categories(
     val displayName: String,
     val subcategories: List<String> = listOf("General"),
 ) {
+    GLOBAL("Global", listOf("Dungeon Colors")),
     DUNGEONS("Dungeons", listOf("QOL", "Solvers", "HUD", "Alerts", "Highlights", "Hiders", "F7", "M7")),
     DUNGEON_MAP("Dungeon Map", listOf("Toggle", "Markers", "Colors", "Behavior", "Style")),
     GARDEN("Garden"),
@@ -15,7 +16,7 @@ enum class Categories(
 
     init {
         if (subcategories.isEmpty()) throw IllegalArgumentException("must provide at least 1 subcategory")
-        if (subcategories.size > 8) throw IllegalArgumentException("limit of 6 subcategories")
+        if (subcategories.size > 8) throw IllegalArgumentException("limit of 8 subcategories")
     }
 
     companion object {
