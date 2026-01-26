@@ -251,9 +251,6 @@ object CustomDungeonWaypoints : Feature(
                     WaypointType.MINE -> Color(230, 250, 50, 255)
                 }
 
-                val camera = event.ctx.gameRenderer().mainCamera
-                val camPos = camera.position()
-
                 if (it.text != null && SETTING_RENDER_TEXT.get()) {
                     Render3DImmediate.renderString(
                         it.text!!,
@@ -277,7 +274,7 @@ object CustomDungeonWaypoints : Feature(
 
                 Render3DImmediate.renderWireframeShape(
                     it.type.shape,
-                    pos.x - camPos.x, pos.y - camPos.y, pos.z - camPos.z,
+                    pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(),
                     color,
                     phase = SETTING_PHASE_MODE.get(),
                     lineWidth = SETTING_LINE_WIDTH.get()
