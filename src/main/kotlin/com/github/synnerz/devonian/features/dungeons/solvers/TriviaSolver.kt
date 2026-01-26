@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
+import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
@@ -96,6 +97,7 @@ object TriviaSolver : Feature(
         "ⓒ" to (10 to 6),
     )
     var inQuiz = false
+    var quizRoom: DungeonRoom? = null
     var solution: List<String>? = null
     var currentType: String? = null
     val answers = mutableListOf<String>()
@@ -104,8 +106,18 @@ object TriviaSolver : Feature(
     override fun initialize() {
         on<DungeonEvent.RoomEnter> { event ->
             val room = event.room
-            if (room.name != "Quiz") return@on
-            inQuiz = true
+            inQuiz = if (room.name == "Quiz") {
+                inQuiz = true
+                quizRoom = room
+                true
+            } else room.doors.any {
+                it.rooms.any {
+                    if (it.name == "Quiz") {
+                        quizRoom = it
+                        true
+                    } else false
+                }
+            }
         }
 
         on<DungeonEvent.RoomLeave> {
@@ -179,7 +191,7 @@ object TriviaSolver : Feature(
             if (!inQuiz || solution == null || currentType == null) return@on
             val pos = typeBlocks[currentType] ?: return@on
             // Should never happen but just in case
-            val room = DungeonScanner.currentRoom ?: return@on
+            val room = quizRoom ?: return@on
             val realPos = room.fromComp(pos.first, pos.second) ?: return@on
             Render3DImmediate.renderWireframeBox(
                 realPos.first.toDouble(), 70.0, realPos.second.toDouble(),
@@ -198,6 +210,7 @@ object TriviaSolver : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         inQuiz = false
+        quizRoom = null
         resetSolution()
     }
 
