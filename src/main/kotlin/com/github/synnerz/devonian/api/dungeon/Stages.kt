@@ -28,13 +28,14 @@ object Stages {
     val F6: SequentialSplitStage
 
     val F7: SequentialSplitStage
-    val Maxor: SplitStage
+    val Maxor = SplitStage().withName("&5Maxor")
     val Storm: SplitStage
+    val StormLightning = SplitStage()
     val Terminals: SequentialSplitStage
-    val S1: TerminalSection
-    val S2: TerminalSection
-    val S3: TerminalSection
-    val S4: TerminalSection
+    val S1 = TerminalSection(4, 1).also { it.withName("&e&lS1").withLongTime() }
+    val S2 = TerminalSection(5, 2).also { it.withName("&e&lS2").withLongTime() }
+    val S3 = TerminalSection(4, 3).also { it.withName("&e&lS3").withLongTime() }
+    val S4 = TerminalSection(4, 4).also { it.withName("&e&lS4").withLongTime() }
     val Goldor: SplitStage
     val Necron: SplitStage
     val WitherKing: SplitStage
@@ -144,12 +145,18 @@ object Stages {
             )
         )
 
-        Maxor = SplitStage().withName("&5Maxor")
-        Storm = SplitStage("[BOSS] Storm: Pathetic Maxor, just like expected.").withName("&9Storm").withLongTime()
-        S1 = TerminalSection(4, 1).also { it.withName("&e&lS1").withLongTime() }
-        S2 = TerminalSection(5, 2).also { it.withName("&e&lS2").withLongTime() }
-        S3 = TerminalSection(4, 3).also { it.withName("&e&lS3").withLongTime() }
-        S4 = TerminalSection(4, 4).also { it.withName("&e&lS4").withLongTime() }
+        Storm = SplitStage(
+            "[BOSS] Storm: Pathetic Maxor, just like expected.",
+            arrayOf(
+                StormLightning,
+                BranchingSplitStage(
+                    arrayOf(
+                        SplitStage("[BOSS] Storm: ENERGY HEED MY CALL!"),
+                        SplitStage("[BOSS] Storm: THUNDER LET ME BE YOUR CATALYST!"),
+                    )
+                )
+            )
+        ).withName("&9Storm").withLongTime()
         Terminals = SequentialSplitStage(
             "[BOSS] Goldor: Who dares trespass into my domain?",
             arrayOf(S1, S2, S3, S4),

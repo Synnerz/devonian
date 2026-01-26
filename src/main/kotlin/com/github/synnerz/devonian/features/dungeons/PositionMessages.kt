@@ -23,7 +23,7 @@ object PositionMessages : Feature(
     subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.isActiveState)
+        return super.createRequirements() + listOf(Stages.StormLightning.hasFinishedState)
     }
 
     private val SETTING_RENDER_HIGHLIGHT = addSwitch(
