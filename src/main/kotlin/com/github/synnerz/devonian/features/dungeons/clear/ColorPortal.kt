@@ -12,6 +12,8 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import java.awt.Color
+import kotlin.math.max
+import kotlin.math.min
 
 object ColorPortal : Feature(
     "colorPortal",
@@ -57,40 +59,17 @@ object ColorPortal : Feature(
             val blood = DungeonScanner.rooms.find { it?.type == RoomTypes.BLOOD } ?: return@on
             if (!blood.hasRotation()) return@on
 
-            val l = blood.fromComp(16, 29) ?: return@on
-            val r = blood.fromComp(14, 29) ?: return@on
+            val l = blood.fromComp(17.0, 29.375) ?: return@on
+            val r = blood.fromComp(14.0, 29.625) ?: return@on
+            val x1 = min(l.first, r.first)
+            val z1 = min(l.second, r.second)
+            val x2 = max(l.first, r.first)
+            val z2 = max(l.second, r.second)
 
-            when (blood.rotation) {
-                0 -> {
-                    x = r.first.toDouble()
-                    z = l.second + 0.375
-                    wx = 3.0
-                    wz = 0.25
-                }
-
-                90 -> {
-                    x = l.first + 0.375
-                    z = r.second.toDouble()
-                    wx = 0.25
-                    wz = 3.0
-                }
-
-                180 -> {
-                    x = l.first.toDouble()
-                    z = r.second + 0.375
-                    wx = 3.0
-                    wz = 0.25
-                }
-
-                270 -> {
-                    x = r.first + 0.375
-                    z = l.second.toDouble()
-                    wx = 0.25
-                    wz = 3.0
-                }
-
-                else -> return@on
-            }
+            x = x1
+            z = z1
+            wx = x2 - x1
+            wz = z2 - z1
 
             found = true
         }

@@ -6,7 +6,6 @@ import com.github.synnerz.devonian.api.dungeon.mapEnums.ClearTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.ShapeTypes
 import net.minecraft.world.level.block.Blocks
-import kotlin.math.floor
 
 class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
     val comps = mutableListOf<WorldComponentPosition>()
@@ -182,17 +181,25 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
             else -> x to z
         }
     }
+    
+    private fun rotatePos(x: Double, z: Double, degree: Int): Pair<Double, Double> {
+        return when (degree) {
+            0 -> x to z
+            90 -> z to -x
+            180 -> -x to -z
+            270 -> -z to x
+            else -> x to z
+        }
+    }
 
     /**
      * - Converts real world position coordinates into relative component position
      * - NOTE: the Y value is always the same regardless, that never changes
-     * @param x
-     * @param z
      */
     fun fromPos(x: Int, z: Int): Pair<Int, Int>? {
         if (!hasRotation()) return null
-        val x1 = x - floor(corner.x + 0.5).toInt()
-        val z1 = z - floor(corner.z + 0.5).toInt()
+        val x1 = x - corner.x
+        val z1 = z - corner.z
 
         return rotatePos(x1, z1, rotation)
     }
@@ -200,14 +207,37 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
     /**
      * - Converts component positions into real world position coordinates
      * - NOTE: the Y value is always the same regardless, that never changes
-     * @param x
-     * @param z
      */
     fun fromComp(x: Int, z: Int): Pair<Int, Int>? {
         if (!hasRotation()) return null
         val ( x1, z1 ) = rotatePos(x, z, 360 - rotation)
         val x2 = x1 + corner.x
         val z2 = z1 + corner.z
+
+        return x2 to z2
+    }
+
+    /**
+     * - Converts real world position coordinates into relative component position
+     * - NOTE: the Y value is always the same regardless, that never changes
+     */
+    fun fromPos(x: Double, z: Double): Pair<Double, Double>? {
+        if (!hasRotation()) return null
+        val x1 = x - corner.x - 0.5
+        val z1 = z - corner.z - 0.5
+
+        return rotatePos(x1 + 0.5, z1 + 0.5, rotation)
+    }
+
+    /**
+     * - Converts component positions into real world position coordinates
+     * - NOTE: the Y value is always the same regardless, that never changes
+     */
+    fun fromComp(x: Double, z: Double): Pair<Double, Double>? {
+        if (!hasRotation()) return null
+        val ( x1, z1 ) = rotatePos(x - 0.5, z - 0.5, 360 - rotation)
+        val x2 = x1 + corner.x + 0.5
+        val z2 = z1 + corner.z + 0.5
 
         return x2 to z2
     }

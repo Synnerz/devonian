@@ -14,6 +14,8 @@ import com.google.gson.Gson
 import net.minecraft.world.level.block.Blocks
 import java.awt.Color
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 object WaterBoardSolver : Feature(
@@ -24,6 +26,10 @@ object WaterBoardSolver : Feature(
     subcategory = "Solvers",
     searchTags = setOf("wb", "puzzle"),
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+    }
+
     private val SETTING_SOLUTION_MODE = addSelection(
         "solutionMode",
         0,
@@ -31,9 +37,6 @@ object WaterBoardSolver : Feature(
         "Choose the waterboard solutions mode.",
         "WaterBoardSolver Mode"
     )
-    override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
-    }
 
     @Suppress("unchecked_cast")
     private val solutionsData = (Gson().fromJson(
@@ -87,15 +90,27 @@ object WaterBoardSolver : Feature(
     var openedWaterAt = -1
     private val solutionSort = Comparator.comparingInt<Pair<Lever, Int>> { it.second }.thenBy { it.first.ordinal }
 
-    data class SolutionEntry(val x: Int, val y: Int, val z: Int, val time: Int, val lever: Lever)
-    enum class Lever(val type: String, val x: Int, val y: Int, val z: Int) {
-        Quartz("quartz_block", 20, 61, 20),
-        Gold("gold_block", 20, 61, 15),
-        Coal("coal_block", 20, 61, 10),
-        Diamond("diamond_block", 10, 61, 20),
-        Emerald("emerald_block", 10, 61, 15),
-        Terracotta("hardened_clay", 10, 61, 10),
-        Water("water", 15, 60, 5);
+    data class SolutionEntry(
+        val x: Int, val y: Int, val z: Int,
+        val time: Int, val lever: Lever,
+        val x1: Double, val z1: Double,
+        val wx: Double, val wz: Double,
+        val y1: Double, val h: Double,
+    )
+    enum class Lever(
+        val type: String,
+        val x: Int, val y: Int, val z: Int,
+        val x1: Double, val z1: Double,
+        val x2: Double, val z2: Double,
+        val y1: Double, val h: Double,
+    ) {
+        Quartz("quartz_block", 20, 61, 20, 20.625, 20.3125, 21.0, 20.6875, 61.25, 0.5),
+        Gold("gold_block", 20, 61, 15, 20.625, 15.3125, 21.0, 15.6875, 61.25, 0.5),
+        Coal("coal_block", 20, 61, 10, 20.625, 10.3125, 21.0, 10.6875, 61.25, 0.5),
+        Diamond("diamond_block", 10, 61, 20, 10.0, 20.3125, 10.375, 20.6875, 61.25, 0.5),
+        Emerald("emerald_block", 10, 61, 15, 10.0, 15.3125, 10.375, 15.6875, 61.25, 0.5),
+        Terracotta("hardened_clay", 10, 61, 10, 10.0, 10.3125, 10.375, 10.6875, 61.25, 0.5),
+        Water("water", 15, 60, 5, 15.25, 5.3125, 15.75, 5.6875, 60.0, 0.375);
 
         companion object {
             fun from(type: String) = entries.find { it.type == type }!!
@@ -165,7 +180,19 @@ object WaterBoardSolver : Feature(
                     arr.sortWith(solutionSort)
                     solution = arr.mapTo(mutableListOf()) {
                         val pos = room.fromComp(it.first.x, it.first.z) ?: return@on
-                        SolutionEntry(pos.first, it.first.y, pos.second, it.second, it.first)
+                        val p1 = room.fromComp(it.first.x1, it.first.z1) ?: return@on
+                        val p2 = room.fromComp(it.first.x2, it.first.z2) ?: return@on
+                        val x1 = min(p1.first, p2.first)
+                        val z1 = min(p1.second, p2.second)
+                        val x2 = max(p1.first, p2.first)
+                        val z2 = max(p1.second, p2.second)
+                        SolutionEntry(
+                            pos.first, it.first.y, pos.second,
+                            it.second, it.first,
+                            x1, z1,
+                            x2 - x1, z2 - z1,
+                            it.first.y1, it.first.h,
+                        )
                     }
                 }
                 println("Devonian\$WaterBoard[variant=\"$variant\", subvariant=\"$subvariant\"]")
@@ -241,14 +268,11 @@ object WaterBoardSolver : Feature(
             sol.forEachIndexed { i, entry ->
                 val yo = levers.merge(entry.lever, 1, Int::plus)!! - 1
 
-                val x = entry.x.toDouble()
-                val y = entry.y.toDouble() + yo
-                val z = entry.z.toDouble()
-
                 Render3DImmediate.renderWireframeBox(
-                    x, y, z,
-                    1.0, 1.0,
+                    entry.x1, entry.y1 + yo, entry.z1,
+                    entry.wx, entry.h,
                     if (i == 0) FIRST_COLOR else SECOND_COLOR,
+                    wz = entry.wz,
                     phase = false,
                     lineWidth = 2.0,
                 )
@@ -258,22 +282,21 @@ object WaterBoardSolver : Feature(
                     else entry.time - (EventBus.serverTicks() - openedWaterAt)
                 val title = if (remaining <= 0) "§aClick Now!" else "§e${"%.2fs".format(remaining * 0.05)}"
 
-                Render3DImmediate.renderString(
-                    title,
-                    x + 0.5,
-                    y + 0.5,
-                    z + 0.5,
-                )
+                val x = entry.x + 0.5
+                val y = entry.y + 0.5 + yo
+                val z = entry.z + 0.5
+
+                Render3DImmediate.renderString(title, x, y, z)
 
                 if (i in 1 .. 2) Render3DImmediate.renderLine(
                     lastX, lastY, lastZ,
-                    x + 0.5, y + 0.5, z + 0.5,
+                    x, y, z,
                     if (i == 1) FIRST_COLOR else SECOND_COLOR,
                 )
 
-                lastX = x + 0.5
-                lastY = y + 0.5
-                lastZ = z + 0.5
+                lastX = x
+                lastY = y
+                lastZ = z
             }
         }
     }
