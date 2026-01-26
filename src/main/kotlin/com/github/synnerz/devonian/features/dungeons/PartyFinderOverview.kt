@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 object PartyFinderOverview : Feature(
     "partyFinderOverview",
-    "Customizes the tooltip for party finder parties so they show more information (only parties you can join currently).",
+    "Customizes the tooltip for party finder parties so they show more information.",
     Categories.DUNGEONS,
     subcategory = "QOL",
     searchTags = setOf("pf"),
@@ -59,11 +59,6 @@ object PartyFinderOverview : Feature(
             if (event.parties.isEmpty()) return@on
 
             event.parties.forEach {
-                if (
-                    it.canJoin != PartyFinderListener.PartyFinderStatus.CAN_JOIN &&
-                    it.canJoin != PartyFinderListener.PartyFinderStatus.DUPE_CLASS
-                ) return@forEach
-
                 parties.add(it)
 
                 it.members.forEach { m -> members.add(m.name) }
@@ -71,7 +66,7 @@ object PartyFinderOverview : Feature(
             if (members.isNotEmpty()) onUpdate()
         }
 
-        on<ServerTickEvent> { event ->
+        on<ServerTickEvent> {
             if (parties.isEmpty()) return@on
 
             // slightly less efficient workaround to avoid re-set of lore data,

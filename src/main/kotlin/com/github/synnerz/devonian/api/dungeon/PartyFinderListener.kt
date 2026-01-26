@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.dungeons.PartyFinderHighlight.minecraft
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.world.item.Items
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 object PartyFinderListener {
@@ -42,7 +43,7 @@ object PartyFinderListener {
 //        var note: String = "Empty",
 //        var requiredLevel: Int = -1,
 //        var requiredRoleLevel: Int = -1,
-        var canJoin: PartyFinderStatus = PartyFinderStatus.CAN_JOIN,
+        val canJoin: EnumSet<PartyFinderStatus> = EnumSet.noneOf(PartyFinderStatus::class.java),
     )
 
     fun initialize() {
@@ -110,15 +111,15 @@ object PartyFinderListener {
                         continue
                     }
                     if (LOW_CATA_REGEX.matches(line)) {
-                        currentData.canJoin = PartyFinderStatus.LOW_CATA
+                        currentData.canJoin.add(PartyFinderStatus.LOW_CATA)
                         continue
                     }
                     if (LOW_ROLE_REGEX.matches(line)) {
-                        currentData.canJoin = PartyFinderStatus.LOW_ROLE
+                        currentData.canJoin.add(PartyFinderStatus.LOW_ROLE)
                         continue
                     }
                     if (CANNOT_JOIN_REGEX.matches(line)) {
-                        currentData.canJoin = PartyFinderStatus.CANNOT_JOIN
+                        currentData.canJoin.add(PartyFinderStatus.CANNOT_JOIN)
                         continue
                     }
                     if (currentData.floor == -1) {
@@ -127,20 +128,20 @@ object PartyFinderListener {
                         continue
                     }
 
-                    val ( username, role, level ) = USER_ROLE_REGEX.matchEntire(line)?.groupValues?.drop(1) ?: continue
+                    val (username, role, level) = USER_ROLE_REGEX.matchEntire(line)?.groupValues?.drop(1) ?: continue
 
-                    currentData.members.add(PartyFinderMember(
-                        username,
-                        role,
-                        level.toIntOrNull() ?: 0
-                    ))
+                    currentData.members.add(
+                        PartyFinderMember(
+                            username,
+                            role,
+                            level.toIntOrNull() ?: 0
+                        )
+                    )
                 }
 
-                if (
-                    currentData != null &&
-                    currentData.canJoin == PartyFinderStatus.CAN_JOIN &&
-                    currentData.members.any { it.role == currentRole }
-                ) currentData.canJoin = PartyFinderStatus.DUPE_CLASS
+                if (currentData?.members?.any { it.role == currentRole } == true) {
+                    currentData.canJoin.add(PartyFinderStatus.DUPE_CLASS)
+                }
 
                 if (currentData == null) return@forEach
 
@@ -168,7 +169,6 @@ object PartyFinderListener {
     }
 
     enum class PartyFinderStatus {
-        CAN_JOIN,
         CANNOT_JOIN, // SHOULD be, hasn't completed previous floor
         DUPE_CLASS,
         LOW_CATA,

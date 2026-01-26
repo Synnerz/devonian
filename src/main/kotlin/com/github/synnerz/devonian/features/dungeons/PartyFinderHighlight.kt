@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import java.awt.Color
+import java.util.EnumSet
 import java.util.concurrent.CopyOnWriteArrayList
 
 object PartyFinderHighlight : Feature(
@@ -33,8 +34,8 @@ object PartyFinderHighlight : Feature(
         "Ignores your own class (if dupe class it wont be red highlight).",
         "Party Finder Highlight Role",
     )
-    private val whitelist = CopyOnWriteArrayList<Int>()
-    private val blacklist = CopyOnWriteArrayList<Int>()
+    private val whitelist = CopyOnWriteArrayList<Boolean>()
+    private val blacklist = CopyOnWriteArrayList<Boolean>()
 
     override fun initialize() {
         PartyFinderListener.initialize()
@@ -46,32 +47,34 @@ object PartyFinderHighlight : Feature(
                 return@on
             }
 
-            event.parties.forEach {
-                if (
-                    it.canJoin == PartyFinderListener.PartyFinderStatus.CAN_JOIN ||
-                    it.canJoin == PartyFinderListener.PartyFinderStatus.LOW_CATA && SETTING_IGNORE_CATA_REQUIREMENT.get() ||
-                    it.canJoin == PartyFinderListener.PartyFinderStatus.LOW_ROLE && SETTING_IGNORE_ROLE_LEVEL.get() ||
-                    it.canJoin == PartyFinderListener.PartyFinderStatus.DUPE_CLASS && SETTING_IGNORE_OWN_ROLE.get()
-                ) {
-                    whitelist.add(it.idx)
-                    return@forEach
-                }
+            val ignoring = EnumSet.noneOf(PartyFinderListener.PartyFinderStatus::class.java)
+            if (SETTING_IGNORE_CATA_REQUIREMENT.get()) ignoring.add(PartyFinderListener.PartyFinderStatus.LOW_CATA)
+            if (SETTING_IGNORE_ROLE_LEVEL.get()) ignoring.add(PartyFinderListener.PartyFinderStatus.LOW_ROLE)
+            if (SETTING_IGNORE_OWN_ROLE.get()) ignoring.add(PartyFinderListener.PartyFinderStatus.DUPE_CLASS)
 
-                blacklist.add(it.idx)
+            val white = mutableListOf<Boolean>()
+            val black = mutableListOf<Boolean>()
+            event.parties.forEach {
+                val list = if ((it.canJoin - ignoring).isEmpty()) white else black
+                while (list.size <= it.idx) list.add(false)
+                list[it.idx] = true
             }
+
+            whitelist.clear()
+            whitelist.addAll(white)
+            blacklist.clear()
+            blacklist.addAll(black)
         }
 
         on<RenderSlotEvent> { event ->
             if (event.isInventory()) return@on
             val slot = event.slot
 
-            if (blacklist.contains(slot.containerSlot)) {
+            if (blacklist.getOrNull(slot.containerSlot) == true) {
                 event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color.RED.rgb)
-                return@on
+            } else if (whitelist.getOrNull(slot.containerSlot) == true) {
+                event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color.GREEN.rgb)
             }
-            if (!whitelist.contains(slot.containerSlot)) return@on
-
-            event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color.GREEN.rgb)
         }.prio = 30
     }
 
