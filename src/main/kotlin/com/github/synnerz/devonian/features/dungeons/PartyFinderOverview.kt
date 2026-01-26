@@ -1,8 +1,9 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WebRequests
 import com.github.synnerz.devonian.api.dungeon.PartyFinderListener
-import com.github.synnerz.devonian.api.events.ServerTickEvent
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.PersistentJson
@@ -32,9 +33,16 @@ object PartyFinderOverview : Feature(
         "The pb mode to use whenever displaying personal best time for the current floor. \"Both\" = if S+ does not exist it'll default to S.",
         "Party Finder Overview PB",
     )
+    private val SETTING_SHOW_MISSING = addSwitch(
+        "showMissing",
+        true,
+        "Shows the missing classes at the bottom of the tooltip",
+        "Party Finder Overview Missing"
+    )
     private val members = CopyOnWriteArrayList<String>()
     private val cachedMembers = ConcurrentHashMap<String, DungeonsApiResult>()
     private val parties = CopyOnWriteArrayList<PartyFinderListener.PartyFinderData>()
+    private val roles = listOf("Healer", "Tank", "Mage", "Berserk", "Archer")
 
     data class UserDungeonsData(
         val cataXP: Double,
@@ -66,7 +74,7 @@ object PartyFinderOverview : Feature(
             if (members.isNotEmpty()) onUpdate()
         }
 
-        on<ServerTickEvent> {
+        on<ClientThreadServerTickEvent> {
             if (parties.isEmpty()) return@on
 
             // slightly less efficient workaround to avoid re-set of lore data,
@@ -80,6 +88,21 @@ object PartyFinderOverview : Feature(
 
                 lore.lines.toList().forEach { l ->
                     val match = PartyFinderListener.USER_ROLE_REGEX.matchEntire(l.string)?.groupValues?.drop(1)
+                    if (l.string.contains("Click to join!") || l.string.contains("Requires ")) {
+                        if (SETTING_SHOW_MISSING.get()) {
+                            val missingComponent = ChatUtils.literal(buildString {
+                                append("&eMissing: ")
+                                p.missingRoles.forEachIndexed { idx, it ->
+                                    if (it == PartyFinderListener.currentRole()) append(if (idx == 0) "&a$it" else "&7, &a$it")
+                                    else append(if (idx == 0) "&7$it" else "&7, $it")
+                                }
+                            })
+                            newLore.add(missingComponent)
+                        }
+                        newLore.add(l.copy())
+                        return@forEach
+                    }
+                    if (l.string.contains("Missing: ")) return@forEach
                     if (match == null) {
                         newLore.add(l.copy())
                         return@forEach
