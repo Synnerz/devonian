@@ -1,10 +1,11 @@
-package com.github.synnerz.devonian.features.misc
+package com.github.synnerz.devonian.features.misc.chat
 
 import com.github.synnerz.devonian.features.Feature
 
 object ChatEmotes : Feature(
     "chatEmotes",
     "works same way as /emotes in hypixel does - :java: -> ☕",
+    subcategory = "Chat",
 ) {
     private val emoticons = linkedMapOf(
         "(?<=\\s|^)<3(?=\\s|$)".toRegex() to "❤",

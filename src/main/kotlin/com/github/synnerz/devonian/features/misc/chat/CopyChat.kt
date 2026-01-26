@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.misc
+package com.github.synnerz.devonian.features.chat
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
@@ -11,7 +11,7 @@ import net.minecraft.client.gui.screens.ChatScreen
 object CopyChat : Feature(
     "copyChat",
     "Right click to copy a message in chat.",
-    subcategory = "General",
+    subcategory = "Chat",
 ) {
     override fun initialize() {
         on<GuiClickEvent> { event ->

@@ -14,6 +14,13 @@ import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
 import com.github.synnerz.devonian.features.misc.ActionbarParser
 import com.github.synnerz.devonian.features.bossbar.BossBarHealth
+import com.github.synnerz.devonian.features.misc.chat.CancelMessages
+import com.github.synnerz.devonian.features.misc.chat.ChatEmotes
+import com.github.synnerz.devonian.features.misc.chat.ChatWaypoint
+import com.github.synnerz.devonian.features.chat.CommandAliases
+import com.github.synnerz.devonian.features.chat.CompactChat
+import com.github.synnerz.devonian.features.chat.CopyChat
+import com.github.synnerz.devonian.features.misc.chat.PartyCommands
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger

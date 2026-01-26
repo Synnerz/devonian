@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.misc
+package com.github.synnerz.devonian.features.misc.chat
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
@@ -13,7 +13,7 @@ import kotlin.math.sqrt
 object ChatWaypoint : Feature(
     "chatWaypoint",
     "Renders a waypoint at the location where a player sent in Party/Coop chat. (You can send coordinates for other people by running /dv sendcoords).",
-    subcategory = "General",
+    subcategory = "Chat",
 ) {
     private val SETTING_ALL_CHAT = addSwitch(
         "allChat",

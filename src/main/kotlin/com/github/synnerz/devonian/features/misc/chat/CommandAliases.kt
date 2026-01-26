@@ -1,33 +1,37 @@
-package com.github.synnerz.devonian.features.misc.hiders
+package com.github.synnerz.devonian.features.chat
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.events.ChatEvent
-import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.CancellableEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.components.UITextInput
-import com.google.gson.JsonArray
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.network.chat.Component
 import java.awt.Color
 
-object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
-    private const val KEY_NAME = "CancelMessages"
+object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
+    private const val KEY_NAME = "CommandAliases"
     private val components = mutableListOf<UIRect>()
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
     private val main = UIRect(30.0, 17.5, 40.0, 65.0, parent = background).apply {
         setColor(Color(25, 25, 25, 255))
     }
-    private val cancelMsgInput = UIRect(1.0, 1.0, 77.0, 10.0, parent = main).apply {
+    private val aliasInputRect = UIRect(1.0, 1.0, 38.0, 10.0, parent = main).apply {
         setColor(Color(50, 50, 50, 255))
-        addChild(UIText(0.0, 0.0, 100.0, 100.0, "Message", true))
+        addChild(UIText(0.0, 0.0, 100.0, 100.0, "Alias", true))
+    }
+    private val commandInputRect = UIRect(40.0, 1.0, 38.0, 10.0, parent = main).apply {
+        setColor(Color(50, 50, 50, 255))
+        addChild(UIText(0.0, 0.0, 100.0, 100.0, "Command", true))
     }
     private val removeRect = UIRect(79.0, 1.0, 20.0, 10.0, parent = main).apply {
         setColor(Color(50, 50, 50, 255))
@@ -39,7 +43,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "§a+", true).apply { textScale = 1.5f })
         onMouseRelease {
             if (it.button != 0) return@onMouseRelease
-            createCancel(if (components.isEmpty()) 1 else 1 + (components.size % 7), "placeholder")
+            createAlias(if (components.isEmpty()) 1 else 1 + (components.size % 7), "p", "placeholder")
         }
     }
     private val leftArrow = UIRect(1.0, 89.0, 10.0, 10.0, parent = main).apply {
@@ -64,74 +68,62 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
             field = value.coerceIn(0, components.size / 7)
             onUpdate()
         }
-    private val messagesList = mutableSetOf<MessageData>()
+    private val aliasesList = mutableListOf<CommandAlias>()
+    private var lastTrigger = -1L
 
-    data class MessageData(var message: String) {
-        var cachedRegex: Regex? = null
+    data class CommandAlias(var alias: String, var command: String) {
+        fun onCommand(msg: String, event: CancellableEvent) {
+            if (!shouldTrigger()) return
+            if (msg == alias) {
+                event.cancel()
+                ChatUtils.say("/$command")
+                return
+            }
 
-        init {
-            checkRegex()
-        }
-
-        fun onMessage(event: ChatEvent): Boolean {
-            if (!shouldTrigger()) return false
-            if (cachedRegex != null && event.matches(cachedRegex!!) != null) return true
-            if (event.message != message) return false
+            val cmd = msg.split(" ").getOrNull(0) ?: return
+            val args = msg.split("$cmd ").getOrNull(1) ?: return
+            if (cmd != alias) return
             event.cancel()
-            return true
+            ChatUtils.say("/$command $args")
         }
 
         fun shouldTrigger(): Boolean {
-            if (message.isBlank()) return false
-            if (message == "placeholder") return false
+            if (alias.isBlank()) return false
+            if (command.isBlank()) return false
+            if (command == "placeholder") return false
             return true
-        }
-
-        fun isRegex(): Boolean {
-            return message.startsWith("/") && message.endsWith("/")
-        }
-
-        fun checkRegex() {
-            if (isRegex()) {
-                val reg = message.drop(1).dropLast(1)
-                try {
-                    // Regex taken from <https://github.com/ChatTriggers/ChatTriggers> under MIT license
-                    // i wasn't lazy this simply works better for this specific feature
-                    cachedRegex = Regex(Regex.escape(reg)
-                        .replace(Regex("\\\$\\{[^*]+?}"), "\\\\E(.+)\\\\Q")
-                        .replace(Regex("\\$\\{\\*?}"), "\\\\E(?:.+)\\\\Q"))
-                } catch (_: IllegalArgumentException) {  }
-            }
         }
     }
 
     fun initialize() {
-        Config.set(KEY_NAME, JsonArray())
+        Config.set(KEY_NAME, JsonObject())
 
         Config.onAfterLoad {
-            val cachedData = Config.get<List<JsonElement>>(KEY_NAME) ?: return@onAfterLoad
+            val cachedData = Config.get<Map<String, JsonElement>>(KEY_NAME) ?: return@onAfterLoad
             cachedData.forEach {
-                createCancel(if (components.isEmpty()) 1 else 1 + (components.size % 7), it.asString)
+                val alias = it.key
+                val command = it.value.asString
+                createAlias(if (components.isEmpty()) 1 else 1 + (components.size % 7), alias, command)
             }
         }
 
-        DevonianCommand.command.subcommand("cmsg") { _, args ->
+        DevonianCommand.command.subcommand("cmdali") { _, args ->
             Scheduler.scheduleTask {
                 Devonian.minecraft.setScreen(this)
             }
             1
         }
-        DevonianCommand.command.subcommand("cancelmsg") { _, args ->
+        DevonianCommand.command.subcommand("commandalias") { _, args ->
             Scheduler.scheduleTask {
                 Devonian.minecraft.setScreen(this)
             }
             1
         }
 
-        EventBus.on<ChatEvent> { event ->
-            for (data in messagesList)
-                if (data.onMessage(event))
-                    event.cancel()
+        ClientSendMessageEvents.ALLOW_COMMAND.register { msg ->
+            val event = object : CancellableEvent() {}
+            onCommand(msg, event)
+            !event.isCancelled()
         }
     }
 
@@ -161,18 +153,24 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         }
     }
 
-    private fun createCancel(idx: Int, message: String) {
-        val data = MessageData(message)
+    private fun createAlias(idx: Int, alias: String, command: String) {
+        val data = CommandAlias(alias, command)
         val yy = (11 * idx) + 1.0
         val parentBg = UIRect(0.0, yy, 100.0, 10.0, parent = main).apply {
             setColor(Color(35, 35, 35, 0))
             hide()
         }
-        val cancelMsg = UITextInput(1.0, 0.0, 77.0, 100.0, message, parent = parentBg).apply {
+        val aliasInput = UITextInput(1.0, 0.0, 38.0, 100.0, alias, parent = parentBg).apply {
             setColor(Color(35, 35, 35, 255))
             onLostFocus {
-                data.message = text
-                data.checkRegex()
+                data.alias = text.replace("/", "")
+                updateCache()
+            }
+        }
+        val commandInput = UITextInput(40.0, 0.0, 38.0, 100.0, command, parent = parentBg).apply {
+            setColor(Color(35, 35, 35, 255))
+            onLostFocus {
+                data.command = text.replace("/", "")
                 updateCache()
             }
         }
@@ -181,9 +179,9 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
             addChild(UIText(0.0, 0.0, 100.0, 100.0, "X", true).apply { setColor(Color.RED) })
             onMouseRelease {
                 if (it.button != 0) return@onMouseRelease
-                messagesList.remove(data)
+                aliasesList.remove(data)
                 components.remove(parentBg)
-                ChatUtils.sendMessage("&cRemoved CancelMessage &7[${data.message}]", true)
+                ChatUtils.sendMessage("&cRemoved CommandAlias &7[${data.alias} > ${data.command}]", true)
                 updateCache()
                 parentBg.remove()
                 rebuildChildren()
@@ -191,7 +189,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         }
 
         components.add(parentBg)
-        messagesList.add(data)
+        aliasesList.add(data)
         onUpdate()
     }
 
@@ -202,11 +200,18 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         components.clear()
         main.markDirty()
 
-        val msgListCopy = messagesList.toMutableList()
-        messagesList.clear()
+        val aliasListCopy = aliasesList.toMutableList()
+        aliasesList.clear()
 
-        for (data in msgListCopy)
-            createCancel(if (components.isEmpty()) 1 else 1 + (components.size % 7), data.message)
+        for (data in aliasListCopy)
+            createAlias(if (components.isEmpty()) 1 else 1 + (components.size % 7), data.alias, data.command)
+    }
+
+    private fun onCommand(msg: String, event: CancellableEvent) {
+        if (lastTrigger != -1L && System.currentTimeMillis() - lastTrigger < 200) return
+        for (alias in aliasesList)
+            alias.onCommand(msg, event)
+        lastTrigger = System.currentTimeMillis()
     }
 
     override fun render(guiGraphics: GuiGraphics, i: Int, j: Int, f: Float) {
@@ -227,11 +232,10 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
     }
 
     private fun updateCache() {
-        val obj = JsonArray()
+        val obj = JsonObject()
 
-        for (data in messagesList)
-            if (data.shouldTrigger())
-                obj.add(data.message)
+        for (alias in aliasesList)
+            obj.addProperty(alias.alias, alias.command)
 
         Config.set(KEY_NAME, obj)
     }

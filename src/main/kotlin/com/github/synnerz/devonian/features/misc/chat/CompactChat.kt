@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.misc
+package com.github.synnerz.devonian.features.chat
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
@@ -17,7 +17,7 @@ import java.util.*
 object CompactChat : Feature(
     "compactChat",
     "Stacks the messages if they are repeated and adds the amount of times it was repeated.",
-    subcategory = "General",
+    subcategory = "Chat",
 ) {
     private val STYLE = Style.EMPTY
         .withColor(ChatFormatting.GRAY)

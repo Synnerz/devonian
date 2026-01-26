@@ -1,17 +1,18 @@
-package com.github.synnerz.devonian.features.misc
+package com.github.synnerz.devonian.features.misc.chat
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.*
 import com.github.synnerz.devonian.api.events.ChatChannelEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.misc.TpsDisplay
 import com.github.synnerz.devonian.utils.PersistentJsonClass
 import com.google.gson.reflect.TypeToken
 
 object PartyCommands : Feature(
     "partyCommands",
     "party commands !f6 !m6 TODO: add finish here",
-    subcategory = "General"
+    subcategory = "Chat"
 ) {
     private val SETTING_USE_WHITELIST = addSwitch(
         "useWhitelist",

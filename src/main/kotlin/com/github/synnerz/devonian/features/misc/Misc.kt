@@ -13,7 +13,7 @@ object RemoveLightning : Feature("removeLightning", subcategory = "Hiders")
 object HideInventoryEffects : Feature("hideInventoryEffects", subcategory = "Hiders")
 object HidePotionEffectOverlay : Feature("hidePotionEffectOverlay", subcategory = "Hiders")
 object RemoveFrontView : Feature("removeFrontView", subcategory = "Tweaks")
-object RemoveChatLimit : Feature("removeChatLimit", subcategory = "Tweaks") {
+object RemoveChatLimit : Feature("removeChatLimit", subcategory = "Chat") {
     val SETTING_MAX_MESSAGES = addSlider(
         "maxMessages",
         1000.0,
@@ -43,7 +43,7 @@ object CustomContainerColor : Feature("customContainerColor", subcategory = "Twe
 object DisableChatAutoScroll : Feature(
     "disableChatAutoScroll",
     "Disables the auto scrolling to the latest message whenever the chat gui is focused",
-    subcategory = "Tweaks"
+    subcategory = "Chat"
 )
 object DisableSwim : Feature("disableSwim", subcategory = "Tweaks", cheeto = true)
 object CenteredCrosshair : Feature("centeredCrosshair", subcategory = "Tweaks")
