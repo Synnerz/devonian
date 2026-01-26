@@ -215,7 +215,10 @@ object SlotBinding : Feature(
             val bound = boundSlots.getOrNull(idx) ?: return@on
 
             val hovered = (event.screen as AbstractContainerScreenAccessor).hoveredSlot
-            val isHoveringBound = hovered != null && (boundSlots.getOrNull(hovered.containerSlot)?.size ?: 0) > 0
+            val isHoveringBound =
+                hovered != null &&
+                hovered.container === minecraft.player?.inventory &&
+                (boundSlots.getOrNull(hovered.containerSlot)?.size ?: 0) > 0
 
             while (slotLocCache.size <= idx) slotLocCache.add(null)
             slotLocCache[idx] = Pair(slot.x, slot.y)
@@ -232,7 +235,7 @@ object SlotBinding : Feature(
                 if (
                     SETTING_POINTING_LINE_MODE.get() == 0 ||
                     SETTING_POINTING_LINE_MODE.get() == 2 &&
-                        !InputConstants.isKeyDown(minecraft.window!!, GLFW.GLFW_KEY_LEFT_SHIFT)
+                    !InputConstants.isKeyDown(minecraft.window!!, GLFW.GLFW_KEY_LEFT_SHIFT)
                 ) return@forEachIndexed
 
                 Render2D.drawLine(
