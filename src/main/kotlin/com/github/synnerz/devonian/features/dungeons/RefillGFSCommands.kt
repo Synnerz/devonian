@@ -11,49 +11,46 @@ object RefillGFSCommands {
     fun initialize() {
         DevonianCommand.command.subcommand("pearls") { _, args ->
             val inv = inventory ?: return@subcommand 0
-            var hasMax = false
-            var amount = inv.sumOf {
-                if (ItemUtils.skyblockId(it) == "ENDER_PEARL") {
-                    if (it.count == 16) hasMax = true
-                    16 - it.count
-                }
-                else 0
+            var stacks = 0
+            var amount = 0
+            inv.forEach {
+                if (ItemUtils.skyblockId(it) != "ENDER_PEARL") return@forEach
+                stacks++
+                amount += it.count
             }
-            if (hasMax) return@subcommand 0
-            if (amount <= 0) amount = 16
-            ChatUtils.command("gfs ender pearl $amount")
+            if (amount == 0) stacks = 1
+            val remaining = stacks * 16 - amount
+            if (remaining > 0) ChatUtils.command("gfs ender pearl $remaining")
             1
         }
 
         DevonianCommand.command.subcommand("leaps") { _, args ->
             val inv = inventory ?: return@subcommand 0
-            var hasMax = false
-            var amount = inv.sumOf {
-                if (ItemUtils.skyblockId(it) == "SPIRIT_LEAP") {
-                    if (it.count == 16) hasMax = true
-                    16 - it.count
-                }
-                else 0
+            var stacks = 0
+            var amount = 0
+            inv.forEach {
+                if (ItemUtils.skyblockId(it) != "SPIRIT_LEAP") return@forEach
+                stacks++
+                amount += it.count
             }
-            if (hasMax) return@subcommand 0
-            if (amount <= 0) amount = 16
-            ChatUtils.command("gfs spirit leap $amount")
+            if (amount == 0) stacks = 1
+            val remaining = stacks * 64 - amount
+            if (remaining > 0) ChatUtils.command("gfs spirit leap $remaining")
             1
         }
 
         DevonianCommand.command.subcommand("superbooms") { _, args ->
             val inv = inventory ?: return@subcommand 0
-            var hasMax = false
-            var amount = inv.sumOf {
-                if (ItemUtils.skyblockId(it) == "SUPERBOOM_TNT") {
-                    if (it.count == 64) hasMax = true
-                    64 - it.count
-                }
-                else 0
+            var stacks = 0
+            var amount = 0
+            inv.forEach {
+                if (ItemUtils.skyblockId(it) != "SUPERBOOM_TNT") return@forEach
+                stacks++
+                amount += it.count
             }
-            if (hasMax) return@subcommand 0
-            if (amount <= 0) amount = 64
-            ChatUtils.command("gfs superboom tnt $amount")
+            if (amount == 0) stacks = 1
+            val remaining = stacks * 64 - amount
+            if (remaining > 0) ChatUtils.command("gfs superboom tnt $remaining")
             1
         }
     }
