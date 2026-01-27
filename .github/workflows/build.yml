@@ -16,8 +16,17 @@ jobs:
           distribution: 'microsoft'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
+      - name: get commit message
+        run: |
+          GIT_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "GIT_COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$GIT_COMMIT_MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - name: build
         run: ./gradlew build
+        env:
+          GIT_COMMIT_HASH: ${{ github.sha }}
+          GIT_COMMIT_TIME: ${{ github.event.head_commit.timestamp }}
       - name: capture build artifacts
         uses: actions/upload-artifact@v4
         with:
