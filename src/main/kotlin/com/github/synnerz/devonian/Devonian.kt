@@ -348,22 +348,6 @@ object Devonian : ClientModInitializer {
             return@subcommand 1
         }.greedyString("message")
 
-        DevonianCommand.command.subcommand("testme") { _, _ ->
-            OpenEditor.edit(
-                listOf(
-                    "please edit this text",
-                    "maybe even try adding new ones",
-                    "maybe try deleting a line",
-                )
-            ) {
-                ChatUtils.sendMessage("you typed in the following lines:")
-                it.forEach {
-                    ChatUtils.sendMessage(it)
-                }
-            }
-            return@subcommand 1
-        }
-
         DevonianCommand.initialize()
     }
 }
