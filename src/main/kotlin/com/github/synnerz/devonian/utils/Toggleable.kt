@@ -32,7 +32,7 @@ abstract class Toggleable {
 
     fun isRegistered() = isRegistered
 
-    fun setRegistered(b: Boolean) = apply {
+    open fun setRegistered(b: Boolean) = apply {
         if (b) register()
         else unregister()
     }

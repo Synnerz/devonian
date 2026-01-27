@@ -73,7 +73,7 @@ object Devonian : ClientModInitializer {
     }
     val features = mutableListOf<Feature>()
     private val featureInstances by lazy {
-        listOf(
+        mutableListOf(
             NoCursorReset,
             BoxStarMob,
             RemoveBlockBreakParticle,
@@ -349,5 +349,9 @@ object Devonian : ClientModInitializer {
         }.greedyString("message")
 
         DevonianCommand.initialize()
+    }
+
+    fun addFeatureInstance(feat: Feature) {
+        featureInstances.add(feat)
     }
 }
