@@ -65,7 +65,7 @@ object PartyFinderOverview : Feature(
         val data: UserDungeonsData?
     )
 
-    data class MultiDungeonApiResult(val result: Map<String /* player's name */, DungeonsApiResult>)
+    data class MultiDungeonApiResult(val result: Map<String /* player's name */, DungeonsApiResult>?)
 
     override fun initialize() {
         on<PartyFinderListener.PartyFinderEvent> { event ->
@@ -85,9 +85,10 @@ object PartyFinderOverview : Feature(
                         cachedData == null ||
                         System.currentTimeMillis() - cachedData.timeTaken >= (1000 * 60 * 60) * 24
                     }
+                    if (filtered.isEmpty()) return@launch
                     val result = WebRequests.get("$DUNGEONS_API${filtered.joinToString(",")}")
-                    val response = PersistentJson.gson.fromJson(result, MultiDungeonApiResult::class.java)
-                    response.result.entries.forEach { (k, v) ->
+                    val response: MultiDungeonApiResult = PersistentJson.gson.fromJson(result, MultiDungeonApiResult::class.java) ?: return@launch
+                    response.result?.entries?.forEach { (k, v) ->
                         v.timeTaken = System.currentTimeMillis()
                         cachedMembers[k] = v
                     }
