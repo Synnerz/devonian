@@ -101,7 +101,7 @@ object PartyFinderListener {
             if (!shouldScan) return@on
 
             event.forEach { idx, itemStack ->
-                if (itemStack == null || itemStack.item != Items.PLAYER_HEAD) return@forEach
+                if (idx !in 0..45 || itemStack == null || itemStack.item != Items.PLAYER_HEAD) return@forEach
 
                 val lore = ItemUtils.lore(itemStack) ?: return@forEach
                 var currentData: PartyFinderData? = null
