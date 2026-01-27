@@ -24,7 +24,7 @@ object PartyFinderOverview : Feature(
     subcategory = "QOL",
     searchTags = setOf("pf"),
 ) {
-    private const val DUNGEONS_API = "https://dungeons.docilelm.workers.dev/?name="
+    private const val DUNGEONS_API = "https://dungeons.docilelm.workers.dev/?names="
     private val SETTING_PB_MODE = addSelection(
         "pbMode",
         0,
@@ -65,6 +65,8 @@ object PartyFinderOverview : Feature(
         val data: UserDungeonsData?
     )
 
+    data class MultiDungeonApiResult(val result: Map<String /* player's name */, DungeonsApiResult>)
+
     override fun initialize() {
         on<PartyFinderListener.PartyFinderEvent> { event ->
             members.clear()
@@ -76,7 +78,21 @@ object PartyFinderOverview : Feature(
 
                 it.members.forEach { m -> members.add(m.name) }
             }
-            if (members.isNotEmpty()) onUpdate()
+            if (members.isNotEmpty()) {
+                WebRequests.ioScope.launch {
+                    val filtered = members.filter {
+                        val cachedData = cachedMembers[it]
+                        cachedData == null ||
+                        System.currentTimeMillis() - cachedData.timeTaken >= (1000 * 60 * 60) * 24
+                    }
+                    val result = WebRequests.get("$DUNGEONS_API${filtered.joinToString(",")}")
+                    val response = PersistentJson.gson.fromJson(result, MultiDungeonApiResult::class.java)
+                    response.result.entries.forEach { (k, v) ->
+                        v.timeTaken = System.currentTimeMillis()
+                        cachedMembers[k] = v
+                    }
+                }
+            }
         }
 
         on<ClientThreadServerTickEvent> {
@@ -168,25 +184,6 @@ object PartyFinderOverview : Feature(
                 if (newLore.isEmpty()) return@forEach
 
                 itemStack.set(DataComponents.LORE, ItemLore(newLore.toList()))
-            }
-        }
-    }
-
-    private fun onUpdate() {
-        if (members.isEmpty()) return
-
-        WebRequests.ioScope.launch {
-            val results = members.filter {
-                val cachedData = cachedMembers[it]
-                cachedData == null ||
-                System.currentTimeMillis() - cachedData.timeTaken >= (1000 * 60 * 60) * 24
-            }.map { it to WebRequests.get("${DUNGEONS_API}$it") }
-
-            results.forEach { (name, response) ->
-                val data = PersistentJson.gson.fromJson(response, DungeonsApiResult::class.java)
-                data.timeTaken = System.currentTimeMillis()
-
-                cachedMembers[name] = data
             }
         }
     }
