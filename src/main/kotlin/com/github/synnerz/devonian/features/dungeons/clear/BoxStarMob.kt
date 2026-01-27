@@ -71,14 +71,7 @@ object BoxStarMob : Feature(
         "",
         "Starred Mobs Line Width",
     )
-    private val SETTING_PHASE = addSwitch(
-        "phase",
-        false,
-        "",
-        "Starred Mobs Esp",
-        cheeto = true,
-        isHidden = true,
-    )
+    var SETTING_PHASE = false
 
     private val starred = mutableListOf<Pair<LivingEntity, MobData>>()
     private val starredIdQ = ConcurrentLinkedQueue<Pair<Int, MobData>>()
@@ -189,7 +182,7 @@ object BoxStarMob : Feature(
                     pos.z,
                     0.8, data.height,
                     data.color,
-                    phase = SETTING_PHASE.get(),
+                    phase = SETTING_PHASE,
                     lineWidth = SETTING_LINE_WIDTH.get(),
                     centered = true,
                 )
