@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+import java.time.Instant
+
 plugins {
 	id 'fabric-loom' version "${loom_version}"
 	id 'maven-publish'
@@ -43,10 +45,31 @@ dependencies {
 
 processResources {
 	inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": inputs.properties.version
+    }
 
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
+    def gitCommitHash = System.getenv("GIT_COMMIT_HASH") ?:
+        "git rev-parse HEAD".execute().text.trim()
+    inputs.property "gitCommitHash", gitCommitHash
+
+    def gitCommitTime = System.getenv("GIT_COMMIT_TIME") ?:
+        "git show -s --format=%aI HEAD".execute(["TZ=UTC"], null).text.trim()
+    inputs.property "gitCommitTime", gitCommitTime
+
+    def buildTime = Instant.now().toString()
+    inputs.property("buildTime", buildTime)
+
+    def gitCommitMessage = System.getenv("GIT_COMMIT_MESSAGE") ?: "<LOCAL BUILD>"
+
+    filesMatching("**/build.properties") {
+        expand(
+            gitCommitHash: gitCommitHash,
+            gitCommitTime: gitCommitTime,
+            gitCommitMessage: gitCommitMessage,
+            buildTime: buildTime,
+        )
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {

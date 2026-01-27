@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian
 
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.HypixelModApi
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Party
@@ -13,15 +12,10 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
-import com.github.synnerz.devonian.features.misc.ActionbarParser
 import com.github.synnerz.devonian.features.bossbar.BossBarHealth
-import com.github.synnerz.devonian.features.misc.chat.CancelMessages
-import com.github.synnerz.devonian.features.misc.chat.ChatEmotes
-import com.github.synnerz.devonian.features.misc.chat.ChatWaypoint
 import com.github.synnerz.devonian.features.chat.CommandAliases
 import com.github.synnerz.devonian.features.chat.CompactChat
 import com.github.synnerz.devonian.features.chat.CopyChat
-import com.github.synnerz.devonian.features.misc.chat.PartyCommands
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger
@@ -39,7 +33,7 @@ import com.github.synnerz.devonian.features.dungeons.solvers.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.*
 import com.github.synnerz.devonian.features.misc.*
-import com.github.synnerz.devonian.features.misc.chat.MutePartySpam
+import com.github.synnerz.devonian.features.misc.chat.*
 import com.github.synnerz.devonian.features.misc.hiders.*
 import com.github.synnerz.devonian.features.misc.inventory.*
 import com.github.synnerz.devonian.features.misc.tooltip.*
@@ -47,22 +41,40 @@ import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
-import com.github.synnerz.devonian.utils.OpenEditor
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import org.slf4j.LoggerFactory
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")
+
     val minecraft = Minecraft.getInstance()
     val isDev = setOf(
         UUID.fromString("21c82573-9d28-4d7b-957f-adf20938cd38"),
         UUID.fromString("819d8402-51eb-4c0c-bcf2-d070dcb82a93"),
     ).contains(minecraft.gameProfile.id)
+    val buildProperties = Properties().also {
+        it.load(
+            this::class.java.getResourceAsStream("/assets/devonian/build.properties")
+        )
+    }
+    val GIT_COMMIT_HASH = buildProperties.getProperty("git.commit.hash", "<UNKNOWN HASH>")
+    val GIT_COMMIT_TIME = buildProperties.getProperty("git.commit.time")?.let {
+        Instant.parse(it)
+    } ?: Instant.EPOCH
+    val GIT_COMMIT_MESSAGE = buildProperties.getProperty("git.commit.message", "<UNKNOWN MESSAGE>")
+    val BUILD_TIME = buildProperties.getProperty("build.time")?.let {
+        Instant.parse(it)
+    } ?: Instant.EPOCH
+    val IS_LOCAL_BUILD = GIT_COMMIT_MESSAGE == "<LOCAL BUILD>"
+
     val keybindCategory by lazy {
         KeyMapping.Category.register(
             ResourceLocation.fromNamespaceAndPath(
@@ -71,6 +83,7 @@ object Devonian : ClientModInitializer {
             )
         )
     }
+
     val features = mutableListOf<Feature>()
     private val featureInstances by lazy {
         mutableListOf(
@@ -303,6 +316,7 @@ object Devonian : ClientModInitializer {
             ChatEmotes,
             PartyCommands,
             MutePartySpam,
+            CheckForUpdates,
 
             // Debug
             CopyItem,
@@ -314,6 +328,17 @@ object Devonian : ClientModInitializer {
     }
 
     override fun onInitializeClient() {
+        println(
+            "Loading Devonian $GIT_COMMIT_HASH (${
+                GIT_COMMIT_TIME.atOffset(ZoneOffset.ofHours(-5))
+                    .withNano(0)
+                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            }) Built ${
+                BUILD_TIME.atOffset(ZoneOffset.ofHours(-5))
+                    .withNano(0)
+                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            } | $GIT_COMMIT_MESSAGE"
+        )
         featureInstances.forEach(Feature::preinitialize)
         featureInstances.forEach(Feature::initialize)
         ConfigGui.initialize()
