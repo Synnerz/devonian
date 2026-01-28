@@ -113,6 +113,7 @@ object CheckForUpdates : Feature(
         if (checked) return
         checked = true
 
+        if (Devonian.IS_LOCAL_BUILD) return
         WebRequests.ioScope.launch {
             try {
                 if (SETTING_GITHUB_ACTIONS.get() && checkGithub()) return@launch

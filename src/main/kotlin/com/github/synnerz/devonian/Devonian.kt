@@ -374,6 +374,8 @@ object Devonian : ClientModInitializer {
         }.greedyString("message")
 
         DevonianCommand.initialize()
+
+        CheckForUpdates.postInitialize()
     }
 
     fun addFeatureInstance(feat: Feature) {
