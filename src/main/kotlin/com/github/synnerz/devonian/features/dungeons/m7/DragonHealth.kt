@@ -14,7 +14,6 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import net.minecraft.world.entity.decoration.ArmorStand
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.set
 
 object DragonHealth : Feature(
     "dragonHealth",

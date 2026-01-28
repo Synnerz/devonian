@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import java.awt.Color
-import java.util.EnumSet
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 object PartyFinderHighlight : Feature(

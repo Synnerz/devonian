@@ -16,7 +16,7 @@ import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacke
 import net.hypixel.modapi.packet.impl.serverbound.ServerboundPartyInfoPacket
 import net.hypixel.modapi.packet.impl.serverbound.ServerboundPingPacket
 import net.hypixel.modapi.packet.impl.serverbound.ServerboundPlayerInfoPacket
-import java.util.UUID
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 object HypixelModApi {

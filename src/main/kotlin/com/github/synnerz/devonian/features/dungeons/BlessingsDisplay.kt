@@ -8,7 +8,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
-import java.util.SequencedMap
+import java.util.*
 
 object BlessingsDisplay : TextHudFeature(
     "blessingsDisplay",

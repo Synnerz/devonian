@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import java.nio.file.Files
 import java.nio.file.attribute.FileAttribute
 import java.nio.file.attribute.PosixFilePermission
-import java.util.EnumSet
+import java.util.*
 
 object OpenEditor {
     private val isWindows = System.getProperty("os.name").startsWith("Windows")
