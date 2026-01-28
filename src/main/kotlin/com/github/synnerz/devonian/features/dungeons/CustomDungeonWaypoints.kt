@@ -150,6 +150,8 @@ object CustomDungeonWaypoints : Feature(
         ESSENCE(Block.column(8.0, 0.0, 8.0)),
         REDSTONE(Block.column(8.0, 0.0, 8.0)),
         ETHERWARP,
+        ETHERWARPPEARL,
+        DOUBLEPEARL,
         TEXT,
         MINE;
 
@@ -247,6 +249,8 @@ object CustomDungeonWaypoints : Feature(
                     WaypointType.ESSENCE -> Color(255, 0, 255, 255)
                     WaypointType.REDSTONE -> Color(255, 0, 0, 255)
                     WaypointType.ETHERWARP -> Color(0, 255, 255, 255)
+                    WaypointType.ETHERWARPPEARL -> Color(172, 0, 249)
+                    WaypointType.DOUBLEPEARL -> Color(249, 117, 0)
                     WaypointType.TEXT -> Color(0, 0, 0, 0)
                     WaypointType.MINE -> Color(230, 250, 50, 255)
                 }
