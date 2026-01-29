@@ -48,7 +48,7 @@ object CheckForUpdates : Feature(
         Scheduler.scheduleTask(100) {
             val txtRend = minecraft.font
 
-            val lineBreak = "-".repeat(30)
+            val lineBreak = "-".repeat(40)
             val breakWidth = txtRend.width(lineBreak)
             val spaceWidth = txtRend.width(" ")
 
@@ -57,13 +57,13 @@ object CheckForUpdates : Feature(
                 val o = (breakWidth - w) / 2
                 return " ".repeat(max(0, o / spaceWidth)) + s
             }
-            ChatUtils.sendMessage("&7$lineBreak")
-            ChatUtils.sendMessage(center("&bDevonian Update!!!"))
+            ChatUtils.sendMessage("§7$lineBreak")
+            ChatUtils.sendMessage(center("§bDevonian Update!!!"))
             ChatUtils.sendMessage(
-                Component.literal(center("&e&lCLICK HERE&r&a to view"))
+                Component.literal(center("§e§lCLICK HERE§r§a to view"))
                     .withStyle(Style.EMPTY.withClickEvent(ClickEvent.OpenUrl(URI.create(url))))
             )
-            ChatUtils.sendMessage("&7$lineBreak")
+            ChatUtils.sendMessage("§7$lineBreak")
         }
     }
 
@@ -110,6 +110,7 @@ object CheckForUpdates : Feature(
     }
 
     fun postInitialize() {
+        if (!isEnabled()) return
         if (checked) return
         checked = true
 
