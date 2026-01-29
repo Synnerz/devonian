@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
@@ -23,6 +25,10 @@ object SlotBinding : Feature(
     "Bind a slot to another slot (with keybind in controls) so you can shift + left click on it to swap each others' items around.",
     subcategory = "Inventory",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return listOf(Location.stateInSkyblock)
+    }
+
     private val SETTING_PROTECT = addSwitch(
         "protect",
         true,
