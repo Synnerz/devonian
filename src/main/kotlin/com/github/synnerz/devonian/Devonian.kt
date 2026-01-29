@@ -318,6 +318,7 @@ object Devonian : ClientModInitializer {
             MutePartySpam,
             CheckForUpdates,
             Searchbar,
+            PartyFinderCount,
 
             // Debug
             CopyItem,
