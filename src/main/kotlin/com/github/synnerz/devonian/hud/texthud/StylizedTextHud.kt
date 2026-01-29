@@ -183,6 +183,16 @@ open class StylizedTextHud(
         markImage()
     }
 
+    private var storedLines = emptyList<String>()
+    override fun storeLines(): ITextHud = apply {
+        storedLines = lines.map { it.str }
+    }
+
+    override fun resetLines(): ITextHud = apply {
+        setLines(storedLines)
+        storedLines = emptyList()
+    }
+
     open class LineData(
         width: Float,
         ascent: Float,

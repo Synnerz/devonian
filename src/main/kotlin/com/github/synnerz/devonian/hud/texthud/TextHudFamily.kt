@@ -19,6 +19,12 @@ class TextHudFamily(name: String, data: DataProvider) : StylizedTextHud(name, da
     override fun setLine(s: String) = throw UnsupportedOperationException("operate on children directly")
     override fun setLines(s: List<String>) = throw UnsupportedOperationException("operate on children directly")
     override fun removeLine(i: Int) = throw UnsupportedOperationException("operate on children directly")
+    override fun storeLines(): ITextHud = apply {
+        children.forEach { it.storeLines() }
+    }
+    override fun resetLines(): ITextHud = apply {
+        children.forEach { it.resetLines() }
+    }
 
     override fun draw(ctx: GuiGraphics) {
         val bounds = getBounds()
