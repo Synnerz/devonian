@@ -67,11 +67,19 @@ object Devonian : ClientModInitializer {
     }
     val GIT_COMMIT_HASH = buildProperties.getProperty("git.commit.hash", "<UNKNOWN HASH>")
     val GIT_COMMIT_TIME = buildProperties.getProperty("git.commit.time")?.let {
-        Instant.parse(it)
+        try {
+            Instant.parse(it)
+        } catch (_: Exception) {
+            null
+        }
     } ?: Instant.EPOCH
     val GIT_COMMIT_MESSAGE = buildProperties.getProperty("git.commit.message", "<UNKNOWN MESSAGE>")
     val BUILD_TIME = buildProperties.getProperty("build.time")?.let {
-        Instant.parse(it)
+        try {
+            Instant.parse(it)
+        } catch (_: Exception) {
+            null
+        }
     } ?: Instant.EPOCH
     val IS_LOCAL_BUILD = GIT_COMMIT_MESSAGE == "<LOCAL BUILD>"
 
