@@ -1,12 +1,14 @@
 package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.google.gson.JsonArray
@@ -27,6 +29,10 @@ object SlotLocking : Feature(
     subcategory = "Inventory",
     searchTags = setOf("protect", "prevent", "item"),
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return listOf(Location.stateInSkyblock)
+    }
+
     private val SETTING_STYLE = addSelection(
         "style",
         0,
