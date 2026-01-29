@@ -5,6 +5,8 @@ import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_BACKGROUND_SLOT
+import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_BACKGROUND_TERMINAL_COLOR
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_HIDE_DONE
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_HIDE_ITEMS
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RED_GREEN_DISABLE_RENDER
@@ -22,6 +24,7 @@ import net.minecraft.sounds.SoundSource
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import java.awt.Color
 import kotlin.math.abs
 
 // Credits to <https://github.com/UnclaimedBloom6/BloomModule/blob/main/features/TerminalSolvers.js>
@@ -72,6 +75,18 @@ object TerminalSolvers : Feature(
         0xFF8F2E2E.toInt(),
         "The other color for terminal solver.",
         "Terminal Solver Other Color",
+    )
+    val SETTING_BACKGROUND_SLOT = addSwitch(
+        "bgTerminal",
+        false,
+        "Makes it so every slot rendered on the Terminal gui will have a custom color (may negatively impact performance.)",
+        "Terminal Slot Background"
+    )
+    val SETTING_BACKGROUND_TERMINAL_COLOR = addColorPicker(
+        "bgTerminalColor",
+        Color(25, 25, 25, 255).rgb,
+        "The color which will be used to draw on all the slots",
+        "Terminal Slot Background Color"
     )
     private val SETTING_CANCEL_WRONG_CLICKS = addSwitch(
         "cancelWrongClicks",
@@ -235,11 +250,17 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             if (slot.container == minecraft.player?.inventory) return
             val idx = correctSlots.indexOfFirst { it.slot == event.slot.containerSlot }
             if (idx == -1) {
-                if (SETTING_HIDE_DONE.get()) event.cancel()
+                if (SETTING_HIDE_DONE.get()) {
+                    if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
+                        event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
+                    event.cancel()
+                }
                 return
             }
             val data = correctSlots[idx]
 
+            if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
+                event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
             event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(idx))
             if (SETTING_RENDER_NUMBERS.get())
                 event.ctx.drawCenteredString(
@@ -295,10 +316,16 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             if (slot.container == minecraft.player?.inventory) return
             val idx = correctSlots.indexOfFirst { it.slot == event.slot.containerSlot }
             if (idx == -1) {
-                if (SETTING_HIDE_DONE.get()) event.cancel()
+                if (SETTING_HIDE_DONE.get()) {
+                    if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
+                        event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
+                    event.cancel()
+                }
                 return
             }
 
+            if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
+                event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
             event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(0))
             if (SETTING_HIDE_ITEMS.get()) event.cancel()
         }
@@ -423,10 +450,16 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
             val idx = correctSlots.indexOfFirst { it.slot == event.slot.containerSlot }
             if (idx == -1) {
-                if (SETTING_HIDE_DONE.get()) event.cancel()
+                if (SETTING_HIDE_DONE.get()) {
+                    if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
+                        event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
+                    event.cancel()
+                }
                 return
             }
 
+            if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
+                event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
             event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(0))
             if (SETTING_HIDE_ITEMS.get()) event.cancel()
         }
@@ -541,10 +574,16 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
             val idx = correctSlots.indexOfFirst { it.slot == event.slot.containerSlot }
             if (idx == -1) {
-                if (SETTING_HIDE_DONE.get()) event.cancel()
+                if (SETTING_HIDE_DONE.get()) {
+                    if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
+                        event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
+                    event.cancel()
+                }
                 return
             }
 
+            if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
+                event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
             event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(0))
             event.cancel()
         }
