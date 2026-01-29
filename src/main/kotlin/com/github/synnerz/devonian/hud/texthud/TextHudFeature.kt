@@ -44,6 +44,7 @@ abstract class TextHudFeature(
     abstract fun getEditText(): List<String>
 
     protected var isEditing = false
+    protected val normalLines = mutableListOf<String>()
     override var anchor = Anchor.NW
     override var align = Align.Left
     override var shadow = Shadow.Drop
@@ -75,6 +76,11 @@ abstract class TextHudFeature(
     override fun getBounds(): BoundingBox = hud.getBounds()
 
     override fun drawImpl(ctx: GuiGraphics) {
+        if (isEditing) {
+            hud.clearLines()
+            hud.setLines(normalLines)
+            normalLines.clear()
+        }
         isEditing = false
         hud.draw(ctx)
     }
@@ -84,6 +90,10 @@ abstract class TextHudFeature(
     }
 
     override fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
+        if (!isEditing) {
+            normalLines.clear()
+            normalLines.addAll(hud.lines.map { it.str })
+        }
         isEditing = true
         setEditDisplay()
         hud.draw(ctx)
