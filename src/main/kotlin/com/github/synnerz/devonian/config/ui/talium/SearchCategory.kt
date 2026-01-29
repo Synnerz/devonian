@@ -348,6 +348,10 @@ class SearchCategory(rightPanel: UIBase) {
     ): UIColorPicker = object : UIColorPicker(80.0, 25.0, 15.0, 50.0, configData.get(), parent) {
         init {
             colorComponents.add(this)
+            floatingChild.onUnfocus { event ->
+                if (!arrowToggle || isMainClicked) return@onUnfocus
+                hideDropdown()
+            }
         }
 
         override fun setValue(hue: Double) {
