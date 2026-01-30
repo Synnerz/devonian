@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.talium.components.UITextInput
+import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import java.awt.Color
@@ -40,9 +41,7 @@ object Searchbar : HudFeature(
         onKeyType { onKeyType() }
         onResize { _, _ -> onResize() }
     }
-    private val highlightItems = mutableListOf<ItemMatch>()
-
-    data class ItemMatch(val idx: Int, val inLore: Boolean = false)
+    private val highlightItems = atomic(intArrayOf())
 
     override fun onMouseDrag(dx: Double, dy: Double) {
         super.onMouseDrag(dx, dy)
@@ -91,11 +90,11 @@ object Searchbar : HudFeature(
         }
 
         on<ClientContainerCloseEvent> {
-            highlightItems.clear()
+            highlightItems.value = intArrayOf()
         }
 
         on<ServerContainerCloseEvent> {
-            highlightItems.clear()
+            highlightItems.value = intArrayOf()
         }
 
         on<GuiKeyDownEvent> { event ->
@@ -108,8 +107,9 @@ object Searchbar : HudFeature(
 
         on<RenderSlotEvent> { event ->
             val slot = event.slot
-            val data = highlightItems.find { it.idx == slot.index } ?: return@on
-            val color = if (data.inLore) SETTING_LORE_MATCH_COLOR.get() else SETTING_NAME_MATCH_COLOR.get()
+            val data = highlightItems.value.getOrNull(slot.index) ?: return@on
+            if (data == 0) return@on
+            val color = if (data == 1) SETTING_LORE_MATCH_COLOR.get() else SETTING_NAME_MATCH_COLOR.get()
 
             event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color)
         }.prio = 30
@@ -137,23 +137,15 @@ object Searchbar : HudFeature(
         val items = container.menu.items
         val text = input.text
 
-        highlightItems.clear()
-        if (text.isEmpty()) return
+        val arr = items.map { item ->
+            if (text.isEmpty()) return@map 0
+            if (item.isEmpty) return@map 0
 
-        items.forEachIndexed { idx, item ->
-            if (item.isEmpty) return@forEachIndexed
-            val name = item.customName?.string ?: return@forEachIndexed
-            val lore = ItemUtils.lore(item) ?: return@forEachIndexed
-
-            if (name.lowercase().contains(text.lowercase())) {
-                highlightItems.add(ItemMatch(idx))
-                return@forEachIndexed
-            }
-
-            if (lore.any { it.lowercase().contains(text.lowercase()) }) {
-                highlightItems.add(ItemMatch(idx, true))
-                return@forEachIndexed
-            }
+            if (item.customName?.string?.contains(text, ignoreCase = true) == true) 2
+                else if (ItemUtils.lore(item)?.any { it.contains(text, ignoreCase = true) } == true) 1
+                else 0
         }
+
+        highlightItems.value = arr.toIntArray()
     }
 }
