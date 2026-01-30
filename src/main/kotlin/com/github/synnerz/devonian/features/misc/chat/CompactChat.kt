@@ -1,8 +1,9 @@
-package com.github.synnerz.devonian.features.chat
+package com.github.synnerz.devonian.features.misc.chat
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.ChatFormatting
 import net.minecraft.client.GuiMessage
 import net.minecraft.network.chat.Component
@@ -43,10 +44,8 @@ object CompactChat : Feature(
 
         cachedData.count++
         cachedData.lastTime = time
-        val textCopy = text.copy()
-        val incomingMsg = textCopy.string
         if (cachedData.count <= 1) {
-            recentMessages[incomingMsg] = 1
+            recentMessages[string] = 1
             return text
         }
 
@@ -59,10 +58,10 @@ object CompactChat : Feature(
                 val contentCopy = line.content.copy()
                 contentCopy.siblings.removeIf { it.contents is CompactChatComponent }
 
-                return@getOrPut contentCopy.string
+                return@getOrPut contentCopy.string.clearCodes()
             } ?: continue
 
-            if (msg == incomingMsg) {
+            if (msg == string) {
                 val count = recentMessages.merge(msg, 1, Int::plus) ?: 1
                 if (count == 1 || nonLineBreakMessage.containsMatchIn(msg)) {
                     iter.remove()
@@ -84,9 +83,9 @@ object CompactChat : Feature(
             }
         }
         if (refresh) ChatUtils.chatComponentAccessor.invokeRefresh()
-        else recentMessages[incomingMsg] = 1
+        else recentMessages[string] = 1
 
-        return textCopy.append(CompactChatComponent.of(cachedData.count).withStyle(STYLE))
+        return text.copy().append(CompactChatComponent.of(cachedData.count).withStyle(STYLE))
     }
 
     fun clearHistory() {
