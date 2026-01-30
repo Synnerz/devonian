@@ -51,6 +51,7 @@ object Dungeons {
     val playerClasses = ConcurrentHashMap<String, DungeonClass>()
     val selfClass = BasicState(DungeonClass.Unknown)
     private var needReset = true
+    private var worldId = 0
 
     var floor = FloorType.None
     val floorState = BasicState(FloorType.None)
@@ -223,7 +224,9 @@ object Dungeons {
             val match = event.matches(playerInfoRegex) ?: return@on
             val (name, role) = match
 
+            val id = worldId
             Scheduler.scheduleTask {
+                if (id != worldId) return@scheduleTask
                 val player = players.getOrPut(name) {
                     playerClasses[name] = DungeonClass.Unknown
                     DungeonPlayer(
@@ -337,9 +340,11 @@ object Dungeons {
             }
 
             event.matches(disconnectRegex)?.let {
+                val id = worldId
                 Scheduler.scheduleTask {
+                    if (worldId != id) return@scheduleTask
                     if (it[0] == Devonian.minecraft.gameProfile.name) wasInDungeons = true
-                    players.remove(it[0])?.let { p ->
+                    else players.remove(it[0])?.let { p ->
                         players[it[0]] = p
                         p.isDisconnected = true
                     }
@@ -472,6 +477,7 @@ object Dungeons {
         players.clear()
         playerClasses.clear()
         selfClass.value = DungeonClass.Unknown
+        worldId++
 
         floor = FloorType.None
         Stages.Root.reset()
