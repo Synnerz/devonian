@@ -403,6 +403,12 @@ object DungeonMap : HudFeature(
         "Don't Render Checkmark and Name",
         subcategory = "Behavior",
     )
+    private val SETTING_CHECK_IF_GREEN = addSwitch(
+        "checkIfGreen",
+        false,
+        "Will also hide all room text. Still requires 'Render Checkmarks' to be on, bypasses 'Dont Render Checkmark and Name'.",
+        "Render Check If Green",
+    )
     private val SETTING_RENDER_SECRET_COUNT = addSwitch(
         "renderSecretCount",
         false,
@@ -570,6 +576,7 @@ object DungeonMap : HudFeature(
                     SETTING_DONT_RENDER_YELLOW_NAME.get(),
                     SETTING_RENDER_FAIRY_CHECK.get(),
                     SETTING_DONT_RENDER_CHECK_IF_NAME.get(),
+                    SETTING_CHECK_IF_GREEN.get(),
                     SETTING_RENDER_SECRET_COUNT.get(),
                     SETTING_DONT_RENDER_SECRET_1.get(),
                     SETTING_RENDER_PUZZLE_NAME.get(),

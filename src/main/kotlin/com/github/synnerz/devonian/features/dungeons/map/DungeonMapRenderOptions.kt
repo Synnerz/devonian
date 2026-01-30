@@ -19,6 +19,7 @@ data class DungeonMapRenderOptions(
     val roomNameNotYellow: Boolean,
     val roomNoFairyCheck: Boolean,
     val roomNoCheckName: Boolean,
+    val roomCheckGreen: Boolean,
     val secretCount: Boolean,
     val no1Secret: Boolean,
     val puzzleName: Boolean,
