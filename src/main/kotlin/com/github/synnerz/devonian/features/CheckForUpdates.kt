@@ -45,25 +45,28 @@ object CheckForUpdates : Feature(
     private var checked = false
 
     private fun showUpdateMessage(url: String) {
-        Scheduler.scheduleTask(100) {
-            val txtRend = minecraft.font
+        Scheduler.scheduleTask(1) {
+            if (minecraft.level == null) showUpdateMessage(url)
+            else Scheduler.scheduleTask(100) {
+                val txtRend = minecraft.font
 
-            val lineBreak = "-".repeat(40)
-            val breakWidth = txtRend.width(lineBreak)
-            val spaceWidth = txtRend.width(" ")
+                val lineBreak = "-".repeat(40)
+                val breakWidth = txtRend.width(lineBreak)
+                val spaceWidth = txtRend.width(" ")
 
-            fun center(s: String): String {
-                val w = txtRend.width(lineBreak)
-                val o = (breakWidth - w) / 2
-                return " ".repeat(max(0, o / spaceWidth)) + s
+                fun center(s: String): String {
+                    val w = txtRend.width(s)
+                    val o = (breakWidth - w) / 2
+                    return " ".repeat(max(0, o / spaceWidth)) + s
+                }
+                ChatUtils.sendMessage("§7$lineBreak")
+                ChatUtils.sendMessage(center("§bDevonian Update!!!"))
+                ChatUtils.sendMessage(
+                    Component.literal(center("§e§lCLICK HERE§r§a to view"))
+                        .withStyle(Style.EMPTY.withClickEvent(ClickEvent.OpenUrl(URI.create(url))))
+                )
+                ChatUtils.sendMessage("§7$lineBreak")
             }
-            ChatUtils.sendMessage("§7$lineBreak")
-            ChatUtils.sendMessage(center("§bDevonian Update!!!"))
-            ChatUtils.sendMessage(
-                Component.literal(center("§e§lCLICK HERE§r§a to view"))
-                    .withStyle(Style.EMPTY.withClickEvent(ClickEvent.OpenUrl(URI.create(url))))
-            )
-            ChatUtils.sendMessage("§7$lineBreak")
         }
     }
 
