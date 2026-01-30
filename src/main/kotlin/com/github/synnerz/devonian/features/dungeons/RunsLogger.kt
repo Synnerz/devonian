@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
@@ -29,7 +30,7 @@ object RunsLogger : Feature(
             data = mutableMapOf()
         }
     }
-    private val floorStatsRegex = "^ *(Master Mode )?The Catacombs - Floor ([IV]+) Stats$".toRegex()
+    private val floorStatsRegex = "^ *(Master Mode )?The Catacombs - (?:Floor ([IV]+)|Entrance)? Stats$".toRegex()
     private val teamScoreRegex = "^ *Team Score: (\\d+) \\((.{1,2})\\)(?: \\(NEW RECORD!\\))?$".toRegex()
     private val defeatedRegex = "^ *☠ Defeated [\\w, ]+ in ([\\dms ]+)( \\(NEW RECORD!\\))?$".toRegex()
     private val deathsRegex = "^ *Deaths: (\\d+)$".toRegex()
@@ -154,8 +155,11 @@ object RunsLogger : Feature(
             val match = event.matches(secretsFoundRegex) ?: return@on
             val amount = match[0].toIntOrNull() ?: 0
 
+            if (currentStat == null) {
+                Scheduler.scheduleTask { ChatUtils.sendMessage("&cRunsLogger failed to properly scan the stats.", true) }
+                return@on
+            }
             currentStat!!.secrets = amount
-            if (currentStat == null) return@on
             if (hasAdded) {
                 currentStat = null
                 return@on
