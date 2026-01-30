@@ -7,10 +7,8 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 
 object Location {
-    val teamRegex = "^team_(\\d+)$".toRegex()
-    val emoteRegex = "[^\\u0000-\\u007F]".toRegex()
     val areaRegex = "^(?:Area|Dungeon): ([\\w ]+)\$".toRegex()
-    val subAreaRegex = "^ (⏣|ф) .*".toRegex()
+    val subAreaRegex = "^ ([⏣ф]) ".toRegex()
     var area: String? = null
     var subarea: String? = null
     val stateArea = BasicState<String?>(null)
@@ -42,35 +40,16 @@ object Location {
     }
 
     fun initialize() {
-        EventBus.on<PacketReceivedEvent> { event ->
-            when (val packet = event.packet) {
-                // TabList
-                is ClientboundPlayerInfoUpdatePacket -> {
-                    packet.entries().forEach {
-                        val name = it.displayName ?: return@forEach
-                        val line = name.string.replace(emoteRegex, "")
-                        if (!line.matches(areaRegex)) return@forEach
-                        val newArea = areaRegex.matchEntire(line)?.groupValues?.get(1) ?: return@forEach
+        EventBus.on<TabUpdateEvent> { event ->
+            val newArea = event.matches(areaRegex)?.getOrNull(0) ?: return@on
 
-                        changeArea(newArea)
-                    }
-                }
-                // Scoreboard
-                is ClientboundSetPlayerTeamPacket -> {
-                    if (packet.parameters.isEmpty) return@on
-                    val team = packet.parameters?.get() ?: return@on
-                    val teamPrefix = team.playerPrefix.string
-                    val teamSuffix = team.playerSuffix.string
-                    if (teamPrefix.isEmpty()) return@on
-                    val teamName = packet.name
-                    if (!teamName.matches(teamRegex)) return@on
+            changeArea(newArea)
+        }
 
-                    val line = "${teamPrefix}${teamSuffix}"
-                    if (!line.matches(subAreaRegex)) return@on
+        EventBus.on<ScoreboardEvent> { event ->
+            if (!subAreaRegex.matchesAt(event.message, 0)) return@on
 
-                    changeSubarea(line.drop(3))
-                }
-            }
+            changeSubarea(event.message.drop(3))
         }
 
         EventBus.on<WorldChangeEvent> {
