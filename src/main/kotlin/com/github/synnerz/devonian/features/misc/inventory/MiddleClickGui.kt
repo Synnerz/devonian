@@ -41,6 +41,7 @@ object MiddleClickGui : Feature(
         "Abiphone",
         "Chest",
         "Large Chest",
+        "Stats Tuning",
     )
     private val terminalGuis = listOf(
         "^Click in order!$".toRegex(),
