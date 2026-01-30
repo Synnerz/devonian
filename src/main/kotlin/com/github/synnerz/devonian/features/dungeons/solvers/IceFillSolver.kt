@@ -359,7 +359,14 @@ class IcePlatform(
 
         queue.add(Destination(first, -1, 0, 0, 1L shl idAt(first.comp.x, first.comp.z)))
 
+        var ops = 0
+        val start = System.currentTimeMillis()
         while (queue.isNotEmpty()) {
+            if (ops++ > 100_000) {
+                if (System.currentTimeMillis() - start > 1_000L) break
+                ops = 0
+            }
+
             val d = queue.removeLast()
 
             var pathLen = d.size
