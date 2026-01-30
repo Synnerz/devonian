@@ -180,6 +180,7 @@ object DungeonScanner {
             if (currentRoom != null && !currentRoom!!.explored)
                 Dungeons.totalRoomSecrets.value += currentRoom!!.totalSecrets
             currentRoom?.explored = true
+            if (currentRoom?.checkmark == CheckmarkTypes.UNEXPLORED) currentRoom?.checkmark = CheckmarkTypes.NONE
 
             if (lastIdx == jdx) return@on
             lastIdx = jdx

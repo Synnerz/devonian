@@ -208,7 +208,9 @@ object DungeonMapScanner {
                     MapColors.CHECK_WHITE.color -> CheckmarkTypes.WHITE
                     MapColors.CHECK_GREEN.color -> CheckmarkTypes.GREEN
                     MapColors.CHECK_FAIL.color -> CheckmarkTypes.FAILED
-                    MapColors.CHECK_UNKNOWN.color -> CheckmarkTypes.UNEXPLORED
+                    MapColors.CHECK_UNKNOWN.color ->
+                        if (room.checkmark == CheckmarkTypes.NONE) CheckmarkTypes.NONE
+                        else CheckmarkTypes.UNEXPLORED
                     else -> CheckmarkTypes.NONE
                 }
                 if (room.type == RoomTypes.TRAP && room.checkmark == CheckmarkTypes.WHITE) {
