@@ -23,7 +23,8 @@ object NoBonzoStaffSound : Feature(
         }
 
         on<SoundPlayEvent> { event ->
-            if (event.sound != "minecraft:entity.ghast.warn") return@on
+            if (event.sound != "minecraft:entity.ghast.ambient") return@on
+            if (event.volume != 1f) return@on
             if (event.pitch !in 1.3968254f..1.7936507f) return@on
 
             event.cancel()
