@@ -383,6 +383,24 @@ object ActionbarParser : Feature(
                 subcategory = "Actionbar",
                 searchTags = hideTags,
             ) {},
+        ),
+        EssenceGained(
+            " Essence",
+            null,
+            object : TextHudFeature(
+                "customEssenceGainedHud",
+                "Allows you to move the essence gained that appears in the actionbar (above your hotbar).",
+                subcategory = "Actionbar",
+                searchTags = customTags,
+            ) {
+                override fun getEditText(): List<String> = listOf("§d+1 Wither Essence")
+            },
+            object : Feature(
+                "hideEssenceGainedActionbar",
+                "Hides the essence gained that appears in the actionbar (above your hotbar).",
+                subcategory = "Actionbar",
+                searchTags = hideTags,
+            ) {},
         );
 
         open fun initialize() {}
