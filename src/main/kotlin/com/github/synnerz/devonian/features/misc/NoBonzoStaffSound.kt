@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.api.events.ClientSoundPlayeEvent
+import com.github.synnerz.devonian.api.events.ClientSoundPlayEvent
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.features.Feature
 
@@ -16,7 +16,7 @@ object NoBonzoStaffSound : Feature(
     )
 
     override fun initialize() {
-        on<ClientSoundPlayeEvent> { event ->
+        on<ClientSoundPlayEvent> { event ->
             if (!bonzoFireworks.contains(event.sound)) return@on
             if (event.pitch !in 0.9f..1.1f) return@on
             event.cancel()

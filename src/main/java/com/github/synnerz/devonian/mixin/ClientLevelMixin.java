@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.api.events.ClientSoundPlayeEvent;
+import com.github.synnerz.devonian.api.events.ClientSoundPlayEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -18,7 +18,7 @@ public class ClientLevelMixin {
     )
     private void devonian$onClientSound(double d, double e, double f, SoundEvent soundEvent, SoundSource soundSource, float g, float h, boolean bl, CallbackInfo ci) {
         var soundName = soundEvent.location();
-        if (new ClientSoundPlayeEvent(
+        if (new ClientSoundPlayEvent(
                 soundName.getNamespace() + ":" + soundName.getPath(),
                 h,
                 g,

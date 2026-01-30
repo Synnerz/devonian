@@ -336,7 +336,7 @@ class RenderTickEvent : Event()
     val underlyingEvent: SoundEvent,
 ) : CancellableEvent()
 
-class ClientSoundPlayeEvent(
+class ClientSoundPlayEvent(
     val sound: String,
     val pitch: Float,
     val volume: Float,
