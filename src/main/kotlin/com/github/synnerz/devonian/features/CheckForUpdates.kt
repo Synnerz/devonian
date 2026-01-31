@@ -85,7 +85,7 @@ object CheckForUpdates : Feature(
         val timeStr = latest["date_published"].asString
         val time = Instant.parse(timeStr)
 
-        if (time >= Devonian.GIT_COMMIT_TIME) return false
+        if (time <= Devonian.GIT_COMMIT_TIME) return false
 
         val versionId = latest["id"].asString
         val updateUrl = "https://modrinth.com/mod/j4Tr5Ve2/version/$versionId"
