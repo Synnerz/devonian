@@ -34,9 +34,9 @@ object Searchbar : HudFeature(
         "Searchbar Lore Match"
     )
     private val input = UITextInput(x, y, 15.0, 5.0).apply {
-        setColor(SETTING_BACKGROUND_COLOR.getColor())
+        setColor(Color(SETTING_BACKGROUND_COLOR.get(), true))
         SETTING_BACKGROUND_COLOR.onChange {
-            setColor(SETTING_BACKGROUND_COLOR.getColor())
+            setColor(Color(it, true))
         }
         onKeyType { onKeyType() }
         onResize { _, _ -> onResize() }
