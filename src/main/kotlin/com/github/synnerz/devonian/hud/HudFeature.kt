@@ -46,6 +46,9 @@ abstract class HudFeature(
     isHidden,
     subcategories,
 ) {
+    val window get() = minecraft.window
+    val MARGIN = 2.0
+    var dirty = true
     var x = 10.0
     var y = 10.0
     var scale = 1f
@@ -66,6 +69,20 @@ abstract class HudFeature(
         Config.setHud(legacyName, NullableHudData(x, y, scale))
     }
 
+    /**
+     * IDEA:
+     * since it is possible to import someone else's config and these elements being out of bounds (out of reach)
+     * to the user they will think the feature hud simply does not exist, so we need to prevent that by
+     * forcing the position to always be coerced between the screen bounds, however this cannot be done as soon
+     * as it loads because the "getWindow()" is null at that time, so we delegate it to be in the next
+     * rendering frame (whenever that may happen)
+    */
+    open fun onDirty() {
+        x = coerceX(x)
+        y = coerceY(y)
+        dirty = false
+    }
+
     abstract fun getBounds(): BoundingBox
 
     fun inBounds(mx: Double, my: Double): Boolean = getBounds().inBounds(mx, my)
@@ -78,10 +95,8 @@ abstract class HudFeature(
     }
 
     open fun onMouseDrag(dx: Double, dy: Double) {
-        val MARGIN = 2.0
-        val window = Devonian.minecraft.window
-        x = (x + dx).coerceIn(MARGIN .. window.guiScaledWidth - MARGIN)
-        y = (y + dy).coerceIn(MARGIN .. window.guiScaledHeight - MARGIN)
+        x = coerceX(x + dx)
+        y = coerceY(y + dy)
     }
 
     open fun onMouseClick(mx: Double, my: Double, mbtn: Int) {
@@ -92,7 +107,6 @@ abstract class HudFeature(
 
     open fun onKeyPress(keyCode: Int) {
         val INCREMENT = 5.0
-        val MARGIN = 2.0
         var dx = 0.0
         var dy = 0.0
         when (keyCode) {
@@ -103,9 +117,9 @@ abstract class HudFeature(
             GLFW.GLFW_KEY_MINUS -> return onMouseScroll(-1.0)
             GLFW.GLFW_KEY_EQUAL -> return onMouseScroll(+1.0)
         }
-        val window = Devonian.minecraft.window
-        x = (x + dx).coerceIn(MARGIN .. window.guiScaledWidth - MARGIN)
-        y = (y + dy).coerceIn(MARGIN .. window.guiScaledHeight - MARGIN)
+
+        x = coerceX(x + dx)
+        y = coerceY(y + dy)
     }
 
     abstract fun drawImpl(ctx: GuiGraphics)
@@ -114,6 +128,7 @@ abstract class HudFeature(
         if (HudManager.isEditing) return
 
         drawImpl(ctx)
+        if (dirty) onDirty()
     }
 
     open fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
@@ -154,9 +169,19 @@ abstract class HudFeature(
             if (selected) Color.WHITE.rgb
             else Color.GRAY.rgb
         )
+
+        if (dirty) onDirty()
     }
 
     fun isVisibleEdit() =
         (isEnabled() || isInternal || !HudManagerHider.isEnabled()) &&
         (!isHidden || Devonian.isDev)
+
+    open fun coerceX(v: Double): Double {
+        return v.coerceIn(MARGIN .. window.guiScaledWidth - MARGIN)
+    }
+
+    open fun coerceY(v: Double): Double {
+        return v.coerceIn(MARGIN .. window.guiScaledHeight - MARGIN)
+    }
 }

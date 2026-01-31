@@ -8,6 +8,8 @@ import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import com.github.synnerz.devonian.utils.render.Render2D
+import com.github.synnerz.devonian.utils.render.Render2D.height
+import com.github.synnerz.devonian.utils.render.Render2D.width
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -113,5 +115,19 @@ abstract class TextHudFeature(
             GLFW.GLFW_KEY_3 -> shadow = shadow.cycle()
             GLFW.GLFW_KEY_4 -> backdrop = backdrop.cycle()
         }
+    }
+
+    override fun coerceX(v: Double): Double {
+        if (!dirty && !isEditing) return super.coerceX(v)
+
+        val w = getEditText().maxOf { it.width() }.toDouble()
+        return v.coerceIn(MARGIN .. window.guiScaledWidth - w - MARGIN)
+    }
+
+    override fun coerceY(v: Double): Double {
+        if (!dirty && !isEditing) return super.coerceY(v)
+
+        val h = getEditText().maxOf { it.height() }.toDouble()
+        return v.coerceIn(MARGIN .. window.guiScaledHeight - h - MARGIN)
     }
 }
