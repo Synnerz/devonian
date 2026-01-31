@@ -48,7 +48,7 @@ abstract class HudFeature(
 ) {
     val window get() = minecraft.window
     val MARGIN = 2.0
-    var dirty = true
+    open var dirty = true
     var x = 10.0
     var y = 10.0
     var scale = 1f

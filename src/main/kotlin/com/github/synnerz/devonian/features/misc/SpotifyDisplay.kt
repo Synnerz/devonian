@@ -13,6 +13,7 @@ object SpotifyDisplay : TextHudFeature(
     "spotifyDisplay",
     "shows current song playing, only Windows with Spotify app",
 ) {
+    override var dirty = false
     private val SETTING_HIDE_NOT_OPEN = addSwitch(
         "hideClosed",
         true,

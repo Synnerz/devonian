@@ -120,14 +120,14 @@ abstract class TextHudFeature(
     override fun coerceX(v: Double): Double {
         if (!dirty && !isEditing) return super.coerceX(v)
 
-        val w = getEditText().maxOf { it.width() }.toDouble()
+        val w = if (dirty) getEditText().maxOf { it.width() }.toDouble() else getWidth()
         return v.coerceIn(MARGIN .. window.guiScaledWidth - w - MARGIN)
     }
 
     override fun coerceY(v: Double): Double {
         if (!dirty && !isEditing) return super.coerceY(v)
 
-        val h = getEditText().maxOf { it.height() }.toDouble()
+        val h = if (dirty) getEditText().maxOf { it.height() }.toDouble() else getHeight()
         return v.coerceIn(MARGIN .. window.guiScaledHeight - h - MARGIN)
     }
 }
