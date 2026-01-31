@@ -47,7 +47,7 @@ object SpiritBearTimer : TextHudFeature(
 
             setLine(format)
 
-            if (time <= 0) startedAt = 0
+            if (time < 0) startedAt = 0
         }
 
         on<RenderOverlayEvent> { event ->
