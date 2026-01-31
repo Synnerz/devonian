@@ -81,6 +81,7 @@ object Devonian : ClientModInitializer {
             null
         }
     } ?: Instant.EPOCH
+    val DEVONIAN_VERSION = buildProperties.getProperty("devonian.version", "<UNKNOWN VERSION>")
     val IS_LOCAL_BUILD = GIT_COMMIT_MESSAGE == "<LOCAL BUILD>"
 
     val keybindCategory by lazy {
@@ -339,7 +340,7 @@ object Devonian : ClientModInitializer {
 
     override fun onInitializeClient() {
         println(
-            "Loading Devonian $GIT_COMMIT_HASH (${
+            "Loading Devonian $DEVONIAN_VERSION $GIT_COMMIT_HASH (${
                 GIT_COMMIT_TIME.atOffset(ZoneOffset.ofHours(-5))
                     .withNano(0)
                     .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)

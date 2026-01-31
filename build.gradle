@@ -68,6 +68,7 @@ processResources {
             gitCommitTime: gitCommitTime,
             gitCommitMessage: gitCommitMessage,
             buildTime: buildTime,
+            version: inputs.properties.version,
         )
     }
 }

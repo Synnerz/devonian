@@ -8,12 +8,13 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.utils.Toggleable
 import com.google.gson.JsonParser
 import kotlinx.coroutines.launch
+import net.fabricmc.loader.api.SemanticVersion
+import net.fabricmc.loader.api.Version
 import net.minecraft.SharedConstants
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import java.net.URI
-import java.time.Instant
 import kotlin.math.max
 
 object CheckForUpdates : Feature(
@@ -82,10 +83,16 @@ object CheckForUpdates : Feature(
 
         val latest = obj.first().asJsonObject
 
-        val timeStr = latest["date_published"].asString
-        val time = Instant.parse(timeStr)
+        val versionRaw = latest["version_number"].asString
+        val version: Version = versionRaw.indexOf('-').let {
+            SemanticVersion.parse(
+                if (it < 0) versionRaw
+                else versionRaw.take(it)
+            )
+        }
 
-        if (time <= Devonian.GIT_COMMIT_TIME) return false
+        val currentVersion: Version = SemanticVersion.parse(Devonian.DEVONIAN_VERSION)
+        if (currentVersion >= version) return false
 
         val versionId = latest["id"].asString
         val updateUrl = "https://modrinth.com/mod/j4Tr5Ve2/version/$versionId"
