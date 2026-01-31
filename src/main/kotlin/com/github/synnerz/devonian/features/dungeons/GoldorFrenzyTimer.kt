@@ -22,15 +22,23 @@ object GoldorFrenzyTimer : TextHudFeature(
             Boolean::not))
     }
 
+    private var preGoldor = false
     private var inGoldor = false
     private var until = 0
+    private var preGoldorTicks = 0
 
     override fun initialize() {
         on<ChatEvent> { event ->
             when (event.message) {
                 "[BOSS] Goldor: Who dares trespass into my domain?" -> {
                     inGoldor = true
+                    preGoldor = false
                     until = 60
+                    preGoldorTicks = 0
+                }
+                "[BOSS] Storm: I should have known that I stood no chance." -> {
+                    preGoldor = true
+                    preGoldorTicks = 100
                 }
 
                 "The Core entrance is opening!" -> inGoldor = false
@@ -38,6 +46,20 @@ object GoldorFrenzyTimer : TextHudFeature(
         }
 
         on<ClientThreadServerTickEvent> {
+            if (preGoldor) {
+                val time = preGoldorTicks * 0.05
+                setLine(
+                    "%s%.2f".format(
+                        StringUtils.colorForNumber(preGoldorTicks, 100),
+                        time
+                    )
+                )
+                if (time < 0) {
+                    preGoldor = false
+                    preGoldorTicks = 0
+                }
+                return@on
+            }
             if (!inGoldor) return@on
             until = if (until > 1) until - 1 else 60
             setLine(
@@ -49,6 +71,7 @@ object GoldorFrenzyTimer : TextHudFeature(
         }
 
         on<RenderOverlayEvent> { event ->
+            if (preGoldor) return@on draw(event.ctx)
             if (!inGoldor) return@on
             draw(event.ctx)
         }
@@ -58,6 +81,8 @@ object GoldorFrenzyTimer : TextHudFeature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         inGoldor = false
+        preGoldor = false
         until = 0
+        preGoldorTicks = 0
     }
 }
