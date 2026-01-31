@@ -32,10 +32,10 @@ object Stages {
     val Storm: SplitStage
     val StormLightning = SplitStage()
     val Terminals: SequentialSplitStage
-    val S1 = TerminalSection(4, 1).also { it.withName("&e&lS1").withLongTime() }
-    val S2 = TerminalSection(5, 2).also { it.withName("&e&lS2").withLongTime() }
-    val S3 = TerminalSection(4, 3).also { it.withName("&e&lS3").withLongTime() }
-    val S4 = TerminalSection(4, 4).also { it.withName("&e&lS4").withLongTime() }
+    val S1 = TerminalSection(4, 1).also { it.withName("&eS1").withLongTime() }
+    val S2 = TerminalSection(5, 2).also { it.withName("&eS2").withLongTime() }
+    val S3 = TerminalSection(4, 3).also { it.withName("&eS3").withLongTime() }
+    val S4 = TerminalSection(4, 4).also { it.withName("&eS4").withLongTime() }
     val Goldor: SplitStage
     val Necron: SplitStage
     val WitherKing: SplitStage
@@ -160,7 +160,7 @@ object Stages {
         Terminals = SequentialSplitStage(
             "[BOSS] Goldor: Who dares trespass into my domain?",
             arrayOf(S1, S2, S3, S4),
-        ).also { it.withName("&eTerminals") }
+        ).also { it.withName("&6Terminals") }
         Goldor = SplitStage("The Core entrance is opening!").withName("&8Goldor")
         Necron = SplitStage("[BOSS] Necron: You went further than any human before, congratulations.")
             .withName("&4Necron")
