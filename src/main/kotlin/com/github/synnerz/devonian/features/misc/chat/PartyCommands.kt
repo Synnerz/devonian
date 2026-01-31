@@ -17,7 +17,7 @@ object PartyCommands : Feature(
     private val SETTING_USE_WHITELIST = addSwitch(
         "useWhitelist",
         true,
-        "Whether the feature should use a white list for !allinv, !pt, !inv, !kick commands (/dv pcmd <username>)",
+        "Whether the feature should use a white list for !allinv, !pt, !inv, !kick, !f<1-7>, !m<1-7>, !t<1-5> commands (/dv pcmd <username>)",
         "Party Commands Whitelist"
     )
     private val catacombsFloors = listOf(
@@ -94,7 +94,7 @@ object PartyCommands : Feature(
                         val str = first.getOrNull(1) ?: return@scheduleTask
                         val num = first.getOrNull(2)?.digitToIntOrNull() ?: return@scheduleTask
                         when (str) {
-                            'j' -> if (num in 1..7 && Party.isLeader) ChatUtils.command("joindungeon ${catacombsFloors[num - 1]}")
+                            'f' -> if (num in 1..7 && Party.isLeader) ChatUtils.command("joindungeon ${catacombsFloors[num - 1]}")
                             'm' -> if (num in 1..7 && Party.isLeader) ChatUtils.command("joindungeon master_${catacombsFloors[num - 1]}")
                             't' -> if (num in 1..5 && Party.isLeader) ChatUtils.command("joininstance kuudra_${kuudraTiers[num - 1]}")
                         }
