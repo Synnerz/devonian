@@ -19,8 +19,14 @@ object WitherShieldTimer : TextHudFeature(
     private val SETTING_HIDE_READY = addSwitch(
         "hideReady",
         false,
-        "",
-        "Hide if Ready",
+        "Hides the WitherShieldTimer whenever its cooldown is done (instead of staying on with \"READY\" as text)",
+        "WitherShieldTimer Hide",
+    )
+    private val SETTING_COMPACT_MODE = addSwitch(
+        "compactMode",
+        false,
+        "When enabled, it'll make the WitherShieldTimer not have any words only numbers",
+        "WitherShieldTimer Compact"
     )
 
     private var useTime = 0
@@ -53,6 +59,10 @@ object WitherShieldTimer : TextHudFeature(
                     str =
                         StringUtils.colorForNumber(ttl, cooldown) +
                         "%.2fs".format(max(ttl, 0) * 0.05)
+                    if (SETTING_COMPACT_MODE.get()) {
+                        setLine(str)
+                        return@on
+                    }
                 }
             }
 
@@ -105,5 +115,5 @@ object WitherShieldTimer : TextHudFeature(
         isCooldownPending = false
     }
 
-    override fun getEditText(): List<String> = listOf("&6Shield: &aREADY")
+    override fun getEditText(): List<String> = if (SETTING_COMPACT_MODE.get()) listOf("&a1.00s") else listOf("&6Shield: &aREADY")
 }
