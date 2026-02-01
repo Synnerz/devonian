@@ -47,7 +47,7 @@ object GoldorFrenzyTimer : TextHudFeature(
 
         on<ClientThreadServerTickEvent> {
             if (preGoldor) {
-                val time = preGoldorTicks * 0.05
+                val time = preGoldorTicks-- * 0.05
                 setLine(
                     "%s%.2f".format(
                         StringUtils.colorForNumber(preGoldorTicks, 100),
