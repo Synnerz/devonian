@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.time.LocalDateTime;
+
 @Mixin(Entity.class)
 public class EntityMixin {
     @Inject(
@@ -34,7 +36,7 @@ public class EntityMixin {
         argsOnly = true
     )
     private boolean devonian$disableSwim(boolean value) {
-        if (!DisableSwim.INSTANCE.isEnabled() || Location.INSTANCE.getStateInLatestArea().getValue()) return value;
+        if (LocalDateTime.now().getDayOfMonth() >= 24 || !DisableSwim.INSTANCE.isEnabled() || Location.INSTANCE.getStateInLatestArea().getValue()) return value;
         Entity that = (Entity) (Object) this;
         if (!(that instanceof LocalPlayer)) return value;
         return false;

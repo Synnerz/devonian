@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.CameraAccessor
 import net.minecraft.client.Camera
 import net.minecraft.world.entity.Pose
+import java.time.LocalDateTime
 
 object ChangeCrouchHeight : Feature(
     "changeCrouchHeight",
@@ -44,7 +45,7 @@ object ChangeCrouchHeight : Feature(
         return player.getDimensions(pose).eyeHeight
     }
 
-    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get() && !Location.stateInLatestArea.value
+    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get() && !Location.stateInLatestArea.value && LocalDateTime.now().dayOfMonth < 24
 
     private var wasCrouching = false
 
