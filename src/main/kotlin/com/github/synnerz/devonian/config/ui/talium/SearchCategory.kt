@@ -78,31 +78,33 @@ class SearchCategory(rightPanel: UIBase) {
     }
 
     private fun onSearch(str: String) {
-        val shownFeats = Config.features.associateWith {
-            matchesConfig(it, str)
-        }
-        val shownSubConfigs = Config.features.associateWith {
+        val subConfigHits = Config.features.associateWith {
             it.subconfigs.associateWith {
                 matchesConfig(it, str)
             }
         }
+        val featHits = Config.features.associateWith {
+            matchesConfig(it, str)
+        }
+        val featMaxHits = subConfigHits.entries.associate { (feat, sub) ->
+            feat to max(featHits[feat] ?: 0, sub.entries.maxOfOrNull { it.value } ?: 0)
+        }
         val hitCount = mutableListOf<Int>()
-        val featOrdering = shownSubConfigs.entries.associate {
-            val count = max(shownFeats[it.key] ?: 0, it.value.entries.maxOfOrNull { it.value } ?: 0)
-            while (count >= hitCount.size) hitCount.add(0)
-            it.key to (count * 1000 + hitCount[count]++)
+        val featOrdering = featMaxHits.entries.associate { (key, maxHits) ->
+            while (maxHits >= hitCount.size) hitCount.add(0)
+            key to (maxHits * 1000 - hitCount[maxHits]++)
         }
 
         var idx = 0
         components.sortedBy {
             -1000 * featOrdering[if (it.first is ConfigData.FeatureSwitch) it.first else it.first.parent]!! +
-            (if (it.first is ConfigData.FeatureSwitch) -1 else 500 - (shownSubConfigs[it.first.parent]?.get(it.first) ?: 0))
+            (if (it.first is ConfigData.FeatureSwitch) 0 else 500 - (subConfigHits[it.first.parent]?.get(it.first) ?: 0))
         }.forEach { (data, comp) ->
             val show = if (data is ConfigData.FeatureSwitch) {
-                featOrdering[data]!! > 0
+                featMaxHits[data]!! > 0
             } else {
-                shownFeats[data.parent]!! > 0 ||
-                shownSubConfigs[data.parent]!![data]!! > 0
+                featHits[data.parent]!! > 0 ||
+                subConfigHits[data.parent]!![data]!! > 0
             }
             if (show) {
                 val i = idx++
