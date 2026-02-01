@@ -13,7 +13,6 @@ import com.google.gson.JsonPrimitive
 import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
-import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.inventory.ClickType
@@ -181,8 +180,13 @@ object SlotBinding : Feature(
         }
 
         on<PreventItem.SlotEvent> { event ->
-            val screen = minecraft.screen ?: return@on
-            if (screen !is InventoryScreen) return@on
+            if (SETTING_PROTECT.get() && event.losesItem) {
+                val slots = boundSlots.getOrNull(event.idx)
+                if (!slots.isNullOrEmpty()) {
+                    event.cancel("SlotBinding")
+                    return@on
+                }
+            }
 
             (event.underlying as? QuickMoveItemEvent)?.also {
                 val slots = boundSlots.getOrNull(event.idx) ?: return@on
@@ -193,6 +197,8 @@ object SlotBinding : Feature(
                 val id = menu.containerId
 
                 setToFront(event.idx, other)
+
+                if (event.isCancelled()) return@on
 
                 if (event.idx < 9 && other >= 9) {
                     val inv = player.inventory
@@ -215,7 +221,7 @@ object SlotBinding : Feature(
 
                 event.cancel("SlotBinding")
             }
-        }
+        }.prio = 1
 
         on<RenderSlotEvent> { event ->
             val slot = event.slot

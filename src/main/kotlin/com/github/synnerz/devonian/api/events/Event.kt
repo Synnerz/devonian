@@ -413,6 +413,7 @@ class PostRenderTileEntityEvent(
 class SwapItemEvent(
     val slot1: Slot,
     val slot2: Slot,
+    val screen: AbstractContainerScreen<*>,
 ) : CancellableEvent()
 
 class PickupItemInventoryEvent(

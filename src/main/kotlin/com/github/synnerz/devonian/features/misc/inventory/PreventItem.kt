@@ -85,8 +85,10 @@ object PreventItem {
             if (slot1.container !== mc.player?.inventory) return@on
             if (slot2.container !== mc.player?.inventory) return@on
 
-            val evn1 = SlotEvent(slot1, slot1.item, slot1.containerSlot, false, event, slot2, false)
-            val evn2 = SlotEvent(slot2, slot2.item, slot2.containerSlot, false, event, slot1, true)
+            val selling = isSellScreen(event.screen)
+            val salvage = isSalvageScreen(event.screen)
+            val evn1 = SlotEvent(slot1, slot1.item, slot1.containerSlot, selling || salvage, event, slot2, false)
+            val evn2 = SlotEvent(slot2, slot2.item, slot2.containerSlot, selling || salvage, event, slot1, true)
             if (!evn1.post() && !evn2.post()) return@on
 
             event.cancel()
@@ -107,7 +109,7 @@ object PreventItem {
         return screen.title.string == "Salvage Items"
     }
 
-    class SlotEvent(
+    @Ordered class SlotEvent(
         val slot: Slot?,
         val item: ItemStack,
         val idx: Int,
