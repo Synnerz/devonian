@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
+import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -8,13 +10,12 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BoundingBox
+import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
+import net.minecraft.client.gui.render.TextureSetup
+import net.minecraft.resources.ResourceLocation
+import org.joml.Matrix3x2f
 import kotlin.math.roundToInt
-
-private fun colorForNumber(num: Float, max: Float) = when {
-    num >= max * 0.75 -> "&a"
-    num >= max * 0.50 -> "&e"
-    else -> "&c"
-}
 
 fun colorForNumberReverse(num: Float, max: Float) = when {
     num >= max * 0.75 -> "&c"
@@ -23,31 +24,38 @@ fun colorForNumberReverse(num: Float, max: Float) = when {
     else -> "&a"
 }
 
-object BonzoMask : TextHudFeature(
-    "bonzoMaskTimer",
-    "Displays the immunity time as well as the cooldown for bonzo mask.",
+abstract class ImmunityTimer(val formattedName: String, itemName: String, configName: String) : TextHudFeature(
+    configName,
+    "Displays the immunity time as well as the cooldown for $itemName.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "HUD",
     subcategories = listOf("Alerts"),
 ) {
-    private val SETTING_HIDE_AFTER_IM = addSwitch(
+    private val SETTING_STYLE = addSelection(
+        "style",
+        0,
+        listOf("Icon", "Text"),
+        "",
+        "HUD Style",
+    )
+    private val SETTING_ONLY_SHOW_IMMUNITY = addSwitch(
         "hideAfterImm",
         false,
-        "Hides the entire bonzo display after the immunity timer is over.",
-        "Hide Bonzo After IMM",
+        "Only shows the $itemName hud for the immunity timer.",
+        "Only Show Immunity",
     )
     private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
         "onlyShowInBoss",
         false,
-        "Only displays the hud while inside of a dungeon boss room.",
-        "Bonzo Only In Boss",
+        "Only displays the $itemName hud while inside of a dungeon boss room.",
+        "Only In Boss",
     )
     private val SETTING_PROC_ALERT = addSwitch(
         "procAlert",
         false,
         "Displays an alert whenever the bonzo mask is used.",
-        "Bonzo Proc Alert",
+        "Proc Alert",
         subcategory = "Alerts",
     )
     private val SETTING_PROC_ALERT_TIME = addSlider(
@@ -55,246 +63,154 @@ object BonzoMask : TextHudFeature(
         1.0,
         0.0, 10.0,
         "The amount of time the alert will display for (in seconds).",
-        "Bonzo Proct Alert Time",
+        "Proc Alert Time",
         subcategory = "Alerts",
     )
-    private const val IMMUNITY_TIME = 3 * 1000L
+
+    protected abstract val IMMUNITY_TIME: Long
+    protected abstract val triggerRegex: Regex
+    private var lastProc = -1L
+    private var cooldownTime = 0L
+    protected abstract fun getCooldown(): Long
+    protected abstract fun getIcon(): BufferedImageUploader
+
+    override fun getBounds(): BoundingBox {
+        val bounds = super.getBounds()
+        if (SETTING_STYLE.get() != 0) return bounds
+        val d = 15.0 * scale
+        return BoundingBox(
+            bounds.x - d,
+            bounds.y,
+            bounds.w + d,
+            bounds.h,
+        )
+    }
+
+    override fun initialize() {
+        on<ChatEvent> { event ->
+            if (!triggerRegex.matches(event.message)) return@on
+
+            lastProc = System.currentTimeMillis()
+            cooldownTime = getCooldown()
+
+            if (SETTING_PROC_ALERT.get()) {
+                Alert.show("$formattedName Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt())
+            }
+        }
+
+        on<RenderOverlayEvent> { event ->
+            val str = if (lastProc == -1L) {
+                if (SETTING_ONLY_SHOW_IMMUNITY.get()) return@on
+                "&a&lREADY"
+            } else {
+                val t = System.currentTimeMillis()
+                val dt = t - lastProc
+                val immune = (IMMUNITY_TIME - dt) / 1000f
+                val cooldown = (cooldownTime - dt) / 1000f
+
+                if (cooldown < 0f) lastProc = -1L
+
+                if (immune > 0f) "&b%.2fs".format(immune)
+                else if (SETTING_ONLY_SHOW_IMMUNITY.get()) return@on
+                else colorForNumberReverse(cooldown, cooldownTime / 1000f) + "%.2fs".format(cooldown)
+            }
+
+            val style = SETTING_STYLE.get()
+            setLine(if (style == 0) str else "$formattedName&f: $str")
+
+            draw(event.ctx)
+
+            if (style != 0) return@on
+
+            val bounds = getBounds()
+            event.ctx.guiRenderState.submitGuiElement(
+                TexturedQuadRenderState(
+                    BufferedImageRenderer.pipeline,
+                    TextureSetup.singleTexture(getIcon().textureView),
+                    Matrix3x2f(event.ctx.pose()),
+                    (bounds.x + bounds.h * 0.1).toFloat(), (bounds.y + bounds.h * 0.1).toFloat(),
+                    (bounds.x + bounds.h * 1.0).toFloat(), (bounds.y + bounds.h * 1.0).toFloat(),
+                    0f, 0f,
+                    1f, 1f,
+                    0xFFFFFFFF.toInt(),
+                    event.ctx.scissorStack.peek(),
+                )
+            )
+        }.setEnabled(SETTING_ONLY_SHOW_IN_BOSS.state.zip(Dungeons.inBoss) { a, b -> !a || b })
+    }
+
+    override fun getEditText(): List<String> = listOf(
+        if (SETTING_STYLE.get() == 0) "&a&lREADY"
+        else "$formattedName&f: &a&lREADY"
+    )
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        lastProc = -1
+        hud.clearLines()
+    }
+}
+
+object BonzoMask : ImmunityTimer(
+    "&9Bonzo's Mask",
+    "bonzo mask",
+    "bonzoMaskTimer",
+) {
+    override val IMMUNITY_TIME: Long = 3_000L
+    override val triggerRegex: Regex = "^Your( ⚚)? Bonzo's Mask saved your life!$".toRegex()
+
+    private const val DEFAULT_COOLDOWN = 180_000L
     private val cooldownItemRegex = "^Cooldown: (\\d+)s$".toRegex()
-    private val maskRegex = "^Your( ⚚)? Bonzo's Mask saved your life!$".toRegex()
-    private var startedAt = -1L
-    private var COOLDOWN_TIME = 180
-    private var cdStartedAt = -1L
 
-    override fun initialize() {
-        on<ChatEvent> { event ->
-            if (event.matches(maskRegex) == null) return@on
+    override fun getCooldown(): Long {
+        val helmLore = minecraft.player?.inventory?.getItem(39) ?: return DEFAULT_COOLDOWN
+        val lore = ItemUtils.lore(helmLore) ?: return DEFAULT_COOLDOWN
 
-            startedAt = System.currentTimeMillis() + IMMUNITY_TIME
+        val timeIdx = lore.indexOfLast { it.contains("Cooldown: ") }
+        if (timeIdx == -1) return DEFAULT_COOLDOWN
 
-            val helmLore = minecraft.player?.inventory?.getItem(39) ?: return@on
-            val lore = ItemUtils.lore(helmLore) ?: return@on
-            val timeIdx = lore.indexOfLast { it.contains("Cooldown: ") }
-            if (timeIdx == -1) return@on
-            val cdStr = lore[timeIdx]
-            val match = cooldownItemRegex.matchEntire(cdStr)?.groupValues?.drop(1) ?: return@on
-            val time = match[0].toIntOrNull() ?: return@on
+        val cdStr = lore[timeIdx]
 
-            COOLDOWN_TIME = time
-            cdStartedAt = System.currentTimeMillis() + (COOLDOWN_TIME * 1000L)
+        val match = cooldownItemRegex.matchEntire(cdStr)?.groupValues?.drop(1) ?: return DEFAULT_COOLDOWN
+        val time = match[0].toIntOrNull() ?: return DEFAULT_COOLDOWN
 
-            if (!SETTING_PROC_ALERT.get()) return@on
-            Alert.show("&9Bonzo Mask Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
-        }
-
-        on<RenderOverlayEvent> {
-            if (SETTING_HIDE_AFTER_IM.get() && startedAt == -1L) return@on
-            if (SETTING_ONLY_SHOW_IN_BOSS.get() && !Dungeons.inBoss.value) return@on
-
-            if (cdStartedAt == -1L) {
-                setLine("&9Bonzo's Mask&f: &l&aREADY")
-                draw(it.ctx)
-                return@on
-            }
-
-            val timeImmune = (startedAt - System.currentTimeMillis()) / 1000f
-            val secondImmune = "%.2fs".format(timeImmune)
-            val timeCooldown = (cdStartedAt - System.currentTimeMillis()) / 1000f
-            val secondCooldown = "%.2fs".format(timeCooldown)
-            val cooldownStr = if (timeCooldown <= 0f) "&l&aREADY" else "(${secondCooldown})"
-            val str = when {
-                timeImmune > 0 -> "${colorForNumber(timeImmune, IMMUNITY_TIME / 1000f)}$secondImmune"
-                else -> "${colorForNumberReverse(timeCooldown, COOLDOWN_TIME.toFloat())}$cooldownStr"
-            }
-
-            setLine("&9Bonzo's Mask&f: $str")
-            draw(it.ctx)
-            if (SETTING_HIDE_AFTER_IM.get() && timeImmune <= 0f)
-                startedAt = -1
-        }
+        return time * 1000L
     }
 
-    override fun getEditText(): List<String> = listOf("&9Bonzo's Mask&f: &a3.00s")
+    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "bonzo_mask_icon")!!
+    private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/bonzoMask.png")!!
+        .register(mcidIcon)
 
-    override fun onWorldChange(event: WorldChangeEvent) {
-        startedAt = -1
-        cdStartedAt = -1
-        COOLDOWN_TIME = 180
-        clearLines()
-    }
+    override fun getIcon(): BufferedImageUploader = iconUploader
 }
 
-object SpiritMask : TextHudFeature(
+object SpiritMask : ImmunityTimer(
+    "&fSpirit Mask",
+    "spirit mask",
     "spiritMaskTimer",
-    "Displays the immunity time as well as the cooldown for spirit mask.",
-    Categories.DUNGEONS,
-    "catacombs",
-    subcategory = "HUD",
-    subcategories = listOf("Alerts"),
 ) {
-    private val SETTING_HIDE_AFTER_IM = addSwitch(
-        "hideAfterImm",
-        false,
-        "Hides the entire spirit display after the immunity timer is over.",
-        "Hide Spirit After IMM",
-    )
-    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
-        "onlyShowInBoss",
-        false,
-        "Only displays the hud while inside of a dungeon boss room.",
-        "Spirit Only In Boss",
-    )
-    private val SETTING_PROC_ALERT = addSwitch(
-        "procAlert",
-        false,
-        "Displays an alert whenever the spirit mask is used.",
-        "Spirit Proc Alert",
-        subcategory = "Alerts",
-    )
-    private val SETTING_PROC_ALERT_TIME = addSlider(
-        "procAlertTime",
-        1.0,
-        0.0, 10.0,
-        "The amount of time the alert will display for (in seconds).",
-        "Spirit Proct Alert Time",
-        subcategory = "Alerts",
-    )
-    private const val IMMUNITY_TIME = 1 * 1000L
-    private var COOLDOWN_TIME = 30 * 1000L
-    private val maskRegex = "^Second Wind Activated! Your Spirit Mask saved your life!$".toRegex()
-    private var startedAt = -1L
-    private var cdStartedAt = -1L
+    override val IMMUNITY_TIME: Long = 3_000L
+    override val triggerRegex: Regex = "^Second Wind Activated! Your Spirit Mask saved your life!$".toRegex()
+    override fun getCooldown(): Long = 30_000L
 
-    override fun initialize() {
-        on<ChatEvent> { event ->
-            if (event.matches(maskRegex) == null) return@on
+    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "spirit_mask_icon")!!
+    private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/spiritMask.png")!!
+        .register(mcidIcon)
 
-            startedAt = System.currentTimeMillis() + IMMUNITY_TIME
-            cdStartedAt = System.currentTimeMillis() + COOLDOWN_TIME
-
-            if (!SETTING_PROC_ALERT.get()) return@on
-            Alert.show("&fSpirit Mask Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
-        }
-
-        on<RenderOverlayEvent> {
-            if (SETTING_HIDE_AFTER_IM.get() && startedAt == -1L) return@on
-            if (SETTING_ONLY_SHOW_IN_BOSS.get() && !Dungeons.inBoss.value) return@on
-
-            if (cdStartedAt == -1L) {
-                setLine("&fSpirit Mask&f: &l&aREADY")
-                draw(it.ctx)
-                return@on
-            }
-
-            val timeImmune = (startedAt - System.currentTimeMillis()) / 1000f
-            val secondImmune = "%.2fs".format(timeImmune)
-            val timeCooldown = (cdStartedAt - System.currentTimeMillis()) / 1000f
-            val secondCooldown = "%.2fs".format(timeCooldown)
-            val cooldownStr = if (timeCooldown <= 0f) "&l&aREADY" else "(${secondCooldown})"
-            val str = when {
-                timeImmune > 0 -> "${colorForNumber(timeImmune, IMMUNITY_TIME / 1000f)}$secondImmune"
-                else -> "${colorForNumberReverse(timeCooldown, COOLDOWN_TIME / 1000f)}$cooldownStr"
-            }
-
-            setLine("&fSpirit Mask&f: $str")
-            draw(it.ctx)
-            if (SETTING_HIDE_AFTER_IM.get() && timeImmune <= 0f)
-                startedAt = -1
-        }
-    }
-
-    override fun getEditText(): List<String> = listOf("&fSpirit Mask&f: &a1.00s")
-
-    override fun onWorldChange(event: WorldChangeEvent) {
-        startedAt = -1
-        cdStartedAt = -1
-        clearLines()
-    }
+    override fun getIcon(): BufferedImageUploader = iconUploader
 }
 
-object PhoenixTimer : TextHudFeature(
+object PhoenixTimer : ImmunityTimer(
+    "&cPhoenix",
+    "phoenix",
     "phoenixTimer",
-    "Displays the immunity time as well as the cooldown for phoenix pet.",
-    Categories.DUNGEONS,
-    "catacombs",
-    subcategory = "HUD",
-    subcategories = listOf("Alerts"),
 ) {
-    private val SETTING_HIDE_AFTER_IM = addSwitch(
-        "hideAfterImm",
-        false,
-        "Hides the entire phoenix display after the immunity timer is over.",
-        "Hide Phoenix After IMM",
-    )
-    private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
-        "onlyShowInBoss",
-        false,
-        "Only displays the hud while inside of a dungeon boss room.",
-        "Phoenix Only In Boss",
-    )
-    private val SETTING_PROC_ALERT = addSwitch(
-        "procAlert",
-        false,
-        "Displays an alert whenever the phoenix pet is used.",
-        "Phoenix Proc Alert",
-        subcategory = "Alerts",
-    )
-    private val SETTING_PROC_ALERT_TIME = addSlider(
-        "procAlertTime",
-        1.0,
-        0.0, 10.0,
-        "The amount of time the alert will display for (in seconds).",
-        "Phoenix Proct Alert Time",
-        subcategory = "Alerts",
-    )
-    private const val IMMUNITY_TIME = 4 * 1000L
-    private var COOLDOWN_TIME = 60 * 1000L
-    private val maskRegex = "^Your Phoenix Pet saved you from certain death!$".toRegex()
-    private var startedAt = -1L
-    private var cdStartedAt = -1L
+    override val IMMUNITY_TIME: Long = 4_000L
+    override val triggerRegex: Regex = "^Your Phoenix Pet saved you from certain death!$".toRegex()
+    override fun getCooldown(): Long = 60_000L
 
-    override fun initialize() {
-        on<ChatEvent> { event ->
-            if (event.matches(maskRegex) == null) return@on
+    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "phoenix_icon")!!
+    private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/phoenix.png")!!
+        .register(mcidIcon)
 
-            startedAt = System.currentTimeMillis() + IMMUNITY_TIME
-            cdStartedAt = System.currentTimeMillis() + COOLDOWN_TIME
-
-            if (!SETTING_PROC_ALERT.get()) return@on
-            Alert.show("&cPhoenix Used", (SETTING_PROC_ALERT_TIME.get() * 1000).roundToInt(), playSound = false)
-        }
-
-        on<RenderOverlayEvent> {
-            if (SETTING_HIDE_AFTER_IM.get() && startedAt == -1L) return@on
-            if (SETTING_ONLY_SHOW_IN_BOSS.get() && !Dungeons.inBoss.value) return@on
-
-            if (cdStartedAt == -1L) {
-                setLine("&cPhoenix&f: &l&aREADY")
-                draw(it.ctx)
-                return@on
-            }
-
-            val timeImmune = (startedAt - System.currentTimeMillis()) / 1000f
-            val secondImmune = "%.2fs".format(timeImmune)
-            val timeCooldown = (cdStartedAt - System.currentTimeMillis()) / 1000f
-            val secondCooldown = "%.2fs".format(timeCooldown)
-            val cooldownStr = if (timeCooldown <= 0f) "&l&aREADY" else "(${secondCooldown})"
-            val str = when {
-                timeImmune > 0 -> "${colorForNumber(timeImmune, IMMUNITY_TIME / 1000f)}$secondImmune"
-                else -> "${colorForNumberReverse(timeCooldown, COOLDOWN_TIME / 1000f)}$cooldownStr"
-            }
-
-            setLine("&cPhoenix&f: $str")
-            draw(it.ctx)
-            if (SETTING_HIDE_AFTER_IM.get() && timeImmune <= 0f)
-                startedAt = -1
-        }
-    }
-
-    override fun getEditText(): List<String> = listOf("&cPhoenix&f: &a4.00s")
-
-    override fun onWorldChange(event: WorldChangeEvent) {
-        startedAt = -1
-        cdStartedAt = -1
-        clearLines()
-    }
+    override fun getIcon(): BufferedImageUploader = iconUploader
 }
