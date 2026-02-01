@@ -343,7 +343,9 @@ class DungeonMapBaseRenderer :
                     (
                         options.checkMark ||
                         (renderName && room.name == null && room.checkmark != CheckmarkTypes.UNEXPLORED)
-                    ) && (!options.roomNoCheckName || !renderName || room.name == null)
+                    ) &&
+                    (!options.roomNoCheckName || !renderName || room.name == null) &&
+                    (!options.roomNoFairyCheck || room.type != RoomTypes.FAIRY || room.checkmark == CheckmarkTypes.UNEXPLORED)
                 ) {
                     if (options.renderUnknownRooms && room.checkmark == CheckmarkTypes.UNEXPLORED && room.name != null) null
                     else CHECKMARK[options.iconStyle][room.checkmark]
@@ -395,7 +397,7 @@ class DungeonMapBaseRenderer :
 
             if (decoration == null && text.isEmpty()) return@forEach
 
-            if (decoration != null && !(options.roomNoFairyCheck && room.type == RoomTypes.FAIRY)) {
+            if (decoration != null) {
                 val decW = options.iconSize * options.roomWidth
                 val center = getCenterOf(cells, shape, options.iconAlignment)
                 val decBox = BoundingBox(
