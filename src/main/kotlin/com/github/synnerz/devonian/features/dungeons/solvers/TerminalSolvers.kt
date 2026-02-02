@@ -596,7 +596,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             if (slot.container == minecraft.player?.inventory) return
 
             val data = slots.getOrNull(slot.containerSlot)
-            if (data == null) {
+            if (data == null || !data.correct) {
                 if (SETTING_HIDE_DONE.get()) {
                     renderSlotBackground(event.ctx, slot)
                     event.cancel()
