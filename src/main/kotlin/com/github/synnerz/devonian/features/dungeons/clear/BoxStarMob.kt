@@ -71,6 +71,13 @@ object BoxStarMob : Feature(
         "",
         "Starred Mobs Line Width",
     )
+    private val SETTING_FILL_ALPHA = addDecimalSlider(
+        "fillAlpha",
+        0.0,
+        0.0, 1.0,
+        "if you want to change the color of each fill individually, seek help",
+        "Starred Mobs Fill Alpha",
+    )
     var SETTING_PHASE = false
 
     private val starred = mutableListOf<Pair<LivingEntity, MobData>>()
@@ -184,6 +191,17 @@ object BoxStarMob : Feature(
                     data.color,
                     phase = SETTING_PHASE,
                     lineWidth = SETTING_LINE_WIDTH.get(),
+                    centered = true,
+                )
+                Render3DImmediate.renderFilledBox(
+                    pos.x,
+                    pos.y,
+                    pos.z,
+                    0.8, data.height,
+                    data.color.let {
+                        Color(it.red, it.green, it.blue, (SETTING_FILL_ALPHA.get() * 255.0).toInt())
+                    },
+                    phase = false,
                     centered = true,
                 )
                 false
