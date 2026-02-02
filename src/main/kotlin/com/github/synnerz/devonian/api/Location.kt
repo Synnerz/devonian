@@ -7,7 +7,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 
 object Location {
-    val areaRegex = "^(?:Area|Dungeon): ([\\w ]+)\$".toRegex()
+    val areaRegex = "^(?:Area|Dungeon): ([\\w ']+)\$".toRegex()
     val subAreaRegex = "^ ([⏣ф]) ".toRegex()
     var area: String? = null
     var subarea: String? = null
