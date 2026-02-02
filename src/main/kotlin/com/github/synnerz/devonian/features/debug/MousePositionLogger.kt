@@ -1,0 +1,100 @@
+package com.github.synnerz.devonian.features.debug
+
+import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.config.json.JsonDataObject
+import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.DebugLogger
+import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.Style
+
+object MousePositionLogger : TextHudFeature(
+    "mousePositionLogger",
+    "",
+    Categories.DEBUG,
+    subcategory = "Utils",
+) {
+    private val SETTING_START = addButton(
+        ::startLogger,
+        displayName = "Start Logger",
+    )
+    private val SETTING_STOP = addButton(
+        ::stopLogger,
+        displayName = "Stop Logger",
+    )
+
+    private val mouseLogger = DebugLogger("MouseLogger")
+
+    fun startLogger() {
+        if (!isEnabled()) return
+        if (mouseLogger.startLogger()) ChatUtils.sendMessage("§aMouse Logger started")
+        else ChatUtils.sendMessage("§4Mouse Logger already active")
+    }
+
+    fun stopLogger() {
+        if (!isEnabled()) return
+        val file = mouseLogger.stopLogger()
+        if (file == null) ChatUtils.sendMessage("§4Mouse Logger not active")
+        else ChatUtils.sendMessage(
+            Component.literal("§aMouse Logger stopped")
+                .withStyle(Style.EMPTY.withClickEvent(ClickEvent.OpenFile(file)))
+        )
+    }
+
+    fun onMove(l: Long, x: Double, y: Double) {
+        if (!isEnabled()) return
+
+        val o = JsonDataObject()
+        o.set("type", "move")
+        o.set("handle", l)
+        o.set("x", x)
+        o.set("y", y)
+        o.set("time", System.currentTimeMillis() - mouseLogger.startTime)
+
+        mouseLogger.offer(o)
+    }
+
+    fun onGrab() {
+        if (!isEnabled()) return
+
+        val o = JsonDataObject()
+        o.set("type", "grab")
+        o.set("x", minecraft.mouseHandler.xpos())
+        o.set("y", minecraft.mouseHandler.ypos())
+        o.set("time", System.currentTimeMillis() - mouseLogger.startTime)
+
+        mouseLogger.offer(o)
+    }
+
+    fun onRelease() {
+        if (!isEnabled()) return
+
+        val o = JsonDataObject()
+        o.set("type", "release")
+        o.set("x", minecraft.mouseHandler.xpos())
+        o.set("y", minecraft.mouseHandler.ypos())
+        o.set("time", System.currentTimeMillis() - mouseLogger.startTime)
+
+        mouseLogger.offer(o)
+    }
+
+    override fun initialize() {
+        on<RenderOverlayEvent> { event ->
+            if (mouseLogger.startTime == 0L) return@on
+            setLines(
+                listOf(
+                    "${mouseLogger.logFile?.name}",
+                    "Time: ${System.currentTimeMillis() - mouseLogger.startTime}",
+                )
+            )
+            draw(event.ctx)
+        }.setEnabled(mouseLogger.loggerEnabled)
+    }
+
+    override fun getEditText(): List<String> = listOf(
+        "devonian-MouseLogger-1770011529466.log",
+        "Time: 6942",
+    )
+}

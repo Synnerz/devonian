@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.features.debug.MousePositionLogger;
 import com.github.synnerz.devonian.features.misc.KeyShortcuts;
 import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -97,5 +98,29 @@ public class MouseHandlerMixin {
         if (i != GLFW.GLFW_PRESS) return;
 
         KeyShortcuts.INSTANCE.onButtonPress(mouseButtonInfo);
+    }
+
+    @Inject(
+        method = "onMove",
+        at = @At("HEAD")
+    )
+    private void devonian$mouseLoggerMove(long l, double d, double e, CallbackInfo ci) {
+        MousePositionLogger.INSTANCE.onMove(l, d, e);
+    }
+
+    @Inject(
+        method = "grabMouse",
+        at = @At("HEAD")
+    )
+    private void devonian$mouseLoggerGrab(CallbackInfo ci) {
+        MousePositionLogger.INSTANCE.onGrab();
+    }
+
+    @Inject(
+        method = "releaseMouse",
+        at = @At("HEAD")
+    )
+    private void devonian$mouseLoggerRelease(CallbackInfo ci) {
+        MousePositionLogger.INSTANCE.onRelease();
     }
 }

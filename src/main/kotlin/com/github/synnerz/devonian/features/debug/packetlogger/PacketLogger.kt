@@ -8,21 +8,14 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.json.JsonDataObject
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.DebugLogger
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.common.ClientboundPingPacket
-import java.io.BufferedOutputStream
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStreamWriter
-import java.nio.charset.StandardCharsets
 import java.util.*
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.TimeUnit
-import java.util.zip.GZIPOutputStream
 
 object PacketLogger : TextHudFeature(
     "packetLogger",
@@ -56,83 +49,28 @@ object PacketLogger : TextHudFeature(
         filter = str.split(',').toSet()
     }
 
-    private var writer: OutputStreamWriter? = null
-    private var ioThread: Thread? = null
-    private var queue: Queue<JsonDataObject>? = null
-    private var startTime = 0L
+    private val packetLogger = DebugLogger("PacketLogger")
+
     private var lastTick = 0
-    private val loggerEnabled = BasicState(false)
 
     fun startLogger() {
-        if (startTime != 0L) {
-            ChatUtils.sendMessage("§4Packet Logger already active")
-            return
-        }
-
-        startTime = System.currentTimeMillis()
-
-        val logFile = File(
-            Devonian.minecraft.gameDirectory,
-            "logs"
-        ).resolve("devonian-packets-$startTime.log.gz")
-        val fileStream = FileOutputStream(logFile)
-        val gzipStream = GZIPOutputStream(fileStream)
-        val buffStream = BufferedOutputStream(gzipStream)
-        val writer = OutputStreamWriter(buffStream, StandardCharsets.UTF_8)
-        this.writer = writer
-
-        val q = LinkedBlockingQueue<JsonDataObject>()
-        queue = q
-        ioThread = Thread({
-            writer.write("[\n")
-            while (!Thread.currentThread().isInterrupted) {
-                try {
-                    val data = q.poll(100, TimeUnit.MILLISECONDS)
-                    if (data != null) writer.write(data.toString() + ",\n")
-                } catch (_: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                    break
-                }
-            }
-
-            do {
-                val data = q.poll() ?: break
-                writer.write(data.toString() + ",\n")
-            } while (true)
-            writer.write("]\n")
-        }, "DevonianPacketLogger").also { it.start() }
-
-        loggerEnabled.value = true
-        ChatUtils.sendMessage("§aPacket Logger started")
+        if (!isEnabled()) return
+        if (packetLogger.startLogger()) ChatUtils.sendMessage("§aPacket Logger started")
+        else ChatUtils.sendMessage("§4Packet Logger already active")
     }
 
     fun stopLogger() {
-        if (startTime == 0L) {
-            ChatUtils.sendMessage("§4Packet Logger not active")
-            return
-        }
-
-        val logFile = File(
-            Devonian.minecraft.gameDirectory,
-            "logs"
-        ).resolve("devonian-packets-$startTime.log.gz")
-
-        loggerEnabled.value = false
-        startTime = 0L
-        ioThread?.interrupt()
-        ioThread?.join(5_000L)
-        ioThread = null
-        writer?.close()
-        writer = null
-
-        ChatUtils.sendMessage(
+        if (!isEnabled()) return
+        val file = packetLogger.stopLogger()
+        if (file == null) ChatUtils.sendMessage("§4Packet Logger not active")
+        else ChatUtils.sendMessage(
             Component.literal("§aPacket Logger stopped")
-                .withStyle(Style.EMPTY.withClickEvent(ClickEvent.OpenFile(logFile)))
+                .withStyle(Style.EMPTY.withClickEvent(ClickEvent.OpenFile(file)))
         )
     }
 
     private fun onPacket(packet: Packet<*>) {
-        if (startTime == 0L) return
+        if (packetLogger.startTime == 0L) return
         if (packet is ClientboundPingPacket) {
             lastTick = packet.id
         }
@@ -147,36 +85,36 @@ object PacketLogger : TextHudFeature(
         obj.set("_class", packet.javaClass.name)
         obj.set("_type", type)
         obj.set("_tick", lastTick)
-        obj.set("_time", System.currentTimeMillis() - startTime)
+        obj.set("_time", System.currentTimeMillis() - packetLogger.startTime)
 
         serializer.serialize(packet, obj)
 
-        queue?.offer(obj)
+        packetLogger.offer(obj)
     }
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             onPacket(event.packet)
-        }.setEnabled(loggerEnabled)
+        }.setEnabled(packetLogger.loggerEnabled)
         on<PacketSentEvent> { event ->
             onPacket(event.packet)
-        }.setEnabled(loggerEnabled)
+        }.setEnabled(packetLogger.loggerEnabled)
 
         on<RenderOverlayEvent> { event ->
-            if (startTime == 0L) return@on
+            if (packetLogger.startTime == 0L) return@on
             setLines(
                 listOf(
-                    "devonian-packets-$startTime.log",
+                    "${packetLogger.logFile?.name}",
                     "Last Tick: $lastTick",
-                    "Time: ${System.currentTimeMillis() - startTime}",
+                    "Time: ${System.currentTimeMillis() - packetLogger.startTime}",
                 )
             )
             draw(event.ctx)
-        }.setEnabled(loggerEnabled)
+        }.setEnabled(packetLogger.loggerEnabled)
     }
 
     override fun getEditText(): List<String> = listOf(
-        "devonian-packets-1765612547398.log",
+        "devonian-PacketLogger-1765612547398.log",
         "Last Tick: -69",
         "Time: 6942",
     )

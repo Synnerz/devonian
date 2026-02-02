@@ -17,6 +17,8 @@ import com.github.synnerz.devonian.features.chat.CommandAliases
 import com.github.synnerz.devonian.features.misc.chat.CompactChat
 import com.github.synnerz.devonian.features.chat.CopyChat
 import com.github.synnerz.devonian.features.debug.CopyItem
+import com.github.synnerz.devonian.features.debug.MousePositionLogger
+import com.github.synnerz.devonian.features.debug.MousePositionRenderer
 import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger
 import com.github.synnerz.devonian.features.debug.renderers.DungeonRoomComponentRenderer
@@ -335,6 +337,8 @@ object Devonian : ClientModInitializer {
             PacketLogger,
             DungeonRoomComponentRenderer,
             WAILA,
+            MousePositionLogger,
+            MousePositionRenderer,
         )
     }
 
