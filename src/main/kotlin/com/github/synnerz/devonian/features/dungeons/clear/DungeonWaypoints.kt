@@ -34,6 +34,13 @@ object DungeonWaypoints : Feature(
         "Whether to display a text at the location of the waypoint.",
         "Dungeon Waypoints Text",
     )
+    private val SETTING_LINE_WIDTH = addSlider(
+        "lineWidth",
+        2.0,
+        0.0, 10.0,
+        "",
+        "Dungeon Waypoints Line Width",
+    )
     private val SETTING_CHEST_OUTLINE = addColorPicker(
         "chestOutline",
         Color(0, 255, 0, 255).rgb,
@@ -273,7 +280,8 @@ object DungeonWaypoints : Feature(
                         pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(),
                         1.0, 1.0,
                         outlineColor,
-                        phase = true
+                        phase = true,
+                        lineWidth = SETTING_LINE_WIDTH.get(),
                     )
                     Render3DImmediate.renderFilledBox(
                         pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(),
