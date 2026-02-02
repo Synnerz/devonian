@@ -106,6 +106,6 @@ object PartyCommands : Feature(
 
     private fun canTrigger(name: String): Boolean {
         if (!SETTING_USE_WHITELIST.get()) return Party.isLeader
-        return loader.data!!.contains(name) && Party.isLeader
+        return (name == minecraft.player!!.name.string || loader.data!!.contains(name)) && Party.isLeader
     }
 }
