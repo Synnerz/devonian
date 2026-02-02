@@ -12,20 +12,20 @@ import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SET
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RED_GREEN_DISABLE_RENDER
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RENDER_NUMBERS
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RUBIX_FORCE_POSITIVE
-import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.TerminalSlot
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.color
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.minecraft
 import com.github.synnerz.devonian.utils.BasicState
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.inventory.Slot
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import java.awt.Color
 import kotlin.math.abs
+import kotlin.math.min
 
 // Credits to <https://github.com/UnclaimedBloom6/BloomModule/blob/main/features/TerminalSolvers.js>
 // this fk noob
@@ -137,8 +137,8 @@ object TerminalSolvers : Feature(
 
     private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
 
-    data class TerminalSlot(val slot: Int, val itemStack: ItemStack)
-    data class RubixSlot(val slot: Int, val itemStack: ItemStack, val color: Int, val clicks: Int = 0)
+    data class InterimRubixSlot(val idx: Int, val color: Int, val clicks: Int = 0)
+    data class RedGreenSlot(val correct: Boolean, var clickCd: Int = 0)
 
     private fun onInteractSlot(slot: Slot, event: CancellableEvent): Boolean {
         return if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot) == true) {
@@ -159,6 +159,7 @@ object TerminalSolvers : Feature(
         }
 
         on<GuiCloseEvent> {
+            currentSolver?.reset()
             currentSolver = null
         }
 
@@ -216,6 +217,8 @@ object TerminalSolvers : Feature(
 interface ITerminalSolver {
     val changesWindow: Boolean
 
+    fun reset()
+
     fun onTick()
 
     fun onRenderSlot(event: RenderSlotEvent) {}
@@ -223,62 +226,77 @@ interface ITerminalSolver {
     fun onAfterRender(event: PostRenderSlotsEvent) {}
 
     fun cancelClick(slot: Slot): Boolean
+
+    fun renderSlotBackground(ctx: GuiGraphics, slot: Slot) {
+        if (!SETTING_BACKGROUND_SLOT.get()) return
+        if (SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha == 0) return
+        ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
+    }
+
+    fun renderSlot(ctx: GuiGraphics, slot: Slot, idx: Int) {
+        ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(idx))
+    }
 }
 
 enum class TerminalData(val title: Regex) : ITerminalSolver {
     NUMBERS("Click in order!".toRegex()) {
         override val changesWindow: Boolean = true
 
-        private var correctSlots = mutableListOf<TerminalSlot>()
+        private var slots = emptyArray<Int>()
+        private var minCount = 14
+
+        override fun reset() {
+            slots = emptyArray()
+        }
 
         override fun onTick() {
             val screen = minecraft.screen ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
 
-            correctSlots.clear()
-
-            items.forEachIndexed { idx, item ->
-                if (item.item != Items.RED_STAINED_GLASS_PANE) return@forEachIndexed
-                correctSlots.add(TerminalSlot(idx, item))
+            minCount = 14
+            slots = Array(items.size) { idx ->
+                val stack = items[idx]
+                val count = if (stack.item == Items.RED_STAINED_GLASS_PANE) stack.count
+                else 0
+                if (count > 0) minCount = min(minCount, count)
+                return@Array count
             }
-
-            correctSlots.sortBy { it.itemStack.count }
         }
 
         override fun onRenderSlot(event: RenderSlotEvent) {
             val slot = event.slot
             if (slot.container == minecraft.player?.inventory) return
-            val idx = correctSlots.indexOfFirst { it.slot == event.slot.containerSlot }
-            if (idx == -1) {
+
+            val count = slots.getOrElse(slot.containerSlot) { 0 }
+            if (count == 0) {
                 if (SETTING_HIDE_DONE.get()) {
-                    if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
-                        event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
+                    renderSlotBackground(event.ctx, slot)
                     event.cancel()
                 }
                 return
             }
-            val data = correctSlots[idx]
 
-            if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
-                event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
-            event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(idx))
-            if (SETTING_RENDER_NUMBERS.get())
+            renderSlotBackground(event.ctx, slot)
+            renderSlot(event.ctx, slot, count - minCount)
+            if (SETTING_RENDER_NUMBERS.get()) {
                 event.ctx.drawCenteredString(
                     minecraft.font,
-                    "${data.itemStack.count}",
+                    "$count",
                     slot.x + 8, slot.y + 4, -1
                 )
+            }
+
             event.cancel()
         }
 
         override fun cancelClick(slot: Slot): Boolean {
-            return !correctSlots.any { it.slot == slot.containerSlot }
+            return slots.getOrElse(slot.containerSlot) { 0 } == 0
         }
     },
     COLORS("^Select all the (.*?) items!$".toRegex()) {
         override val changesWindow: Boolean = true
 
-        private val correctSlots = mutableListOf<TerminalSlot>()
+        private var slots = emptyArray<Boolean>()
         private val fixedColorItems = mapOf(
             "light gray" to "silver",
             "wool" to "white",
@@ -291,53 +309,54 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             "cactus" to "green",
         )
 
+        override fun reset() {
+            slots = emptyArray()
+        }
+
         override fun onTick() {
             val screen = minecraft.screen ?: return
             val toFind = title.matchEntire(screen.title.string)?.groupValues?.drop(1)?.getOrNull(0) ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
 
-            correctSlots.clear()
+            slots = Array(items.size) { idx ->
+                val stack = items[idx]
+                if (stack.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return@Array false
 
-            items.forEachIndexed { idx, item ->
-                if (item.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return@forEachIndexed
-                var name = item.customName?.string ?: item.itemName.string
+                var name = stack.customName?.string ?: stack.itemName.string
                 for (fixed in fixedColorItems) {
                     if (name.startsWith(fixed.key, ignoreCase = true))
                         name = fixed.value
                 }
-                if (!name.startsWith(toFind, ignoreCase = true)) return@forEachIndexed
 
-                correctSlots.add(TerminalSlot(idx, item))
+                return@Array name.startsWith(toFind, ignoreCase = true)
             }
         }
 
         override fun onRenderSlot(event: RenderSlotEvent) {
             val slot = event.slot
             if (slot.container == minecraft.player?.inventory) return
-            val idx = correctSlots.indexOfFirst { it.slot == event.slot.containerSlot }
-            if (idx == -1) {
+
+            if (!slots.getOrElse(slot.containerSlot) { false }) {
                 if (SETTING_HIDE_DONE.get()) {
-                    if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
-                        event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
+                    renderSlotBackground(event.ctx, slot)
                     event.cancel()
                 }
                 return
             }
 
-            if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
-                event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
-            event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(0))
+            renderSlotBackground(event.ctx, slot)
+            renderSlot(event.ctx, slot, 0)
             if (SETTING_HIDE_ITEMS.get()) event.cancel()
         }
 
         override fun cancelClick(slot: Slot): Boolean {
-            return !correctSlots.any { it.slot == slot.containerSlot }
+            return !slots.getOrElse(slot.containerSlot) { false }
         }
     },
     STARTS_WITH("^What starts with: '(.*?)'\\?$".toRegex()) {
         override val changesWindow: Boolean = true
 
-        private val correctSlots = mutableListOf<TerminalSlot>()
+        private var slots = emptyArray<Boolean>()
 
         private val legacyNames = mapOf(
             "Grass" to "Grass Block",
@@ -426,21 +445,23 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             "Golden Horse Armor" to "Gold Horse Armor",
         )
 
+        override fun reset() {
+            slots = emptyArray()
+        }
+
         override fun onTick() {
             val screen = minecraft.screen ?: return
             val toFind = title.matchEntire(screen.title.string)?.groupValues?.drop(1)?.getOrNull(0) ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
 
-            correctSlots.clear()
+            slots = Array(items.size) { idx ->
+                val stack = items[idx]
+                if (stack.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return@Array false
 
-            items.forEachIndexed { idx, item ->
-                if (item.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return@forEachIndexed
-
-                var name = item.customName?.string ?: item.itemName.string
+                var name = stack.customName?.string ?: stack.itemName.string
                 name = legacyNames[name] ?: name
-                if (!name.startsWith(toFind, ignoreCase = true)) return@forEachIndexed
 
-                correctSlots.add(TerminalSlot(idx, item))
+                return@Array name.startsWith(toFind, ignoreCase = true)
             }
         }
 
@@ -448,24 +469,21 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             val slot = event.slot
             if (slot.container == minecraft.player?.inventory) return
 
-            val idx = correctSlots.indexOfFirst { it.slot == event.slot.containerSlot }
-            if (idx == -1) {
+            if (!slots.getOrElse(slot.containerSlot) { false }) {
                 if (SETTING_HIDE_DONE.get()) {
-                    if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
-                        event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
+                    renderSlotBackground(event.ctx, slot)
                     event.cancel()
                 }
                 return
             }
 
-            if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
-                event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
-            event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(0))
+            renderSlotBackground(event.ctx, slot)
+            renderSlot(event.ctx, slot, 0)
             if (SETTING_HIDE_ITEMS.get()) event.cancel()
         }
 
         override fun cancelClick(slot: Slot): Boolean {
-            return !correctSlots.any { it.slot == slot.containerSlot }
+            return !slots.getOrElse(slot.containerSlot) { false }
         }
     },
     RUBIX("^Change all to same color!$".toRegex()) {
@@ -481,7 +499,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             Items.BLUE_STAINED_GLASS_PANE,
             Items.RED_STAINED_GLASS_PANE,
         )
-        private var correctSlots = listOf<TerminalSolvers.RubixSlot>()
+        private var slots = emptyArray<Int>()
         private val strings = arrayOf(
             Component.literal("§e-2"),
             Component.literal("§a-1"),
@@ -492,22 +510,26 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             Component.literal("§c4"),
         )
 
+        override fun reset() {
+            slots = emptyArray()
+        }
+
         override fun onTick() {
             val screen = minecraft.screen ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
-            val slotsIn = mutableListOf<TerminalSolvers.RubixSlot>()
+            val slotsIn = mutableListOf<TerminalSolvers.InterimRubixSlot>()
 
             rubixIndices.forEach { idx ->
                 val item = items.getOrNull(idx) ?: return@forEach
                 val color = rubixOrder.indexOf(item.item)
                 if (color < 0) return@forEach
-                slotsIn.add(TerminalSolvers.RubixSlot(idx, item, color))
+                slotsIn.add(TerminalSolvers.InterimRubixSlot(idx, color))
             }
 
             var best = 19
             for (target in rubixOrder.indices) {
                 var clicks = 0
-                val slots = slotsIn.filter {
+                val needClicks = slotsIn.filter {
                     var dist = abs(target - it.color)
                     if (dist >= 3) dist = 5 - dist
                     clicks += dist
@@ -516,10 +538,11 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
                 if (clicks < best) {
                     best = clicks
-                    correctSlots = slots.map {
-                        var lc = target - it.color
+                    slots = Array(items.size) { idx ->
+                        val tmp = needClicks.find { it.idx == idx } ?: return@Array 0
+                        var lc = target - tmp.color
                         if (lc < 0) lc += 5
-                        TerminalSolvers.RubixSlot(it.slot, it.itemStack, it.color, lc)
+                        return@Array lc
                     }
                 }
             }
@@ -529,41 +552,41 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             event.container.menu.slots.forEach { slot ->
                 if (slot.container == minecraft.player?.inventory) return@forEach
 
-                val data = correctSlots.find { it.slot == slot.containerSlot } ?: return@forEach
+                var clicks = slots.getOrElse(slot.containerSlot) { 0 }
+                if (clicks == 0) return@forEach
 
-                val num = if (!SETTING_RUBIX_FORCE_POSITIVE.get() && data.clicks >= 3) data.clicks - 5
-                else data.clicks
-                val str = strings.getOrNull(num + 2) ?: return@forEach
+                if (!SETTING_RUBIX_FORCE_POSITIVE.get() && clicks >= 3) clicks -= 5
+                val str = strings.getOrNull(clicks + 2) ?: return@forEach
 
                 event.ctx.drawCenteredString(minecraft.font, str, slot.x + 8, slot.y + 4, -1)
             }
         }
 
         override fun cancelClick(slot: Slot): Boolean {
-            return (correctSlots.find { it.slot == slot.containerSlot }?.clicks ?: 0) == 0
+            return slots.getOrElse(slot.containerSlot) { 0 } == 0
         }
     },
     RED_GREEN("^Correct all the panes!$".toRegex()) {
-        override val changesWindow: Boolean = true
+        override val changesWindow: Boolean = false
 
-        private val paneSlots = mutableListOf(
-            11, 12, 13, 14, 15,
-            20, 21, 22, 23, 24,
-            29, 30, 31, 32, 33,
-        )
+        private val MAX_PING = 20
+        private var slots = emptyArray<TerminalSolvers.RedGreenSlot>()
 
-        private val correctSlots = mutableListOf<TerminalSlot>()
+        override fun reset() {
+            slots = emptyArray()
+        }
 
         override fun onTick() {
             val screen = minecraft.screen ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
+            val tick = EventBus.serverTicks()
 
-            correctSlots.clear()
-
-            paneSlots.forEach { idx ->
-                val item = items.getOrNull(idx) ?: return@forEach
-                if (item.item != Items.RED_STAINED_GLASS_PANE) return@forEach
-                correctSlots.add(TerminalSlot(idx, item))
+            slots = Array(items.size) { idx ->
+                val cd = slots.getOrNull(idx)?.clickCd ?: 0
+                TerminalSolvers.RedGreenSlot(
+                    cd <= tick && items[idx].item == Items.RED_STAINED_GLASS_PANE,
+                    cd,
+                )
             }
         }
 
@@ -572,28 +595,32 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             val slot = event.slot
             if (slot.container == minecraft.player?.inventory) return
 
-            val idx = correctSlots.indexOfFirst { it.slot == event.slot.containerSlot }
-            if (idx == -1) {
+            val data = slots.getOrNull(slot.containerSlot)
+            if (data == null) {
                 if (SETTING_HIDE_DONE.get()) {
-                    if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
-                        event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
+                    renderSlotBackground(event.ctx, slot)
                     event.cancel()
                 }
                 return
             }
 
-            if (SETTING_BACKGROUND_SLOT.get() && SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha != 0)
-                event.ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
-            event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(0))
+            renderSlotBackground(event.ctx, slot)
+            renderSlot(event.ctx, slot, 0)
             event.cancel()
         }
 
         override fun cancelClick(slot: Slot): Boolean {
-            return !correctSlots.any { it.slot == slot.containerSlot }
+            val data = slots.getOrNull(slot.containerSlot) ?: return true
+            if (!data.correct) return true
+
+            data.clickCd = EventBus.serverTicks() + MAX_PING
+            return false
         }
     },
     MELODY("^Click the button on time!$".toRegex()) {
         override val changesWindow: Boolean = false
+
+        override fun reset() {}
 
         override fun onTick() {}
 
