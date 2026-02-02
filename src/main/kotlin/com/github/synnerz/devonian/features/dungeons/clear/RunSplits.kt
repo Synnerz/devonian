@@ -7,6 +7,8 @@ import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.hud.texthud.FixedWidthTextHud
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
@@ -41,6 +43,12 @@ object RunSplits : TextHudFeature(
         false,
         "",
         "Show In Boss",
+    )
+
+    override fun createHud(): StylizedTextHud = FixedWidthTextHud(
+        "Portal Enter: 000.00s",
+        configName,
+        this,
     )
 
     fun onFloorEnd() {

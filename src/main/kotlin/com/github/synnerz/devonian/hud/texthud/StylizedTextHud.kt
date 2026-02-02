@@ -42,7 +42,7 @@ open class StylizedTextHud(
         imageDirty = true
     }
 
-    fun markText() {
+    open fun markText() {
         lines.forEach { it.dirty = true }
     }
 
@@ -53,7 +53,7 @@ open class StylizedTextHud(
     var fontSize = BASE_FONT_SIZE
         private set
     var lineWidth = 0f
-        private set
+        protected set
     var fontAscent = 0f
         private set
     var fontDescent = 0f
@@ -104,9 +104,15 @@ open class StylizedTextHud(
         hasObfuText = false
         renderer.onUpdate()
 
+        updateLines()
+
+        renderer.updateCleanup()
+    }
+
+    protected open fun updateLines() {
         lines.forEach {
             if (it.dirty) {
-                it.data = renderer.onUpdateLine(it.str, currentParams)
+                it.data = renderer.onUpdateLine(it.str, lastRenderParams)
                 if (it.data!!.width != 0f) it.data!!.width += shadow.getSizeIncrease(fontSize)
                 it.dirty = false
                 markImage()
@@ -117,8 +123,6 @@ open class StylizedTextHud(
             fontDescent = max(fontDescent, it.data!!.descent)
             if (it.data!!.hasObfuText) hasObfuText = true
         }
-
-        renderer.updateCleanup()
     }
 
     override fun draw(ctx: GuiGraphics) {

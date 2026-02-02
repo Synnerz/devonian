@@ -7,6 +7,8 @@ import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.hud.texthud.FixedWidthTextHud
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
@@ -35,6 +37,12 @@ object BossSplits : TextHudFeature(
         listOf("Real Time", "Server Ticks", "Both"),
         "",
         "Time Format",
+    )
+
+    override fun createHud(): StylizedTextHud = FixedWidthTextHud(
+        "Second Phase: 000.00s",
+        configName,
+        this,
     )
 
     private fun getSplits(force: TimeUnit? = null): List<String> {
