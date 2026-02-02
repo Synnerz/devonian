@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
+import com.google.gson.JsonParser
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.TextureSetup
@@ -16,6 +17,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import org.joml.Matrix3x2f
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.roundToInt
 
 object ItemRarityBackground : Feature(
@@ -78,6 +80,14 @@ object ItemRarityBackground : Feature(
         if (item.isEmpty) return
 
         val rgb = cache.getOrPut(item) {
+            val petInfo = ItemUtils.extraAttributes(item)?.getString("petInfo")?.getOrNull()
+            if (petInfo != null) try {
+                val pet = JsonParser.parseString(petInfo).asJsonObject
+                val rarity = pet.get("tier")?.asString
+                if (rarity != null) rarities.find { it.first == rarity }?.let {
+                    return@getOrPut it.second
+                }
+            } catch (_: Exception) {}
             val lore = ItemUtils.lore(item) ?: return@getOrPut -1
             return@getOrPut findColor(lore) ?: -1
         }
