@@ -122,7 +122,7 @@ abstract class TextHudFeature(
 
         val w = if (dirty) getEditText().maxOf { it.width() }.toDouble() else getBounds().w
         val ax = when (anchor) {
-            Anchor.NW, Anchor.SW -> MARGIN
+            Anchor.NW, Anchor.SW -> 0.0
             Anchor.Center -> w * 0.5
             Anchor.NE, Anchor.SE -> w
         }
@@ -138,7 +138,7 @@ abstract class TextHudFeature(
 
         val h = if (dirty) getEditText().maxOf { it.height() }.toDouble() else getBounds().h
         val ay = when (anchor) {
-            Anchor.NW, Anchor.NE -> MARGIN
+            Anchor.NW, Anchor.NE -> 0.0
             Anchor.Center -> h * 0.5
             Anchor.SW, Anchor.SE -> h
         }
