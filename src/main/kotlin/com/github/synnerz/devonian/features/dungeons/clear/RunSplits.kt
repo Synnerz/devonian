@@ -28,7 +28,7 @@ object RunSplits : TextHudFeature(
     private val SETTING_SEND_ALL_END = addSwitch(
         "sendAllOnRunEnd",
         false,
-        "Sends all of the splits in chat whenever the run ends.",
+        "Sends all of the splits in chat whenever the run ends. §cIGNORES PARENT TOGGLE",
         "Run Splits Send All End",
     )
     private val SETTING_FORMAT = addSelection(
@@ -52,7 +52,7 @@ object RunSplits : TextHudFeature(
     }
 
     fun onFloorEnd() {
-        if (!isEnabled()) return
+        // if (!isEnabled()) return
         if (!SETTING_SEND_ALL_END.get()) return
         Scheduler.scheduleServerTask(2) {
             Stages.Clear.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]).forEach {

@@ -28,7 +28,7 @@ object BossSplits : TextHudFeature(
     private val SETTING_SEND_ALL_END = addSwitch(
         "sendAllOnRunEnd",
         false,
-        "Sends all of the splits in chat whenever the run ends.",
+        "Sends all of the splits in chat whenever the run ends. §cIGNORES PARENT TOGGLE",
         "Boss Splits Send All End",
     )
     private val SETTING_FORMAT = addSelection(
@@ -51,7 +51,7 @@ object BossSplits : TextHudFeature(
     }
 
     fun onFloorEnd() {
-        if (!isEnabled()) return
+        // if (!isEnabled()) return
         if (!SETTING_SEND_ALL_END.get()) return
         Scheduler.scheduleServerTask(2) {
             getSplits().forEach {
