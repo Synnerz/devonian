@@ -48,5 +48,9 @@ object Party {
             members = event.members
             isLeader = event.isLeader
         }
+
+        EventBus.on<HypixelModApi.HelloPacket> { event ->
+            HypixelModApi.requestPartyInfo()
+        }
     }
 }
