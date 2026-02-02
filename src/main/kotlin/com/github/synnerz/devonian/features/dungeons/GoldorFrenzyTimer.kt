@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
+import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
@@ -21,6 +22,13 @@ object GoldorFrenzyTimer : TextHudFeature(
         return super.createRequirements() + listOf(Stages.F7.isActiveState, Stages.Terminals.hasFinishedState.map(
             Boolean::not))
     }
+
+    private val SETTING_SHOW_TOTAL = addSwitch(
+        "showTotal",
+        false,
+        "",
+        "Show Cumulative Time",
+    )
 
     private var preGoldor = false
     private var inGoldor = false
@@ -65,15 +73,14 @@ object GoldorFrenzyTimer : TextHudFeature(
             setLine(
                 "%s%.2f".format(
                     StringUtils.colorForNumber(until, 60),
-                    until * 0.05
+                    if (SETTING_SHOW_TOTAL.get()) (EventBus.serverTicks() - Stages.Terminals.startTime.tick) * 0.05
+                    else until * 0.05
                 )
             )
         }
 
         on<RenderOverlayEvent> { event ->
-            if (preGoldor) return@on draw(event.ctx)
-            if (!inGoldor) return@on
-            draw(event.ctx)
+            if (preGoldor || inGoldor) draw(event.ctx)
         }
     }
 
