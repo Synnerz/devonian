@@ -55,40 +55,16 @@ object Stages {
                 SequentialSplitStage(
                     arrayOf(
                         BloodOpen,
-                        BranchingSplitStage(
+                        SplitStage(
+                            "The BLOOD DOOR has been opened!",
                             arrayOf(
-                                SplitStage(
-                                    "The BLOOD DOOR has been opened!",
+                                SequentialSplitStage(
                                     arrayOf(
-                                        InsulatingStage(
-                                            arrayOf(
-                                                SequentialSplitStage(
-                                                    arrayOf(
-                                                        FirstWatcherSpawn,
-                                                        SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
-                                                    )
-                                                ),
-                                                WatcherClear
-                                            )
-                                        )
+                                        FirstWatcherSpawn,
+                                        SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
                                     )
                                 ),
-                                SplitStage(
-                                    "^\\[BOSS] The Watcher: .+?$".toRegex(),
-                                    arrayOf(
-                                        InsulatingStage(
-                                            arrayOf(
-                                                SequentialSplitStage(
-                                                    arrayOf(
-                                                        FirstWatcherSpawn,
-                                                        SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
-                                                    )
-                                                ),
-                                                WatcherClear
-                                            )
-                                        )
-                                    )
-                                ),
+                                WatcherClear
                             )
                         ),
                         PortalEnter
