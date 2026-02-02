@@ -11,13 +11,13 @@ import com.google.gson.reflect.TypeToken
 
 object PartyCommands : Feature(
     "partyCommands",
-    "party commands !f6 !m6 TODO: add finish here",
+    "party commands !f<1-7>, !m<1-7>, !t<1-5>, !warp, !fps, !tps, !ping, !location, !allinv, !pt, !inv, !kick",
     subcategory = "Chat"
 ) {
     private val SETTING_USE_WHITELIST = addSwitch(
         "useWhitelist",
         true,
-        "Whether the feature should use a white list for !allinv, !pt, !inv, !kick, !f<1-7>, !m<1-7>, !t<1-5> commands (/dv pcmd <username>)",
+        "Whether the feature should use a whitelist for !allinv, !pt, !inv, !kick commands (/dv pcmd <username>)",
         "Party Commands Whitelist"
     )
     private val catacombsFloors = listOf(
