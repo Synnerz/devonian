@@ -24,6 +24,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
     protected var lastFuture: Future<*>? = null
     protected val mcid = ResourceLocation.fromNamespaceAndPath("devonian", "buffered_image/${name.lowercase()}")
     protected var valid = true
+    protected var old = false
 
     init {
         uploader.register(mcid)
@@ -37,6 +38,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
             return
         }
         running = true
+        old = false
         lastFuture = pool.submit {
             try {
                 val img = bimgProvider.create(w, h)
@@ -54,7 +56,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
 
     protected fun uploadImage() {
         val bimg = dirtyImage.getAndSet(null)
-        if (bimg != null) {
+        if (bimg != null && !old) {
             uploader.upload(bimg)
             valid = true
         }
@@ -62,6 +64,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
 
     fun invalidate() {
         valid = false
+        old = true
         lastFuture?.cancel(true)
     }
 
