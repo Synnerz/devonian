@@ -39,11 +39,11 @@ object BossSplits : TextHudFeature(
         "Time Format",
     )
 
-    override fun createHud(): StylizedTextHud = FixedWidthTextHud(
-        "Second Phase: 000.00s",
-        configName,
-        this,
-    )
+    override fun createHud(): StylizedTextHud = object : FixedWidthTextHud(configName, this@BossSplits) {
+        override fun getMaxLine(): String =
+            if (SETTING_FORMAT.get() == 2) "Second Phase: 000.00s (000.00s)"
+            else "Second Phase: 000.00s"
+    }
 
     private fun getSplits(force: TimeUnit? = null): List<String> {
         return Stages.Boss.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()], force) +

@@ -45,11 +45,11 @@ object RunSplits : TextHudFeature(
         "Show In Boss",
     )
 
-    override fun createHud(): StylizedTextHud = FixedWidthTextHud(
-        "Portal Enter: 000.00s",
-        configName,
-        this,
-    )
+    override fun createHud(): StylizedTextHud = object : FixedWidthTextHud(configName, this@RunSplits) {
+        override fun getMaxLine(): String =
+            if (SETTING_FORMAT.get() == 2) "Portal Enter: 000.00s (000.00s)"
+            else "Portal Enter: 000.00s"
+    }
 
     fun onFloorEnd() {
         if (!isEnabled()) return
