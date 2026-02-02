@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MouseHandler.class)
@@ -28,6 +29,9 @@ public class MouseHandlerMixin {
 
     @Shadow
     private double ypos;
+
+    @Shadow
+    private boolean ignoreFirstMove;
 
     @WrapWithCondition(
         method = "releaseMouse",
@@ -64,7 +68,16 @@ public class MouseHandlerMixin {
         }
         GLFW.glfwSetInputMode(window.handle(), 208897, i);
         GLFW.glfwSetCursorPos(window.handle(), xpos, ypos);
+        NoCursorReset.ignoreFirstBatch = 2;
         // ignoreFirstMove = true;
+    }
+
+    @Redirect(
+        method = "onMove",
+        at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;ignoreFirstMove:Z", opcode = Opcodes.GETFIELD)
+    )
+    private boolean devonian$releaseMouseSetPosFixIgnore(MouseHandler instance) {
+        return NoCursorReset.ignoreFirstBatch > 0 || ignoreFirstMove;
     }
 
     @WrapWithCondition(

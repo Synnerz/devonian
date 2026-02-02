@@ -9,12 +9,18 @@ object NoCursorReset : Feature(
     subcategory = "Inventory",
     searchTags = setOf("keep"),
 ) {
-    private var lastOpen = -1
+    private var lastOpenTick = -1
+    private var lastOpenTime = 0L
     private var lastClose = -1
+    @JvmField
+    var ignoreFirstBatch = 0
 
     override fun initialize() {
         on<ServerContainerOpenEvent> {
-            if (EventBus.serverTicks() - lastClose < 2) lastOpen = EventBus.serverTicks()
+            if (EventBus.serverTicks() - lastClose < 2) {
+                lastOpenTick = EventBus.serverTicks()
+                lastOpenTime = System.currentTimeMillis()
+            }
         }
 
         on<ServerContainerCloseEvent> {
@@ -22,17 +28,19 @@ object NoCursorReset : Feature(
         }
 
         on<ClientContainerCloseEvent> {
-            lastOpen = -1
+            lastOpenTick = -1
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        lastOpen = -1
+        lastOpenTick = -1
         lastClose = -1
     }
 
     fun shouldReset(): Boolean {
         if (!isEnabled()) return true
-        return lastOpen == -1 || EventBus.serverTicks() - lastOpen > 3
+        return lastOpenTick == -1 ||
+            EventBus.serverTicks() - lastOpenTick > 3 ||
+            System.currentTimeMillis() - lastOpenTime > 500L
     }
 }
