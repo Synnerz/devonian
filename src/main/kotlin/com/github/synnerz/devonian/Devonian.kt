@@ -330,6 +330,7 @@ object Devonian : ClientModInitializer {
             CheckForUpdates,
             Searchbar,
             PartyFinderCount,
+            HighlightTeammates,
 
             // Debug
             CopyItem,

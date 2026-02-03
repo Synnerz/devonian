@@ -75,7 +75,7 @@ enum class DungeonClass(
     Healer("Heal", 'h', "&5", Color(170, 0, 170, 255)),
     Tank("Tank", 't', "&a", Color(85, 255, 85, 255)),
 
-    Unknown("Unknown", '\u0000', "", Color(0, 0, 0, 0));
+    Unknown("Unknown", '\u0000', "", Color(0, 0, 0, 255));
 
     private val colorSetting = ConfigData.ColorPicker(
         "dungeonColor$name",
