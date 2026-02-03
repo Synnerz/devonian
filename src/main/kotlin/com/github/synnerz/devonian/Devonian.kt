@@ -332,6 +332,7 @@ object Devonian : ClientModInitializer {
             PartyFinderCount,
             HighlightTeammates,
             LastBreathPullSound,
+            EnchantAbbreviation,
 
             // Debug
             CopyItem,

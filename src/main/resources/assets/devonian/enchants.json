@@ -1,0 +1,1078 @@
+{
+  "NORMAL": [
+    {
+      "loreName": "Dragon Tracer",
+      "nbtName": "aiming",
+      "abbreviation": "Aim",
+      "goodLevel": 5,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Angler",
+      "nbtName": "angler",
+      "abbreviation": "Ang",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Aqua Affinity",
+      "nbtName": "aqua_affinity",
+      "abbreviation": "Aq Aff",
+      "goodLevel": 1,
+      "maxLevel": 1
+    },
+    {
+      "loreName": "Bane of Arthropods",
+      "nbtName": "bane_of_arthropods",
+      "abbreviation": "BOA",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Big Brain",
+      "nbtName": "big_brain",
+      "abbreviation": "BB",
+      "goodLevel": 5,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Blast Protection",
+      "nbtName": "blast_protection",
+      "abbreviation": "BProt",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Blessing",
+      "nbtName": "blessing",
+      "abbreviation": "Ble",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Caster",
+      "nbtName": "caster",
+      "abbreviation": "Cas",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Cayenne",
+      "nbtName": "cayenne",
+      "abbreviation": "Cay",
+      "goodLevel": 4,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Chance",
+      "nbtName": "chance",
+      "abbreviation": "Cha",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Cleave",
+      "nbtName": "cleave",
+      "abbreviation": "Cle",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Counter-Strike",
+      "nbtName": "counter_strike",
+      "abbreviation": "CS",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Critical",
+      "nbtName": "critical",
+      "abbreviation": "Crit",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Cubism",
+      "nbtName": "cubism",
+      "abbreviation": "Cub",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Charm",
+      "nbtName": "charm",
+      "abbreviation": "Cha",
+      "goodLevel": 4,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Corruption",
+      "nbtName": "corruption",
+      "abbreviation": "Corr",
+      "goodLevel": 4,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Delicate",
+      "nbtName": "delicate",
+      "abbreviation": "Deli",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Depth Strider",
+      "nbtName": "depth_strider",
+      "abbreviation": "Dep Str",
+      "goodLevel": 3,
+      "maxLevel": 3
+    },
+    {
+      "loreName": "Divine Gift",
+      "nbtName": "divine_gift",
+      "abbreviation": "DG",
+      "goodLevel": 3,
+      "maxLevel": 3
+    },
+    {
+      "loreName": "Gravity",
+      "nbtName": "dragon_hunter",
+      "abbreviation": "DH",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Efficiency",
+      "nbtName": "efficiency",
+      "abbreviation": "Eff",
+      "goodLevel": 5,
+      "maxLevel": 10
+    },
+    {
+      "loreName": "Ender Slayer",
+      "nbtName": "ender_slayer",
+      "abbreviation": "ES",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Execute",
+      "nbtName": "execute",
+      "abbreviation": "Exec",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Experience",
+      "nbtName": "experience",
+      "abbreviation": "Exp",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Feather Falling",
+      "nbtName": "feather_falling",
+      "abbreviation": "FF",
+      "goodLevel": 5,
+      "maxLevel": 10
+    },
+    {
+      "loreName": "Fire Aspect",
+      "nbtName": "fire_aspect",
+      "abbreviation": "FA",
+      "goodLevel": 2,
+      "maxLevel": 3
+    },
+    {
+      "loreName": "Fire Protection",
+      "nbtName": "fire_protection",
+      "abbreviation": "FProt",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "First Strike",
+      "nbtName": "first_strike",
+      "abbreviation": "FS",
+      "goodLevel": 4,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Flame",
+      "nbtName": "flame",
+      "abbreviation": "Fla",
+      "goodLevel": 1,
+      "maxLevel": 2
+    },
+    {
+      "loreName": "Fortune",
+      "nbtName": "fortune",
+      "abbreviation": "For",
+      "goodLevel": 3,
+      "maxLevel": 4
+    },
+    {
+      "loreName": "Frail",
+      "nbtName": "frail",
+      "abbreviation": "Fra",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Frost Walker",
+      "nbtName": "frost_walker",
+      "abbreviation": "FW",
+      "goodLevel": 2,
+      "maxLevel": 2
+    },
+    {
+      "loreName": "Ferocious Mana",
+      "nbtName": "ferocious_mana",
+      "abbreviation": "FM",
+      "goodLevel": 9,
+      "maxLevel": 10
+    },
+    {
+      "loreName": "Giant Killer",
+      "nbtName": "giant_killer",
+      "abbreviation": "GK",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Growth",
+      "nbtName": "growth",
+      "abbreviation": "Gro",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Harvesting",
+      "nbtName": "harvesting",
+      "abbreviation": "Harv",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Hardened Mana",
+      "nbtName": "hardened_mana",
+      "abbreviation": "HM",
+      "goodLevel": 9,
+      "maxLevel": 10
+    },
+    {
+      "loreName": "Impaling",
+      "nbtName": "impaling",
+      "abbreviation": "Imp",
+      "goodLevel": 5,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Infinite Quiver",
+      "nbtName": "infinite_quiver",
+      "abbreviation": "IQ",
+      "goodLevel": 5,
+      "maxLevel": 10
+    },
+    {
+      "loreName": "Knockback",
+      "nbtName": "knockback",
+      "abbreviation": "KB",
+      "goodLevel": 2,
+      "maxLevel": 2
+    },
+    {
+      "loreName": "Lethality",
+      "nbtName": "lethality",
+      "abbreviation": "Leth",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Life Steal",
+      "nbtName": "life_steal",
+      "abbreviation": "LS",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Looting",
+      "nbtName": "looting",
+      "abbreviation": "Loot",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Luck",
+      "nbtName": "luck",
+      "abbreviation": "Luck",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Luck Of The Sea",
+      "nbtName": "luck_of_the_sea",
+      "abbreviation": "LOTS",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Lure",
+      "nbtName": "lure",
+      "abbreviation": "Lure",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Magnet",
+      "nbtName": "magnet",
+      "abbreviation": "Magn",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Mana Steal",
+      "nbtName": "mana_steal",
+      "abbreviation": "MS",
+      "goodLevel": 0,
+      "maxLevel": 3
+    },
+    {
+      "loreName": "Mana Vampire",
+      "nbtName": "mana_vampire",
+      "abbreviation": "MV",
+      "goodLevel": 9,
+      "maxLevel": 10
+    },
+    {
+      "loreName": "Overload",
+      "nbtName": "overload",
+      "abbreviation": "Ovl",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Piercing",
+      "nbtName": "piercing",
+      "abbreviation": "Pier",
+      "goodLevel": 1,
+      "maxLevel": 1
+    },
+    {
+      "loreName": "Power",
+      "nbtName": "power",
+      "abbreviation": "Pow",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Prismatic",
+      "nbtName": "pristine",
+      "abbreviation": "Pris",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Projectile Protection",
+      "nbtName": "projectile_protection",
+      "abbreviation": "PProt",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Prosecute",
+      "nbtName": "prosecute",
+      "abbreviation": "Pros",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Protection",
+      "nbtName": "protection",
+      "abbreviation": "Prot",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Punch",
+      "nbtName": "punch",
+      "abbreviation": "Pun",
+      "goodLevel": 2,
+      "maxLevel": 2
+    },
+    {
+      "loreName": "Rainbow",
+      "nbtName": "rainbow",
+      "abbreviation": "Rain",
+      "goodLevel": 1,
+      "maxLevel": 2
+    },
+    {
+      "loreName": "Rejuvenate",
+      "nbtName": "rejuvenate",
+      "abbreviation": "Rej",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Replenish",
+      "nbtName": "replenish",
+      "abbreviation": "Repl",
+      "goodLevel": 1,
+      "maxLevel": 1
+    },
+    {
+      "loreName": "Respiration",
+      "nbtName": "respiration",
+      "abbreviation": "Resp",
+      "goodLevel": 3,
+      "maxLevel": 4
+    },
+    {
+      "loreName": "Respite",
+      "nbtName": "respite",
+      "abbreviation": "Rspt",
+      "goodLevel": 5,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Scavenger",
+      "nbtName": "scavenger",
+      "abbreviation": "Scav",
+      "goodLevel": 3,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Sharpness",
+      "nbtName": "sharpness",
+      "abbreviation": "Sharp",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Silk Touch",
+      "nbtName": "silk_touch",
+      "abbreviation": "Silk",
+      "goodLevel": 1,
+      "maxLevel": 1
+    },
+    {
+      "loreName": "Smarty Pants",
+      "nbtName": "smarty_pants",
+      "abbreviation": "SP",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Smelting Touch",
+      "nbtName": "smelting_touch",
+      "abbreviation": "ST",
+      "goodLevel": 1,
+      "maxLevel": 1
+    },
+    {
+      "loreName": "Smite",
+      "nbtName": "smite",
+      "abbreviation": "Smite",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Snipe",
+      "nbtName": "snipe",
+      "abbreviation": "Snipe",
+      "goodLevel": 3,
+      "maxLevel": 4
+    },
+    {
+      "loreName": "Spiked Hook",
+      "nbtName": "spiked_hook",
+      "abbreviation": "SH",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Sugar Rush",
+      "nbtName": "sugar_rush",
+      "abbreviation": "SR",
+      "goodLevel": 0,
+      "maxLevel": 3
+    },
+    {
+      "loreName": "Drain",
+      "nbtName": "syphon",
+      "abbreviation": "Syph",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Smoldering",
+      "nbtName": "smoldering",
+      "abbreviation": "Smold",
+      "goodLevel": 4,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Strong Mana",
+      "nbtName": "strong_mana",
+      "abbreviation": "SM",
+      "goodLevel": 9,
+      "maxLevel": 10
+    },
+    {
+      "loreName": "Tabasco",
+      "nbtName": "tabasco",
+      "abbreviation": "Tab",
+      "goodLevel": 2,
+      "maxLevel": 3
+    },
+    {
+      "loreName": "Thorns",
+      "nbtName": "thorns",
+      "abbreviation": "Tho",
+      "goodLevel": 3,
+      "maxLevel": 3
+    },
+    {
+      "loreName": "Thunderbolt",
+      "nbtName": "thunderbolt",
+      "abbreviation": "TB",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Thunderlord",
+      "nbtName": "thunderlord",
+      "abbreviation": "TL",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Titan Killer",
+      "nbtName": "titan_killer",
+      "abbreviation": "TK",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Triple-Strike",
+      "nbtName": "triple_strike",
+      "abbreviation": "TS",
+      "goodLevel": 4,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "True Protection",
+      "nbtName": "true_protection",
+      "abbreviation": "TProt",
+      "goodLevel": 0,
+      "maxLevel": 1
+    },
+    {
+      "loreName": "Turbo-Cacti",
+      "nbtName": "turbo_cactus",
+      "abbreviation": "T-Cac",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Cane",
+      "nbtName": "turbo_cane",
+      "abbreviation": "T-Cane",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Carrot",
+      "nbtName": "turbo_carrot",
+      "abbreviation": "T-Carr",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Cocoa",
+      "nbtName": "turbo_coco",
+      "abbreviation": "T-Coco",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Melon",
+      "nbtName": "turbo_melon",
+      "abbreviation": "T-Mel",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Mushrooms",
+      "nbtName": "turbo_mushrooms",
+      "abbreviation": "T-Mush",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Potato",
+      "nbtName": "turbo_potato",
+      "abbreviation": "T-Pot",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Pumpkin",
+      "nbtName": "turbo_pumpkin",
+      "abbreviation": "T-Pump",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Warts",
+      "nbtName": "turbo_warts",
+      "abbreviation": "T-Wart",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Wheat",
+      "nbtName": "turbo_wheat",
+      "abbreviation": "T-Whe",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Vampirism",
+      "nbtName": "vampirism",
+      "abbreviation": "Vamp",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Venomous",
+      "nbtName": "venomous",
+      "abbreviation": "Veno",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Vicious",
+      "nbtName": "vicious",
+      "abbreviation": "Vic",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Piscary",
+      "nbtName": "piscary",
+      "abbreviation": "Pisc",
+      "goodLevel": 5,
+      "maxLevel": 7
+    },
+    {
+      "loreName": "Prosperity",
+      "nbtName": "prosperity",
+      "abbreviation": "Pros",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Sunder",
+      "nbtName": "sunder",
+      "abbreviation": "Sun",
+      "goodLevel": 0,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Dedication",
+      "nbtName": "dedication",
+      "abbreviation": "Dedi",
+      "goodLevel": 3,
+      "maxLevel": 4
+    },
+    {
+      "loreName": "Green Thumb",
+      "nbtName": "green_thumb",
+      "abbreviation": "GT",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Reflection",
+      "nbtName": "reflection",
+      "abbreviation": "Refl",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Quantum",
+      "nbtName": "quantum",
+      "abbreviation": "Quan",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Transylvanian",
+      "nbtName": "transylvanian",
+      "abbreviation": "Trans",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Pesterminator",
+      "nbtName": "pesterminator",
+      "abbreviation": "Pest",
+      "goodLevel": 4,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Ice Cold",
+      "nbtName": "ice_cold",
+      "abbreviation": "Ice",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Paleontologist",
+      "nbtName": "paleontologist",
+      "abbreviation": "Pale",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Lapidary",
+      "nbtName": "lapidary",
+      "abbreviation": "Lapi",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Small Brain",
+      "nbtName": "small_brain",
+      "abbreviation": "SB",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Tidal",
+      "nbtName": "tidal",
+      "abbreviation": "Tid",
+      "goodLevel": 2,
+      "maxLevel": 3
+    },
+    {
+      "loreName": "Quick Bite",
+      "nbtName": "quick_bite",
+      "abbreviation": "QB",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Woodsplitter",
+      "nbtName": "arcane",
+      "abbreviation": "Wood",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
+      "loreName": "Forest Pledge",
+      "nbtName": "forest_pledge",
+      "abbreviation": "FP",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Scuba",
+      "nbtName": "scuba",
+      "abbreviation": "Scu",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Stealth",
+      "nbtName": "stealth",
+      "abbreviation": "Stea",
+      "goodLevel": 0,
+      "maxLevel": 1
+    },
+    {
+      "loreName": "Great Spook",
+      "nbtName": "great_spook",
+      "abbreviation": "GS",
+      "goodLevel": 0,
+      "maxLevel": 1
+    }
+  ],
+  "ULTIMATE": [
+    {
+      "loreName": "Bank",
+      "nbtName": "ultimate_bank",
+      "abbreviation": "Bank",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Chimera",
+      "nbtName": "ultimate_chimera",
+      "abbreviation": "Chim",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Combo",
+      "nbtName": "ultimate_combo",
+      "abbreviation": "Comb",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Duplex",
+      "nbtName": "ultimate_reiterate",
+      "abbreviation": "Dupl",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Flash",
+      "nbtName": "ultimate_flash",
+      "abbreviation": "Flash",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Last Stand",
+      "nbtName": "ultimate_last_stand",
+      "abbreviation": "LS",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Fatal Tempo",
+      "nbtName": "ultimate_fatal_tempo",
+      "abbreviation": "FT",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Habanero Tactics",
+      "nbtName": "ultimate_habanero_tactics",
+      "abbreviation": "Haba",
+      "goodLevel": 4,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Inferno",
+      "nbtName": "ultimate_inferno",
+      "abbreviation": "Inf",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Ultimate Jerry",
+      "nbtName": "ultimate_jerry",
+      "abbreviation": "Jerry",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Legion",
+      "nbtName": "ultimate_legion",
+      "abbreviation": "Leg",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "No Pain No Gain",
+      "nbtName": "ultimate_no_pain_no_gain",
+      "abbreviation": "NPNG",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "One For All",
+      "nbtName": "ultimate_one_for_all",
+      "abbreviation": "OFA",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Rend",
+      "nbtName": "ultimate_rend",
+      "abbreviation": "Rend",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Soul Eater",
+      "nbtName": "ultimate_soul_eater",
+      "abbreviation": "SE",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Swarm",
+      "nbtName": "ultimate_swarm",
+      "abbreviation": "Swarm",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Ultimate Wise",
+      "nbtName": "ultimate_wise",
+      "abbreviation": "UW",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Wisdom",
+      "nbtName": "ultimate_wisdom",
+      "abbreviation": "Wis",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "The One",
+      "nbtName": "ultimate_the_one",
+      "abbreviation": "One",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Refrigerate",
+      "nbtName": "ultimate_refrigerate",
+      "abbreviation": "Ref",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Flowstate",
+      "nbtName": "ultimate_flowstate",
+      "abbreviation": "Flow",
+      "maxLevel": 3
+    },
+    {
+      "loreName": "First Impression",
+      "nbtName": "ultimate_first_impression",
+      "abbreviation": "FI",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Missile",
+      "nbtName": "ultimate_missile",
+      "abbreviation": "Miss",
+      "maxLevel": 5
+    }
+  ],
+  "STACKING": [
+    {
+      "loreName": "Compact",
+      "nbtName": "compact",
+      "abbreviation": "Comp",
+      "nbtTag": "compact_blocks",
+      "displayName": "Compacted Blocks",
+      "progress": [
+        0,
+        100,
+        500,
+        1500,
+        5000,
+        15000,
+        50000,
+        150000,
+        500000,
+        1000000
+      ]
+    },
+    {
+      "loreName": "Cultivating",
+      "nbtName": "cultivating",
+      "abbreviation": "Cult",
+      "nbtTag": "farmed_cultivating",
+      "displayName": "Cultivated Crops",
+      "progress": [
+        0,
+        1000,
+        5000,
+        25000,
+        100000,
+        300000,
+        1500000,
+        5000000,
+        20000000,
+        100000000
+      ]
+    },
+    {
+      "loreName": "Expertise",
+      "nbtName": "expertise",
+      "abbreviation": "Expt",
+      "nbtTag": "expertise_kills",
+      "displayName": "Expertise Kills",
+      "progress": [
+        0,
+        50,
+        100,
+        250,
+        500,
+        1000,
+        2500,
+        5500,
+        10000,
+        15000
+      ]
+    },
+    {
+      "loreName": "Hecatomb",
+      "nbtName": "hecatomb",
+      "abbreviation": "Heca",
+      "nbtTag": "hecatomb_s_runs",
+      "displayName": "Hecatombs S Runs",
+      "progress": [
+        0,
+        2,
+        5,
+        10,
+        20,
+        30,
+        40,
+        60,
+        80,
+        100
+      ]
+    },
+    {
+      "loreName": "Champion",
+      "nbtName": "champion",
+      "abbreviation": "Champ",
+      "nbtTag": "champion_combat_xp",
+      "displayName": "Champion Combat XP",
+      "progress": [
+        0,
+        50000,
+        100000,
+        250000,
+        500000,
+        1000000,
+        1500000,
+        2000000,
+        2500000,
+        3000000
+      ]
+    },
+    {
+      "loreName": "Toxophilite",
+      "nbtName": "toxophilite",
+      "abbreviation": "Toxo",
+      "nbtTag": "toxophilite_combat_xp",
+      "displayName": "Toxophilite Combat XP",
+      "progress": [
+        0,
+        50000,
+        100000,
+        250000,
+        500000,
+        1000000,
+        1500000,
+        2000000,
+        2500000,
+        3000000
+      ]
+    },
+    {
+      "loreName": "Absorb",
+      "nbtName": "absorb",
+      "abbreviation": "Abs",
+      "nbtTag": "absorb_logs_chopped",
+      "displayName": "Absorb Logs Chopped",
+      "progress": [
+        0,
+        1000,
+        5000,
+        25000,
+        100000,
+        300000,
+        1500000,
+        5000000,
+        25000000,
+        50000000
+      ]
+    }
+  ]
+}
