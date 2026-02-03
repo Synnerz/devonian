@@ -128,7 +128,6 @@ abstract class HudFeature(
         if (HudManager.isEditing) return
 
         drawImpl(ctx)
-        if (dirty) onDirty()
     }
 
     open fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
