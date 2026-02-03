@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api
 
+import com.github.synnerz.devonian.features.misc.chat.CompactChatComponent
 import com.github.synnerz.devonian.mixin.accessor.ChatComponentAccessor
 import net.fabricmc.fabric.impl.command.client.ClientCommandInternals
 import net.minecraft.client.GuiMessage
@@ -130,4 +131,21 @@ object ChatUtils {
     }
 
     fun getMessageFromLine(line: GuiMessage.Line): GuiMessage? = lineCache[line]
+
+    fun deleteMessage(comp: Component, max: Int = 20) {
+        val iter = chatComponentAccessor.messages.listIterator()
+        var i = max
+
+        while (--i >= 0 && iter.hasNext()) {
+            val line = iter.next()
+            if (
+                line.content === comp ||
+                (line.content.siblings.lastOrNull()?.contents as? CompactChatComponent)?.orig === comp
+            ) {
+                iter.remove()
+                chatComponentAccessor.invokeRefresh()
+                break
+            }
+        }
+    }
 }

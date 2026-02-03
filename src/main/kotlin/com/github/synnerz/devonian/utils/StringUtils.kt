@@ -173,28 +173,45 @@ object StringUtils {
         }
     }
 
-    // "1h 2m 13.42s"
-    fun formatTime(time: Long, decimals: Int): String {
+    // "1h 02m 13.42s"
+    fun formatTime(time: Long, decimals: Int, maxUnits: Int = 4): String {
         if (time < 0L) return '-' + formatTime(-time, decimals)
         val ms = time % 1000
         var t = time / 1000
         val s = t % 60
         t /= 60
         val m = t % 60
-        val h = t / 60
+        t /= 60
+        val h = t % 24
+        val d = t / 24
+        var i = maxUnits
 
         return buildString {
-            if (h > 0) {
-                append("${h}h ")
+            if (d > 0) {
+                append("${d}d ")
+                if (--i <= 0) return@buildString
+                append("%02dh ".format(h))
+                if (--i <= 0) return@buildString
                 append("%02dm ".format(m))
+                if (--i <= 0) return@buildString
                 append("%02d".format(s))
+                if (--i <= 0) return@buildString
+            } else if (h > 0) {
+                append("${h}h ")
+                if (--i <= 0) return@buildString
+                append("%02dm ".format(m))
+                if (--i <= 0) return@buildString
+                append("%02d".format(s))
+                if (--i <= 0) return@buildString
             } else if (m > 0) {
                 append("${m}m ")
+                if (--i <= 0) return@buildString
                 append("%02d".format(s))
+                if (--i <= 0) return@buildString
             } else append(s)
             append("%.${decimals}f".format(ms / 1000.0).substring(1))
             append("s")
-        }
+        }.trim()
     }
 
     fun formatDuration(time: Long): String {

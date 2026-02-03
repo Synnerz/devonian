@@ -69,20 +69,7 @@ object CompactMelodyMessages : Feature(
 
                 val old = prevMelodyMessage.put(event.name, event.text) ?: return@on
                 Scheduler.scheduleBeforePacket {
-                    val iter = ChatUtils.chatComponentAccessor.messages.listIterator()
-                    var i = 20
-
-                    while (--i >= 0 && iter.hasNext()) {
-                        val line = iter.next()
-                        if (
-                            line.content === old ||
-                            (line.content.siblings.lastOrNull()?.contents as? CompactChatComponent)?.orig === old
-                        ) {
-                            iter.remove()
-                            ChatUtils.chatComponentAccessor.invokeRefresh()
-                            break
-                        }
-                    }
+                    ChatUtils.deleteMessage(old)
                 }
             } else lastMessages[event.name] = event.userMessage
         }

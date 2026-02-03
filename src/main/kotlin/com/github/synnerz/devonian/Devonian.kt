@@ -349,6 +349,7 @@ object Devonian : ClientModInitializer {
             EnchantAbbreviation,
             RareDungeonMobDropAlert,
             CompactMelodyMessages,
+            CenturyCakeTimer,
 
             // Debug
             CopyItem,
