@@ -84,7 +84,11 @@ object MiddleClickGui : Feature(
             if (ItemUtils.skyblockId(stack) != null) return@on
 
             val screenName = event.screen.title?.string ?: return@on
-            if (avoidGuis.any { screenName.startsWith(it) } || blacklisted.any { screenName.startsWith(it) }) return@on
+            if (
+                screenName.contains(" Minion ") ||
+                avoidGuis.any { screenName.startsWith(it) } ||
+                blacklisted.any { screenName.startsWith(it) }
+            ) return@on
             if (terminalGuis.any { it.matches(screenName) }) return@on
 
             val itemName = stack.customName?.string
