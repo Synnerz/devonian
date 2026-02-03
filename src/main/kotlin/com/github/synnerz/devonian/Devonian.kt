@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Party
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.garden.GardenEvents
 import com.github.synnerz.devonian.commands.DevonianCommand
@@ -399,6 +400,7 @@ object Devonian : ClientModInitializer {
         GardenEvents.initialize()
         HypixelModApi.initialize()
         Party.initialize()
+        Stages.initialize()
 
         DevonianCommand.command.subcommand("sim") { _, args ->
             val msg = args.joinToString(" ") { it.toString() }

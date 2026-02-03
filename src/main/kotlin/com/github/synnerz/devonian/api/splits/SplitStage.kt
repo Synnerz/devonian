@@ -5,7 +5,8 @@ import com.github.synnerz.devonian.utils.StringUtils
 
 open class SplitStage {
     val children: Array<SplitStage>
-    protected var parent: SplitStage? = null
+    var parent: SplitStage? = null
+        protected set
     protected val filterStr: String?
     protected val filterReg: Regex?
     var startTime = TimeUnit.EMPTY
