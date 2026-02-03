@@ -331,6 +331,7 @@ object Devonian : ClientModInitializer {
             Searchbar,
             PartyFinderCount,
             HighlightTeammates,
+            LastBreathPullSound,
 
             // Debug
             CopyItem,
