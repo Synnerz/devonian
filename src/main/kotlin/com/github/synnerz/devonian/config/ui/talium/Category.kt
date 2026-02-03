@@ -121,7 +121,7 @@ open class Category(
 
                 val y = 1 + i * 17.0
 
-                components.add(createBase(y, scrollable.first, if (data is ConfigData.FeatureSwitch) 0.0 else 5.0).apply {
+                components.add(createBase(y, scrollable.first, if (data is ConfigData.FeatureSwitch) 0.0 else 0.5).apply {
                     addChild(createTitle(data.displayName))
                     addChild(createDescription(data.description))
                     addChild(
@@ -156,7 +156,7 @@ open class Category(
 
     private fun createBase(y: Double, parent: UIBase, offset: Double): UIRect =
         UIRect(1.0 + offset, y, 98.0 - offset, 15.0, parent = parent).apply {
-            addEffects(OutlineEffect(1.0, ColorPalette.OUTLINE_COLOR))
+            addEffects(OutlineEffect(1.0, if (offset == 0.0) ColorPalette.OUTLINE_COLOR else ColorPalette.OUTLINE2_COLOR))
         }
 
     private fun createTitle(text: String, parent: UIRect? = null): UIText =

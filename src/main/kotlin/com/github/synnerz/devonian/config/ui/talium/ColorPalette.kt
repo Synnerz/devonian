@@ -9,6 +9,7 @@ object ColorPalette {
     val TEXT_COLOR: Color = Color.WHITE
     val LIGHT_TEXT_COLOR = Color(255, 255, 255, 150)
     val OUTLINE_COLOR = Color(50, 50, 50, 255)
+    val OUTLINE2_COLOR = Color(70, 70, 70, 255)
     val TITLE_COLOR = Color(255, 255, 255, 80)
     val ENABLED_COLOR = Color(0, 255, 0,  255)
     val DISABLED_COLOR = Color(255, 0, 0,  255)
