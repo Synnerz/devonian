@@ -333,6 +333,7 @@ object Devonian : ClientModInitializer {
             HighlightTeammates,
             LastBreathPullSound,
             EnchantAbbreviation,
+            RareDungeonMobDropAlert,
 
             // Debug
             CopyItem,
