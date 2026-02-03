@@ -85,7 +85,7 @@ object HideNoStarTag : Feature(
 
         "Akia", "Ilene", "Kari", "Lelani", "Steve", "Synestra", "Tyene", "Ussaea", "Yve", "Zana", "Trisha", "Nymira"
     ) + bloodExceptions
-    private val noStarTagRegex = "^(?:\\[Lv\\d+] )?[^\\sA-Za-z]* ?([A-Za-z ]+) [\\dkM.,/]+❤$".toRegex()
+    private val noStarTagRegex = "^(?:\\[Lv\\d+] )?[^\\sA-Za-z]* ?([A-Za-z ]+) [\\dkMB.,/]+❤$".toRegex()
 
     override fun initialize() {
         on<NameChangeEvent> { event ->
