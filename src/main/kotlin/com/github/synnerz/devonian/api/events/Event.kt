@@ -472,6 +472,16 @@ class PostRenderGuiEvent(
     val ctx: GuiGraphics
 ) : Event()
 
+@Ordered class GuiScaleEvent(
+    val screen: Screen,
+) : Event() {
+    var overrideScale = -1
+
+    fun setScale(scale: Int) {
+        if (overrideScale == -1) overrideScale = scale
+    }
+}
+
 class ContainerRenderEvent(
     val screen: ContainerScreen,
     val x: Int,

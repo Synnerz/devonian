@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.MouseHandlerAccessor;
 import com.github.synnerz.devonian.features.debug.MousePositionLogger;
 import com.github.synnerz.devonian.features.misc.KeyShortcuts;
 import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset;
@@ -15,13 +16,14 @@ import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MouseHandler.class)
-public class MouseHandlerMixin {
+public class MouseHandlerMixin implements MouseHandlerAccessor {
     @Shadow @Final private Minecraft minecraft;
 
     @Shadow
@@ -135,5 +137,38 @@ public class MouseHandlerMixin {
     )
     private void devonian$mouseLoggerRelease(CallbackInfo ci) {
         MousePositionLogger.INSTANCE.onRelease();
+    }
+
+    @Unique
+    private static int guiScaledWidthOverride = -1;
+    @Unique
+    private static int guiScaledHeightOverride = -1;
+
+    @Override
+    public void devonian$setGuiScaledWidthOverride(int w) {
+        guiScaledWidthOverride = w;
+    }
+
+    @Override
+    public void devonian$setGuiScaledHeightOverride(int h) {
+        guiScaledHeightOverride = h;
+    }
+
+    @WrapOperation(
+        method = "getScaledXPos(Lcom/mojang/blaze3d/platform/Window;D)D",
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;getGuiScaledWidth()I")
+    )
+    private static int devonian$guiScaleEventX(Window instance, Operation<Integer> original) {
+        if (guiScaledWidthOverride != -1) return guiScaledWidthOverride;
+        return original.call(instance);
+    }
+
+    @WrapOperation(
+        method = "getScaledYPos(Lcom/mojang/blaze3d/platform/Window;D)D",
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;getGuiScaledHeight()I")
+    )
+    private static int devonian$guiScaleEventY(Window instance, Operation<Integer> original) {
+        if (guiScaledHeightOverride != -1) return guiScaledHeightOverride;
+        return original.call(instance);
     }
 }
