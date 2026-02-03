@@ -78,8 +78,8 @@ object KeyPickup : Feature(
 
     private val pickupSound = SoundEvents.VAULT_OPEN_SHUTTER
 
-    private val witherKeyRegex = "^.+?(\\w+) has obtained Wither Key!$".toRegex()
-    private val bloodKeyRegex = "^.+?(\\w+) has obtained Blood Key!$".toRegex()
+    private val witherKeyRegex = "^.*?(\\w+) has obtained Wither Key!$".toRegex()
+    private val bloodKeyRegex = "^.*?(\\w+) has obtained Blood Key!$".toRegex()
 
     private val witherKeyId = UUID.fromString("2865274b-3097-394e-8149-ec629c72d850")
     private val bloodKeyId = UUID.fromString("73f6d1f9-df41-3d1d-b98c-e1442d915885")
