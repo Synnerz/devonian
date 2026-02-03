@@ -350,6 +350,7 @@ object Devonian : ClientModInitializer {
             RareDungeonMobDropAlert,
             CompactMelodyMessages,
             CenturyCakeTimer,
+            ScoreTime,
 
             // Debug
             CopyItem,
