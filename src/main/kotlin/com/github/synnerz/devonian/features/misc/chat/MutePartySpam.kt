@@ -1,15 +1,21 @@
 package com.github.synnerz.devonian.features.misc.chat
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatChannelEvent
+import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.OpenEditor
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
+import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.update
+import kotlinx.atomicfu.updateAndGet
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.max
 
 object MutePartySpam : Feature(
     "mutePartySpam",
@@ -36,7 +42,7 @@ object MutePartySpam : Feature(
 
     private val messages = CopyOnWriteArrayList<String>()
 
-    var muteNextMessage = false
+    val muteNextNMessages = atomic(0)
 
     override fun initialize() {
         Config.set(CONFIG_KEY, JsonArray().also { arr ->
@@ -95,19 +101,35 @@ object MutePartySpam : Feature(
         }
 
         on<ChatChannelEvent.PartyChatEvent> { event ->
-            if (messages.any { event.userMessage.startsWith(it) }) muteNextMessage = true
+            if (messages.any { event.userMessage.startsWith(it) }) muteNextNMessages.incrementAndGet()
         }
 
-        on<SoundPlayEvent> { event ->
-            if (muteNextMessage) {
-                if (
-                    event.underlyingEvent == SoundEvents.EXPERIENCE_ORB_PICKUP &&
-                    event.category == SoundSource.PLAYERS &&
-                    event.volume == 1f &&
-                    event.pitch == 1f
-                ) event.cancel()
+        EventBus.on<SoundPlayEvent> { event ->
+            if (
+                event.underlyingEvent != SoundEvents.EXPERIENCE_ORB_PICKUP ||
+                event.category != SoundSource.PLAYERS ||
+                event.volume != 1f ||
+                event.pitch != 1f
+            ) return@on
+
+            event.cancel()
+            Scheduler.scheduleBeforePacket {
+                var canceled = false
+                muteNextNMessages.update {
+                    if (it > 0) canceled = true
+                    max(it - 1, 0)
+                }
+                if (canceled) return@scheduleBeforePacket
+
+                minecraft.level?.playSeededSound(
+                    minecraft.player,
+                    event.x, event.y, event.z,
+                    event.underlyingEvent,
+                    event.category,
+                    event.volume, event.pitch,
+                    event.seed,
+                )
             }
-            muteNextMessage = false
         }
     }
 }

@@ -30,6 +30,7 @@ import com.github.synnerz.devonian.features.diana.DianaMobTracker
 import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.dungeons.clear.*
 import com.github.synnerz.devonian.features.dungeons.f7.CancelF7BossSounds
+import com.github.synnerz.devonian.features.dungeons.f7.CompactMelodyMessages
 import com.github.synnerz.devonian.features.dungeons.f7.CustomTerminalScale
 import com.github.synnerz.devonian.features.dungeons.f7.GoldorFrenzyTimer
 import com.github.synnerz.devonian.features.dungeons.f7.MelodyKeys
@@ -346,6 +347,7 @@ object Devonian : ClientModInitializer {
             LastBreathPullSound,
             EnchantAbbreviation,
             RareDungeonMobDropAlert,
+            CompactMelodyMessages,
 
             // Debug
             CopyItem,

@@ -96,7 +96,7 @@ object CompactChat : Feature(
 
         cachedData.lastCheck = first
 
-        return text.copy().append(CompactChatComponent.of(cachedData.count).withStyle(STYLE))
+        return text.copy().append(CompactChatComponent.of(text, cachedData.count).withStyle(STYLE))
     }
 
     fun clearHistory() {
@@ -113,10 +113,11 @@ object CompactChat : Feature(
 
 // Credits to <https://github.com/caoimhebyrne/compact-chat>
 // Licensed under the MIT license
-class CompactChatComponent(val times: Int = 0) : PlainTextContents {
+class CompactChatComponent(val orig: Component, val times: Int = 0) : PlainTextContents {
     companion object {
         @JvmStatic
-        fun of(times: Int): MutableComponent = MutableComponent.create(CompactChatComponent(times))
+        fun of(orig: Component, times: Int): MutableComponent =
+            MutableComponent.create(CompactChatComponent(orig, times))
     }
 
     override fun text(): String = " ($times)"
