@@ -413,7 +413,7 @@ object ActionbarParser : Feature(
         ),
         RagAxeTimer(
             null,
-            listOf("CASTING in 3s", "CASTING in 2s", "CASTING in 1s", "CASTING", "CANCELLED"),
+            listOf("CASTING IN 3s", "CASTING IN 2s", "CASTING IN 1s", "CASTING", "CANCELLED"),
             object : TextHudFeature(
                 "customRagAxeTimerHud",
                 "$desc Allows you to move the rag axe timer that appears in the actionbar (above your hotbar).",
