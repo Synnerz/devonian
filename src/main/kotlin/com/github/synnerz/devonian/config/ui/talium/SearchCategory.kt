@@ -12,6 +12,7 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
     private var oldCategory: Category? = null
     private val categoryTitleBg = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
         setColor(ColorPalette.TERTIARY_COLOR)
+        addChild(categoryTitle)
     }
     private val contentContainer = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel)
 

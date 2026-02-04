@@ -14,7 +14,6 @@ class Category(
     val configs = Config.categories[category]!!
     private val subcategoryPanel = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
         setColor(ColorPalette.TERTIARY_COLOR)
-        addChild(categoryTitle)
     }
     private val subcategoriesRect = mutableMapOf<String, Pair<UIScrollable, UIText>>()
     private var currentSubcategory = category.subcategories[0]
