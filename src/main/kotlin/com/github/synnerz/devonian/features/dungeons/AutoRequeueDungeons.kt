@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Party
 import com.github.synnerz.devonian.api.events.ChatChannelEvent
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -17,15 +18,23 @@ object AutoRequeueDungeons : Feature(
 ) {
     private val extraStatsRegex = "^ *> EXTRA STATS <\$".toRegex()
     private var needsDowntime = Collections.newSetFromMap<String>(ConcurrentHashMap())
+    private var lastQueue = 0
 
     private fun requeue() {
+        if (!Party.isLeader && Party.inParty) return
+        if (lastQueue > 0 && lastQueue != Party.members.size) {
+            lastQueue = 0
+            return
+        }
+
         ChatUtils.command("instancerequeue")
+        lastQueue = Party.members.size
     }
 
     override fun initialize() {
         on<ChatChannelEvent.PartyChatEvent> { event ->
             val msg = event.userMessage.lowercase()
-            if (msg == "r") {
+            if (msg == "r" || msg == "!r") {
                 if (!needsDowntime.remove(event.name)) return@on
 
                 ChatUtils.sendMessage("&a${event.name} is ready", true)
