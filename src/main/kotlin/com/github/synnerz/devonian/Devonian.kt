@@ -353,6 +353,7 @@ object Devonian : ClientModInitializer {
             ScoreTime,
             HidePlayers,
             RemoveSmokeParticle,
+            PartyFinderRightClick,
 
             // Debug
             CopyItem,
