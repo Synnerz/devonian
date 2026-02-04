@@ -351,6 +351,7 @@ object Devonian : ClientModInitializer {
             CompactMelodyMessages,
             CenturyCakeTimer,
             ScoreTime,
+            HidePlayers,
 
             // Debug
             CopyItem,
