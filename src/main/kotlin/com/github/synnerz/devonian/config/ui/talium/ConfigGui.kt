@@ -30,6 +30,9 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         setColor(ColorPalette.TERTIARY_COLOR)
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "Edit Huds", true).apply {
             setColor(ColorPalette.TEXT_COLOR)
+            onResize {  _, w ->
+                textScale = 2.5f / w.scaleFactor
+            }
         })
         onMouseRelease {
             if (it.button != 0) return@onMouseRelease
