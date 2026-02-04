@@ -36,7 +36,7 @@ object CancelF7BossSounds : Feature(
     override fun initialize() {
         on<SoundPlayEvent> { event ->
             if (SETTING_ONLY_LOWER.get() && event.volume > 1f) {
-                Scheduler.scheduleTask(0) {
+                Scheduler.scheduleBeforePacket {
                     minecraft.level?.playLocalSound(
                         event.x, event.y, event.z,
                         event.underlyingEvent, event.category,
@@ -44,6 +44,7 @@ object CancelF7BossSounds : Feature(
                         false
                     )
                 }
+                event.cancel()
                 return@on
             }
 
