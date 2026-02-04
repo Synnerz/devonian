@@ -473,7 +473,26 @@ object ActionbarParser : Feature(
             ) {},
         ) {
             override fun modifyStringVanilla(str: String): String = "$str§r"
-        };
+        },
+        BitsGained(
+            " Bits from Cookie Buff!",
+            null,
+            object : TextHudFeature(
+                "customBitsGainedHud",
+                "$desc Allows you to move the bits gained that appears in the actionbar (above your hotbar).",
+                subcategory = "Actionbar",
+                searchTags = customTags,
+            ) {
+                override fun getEditText(): List<String> = listOf("§9§lINVULNERABLE")
+            },
+            object : Feature(
+                "hideBitsGainedActionbar",
+                "$desc Hides the bits gained that appears in the actionbar (above your hotbar).",
+                subcategory = "Actionbar",
+                searchTags = hideTags,
+            ) {},
+            pad = "",
+        );
 
         open fun initialize() {}
 
