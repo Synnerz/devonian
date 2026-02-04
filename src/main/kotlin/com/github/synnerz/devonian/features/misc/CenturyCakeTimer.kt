@@ -60,9 +60,9 @@ object CenturyCakeTimer : TextHudFeature(
         val bounds = super.getBounds()
         val d = 15.0 * scale
         return BoundingBox(
-            bounds.x - d,
+            bounds.x - d * 1.25,
             bounds.y + (bounds.h - d) * 0.5,
-            bounds.w + d,
+            bounds.w + d * 1.25,
             d
         )
     }
@@ -122,7 +122,10 @@ object CenturyCakeTimer : TextHudFeature(
             else {
                 val time = Instant.now().until(expireTime, ChronoUnit.MILLIS)
 
-                setLine(StringUtils.formatTime(time, 0, 2))
+                setLine(
+                    StringUtils.colorForNumber(time, 60L * 60L * 1000L) +
+                    StringUtils.formatTime(time, 0, 2)
+                )
 
                 if (time < 0L) expireTime = Instant.EPOCH
             }
