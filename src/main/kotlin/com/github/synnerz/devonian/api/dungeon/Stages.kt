@@ -136,7 +136,7 @@ object Stages {
             )
         ).withName("&9Storm").withLongTime()
         Terminals = SequentialSplitStage(
-            "[BOSS] Goldor: Who dares trespass into my domain?",
+            "^(?:(\\w+) (?:activated|completed) a (terminal|lever|device)! \\((\\d)/\\d\\)|\\[BOSS] Goldor: Who dares trespass into my domain\\?)$".toRegex(),
             arrayOf(S1, S2, S3, S4),
         ).also { it.withName("&6Terminals") }
         Goldor = SplitStage("The Core entrance is opening!").withName("&8Goldor")
