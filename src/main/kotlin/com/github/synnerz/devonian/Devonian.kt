@@ -352,6 +352,7 @@ object Devonian : ClientModInitializer {
             CenturyCakeTimer,
             ScoreTime,
             HidePlayers,
+            RemoveSmokeParticle,
 
             // Debug
             CopyItem,
