@@ -121,7 +121,7 @@ open class Category(
 
                 val y = 1 + i * 17.0
 
-                components.add(createBase(y, scrollable.first, if (data is ConfigData.FeatureSwitch) 0.0 else 0.5).apply {
+                components.add(createBase(y, scrollable.first, if (data is ConfigData.FeatureSwitch) 0.0 else 1.0).apply {
                     addChild(createTitle(data.displayName))
                     addChild(createDescription(data.description))
                     addChild(

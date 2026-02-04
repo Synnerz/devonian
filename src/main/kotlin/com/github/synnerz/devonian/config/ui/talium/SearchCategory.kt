@@ -155,7 +155,7 @@ class SearchCategory(rightPanel: UIBase) {
         components.add(
             Pair(
                 data,
-                createBase(0.0, scrollableRect, if (data is ConfigData.FeatureSwitch) 0.0 else 0.5).apply {
+                createBase(0.0, scrollableRect, if (data is ConfigData.FeatureSwitch) 0.0 else 1.0).apply {
                     addChild(createTitle(data.displayName))
                     addChild(createDescription(data.description))
                     addChild(

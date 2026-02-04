@@ -23,12 +23,12 @@ object ScoreTime : Feature(
 
             if (it >= 270 && !trigger270) {
                 trigger270 = true
-                ChatUtils.sendMessage("&eS &breached at &a${StringUtils.formatSeconds(Dungeons.timeElapsed.value.toLong())}", true)
+                ChatUtils.sendMessage("&eS &breached at &a${StringUtils.formatSeconds(Dungeons.timeElapsed.value.toLong())} &7(${Dungeons.floor.shortName})", true)
                 return@listen
             }
             if (it < 300 || trigger300) return@listen
 
-            ChatUtils.sendMessage("&6S+ &breached at &a${StringUtils.formatSeconds(Dungeons.timeElapsed.value.toLong())}", true)
+            ChatUtils.sendMessage("&6S+ &breached at &a${StringUtils.formatSeconds(Dungeons.timeElapsed.value.toLong())} &7(${Dungeons.floor.shortName})", true)
             trigger300 = true
         }
     }
