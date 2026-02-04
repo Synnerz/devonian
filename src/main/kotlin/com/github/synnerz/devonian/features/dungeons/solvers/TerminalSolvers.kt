@@ -11,6 +11,7 @@ import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SET
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_HIDE_ITEMS
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RED_GREEN_DISABLE_RENDER
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RENDER_NUMBERS
+import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RUBIX_BLOCK_SUBOPTIMAL
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RUBIX_FORCE_POSITIVE
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.color
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.minecraft
@@ -132,6 +133,13 @@ object TerminalSolvers : Feature(
         "Effectively always shows the clicks required as positive, doesn't affect selecting fastest solution.",
         "Rubix Show Left Click Count",
     )
+    val SETTING_RUBIX_BLOCK_SUBOPTIMAL = addSwitch(
+        "rubixBlockBad",
+        false,
+        "Prevents the wrong type of mouse click, " +
+        "i.e. right clicking on an item that needs 2 or less left clicks, and vv.",
+        "Rubix Block Bad Clicks",
+    )
 
     private var currentSolver: TerminalData? = null
 
@@ -140,8 +148,8 @@ object TerminalSolvers : Feature(
     data class InterimRubixSlot(val idx: Int, val color: Int, val clicks: Int = 0)
     data class RedGreenSlot(val correct: Boolean, var clickCd: Int = 0)
 
-    private fun onInteractSlot(slot: Slot, event: CancellableEvent): Boolean {
-        return if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot) == true) {
+    private fun onInteractSlot(slot: Slot, event: CancellableEvent, lc: Boolean): Boolean {
+        return if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot, lc) == true) {
             event.cancel()
             minecraft.level?.playPlayerSound(
                 PREVENTED_SOUND.value(),
@@ -182,7 +190,7 @@ object TerminalSolvers : Feature(
         on<DropItemEvent> { event ->
             if (currentSolver == null) return@on
             val slot = event.slot ?: return@on
-            onInteractSlot(slot, event)
+            onInteractSlot(slot, event, true)
         }
 
         on<PickupItemInventoryEvent> { event ->
@@ -193,7 +201,7 @@ object TerminalSolvers : Feature(
                 return@on
             }
 
-            if (onInteractSlot(event.slot, event)) return@on
+            if (onInteractSlot(event.slot, event, !event.isSplitItem)) return@on
             if (SETTING_MIDDLE_CLICK.get() && currentSolver != TerminalData.RUBIX) {
                 event.cancel()
                 ScreenUtils.click(event.slot.index, false, "MIDDLE")
@@ -225,7 +233,8 @@ interface ITerminalSolver {
 
     fun onAfterRender(event: PostRenderSlotsEvent) {}
 
-    fun cancelClick(slot: Slot): Boolean
+    fun cancelClick(slot: Slot, lc: Boolean): Boolean = cancelClick(slot)
+    fun cancelClick(slot: Slot): Boolean = false
 
     fun renderSlotBackground(ctx: GuiGraphics, slot: Slot) {
         if (!SETTING_BACKGROUND_SLOT.get()) return
@@ -490,7 +499,6 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         override val changesWindow: Boolean = true
 
         private val rubixIndices = listOf(12, 13, 14, 21, 22, 23, 30, 31, 32)
-
         // left click = ++, right click = --
         private val rubixOrder = listOf(
             Items.ORANGE_STAINED_GLASS_PANE,
@@ -499,7 +507,6 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             Items.BLUE_STAINED_GLASS_PANE,
             Items.RED_STAINED_GLASS_PANE,
         )
-        private var slots = emptyArray<Int>()
         private val strings = arrayOf(
             Component.literal("§e-2"),
             Component.literal("§a-1"),
@@ -510,8 +517,14 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             Component.literal("§c4"),
         )
 
+        private var slots = emptyArray<Int>()
+        private var lastClicked = -1
+        private var lastClickType = false
+
         override fun reset() {
             slots = emptyArray()
+            lastClicked = -1
+            lastClickType = false
         }
 
         override fun onTick() {
@@ -519,10 +532,26 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             val items = (screen as AbstractContainerScreen<*>).menu.items
             val slotsIn = mutableListOf<TerminalSolvers.InterimRubixSlot>()
 
+            val held = screen.menu.carried
+
             rubixIndices.forEach { idx ->
-                val item = items.getOrNull(idx) ?: return@forEach
-                val color = rubixOrder.indexOf(item.item)
+                var item = items.getOrNull(idx)
+                if (item?.isEmpty != false) {
+                    if (idx == lastClicked) item = held
+                    if (item?.isEmpty != false) return@forEach
+                }
+
+                var color = rubixOrder.indexOf(item.item)
                 if (color < 0) return@forEach
+
+                if (item === held) {
+                    if (lastClickType) color++
+                    else color--
+
+                    if (color < 0) color += rubixOrder.size
+                    if (color >= rubixOrder.size) color -= rubixOrder.size
+                }
+
                 slotsIn.add(TerminalSolvers.InterimRubixSlot(idx, color))
             }
 
@@ -562,8 +591,12 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             }
         }
 
-        override fun cancelClick(slot: Slot): Boolean {
-            return slots.getOrElse(slot.containerSlot) { 0 } == 0
+        override fun cancelClick(slot: Slot, lc: Boolean): Boolean {
+            val clicks = slots.getOrElse(slot.containerSlot) { 0 }
+            if (clicks == 0) return true
+            lastClicked = slot.containerSlot
+            lastClickType = lc
+            return SETTING_RUBIX_BLOCK_SUBOPTIMAL.get() && clicks > 2 == lc
         }
     },
     RED_GREEN("^Correct all the panes!$".toRegex()) {
@@ -623,8 +656,6 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         override fun reset() {}
 
         override fun onTick() {}
-
-        override fun cancelClick(slot: Slot): Boolean = false
     };
 
     companion object {
