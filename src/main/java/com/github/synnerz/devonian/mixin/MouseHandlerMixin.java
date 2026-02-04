@@ -70,7 +70,7 @@ public class MouseHandlerMixin implements MouseHandlerAccessor {
         }
         GLFW.glfwSetInputMode(window.handle(), 208897, i);
         GLFW.glfwSetCursorPos(window.handle(), xpos, ypos);
-        NoCursorReset.ignoreFirstBatch = 2;
+        NoCursorReset.ignoreFirstBatch = 3;
         // ignoreFirstMove = true;
     }
 

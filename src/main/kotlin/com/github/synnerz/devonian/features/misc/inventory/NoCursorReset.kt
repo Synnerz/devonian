@@ -17,9 +17,13 @@ object NoCursorReset : Feature(
 
     override fun initialize() {
         on<ServerContainerOpenEvent> {
-            if (EventBus.serverTicks() - lastClose < 2) {
+            val t = System.currentTimeMillis()
+            if (
+                EventBus.serverTicks() - lastClose < 2 &&
+                t - lastOpenTime < 500L
+            ) {
                 lastOpenTick = EventBus.serverTicks()
-                lastOpenTime = System.currentTimeMillis()
+                lastOpenTime = t
             }
         }
 
@@ -40,7 +44,7 @@ object NoCursorReset : Feature(
     fun shouldReset(): Boolean {
         if (!isEnabled()) return true
         return lastOpenTick == -1 ||
-            EventBus.serverTicks() - lastOpenTick > 3 ||
+            EventBus.serverTicks() - lastOpenTick >= 3 ||
             System.currentTimeMillis() - lastOpenTime > 500L
     }
 }
