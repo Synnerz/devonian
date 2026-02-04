@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SET
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_HIDE_DONE
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_HIDE_ITEMS
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RED_GREEN_DISABLE_RENDER
+import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RED_GREEN_PREVENT_RECLICK
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RENDER_NUMBERS
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RUBIX_BLOCK_SUBOPTIMAL
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_RUBIX_FORCE_POSITIVE
@@ -119,6 +120,15 @@ object TerminalSolvers : Feature(
         "Toggle to specifically disable custom renderer for red/green solver.",
         "Correct All Terminal Vanilla Renderer",
     )
+    val SETTING_RED_GREEN_PREVENT_RECLICK = addSlider(
+        "redGreenPreventReclick",
+        0.0,
+        0.0, 1000.0,
+        "After clicking a pane in the red/green terminal, prevents you from reclicking that " +
+        "pane for this amount of time. It does not account for whether your initial click went through or not, " +
+        "so please do not turn this on if you are laggy.",
+        "Red Green Prevent Reclick",
+    )
 
     // make render name for numbers
     val SETTING_RENDER_NUMBERS = addSwitch(
@@ -146,7 +156,7 @@ object TerminalSolvers : Feature(
     private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
 
     data class InterimRubixSlot(val idx: Int, val color: Int, val clicks: Int = 0)
-    data class RedGreenSlot(val correct: Boolean, var clickCd: Int = 0)
+    data class RedGreenSlot(val correct: Boolean, var clickCd: Long = 0L)
 
     private fun onInteractSlot(slot: Slot, event: CancellableEvent, lc: Boolean): Boolean {
         return if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot, lc) == true) {
@@ -602,7 +612,6 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
     RED_GREEN("^Correct all the panes!$".toRegex()) {
         override val changesWindow: Boolean = false
 
-        private val MAX_PING = 20
         private var slots = emptyArray<TerminalSolvers.RedGreenSlot>()
 
         override fun reset() {
@@ -612,12 +621,12 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         override fun onTick() {
             val screen = minecraft.screen ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
-            val tick = EventBus.serverTicks()
+            val time = System.currentTimeMillis()
 
             slots = Array(items.size) { idx ->
-                val cd = slots.getOrNull(idx)?.clickCd ?: 0
+                val cd = slots.getOrNull(idx)?.clickCd ?: 0L
                 TerminalSolvers.RedGreenSlot(
-                    cd <= tick && items[idx].item == Items.RED_STAINED_GLASS_PANE,
+                    cd <= time && items[idx].item == Items.RED_STAINED_GLASS_PANE,
                     cd,
                 )
             }
@@ -646,7 +655,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             val data = slots.getOrNull(slot.containerSlot) ?: return true
             if (!data.correct) return true
 
-            data.clickCd = EventBus.serverTicks() + MAX_PING
+            data.clickCd = System.currentTimeMillis() + SETTING_RED_GREEN_PREVENT_RECLICK.get().toInt()
             return false
         }
     },
