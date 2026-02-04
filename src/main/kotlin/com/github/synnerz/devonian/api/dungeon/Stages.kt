@@ -58,7 +58,7 @@ object Stages {
                     arrayOf(
                         BloodOpen,
                         SplitStage(
-                            "The BLOOD DOOR has been opened!",
+                            "^(\\[BOSS] The Watcher: .+?|The BLOOD DOOR has been opened!)$".toRegex(),
                             arrayOf(
                                 SequentialSplitStage(
                                     arrayOf(
