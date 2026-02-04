@@ -29,18 +29,17 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
                     this@SearchCategory.unhide()
                 }
                 // Hide
-                else if (previousText.isNotEmpty() && text.isEmpty()) {
-                    hideColorPickers()
-                    this@SearchCategory.hide()
+                if (text.isEmpty()) {
+                    if (previousText.isNotEmpty()) {
+                        hideColorPickers()
+                        this@SearchCategory.hide()
 
-                    if (oldCategory == null && ConfigGui.selectedCategory == null) {
-                        ConfigGui.selectedCategory = ConfigGui.categories.first()
-                        ConfigGui.selectedCategory?.unhide()
-                    } else if (ConfigGui.selectedCategory == null)
-                        oldCategory?.unhide()
+                        // if (ConfigGui.selectedCategory == null)
+                        //     oldCategory?.unhide()
 
-                    oldCategory = null
-                    previousText = ""
+                        oldCategory = null
+                        previousText = ""
+                    }
                     return@onKeyType
                 }
                 if (previousText !== text)
