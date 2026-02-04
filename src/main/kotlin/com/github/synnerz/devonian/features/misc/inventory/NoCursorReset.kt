@@ -11,7 +11,8 @@ object NoCursorReset : Feature(
 ) {
     private var lastOpenTick = -1
     private var lastOpenTime = 0L
-    private var lastClose = -1
+    private var lastCloseTick = -1
+    private var lastCloseTime = 0L
     @JvmField
     var ignoreFirstBatch = 0
 
@@ -19,8 +20,8 @@ object NoCursorReset : Feature(
         on<ServerContainerOpenEvent> {
             val t = System.currentTimeMillis()
             if (
-                EventBus.serverTicks() - lastClose < 2 &&
-                t - lastOpenTime < 500L
+                EventBus.serverTicks() - lastCloseTick < 2 &&
+                t - lastCloseTime < 500L
             ) {
                 lastOpenTick = EventBus.serverTicks()
                 lastOpenTime = t
@@ -28,17 +29,21 @@ object NoCursorReset : Feature(
         }
 
         on<ServerContainerCloseEvent> {
-            lastClose =  EventBus.serverTicks()
+            lastCloseTick =  EventBus.serverTicks()
+            lastCloseTime = System.currentTimeMillis()
         }
 
         on<ClientContainerCloseEvent> {
             lastOpenTick = -1
+            lastOpenTime = 0L
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         lastOpenTick = -1
-        lastClose = -1
+        lastOpenTime = 0L
+        lastCloseTick = -1
+        lastCloseTime = 0L
     }
 
     fun shouldReset(): Boolean {
