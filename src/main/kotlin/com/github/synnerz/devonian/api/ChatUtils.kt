@@ -1,5 +1,7 @@
 package com.github.synnerz.devonian.api
 
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.misc.chat.CompactChatComponent
 import com.github.synnerz.devonian.mixin.accessor.ChatComponentAccessor
 import net.fabricmc.fabric.impl.command.client.ClientCommandInternals
@@ -73,7 +75,7 @@ object ChatUtils {
 
         if (!removedLine) return
 
-        chatComponentAccessor.invokeRefresh()
+        refreshChat()
     }
 
     fun editLines(cb: (GuiMessage) -> Boolean, replaceWith: TextComponent) {
@@ -98,7 +100,7 @@ object ChatUtils {
 
         if (!editedLine) return
 
-        chatComponentAccessor.invokeRefresh()
+        refreshChat()
     }
 
     fun centerTextPadding(text: String): String {
@@ -143,9 +145,23 @@ object ChatUtils {
                 (line.content.siblings.lastOrNull()?.contents as? CompactChatComponent)?.orig === comp
             ) {
                 iter.remove()
-                chatComponentAccessor.invokeRefresh()
+                refreshChat()
                 break
             }
+        }
+    }
+
+    private var needRefresh = false
+
+    fun refreshChat() {
+        needRefresh = true
+    }
+
+    fun initialize() {
+        EventBus.on<TickEvent> {
+            if (!needRefresh) return@on
+            chatComponentAccessor.invokeRefresh()
+            needRefresh = false
         }
     }
 }

@@ -91,7 +91,7 @@ object CompactChat : Feature(
                 break
             }
         }
-        if (refresh) ChatUtils.chatComponentAccessor.invokeRefresh()
+        if (refresh) ChatUtils.refreshChat()
         else recentMessages[textStr] = 1
 
         cachedData.lastCheck = first
