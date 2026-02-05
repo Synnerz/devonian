@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.HypixelModApi
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Party
@@ -406,6 +407,7 @@ object Devonian : ClientModInitializer {
         HypixelModApi.initialize()
         Party.initialize()
         Stages.initialize()
+        ChatUtils.initialize()
 
         DevonianCommand.command.subcommand("sim") { _, args ->
             val msg = args.joinToString(" ") { it.toString() }
