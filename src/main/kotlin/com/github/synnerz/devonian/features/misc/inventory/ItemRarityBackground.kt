@@ -156,7 +156,7 @@ object ItemRarityBackground : Feature(
         return rarities.find { str.startsWith(it.first) }?.second
     }
 
-    private val blurId = ResourceLocation.fromNamespaceAndPath("devonian", "item_rarity_background_blur")!!
+    private val blurId = ResourceLocation.fromNamespaceAndPath("devonian", "blur")!!
     private val blurImg = BufferedImageUploader.fromResource("/assets/devonian/blur.png")!!
         .register(blurId)
 }

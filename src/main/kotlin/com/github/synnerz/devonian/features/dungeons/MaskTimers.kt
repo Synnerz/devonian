@@ -176,8 +176,8 @@ object BonzoMask : ImmunityTimer(
         return time * 1000L
     }
 
-    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "bonzo_mask_icon")!!
-    private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/bonzoMask.png")!!
+    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "dungeons/bonzo_mask")!!
+    private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/bonzo_mask.png")!!
         .register(mcidIcon)
 
     override fun getIcon(): BufferedImageUploader = iconUploader
@@ -192,8 +192,8 @@ object SpiritMask : ImmunityTimer(
     override val triggerRegex: Regex = "^Second Wind Activated! Your Spirit Mask saved your life!$".toRegex()
     override fun getCooldown(): Long = 30_000L
 
-    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "spirit_mask_icon")!!
-    private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/spiritMask.png")!!
+    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "dungeons/spirit_mask")!!
+    private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/spirit_mask.png")!!
         .register(mcidIcon)
 
     override fun getIcon(): BufferedImageUploader = iconUploader
@@ -208,7 +208,7 @@ object PhoenixTimer : ImmunityTimer(
     override val triggerRegex: Regex = "^Your Phoenix Pet saved you from certain death!$".toRegex()
     override fun getCooldown(): Long = 60_000L
 
-    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "phoenix_icon")!!
+    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "dungeons/phoenix")!!
     private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/phoenix.png")!!
         .register(mcidIcon)
 

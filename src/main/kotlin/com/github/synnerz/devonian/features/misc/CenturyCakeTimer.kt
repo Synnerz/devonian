@@ -164,7 +164,7 @@ object CenturyCakeTimer : TextHudFeature(
 
     override fun getEditText(): List<String> = listOf("1d 12h 34m 56s")
 
-    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "cake_icon")!!
+    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "cake")!!
     private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/cake.png")!!
         .register(mcidIcon)
 

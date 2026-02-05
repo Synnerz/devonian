@@ -843,8 +843,8 @@ object DungeonMap : HudFeature(
         mapRenderer.invalidate()
     }
 
-    val mcidMarkerAtlas = ResourceLocation.fromNamespaceAndPath("devonian", "dungeon_map_marker_atlas")!!
-    val markerAtlasUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/markerAtlas.png")!!
+    val mcidMarkerAtlas = ResourceLocation.fromNamespaceAndPath("devonian", "dungeons/map/marker_atlas")!!
+    val markerAtlasUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/marker_atlas.png")!!
         .register(mcidMarkerAtlas)
 
     val MARKER_SELF_U0: Float

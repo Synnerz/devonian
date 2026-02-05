@@ -160,7 +160,7 @@ object SlotLocking : Feature(
     }
 
     // from sba
-    private val mcidLock = ResourceLocation.fromNamespaceAndPath("devonian", "slot_locking_lock")!!
+    private val mcidLock = ResourceLocation.fromNamespaceAndPath("devonian", "lock")!!
     private val lockUploader = BufferedImageUploader.fromResource("/assets/devonian/lock.png")!!
         .register(mcidLock)
 }
