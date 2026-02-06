@@ -36,11 +36,16 @@ object CustomLeapGui : Feature(
         0,
         listOf("a-z", "z-a", "a-z name", "z-a name"),
         "Sorting order for CustomLeapGui",
-        "Custom Leap Sorting",
+        "CustomLeap Sorting",
+    )
+    private val SETTING_BACKGROUND_COLOR = addColorPicker(
+        "backgroundColor",
+        Color(25, 25, 25, 255).rgb,
+        "Sets the background color for custom leap gui",
+        "CustomLeap Background"
     )
     private const val CONTAINER_NAME = "Spirit Leap"
     private val closeChestKey get() = minecraft.options.keyInventory
-    private val PRIMARY_COLOR = Color(25, 25, 25, 255)
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
     private var containerId = -1
     private val playerList = mutableListOf<LeapPlayer>()
@@ -154,7 +159,7 @@ object CustomLeapGui : Feature(
 
         UIRect(x, y, w, h, parent = background).apply {
             val outlineEffect = OutlineEffect(1.5, outline)
-            setColor(PRIMARY_COLOR)
+            setColor(SETTING_BACKGROUND_COLOR.getColor())
             addEffect(outlineEffect)
             addChild(UIText(0.0, 35.0, 100.0, 16.0, data.name, true).apply {
                 onResize { _, w ->
@@ -171,7 +176,7 @@ object CustomLeapGui : Feature(
             onMouseLeave { outlineEffect.color = outline }
 
             onMouseRelease { event ->
-                if (event.button != 0) return@onMouseRelease
+                if (event.button !in 0..1) return@onMouseRelease
 
                 ScreenUtils.click(data.slot)
                 Scheduler.scheduleTask { background.clearChildren() }
