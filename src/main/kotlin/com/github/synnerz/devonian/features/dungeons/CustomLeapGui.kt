@@ -174,7 +174,8 @@ object CustomLeapGui : Feature(
 
             onMouseEnter { outlineEffect.color = outlineHover }
             onMouseLeave { outlineEffect.color = outline }
-
+        }
+        UIRect(if (idx % 2 == 0) 0.0 else x, if (idx < 2) 0.0 else y, 50.0, 50.0, parent = background).apply {
             onMouseRelease { event ->
                 if (event.button !in 0..1) return@onMouseRelease
 
