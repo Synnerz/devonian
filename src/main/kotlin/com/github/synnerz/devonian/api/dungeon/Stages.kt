@@ -116,7 +116,7 @@ object Stages {
         F6 = SequentialSplitStage(
             "[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!",
             arrayOf(
-                SplitStage().withName("&4Terracottas"),
+                SplitStage().withName("&cTerracottas"),
                 SplitStage("[BOSS] Sadan: ENOUGH!").withName("&5Giants"),
                 SplitStage("[BOSS] Sadan: You did it. I understand now, you have earned my respect.")
                     .withName("&6Sadan"),
