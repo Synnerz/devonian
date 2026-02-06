@@ -151,17 +151,17 @@ object ChatUtils {
         }
     }
 
-    private var needRefresh = false
+    private var needRefresh = 0
 
     fun refreshChat() {
-        needRefresh = true
+        needRefresh++
+        if (needRefresh == 1) chatComponentAccessor.invokeRefresh()
     }
 
     fun initialize() {
         EventBus.on<TickEvent> {
-            if (!needRefresh) return@on
-            chatComponentAccessor.invokeRefresh()
-            needRefresh = false
+            if (needRefresh > 1) chatComponentAccessor.invokeRefresh()
+            needRefresh = 0
         }
     }
 }

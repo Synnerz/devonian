@@ -126,7 +126,7 @@ object CenturyCakeTimer : TextHudFeature(
         }
 
         on<TickEvent> {
-            show.value = !SETTING_ONLY_SHOW_EXPIRED.get() || if (expireTime.epochSecond == 0L) {
+            show.value = if (expireTime.epochSecond == 0L) {
                 setLine("&cNONE")
                 true
             } else {
@@ -139,7 +139,7 @@ object CenturyCakeTimer : TextHudFeature(
 
                 if (time < 0L) expireTime = Instant.EPOCH
                 false
-            }
+            } || !SETTING_ONLY_SHOW_EXPIRED.get()
         }
 
         on<RenderOverlayEvent> { event ->
