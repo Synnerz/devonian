@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 
 object ScoreDisplay : TextHudFeature(
     "dungeonScoreDisplay",
@@ -14,6 +15,17 @@ object ScoreDisplay : TextHudFeature(
     "catacombs",
     subcategory = "HUD",
 ) {
+    private val SETTING_SHOW_BOSS = addSwitch(
+        "showInBoss",
+        false,
+        "",
+        "Show in Boss",
+    )
+
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Dungeons.inBoss.zip(SETTING_SHOW_BOSS.state) { a, b -> !a || b })
+    }
+
     private val SETTING_ILLEGALMAP_FORMAT = addSwitch(
         "illegapStyle",
         false,
@@ -118,8 +130,6 @@ object ScoreDisplay : TextHudFeature(
 
     override fun initialize() {
         on<TickEvent> {
-            if (SETTING_ILLEGALMAP_FORMAT.get() && Dungeons.inBoss.value) return@on
-
             setLines(
                 getLines(
                     Dungeons.score.value,
@@ -137,8 +147,6 @@ object ScoreDisplay : TextHudFeature(
         }
 
         on<RenderOverlayEvent> { event ->
-            if (SETTING_ILLEGALMAP_FORMAT.get() && Dungeons.inBoss.value) return@on
-
             draw(event.ctx)
         }
     }

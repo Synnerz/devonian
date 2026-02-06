@@ -17,7 +17,7 @@ object CryptsDisplay : TextHudFeature(
     subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
     }
 
     private val cryptsRegex = "^ Crypts: (\\d+)$".toRegex()

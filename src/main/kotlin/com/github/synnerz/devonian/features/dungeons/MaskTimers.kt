@@ -45,6 +45,12 @@ abstract class ImmunityTimer(val formattedName: String, itemName: String, config
         "Only shows the $itemName hud for the immunity timer.",
         "Only Show Immunity",
     )
+    private val SETTING_ONLY_SHOW_READY = addSwitch(
+        "onlyShowReady",
+        false,
+        "Only shows the $itemName hud when ready to be used.",
+        "Only Show Ready",
+    )
     private val SETTING_ONLY_SHOW_IN_BOSS = addSwitch(
         "onlyShowInBoss",
         false,
@@ -99,10 +105,14 @@ abstract class ImmunityTimer(val formattedName: String, itemName: String, config
         }
 
         on<RenderOverlayEvent> { event ->
+            val imm = SETTING_ONLY_SHOW_IMMUNITY.get()
+            val rdy = SETTING_ONLY_SHOW_READY.get()
+
             val str = if (lastProc == -1L) {
-                if (SETTING_ONLY_SHOW_IMMUNITY.get()) return@on
+                if (imm && !rdy) return@on
                 "&a&lREADY"
-            } else {
+            } else if (rdy && !imm) return@on
+            else {
                 val t = System.currentTimeMillis()
                 val dt = t - lastProc
                 val immune = (IMMUNITY_TIME - dt) / 1000f
@@ -111,7 +121,7 @@ abstract class ImmunityTimer(val formattedName: String, itemName: String, config
                 if (cooldown < 0f) lastProc = -1L
 
                 if (immune > 0f) "&b%.2fs".format(immune)
-                else if (SETTING_ONLY_SHOW_IMMUNITY.get()) return@on
+                else if (imm) return@on
                 else colorForNumberReverse(cooldown, cooldownTime / 1000f) + "%.2fs".format(cooldown)
             }
 

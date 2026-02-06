@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
@@ -31,6 +32,12 @@ object CenturyCakeTimer : TextHudFeature(
         true,
         "When eating a cake, shows a message displaying which cakes have not been eaten.",
         "Nom Nom Helper",
+    )
+    private val SETTING_ONLY_SHOW_EXPIRED = addSwitch(
+        "onlyShowExpired",
+        false,
+        "",
+        "Only Show When Expired",
     )
 
     private const val CONFIG_KEY = "cakeEatTime"
@@ -70,6 +77,7 @@ object CenturyCakeTimer : TextHudFeature(
     private var lastEatTime = 0L
     private var lastEat = linkedMapOf<String, Pair<String, String>>()
     private var lastMsg: Component? = null
+    private val show = BasicState(true)
 
     fun onEat(cake: String) {
         expireTime = Instant.now().plus(2L, ChronoUnit.DAYS)
@@ -118,8 +126,10 @@ object CenturyCakeTimer : TextHudFeature(
         }
 
         on<TickEvent> {
-            if (expireTime.epochSecond == 0L) setLine("&cNONE")
-            else {
+            show.value = !SETTING_ONLY_SHOW_EXPIRED.get() || if (expireTime.epochSecond == 0L) {
+                setLine("&cNONE")
+                true
+            } else {
                 val time = Instant.now().until(expireTime, ChronoUnit.MILLIS)
 
                 setLine(
@@ -128,6 +138,7 @@ object CenturyCakeTimer : TextHudFeature(
                 )
 
                 if (time < 0L) expireTime = Instant.EPOCH
+                false
             }
         }
 
@@ -148,7 +159,7 @@ object CenturyCakeTimer : TextHudFeature(
                     event.ctx.scissorStack.peek(),
                 )
             )
-        }
+        }.setEnabled(show)
 
         on<ChatEvent> { event ->
             event.matches(eatRegex1)?.getOrNull(0)?.let {

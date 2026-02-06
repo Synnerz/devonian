@@ -88,6 +88,12 @@ object BoxDoors : Feature(
         "Line width of the box outline of the door",
         "Door Line Width",
     )
+    private val SETTING_DOOR_FILL_PHASE = addSwitch(
+        "fillPhase",
+        false,
+        "",
+        "Door Fill Phase",
+    )
     private val SETTING_RENDER_HIDDEN_DOORS = addSwitch(
         "renderUnknownDoors",
         false,
@@ -203,7 +209,7 @@ object BoxDoors : Feature(
             comp.wx + 0.5, 69.0, comp.wz + 0.5,
             3.0, 4.0,
             fill,
-            false,
+            SETTING_DOOR_FILL_PHASE.get(),
             centered = true,
         )
     }
