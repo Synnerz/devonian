@@ -12,7 +12,6 @@ import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
-import net.minecraft.sounds.SoundEvents
 
 object LeapCounter : TextHudFeature(
     "leapCounter",
@@ -38,7 +37,6 @@ object LeapCounter : TextHudFeature(
         "LeapCounter Sound"
     )
     private val leapedToRegex = "^You have teleported to \\w{1,16}!$".toRegex()
-    private val soundEvent by lazy { SoundEvents.NOTE_BLOCK_PLING.value() }
     private val leapPositions = listOf(
         LeapPosition(58.5, 109.0, 131.5, 1.5),
         LeapPosition(60.5, 132.0, 139.0, 1.5),
@@ -112,8 +110,8 @@ object LeapCounter : TextHudFeature(
 
             if (leapedPlayers.size >= pos!!.playerCount) {
                 pos!!.triggered = true
-                if (SETTING_SHOW_ALERT.get()) Alert.show("&9${pos!!.playerCount} have leaped", 1000)
-                if (SETTING_PLAY_SOUND.get()) minecraft.player!!.playSound(soundEvent, 1f, 1f)
+                if (SETTING_SHOW_ALERT.get())
+                    Alert.show("&9${pos!!.playerCount} have leaped", 1000, SETTING_PLAY_SOUND.get())
             }
             setLine("${StringUtils.colorForNumber(leapedPlayers.size, pos!!.playerCount)}${leapedPlayers.size}&f/&94 Leaped")
         }
