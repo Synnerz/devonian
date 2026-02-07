@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.BlockPos
@@ -27,6 +28,18 @@ object SharpShooterSolver : Feature(
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
     }
 
+    private val SETTING_SHOW_ALERT = addSwitch(
+        "showAlert",
+        true,
+        "Displays an alert whenever you finish the device",
+        "SharpShooter Alert"
+    )
+    private val SETTING_PLAY_SOUND = addSwitch(
+        "playSound",
+        true,
+        "Makes the alert play a sound (ONLY WORKS IF ALERT IS ENABLED)",
+        "SharpShooter Sound"
+    )
     private val deviceCompletedRegex = "^(\\w{1,16}) completed a device! \\(\\d/7\\)$".toRegex()
     private val emeraldPositions = listOf(
         SolverPosition(68, 130, 50),
@@ -49,7 +62,11 @@ object SharpShooterSolver : Feature(
             event.matches(deviceCompletedRegex)?.let {
                 val playerName = minecraft.player?.name?.string ?: return@on
                 if (it[0] != playerName) return@on
-                if (whitelist.size >= 8) whitelist.clear()
+                if (whitelist.size >= 9) {
+                    if (SETTING_SHOW_ALERT.get())
+                        Alert.show("&aSharpShooter Done", 1500, SETTING_PLAY_SOUND.get())
+                    whitelist.clear()
+                }
                 return@on
             }
         }
@@ -92,7 +109,11 @@ object SharpShooterSolver : Feature(
                 )
             }
 
-            if (whitelist.size >= 9) whitelist.clear()
+            if (whitelist.size >= 9) {
+                if (SETTING_SHOW_ALERT.get())
+                    Alert.show("&aSharpShooter Done", 1500, SETTING_PLAY_SOUND.get())
+                whitelist.clear()
+            }
         }
     }
 
