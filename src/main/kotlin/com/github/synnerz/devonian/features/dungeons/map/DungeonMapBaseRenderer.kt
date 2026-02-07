@@ -8,12 +8,10 @@ import com.github.synnerz.devonian.hud.texthud.*
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.render.impl.TextRendererImpl
 import kotlinx.atomicfu.atomic
-import kotlinx.atomicfu.update
 import java.awt.Color
 import java.awt.Font
 import java.awt.image.BufferedImage
 import java.util.*
-import java.util.concurrent.ConcurrentLinkedQueue
 import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -48,7 +46,6 @@ class DungeonMapBaseRenderer :
 
     data class TextRenderParam(val box: BoundingBox, val key: CachedStringKey, val text: List<String>)
 
-    private val textHudPool = ConcurrentLinkedQueue<StylizedTextHud>()
     val delegatedText = atomic(emptyList<StylizedTextHud>())
 
     override fun drawImage(img: BufferedImage, param: DungeonMapRenderData): BufferedImage {
@@ -434,7 +431,7 @@ class DungeonMapBaseRenderer :
                 textToRender.forEach { (decBox, _, text) ->
                     if (text.isEmpty()) return@forEach
 
-                    val hud = textHudPool.poll() ?: StylizedTextHud(
+                    val hud = StylizedTextHud(
                         "internal_map_room_text",
                         StaticProvider(
                             0.0, 0.0, 1f,
@@ -457,10 +454,7 @@ class DungeonMapBaseRenderer :
                     delegate.add(hud)
                 }
 
-                delegatedText.update { old ->
-                    old.forEach { textHudPool.add(it) }
-                    delegate
-                }
+                delegatedText.value = delegate
             } else {
                 val fontSizeF = fontSize.toFloat()
                 val font = BImgTextHudRenderer.fontMainBase.deriveFont(Font.PLAIN, fontSizeF)
