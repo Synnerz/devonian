@@ -15,6 +15,8 @@ import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sign
 import kotlin.math.withSign
 
@@ -177,10 +179,10 @@ abstract class HudFeature(
         (!isHidden || Devonian.isDev)
 
     open fun coerceX(v: Double): Double {
-        return v.coerceIn(MARGIN .. window.guiScaledWidth - MARGIN)
+        return max(MARGIN, min(window.guiScaledWidth - MARGIN, v))
     }
 
     open fun coerceY(v: Double): Double {
-        return v.coerceIn(MARGIN .. window.guiScaledHeight - MARGIN)
+        return max(MARGIN, min(window.guiScaledHeight - MARGIN, v))
     }
 }
