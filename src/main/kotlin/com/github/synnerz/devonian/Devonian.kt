@@ -345,6 +345,7 @@ object Devonian : ClientModInitializer {
             PartyFinderRightClick,
             LeapCounter,
             HideSheeps,
+            WatcherKillAlert,
 
             // Debug
             CopyItem,
