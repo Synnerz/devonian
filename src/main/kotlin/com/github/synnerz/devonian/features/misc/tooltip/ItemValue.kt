@@ -9,6 +9,8 @@ import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
+import net.minecraft.world.item.ItemStack
+import kotlin.jvm.optionals.getOrNull
 
 object ItemValue : Feature(
     "itemValue",
@@ -20,7 +22,12 @@ object ItemValue : Feature(
             val item = event.item ?: return@on
             val sbId = ItemUtils.skyblockId(item) ?: return@on
             var price = SkyblockPrices.sellPrice(sbId)
-            if (price == 0f) return@on
+            if (price == 0f) {
+                val name = name(item) ?: return@on
+                val possiblePrice = SkyblockPrices.sellPrice(name)
+                if (possiblePrice == 0f) return@on
+                price = possiblePrice
+            }
             price *= item.count
 
             val priceSequence = FormattedCharSequence.composite(
@@ -33,5 +40,16 @@ object ItemValue : Feature(
                 ClientTooltipComponent.create(priceSequence)
             )
         }
+    }
+
+    private fun name(itemStack: ItemStack): String? {
+        val name = itemStack.customName?.string?.replace("x\\d+".toRegex(), "") ?: return null
+        val reforge = ItemUtils.extraAttributes(itemStack)?.getString("modifier")
+        var clearName = "([A-z' ]+)".toRegex().find(name)?.value ?: return null
+
+        clearName = clearName.uppercase().replace("\'".toRegex(), "")
+        reforge?.getOrNull()?.let { clearName = clearName.replace(it.uppercase(), "") }
+
+        return clearName.trim().replace(" ".toRegex(), "_")
     }
 }
