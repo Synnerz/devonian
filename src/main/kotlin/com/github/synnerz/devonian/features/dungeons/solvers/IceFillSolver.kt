@@ -353,7 +353,7 @@ class IcePlatform(
         var minCost = 5318008
         var best: LinkedList<Coord>? = null
 
-        val visitedHist = LongArray(maxId + 1)
+        val visitedHist = LongArray(maxId + 2)
         val route = arrayOfNulls<Destination>(total)
         val queue = ArrayDeque<Destination>()
 
