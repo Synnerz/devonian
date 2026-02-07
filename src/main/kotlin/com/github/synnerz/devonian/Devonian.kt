@@ -31,19 +31,7 @@ import com.github.synnerz.devonian.features.diana.DianaDropTracker
 import com.github.synnerz.devonian.features.diana.DianaMobTracker
 import com.github.synnerz.devonian.features.dungeons.*
 import com.github.synnerz.devonian.features.dungeons.clear.*
-import com.github.synnerz.devonian.features.dungeons.f7.CancelF7BossSounds
-import com.github.synnerz.devonian.features.dungeons.f7.CompactMelodyMessages
-import com.github.synnerz.devonian.features.dungeons.f7.CustomTerminalScale
-import com.github.synnerz.devonian.features.dungeons.f7.GoldorFrenzyTimer
-import com.github.synnerz.devonian.features.dungeons.f7.MelodyKeys
-import com.github.synnerz.devonian.features.dungeons.f7.PositionMessages
-import com.github.synnerz.devonian.features.dungeons.f7.PurplePadTimer
-import com.github.synnerz.devonian.features.dungeons.f7.SimonSaysProgressDisplay
-import com.github.synnerz.devonian.features.dungeons.f7.TerminalBreakdown
-import com.github.synnerz.devonian.features.dungeons.f7.TerminalDisplay
-import com.github.synnerz.devonian.features.dungeons.f7.TerminalHideCompletion
-import com.github.synnerz.devonian.features.dungeons.f7.TerminalProtection
-import com.github.synnerz.devonian.features.dungeons.f7.WitherHighlight
+import com.github.synnerz.devonian.features.dungeons.f7.*
 import com.github.synnerz.devonian.features.dungeons.m7.*
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.features.dungeons.solvers.*
@@ -355,6 +343,7 @@ object Devonian : ClientModInitializer {
             HidePlayers,
             RemoveSmokeParticle,
             PartyFinderRightClick,
+            LeapCounter,
 
             // Debug
             CopyItem,
