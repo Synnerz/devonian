@@ -344,6 +344,7 @@ object Devonian : ClientModInitializer {
             RemoveSmokeParticle,
             PartyFinderRightClick,
             LeapCounter,
+            HideSheeps,
 
             // Debug
             CopyItem,
