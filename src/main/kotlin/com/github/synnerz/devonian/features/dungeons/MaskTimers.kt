@@ -111,14 +111,14 @@ abstract class ImmunityTimer(val formattedName: String, itemName: String, config
             val str = if (lastProc == -1L) {
                 if (imm && !rdy) return@on
                 "&a&lREADY"
-            } else if (rdy && !imm) return@on
-            else {
+            } else {
                 val t = System.currentTimeMillis()
                 val dt = t - lastProc
                 val immune = (IMMUNITY_TIME - dt) / 1000f
                 val cooldown = (cooldownTime - dt) / 1000f
 
                 if (cooldown < 0f) lastProc = -1L
+                if (rdy && !imm) return@on
 
                 if (immune > 0f) "&b%.2fs".format(immune)
                 else if (imm) return@on
