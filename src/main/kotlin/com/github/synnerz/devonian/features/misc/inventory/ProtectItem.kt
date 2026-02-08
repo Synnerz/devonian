@@ -26,6 +26,12 @@ object ProtectItem : Feature(
     searchTags = setOf("prevent"),
 ) {
     private const val KEY_NAME = "protectedItems"
+    private val SETTING_USE_ITEM_ID = addSwitch(
+        "useItemId",
+        false,
+        "Uses Skyblock ItemId as a fallback for items without UUID",
+        "ProtectItem ID Fallback"
+    )
     private var lockedList = mutableSetOf<String>()
     private val keybind = KeyBindingHelper.registerKeyBinding(
         KeyMapping(
@@ -74,7 +80,10 @@ object ProtectItem : Feature(
             val screen = event.screen as? AbstractContainerScreenAccessor ?: return@on
             val stack = screen.hoveredSlot?.item ?: return@on
 
-            val uuid = ItemUtils.uuid(stack) ?: return@on
+            var uuid = ItemUtils.uuid(stack)
+            if (uuid == null && SETTING_USE_ITEM_ID.get()) uuid = ItemUtils.skyblockId(stack)
+            if (uuid == null) return@on
+
             val msg = if (lockedList.contains(uuid)) "&cRemoved" else "&aAdded"
 
             if (lockedList.contains(uuid)) lockedList.remove(uuid)
@@ -119,7 +128,9 @@ object ProtectItem : Feature(
     private fun isLocked(itemStack: ItemStack?): Boolean {
         if (itemStack == null) return false
         if (itemStack.isEmpty) return false
-        val uuid = ItemUtils.uuid(itemStack) ?: return false
+        var uuid = ItemUtils.uuid(itemStack)
+        if (uuid == null && SETTING_USE_ITEM_ID.get()) uuid = ItemUtils.skyblockId(itemStack)
+        if (uuid == null) return false
         return lockedList.contains(uuid)
     }
 }
