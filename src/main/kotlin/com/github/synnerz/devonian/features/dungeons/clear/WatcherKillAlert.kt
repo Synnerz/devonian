@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
@@ -47,7 +46,6 @@ object WatcherKillAlert : Feature(
                     Alert.show("&c[Watcher] &aEstimate ${killAt.toInt()}s", 1000, false)
 
                 Scheduler.scheduleServerTask(((killAt - x) / 0.05).toInt()) {
-                    ChatUtils.sendMessage("kill")
                     Alert.show("&c[Watcher] Kill Now", 1500, SETTING_PLAY_SOUND.get())
                 }
             }
