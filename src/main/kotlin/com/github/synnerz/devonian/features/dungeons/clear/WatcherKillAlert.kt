@@ -33,7 +33,6 @@ object WatcherKillAlert : Feature(
         "Shows the predicted time to kill alert",
         "WatcherKillAlert Estimate"
     )
-    private var sent = false
     private var killAt = 0.0
 
     override fun initialize() {
@@ -56,6 +55,6 @@ object WatcherKillAlert : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        sent = false
+        killAt = 0.0
     }
 }
