@@ -17,7 +17,7 @@ object CancelF7BossSounds : Feature(
     searchTags = setOf("mute", "quiet"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.isActiveState)
+        return super.createRequirements() + listOf(Stages.F7.hasStartedState)
     }
 
     private val SETTING_CANCEL_ABOVE_CAP = addSwitch(
