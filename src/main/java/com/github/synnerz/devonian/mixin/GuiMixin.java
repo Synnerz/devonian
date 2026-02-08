@@ -265,4 +265,13 @@ public class GuiMixin {
         }
         return arr;
     }
+
+    @Inject(
+            method = "renderItemHotbar",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void devonian$onRenderItemHotbar(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+        if (HideHotbar.INSTANCE.isEnabled()) ci.cancel();
+    }
 }

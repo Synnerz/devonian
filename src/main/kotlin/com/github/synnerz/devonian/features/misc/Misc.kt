@@ -89,3 +89,8 @@ object HideUselessBossBar : Feature(
     "",
     subcategory = "Hiders",
 )
+object HideHotbar : Feature(
+    "hideHotbar",
+    "Stops your hotbar from rendering",
+    subcategory = "General"
+)
