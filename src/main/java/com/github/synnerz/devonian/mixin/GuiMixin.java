@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.PlayerScoreEntry;
 import net.minecraft.world.scores.Scoreboard;
 import org.joml.Matrix3x2f;
@@ -241,6 +242,15 @@ public class GuiMixin {
         }
 
         original.call(instance, font, component, i, j, k, true);
+    }
+
+    @Inject(
+            method = "displayScoreboardSidebar",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void devonian$onScoreboardRender(GuiGraphics guiGraphics, Objective objective, CallbackInfo ci) {
+        if (HideScoreboard.INSTANCE.isEnabled()) ci.cancel();
     }
 
     @Unique

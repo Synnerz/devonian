@@ -99,3 +99,8 @@ object HideHearts : Feature(
     "Does not render your hearts",
     subcategory = "Hiders"
 )
+object HideScoreboard : Feature(
+    "hideScoreboard",
+    "Does not render your scoreboard",
+    subcategory = "Hiders"
+)

@@ -348,6 +348,7 @@ object Devonian : ClientModInitializer {
             WatcherKillAlert,
             HideHotbar,
             HideHearts,
+            HideScoreboard,
 
             // Debug
             CopyItem,
