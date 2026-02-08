@@ -88,7 +88,7 @@ object StringUtils {
     fun colorForNumber(num: Int, max: Int) = colorForNumber(num.toDouble(), max.toDouble())
     fun colorForNumber(num: Long, max: Long) = colorForNumber(num.toDouble(), max.toDouble())
 
-    private fun parseStyle(style: Style): String = buildString {
+    fun parseStyle(style: Style): String = buildString {
         append("§r")
 
         style.color?.let(colorToFormat::get)?.run(::append)

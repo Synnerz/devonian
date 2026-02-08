@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
 import net.minecraft.network.syncher.SynchedEntityData
@@ -540,7 +541,8 @@ class ClientContainerCloseEvent(
 ) : CancellableEvent()
 
 class SelectedItemRenderEvent(
-    val ctx: GuiGraphics
+    val ctx: GuiGraphics,
+    val mutableComponent: MutableComponent,
 ) : CancellableEvent()
 
 class ItemPickupEvent(

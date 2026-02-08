@@ -20,6 +20,7 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.numbers.NumberFormat;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -37,6 +38,7 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Arrays;
 import java.util.function.IntFunction;
@@ -172,10 +174,11 @@ public class GuiMixin {
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/GuiGraphics;drawStringWithBackdrop(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIII)V"
             ),
+            locals = LocalCapture.CAPTURE_FAILSOFT,
             cancellable = true
     )
-    private void devonian$onRenderSelectedName(GuiGraphics guiGraphics, CallbackInfo ci) {
-        if (new SelectedItemRenderEvent(guiGraphics).post())
+    private void devonian$onRenderSelectedName(GuiGraphics guiGraphics, CallbackInfo ci, MutableComponent mutableComponent, int i, int j, int k, int l) {
+        if (new SelectedItemRenderEvent(guiGraphics, mutableComponent).post())
             ci.cancel();
     }
 
