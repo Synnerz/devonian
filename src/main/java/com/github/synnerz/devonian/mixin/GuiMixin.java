@@ -101,7 +101,9 @@ public class GuiMixin {
         boolean blinking,
         CallbackInfo ci
     ) {
+        if (HideHearts.INSTANCE.isEnabled()) ci.cancel();
         if (!AccurateAbsorption.INSTANCE.isEnabled()) return;
+        // whatever this might break hide hearts
         AccurateAbsorption.INSTANCE.renderHearts(
             (Gui) (Object) this,
             guiGraphics, player,
@@ -110,7 +112,7 @@ public class GuiMixin {
             maxHearts, hearts, displayHearts, absorption,
             blinking
         );
-        ci.cancel();
+        if (!ci.isCancelled()) ci.cancel();
     }
 
     @WrapOperation(
