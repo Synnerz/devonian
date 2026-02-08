@@ -286,4 +286,40 @@ public class GuiMixin {
     private void devonian$onRenderItemHotbar(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         if (HideHotbar.INSTANCE.isEnabled()) ci.cancel();
     }
+
+    @Inject(
+            method = "renderHotbarAndDecorations",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/contextualbar/ContextualBarRenderer;renderExperienceLevel(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;I)V"
+            ),
+            cancellable = true
+    )
+    private void devonian$onExperienceLevelRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+        if (HideExperience.INSTANCE.isEnabled()) ci.cancel();
+    }
+
+    @Inject(
+            method = "renderHotbarAndDecorations",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/contextualbar/ContextualBarRenderer;renderBackground(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V"
+            ),
+            cancellable = true
+    )
+    private void devonian$onExperienceBackgroundRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+        if (HideExperience.INSTANCE.isEnabled()) ci.cancel();
+    }
+
+    @Inject(
+            method = "renderHotbarAndDecorations",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/contextualbar/ContextualBarRenderer;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V"
+            ),
+            cancellable = true
+    )
+    private void devonian$onExperienceBarRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+        if (HideExperience.INSTANCE.isEnabled()) ci.cancel();
+    }
 }

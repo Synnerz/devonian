@@ -104,3 +104,8 @@ object HideScoreboard : Feature(
     "Does not render your scoreboard",
     subcategory = "Hiders"
 )
+object HideExperience : Feature(
+    "hideExperience",
+    "Does not render the experience bar and level",
+    subcategory = "Hiders"
+)
