@@ -102,7 +102,7 @@ open class Feature @JvmOverloads constructor(
             searchTags,
             isHidden,
         ).also {
-            if (isInternal) return@also
+            if (isInternal && configName != "hudManagerHider" && configName != "hudManagerRenderer") return@also
             subcategories.forEach { s -> Config.registerCategory(it, category, s) }
             Config.registerCategory(it, category, subcategory)
             Config.features.add(it)
