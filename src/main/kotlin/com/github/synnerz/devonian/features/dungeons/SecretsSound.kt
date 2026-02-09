@@ -24,21 +24,31 @@ object SecretsSound : Feature(
     override fun initialize() {
         DevonianCommand.command.subcommand("secretsound") { _, args ->
             val type = args.firstOrNull() ?: return@subcommand 0
-            val volume = args.getOrNull(1) as? Float ?: 1f
-            val pitch = args.getOrNull(2) as? Float ?: 1f
+            val volume = args.getOrNull(1) as? String?
+            val pitch = args.getOrNull(2) as? String?
             var soundName = args.getOrNull(3) as? String
             if (soundName.isNullOrEmpty()) {
                 soundName = if (type == "SUCCESS") "minecraft:entity.blaze.hurt"
                 else "minecraft:block.anvil.place"
             }
-            if (type == "SUCCESS") successOpt.setValues(soundName, volume, pitch)
-            else declineOpt.setValues(soundName, volume, pitch)
+            if (type == "SUCCESS")
+                successOpt.setValues(
+                    soundName,
+                    if (volume.isNullOrEmpty()) 1f else volume.toFloatOrNull() ?: 1f,
+                    if (pitch.isNullOrEmpty()) 1f else pitch.toFloatOrNull() ?: 1f
+                )
+            else
+                declineOpt.setValues(
+                    soundName,
+                    if (volume.isNullOrEmpty()) 1f else volume.toFloatOrNull() ?: 1f,
+                    if (pitch.isNullOrEmpty()) 1f else pitch.toFloatOrNull() ?: 1f
+                )
             ChatUtils.sendMessage("&aSuccessfully set SecretsSound to &6$soundName", true)
             1
         }
             .string("type")
-            .float("volume", 0f, 1f)
-            .float("pitch", 0f, 1f)
+            .float("volume", 0f, 10f)
+            .float("pitch", 0f, 10f)
             .greedyString("sound")
             .suggest("type", *listOf("SUCCESS", "DECLINE").toTypedArray())
             .suggest("sound", *BuiltInRegistries.SOUND_EVENT.entrySet().map { "${it.value.location.namespace}:${it.value.location.path}" }.toTypedArray())
