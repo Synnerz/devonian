@@ -2,7 +2,6 @@ package com.github.synnerz.devonian.commands
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.hud.texthud.BImgTextHudRenderer
 
 object DevonianCommand {
@@ -33,10 +32,6 @@ object DevonianCommand {
     }
         .greedyString("name")
         .suggest("name", *BImgTextHudRenderer.Fonts.keys.toTypedArray())
-    private val reloadConfig = command.subcommand("reloadcfg") { _, args ->
-        Config.load()
-        1
-    }
     private val clearChat = command.subcommand("clearchat") { _, args ->
         Devonian.minecraft.gui.chat.clearMessages(false)
         1
