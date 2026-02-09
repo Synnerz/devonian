@@ -51,8 +51,8 @@ object DungeonScanner {
     var rooms = MutableList<DungeonRoom?>(36) { null }
     var doors = MutableList<DungeonDoor?>(60) { null }
     var availablePos = findAvailablePos()
-    private var worldChangeCooldown = 5
-    private var foundEntrance = 5
+    private var worldChangeCooldown = 20
+    private var foundEntrance = 20
     private var wasInEntrance = false
 
     private val secretRegex = "\\b(\\d+)/(\\d+) Secrets".toRegex()
