@@ -35,12 +35,7 @@ object MousePositionLogger : TextHudFeature(
 
     fun stopLogger() {
         if (!isEnabled()) return
-        val file = mouseLogger.stopLogger()
-        if (file == null) ChatUtils.sendMessage("§4Mouse Logger not active")
-        else ChatUtils.sendMessage(
-            Component.literal("§aMouse Logger stopped")
-                .withStyle(Style.EMPTY.withClickEvent(ClickEvent.OpenFile(file)))
-        )
+        mouseLogger.stopAndPrint()
     }
 
     fun onMove(l: Long, x: Double, y: Double) {

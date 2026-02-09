@@ -61,12 +61,7 @@ object PacketLogger : TextHudFeature(
 
     fun stopLogger() {
         if (!isEnabled()) return
-        val file = packetLogger.stopLogger()
-        if (file == null) ChatUtils.sendMessage("§4Packet Logger not active")
-        else ChatUtils.sendMessage(
-            Component.literal("§aPacket Logger stopped")
-                .withStyle(Style.EMPTY.withClickEvent(ClickEvent.OpenFile(file)))
-        )
+        packetLogger.stopAndPrint()
     }
 
     private fun onPacket(packet: Packet<*>) {

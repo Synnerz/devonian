@@ -2,12 +2,17 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.json.JsonDataObject
 import com.github.synnerz.devonian.hud.texthud.Marquee
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHudFamily
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.DebugLogger
+import com.google.gson.JsonArray
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.log
 
 object SpotifyDisplay : TextHudFeature(
     "spotifyDisplay",
@@ -99,49 +104,68 @@ object SpotifyDisplay : TextHudFeature(
     private var artist = ""
     private var open = false
 
+    private val logger = DebugLogger("SpotifyLogger")
+
     override fun initialize() {
+        logger.startLogger()
+
+        DevonianCommand.command.subcommand("dumpspotify") { _, _ ->
+            logger.stopAndPrint()
+            return@subcommand 1
+        }
+
         if (isWindows) {
             Scheduler.schedulePool.scheduleWithFixedDelay({
                 if (isEditing) return@scheduleWithFixedDelay
 
-                val proc = ProcessBuilder(
-                    "cmd.exe", "/s", "/c",
-                    "chcp", "65001",
-                    "&&",
-                    "tasklist.exe",
-                    "/fo", "csv",
-                    "/nh",
-                    "/v",
-                    "/fi", "\"IMAGENAME eq Spotify.exe\""
-                ).start()
+                val obj = JsonDataObject().also {
+                    val proc = ProcessBuilder(
+                        "cmd.exe", "/s", "/c",
+                        "chcp", "65001",
+                        "&&",
+                        "tasklist.exe",
+                        "/fo", "csv",
+                        "/nh",
+                        "/v",
+                        "/fi", "\"IMAGENAME eq Spotify.exe\""
+                    ).start()
 
-                val sc = Scanner(proc.inputStream, Charsets.UTF_8)
-                // Active code page: 65001
-                sc.nextLine()
+                    it.set("time", System.currentTimeMillis())
 
-                while (sc.hasNextLine()) {
-                    val line = sc.nextLine()
-                    if (line == "INFO: No tasks are running which match the specified criteria.") break
+                    val sc = Scanner(proc.inputStream, Charsets.UTF_8)
+                    // Active code page: 65001
+                    it.set("first", sc.nextLine())
 
-                    val parts = line.split("\",\"")
-                    var name = parts.drop(8).joinToString("\",\"").dropLast(1)
+                    val arr = JsonArray()
+                    it.set("lines", arr)
 
-                    if (name == "N/A") continue
-                    name = name.trim()
+                    while (sc.hasNextLine()) {
+                        val line = sc.nextLine()
+                        arr.add(line)
+                        if (line == "INFO: No tasks are running which match the specified criteria.") break
 
-                    if (name in specialNames) song = name
-                    else {
-                        val i = name.indexOf(" - ")
-                        artist = name.take(i)
-                        song = name.drop(i + 3)
+                        val parts = line.split("\",\"")
+                        var name = parts.drop(8).joinToString("\",\"").dropLast(1)
+
+                        if (name == "N/A") continue
+                        name = name.trim()
+
+                        if (name in specialNames) song = name
+                        else {
+                            val i = name.indexOf(" - ")
+                            artist = name.take(i)
+                            song = name.drop(i + 3)
+                        }
+                        open = true
+                        return@also
                     }
-                    open = true
-                    return@scheduleWithFixedDelay
+
+                    song = "NOT OPENED"
+                    open = false
+                    proc.waitFor(2L, TimeUnit.SECONDS)
                 }
 
-                song = "NOT OPENED"
-                open = false
-                proc.waitFor(2L, TimeUnit.SECONDS)
+                logger.offer(obj)
             }, 0L, 2L, TimeUnit.SECONDS)
         }
 

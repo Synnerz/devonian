@@ -1,7 +1,12 @@
 package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.config.json.JsonDataObject
+import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
+import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.Style
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -69,6 +74,7 @@ class DebugLogger(val name: String) {
         loggerEnabled.value = false
         startTime = 0L
         logFile = null
+        queue = null
         ioThread?.interrupt()
         ioThread?.join(5_000L)
         ioThread = null
@@ -76,6 +82,18 @@ class DebugLogger(val name: String) {
         writer = null
 
         return file
+    }
+
+    fun stopAndPrint(): Boolean {
+        val file = stopLogger()
+
+        if (file == null) ChatUtils.sendMessage("§4${name.camelCaseToSentence()} not active")
+        else ChatUtils.sendMessage(
+            Component.literal("§a${name.camelCaseToSentence()} stopped")
+                .withStyle(Style.EMPTY.withClickEvent(ClickEvent.OpenFile(file)))
+        )
+
+        return file != null
     }
 
     fun offer(obj: JsonDataObject) {
