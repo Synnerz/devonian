@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.config.Config
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
@@ -55,10 +56,24 @@ object CustomSounds {
         }
 
         /**
-         * * NOTE: always call me on main thread
+         * * NOTE: call on main thread
          */
         fun play() {
             soundEvent?.let { Devonian.minecraft.player?.playSound(it, volume, pitch) }
+        }
+
+        /**
+         * * NOTE: call on main thread
+         */
+        fun playWithEvent(event: SoundPlayEvent) {
+            soundEvent?.let {
+                Devonian.minecraft.level?.playLocalSound(
+                    event.x, event.y, event.z,
+                    it, event.category,
+                    volume, pitch,
+                    false
+                )
+            }
         }
     }
 }
