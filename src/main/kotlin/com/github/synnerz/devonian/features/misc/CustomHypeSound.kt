@@ -7,12 +7,9 @@ import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.core.registries.BuiltInRegistries
+import com.github.synnerz.devonian.utils.CustomSounds
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.sounds.SoundEvents
 
 object CustomHypeSound : Feature(
     "customHypeSound",
@@ -20,9 +17,6 @@ object CustomHypeSound : Feature(
     "`/dv hypesound`",
     subcategory = "General",
 ) {
-    private const val KEY = "witherBladeSound"
-    private const val KEY_VOLUME = "$KEY\$Volume"
-    private const val KEY_PITCH = "$KEY\$Pitch"
     private val soundOptions = listOf(
         "minecraft:entity.blaze.hurt",
         "minecraft:entity.experience_orb.pickup",
@@ -33,51 +27,38 @@ object CustomHypeSound : Feature(
         "minecraft:block.ender_chest.close",
         "minecraft:block.note_block.iron_xylophone",
     )
-    private var soundEvent = SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value()
-    private var volume = 1f
-    private var pitch = 1f
+    private val customSound = CustomSounds.create("witherBladeSound", "minecraft:block.note_block.iron_xylophone")
     private val witherBlades = listOf("HYPERION", "VALKYRIE", "SCYLLA", "ASTRAEA")
     private var lastClick = -1
 
     override fun initialize() {
-        Config.set(KEY, "minecraft:block.note_block.iron_xylophone")
-        Config.set(KEY_VOLUME, 1f)
-        Config.set(KEY_PITCH, 1f)
-
         DevonianCommand.command.subcommand("hypesound") { _, args ->
-            if (args.isEmpty()) return@subcommand 0
-            val argVolume = args.first() as Float
-            val argPitch = args.getOrNull(1) as? Float ?: 1f
-            val soundRegistry = args.getOrNull(2) as? String ?: "minecraft:block.note_block.iron_xylophone"
+            val volume = args.firstOrNull() as? String?
+            val pitch = args.getOrNull(1) as? String
+            var soundName = args.getOrNull(2) as? String
+            if (soundName.isNullOrEmpty()) soundName = "minecraft:block.note_block.iron_xylophone"
 
-            val sound = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
-            if (sound == null) {
-                ChatUtils.sendMessage("&4Cannot find sound: &6$soundRegistry", true)
+            customSound.setValues(
+                soundName,
+                if (volume.isNullOrEmpty()) 1f else volume.toFloatOrNull() ?: 1f,
+                if (pitch.isNullOrEmpty()) 1f else pitch.toFloatOrNull() ?: 1f
+            )
+
+            if (customSound.soundEvent == null) {
+                ChatUtils.sendMessage("&4Cannot find sound: &6$soundName", true)
                 return@subcommand 0
             }
-            soundEvent = sound
-            volume = argVolume
-            pitch = argPitch
 
-            Config.set(KEY, soundRegistry)
-            ChatUtils.sendMessage("&aSuccessfully set wither blade sound to &6$soundRegistry", true)
+            ChatUtils.sendMessage("&aSuccessfully set wither blade sound to &6$soundName", true)
             1
         }
-            .float("volume", 0f, 1f)
-            .float("pitch", 0f, 1f)
+            .float("volume", 0f, 10f)
+            .float("pitch", 0f, 10f)
             .greedyString("sound")
             .suggest(
                 "sound",
                 *soundOptions.toTypedArray()
             )
-
-        Config.onAfterLoad {
-            val savedRegistry = Config.get<String>(KEY) ?: "minecraft:block.note_block.iron_xylophone"
-            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(savedRegistry))
-                ?: SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value()
-            volume = Config.get<Float>(KEY_VOLUME) ?: 1f
-            pitch = Config.get<Float>(KEY_PITCH) ?: 1f
-        }
 
         on<SoundPlayEvent> { event ->
             if (lastClick == -1) return@on
@@ -94,14 +75,7 @@ object CustomHypeSound : Feature(
             if (event.sound != "minecraft:entity.generic.explode" || event.volume != 1f || event.pitch != 1f) return@on
 
             event.cancel()
-            Scheduler.scheduleTask {
-                minecraft.level?.playLocalSound(
-                    event.x, event.y, event.z,
-                    soundEvent, event.category,
-                    volume, pitch,
-                    false
-                )
-            }
+            Scheduler.scheduleTask { customSound.playWithEvent(event) }
         }
 
         on<PacketSentEvent> { event ->
