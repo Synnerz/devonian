@@ -29,8 +29,10 @@ object WebRequests {
             .build()
 
         val response = httpClient.sendAsync(request, BodyHandlers.ofString()).await()
-        if (response.statusCode() !in 200..299)
+        if (response.statusCode() !in 200..299) {
+            println("Devonian\$WebRequest(url=\"$url\", mode=\"GET\", status=\"${response.statusCode()}\", body=\"${response.body()}\")")
             throw Exception("WebRequests #GET Error ${response.statusCode()}: ${response.body()}")
+        }
 
         response.body()
     }
@@ -48,8 +50,10 @@ object WebRequests {
             .build()
 
         val response = httpClient.sendAsync(request, BodyHandlers.ofString()).await()
-        if (response.statusCode() !in 200..299)
+        if (response.statusCode() !in 200..299) {
+            println("Devonian\$WebRequest(url=\"$url\", mode=\"POST\", status=\"${response.statusCode()}\", body=\"${response.body()}\")")
             throw Exception("WebRequests #POST Error ${response.statusCode()}: ${response.body()}")
+        }
 
         response.body()
     }
