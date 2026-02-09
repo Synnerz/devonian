@@ -46,6 +46,7 @@ object WatcherKillAlert : Feature(
                     Alert.show("&c[Watcher] &aEstimate ${killAt.toInt()}s", 1000, false)
 
                 Scheduler.scheduleServerTask(((killAt - x) / 0.05).toInt()) {
+                    if (!isEnabled() || !stage.hasFinished()) return@scheduleServerTask
                     Alert.show("&c[Watcher] Kill Now", 1500, SETTING_PLAY_SOUND.get())
                 }
             }
