@@ -1,7 +1,10 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.splits.*
+import com.github.synnerz.devonian.api.splits.BranchingSplitStage
+import com.github.synnerz.devonian.api.splits.SequentialSplitStage
+import com.github.synnerz.devonian.api.splits.SplitStage
+import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.dungeons.BossSplits
 import com.github.synnerz.devonian.features.dungeons.clear.RunSplits

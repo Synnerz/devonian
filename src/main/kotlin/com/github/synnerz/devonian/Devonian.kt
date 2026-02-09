@@ -1,10 +1,6 @@
 package com.github.synnerz.devonian
 
-import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.HypixelModApi
-import com.github.synnerz.devonian.api.Location
-import com.github.synnerz.devonian.api.Party
-import com.github.synnerz.devonian.api.SkyblockPrices
+import com.github.synnerz.devonian.api.*
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
@@ -16,7 +12,6 @@ import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
 import com.github.synnerz.devonian.features.bossbar.BossBarHealth
 import com.github.synnerz.devonian.features.chat.CommandAliases
-import com.github.synnerz.devonian.features.misc.chat.CompactChat
 import com.github.synnerz.devonian.features.chat.CopyChat
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.MousePositionLogger

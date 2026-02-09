@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.api.ChatUtils;
-import com.github.synnerz.devonian.features.misc.chat.CompactChat;
 import com.github.synnerz.devonian.features.misc.DisableChatAutoScroll;
 import com.github.synnerz.devonian.features.misc.RemoveChatLimit;
+import com.github.synnerz.devonian.features.misc.chat.CompactChat;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.GuiMessage;

@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
-import java.util.TreeSet
+import java.util.*
 
 object EnchantRegistry {
     val Normal = mutableListOf<NormalEnchants>()

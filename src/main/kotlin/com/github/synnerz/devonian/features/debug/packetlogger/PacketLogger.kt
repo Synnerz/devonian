@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.debug.packetlogger
 
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.PacketSentEvent
@@ -9,13 +8,8 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.json.JsonDataObject
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.DebugLogger
-import net.minecraft.network.chat.ClickEvent
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.Style
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.common.ClientboundPingPacket
-import java.io.File
-import java.util.*
 
 object PacketLogger : TextHudFeature(
     "packetLogger",

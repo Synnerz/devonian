@@ -14,11 +14,7 @@ import com.github.synnerz.devonian.utils.render.Render2D.width
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
-import kotlin.math.ceil
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sign
-import kotlin.math.withSign
+import kotlin.math.*
 
 abstract class HudFeature(
     configName: String,

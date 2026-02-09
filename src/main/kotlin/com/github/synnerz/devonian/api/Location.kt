@@ -3,8 +3,6 @@ package com.github.synnerz.devonian.api
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.BasicState
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
-import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 
 object Location {
     val areaRegex = "^(?:Area|Dungeon): ([\\w ']+)\$".toRegex()

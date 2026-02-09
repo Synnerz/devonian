@@ -9,7 +9,7 @@ import com.github.synnerz.devonian.utils.EnchantRegistry
 import com.github.synnerz.devonian.utils.Enchantment
 import com.github.synnerz.devonian.utils.UnknownEnchant
 import net.minecraft.world.item.ItemStack
-import java.util.IdentityHashMap
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 object EnchantAbbreviation : Feature(

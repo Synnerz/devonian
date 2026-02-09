@@ -11,7 +11,6 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
-import kotlinx.atomicfu.updateAndGet
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import java.util.concurrent.CopyOnWriteArrayList

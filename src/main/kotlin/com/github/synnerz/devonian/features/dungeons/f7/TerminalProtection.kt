@@ -1,11 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.f7
 
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.ClientContainerCloseEvent
-import com.github.synnerz.devonian.api.events.GuiClickEvent
-import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
-import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState

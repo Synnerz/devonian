@@ -12,7 +12,6 @@ import com.github.synnerz.devonian.utils.DebugLogger
 import com.google.gson.JsonArray
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.log
 
 object SpotifyDisplay : TextHudFeature(
     "spotifyDisplay",

@@ -3,7 +3,10 @@ package com.github.synnerz.devonian.config.ui.talium
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
-import com.github.synnerz.talium.components.*
+import com.github.synnerz.talium.components.UIBase
+import com.github.synnerz.talium.components.UIRect
+import com.github.synnerz.talium.components.UIScrollable
+import com.github.synnerz.talium.components.UIText
 
 class Category(
     val category: Categories,
