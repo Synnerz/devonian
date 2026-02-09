@@ -45,7 +45,7 @@ object ChangeCrouchHeight : Feature(
         return player.getDimensions(pose).eyeHeight
     }
 
-    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get() && !Location.stateInLatestArea.value && LocalDateTime.now().dayOfMonth < 24
+    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get() && !Location.stateInLatestArea.value && LocalDateTime.now().dayOfMonth < 22
 
     private var wasCrouching = false
 
