@@ -58,8 +58,9 @@ open class Feature @JvmOverloads constructor(
     }
 
     fun preinitialize() {
-        createRequirements().reduce { a, v ->
-            if (a == null || v == null) a
+        createRequirements().reduceOrNull { a, v ->
+            if (a == null) v
+            else if (v == null) a
             else a.zip(v, Boolean::and)
         }?.let { setEnabled(it) }
     }
