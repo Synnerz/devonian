@@ -42,6 +42,7 @@ import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
@@ -56,6 +57,7 @@ object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")
 
     val minecraft = Minecraft.getInstance()
+    val container = FabricLoader.getInstance().getModContainer("devonian").get()
     val isDev = setOf(
         UUID.fromString("21c82573-9d28-4d7b-957f-adf20938cd38"),
         UUID.fromString("819d8402-51eb-4c0c-bcf2-d070dcb82a93"),
@@ -370,6 +372,7 @@ object Devonian : ClientModInitializer {
             } | $GIT_COMMIT_MESSAGE"
         )
         featureInstances.forEach(Feature::preinitialize)
+        ChromaText.initialize()
         featureInstances.forEach(Feature::initialize)
         ConfigGui.initialize()
         HudManager.initialize()

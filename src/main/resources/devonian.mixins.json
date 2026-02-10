@@ -25,6 +25,7 @@
     "GameRendererMixin",
     "GlCommandEncoderMixin",
     "GlDeviceMixin",
+    "GlobalSettingsUniformMixin",
     "GuiGraphicsMixin",
     "GuiMixin",
     "GuiTextRenderStateMixin",
@@ -45,6 +46,8 @@
     "PlayerRendererMixin",
     "PlayerTabOverlayMixin",
     "PreparedTextBuilderMixin",
+    "RenderPipelinesMixin",
+    "RenderSystemMixin",
     "ScreenEffectRendererMixin",
     "ScreenMixin",
     "YggdrasilMinecraftSessionServiceMixin",
@@ -62,6 +65,7 @@
     "accessor.LevelRendererAccessor",
     "accessor.LocalPlayerAccessor",
     "accessor.ParticleAccessor",
+    "accessor.RenderPipeline$BuilderAccessor",
     "accessor.ScreenAccessor"
   ],
   "injectors": {
@@ -76,6 +80,7 @@
     "ItemCooldownsMixin",
     "ItemStackMixin",
     "PlayerMixin",
+    "StringDecomposerMixin",
     "accessor.AbstractArrowAccessor",
     "accessor.ClientboundEntityEventPacketAccessor",
     "accessor.ClientboundGameEventPacket$TypeAccessor",
