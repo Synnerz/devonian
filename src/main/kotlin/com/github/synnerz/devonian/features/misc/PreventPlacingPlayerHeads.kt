@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.BlockInteractEvent
 import com.github.synnerz.devonian.api.events.KeyPressEvent
 import com.github.synnerz.devonian.config.Config
@@ -19,6 +20,12 @@ object PreventPlacingPlayerHeads : Feature(
     "Prevents head-like items which have a right click ability from being placeable. You can setup a blacklist keybind in controls to disable a certain item in case its preventing you from using it.",
     subcategory = "Tweaks",
 ) {
+    private val SETTING_EXCEPTION_GARDEN = addSwitch(
+        "exceptGarden",
+        true,
+        "Stops prevent placing heads from working while inside garden",
+        "PPH Except Garden"
+    )
     private const val KEY_NAME = "pphBlacklist"
     private var blacklisted = mutableListOf<String>()
     private val keybind = KeyBindingHelper.registerKeyBinding(
@@ -45,6 +52,7 @@ object PreventPlacingPlayerHeads : Feature(
         }
 
         on<BlockInteractEvent> { event ->
+            if (SETTING_EXCEPTION_GARDEN.get() && Location.area == "garden") return@on
             if (minecraft.level?.getBlockState(event.pos) == null) return@on
             val itemStack = event.itemStack
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
