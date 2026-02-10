@@ -41,6 +41,7 @@ import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
+import com.github.synnerz.devonian.utils.render.ChromaText
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.KeyMapping
