@@ -48,6 +48,11 @@ class DungeonMapBaseRenderer :
 
     val delegatedText = atomic(emptyList<StylizedTextHud>())
 
+    override fun invalidate() {
+        super.invalidate()
+        delegatedText.value = emptyList()
+    }
+
     override fun drawImage(img: BufferedImage, param: DungeonMapRenderData): BufferedImage {
         val g = img.createGraphics()
 

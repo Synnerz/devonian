@@ -62,7 +62,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         }
     }
 
-    fun invalidate() {
+    open fun invalidate() {
         valid = false
         old = true
         lastFuture?.cancel(true)
