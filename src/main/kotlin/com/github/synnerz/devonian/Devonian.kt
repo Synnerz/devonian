@@ -348,6 +348,7 @@ object Devonian : ClientModInitializer {
             HideHearts,
             HideScoreboard,
             HideExperience,
+            MelodyMessage,
 
             // Debug
             CopyItem,
