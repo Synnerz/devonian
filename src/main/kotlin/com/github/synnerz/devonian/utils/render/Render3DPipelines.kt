@@ -18,14 +18,14 @@ object Render3DPipelines {
         .withoutBlend()
         .withDepthWrite(true)
         .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val LINES_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
         .withLocation("devonian/lines_opaque_esp")
         .withCull(false)
         .withoutBlend()
         .withDepthWrite(true)
-        .build()
+        .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
 
     val LINES_TRANSLUCENT = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
@@ -34,7 +34,7 @@ object Render3DPipelines {
         .withBlend(BlendFunction.TRANSLUCENT)
         .withDepthWrite(false)
         .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val LINES_TRANSLUCENT_ESP = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
         .withLocation("devonian/lines_transparent_esp")
@@ -42,7 +42,7 @@ object Render3DPipelines {
         .withBlend(BlendFunction.TRANSLUCENT)
         .withDepthWrite(false)
         .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val TRIANGLE_STRIP_OPAQUE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/triangle_strip_opaque")
@@ -51,7 +51,7 @@ object Render3DPipelines {
         .withDepthWrite(true)
         .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
         .withoutBlend()
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val TRIANGLE_STRIP_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/triangle_strip_opaque_esp")
@@ -59,7 +59,7 @@ object Render3DPipelines {
         .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP)
         .withDepthWrite(true)
         .withoutBlend()
-        .build()
+        .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
 
     val TRIANGLE_STRIP_TRANSLUCENT = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
@@ -69,7 +69,7 @@ object Render3DPipelines {
         .withDepthWrite(false)
         .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
         .withBlend(BlendFunction.TRANSLUCENT)
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val TRIANGLE_STRIP_TRANSLUCENT_ESP = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/triangle_strip_translucent_esp")
@@ -78,7 +78,7 @@ object Render3DPipelines {
         .withDepthWrite(false)
         .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
         .withBlend(BlendFunction.TRANSLUCENT)
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val QUADS_OPAQUE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/quads_opaque")
@@ -87,7 +87,7 @@ object Render3DPipelines {
         .withDepthWrite(true)
         .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
         .withoutBlend()
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val QUADS_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/quads_opaque_esp")
@@ -95,7 +95,7 @@ object Render3DPipelines {
         .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
         .withDepthWrite(true)
         .withoutBlend()
-        .build()
+        .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
 
     val QUADS_TRANSLUCENT = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
@@ -105,7 +105,7 @@ object Render3DPipelines {
         .withDepthWrite(false)
         .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
         .withBlend(BlendFunction.TRANSLUCENT)
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val QUADS_TRANSLUCENT_ESP = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/quads_translucent_esp")
@@ -114,20 +114,20 @@ object Render3DPipelines {
         .withDepthWrite(false)
         .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
         .withBlend(BlendFunction.TRANSLUCENT)
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val BEACON_BEAM_OPAQUE = RenderPipeline.builder(RenderPipelines.BEACON_BEAM_SNIPPET)
         .withLocation("devonian/beacon_beam_opaque")
         .withDepthWrite(true)
         .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
         .withoutBlend()
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val BEACON_BEAM_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.BEACON_BEAM_SNIPPET)
         .withLocation("devonian/beacon_beam_opaque_esp")
         .withDepthWrite(true)
         .withoutBlend()
-        .build()
+        .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
 
     val BEACON_BEAM_TRANSLUCENT = RenderPipeline.builder(RenderPipelines.BEACON_BEAM_SNIPPET)
@@ -135,14 +135,14 @@ object Render3DPipelines {
         .withDepthWrite(false)
         .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
         .withBlend(BlendFunction.TRANSLUCENT)
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     val BEACON_BEAM_TRANSLUCENT_ESP = RenderPipeline.builder(RenderPipelines.BEACON_BEAM_SNIPPET)
         .withLocation("devonian/beacon_beam_translucent_esp")
         .withDepthWrite(false)
         .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
         .withBlend(BlendFunction.TRANSLUCENT)
-        .build()
+        .build().also { RenderPipelines.register(it) }
 
     fun RenderPipeline.withDepthTestAlways() = apply {
         ALWAYS_PASS_RENDER_PIPELINES.add(this)
