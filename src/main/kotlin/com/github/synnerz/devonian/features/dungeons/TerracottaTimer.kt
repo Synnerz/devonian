@@ -21,24 +21,15 @@ object TerracottaTimer : Feature(
     subcategory = "QOL"
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F6.isActiveState)
+        return super.createRequirements() + listOf(Stages.Terracottas.isActiveState)
     }
 
-    private val terraEndRegex = "^\\[BOSS] Sadan: ENOUGH!$".toRegex()
     private val terracottasPos = mutableListOf<TerraBlock>()
-    private var done = false
 
     data class TerraBlock(val pos: BlockPos, val ticks: Int)
 
     override fun initialize() {
-        on<ChatEvent> { event ->
-            event.matches(terraEndRegex) ?: return@on
-            terracottasPos.clear()
-            done = true
-        }
-
         on<BlockUpdateEvent> { event ->
-            if (done) return@on
             if (event.blockState.block != Blocks.POTTED_POPPY) return@on
             val pos = event.blockPos
             val block = WorldUtils.getBlockState(pos.x, pos.y, pos.z) ?: return@on
@@ -52,8 +43,8 @@ object TerracottaTimer : Feature(
             }
         }
 
-        on<RenderWorldEvent> { event ->
-            if (terracottasPos.isEmpty() || done) return@on
+        on<RenderWorldEvent> {
+            if (terracottasPos.isEmpty()) return@on
 
             terracottasPos.removeIf {
                 val pos = it.pos
@@ -75,7 +66,6 @@ object TerracottaTimer : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         terracottasPos.clear()
-        done = false
     }
 
     private fun colorForNumber(num: Int, max: Int) = when {
