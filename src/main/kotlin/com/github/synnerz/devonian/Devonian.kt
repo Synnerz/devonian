@@ -349,6 +349,7 @@ object Devonian : ClientModInitializer {
             HideScoreboard,
             HideExperience,
             MelodyMessage,
+            TerracottaTimer,
 
             // Debug
             CopyItem,
