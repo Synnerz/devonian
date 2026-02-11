@@ -30,7 +30,9 @@ object Stages {
     val F3: SequentialSplitStage
     val F4: SequentialSplitStage
     val F5: SequentialSplitStage
+
     val F6: SequentialSplitStage
+    val Terracottas = SplitStage().withName("&cTerracottas")
 
     val F7: SequentialSplitStage
     val Maxor = SplitStage().withName("&5Maxor")
@@ -119,7 +121,7 @@ object Stages {
         F6 = SequentialSplitStage(
             "[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!",
             arrayOf(
-                SplitStage().withName("&cTerracottas"),
+                Terracottas,
                 SplitStage("[BOSS] Sadan: ENOUGH!").withName("&5Giants"),
                 SplitStage("[BOSS] Sadan: You did it. I understand now, you have earned my respect.")
                     .withName("&6Sadan"),
