@@ -38,6 +38,12 @@ object CustomLeapGui : Feature(
         "Sorting order for CustomLeapGui",
         "CustomLeap Sorting",
     )
+    private val SETTING_STATIC = addSwitch(
+        "static",
+        false,
+        "When enabled, it will \"fill\" the remaining class roles with empty slots so the sorting is always the same to help with muscle memory (NOTE: it will still use the sorting YOU chose)",
+        "CustomLeap Static"
+    )
     private val SETTING_BACKGROUND_COLOR = addColorPicker(
         "backgroundColor",
         Color(25, 25, 25, 255).rgb,
@@ -48,6 +54,7 @@ object CustomLeapGui : Feature(
     private val closeChestKey get() = minecraft.options.keyInventory
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
     private var containerId = -1
+    private val roles = listOf("Healer", "Tank", "Mage", "Berserk", "Archer")
     private val playerList = mutableListOf<LeapPlayer>()
     private val sortingComparators = listOf(
         compareBy<LeapPlayer> { it.role.singleLetter }.thenBy { it.name.lowercase() },
@@ -85,7 +92,25 @@ object CustomLeapGui : Feature(
             val idx = event.slot
             if (idx !in 9..18) return@on
             if (idx == 17) {
-                val list = playerList.sortedWith(leapComparator)
+                val player = Dungeons.players.firstEntry()?.value
+                val pl = when {
+                    SETTING_STATIC.get() && playerList.size < 5 -> {
+                        if (player == null || player.role == DungeonClass.Unknown || player.isDead)
+                            playerList
+                        else {
+                            val mut = mutableListOf<LeapPlayer>()
+                            val currentRoles = playerList.map { it.role.name }.toSet()
+                            val currentRole = player.role.name
+                            val missing = roles.toMutableSet().apply { remove(currentRole) } - currentRoles
+                            mut.addAll(playerList)
+                            missing.forEachIndexed { jdx, it -> mut.add(LeapPlayer(100 + jdx, "FAKE", DungeonClass.from(it), true)) }
+                            mut
+                        }
+                    }
+                    else -> playerList
+                }
+
+                val list = pl.sortedWith(leapComparator)
                 playerList.clear()
                 Scheduler.scheduleTask {
                     list.forEachIndexed { i, v -> create(v, i) }
@@ -139,6 +164,7 @@ object CustomLeapGui : Feature(
     }
 
     private fun create(data: LeapPlayer, idx: Int) {
+        if (data.slot >= 100 && data.isDead) return
         // TODO: add customizable sorting
         val r = idx / 2
         val c = idx % 2
