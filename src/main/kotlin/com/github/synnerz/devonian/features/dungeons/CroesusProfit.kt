@@ -87,6 +87,101 @@ object CroesusProfit : TextHudFeature(
     }
 
     override fun initialize() {
+        on<ServerContainerSetSlotEvent> { event ->
+            if (!inChest) return@on
+            val slot = event.slot
+            if (slot !in 9..18) return@on
+            val itemStack = event.itemStack
+            if (itemStack.item != Items.PLAYER_HEAD) return@on
+
+            val chestName = itemStack.customName?.string ?: return@on
+            val lore = ItemUtils.lore(itemStack) ?: return@on
+            val formatLore = ItemUtils.lore(itemStack, true) ?: return@on
+            val data = chestsData[chestName] ?: return@on
+            data.slotIdx = slot
+
+            for (jdx in 0..lore.lastIndex) {
+                val line = lore.getOrNull(jdx) ?: continue
+                if (line == "Contents") continue
+                if (line.isBlank()) continue
+
+                if (line == "Already opened!") {
+                    // chest has already been opened do something
+                    break
+                }
+
+                if (line == "Cost") {
+                    val chestPriceLore = lore[jdx + 1]
+                    val possibleKey = lore[jdx + 2]
+                    var price = "^(\\d[\\d,]+) Coins\$".toRegex()
+                        .matchEntire(chestPriceLore)
+                        ?.groupValues
+                        ?.drop(1)
+                        ?.getOrNull(0)
+                        ?.replace(",", "")
+                        ?.toIntOrNull() ?: 0
+                    if (possibleKey == "Dungeon Chest Key") {
+                        price += SkyblockPrices.buyPrice("DUNGEON_CHEST_KEY").roundToInt()
+                        data.requiresKey = true
+                    }
+
+                    data.chestPrice = price
+                    Scheduler.scheduleTask {
+                        val sorted = chestsData.values.sortedByDescending { it.totalProfit() }
+                        mostProfitable = sorted.firstOrNull()?.slotIdx ?: -1
+                        secondMostProfitable = sorted.getOrNull(1)?.slotIdx ?: -1
+                        updateDisplay()
+                    }
+                    break
+                }
+
+                val enchantMatch = enchantedBookRegex.matchEntire(line)?.groupValues?.drop(1)
+                if (enchantMatch != null) {
+                    val name = enchantMatch[0]
+                    val numeral = enchantMatch[1]
+                    val tier = StringUtils.parseRoman(numeral)
+                    val cleanName = name.replace(" ", "_").uppercase()
+                    var price = SkyblockPrices.buyPrice("ENCHANTMENT_${cleanName}_$tier").roundToInt()
+                    if (price == 0)
+                        price = SkyblockPrices.buyPrice("ENCHANTMENT_ULTIMATE_${cleanName}_$tier").roundToInt()
+
+                    data.items.add(ChestItemData(formatLore[jdx], price))
+                    continue
+                }
+
+                val essenceMatch = essenceRegex.matchEntire(line)?.groupValues?.drop(1)
+                if (essenceMatch != null) {
+                    val type = essenceMatch[0].uppercase()
+                    val amount = essenceMatch[1].toIntOrNull() ?: continue
+                    val price = (SkyblockPrices.buyPrice("ESSENCE_$type") * amount).roundToInt()
+
+                    data.items.add(ChestItemData(formatLore[jdx], price, true))
+                    continue
+                }
+
+                var itemId = line
+                    .uppercase()
+                    .replace("- ", "")
+                    .replace("'", "")
+                    .replace(" ", "_")
+                if (itemId in specialIds) itemId = specialIds[itemId]!!
+
+                val price = SkyblockPrices.buyPrice(itemId).roundToInt()
+
+                // TODO: probably make this a toggle
+                if (price == 0) {
+                    // FIXME: Devonian$CroesusProfit[status=Item Not Found, name="NECROMANCERS_BROOCH", line="Necromancer's Brooch"]
+                    //  fix whenever not feeling lazy since this requires to have
+                    //  a failsafe check because most items with ' in them is just remove but this one removes
+                    //  the "s" as well
+                    println("Devonian\$CroesusProfit[status=Item Not Found, name=\"$itemId\", line=\"$line\"]")
+                    continue
+                }
+
+                data.items.add(ChestItemData(formatLore[jdx], price))
+            }
+        }
+
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (packet is ClientboundOpenScreenPacket) {
@@ -104,105 +199,6 @@ object CroesusProfit : TextHudFeature(
                     reset()
                 }
                 return@on
-            }
-
-            if (packet !is ClientboundContainerSetContentPacket) return@on
-            if (!inChest) return@on
-
-            val items = packet.items
-
-            for (idx in 9..18) {
-                val itemStack = items.getOrNull(idx) ?: continue
-                if (itemStack.item != Items.PLAYER_HEAD) continue
-
-                val chestName = itemStack.customName?.string ?: continue
-                val lore = ItemUtils.lore(itemStack) ?: continue
-                val formatLore = ItemUtils.lore(itemStack, true) ?: continue
-                val data = chestsData[chestName] ?: continue
-                data.slotIdx = idx
-
-                for (jdx in 0..lore.lastIndex) {
-                    val line = lore.getOrNull(jdx) ?: continue
-                    if (line == "Contents") continue
-                    if (line.isBlank()) continue
-
-                    if (line == "Already opened!") {
-                        // chest has already been opened do something
-                        break
-                    }
-
-                    if (line == "Cost") {
-                        val chestPriceLore = lore[jdx + 1]
-                        val possibleKey = lore[jdx + 2]
-                        var price = "^(\\d[\\d,]+) Coins\$".toRegex()
-                            .matchEntire(chestPriceLore)
-                            ?.groupValues
-                            ?.drop(1)
-                            ?.getOrNull(0)
-                            ?.replace(",", "")
-                            ?.toIntOrNull() ?: 0
-                        if (possibleKey == "Dungeon Chest Key") {
-                            price += SkyblockPrices.buyPrice("DUNGEON_CHEST_KEY").roundToInt()
-                            data.requiresKey = true
-                        }
-
-                        data.chestPrice = price
-                        break
-                    }
-
-                    val enchantMatch = enchantedBookRegex.matchEntire(line)?.groupValues?.drop(1)
-                    if (enchantMatch != null) {
-                        val name = enchantMatch[0]
-                        val numeral = enchantMatch[1]
-                        val tier = StringUtils.parseRoman(numeral)
-                        val cleanName = name.replace(" ", "_").uppercase()
-                        var price = SkyblockPrices.buyPrice("ENCHANTMENT_${cleanName}_$tier").roundToInt()
-                        if (price == 0)
-                            price = SkyblockPrices.buyPrice("ENCHANTMENT_ULTIMATE_${cleanName}_$tier").roundToInt()
-
-                        data.items.add(ChestItemData(formatLore[jdx], price))
-                        continue
-                    }
-
-                    val essenceMatch = essenceRegex.matchEntire(line)?.groupValues?.drop(1)
-                    if (essenceMatch != null) {
-                        val type = essenceMatch[0].uppercase()
-                        val amount = essenceMatch[1].toIntOrNull() ?: continue
-                        val price = (SkyblockPrices.buyPrice("ESSENCE_$type") * amount).roundToInt()
-
-                        data.items.add(ChestItemData(formatLore[jdx], price, true))
-                        continue
-                    }
-
-                    var itemId = line
-                        .uppercase()
-                        .replace("- ", "")
-                        .replace("'", "")
-                        .replace(" ", "_")
-                    if (itemId in specialIds) itemId = specialIds[itemId]!!
-
-                    val price = SkyblockPrices.buyPrice(itemId).roundToInt()
-
-                    // TODO: probably make this a toggle
-                    if (price == 0) {
-                        // FIXME: Devonian$CroesusProfit[status=Item Not Found, name="NECROMANCERS_BROOCH", line="Necromancer's Brooch"]
-                        //  fix whenever not feeling lazy since this requires to have
-                        //  a failsafe check because most items with ' in them is just remove but this one removes
-                        //  the "s" as well
-                        println("Devonian\$CroesusProfit[status=Item Not Found, name=\"$itemId\", line=\"$line\"]")
-                        continue
-                    }
-
-                    data.items.add(ChestItemData(formatLore[jdx], price))
-                }
-            }
-
-            inChest = false
-            Scheduler.scheduleTask {
-                val sorted = chestsData.values.sortedByDescending { it.totalProfit() }
-                mostProfitable = sorted.firstOrNull()?.slotIdx ?: -1
-                secondMostProfitable = sorted.getOrNull(1)?.slotIdx ?: -1
-                updateDisplay()
             }
         }
 
@@ -259,7 +255,7 @@ object CroesusProfit : TextHudFeature(
 
     private fun updateDisplay() {
         clearLines()
-        for (data in chestsData) {
+        for (data in chestsData.entries.sortedByDescending { it.value.totalProfit() }) {
             val v = data.value
             val items = v.items
             if (items.isEmpty()) continue
