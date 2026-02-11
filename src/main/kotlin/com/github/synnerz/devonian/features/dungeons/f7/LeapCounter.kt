@@ -43,8 +43,8 @@ object LeapCounter : TextHudFeature(
         LeapPosition(69.5, 109.0, 122.5, 1.0),
         LeapPosition(48.5, 109.0, 122.5, 1.0),
         LeapPosition(54.5, 115.0, 50.5, 0.5),
-        LeapPosition(2.5, 109.0, 104.5, 1.5, 3),
-        LeapPosition(18.5, 121.5, 92.0, 1.0, 3),
+        LeapPosition(2.5, 109.0, 104.5, 3.0, 3),
+        LeapPosition(18.5, 121.5, 92.0, 2.0, 3),
         LeapPosition(54.5, 5.0, 76.5, 8.0),
     )
     private val leapedPlayers = mutableListOf<DungeonPlayer>()
@@ -92,13 +92,9 @@ object LeapCounter : TextHudFeature(
                 val entity = v.entity ?: return@forEach
                 if (entity.id == player.id) return@forEach
 
-                val xo = entity.xo - pos!!.x
-                val yo = entity.yo - pos!!.y
-                val zo = entity.zo - pos!!.z
-                val lastDist = xo * xo + yo * yo + zo * zo
                 val dist = entity.distanceToSqr(pos!!.x, pos!!.y, pos!!.z)
 
-                if (dist > pos!!.dist || lastDist <= 6) return@forEach
+                if (dist > pos!!.dist) return@forEach
                 if (leapedPlayers.contains(v)) return@forEach
 
                 leapedPlayers.add(v)
