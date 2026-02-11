@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -13,7 +14,6 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
-import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.world.item.Items
 import kotlin.math.roundToInt
@@ -106,12 +106,12 @@ object ChestProfit : TextHudFeature(
     }
 
     override fun initialize() {
-        on<PacketReceivedEvent> { event ->
-            val packet = event.packet
-            if (packet is ClientboundContainerSetContentPacket) {
-                if (!inChest) return@on
-
-                val chestItem = packet.items.getOrNull(31) ?: return@on
+        on<ServerContainerSetSlotEvent> { event ->
+            if (!inChest) return@on
+            val slot = event.slot
+            if (slot == 31) {
+                val currentData = currentChestData[currentChest!!] ?: return@on
+                val chestItem = event.itemStack
                 if (chestItem.item != Items.CHEST) return@on
                 val chestLore = ItemUtils.lore(chestItem) ?: return@on
                 var chestPrice = 0
@@ -128,61 +128,61 @@ object ChestProfit : TextHudFeature(
                     chestPrice += SkyblockPrices.buyPrice("DUNGEON_CHEST_KEY").roundToInt()
                 }
 
-                val currentData = currentChestData[currentChest!!] ?: return@on
                 currentData.chestPrice = chestPrice
-
-                for (idx in 9..17) {
-                    val itemStack = packet.items[idx] ?: continue
-                    if (
-                        itemStack.item == Items.BLACK_STAINED_GLASS_PANE ||
-                        itemStack.item == Items.GRAY_STAINED_GLASS_PANE ||
-                        itemStack.isEmpty
-                    ) continue
-
-                    val customName = itemStack.customName ?: continue
-                    val customNameStr = customName.string ?: continue
-                    val isEnchantedBook = customNameStr == "Enchanted Book"
-                    val itemName =
-                        if (isEnchantedBook)
-                            ItemUtils.lore(itemStack, true)?.firstOrNull() ?: continue
-                        else
-                            customName.colorCodes()
-
-                    var sbId = ItemUtils.skyblockId(itemStack)
-                    var amount = 1
-
-                    if (isEnchantedBook) {
-                        val match = enchantedBookRegex.matchEntire(itemName.clearCodes())?.groupValues?.drop(1) ?: continue
-                        val enchantName = match[0]
-                        val enchantLevel = StringUtils.parseRoman(match[1])
-                        val additionalName = if (ultimateEnchants.contains(enchantName)) "_ULTIMATE_" else ""
-
-                        sbId = "ENCHANTMENT_"
-
-                        if (additionalName.isNotEmpty()) sbId += additionalName
-                        sbId += enchantName.uppercase().replace(" ", "_")
-                        sbId += "_${enchantLevel}"
-                    }
-                    if (sbId == null && itemName.contains(" Essence ")) {
-                        val match = essenceRegex.matchEntire(itemName.clearCodes())?.groupValues?.drop(1) ?: continue
-                        sbId = "ESSENCE_${match[0].uppercase()}"
-                        amount = match[1].toInt()
-                    }
-
-                    if (sbId == null) continue
-
-                    currentData.itemData.add(ItemData(
-                        itemName,
-                        sbId,
-                        amount,
-                        itemName.contains(" Essence ")
-                    ))
-                }
-
                 Scheduler.scheduleTask { updateDisplay() }
-                inChest = false
+
                 return@on
             }
+
+            if (slot !in 9..17) return@on
+            val itemStack = event.itemStack
+            if (
+                itemStack.item == Items.BLACK_STAINED_GLASS_PANE ||
+                itemStack.item == Items.GRAY_STAINED_GLASS_PANE ||
+                itemStack.isEmpty
+            ) return@on
+
+            val customName = itemStack.customName ?: return@on
+            val customNameStr = customName.string ?: return@on
+            val isEnchantedBook = customNameStr == "Enchanted Book"
+            val itemName =
+                if (isEnchantedBook)
+                    ItemUtils.lore(itemStack, true)?.firstOrNull() ?: return@on
+                else
+                    customName.colorCodes()
+            var sbId = ItemUtils.skyblockId(itemStack)
+            var amount = 1
+            if (isEnchantedBook) {
+                val match = enchantedBookRegex.matchEntire(itemName.clearCodes())?.groupValues?.drop(1) ?: return@on
+                val enchantName = match[0]
+                val enchantLevel = StringUtils.parseRoman(match[1])
+                val additionalName = if (ultimateEnchants.contains(enchantName)) "_ULTIMATE_" else ""
+
+                sbId = "ENCHANTMENT_"
+
+                if (additionalName.isNotEmpty()) sbId += additionalName
+                sbId += enchantName.uppercase().replace(" ", "_")
+                sbId += "_${enchantLevel}"
+            }
+            if (sbId == null && itemName.contains(" Essence ")) {
+                val match = essenceRegex.matchEntire(itemName.clearCodes())?.groupValues?.drop(1) ?: return@on
+                sbId = "ESSENCE_${match[0].uppercase()}"
+                amount = match[1].toInt()
+            }
+
+            if (sbId == null) return@on
+            val currentData = currentChestData[currentChest!!] ?: return@on
+
+            currentData.itemData.add(ItemData(
+                itemName,
+                sbId,
+                amount,
+                itemName.contains(" Essence ")
+            ))
+        }
+
+        on<PacketReceivedEvent> { event ->
+            val packet = event.packet
             if (packet !is ClientboundOpenScreenPacket) return@on
 
             inChest = chestNames.contains(packet.title.string)
@@ -222,7 +222,7 @@ object ChestProfit : TextHudFeature(
     private fun updateDisplay() {
         // TODO: add sort by most profitable
         clearLines()
-        for (data in currentChestData) {
+        for (data in currentChestData.entries.sortedBy { it.value.chestPrice }) {
             val v = data.value
             val items = v.itemData
             if (items.isEmpty()) continue
