@@ -23,6 +23,7 @@ object RemoveChatLimit : Feature("removeChatLimit", subcategory = "Chat") {
     )
 }
 object RemoveTabPing : Feature("removeTabPing", subcategory = "Hiders")
+object RemoveTabHead : Feature("removeTabUselessHeads", "Removes the gray heads that hypixel sets in tablist", subcategory = "Hiders")
 object DisableAttachedArrows : Feature("disableAttachedArrows", subcategory = "Hiders")
 object DisableVignette : Feature("disableVignette", subcategory = "Hiders")
 object DisableWaterOverlay : Feature("disableWaterOverlay", subcategory = "Hiders")
