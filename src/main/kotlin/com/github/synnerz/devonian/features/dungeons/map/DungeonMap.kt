@@ -783,6 +783,25 @@ object DungeonMap : HudFeature(
                     ctx.scissorStack.peek()
                 )
             )
+            if (isHead) {
+                ctx.guiRenderState.submitGuiElement(
+                    TexturedQuadRenderState(
+                        BufferedImageRenderer.pipeline,
+                        TextureSetup.singleTexture(textureView),
+                        Matrix3x2f(ctx.pose()),
+                        px + dxf - dxr, py + dyf - dyr,
+                        px - dxf - dxr, py - dyf - dyr,
+                        px + dxf + dxr, py + dyf + dyr,
+                        px - dxf + dxr, py - dyf + dyr,
+                        SKIN_HAT_U.toFloat() / SKIN_TEX_WIDTH, SKIN_HAT_V.toFloat() / SKIN_TEX_HEIGHT,
+                        SKIN_HAT_U.toFloat() / SKIN_TEX_WIDTH, (SKIN_HAT_V + SKIN_HAT_HEIGHT).toFloat() / SKIN_TEX_HEIGHT,
+                        (SKIN_HAT_U + SKIN_HAT_WIDTH).toFloat() / SKIN_TEX_WIDTH, SKIN_HAT_V.toFloat() / SKIN_TEX_HEIGHT,
+                        (SKIN_HAT_U + SKIN_HAT_WIDTH).toFloat() / SKIN_TEX_WIDTH, (SKIN_HAT_V + SKIN_HAT_HEIGHT).toFloat() / SKIN_TEX_HEIGHT,
+                        -1,
+                        ctx.scissorStack.peek()
+                    )
+                )
+            }
 
             if (SETTING_COLOR_MARKER_BY_CLASS.get() && player.role.color.alpha != 0) {
                 val u0: Float
