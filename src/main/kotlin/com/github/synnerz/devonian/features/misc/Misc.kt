@@ -110,3 +110,16 @@ object HideExperience : Feature(
     "Does not render the experience bar and level",
     subcategory = "Hiders"
 )
+object ConfirmDisconnect : Feature(
+    "confirmDisconnect",
+    "Allows you to set a time threshold of when your disconnect click should register rather than instantly disconnecting",
+    subcategory = "Tweaks"
+) {
+    val SETTING_THRESHOLD = addSlider(
+        "threshold",
+        150.0,
+        0.0, 1000.0,
+        "The threshold time",
+        "ConfirmDisconnect Threshold"
+    )
+}

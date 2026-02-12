@@ -43,6 +43,7 @@
     "NameTagFeatureRendererMixin",
     "OverlayTextureMixin",
     "ParticleEngineMixin",
+    "PauseScreenMixin",
     "PlayerRendererMixin",
     "PlayerTabOverlayMixin",
     "PreparedTextBuilderMixin",

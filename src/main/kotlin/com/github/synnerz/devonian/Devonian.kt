@@ -351,6 +351,7 @@ object Devonian : ClientModInitializer {
             MelodyMessage,
             TerracottaTimer,
             RemoveTabHead,
+            ConfirmDisconnect,
 
             // Debug
             CopyItem,
