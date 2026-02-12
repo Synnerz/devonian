@@ -94,7 +94,7 @@ object CustomLeapGui : Feature(
             if (idx == 17) {
                 val player = Dungeons.players.firstEntry()?.value
                 val pl = when {
-                    SETTING_STATIC.get() && playerList.size < 5 -> {
+                    SETTING_STATIC.get() && playerList.size < 4 -> {
                         if (player == null || player.role == DungeonClass.Unknown || player.isDead)
                             playerList
                         else {
