@@ -36,8 +36,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	// TODO: upload to modrinth
-	include modImplementation("com.github.Synnerz:talium:4fbf96b664")
+	include modImplementation("com.github.Synnerz:talium:e3020b1cd4")
 	modImplementation "net.hypixel:mod-api:1.0.1"
 
 	modApi("com.terraformersmc:modmenu:16.0.0")
