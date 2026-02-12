@@ -15,6 +15,7 @@
     "ClientPacketListenerMixin",
     "ClientTextTooltipMixin",
     "ConnectionMixin",
+    "ContainerEventHandlerMixin",
     "ContainerScreenMixin",
     "EffectsInInventoryMixin",
     "EntityRenderDispatcherMixin",

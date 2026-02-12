@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
+import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.particle.Particle
@@ -549,3 +550,9 @@ class ItemPickupEvent(
     val entity: ItemEntity,
     val entityId: Int,
 ) : Event()
+
+class GuiCharTypeEvent(
+    val codepoint: Int,
+    val str: String,
+    val event: CharacterEvent,
+) : CancellableEvent()
