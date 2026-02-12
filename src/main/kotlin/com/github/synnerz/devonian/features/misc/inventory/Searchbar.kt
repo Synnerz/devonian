@@ -38,7 +38,7 @@ object Searchbar : HudFeature(
         SETTING_BACKGROUND_COLOR.onChange {
             setColor(Color(it, true))
         }
-        onKeyType { onKeyType() }
+        onCharType { onKeyType() }
         onResize { _, _ -> onResize() }
     }
     private val highlightItems = atomic(intArrayOf())
@@ -102,6 +102,15 @@ object Searchbar : HudFeature(
             if (!input.focused) return@on
 
             input.handleKeyInput(event.key, event.scanCode)
+            event.cancel()
+        }
+
+        on<GuiCharTypeEvent> { event ->
+            val screen = minecraft.screen ?: return@on
+            if (screen !is AbstractContainerScreen<*>) return@on
+            if (!input.focused) return@on
+
+            input.handleCharType(event.codepoint, event.str, event.event.modifiers)
             event.cancel()
         }
 

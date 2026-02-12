@@ -8,6 +8,7 @@ import com.github.synnerz.talium.components.*
 import net.minecraft.Util
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.network.chat.Component
 import java.io.BufferedReader
@@ -170,6 +171,11 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
         background.handleKeyInput(keyEvent.key, keyEvent.scancode)
         return super.keyPressed(keyEvent)
+    }
+
+    override fun charTyped(characterEvent: CharacterEvent): Boolean {
+        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), characterEvent.modifiers)
+        return super.charTyped(characterEvent)
     }
 
     override fun isPauseScreen(): Boolean {

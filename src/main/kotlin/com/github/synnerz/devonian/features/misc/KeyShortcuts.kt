@@ -13,6 +13,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.input.MouseButtonInfo
 import net.minecraft.network.chat.Component
@@ -227,6 +228,11 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
                 hadFocus
         }) return false
         return super.keyPressed(keyEvent)
+    }
+
+    override fun charTyped(characterEvent: CharacterEvent): Boolean {
+        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), characterEvent.modifiers)
+        return super.charTyped(characterEvent)
     }
 
     override fun isPauseScreen(): Boolean {

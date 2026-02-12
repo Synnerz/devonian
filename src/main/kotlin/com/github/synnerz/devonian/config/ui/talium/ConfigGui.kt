@@ -9,6 +9,7 @@ import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.network.chat.Component
 
@@ -80,6 +81,11 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
 
     override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         // no background here bud
+    }
+
+    override fun charTyped(characterEvent: CharacterEvent): Boolean {
+        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), characterEvent.modifiers)
+        return super.charTyped(characterEvent)
     }
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
