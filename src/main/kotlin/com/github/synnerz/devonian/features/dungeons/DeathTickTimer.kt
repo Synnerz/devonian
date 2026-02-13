@@ -30,7 +30,7 @@ object DeathTickTimer : TextHudFeature(
         }
 
         on<ClientThreadServerTickEvent> {
-            setLine("&7DeathTicks&f: ${StringUtils.colorForNumber(deathTicks, 40)}${"%.2fs".format(deathTicks * 0.05)}")
+            setLine("${StringUtils.colorForNumber(deathTicks, 40)}%.2fs".format(deathTicks * 0.05))
         }
 
         on<RenderOverlayEvent> {
@@ -42,5 +42,5 @@ object DeathTickTimer : TextHudFeature(
         deathTicks = 0
     }
 
-    override fun getEditText(): List<String> = listOf("&7DeathTicks&f: &240s")
+    override fun getEditText(): List<String> = listOf("&240s")
 }
