@@ -32,20 +32,36 @@ object WatcherKillAlert : Feature(
         "Shows the predicted time to kill alert",
         "WatcherKillAlert Estimate"
     )
-    private var killAt = 0.0
+    private var assigned = false
 
     override fun initialize() {
         on<ClientThreadServerTickEvent> {
             val stage = Stages.FirstWatcherSpawn
             if (!stage.hasFinished()) return@on
 
-            if (killAt == 0.0) {
-                val x = stage.getTime().tick * 0.05
-                killAt = (((x + 2) + (3 - (x + 2) % 3)) - 1)
-                if (SETTING_ESTIMATE_ALERT.get())
-                    Alert.show("&c[Watcher] &aEstimate ${killAt.toInt()}s", 1000, false)
+            if (!assigned) {
+                val ticks = stage.getTime().tick
+                val prediction = when {
+                    ticks < 390 -> 22
+                    ticks < 430 -> 23
+                    ticks < 450 -> 25
+                    ticks < 490 -> 26
+                    ticks < 510 -> 28
+                    ticks < 550 -> 29
+                    ticks < 570 -> 31
+                    ticks < 610 -> 32
+                    ticks < 630 -> 34
+                    ticks < 670 -> 35
+                    ticks < 690 -> 37
+                    ticks < 730 -> 38
+                    else -> ticks * 20 + 3
+                } / 0.05
 
-                Scheduler.scheduleServerTask(((killAt - x) / 0.05).toInt()) {
+                assigned = true
+                if (SETTING_ESTIMATE_ALERT.get())
+                    Alert.show("&c[Watcher] &aEstimate ${"%.2fs".format(prediction * 0.05)}", 1000, false)
+
+                Scheduler.scheduleServerTask((prediction - ticks).toInt()) {
                     if (!isEnabled() || !stage.hasFinished()) return@scheduleServerTask
                     Alert.show("&c[Watcher] Kill Now", 1500, SETTING_PLAY_SOUND.get())
                 }
@@ -54,6 +70,6 @@ object WatcherKillAlert : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        killAt = 0.0
+        assigned = false
     }
 }
