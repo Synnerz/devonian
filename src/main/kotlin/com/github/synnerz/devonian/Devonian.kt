@@ -352,6 +352,7 @@ object Devonian : ClientModInitializer {
             TerracottaTimer,
             RemoveTabHead,
             ConfirmDisconnect,
+            DeathTickTimer,
 
             // Debug
             CopyItem,
