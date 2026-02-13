@@ -7,30 +7,30 @@ import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket
 
-object DeathTickTimer : TextHudFeature(
-    "deathTickTimer",
+object SecretTickTimer : TextHudFeature(
+    "secretTickTimer",
     "",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "HUD"
 ) {
-    private var deathTicks = 0
+    private var secretTicks = 0
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (packet !is ClientboundSetTimePacket) return@on
-            if (Dungeons.timeElapsed.value != 0) return@on
+            if (Dungeons.timeElapsed.value == 0) return@on
 
-            deathTicks = 40 - (packet.gameTime % 40).toInt()
+            secretTicks = 20 - (packet.gameTime % 20).toInt()
         }
 
         on<ServerTickEvent> {
-            deathTicks = if (deathTicks <= 0) 40 else deathTicks - 1
+            secretTicks = if (secretTicks <= 0) 20 else secretTicks -1
         }
 
         on<ClientThreadServerTickEvent> {
-            setLine("&7DeathTicks&f: ${StringUtils.colorForNumber(deathTicks, 40)}${"%.2fs".format(deathTicks * 0.05)}")
+            setLine("&dSecretTicks&f: ${StringUtils.colorForNumber(secretTicks, 20)}${"%.2fs".format(secretTicks * 0.05)}")
         }
 
         on<RenderOverlayEvent> {
@@ -39,8 +39,8 @@ object DeathTickTimer : TextHudFeature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        deathTicks = 0
+        secretTicks = 0
     }
 
-    override fun getEditText(): List<String> = listOf("&7DeathTicks&f: &240s")
+    override fun getEditText(): List<String> = listOf("&dSecretTicks&f: &220s")
 }

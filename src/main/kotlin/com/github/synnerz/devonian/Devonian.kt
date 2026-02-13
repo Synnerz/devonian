@@ -353,6 +353,7 @@ object Devonian : ClientModInitializer {
             RemoveTabHead,
             ConfirmDisconnect,
             DeathTickTimer,
+            SecretTickTimer,
 
             // Debug
             CopyItem,
