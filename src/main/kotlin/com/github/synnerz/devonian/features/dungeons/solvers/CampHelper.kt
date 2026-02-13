@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.ComponentPosition
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
@@ -18,6 +17,7 @@ import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.TextColor
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EquipmentSlot
@@ -28,7 +28,6 @@ import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
 import kotlin.math.floor
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 object CampHelper : Feature(
@@ -49,18 +48,25 @@ object CampHelper : Feature(
         "renders timer under each box",
         "Camp Show Timer",
     )
-    private val SETTING_USE_PING = addSwitch(
-        "usePing",
-        true,
-        "attempts to correct timer for ping",
-        "Camp Adjust For Ping",
-    )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
         3.0,
         0.0, 10.0,
         "",
         "Camp Line Width",
+    )
+    private val SETTING_PLAY_SOUND = addSwitch(
+        "playSound",
+        false,
+        "Plays a sound whenever you _should_ be able to hit the blood mob",
+        "Camp Mob Sound"
+    )
+    private val SETTING_SOUND_THRESHOLD = addSlider(
+        "soundThreshold",
+        1.3,
+        0.0, 10.0,
+        "The amount of TICKS at which the PlaySound feature should play (1 tick = 0.05s, default is 1.3 = 0.065s)",
+        "Camp Mob Sound Threshold"
     )
 
     private var bloodComp: ComponentPosition? = null
@@ -142,6 +148,10 @@ object CampHelper : Feature(
                 val w = 1.0
                 val h = 1.0
                 val color = Color(colorForNumber2(ttl, v.maxTTL))
+                if (SETTING_PLAY_SOUND.get() && ttl < SETTING_SOUND_THRESHOLD.get() && !v.triggeredSound) {
+                    v.triggeredSound = true
+                    minecraft.player?.playSound(SoundEvents.NOTE_BLOCK_PLING.value())
+                }
 
                 Render3DImmediate.renderWireframeBox(
                     x, y + 1.0, z,
@@ -223,6 +233,7 @@ class UndeadGuesser(val id: Int) {
     var calcStart = false
 
     var hasSpawn = false
+    var triggeredSound = false
 
     fun shouldShow() = hasSpawn && (ent?.isAlive == true) && startTick != -1 && !dead && guessTime > 0L
 
