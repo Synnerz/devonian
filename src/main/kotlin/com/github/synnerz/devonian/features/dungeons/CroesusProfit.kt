@@ -8,7 +8,6 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
-import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 import net.minecraft.world.item.Items
@@ -255,7 +254,7 @@ object CroesusProfit : TextHudFeature(
 
     private fun updateDisplay() {
         clearLines()
-        for (data in chestsData.entries.sortedByDescending { it.value.totalProfit() }) {
+        for (data in chestsData.entries.toList().sortedByDescending { it.value.totalProfit() }) {
             val v = data.value
             val items = v.items
             if (items.isEmpty()) continue

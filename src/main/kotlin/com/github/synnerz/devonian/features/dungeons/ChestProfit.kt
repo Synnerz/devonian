@@ -222,7 +222,7 @@ object ChestProfit : TextHudFeature(
     private fun updateDisplay() {
         // TODO: add sort by most profitable
         clearLines()
-        for (data in currentChestData.entries.sortedByDescending { it.value.profit() }) {
+        for (data in currentChestData.entries.toList().sortedByDescending { it.value.profit() }) {
             val v = data.value
             val items = v.itemData
             if (items.isEmpty()) continue
