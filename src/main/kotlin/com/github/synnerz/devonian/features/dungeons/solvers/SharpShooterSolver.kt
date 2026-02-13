@@ -109,11 +109,7 @@ object SharpShooterSolver : Feature(
                 )
             }
 
-            if (whitelist.size >= 9) {
-                if (SETTING_SHOW_ALERT.get())
-                    Alert.show("&aSharpShooter Done", 1500, SETTING_PLAY_SOUND.get())
-                whitelist.clear()
-            }
+            if (whitelist.size >= 9) whitelist.clear()
         }
     }
 
