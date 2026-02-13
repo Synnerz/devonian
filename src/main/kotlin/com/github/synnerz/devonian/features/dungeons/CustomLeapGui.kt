@@ -208,7 +208,7 @@ object CustomLeapGui : Feature(
         }
         UIRect(if (idx % 2 == 0) 0.0 else x, if (idx < 2) 0.0 else y, 50.0, 50.0, parent = background).apply {
             onMouseRelease { event ->
-                if (event.button !in 0..1) return@onMouseRelease
+                if (event.button !in 0..1 || data.isDead) return@onMouseRelease
 
                 ScreenUtils.click(data.slot)
                 Scheduler.scheduleTask { background.clearChildren() }
