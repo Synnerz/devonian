@@ -99,12 +99,17 @@ object CustomLeapGui : Feature(
                             playerList
                         else {
                             val mut = mutableListOf<LeapPlayer>()
-                            val currentRoles = playerList.map { it.role.name }.toSet()
-                            val currentRole = player.role.name
-                            val missing = roles.toMutableSet().apply { remove(currentRole) } - currentRoles
-                            mut.addAll(playerList)
-                            missing.forEachIndexed { jdx, it -> mut.add(LeapPlayer(100 + jdx, "FAKE", DungeonClass.from(it), true)) }
-                            mut
+                            val currentRoles = playerList.map { it.role.name }
+                            val amounts = currentRoles.groupingBy { it }.eachCount()
+                            if (amounts.any { it.value > 1 }) {
+                                playerList
+                            } else {
+                                val currentRole = player.role.name
+                                val missing = roles.toMutableSet().apply { remove(currentRole) } - currentRoles.toSet()
+                                mut.addAll(playerList)
+                                missing.forEachIndexed { jdx, it -> mut.add(LeapPlayer(100 + jdx, "FAKE", DungeonClass.from(it), true)) }
+                                mut
+                            }
                         }
                     }
                     else -> playerList
