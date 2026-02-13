@@ -1,7 +1,9 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.HypixelModApi
 import com.github.synnerz.devonian.api.Party
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatChannelEvent
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -19,19 +21,30 @@ object AutoRequeueDungeons : Feature(
     private val extraStatsRegex = "^ *> EXTRA STATS <\$".toRegex()
     private var needsDowntime = Collections.newSetFromMap<String>(ConcurrentHashMap())
     private var lastQueue = 0
+    private var startedRun = false
 
     private fun requeue() {
         if (!Party.isLeader && Party.inParty) return
+        if (lastQueue > 0) println("Devonian\$AutoRequeueDungeons(requeue, $lastQueue)")
         if (lastQueue > 0 && lastQueue != Party.members.size) {
             lastQueue = 0
             return
         }
 
         ChatUtils.command("instancerequeue")
-        lastQueue = Party.members.size
+        lastQueue = 0
     }
 
     override fun initialize() {
+        Dungeons.timeElapsed.listen {
+            if (it <= 0 || startedRun) return@listen
+
+            startedRun = true
+            HypixelModApi.requestPartyInfo()
+            lastQueue = Party.members.size
+            println("Devonian\$AutoRequeueDungeons(started, $lastQueue)")
+        }
+
         on<ChatChannelEvent.PartyChatEvent> { event ->
             val msg = event.userMessage.lowercase()
             if (msg == "r" || msg == "!r") {
@@ -55,6 +68,9 @@ object AutoRequeueDungeons : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
+        startedRun = false
+        lastQueue = 0
+
         if (needsDowntime.isEmpty()) return
         ChatUtils.sendMessage("&aDowntime has been reset.", true)
         needsDowntime.clear()
