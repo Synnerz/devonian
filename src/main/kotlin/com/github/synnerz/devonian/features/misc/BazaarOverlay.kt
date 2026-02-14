@@ -42,7 +42,10 @@ object BazaarOverlay : Feature(
 
     override fun initialize() {
         on<ServerContainerOpenEvent> { event ->
-            inOrders = event.titleStr == "Co-op Bazaar Orders" || event.titleStr == "Your Bazaar Orders"
+            val vv = event.titleStr == "Co-op Bazaar Orders" || event.titleStr == "Your Bazaar Orders"
+            if (inOrders && !vv) Scheduler.scheduleTask { orders.clear() }
+
+            inOrders = vv
         }
 
         on<ServerContainerCloseEvent> {
