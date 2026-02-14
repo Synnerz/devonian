@@ -75,7 +75,6 @@ object BazaarOverlay : Feature(
                 value = match.getOrNull(0)?.replace(".", "")?.replace("k", "")?.toIntOrNull() ?: 0
                 total = match.getOrNull(1)?.replace(".", "")?.replace("k", "")?.toIntOrNull() ?: 1
             }
-            if (total == 0) return@on
 
             val state = when {
                 value > 0 && value == total -> BazaarState.FILLED
