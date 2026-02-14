@@ -358,6 +358,7 @@ object Devonian : ClientModInitializer {
             SpringBootsProgress,
             PeekChatKeybind,
             ZoomKeybind,
+            BazaarOverlay,
 
             // Debug
             CopyItem,
