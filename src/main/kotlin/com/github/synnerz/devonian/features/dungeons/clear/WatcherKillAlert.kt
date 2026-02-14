@@ -43,8 +43,8 @@ object WatcherKillAlert : Feature(
                 val ticks = stage.getTime().tick
                 val prediction = when {
                     ticks < 390 -> 22
-                    ticks < 430 -> 23
-                    ticks < 450 -> 25
+                    ticks < 441 -> 23
+                    ticks < 460 -> 24
                     ticks < 490 -> 26
                     ticks < 510 -> 28
                     ticks < 550 -> 29
