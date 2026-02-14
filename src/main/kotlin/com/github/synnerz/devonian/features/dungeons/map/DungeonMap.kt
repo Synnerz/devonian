@@ -110,7 +110,7 @@ object DungeonMap : HudFeature(
         "Color Player Markers",
         subcategory = "Markers",
     )
-    private val SETTING_NAME_SCALE = addSlider(
+    private val SETTING_NAME_SCALE = addDecimalSlider(
         "nameScale",
         1.0,
         0.0, 10.0,
@@ -118,13 +118,21 @@ object DungeonMap : HudFeature(
         "Player Name Scale",
         subcategory = "Markers",
     )
-    private val SETTING_MARKER_SCALE = addSlider(
+    private val SETTING_MARKER_SCALE = addDecimalSlider(
         "markerScale",
         1.0,
         0.0, 10.0,
         "",
         "Marker Scale",
         subcategory = "Markers",
+    )
+    private val SETTING_HEAD_SCALE = addDecimalSlider(
+        "headScale",
+        2.5,
+        0.0, 10.0,
+        "",
+        "Head Scale",
+        subcategory = "Markers"
     )
     private val SETTING_PRESET_HYPIXEL_COLORS = addButton(
         {
@@ -706,20 +714,20 @@ object DungeonMap : HudFeature(
                 compBounds.y, compBounds.y + compBounds.h
             ).toFloat()
 
-            var dxf = cos(-pos.r).toFloat() * SETTING_MARKER_SCALE.get().toFloat() * scale * 0.5f
-            var dyf = sin(-pos.r).toFloat() * SETTING_MARKER_SCALE.get().toFloat() * scale * 0.5f
-            var dxr = cos(-pos.r + PI / 2).toFloat() * SETTING_MARKER_SCALE.get().toFloat() * scale * 0.5f
-            var dyr = sin(-pos.r + PI / 2).toFloat() * SETTING_MARKER_SCALE.get().toFloat() * scale * 0.5f
+            val info = player.profileInfo
+            val isHead =
+                SETTING_USE_PLAYER_HEADS.get() && info != null &&
+                        (!SETTING_USE_MARKER_SELF.get() || i > 0)
+            var dxf = cos(-pos.r).toFloat() * (if (isHead) SETTING_HEAD_SCALE.get().toFloat() else SETTING_MARKER_SCALE.get().toFloat()) * scale * 0.5f
+            var dyf = sin(-pos.r).toFloat() * (if (isHead) SETTING_HEAD_SCALE.get().toFloat() else SETTING_MARKER_SCALE.get().toFloat()) * scale * 0.5f
+            var dxr = cos(-pos.r + PI / 2).toFloat() * (if (isHead) SETTING_HEAD_SCALE.get().toFloat() else SETTING_MARKER_SCALE.get().toFloat()) * scale * 0.5f
+            var dyr = sin(-pos.r + PI / 2).toFloat() * (if (isHead) SETTING_HEAD_SCALE.get().toFloat() else SETTING_MARKER_SCALE.get().toFloat()) * scale * 0.5f
             val u0: Float
             val v0: Float
             val u1: Float
             val v1: Float
             val maxDy: Float
             val textureView: GpuTextureView
-            val info = player.profileInfo
-            val isHead =
-                SETTING_USE_PLAYER_HEADS.get() && info != null &&
-                (!SETTING_USE_MARKER_SELF.get() || i > 0)
             if (isHead) {
                 dxf *= 4f
                 dyf *= 4f
@@ -759,7 +767,7 @@ object DungeonMap : HudFeature(
 
                 val hud = textHuds[i]
                 hud.x = px.toDouble()
-                hud.y = py - maxDy * SETTING_MARKER_SCALE.get().toFloat() - hud.getHeight() * 0.5
+                hud.y = py - maxDy * (if (isHead) SETTING_HEAD_SCALE.get().toFloat() else SETTING_MARKER_SCALE.get().toFloat()) - hud.getHeight() * 0.5
                 hud.shadow = Shadow.from(SETTING_TEXT_SHADOW.get())
                 hud.setLine("$nameFormat$text")
                 hud.scale = scale * 0.3f * SETTING_NAME_SCALE.get().toFloat()
