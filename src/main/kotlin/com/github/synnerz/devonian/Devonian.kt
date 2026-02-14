@@ -354,6 +354,7 @@ object Devonian : ClientModInitializer {
             ConfirmDisconnect,
             DeathTickTimer,
             SecretTickTimer,
+            TerminalDropKey,
 
             // Debug
             CopyItem,

@@ -62,6 +62,7 @@
     "accessor.GuiAccessor",
     "accessor.GuiGraphicsAccessor",
     "accessor.HeartTypeAccessor",
+    "accessor.KeyMappingAccessor",
     "accessor.LerpingBossEventAccessor",
     "accessor.LevelLoadingScreenAccessor",
     "accessor.LevelRendererAccessor",
