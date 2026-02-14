@@ -355,6 +355,7 @@ object Devonian : ClientModInitializer {
             DeathTickTimer,
             SecretTickTimer,
             TerminalDropKey,
+            SpringBootsProgress,
 
             // Debug
             CopyItem,
