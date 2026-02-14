@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.MouseHandlerAccessor;
 import com.github.synnerz.devonian.features.debug.MousePositionLogger;
 import com.github.synnerz.devonian.features.misc.KeyShortcuts;
+import com.github.synnerz.devonian.features.misc.ZoomKeybind;
 import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -170,5 +171,17 @@ public class MouseHandlerMixin implements MouseHandlerAccessor {
     private static int devonian$guiScaleEventY(Window instance, Operation<Integer> original) {
         if (guiScaledHeightOverride != -1) return guiScaledHeightOverride;
         return original.call(instance);
+    }
+
+    @Inject(
+            method = "onScroll",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/ScrollWheelHandler;onMouseScroll(DD)Lorg/joml/Vector2i;"
+            ),
+            cancellable = true
+    )
+    private void devonian$onScroll(long l, double d, double e, CallbackInfo ci) {
+        if (ZoomKeybind.INSTANCE.onScroll(e)) ci.cancel();
     }
 }

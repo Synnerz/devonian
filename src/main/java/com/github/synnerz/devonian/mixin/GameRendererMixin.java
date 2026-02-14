@@ -4,6 +4,9 @@ import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.MouseHandlerAccessor;
 import com.github.synnerz.devonian.api.events.GuiScaleEvent;
 import com.github.synnerz.devonian.features.misc.NoHurtCamera;
+import com.github.synnerz.devonian.features.misc.PeekChatKeybind;
+import com.github.synnerz.devonian.features.misc.ZoomKeybind;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.platform.Window;
@@ -83,5 +86,15 @@ public class GameRendererMixin {
         mh.devonian$setGuiScaledHeightOverride(w.getGuiScaledHeight());
         w.setGuiScale(oldScale);
         // instance.resize(mc, w.getGuiScaledWidth(), w.getGuiScaledHeight());
+    }
+
+    @ModifyReturnValue(method = "getFov", at = @At(value = "RETURN", ordinal = 1))
+    private float devonian$onGetFov(float original) {
+        if (ZoomKeybind.INSTANCE.isEnabled()) {
+            if (ZoomKeybind.INSTANCE.getKeybind().isDown()) return ZoomKeybind.INSTANCE.getSteps();
+            else ZoomKeybind.INSTANCE.setSteps(50f);
+        }
+
+        return original;
     }
 }

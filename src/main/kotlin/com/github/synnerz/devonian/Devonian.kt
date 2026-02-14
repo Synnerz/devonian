@@ -357,6 +357,7 @@ object Devonian : ClientModInitializer {
             TerminalDropKey,
             SpringBootsProgress,
             PeekChatKeybind,
+            ZoomKeybind,
 
             // Debug
             CopyItem,
