@@ -156,7 +156,7 @@ object ChestProfit : TextHudFeature(
                 val match = enchantedBookRegex.matchEntire(itemName.clearCodes())?.groupValues?.drop(1) ?: return@on
                 val enchantName = match[0]
                 val enchantLevel = StringUtils.parseRoman(match[1])
-                val additionalName = if (ultimateEnchants.contains(enchantName)) "_ULTIMATE_" else ""
+                val additionalName = if (ultimateEnchants.contains(enchantName)) "ULTIMATE_" else ""
 
                 sbId = "ENCHANTMENT_"
 
