@@ -106,7 +106,7 @@ object SpotifyDisplay : TextHudFeature(
     private val logger = DebugLogger("SpotifyLogger")
 
     override fun initialize() {
-        logger.startLogger()
+//        logger.startLogger()
 
         DevonianCommand.command.subcommand("dumpspotify") { _, _ ->
             logger.stopAndPrint()
