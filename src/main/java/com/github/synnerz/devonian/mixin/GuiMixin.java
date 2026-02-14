@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
@@ -323,5 +324,16 @@ public class GuiMixin {
     )
     private void devonian$onExperienceBarRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         if (HideExperience.INSTANCE.isEnabled()) ci.cancel();
+    }
+
+    @WrapOperation(
+            method = "renderChat",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/GuiGraphics;IIIZ)V"
+            )
+    )
+    private void devonian$onRenderChat(ChatComponent instance, GuiGraphics guiGraphics, int i, int j, int k, boolean bl, Operation<Void> original) {
+        original.call(instance, guiGraphics, i, j, k, PeekChatKeybind.INSTANCE.isEnabled() ? PeekChatKeybind.INSTANCE.getKeybind().isDown() : bl);
     }
 }

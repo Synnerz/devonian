@@ -6,5 +6,6 @@
   "key.devonian.slotLocking": "Slot Locking",
   "key.devonian.mcgBlacklist": "Middle Click Gui Blacklist",
   "key.devonian.pphBlacklist": "Placing Player Heads Blacklist",
-  "key.devonian.termdropkey": "Terminal Drop Key"
+  "key.devonian.termdropkey": "Terminal Drop Key",
+  "key.devonian.peekchatkey": "Peek Chat"
 }

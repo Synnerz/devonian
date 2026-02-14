@@ -1,7 +1,10 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.minecraft.client.KeyMapping
 import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -121,5 +124,19 @@ object ConfirmDisconnect : Feature(
         0.0, 1000.0,
         "The threshold time",
         "ConfirmDisconnect Threshold"
+    )
+}
+object PeekChatKeybind : Feature(
+    "peekChatKeybind",
+    "Allows you to quickly peek into the chat screen without opening the textinput (change the keybind in minecraft controls)",
+    Categories.MISC,
+    subcategory = "Tweaks"
+) {
+    val keybind = KeyBindingHelper.registerKeyBinding(
+        KeyMapping(
+            "key.devonian.peekchatkey",
+            GLFW.GLFW_KEY_UNKNOWN,
+            Devonian.keybindCategory
+        )
     )
 }
