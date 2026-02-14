@@ -42,7 +42,7 @@ object LeapCounter : TextHudFeature(
         LeapPosition(60.5, 132.0, 139.0, 1.5),
         LeapPosition(69.5, 109.0, 122.5, 1.0),
         LeapPosition(48.5, 109.0, 122.5, 1.0),
-        LeapPosition(54.5, 115.0, 50.5, 0.5),
+        LeapPosition(54.5, 115.0, 50.5, 1.5),
         LeapPosition(2.5, 109.0, 104.5, 3.0, 3),
         LeapPosition(18.5, 121.5, 92.0, 2.0, 3),
         LeapPosition(54.5, 5.0, 76.5, 8.0),
@@ -118,6 +118,7 @@ object LeapCounter : TextHudFeature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
+        rolePositions.forEach { it.triggered = false }
         rolePositions.clear()
         lastLeap = -1L
     }
