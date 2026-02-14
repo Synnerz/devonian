@@ -39,7 +39,7 @@ object LeapCounter : TextHudFeature(
     private val leapedToRegex = "^You have teleported to \\w{1,16}!$".toRegex()
     private val leapPositions = listOf(
         LeapPosition(58.5, 109.0, 131.5, 1.5),
-        LeapPosition(60.5, 132.0, 139.0, 1.5),
+        LeapPosition(60.5, 132.0, 139.0, 2.0),
         LeapPosition(69.5, 109.0, 122.5, 1.0),
         LeapPosition(48.5, 109.0, 122.5, 1.0),
         LeapPosition(54.5, 115.0, 50.5, 1.5),
