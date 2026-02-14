@@ -272,7 +272,7 @@ object ActionbarParser : Feature(
                 subcategory = "Actionbar",
                 searchTags = customTags,
             ) {
-                override fun getEditText(): List<String> = listOf("§70/4 Secrets")
+                override fun getEditText(): List<String> = listOf("§70&f/§a4")
             },
             object : Feature(
                 "hideSecretCountActionbar",
@@ -281,7 +281,18 @@ object ActionbarParser : Feature(
                 searchTags = hideTags,
             ) {},
         ) {
-            override fun modifyStringHud(str: String): String = str.dropLast(" Secrets".length)
+            override fun modifyStringHud(str: String): String {
+                val ss = str.dropLast(" Secrets".length)
+                val ( _, secret, total ) = "(\\d+)/(\\d+)".toRegex().find(ss.replace("§7", ""))?.groupValues ?: return ss
+
+                return "${colorForNumber(secret.toIntOrNull() ?: return ss, total.toIntOrNull() ?: return ss)}$secret&f/&a$total"
+            }
+
+            private fun colorForNumber(num: Int, max: Int) = when {
+                num >= max * 0.75 -> "§a"
+                num >= max * 0.50 -> "§e"
+                else -> "§7"
+            }
         },
         TermLaser(
             null,
