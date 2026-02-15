@@ -65,7 +65,10 @@ object BazaarOverlay : Feature(
             val slot = event.slot
             if (slot > 45) return@on
             val itemStack = event.itemStack
-            if (itemStack.isEmpty) return@on
+            if (itemStack.isEmpty) {
+                if (orders.any { it.slot == slot }) Scheduler.scheduleTask { orders.removeIf { it.slot == slot } }
+                return@on
+            }
             val name = itemStack.customName?.string ?: return@on
             if (!name.startsWith("BUY") && !name.startsWith("SELL")) return@on
 
@@ -88,6 +91,20 @@ object BazaarOverlay : Feature(
             Scheduler.scheduleTask {
                 orders.removeIf { it.slot == slot }
                 orders.add(BazaarOrder(slot, state))
+            }
+        }
+
+        on<ServerContainerSetContentEvent> { event ->
+            if (!inOrders || orders.isEmpty()) return@on
+
+            event.forEach { idx, itemStack ->
+                if (idx > 45 || itemStack == null) return@forEach
+
+                Scheduler.scheduleTask {
+                    orders.removeIf {
+                        itemStack.isEmpty && it.slot == idx
+                    }
+                }
             }
         }
 
