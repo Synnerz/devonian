@@ -359,6 +359,7 @@ object Devonian : ClientModInitializer {
             PeekChatKeybind,
             ZoomKeybind,
             BazaarOverlay,
+            CustomEnchantLore,
 
             // Debug
             CopyItem,

@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.utils
 
-import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
+import com.github.synnerz.devonian.utils.StringUtils.snakeCaseToSentence
+import com.github.synnerz.devonian.utils.render.ChromaText
 import com.google.gson.Gson
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
@@ -8,10 +9,11 @@ import net.minecraft.network.chat.Style
 import java.util.*
 
 object EnchantRegistry {
-    val Normal = mutableListOf<NormalEnchants>()
-    val Ultimate = mutableListOf<UltimateEnchants>()
-    val Stacking = mutableListOf<StackingEnchants>()
-    val Cumulative = mutableMapOf<String, Enchantment>()
+    val Normal = mutableListOf<NormalEnchant>()
+    val Ultimate = mutableListOf<UltimateEnchant>()
+    val Stacking = mutableListOf<StackingEnchant>()
+    val CumulativeNbt = mutableMapOf<String, Enchantment>()
+    val CumulativeLore = mutableMapOf<String, Enchantment>()
 
     init {
         // TODO: get from api
@@ -22,28 +24,39 @@ object EnchantRegistry {
             Ultimate.addAll(it.ULTIMATE)
             Stacking.addAll(it.STACKING)
 
-            it.NORMAL.forEach { Cumulative[it.nbtName] = it }
-            it.ULTIMATE.forEach { Cumulative[it.nbtName] = it }
-            it.STACKING.forEach { Cumulative[it.nbtName] = it }
+            it.NORMAL.forEach {
+                CumulativeNbt[it.nbtName] = it
+                CumulativeLore[it.loreName] = it
+            }
+            it.ULTIMATE.forEach {
+                CumulativeNbt[it.nbtName] = it
+                CumulativeLore[it.loreName] = it
+            }
+            it.STACKING.forEach {
+                CumulativeNbt[it.nbtName] = it
+                CumulativeLore[it.loreName] = it
+            }
         }
     }
 
-    fun getOrUnknown(nbt: String) =
-        Cumulative[nbt] ?: UnknownEnchant(nbt.camelCaseToSentence(), nbt)
+    fun getOrUnknownNbt(nbt: String) =
+        CumulativeNbt[nbt.lowercase()] ?: UnknownEnchant(nbt.lowercase().snakeCaseToSentence(), nbt.lowercase())
+
+    fun getOrUnknownLore(lore: String) =
+        CumulativeLore[lore] ?: UnknownEnchant(lore, lore.lowercase().replace(' ', '_'))
 
     private data class EnchantJson(
-        val NORMAL: List<NormalEnchants>,
-        val ULTIMATE: List<UltimateEnchants>,
-        val STACKING: List<StackingEnchants>,
+        val NORMAL: List<NormalEnchant>,
+        val ULTIMATE: List<UltimateEnchant>,
+        val STACKING: List<StackingEnchant>,
     )
 }
 
-// TODO: chroma
-private val bestColor = Style.EMPTY.withColor(ChatFormatting.AQUA)!!
+private val bestColor = ChromaText.createStyle()
 private val greatColor = Style.EMPTY.withColor(ChatFormatting.GOLD)!!
 private val goodColor = Style.EMPTY.withColor(ChatFormatting.BLUE)!!
 private val poorColor = Style.EMPTY.withColor(ChatFormatting.GRAY)!!
-private val ultColor = Style.EMPTY.withColor(ChatFormatting.RED).withBold(true)
+private val ultColor = Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE).withBold(true)
 private val unkColor = Style.EMPTY.withColor(ChatFormatting.DARK_RED)
 interface Enchantment {
     val type: EnchantType
@@ -64,7 +77,7 @@ interface Enchantment {
     }
 }
 
-data class NormalEnchants(
+data class NormalEnchant(
     override val loreName: String,
     override val nbtName: String,
     override val abbreviation: String,
@@ -74,19 +87,20 @@ data class NormalEnchants(
     override val type = EnchantType.NORMAL
 }
 
-data class UltimateEnchants(
+data class UltimateEnchant(
     override val loreName: String,
     override val nbtName: String,
     override val abbreviation: String,
     override val maxLevel: Int,
 ) : Enchantment {
     override val type = EnchantType.ULTIMATE
-    override val goodLevel: Int = 0
+    override val goodLevel: Int
+        get() = 0
 
     override fun getStyle(level: Int): Style = ultColor
 }
 
-data class StackingEnchants(
+data class StackingEnchant(
     override val loreName: String,
     override val nbtName: String,
     override val abbreviation: String,
@@ -95,8 +109,10 @@ data class StackingEnchants(
     val progress: List<Int>,
 ) : Enchantment {
     override val type = EnchantType.STACKING
-    override val goodLevel: Int = 0
-    override val maxLevel: Int = 10
+    override val goodLevel: Int
+        get() = 0
+    override val maxLevel: Int
+        get() = 10
     val progressTree = TreeSet(progress)
 }
 
@@ -105,8 +121,10 @@ data class UnknownEnchant(
     override val nbtName: String,
 ) : Enchantment {
     override val type = EnchantType.UNKNOWN
-    override val goodLevel: Int = 0
-    override val maxLevel: Int = 0
+    override val goodLevel: Int
+        get() = 0
+    override val maxLevel: Int
+        get() = 0
     override val abbreviation: String = loreName.take(3)
 
     override fun getStyle(level: Int): Style = unkColor

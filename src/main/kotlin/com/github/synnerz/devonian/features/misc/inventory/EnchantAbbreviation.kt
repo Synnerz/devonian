@@ -38,7 +38,7 @@ object EnchantAbbreviation : Feature(
 
                     val entry = enchs.entrySet().firstOrNull() ?: return@getOrPut EMPTY
                     val name = entry.key
-                    val ench = EnchantRegistry.getOrUnknown(name)
+                    val ench = EnchantRegistry.getOrUnknownNbt(name)
 
                     val tier = entry.value.asInt()?.getOrNull() ?: 1
                     return@getOrPut ench to tier

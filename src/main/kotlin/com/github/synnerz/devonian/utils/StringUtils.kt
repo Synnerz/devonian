@@ -291,4 +291,9 @@ object StringUtils {
     fun String.camelCaseToSentence(): String = camelCaseRegex.replace(this) {
         it.value.replaceFirstChar { it.uppercaseChar() } + " "
     }.trim()
+
+    private val snakeCaseRegex = "_\\w".toRegex()
+    fun String.snakeCaseToSentence(): String = snakeCaseRegex.replace(this) {
+        " " + it.value.last().uppercaseChar()
+    }.replaceFirstChar { it.uppercaseChar() }
 }

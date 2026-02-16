@@ -797,6 +797,13 @@
       "abbreviation": "GS",
       "goodLevel": 0,
       "maxLevel": 1
+    },
+    {
+      "loreName": "Telekinesis",
+      "nbtName": "telekinesis",
+      "abbreviation": "Tele",
+      "goodLevel": 0,
+      "maxLevel": 1
     }
   ],
   "ULTIMATE": [
