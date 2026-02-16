@@ -46,7 +46,7 @@ object WatcherKillAlert : Feature(
                     ticks < 441 -> 23
                     ticks < 460 -> 24
                     ticks < 490 -> 26
-                    ticks < 510 -> 28
+                    ticks < 510 -> 27
                     ticks < 550 -> 29
                     ticks < 570 -> 31
                     ticks < 610 -> 32
