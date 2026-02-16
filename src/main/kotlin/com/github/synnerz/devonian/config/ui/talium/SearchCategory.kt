@@ -135,7 +135,14 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
 
     private fun matchesConfig(config: ConfigData<*>, str: String): Int {
         val tags = str.split(' ').map { it.lowercase().replace(ConfigData.searchStripReg, "") }
-        return tags.count { s -> config.searchTags.any { it.contains(s) } }
+        return tags.sumOf { s ->
+            config.searchTags.sumOf {
+                if (it.startsWith(s)) 10
+                else if (it.contains(s)) 1
+                // yes this is necessary
+                else 0.toInt()
+            }
+        }
     }
 
     override fun hide() {
