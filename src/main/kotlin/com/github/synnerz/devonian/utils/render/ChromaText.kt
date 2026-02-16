@@ -91,6 +91,7 @@ object ChromaText {
     }
 
     fun updateBuffer(time: Float) {
+        if (!::ubo.isInitialized) return
         MemoryStack.stackPush().use { stack ->
             val buf = Std140Builder.onStack(stack, UBO_SIZE)
                 .putFloat(time / 20f)
@@ -106,6 +107,7 @@ object ChromaText {
     }
 
     fun bindUniforms(renderPass: RenderPass) {
+        if (!::ubo.isInitialized) return
         renderPass.setUniform("DevonianChromaInfo", ubo)
     }
 
