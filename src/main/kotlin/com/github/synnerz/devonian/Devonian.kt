@@ -360,6 +360,7 @@ object Devonian : ClientModInitializer {
             ZoomKeybind,
             BazaarOverlay,
             CustomEnchantLore,
+            StackingEnchantProgressHud,
 
             // Debug
             CopyItem,
