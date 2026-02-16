@@ -99,8 +99,8 @@ object ActionbarParser : Feature(
         val startsWith: String? = null,
     ) {
         Health(
-            "❤",
             null,
+            listOf("❤", "▆", "▅", "▄", "▃", "▂", "▁"),
             object : TextHudFeature(
                 "customHealthHud",
                 "$desc Allows you to move the health that appears in the actionbar (above your hotbar).",
