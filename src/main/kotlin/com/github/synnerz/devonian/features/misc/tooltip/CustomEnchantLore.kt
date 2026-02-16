@@ -44,7 +44,7 @@ object CustomEnchantLore : Feature(
     )
 
     private val enchantNameRegex = "^([\\w ]+) ([IVX]+)$".toRegex()
-    private val looseEnchantRegex = "^(?:[A-Z][a-z]+ )+[IVX]+(?:,|$)".toRegex()
+    private val looseEnchantRegex = "^(?:[A-Za-z]+ )+[IVX]+(?:,|$)".toRegex()
     private data class EnchantBundle(val enchant: Enchantment, val level: Int) {
         fun str() = "${enchant.loreName} ${StringUtils.formatRoman(level)}"
     }
@@ -106,7 +106,7 @@ object CustomEnchantLore : Feature(
         if (!ench.all { it.enchant is UnknownEnchant || cachedDescriptions.containsKey(it) }) {
             val (s, e) = findBounds(lore) ?: return emptyList()
             var arr = mutableListOf<ClientTooltipComponent>()
-            var ench: EnchantBundle? = null
+            var curr: EnchantBundle? = null
             for (i in s until e) {
                 val l = lore[i]
                 val str = (l as? ClientTextTooltipStringAccessor)?.`devonian$asString`()
@@ -115,15 +115,15 @@ object CustomEnchantLore : Feature(
                 val name = m?.groupValues?.getOrNull(1)
                 val level = m?.groupValues?.getOrNull(2)
                 if (name != null && level != null) {
-                    if (ench != null && ench.enchant !is UnknownEnchant) cachedDescriptions[ench] = arr
+                    if (curr != null && curr.enchant !is UnknownEnchant) cachedDescriptions[curr] = arr
                     arr = mutableListOf()
 
                     val e = EnchantRegistry.getOrUnknownLore(name)
                     val l = StringUtils.parseRoman(level)
-                    ench = EnchantBundle(e, l)
+                    curr = EnchantBundle(e, l)
                 } else arr.add(l)
             }
-            if (ench != null && ench.enchant !is UnknownEnchant) cachedDescriptions[ench] = arr
+            if (curr != null && curr.enchant !is UnknownEnchant) cachedDescriptions[curr] = arr
         }
 
         return ench.flatMap {

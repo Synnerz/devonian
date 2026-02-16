@@ -20,19 +20,20 @@ object EnchantRegistry {
         this::class.java.getResourceAsStream("/assets/devonian/enchants.json")?.bufferedReader()?.use {
             Gson().fromJson(it, EnchantJson::class.java)
         }?.also {
-            Normal.addAll(it.NORMAL)
-            Ultimate.addAll(it.ULTIMATE)
-            Stacking.addAll(it.STACKING)
+            // gson does some silly stuff to create the POJOs so i cba
+            it.NORMAL.forEach { Normal.add(NormalEnchant(it.loreName, it.nbtName, it.abbreviation, it.goodLevel, it.maxLevel)) }
+            it.ULTIMATE.forEach { Ultimate.add(UltimateEnchant(it.loreName, it.nbtName, it.abbreviation, it.maxLevel)) }
+            it.STACKING.forEach { Stacking.add(StackingEnchant(it.loreName, it.nbtName, it.abbreviation, it.nbtTag, it.displayName, it.progress)) }
 
-            it.NORMAL.forEach {
+            Normal.forEach {
                 CumulativeNbt[it.nbtName] = it
                 CumulativeLore[it.loreName] = it
             }
-            it.ULTIMATE.forEach {
+            Ultimate.forEach {
                 CumulativeNbt[it.nbtName] = it
                 CumulativeLore[it.loreName] = it
             }
-            it.STACKING.forEach {
+            Stacking.forEach {
                 CumulativeNbt[it.nbtName] = it
                 CumulativeLore[it.loreName] = it
             }
@@ -94,8 +95,7 @@ data class UltimateEnchant(
     override val maxLevel: Int,
 ) : Enchantment {
     override val type = EnchantType.ULTIMATE
-    override val goodLevel: Int
-        get() = 0
+    override val goodLevel: Int = 0
 
     override fun getStyle(level: Int): Style = ultColor
 }
@@ -109,10 +109,8 @@ data class StackingEnchant(
     val progress: List<Int>,
 ) : Enchantment {
     override val type = EnchantType.STACKING
-    override val goodLevel: Int
-        get() = 0
-    override val maxLevel: Int
-        get() = 10
+    override val goodLevel: Int = 0
+    override val maxLevel: Int = 10
     val progressTree = TreeSet(progress)
 }
 
@@ -121,10 +119,8 @@ data class UnknownEnchant(
     override val nbtName: String,
 ) : Enchantment {
     override val type = EnchantType.UNKNOWN
-    override val goodLevel: Int
-        get() = 0
-    override val maxLevel: Int
-        get() = 0
+    override val goodLevel: Int = 0
+    override val maxLevel: Int = 0
     override val abbreviation: String = loreName.take(3)
 
     override fun getStyle(level: Int): Style = unkColor

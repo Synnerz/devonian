@@ -29,7 +29,7 @@ object ChromaText {
         .putFloat() // chroma
         .get()
     lateinit var ubo: GpuBuffer
-    val SETTING_SIZE = ConfigData.Slider(
+    val SETTING_SIZE = ConfigData.DecimalSlider(
         "chroma\$size",
         3.0,
         null,
@@ -40,7 +40,7 @@ object ChromaText {
     ).also {
         Config.registerCategory(it, Categories.GLOBAL, "Chroma")
     }
-    val SETTING_SPEED = ConfigData.Slider(
+    val SETTING_SPEED = ConfigData.DecimalSlider(
         "chroma\$speed",
         1.8,
         null,
