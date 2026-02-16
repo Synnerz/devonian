@@ -3,6 +3,9 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.config.json.JsonDataObject
 import com.github.synnerz.devonian.hud.texthud.Marquee
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
@@ -56,6 +59,18 @@ object SpotifyDisplay : TextHudFeature(
         "",
         "Marquee Scroll Speed",
     )
+    private val SETTING_LOGGER = ConfigData.Switch(
+        "${configName}\$logger",
+        false,
+        null,
+        "requires restart",
+        "Spotify Logger",
+        "Misc",
+        emptySet(),
+        isHidden,
+    ).also {
+        Config.registerCategory(it, Categories.DEBUG, "Misc")
+    }
 
     override fun createHud(): StylizedTextHud = TextHudFamily(configName, this)
 
@@ -106,15 +121,18 @@ object SpotifyDisplay : TextHudFeature(
     private val logger = DebugLogger("SpotifyLogger")
 
     override fun initialize() {
-//        logger.startLogger()
+        if (SETTING_LOGGER.get()) {
+            logger.startLogger()
 
-        DevonianCommand.command.subcommand("dumpspotify") { _, _ ->
-            logger.stopAndPrint()
-            return@subcommand 1
+            DevonianCommand.command.subcommand("dumpspotify") { _, _ ->
+                logger.stopAndPrint()
+                return@subcommand 1
+            }
         }
 
         if (isWindows) {
             Scheduler.schedulePool.scheduleWithFixedDelay({
+                if (!isEnabled()) return@scheduleWithFixedDelay
                 if (isEditing) return@scheduleWithFixedDelay
 
                 val obj = JsonDataObject().also {

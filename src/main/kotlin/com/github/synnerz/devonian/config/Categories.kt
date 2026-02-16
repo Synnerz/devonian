@@ -12,7 +12,7 @@ enum class Categories(
     END("End"),
     DIANA("Diana"),
     MISC("Misc", listOf("General", "Inventory", "Hiders", "Tweaks", "Tooltip", "Actionbar", "Chat")),
-    DEBUG("Debug", listOf("Renderers", "Utils", "Packet Logger"));
+    DEBUG("Debug", listOf("Renderers", "Utils", "Packet Logger", "Misc"));
 
     init {
         if (subcategories.isEmpty()) throw IllegalArgumentException("must provide at least 1 subcategory")
