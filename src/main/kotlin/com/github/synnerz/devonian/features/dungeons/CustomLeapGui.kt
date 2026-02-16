@@ -87,6 +87,7 @@ object CustomLeapGui : Feature(
                     containerId = -1
                     return@on
                 }
+                if (containerId != -1) Scheduler.scheduleTask { background.clearChildren() }
                 containerId = packet.containerId
                 return@on
             }
