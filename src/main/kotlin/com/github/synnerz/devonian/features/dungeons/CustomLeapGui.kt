@@ -50,6 +50,12 @@ object CustomLeapGui : Feature(
         "Sets the background color for custom leap gui",
         "CustomLeap Background"
     )
+    private val SETTING_USE_ON_CLICK = addSwitch(
+        "useOnClick",
+        true,
+        "Uses onClick listener instead of onRelease. some people prefer onRelease because it can be faster but it takes a while to get used to it",
+        "CustomLeap On Click"
+    )
     private const val CONTAINER_NAME = "Spirit Leap"
     private val closeChestKey get() = minecraft.options.keyInventory
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
@@ -208,7 +214,15 @@ object CustomLeapGui : Feature(
         }
         UIRect(if (idx % 2 == 0) 0.0 else x, if (idx < 2) 0.0 else y, 50.0, 50.0, parent = background).apply {
             onMouseRelease { event ->
+                if (SETTING_USE_ON_CLICK.get()) return@onMouseRelease
                 if (event.button !in 0..1 || data.isDead) return@onMouseRelease
+
+                ScreenUtils.click(data.slot)
+                Scheduler.scheduleTask { background.clearChildren() }
+            }
+            onMouseClick { event ->
+                if (!SETTING_USE_ON_CLICK.get()) return@onMouseClick
+                if (event.button !in 0..1 || data.isDead) return@onMouseClick
 
                 ScreenUtils.click(data.slot)
                 Scheduler.scheduleTask { background.clearChildren() }
