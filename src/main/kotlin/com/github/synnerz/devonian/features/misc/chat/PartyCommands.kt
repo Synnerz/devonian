@@ -88,7 +88,7 @@ object PartyCommands : Feature(
                     }
                     "!fps" -> ChatUtils.command("pc FPS ${minecraft.fps}")
                     "!ping" -> ChatUtils.command("pc Ping: ${"%.2f".format(Ping.getLastPing())}, Avg: ${"%.2f".format(Ping.getMedianPing())}")
-                    "!tps" -> ChatUtils.command("pc Tps: ${TpsDisplay.lastCur}, Avg: ${TpsDisplay.lastAvg}")
+                    "!tps" -> ChatUtils.command("pc Tps: ${TpsDisplay.lastCur}, Avg: ${"%.2f".format(TpsDisplay.lastAvg)}")
                     "!location" -> ChatUtils.command("pc Location: ${Location.area} - ${Location.subarea}")
                     else -> {
                         val str = first.getOrNull(1) ?: return@scheduleTask
