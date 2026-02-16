@@ -19,7 +19,7 @@ object WitherHighlight : Feature(
     subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.isActiveState)
+        return super.createRequirements() + listOf(Stages.F7.isActiveState, Stages.WitherKing.isActiveState.map(Boolean::not))
     }
 
     private val SETTING_BOX = addSwitch(
