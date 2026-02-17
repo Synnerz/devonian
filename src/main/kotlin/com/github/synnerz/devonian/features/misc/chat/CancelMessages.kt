@@ -66,20 +66,29 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
             onUpdate()
         }
     private val messagesList = mutableSetOf<MessageData>()
+    private var exactMatch = emptySet<String>()
+    private var regexList = emptyList<Regex>()
+
+    private fun rebuildCache() {
+        val str = mutableSetOf<String>()
+        val reg = mutableListOf<Regex>()
+        messagesList.forEach {
+            if (!it.shouldTrigger()) return@forEach
+            it.cachedRegex.let { r ->
+                if (r == null) str.add(it.message)
+                else reg.add(r)
+            }
+        }
+
+        exactMatch = str
+        regexList = reg
+    }
 
     data class MessageData(var message: String) {
         var cachedRegex: Regex? = null
 
         init {
             checkRegex()
-        }
-
-        fun onMessage(event: ChatEvent): Boolean {
-            if (!shouldTrigger()) return false
-            if (cachedRegex != null && event.matches(cachedRegex!!) != null) return true
-            if (event.message != message) return false
-            event.cancel()
-            return true
         }
 
         fun shouldTrigger(): Boolean {
@@ -93,16 +102,15 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         }
 
         fun checkRegex() {
-            if (isRegex()) {
-                val reg = message.drop(1).dropLast(1)
-                try {
-                    // Regex taken from <https://github.com/ChatTriggers/ChatTriggers> under MIT license
-                    // i wasn't lazy this simply works better for this specific feature
-                    cachedRegex = Regex(Regex.escape(reg)
-                        .replace(Regex("\\\$\\{[^*]+?}"), "\\\\E(.+)\\\\Q")
-                        .replace(Regex("\\$\\{\\*?}"), "\\\\E(?:.+)\\\\Q"))
-                } catch (_: IllegalArgumentException) {  }
-            }
+            if (!isRegex()) return
+            val reg = message.drop(1).dropLast(1)
+            try {
+                // Regex taken from <https://github.com/ChatTriggers/ChatTriggers> under MIT license
+                // i wasn't lazy this simply works better for this specific feature
+                cachedRegex = Regex(Regex.escape(reg)
+                    .replace(Regex("\\\$\\{[^*]+?}"), "\\\\E(.+)\\\\Q")
+                    .replace(Regex("\\$\\{\\*?}"), "\\\\E(?:.+)\\\\Q"))
+            } catch (_: IllegalArgumentException) {  }
         }
     }
 
@@ -114,6 +122,8 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
             cachedData.forEach {
                 createCancel(if (components.isEmpty()) 1 else 1 + (components.size % 7), it.asString)
             }
+
+            rebuildCache()
         }
 
         DevonianCommand.command.subcommand("cmsg") { _, args ->
@@ -130,9 +140,8 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         }
 
         EventBus.on<ChatEvent> { event ->
-            for (data in messagesList)
-                if (data.onMessage(event))
-                    event.cancel()
+            if (exactMatch.contains(event.message)) event.cancel()
+            else if (regexList.any { it.matches(event.message) }) event.cancel()
         }
     }
 
@@ -175,6 +184,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
                 data.message = text
                 data.checkRegex()
                 updateCache()
+                rebuildCache()
             }
         }
         val remove = UIRect(79.0, 0.0, 20.0, 100.0, parent = parentBg).apply {
@@ -186,6 +196,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
                 components.remove(parentBg)
                 ChatUtils.sendMessage("&cRemoved CancelMessage &7[${data.message}]", true)
                 updateCache()
+                rebuildCache()
                 parentBg.remove()
                 rebuildChildren()
             }

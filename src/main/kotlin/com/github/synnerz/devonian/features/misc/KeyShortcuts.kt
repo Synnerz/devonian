@@ -9,6 +9,8 @@ import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
 import com.github.synnerz.talium.events.UIKeyType
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.ImmutableListMultimap
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import net.minecraft.client.gui.GuiGraphics
@@ -67,27 +69,26 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
             currentPage++
         }
     }
-    private val bindsList = mutableListOf<ShortCut>()
     private var currentPage = 0
         set(value) {
             field = value.coerceIn(0, components.size / 7)
             onUpdate()
         }
 
+    private val bindsList = mutableListOf<ShortCut>()
+    private var keyCache = ImmutableListMultimap.of<Int, String>()
+
+    private fun rebuildCache() {
+        val cache = ArrayListMultimap.create<Int, String>()
+        bindsList.forEach {
+            if (!it.shouldTrigger()) return@forEach
+            cache.put(it.bind, it.command)
+        }
+
+        keyCache = ImmutableListMultimap.copyOf(cache)
+    }
+
     data class ShortCut(var bind: Int, var command: String) {
-        fun onKeyPress(keyEvent: KeyEvent) {
-            if (!shouldTrigger()) return
-            if (keyEvent.key != bind) return
-            ChatUtils.say(command)
-        }
-
-        fun onButtonPress(btnInfo: MouseButtonInfo) {
-            if (!shouldTrigger()) return
-            if (bind > 0) return
-            if (-100 + btnInfo.button != bind) return
-            ChatUtils.say(command)
-        }
-
         fun shouldTrigger(): Boolean {
             if (bind == -1) return false
             if (command.isBlank()) return false
@@ -107,6 +108,8 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
                 val command = v.get("command").asString
                 createKeyBind(if (components.isEmpty()) 1 else 1 + (components.size % 7), command, keycode)
             }
+
+            rebuildCache()
         }
 
         DevonianCommand.command.subcommand("ksho") { _, args ->
@@ -161,6 +164,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
             onLostFocus {
                 data.command = text
                 updateCache()
+                rebuildCache()
             }
         }
         val keybind = UIKeyBind(55.0, 0.0, 23.0, 100.0, bind, parent = bindRect).apply {
@@ -170,6 +174,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
                 //  cannot accidentally bind one of these
                 data.bind = this.bind
                 updateCache()
+                rebuildCache()
             }
         }
         val remove = UIRect(79.0, 0.0, 20.0, 100.0, parent = bindRect).apply {
@@ -180,6 +185,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
                 bindsList.remove(data)
                 components.remove(bindRect)
                 ChatUtils.sendMessage("&cRemoved KeyShortcut &7[${UIKeyBind.keyName(data.bind)} > ${data.command}]", true)
+                rebuildCache()
                 updateCache()
                 bindRect.remove()
                 rebuildChildren()
@@ -203,12 +209,18 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
             createKeyBind(if (components.isEmpty()) 1 else 1 + (components.size % 7), data.command, data.bind)
     }
 
+    private fun triggerBind(bind: Int) {
+        keyCache.get(bind).forEach {
+            ChatUtils.say(it)
+        }
+    }
+
     fun onKeyPress(event: KeyEvent) {
-        bindsList.forEach { it.onKeyPress(event) }
+        triggerBind(event.key)
     }
 
     fun onButtonPress(btnInfo: MouseButtonInfo) {
-        bindsList.forEach { it.onButtonPress(btnInfo) }
+        triggerBind(-100 + btnInfo.button)
     }
 
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {

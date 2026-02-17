@@ -11,6 +11,8 @@ import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.components.UITextInput
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.ImmutableListMultimap
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import net.minecraft.client.gui.GuiGraphics
@@ -69,35 +71,31 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
             field = value.coerceIn(0, components.size / 7)
             onUpdate()
         }
+
     private val titleCriterias = mutableListOf<TitleCriteria>()
+    private var exactMatch = ImmutableListMultimap.of<String, String>()
+    private var regexList = emptyList<Pair<Regex, String>>()
+
+    private fun rebuildCache() {
+        val str = ArrayListMultimap.create<String, String>()
+        val reg = mutableListOf<Pair<Regex, String>>()
+        titleCriterias.forEach {
+            if (!it.shouldTrigger()) return@forEach
+            it.cachedRegex.let { r ->
+                if (r == null) str.put(it.criteria, it.message)
+                else reg.add(r to it.message)
+            }
+        }
+
+        exactMatch = ImmutableListMultimap.copyOf(str)
+        regexList = reg
+    }
 
     data class TitleCriteria(var criteria: String, var message: String) {
         var cachedRegex: Regex? = null
 
         init {
             checkRegex()
-        }
-
-        fun onMessage(event: ChatEvent) {
-            if (!shouldTrigger()) return
-            // TODO: make Alert#show more customizable
-            // TODO: allow color codes
-            if (cachedRegex != null && isRegex()) {
-                val matches = event.matches(cachedRegex!!) ?: return
-                val fixedMsg = buildString {
-                    for (idx in 0..matches.lastIndex) {
-                        val msg = message.replace("\${${idx + 1}}", matches[idx])
-                        append(msg)
-                    }
-                }
-
-                Alert.show(fixedMsg, 1500, false)
-
-                return
-            }
-            if (event.message != criteria) return
-
-            Alert.show(message, 1500, false)
         }
 
         fun shouldTrigger(): Boolean {
@@ -136,6 +134,8 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
                 val command = it.value.asString
                 createCriteria(if (components.isEmpty()) 1 else 1 + (components.size % 7), alias, command)
             }
+
+            rebuildCache()
         }
 
         DevonianCommand.command.subcommand("titlemsg") { _, args ->
@@ -152,8 +152,20 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         }
 
         EventBus.on<ChatEvent> { event ->
-            for (title in titleCriterias)
-                title.onMessage(event)
+            exactMatch.get(event.message).forEach {
+                Alert.show(it, 1500, false)
+            }
+
+            regexList.forEach { (reg, msg) ->
+                val m = reg.matchEntire(event.message) ?: return@forEach
+                val alertMessage = buildString {
+                    for (i in 1 until m.groupValues.size) {
+                        append(msg.replace("\${${i}}", m.groupValues[i]))
+                    }
+                }
+
+                Alert.show(alertMessage, 1500, false)
+            }
         }
     }
 
@@ -195,6 +207,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
             onLostFocus {
                 data.criteria = text
                 data.checkRegex()
+                rebuildCache()
                 updateCache()
             }
         }
@@ -202,6 +215,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
             setColor(Color(35, 35, 35, 255))
             onLostFocus {
                 data.message = text
+                rebuildCache()
                 updateCache()
             }
         }
@@ -213,6 +227,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
                 titleCriterias.remove(data)
                 components.remove(parentBg)
                 ChatUtils.sendMessage("&cRemoved TitleMessage &7[${data.criteria} > ${data.message}]", true)
+                rebuildCache()
                 updateCache()
                 parentBg.remove()
                 rebuildChildren()
