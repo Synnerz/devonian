@@ -203,6 +203,7 @@ object DungeonMapScanner {
             }
 
             if (room.checkmark != CheckmarkTypes.GREEN) {
+                val previousCheck = room.checkmark
                 room.checkmark = if (roomCol == centerCol) CheckmarkTypes.NONE
                 else when (centerCol) {
                     MapColors.CHECK_WHITE.color -> CheckmarkTypes.WHITE
@@ -216,6 +217,7 @@ object DungeonMapScanner {
                 if (room.type == RoomTypes.TRAP && room.checkmark == CheckmarkTypes.WHITE) {
                     room.secretsCompleted = max(room.secretsCompleted, 1)
                 }
+                if (previousCheck != room.checkmark) DungeonEvent.RoomUpdateEvent(room, previousCheck, room.checkmark).post()
             }
         }
 

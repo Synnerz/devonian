@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons.DungeonBoss
+import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.events.CancellableEvent
 import com.github.synnerz.devonian.api.events.Event
 import com.github.synnerz.devonian.api.events.Threaded
@@ -20,6 +21,11 @@ abstract class DungeonEvent {
         val current: Int,
         val total: Int,
         val room: DungeonRoom,
+    ) : Event
+    class RoomUpdateEvent(
+        val room: DungeonRoom,
+        val previousCheck: CheckmarkTypes,
+        val currentCheck: CheckmarkTypes,
     ) : Event
     class SecretClicked(
         val x: Double, val y: Double, val z: Double,
