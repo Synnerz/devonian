@@ -362,6 +362,7 @@ object Devonian : ClientModInitializer {
             CustomEnchantLore,
             StackingEnchantProgressHud,
             StackingEnchantProgress,
+            ArmorHexColor,
 
             // Debug
             CopyItem,
