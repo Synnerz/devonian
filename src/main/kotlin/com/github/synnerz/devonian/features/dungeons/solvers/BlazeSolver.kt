@@ -30,6 +30,26 @@ object BlazeSolver : Feature(
         "Sends \"Blaze done\" in party chat",
         "Blaze Done Message"
     )
+    private val SETTING_RENDER_TRACER = addSwitch(
+        "renderTracer",
+        true,
+        "Renders tracer to the blaze",
+        "BlazeSolver Tracer"
+    )
+    private val SETTING_RENDER_TRACER_WIDTH = addSlider(
+        "renderTracerLine",
+        2.0,
+        1.0, 5.0,
+        "",
+        "BlazeSolver Tracer Width"
+    )
+    private val SETTING_RENDER_TRACER_AMOUNT = addSelection(
+        "renderTracerAmount",
+        0,
+        listOf("1", "2", "all"),
+        "The amount of tracers which should be displayed",
+        "BlazeSolver Tracer Amount"
+    )
     private val SETTING_COLOR_FIRST_OUTLINE = addColorPicker(
         "firstBlazeColorOutline",
         Color(0, 255, 0, 255).rgb,
@@ -214,13 +234,13 @@ object BlazeSolver : Feature(
             // yes i could make this dynamic, but why ?
             // it is pointless if we only need 3 entries
             val blaze1 = blazes.getOrNull(0)?.entity ?: return@on
-            highlightBlaze(blaze1, c1, SETTING_COLOR_FIRST_FILLED.getColor())
+            highlightBlaze(blaze1, c1, SETTING_COLOR_FIRST_FILLED.getColor(), SETTING_RENDER_TRACER_AMOUNT.get() >= 0)
 
             val blaze2 = blazes.getOrNull(1)?.entity ?: return@on
-            highlightBlaze(blaze2, c2, SETTING_COLOR_SECOND_FILLED.getColor())
+            highlightBlaze(blaze2, c2, SETTING_COLOR_SECOND_FILLED.getColor(), SETTING_RENDER_TRACER_AMOUNT.get() >= 1)
 
             val blaze3 = blazes.getOrNull(2)?.entity
-            if (blaze3 != null) highlightBlaze(blaze3, c3, SETTING_COLOR_THIRD_FILLED.getColor())
+            if (blaze3 != null) highlightBlaze(blaze3, c3, SETTING_COLOR_THIRD_FILLED.getColor(), SETTING_RENDER_TRACER_AMOUNT.get() == 2)
 
             Render3DImmediate.renderLines(c1.alpha and c2.alpha and c3.alpha == 255) {
                 val p1 = blaze1.position().add(0.0, 0.8, 0.0)
@@ -236,7 +256,8 @@ object BlazeSolver : Feature(
     private fun highlightBlaze(
         entity: Entity,
         outlineColor: Color = Color.GREEN,
-        filledColor: Color = Color(0, 255, 0, 80)
+        filledColor: Color = Color(0, 255, 0, 80),
+        tracer: Boolean = false,
     ) {
         Render3DImmediate.renderWireframeBox(
             entity.x, entity.y, entity.z,
@@ -251,6 +272,10 @@ object BlazeSolver : Feature(
             entity.bbHeight.toDouble(),
             filledColor,
             centered = true,
+        )
+        if (tracer && SETTING_RENDER_TRACER.get()) Render3DImmediate.renderTracer(
+            entity.x, entity.y + 1.0, entity.z,
+            outlineColor, lineWidth = SETTING_RENDER_TRACER_WIDTH.get()
         )
     }
 
