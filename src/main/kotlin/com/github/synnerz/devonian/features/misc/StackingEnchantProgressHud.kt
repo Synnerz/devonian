@@ -20,6 +20,13 @@ object StackingEnchantProgressHud : TextHudFeature(
     Categories.MISC,
     subcategory = "General",
 ) {
+    private val SETTING_COMPACT = addSwitch(
+        "compact",
+        true,
+        "Abbreviates the number (1.47k instead of 1,473).",
+        "Compact Number",
+    )
+
     private val EMPTY = StackingEnchant("", "", "", "", "", listOf())
 
     private val cache = IdentityHashMap<ItemStack, StackingEnchant>()
@@ -48,10 +55,11 @@ object StackingEnchantProgressHud : TextHudFeature(
             val num = data.getInt(type.nbtTag).getOrNull() ?: 0
             val tier = type.progress.indexOf(type.progressTree.floor(num) ?: 0) + 1
 
-            val upper = type.progressTree.ceiling(num)
-            val curr = StringUtils.shortenNumber(num)
+            val upper = type.progressTree.higher(num)
+            val curr = if (SETTING_COMPACT.get()) StringUtils.shortenNumber(num)
+                else StringUtils.addCommas(num)
             val progress = if (upper == null) "&e$curr"
-                else "&c$curr &f/ &a${StringUtils.shortenNumber(upper)}"
+                else "&c$curr &f/ &a${StringUtils.formatShortest(upper)}"
 
             setLine("&b${type.loreName} &e${tier} &f($progress&f)")
             display = true

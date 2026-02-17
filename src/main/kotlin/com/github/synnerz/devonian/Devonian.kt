@@ -361,6 +361,7 @@ object Devonian : ClientModInitializer {
             BazaarOverlay,
             CustomEnchantLore,
             StackingEnchantProgressHud,
+            StackingEnchantProgress,
 
             // Debug
             CopyItem,

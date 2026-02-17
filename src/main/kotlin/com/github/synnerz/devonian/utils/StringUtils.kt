@@ -8,6 +8,8 @@ import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.TextColor
 import java.text.NumberFormat
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 object StringUtils {
     private val removeCodesRegex = "[\\u00a7&][0-9a-fk-or]".toRegex(RegexOption.IGNORE_CASE)
@@ -273,6 +275,44 @@ object StringUtils {
                 'd', 'D' -> 86400
                 else -> 0
             }
+        }
+    }
+
+    // uses as few sig figs as possible
+    private val digitChars = Array(10) { '0' + it }
+    private val placePrefix = arrayOf(
+        "",
+        "", "", "",
+        "k", "k", "k",
+        "M", "M", "M",
+        "B",
+    )
+    fun formatShortest(num: Int, maxDigits: Int = 10): String {
+        if (num < 0) return '-' + formatShortest(-num, maxDigits)
+        if (num == 0) return "0"
+
+        val digits = mutableListOf<Int>()
+        var num = num
+        while (num > 0) {
+            digits.add(num % 10)
+            num /= 10
+        }
+        digits.reverse()
+
+        val count = max(
+            ((digits.size - 1) % 3) + 1,
+            min(
+                maxDigits,
+                digits.indexOf(0).let { if (it == -1) digits.size else it }
+            )
+        )
+
+        return buildString {
+            for (i in 0 until count) {
+                if (i == 1 && digits.size > 3) append('.')
+                append(digitChars[digits[i]])
+            }
+            append(placePrefix[digits.size])
         }
     }
 
