@@ -4,7 +4,6 @@ import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.MouseHandlerAccessor;
 import com.github.synnerz.devonian.api.events.GuiScaleEvent;
 import com.github.synnerz.devonian.features.misc.NoHurtCamera;
-import com.github.synnerz.devonian.features.misc.PeekChatKeybind;
 import com.github.synnerz.devonian.features.misc.ZoomKeybind;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

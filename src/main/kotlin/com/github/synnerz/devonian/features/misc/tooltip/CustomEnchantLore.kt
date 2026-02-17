@@ -6,16 +6,11 @@ import com.github.synnerz.devonian.api.events.TooltipRenderEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.EnchantRegistry
-import com.github.synnerz.devonian.utils.Enchantment
-import com.github.synnerz.devonian.utils.StringUtils
-import com.github.synnerz.devonian.utils.UltimateEnchant
-import com.github.synnerz.devonian.utils.UnknownEnchant
+import com.github.synnerz.devonian.utils.*
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.item.ItemStack
-import java.util.Comparator
-import java.util.IdentityHashMap
+import java.util.*
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
 

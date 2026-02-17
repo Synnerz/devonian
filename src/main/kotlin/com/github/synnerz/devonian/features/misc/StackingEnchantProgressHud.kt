@@ -10,7 +10,7 @@ import com.github.synnerz.devonian.utils.EnchantRegistry
 import com.github.synnerz.devonian.utils.StackingEnchant
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.world.item.ItemStack
-import java.util.IdentityHashMap
+import java.util.*
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
 

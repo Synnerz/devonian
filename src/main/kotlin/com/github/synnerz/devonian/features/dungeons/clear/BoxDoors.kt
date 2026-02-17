@@ -14,8 +14,6 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
-import kotlinx.atomicfu.atomic
-import kotlinx.atomicfu.update
 import java.awt.Color
 import java.util.*
 import kotlin.math.min

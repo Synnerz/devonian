@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.end
 
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature

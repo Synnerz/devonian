@@ -4,7 +4,6 @@ import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.Event
 import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.Threaded
 
 object GardenEvents {
     private const val OVERCLOCKER_3000 = "Overclocker 3000"
