@@ -39,7 +39,10 @@ object Searchbar : HudFeature(
         SETTING_BACKGROUND_COLOR.onChange {
             setColor(Color(it, true))
         }
-        onCharType { onKeyType() }
+        onKeyType {
+            this.onKeyType(it)
+            onKeyType()
+        }
         onResize { _, _ -> onResize() }
     }
     private val highlightItems = atomic(intArrayOf())

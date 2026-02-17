@@ -20,7 +20,9 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
         UITextInput(23.75, 92.0, 52.5, 8.0, parent = rightPanel).apply {
             setColor(ColorPalette.TERTIARY_COLOR)
 
-            onCharType {
+            onKeyType {
+                this.onKeyType(it)
+
                 // Unhide
                 if (previousText.isEmpty() && text.isNotEmpty()) {
                     oldCategory = ConfigGui.selectedCategory
@@ -40,7 +42,7 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
                         oldCategory = null
                         previousText = ""
                     }
-                    return@onCharType
+                    return@onKeyType
                 }
                 if (previousText !== text)
                     onSearch(text)
