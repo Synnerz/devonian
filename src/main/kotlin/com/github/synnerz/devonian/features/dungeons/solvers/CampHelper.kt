@@ -150,7 +150,7 @@ object CampHelper : Feature(
                 val color = Color(colorForNumber2(ttl, v.maxTTL))
                 if (SETTING_PLAY_SOUND.get() && ttl < SETTING_SOUND_THRESHOLD.get() && !v.triggeredSound) {
                     v.triggeredSound = true
-                    minecraft.player?.playSound(SoundEvents.NOTE_BLOCK_PLING.value())
+                    minecraft.player?.playSound(SoundEvents.NOTE_BLOCK_COW_BELL.value())
                 }
 
                 Render3DImmediate.renderWireframeBox(
