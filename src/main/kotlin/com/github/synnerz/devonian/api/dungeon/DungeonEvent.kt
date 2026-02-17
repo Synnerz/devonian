@@ -16,6 +16,11 @@ abstract class DungeonEvent {
     class BossRoomEnter(val boss: DungeonBoss, val floor: FloorType) : Event
     @Threaded class FloorEnter(val floorType: FloorType) : Event
     class BossMessageEvent(val boss: DungeonBoss, val message: String) : Event
+    class SecretUpdateEvent(
+        val current: Int,
+        val total: Int,
+        val room: DungeonRoom,
+    ) : Event
     class SecretClicked(
         val x: Double, val y: Double, val z: Double,
         val isSkull: Boolean = false,

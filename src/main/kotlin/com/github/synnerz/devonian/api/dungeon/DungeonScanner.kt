@@ -201,6 +201,7 @@ object DungeonScanner {
 
             if (total != room.totalSecrets) println("mismatching secret counts in ${room.name}")
             room.secretsCompleted = found
+            DungeonEvent.SecretUpdateEvent(found, total, room).post()
         }.setEnabled(Location.stateInArea("catacombs"))
     }
 
