@@ -189,9 +189,7 @@ object DungeonWaypoints : Feature(
         on<ChatEvent> { event ->
             when (event.message) {
                 "You found a Secret Redstone Key!" -> {
-                    Scheduler.scheduleTask {
-                        getWaypoints()?.get(WaypointType.REDSTONE)?.clear()
-                    }
+                    getWaypoints()?.get(WaypointType.REDSTONE)?.clear()
                 }
 
                 "That chest is locked!" -> {
@@ -201,10 +199,8 @@ object DungeonWaypoints : Feature(
 
                     readdLockCD = t + 11
 
-                    Scheduler.scheduleTask {
-                        lastChestOp = null
-                        op.first.add(op.second)
-                    }
+                    lastChestOp = null
+                    op.first.add(op.second)
                 }
             }
         }

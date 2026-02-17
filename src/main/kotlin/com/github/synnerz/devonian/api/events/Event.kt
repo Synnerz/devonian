@@ -46,15 +46,16 @@ annotation class Threaded
 @Target(AnnotationTarget.CLASS)
 annotation class Ordered
 
-abstract class Event {
-    open fun post(): Boolean {
+interface Event {
+    fun post(): Boolean {
         EventBus.post(this)
         return false
     }
 }
 
-abstract class CancellableEvent : Event() {
-    private var shouldCancel = false
+interface CancellableEventI : Event {
+    // where is my multiple inheritance :(
+    var shouldCancel: Boolean
 
     fun cancel() {
         shouldCancel = true
@@ -65,6 +66,19 @@ abstract class CancellableEvent : Event() {
     override fun post(): Boolean {
         EventBus.post(this)
         return isCancelled()
+    }
+}
+
+abstract class CancellableEvent : CancellableEventI {
+    override var shouldCancel: Boolean = false
+}
+
+interface CriteriaEvent : Event {
+    val message: String
+    
+    fun matches(criteria: Regex): List<String>? {
+        val matches = criteria.matchEntire(message) ?: return null
+        return matches.groupValues.drop(1)
     }
 }
 
@@ -82,11 +96,11 @@ class PrePacketSentEvent(
 
 class EntityJoinEvent(
     val entity: Entity
-) : Event()
+) : Event
 
 class EntityLeaveEvent(
     val entity: Entity
-) : Event()
+) : Event
 
 class DropItemEvent @JvmOverloads constructor(
     val slot: Slot?,
@@ -98,18 +112,18 @@ class DropItemEvent @JvmOverloads constructor(
 class TickEvent(
     val minecraft: Minecraft,
     val tick: Int,
-) : Event()
+) : Event
 
 class RenderWorldEvent(
     val ctx: WorldRenderContext
-) : Event()
+) : Event
 
 class PreRenderEntityEvent(
     val entityState: EntityRenderState,
     val cameraState: CameraRenderState,
     val matrix: PoseStack,
     val submitter: SubmitNodeCollector,
-) : Event()
+) : Event
 
 /*
 class PostRenderEntityEvent(
@@ -117,7 +131,7 @@ class PostRenderEntityEvent(
     val cameraState: CameraRenderState,
     val matrix: PoseStack,
     val submitter: SubmitNodeCollector,
-) : Event()
+) : Event
  */
 
 class PreExtractRenderEntityEvent(
@@ -129,7 +143,7 @@ class PostExtractRenderEntityEvent(
     val entity: Entity,
     val state: EntityRenderState,
     val pt: Float,
-) : Event()
+) : Event
 
 class GuiOpenEvent(
     val screen: Screen
@@ -145,24 +159,24 @@ class ParticleSpawnEvent(
 
 class GameLoadEvent(
     val minecraft: Minecraft
-) : Event()
+) : Event
 
 class GameUnloadEvent(
     val minecraft: Minecraft
-) : Event()
+) : Event
 
 class WorldChangeEvent(
     val minecraft: Minecraft,
     val world: ClientLevel
-) : Event()
+) : Event
 
 @Threaded class AreaEvent(
     val area: String?
-) : Event()
+) : Event
 
 @Threaded class SubAreaEvent(
     val subarea: String?
-) : Event()
+) : Event
 
 class BlockInteractEvent(
     val itemStack: ItemStack,
@@ -198,51 +212,50 @@ class BeforeBlockOutlineEvent(
     val hitResult: HitResult?
 ) : CancellableEvent()
 
-open class CriteriaEvent(val message: String) : CancellableEvent() {
-    fun matches(criteria: Regex): List<String>? {
-        val matches = criteria.matchEntire(message) ?: return null
-        return matches.groupValues.drop(1)
-    }
+abstract class InternalMessageEvent(override val message: String, val text: Component) : CriteriaEvent, CancellableEventI {
+    override var shouldCancel: Boolean = false
+}
+abstract class InternalModifyMessageEvent(override val message: String, val text: Component) : CriteriaEvent {
+    var overrideValue = text
 }
 
-@Threaded open class ChatEvent(message: String, val text: Component) : CriteriaEvent(message)
+open class ChatEvent(message: String, text: Component) : InternalMessageEvent(message, text)
+open class ModifyChatEvent(message: String, text: Component) : InternalModifyMessageEvent(message, text)
 
-@Threaded class ActionbarEvent(
-    message: String,
-    val text: Component
-) : CriteriaEvent(message)
+open class ActionbarEvent(message: String, text: Component) : InternalMessageEvent(message, text)
+open class ModifyActionbarEvent(message: String, text: Component) : InternalModifyMessageEvent(message, text)
 
 abstract class ChatChannelEvent(message: String, text: Component, val name: String, val userMessage: String) :
     ChatEvent(message, text) {
-    @Threaded class AllChatEvent(message: String, text: Component, name: String, userMessage: String, val level: Int) :
+    class AllChatEvent(message: String, text: Component, name: String, userMessage: String, val level: Int) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    @Threaded class PartyChatEvent(message: String, text: Component, name: String, userMessage: String) :
+    class PartyChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    @Threaded class CoopChatEvent(message: String, text: Component, name: String, userMessage: String) :
+    class CoopChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
 
-    @Threaded class GuildChatEvent(message: String, text: Component, name: String, userMessage: String) :
+    class GuildChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
 
     abstract class PrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage) {
-        @Threaded class IncomingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
+        class IncomingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
             PrivateChatEvent(message, text, name, userMessage)
 
-        @Threaded class OutgoingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
+        class OutgoingPrivateChatEvent(message: String, text: Component, name: String, userMessage: String) :
             PrivateChatEvent(message, text, name, userMessage)
     }
 
     companion object {
         private val allChatRegex =
-            "^(?:\\[(?<level>\\d+)] .? ?)?(?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
-        private val partyChatRegex = "^Party > (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
-        private val coopChatRegex = "^Co-op > (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
-        private val guildChatRegex = "^Guild > (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
-        private val incomingPMRegex = "^From (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
-        private val outgoingPMRegex = "^To (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)\$".toRegex()
+            "^(?:\\[(?<level>\\d+)] .? ?)?(?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)$".toRegex()
+        private val partyChatRegex = "^Party > (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)$".toRegex()
+        private val coopChatRegex = "^Co-op > (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)$".toRegex()
+        private val guildChatRegex = "^Guild > (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)$".toRegex()
+        private val incomingPMRegex = "^From (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)$".toRegex()
+        private val outgoingPMRegex = "^To (?:\\[[^]]+] )?(?<name>\\w{1,16}): (?<msg>.+)$".toRegex()
 
         fun from(message: String, text: Component): ChatChannelEvent? {
             allChatRegex.matchEntire(message)?.let {
@@ -302,29 +315,38 @@ abstract class ChatChannelEvent(message: String, text: Component, val name: Stri
 class EntityDeathEvent(
     val entity: Entity,
     val world: ClientLevel
-) : Event()
+) : Event
 
 class RenderOverlayEvent(
     val ctx: GuiGraphics,
     val tickCounter: DeltaTracker
-) : Event()
+) : Event
 
-class RenderTickEvent : Event()
+class RenderTickEvent : Event
 
-@Threaded class TabAddEvent(message: String) : CriteriaEvent(message)
-@Threaded class TabUpdateEvent(message: String) : CriteriaEvent(message)
-@Threaded class TabFooterEvent(message: String) : CriteriaEvent(message)
-@Threaded class TabHeaderEvent(message: String) : CriteriaEvent(message)
+@Threaded class TabAddEvent(override val message: String) : CriteriaEvent
+@Threaded class TabUpdateEvent(override val message: String) : CriteriaEvent
+@Threaded class TabFooterEvent(override val message: String) : CriteriaEvent
+@Threaded class TabHeaderEvent(override val message: String) : CriteriaEvent
 
-@Threaded class ServerTickEvent(val ticks: Int) : Event()
+@Threaded class ServerTickEvent(val ticks: Int) : Event
 
-@Threaded class ScoreboardEvent(message: String) : CriteriaEvent(message)
+@Threaded class ScoreboardEvent(override val message: String) : CriteriaEvent
 
-@Ordered class RenderSlotEvent(val slot: Slot, val ctx: GuiGraphics, val screen: AbstractContainerScreen<*>) : CancellableEvent() {
+@Ordered class RenderSlotEvent(
+    val slot: Slot,
+    val ctx: GuiGraphics,
+    val screen: AbstractContainerScreen<*>,
+) : CancellableEvent() {
     fun isInventory(): Boolean = slot.container == Devonian.minecraft.player?.inventory
 }
 
-@Ordered class RenderHotbarSlotEvent(val item: ItemStack, val x: Int, val y: Int, val ctx: GuiGraphics) : CancellableEvent()
+@Ordered class RenderHotbarSlotEvent(
+    val item: ItemStack,
+    val x: Int,
+    val y: Int,
+    val ctx: GuiGraphics,
+) : CancellableEvent()
 
 @Threaded class SoundPlayEvent(
     val sound: String,
@@ -350,21 +372,21 @@ class ClientSoundPlayEvent(
 ) : CancellableEvent()
 
 // while no, yes
-@Threaded class PostClientInitEvent(val minecraft: Minecraft) : Event()
+@Threaded class PostClientInitEvent(val minecraft: Minecraft) : Event
 
 @Threaded class NameChangeEvent(
     val entityId: Int,
     val type: EntityType<*>,
     val nameText: Component,
     val name: String
-) : Event()
+) : Event
 
 @Threaded class EntityEquipmentEvent(
     val entityId: Int,
     val type: EntityType<*>,
     val spawnPos: Vec3,
     val slots: List<Pair<EquipmentSlot, ItemStack?>>
-) : Event()
+) : Event
 
 class EntityInteractEvent(
     val entity: Entity
@@ -373,11 +395,11 @@ class EntityInteractEvent(
 @Threaded class BlockUpdateEvent(
     val blockPos: BlockPos,
     val blockState: BlockState
-) : Event()
+) : Event
 
 @Threaded class MultiBlockUpdateEvent(
     val packet: ClientboundSectionBlocksUpdatePacket
-) : Event() {
+) : Event {
     fun forEach(cb: (BlockPos, BlockState) -> Unit) {
         packet.runUpdates(cb)
     }
@@ -386,15 +408,15 @@ class EntityInteractEvent(
 class UseItemOnEvent(
     val blockHitResult: BlockHitResult,
     val hand: InteractionHand
-) : Event()
+) : Event
 
 class UseItemEvent(
     val hand: InteractionHand
-) : Event()
+) : Event
 
 class ClientThreadServerTickEvent(
     val action: Int,
-) : Event()
+) : Event
 
 /*
 class PreRenderTileEntityEvent(
@@ -402,7 +424,7 @@ class PreRenderTileEntityEvent(
     val cameraState: CameraRenderState,
     val matrix: PoseStack,
     val submitter: SubmitNodeCollector,
-) : Event()
+) : Event
 */
 
 class PostRenderTileEntityEvent(
@@ -410,7 +432,7 @@ class PostRenderTileEntityEvent(
     val cameraState: CameraRenderState,
     val matrix: PoseStack,
     val submitter: SubmitNodeCollector,
-) : Event()
+) : Event
 
 class SwapItemEvent(
     val slot1: Slot,
@@ -444,19 +466,19 @@ class QuickCraftMoveEvent(
     val mouseX: Int,
     val mouseY: Int,
     val container: AbstractContainerScreen<*>,
-) : Event()
+) : Event
 
 @Threaded class EntityDataEvent(
     val entityId: Int,
     val type: EntityType<*>,
     val data: List<SynchedEntityData.DataValue<*>>,
-) : Event()
+) : Event
 
 class KeyPressEvent(
     val key: Int,
     val scancode: Int,
     val underlying: KeyEvent,
-) : Event()
+) : Event
 
 class RenderGuiEvent(
     val screen: Screen,
@@ -472,11 +494,11 @@ class PostRenderGuiEvent(
     val y: Int,
     val pticks: Float,
     val ctx: GuiGraphics
-) : Event()
+) : Event
 
 @Ordered class GuiScaleEvent(
     val screen: Screen,
-) : Event() {
+) : Event {
     var overrideScale = -1
 
     fun setScale(scale: Int) {
@@ -511,18 +533,18 @@ class ContainerRenderEvent(
     val containerId: Int,
     val title: Component,
     val titleStr: String,
-) : Event()
+) : Event
 
 @Threaded class ServerContainerCloseEvent(
     val containerId: Int,
-) : Event()
+) : Event
 
 @Threaded class ServerContainerSetContentEvent(
     val containerId: Int,
     val stateId: Int,
     val items: List<ItemStack>,
     val carriedItem: ItemStack, // Item in current cursor
-) : Event() {
+) : Event {
     inline fun forEach(cb: (Int, ItemStack?) -> Unit) {
         for (idx in items.indices) {
             cb(idx, items.getOrNull(idx))
@@ -535,7 +557,7 @@ class ContainerRenderEvent(
     val stateId: Int,
     val itemStack: ItemStack,
     val slot: Int,
-) : Event()
+) : Event
 
 class ClientContainerCloseEvent(
     val containerId: Int
@@ -549,7 +571,7 @@ class SelectedItemRenderEvent(
 class ItemPickupEvent(
     val entity: ItemEntity,
     val entityId: Int,
-) : Event()
+) : Event
 
 class GuiCharTypeEvent(
     val codepoint: Int,

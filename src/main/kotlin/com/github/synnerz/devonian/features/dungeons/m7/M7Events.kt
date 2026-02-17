@@ -7,8 +7,8 @@ import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import java.util.*
 
 object M7Events {
-    @Threaded class DragonSpawned(val dragon: M7Dragon, val isHigh: Boolean) : Event()
-    @Threaded class DragonSpawned2(val dragon: M7Dragon, val isHigh: Boolean) : Event()
+    @Threaded class DragonSpawned(val dragon: M7Dragon, val isHigh: Boolean) : Event
+    @Threaded class DragonSpawned2(val dragon: M7Dragon, val isHigh: Boolean) : Event
 
     val cooldown = EnumMap<M7Dragon, Int>(M7Dragon::class.java)
 

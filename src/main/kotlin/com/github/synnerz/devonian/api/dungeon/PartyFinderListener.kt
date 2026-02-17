@@ -31,7 +31,7 @@ object PartyFinderListener {
 
     @Threaded class PartyFinderEvent(
         val parties: CopyOnWriteArrayList<PartyFinderData>
-    ) : Event()
+    ) : Event
 
     data class PartyFinderMember(val name: String, val role: String, val level: Int)
 

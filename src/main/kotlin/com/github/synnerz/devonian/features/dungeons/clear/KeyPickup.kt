@@ -115,10 +115,8 @@ object KeyPickup : Feature(
                 else -> null
             } ?: return@on
 
-            Scheduler.scheduleTask {
-                if (SETTING_KEY_PICKUP_SOUND.get()) minecraft.player?.playSound(pickupSound, 2f, 1f)
-                if (SETTING_KEY_PICKUP_TITLE.get()) Alert.show(title, SETTING_KEY_PICKUP_TIME.get().toInt() * 1000, playSound = false)
-            }
+            if (SETTING_KEY_PICKUP_SOUND.get()) minecraft.player?.playSound(pickupSound, 2f, 1f)
+            if (SETTING_KEY_PICKUP_TITLE.get()) Alert.show(title, SETTING_KEY_PICKUP_TIME.get().toInt() * 1000, playSound = false)
         }
         on<EntityEquipmentEvent> { event ->
             if (event.type != EntityType.ARMOR_STAND) return@on

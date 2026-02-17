@@ -22,10 +22,9 @@ object NoAbilityCdSound : Feature(
 
     override fun initialize() {
         on<ChatEvent> { event ->
-            if (!SETTING_NO_MESSAGE.get()) return@on
             event.matches("^This ability is on cooldown for \\d+s.$".toRegex()) ?: return@on
             event.cancel()
-        }
+        }.setEnabled(SETTING_NO_MESSAGE.state)
 
         on<SoundPlayEvent> { event ->
             if (event.sound != "minecraft:entity.enderman.teleport" || event.volume != 8.0f) return@on

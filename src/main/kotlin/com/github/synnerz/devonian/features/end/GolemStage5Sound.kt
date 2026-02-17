@@ -18,7 +18,7 @@ object GolemStage5Sound : Feature(
     override fun initialize() {
         on<ChatEvent> { event ->
             event.matches(golemSpawnRegex) ?: return@on
-            Scheduler.scheduleTask { minecraft.player?.playSound(soundEvent, 1f, 1f) }
+            minecraft.player?.playSound(soundEvent, 1f, 1f)
         }
     }
 }

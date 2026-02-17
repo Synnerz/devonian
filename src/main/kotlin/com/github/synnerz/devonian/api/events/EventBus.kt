@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
@@ -107,6 +108,27 @@ object EventBus {
             if (cancel) worldContext.worldState().blockOutlineRenderState = null
             !cancel
         }
+        ClientReceiveMessageEvents.ALLOW_GAME.register { comp, overlay ->
+            val str = comp.string.clearCodes()
+
+            if (overlay) return@register !ActionbarEvent(str, comp).post()
+
+            val specialized = ChatChannelEvent.from(str, comp)
+            val b1 = ChatEvent(str, comp).post()
+            val b2 = specialized?.post() ?: false
+
+            return@register !b1 && !b2
+        }
+        ClientReceiveMessageEvents.MODIFY_GAME.register { comp, overlay ->
+            var str = comp.string.clearCodes()
+
+            val evn = if (overlay) ModifyActionbarEvent(str, comp)
+                else ModifyChatEvent(str, comp)
+
+            evn.post()
+
+            return@register evn.overrideValue
+        }
 
         on<PacketReceivedEvent> { event ->
             when (val packet = event.packet) {
@@ -162,23 +184,6 @@ object EventBus {
                     if (!packet.name.matches(teamRegex)) return@on
                     ScoreboardEvent("${teamPrefix}${teamSuffix.trim()}".clearCodes()).post()
                     return@on
-                }
-
-                is ClientboundSystemChatPacket -> {
-                    val content = packet.content ?: return@on
-                    val message = content.string.clearCodes()
-
-                    if (packet.overlay) {
-                        if (ActionbarEvent(message, content).post())
-                            event.cancel()
-                        return@on
-                    }
-
-                    val specialized = ChatChannelEvent.from(message, content)
-                    val b1 = ChatEvent(message, content).post()
-                    val b2 = specialized?.post() ?: false
-
-                    if (b1 || b2) event.cancel()
                 }
 
                 is ClientboundAddEntityPacket -> {

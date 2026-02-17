@@ -17,7 +17,7 @@ object DianaMobTracker : TextHudFeature(
     searchTags = setOf("inquis"),
 ) {
     private val mobCriteria = "^(?:Woah|Yikes|Oi|Danger|Good Grief|Uh oh|Oh)! You dug out a? ?([\\w ]+)!$".toRegex()
-    private val mobNames = listOf(
+    private val mobNames = setOf(
         "Minos Hunter",
         "Gaia Construct",
         "Stranded Nymph",

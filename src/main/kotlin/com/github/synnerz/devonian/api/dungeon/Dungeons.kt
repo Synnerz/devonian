@@ -340,14 +340,10 @@ object Dungeons {
             }
 
             event.matches(disconnectRegex)?.let {
-                val id = worldId
-                Scheduler.scheduleTask {
-                    if (worldId != id) return@scheduleTask
-                    if (it[0] == Devonian.minecraft.gameProfile.name) wasInDungeons = true
-                    else players.remove(it[0])?.let { p ->
-                        players[it[0]] = p
-                        p.isDisconnected = true
-                    }
+                if (it[0] == Devonian.minecraft.gameProfile.name) wasInDungeons = true
+                else players.remove(it[0])?.let { p ->
+                    players[it[0]] = p
+                    p.isDisconnected = true
                 }
                 return@on
             }

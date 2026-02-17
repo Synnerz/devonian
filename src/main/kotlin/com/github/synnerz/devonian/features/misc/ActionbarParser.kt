@@ -5,12 +5,14 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ActionbarEvent
+import com.github.synnerz.devonian.api.events.ModifyActionbarEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
+import net.minecraft.network.chat.Component
 
 object ActionbarParser : Feature(
     "actionbarParser",
@@ -31,7 +33,7 @@ object ActionbarParser : Feature(
     override fun initialize() {
         Stats.entries.forEach { it.initialize() }
 
-        on<ActionbarEvent> { event ->
+        on<ModifyActionbarEvent> { event ->
             val str = event.text.string
 
             val pieces = str.split(splitReg)
@@ -74,8 +76,7 @@ object ActionbarParser : Feature(
             updateCount++
 
             if (!shouldOverride) return@on
-            event.cancel()
-            ChatUtils.sendActionbar(override)
+            event.overrideValue = Component.literal(override)
         }
 
         on<RenderOverlayEvent> { event ->

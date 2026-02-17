@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageUploader
 import com.github.synnerz.devonian.api.events.ChatEvent
@@ -103,11 +102,10 @@ object CenturyCakeTimer : TextHudFeature(
                         )
                     )
                 )
-        Scheduler.scheduleBeforePacket {
-            lastMsg?.let { ChatUtils.deleteMessage(it) }
-            ChatUtils.sendMessage(msg)
-            lastMsg = msg
-        }
+
+        lastMsg?.let { ChatUtils.deleteMessage(it) }
+        ChatUtils.sendMessage(msg)
+        lastMsg = msg
     }
 
     override fun initialize() {

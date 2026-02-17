@@ -22,28 +22,28 @@ import kotlin.jvm.optionals.getOrNull
 object HypixelModApi {
     val modApiIns: HypixelModAPI get() = HypixelModAPI.getInstance()
 
-    class HelloPacket : Event()
+    class HelloPacket : Event
     class PartyInfoPacket(
         val inParty: Boolean,
         val members: Map<UUID, PartyRole>,
         val isLeader: Boolean, // whether the current user is the leader
-    ) : Event()
+    ) : Event
     class PingPacket(
         val response: String,
-    ) : Event()
+    ) : Event
     class PlayerInfoPacket(
         val playerRank: PlayerRank,
         val packageRank: PackageRank,
         val monthlyPackageRank: MonthlyPackageRank,
         val prefix: String?,
-    ) : Event()
+    ) : Event
     class LocationPacket(
         val serverName: String,
         val serverType: ServerType?,
         val lobbyName: String?,
         val mode: String?,
         val map: String?,
-    ) : Event()
+    ) : Event
 
     fun initialize() {
         modApiIns.createHandler(ClientboundHelloPacket::class.java) { HelloPacket().post() }

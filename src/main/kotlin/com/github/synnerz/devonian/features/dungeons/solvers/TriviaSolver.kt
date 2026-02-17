@@ -1,18 +1,18 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.ModifyChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
+import net.minecraft.network.chat.Component
 import java.awt.Color
 
 object TriviaSolver : Feature(
@@ -98,8 +98,7 @@ object TriviaSolver : Feature(
     var inQuiz = false
     var quizRoom: DungeonRoom? = null
     var solution: List<String>? = null
-    var currentType: String? = null
-    val answers = mutableListOf<String>()
+    var currentAnswer: String? = null
     var enteredAt = -1
 
     override fun initialize() {
@@ -124,24 +123,17 @@ object TriviaSolver : Feature(
             inQuiz = false
         }
 
-        on<ChatEvent> { event ->
+        on<ModifyChatEvent> { event ->
             event.matches("^ *([ⓐⓑⓒ]) (.*)$".toRegex())?.let {
                 if (solution == null) return@on
                 val ( type, msg ) = it
-                event.cancel()
 
                 if (!solution!!.contains(msg)) {
-                    answers.add("    &c$type $msg")
+                    event.overrideValue = Component.literal("    §c$type $msg")
                 } else {
-                    currentType = type
-                    answers.add("    &a$type $msg")
+                    currentAnswer = type
+                    event.overrideValue = Component.literal("    §a$type $msg")
                 }
-
-                if (type == "ⓒ")
-                    Scheduler.scheduleServerTask {
-                        answers.forEach(ChatUtils::sendMessage)
-                        answers.clear()
-                    }
 
                 return@on
             }
@@ -187,8 +179,8 @@ object TriviaSolver : Feature(
         }
 
         on<RenderWorldEvent> {
-            if (!inQuiz || solution == null || currentType == null) return@on
-            val pos = typeBlocks[currentType] ?: return@on
+            if (!inQuiz || solution == null || currentAnswer == null) return@on
+            val pos = typeBlocks[currentAnswer] ?: return@on
             // Should never happen but just in case
             val room = quizRoom ?: return@on
             val realPos = room.fromComp(pos.first, pos.second) ?: return@on
@@ -216,7 +208,7 @@ object TriviaSolver : Feature(
     private fun resetSolution() {
         enteredAt = -1
         solution = null
-        currentType = null
+        currentAnswer = null
     }
 
     private fun currentYear(): String {
