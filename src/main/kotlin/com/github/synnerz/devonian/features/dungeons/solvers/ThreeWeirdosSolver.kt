@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.Stages
@@ -10,6 +9,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
+import net.minecraft.network.chat.Component
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import java.awt.Color
@@ -100,27 +100,24 @@ object ThreeWeirdosSolver : Feature(
                 reset()
                 return@on
             }
+        }
 
+        on<ModifyChatEvent> { event ->
             val match = event.matches(npcRegex) ?: return@on
             val ( name, message ) = match
             if (wrongAnswers.any { it.matches(message) }) {
-                Scheduler.scheduleTask {
-                    getChest(name, false)?.let {
-                        if (answers.contains(it)) return@scheduleTask
-                        answers.add(it)
-                    }
+                createChest(name, false)?.let {
+                    if (answers.contains(it)) return@on
+                    answers.add(it)
                 }
                 return@on
             }
             if (!solutions.any { it.matches(message) }) return@on
 
-            event.cancel()
-            ChatUtils.sendMessage("&e[NPC] &b&l$name: &a&l$message")
-            Scheduler.scheduleTask {
-                getChest(name, true)?.let {
-                    if (answers.contains(it)) return@scheduleTask
-                    answers.add(it)
-                }
+            event.overrideValue = Component.literal("§e[NPC] §b§l$name: §a§l$message")
+            createChest(name, true)?.let {
+                if (answers.contains(it)) return@on
+                answers.add(it)
             }
         }
 
@@ -176,7 +173,7 @@ object ThreeWeirdosSolver : Feature(
         entityList.clear()
     }
 
-    private fun getChest(name: String, isCorrect: Boolean): AnswerData? {
+    private fun createChest(name: String, isCorrect: Boolean): AnswerData? {
         val entityId = entityList[name] ?: return null
         val entity = minecraft.level?.getEntity(entityId) ?: return null
         val pos = entity.position() ?: return null
