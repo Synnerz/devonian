@@ -243,8 +243,8 @@ class DungeonMapBaseRenderer :
                             if (sorted[0].cz == sorted[1].cz) 2
                             else 0
                         Pair(
-                            cells.mapIndexed { i, v -> if (i == idx) 0.0 else v.cx / 2.0 }.sum() / 2.0 + 0.5,
-                            cells.mapIndexed { i, v -> if (i == idx) 0.0 else v.cz / 2.0 }.sum() / 2.0 + 0.5,
+                            sorted.mapIndexed { i, v -> if (i == idx) 0.0 else v.cx / 2.0 }.sum() / 2.0 + 0.5,
+                            sorted.mapIndexed { i, v -> if (i == idx) 0.0 else v.cz / 2.0 }.sum() / 2.0 + 0.5,
                         )
                     }
                 } else Pair(
