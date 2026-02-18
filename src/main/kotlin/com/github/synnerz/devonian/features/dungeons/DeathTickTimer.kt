@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket
 
@@ -14,6 +15,17 @@ object DeathTickTimer : TextHudFeature(
     "catacombs",
     subcategory = "HUD"
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Dungeons.inBoss.map(Boolean::not), Dungeons.started.zip(SETTING_SHOW_CLEAR.state) { a, b -> !a || b })
+    }
+
+    private val SETTING_SHOW_CLEAR = addSwitch(
+        "showDuringClear",
+        false,
+        "Displays the timer even if the run has already started",
+        "DeathTickTimer Clear"
+    )
+
     private var deathTicks = 0
 
     override fun initialize() {
