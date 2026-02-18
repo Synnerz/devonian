@@ -82,6 +82,7 @@ object Render3DVertex {
         wz: Double,
         color: Color,
     ) {
+        // TODO: use gizmos (look into src)
         ShapeRenderer.addChainedFilledBoxVertices(
             stack,
             consumer,
