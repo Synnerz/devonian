@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.PersistentJson
 import com.github.synnerz.devonian.utils.StringUtils
+import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import kotlinx.coroutines.launch
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
@@ -45,6 +46,13 @@ object PartyFinderOverview : Feature(
         "If enabled, it'll compact most of the party finder data from the users",
         "Party Finder Overview Compact"
     )
+    private val SETTING_COMPACT_NO_NAME = addSwitch(
+        "compactNoName",
+        false,
+        "Whether the Compact Mode can change the color of the igns to their respective class(role) color",
+        "Party Finder Overview Compact Names"
+    )
+    private val nameRegex = "^§r §r(§\\w)\\w{1,16}§r§f".toRegex()
     private val members = CopyOnWriteArrayList<String>()
     private val cachedMembers = ConcurrentHashMap<String, DungeonsApiResult>()
     private val parties = CopyOnWriteArrayList<PartyFinderListener.PartyFinderData>()
@@ -125,6 +133,7 @@ object PartyFinderOverview : Feature(
                         return@forEach
                     }
                     if (l.string.contains("Missing: ")) return@forEach
+                    val matchName = nameRegex.find(l.colorCodes())
                     if (match == null) {
                         newLore.add(l.copy())
                         return@forEach
@@ -154,7 +163,8 @@ object PartyFinderOverview : Feature(
                             ChatUtils.literal(buildString {
                                 val role = DungeonClass.from(match[1])
                                 val roleCode = role.colorCode
-                                append("&8[$roleCode${role.singleLetter.uppercase()}&8] $roleCode${match[0]} &8[&e${match[2]} &7| &6${data.level.toInt()}&8] &8[&3${StringUtils.shortenNumber(data.secrets)} &7| &b${"%.1f".format(data.averageSecrets)}&8]")
+                                val nameColor = if (SETTING_COMPACT_NO_NAME.get() && matchName != null) matchName.groupValues[1] else roleCode
+                                append("&8[$roleCode${role.singleLetter.uppercase()}&8] $nameColor${match[0]} &8[&e${match[2]} &7| &6${data.level.toInt()}&8] &8[&3${StringUtils.shortenNumber(data.secrets)} &7| &b${"%.1f".format(data.averageSecrets)}&8]")
                                 if (personalBest == null) append(" &8[&cNO PB&8]")
                                 else append(" &8[&a$personalBest&8]")
                             })
@@ -163,7 +173,8 @@ object PartyFinderOverview : Feature(
                             ChatUtils.literal(buildString {
                                 val role = DungeonClass.from(match[1])
                                 val roleCode = role.colorCode
-                                append("&8[$roleCode${role.singleLetter.uppercase()} &e${match[2]}&8] $roleCode${match[0]} &8[&6${data.level.toInt()} &7| &3${StringUtils.shortenNumber(data.secrets)} &7| &b${"%.1f".format(data.averageSecrets)}&8]")
+                                val nameColor = if (SETTING_COMPACT_NO_NAME.get() && matchName != null) matchName.groupValues[1] else roleCode
+                                append("&8[$roleCode${role.singleLetter.uppercase()} &e${match[2]}&8] $nameColor${match[0]} &8[&6${data.level.toInt()} &7| &3${StringUtils.shortenNumber(data.secrets)} &7| &b${"%.1f".format(data.averageSecrets)}&8]")
                                 if (personalBest == null) append(" &cNO PB")
                                 else append(" &a$personalBest")
                             })
