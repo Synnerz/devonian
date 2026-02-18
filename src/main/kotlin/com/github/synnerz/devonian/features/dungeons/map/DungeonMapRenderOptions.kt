@@ -58,7 +58,7 @@ enum class DungeonMapRoomInfoAlignment(val str: String) {
     // affects which "cell", not sub-cell position
     TopLeft("Top Left"), TopRight("Top Right"),
     BottomLeft("Bottom Left"), BottomRight("Bottom Right"),
-    Center("Center");
+    Center("Center"), CenterL("CenterL");
 
     companion object {
         fun from(name: String) = entries.find { it.str == name } ?: Center

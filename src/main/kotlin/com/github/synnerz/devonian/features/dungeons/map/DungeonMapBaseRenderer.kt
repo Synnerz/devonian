@@ -228,14 +228,25 @@ class DungeonMapBaseRenderer :
                 -> cells.minBy { +it.cx - it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
             DungeonMapRoomInfoAlignment.BottomRight
                 -> cells.minBy { -it.cx - it.cz }.let { Pair(it.cx / 2 + 0.5, it.cz / 2 + 0.5) }
-            DungeonMapRoomInfoAlignment.Center -> {
+            DungeonMapRoomInfoAlignment.Center,
+            DungeonMapRoomInfoAlignment.CenterL -> {
                 if (shape == ShapeTypes.ShapeL) {
                     val sorted = cells.sortedBy { it.cx + it.cz * 11 }
-                    val idx =
-                        if (sorted[0].cx > sorted[1].cx) 2
-                        else if (sorted[0].cx == sorted[2].cx) 0
-                        else 1
-                    Pair(sorted[idx].cx / 2 + 0.5, sorted[idx].cz / 2 + 0.5)
+                    if (alignment == DungeonMapRoomInfoAlignment.Center) {
+                        val idx =
+                            if (sorted[0].cx > sorted[1].cx) 2
+                            else if (sorted[0].cx == sorted[2].cx) 0
+                            else 1
+                        Pair(sorted[idx].cx / 2 + 0.5, sorted[idx].cz / 2 + 0.5)
+                    } else {
+                        val idx =
+                            if (sorted[0].cz == sorted[1].cz) 2
+                            else 0
+                        Pair(
+                            cells.mapIndexed { i, v -> if (i == idx) 0.0 else v.cx / 2.0 }.sum() / 2.0 + 0.5,
+                            cells.mapIndexed { i, v -> if (i == idx) 0.0 else v.cz / 2.0 }.sum() / 2.0 + 0.5,
+                        )
+                    }
                 } else Pair(
                     cells.sumOf { it.cx / 2.0 } / cells.size + 0.5,
                     cells.sumOf { it.cz / 2.0 } / cells.size + 0.5
