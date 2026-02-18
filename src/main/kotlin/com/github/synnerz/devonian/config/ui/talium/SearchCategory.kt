@@ -21,7 +21,7 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
             setColor(ColorPalette.TERTIARY_COLOR)
 
             onKeyType {
-                this.onKeyType(it)
+                // this.onKeyType(it)
 
                 // Unhide
                 if (previousText.isEmpty() && text.isNotEmpty()) {

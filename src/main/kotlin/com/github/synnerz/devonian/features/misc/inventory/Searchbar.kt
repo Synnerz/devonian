@@ -40,7 +40,7 @@ object Searchbar : HudFeature(
             setColor(Color(it, true))
         }
         onKeyType {
-            this.onKeyType(it)
+            // this.onKeyType(it)
             onKeyType()
         }
         onResize { _, _ -> onResize() }
