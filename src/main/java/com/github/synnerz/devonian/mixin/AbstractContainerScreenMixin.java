@@ -132,7 +132,7 @@ public abstract class AbstractContainerScreenMixin {
 
     @Inject(
         method = "renderSlotHighlightBack",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V"),
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"),
         cancellable = true
     )
     private void devonian$test1(GuiGraphics guiGraphics, CallbackInfo ci) {
@@ -146,7 +146,7 @@ public abstract class AbstractContainerScreenMixin {
 
     @Inject(
         method = "renderSlotHighlightFront",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V"),
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"),
         cancellable = true
     )
     private void devonian$test2(GuiGraphics guiGraphics, CallbackInfo ci) {

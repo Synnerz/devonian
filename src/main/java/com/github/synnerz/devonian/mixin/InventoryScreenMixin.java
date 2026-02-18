@@ -30,7 +30,7 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
     )
     private void devonian$renderBg(GuiGraphics instance, RenderPipeline renderPipeline, Identifier identifier, int i, int j, float f, float g, int k, int l, int m, int n, Operation<Void> original) {
         if (!CustomContainerColor.INSTANCE.isEnabled()) {
-            original.call(instance, renderPipeline, resourceLocation, i, j, f, g, k, l, m, n);
+            original.call(instance, renderPipeline, identifier, i, j, f, g, k, l, m, n);
             return;
         }
 

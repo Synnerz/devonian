@@ -61,7 +61,7 @@ public class ItemInHandRendererMixin {
 
     @WrapOperation(
         method = "tick",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getAttackStrengthScale(F)F")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getItemSwapScale(F)F")
     )
     private float devonian$itemAnimationsBob(LocalPlayer instance, float v, Operation<Float> original) {
         if (ItemAnimations.INSTANCE.disableReequip() || ItemAnimations.INSTANCE.disableSwingBob()) return 1f;
@@ -95,7 +95,7 @@ public class ItemInHandRendererMixin {
 
     @Inject(
         method = "renderMapHand",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/core/ClientAsset$Texture;texturePath()Lnet/minecraft/resources/ResourceLocation;")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/core/ClientAsset$Texture;texturePath()Lnet/minecraft/resources/Identifier;")
     )
     private void devonian$itemAnimations3(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, HumanoidArm humanoidArm, CallbackInfo ci) {
         if (!ItemAnimations.INSTANCE.affectMap()) return;
@@ -104,7 +104,7 @@ public class ItemInHandRendererMixin {
 
     @Inject(
         method = "renderMap",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitCustomGeometry(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;Lnet/minecraft/client/renderer/SubmitNodeCollector$CustomGeometryRenderer;)V")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitCustomGeometry(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;L;)V")
     )
     private void devonian$itemAnimations4(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, ItemStack itemStack, CallbackInfo ci) {
         if (!ItemAnimations.INSTANCE.isEnabled()) return;

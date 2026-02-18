@@ -39,9 +39,9 @@ public class GuiTextRenderStateMixin implements GuiTextRenderStateAccessor {
 
     @WrapOperation(
         method = "ensurePrepared",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;prepareText(Lnet/minecraft/util/FormattedCharSequence;FFIZI)Lnet/minecraft/client/gui/Font$PreparedText;")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;prepareText(Lnet/minecraft/util/FormattedCharSequence;FFIZZI)Lnet/minecraft/client/gui/Font$PreparedText;")
     )
-    private Font.PreparedText devonian$textFloatPosition(Font instance, FormattedCharSequence formattedCharSequence, float f, float g, int i, boolean bl, int j, Operation<Font.PreparedText> original) {
+    private Font.PreparedText devonian$textFloatPosition(Font instance, FormattedCharSequence formattedCharSequence, float f, float g, int i, boolean bl, boolean bl2, int j, Operation<Font.PreparedText> original) {
         float x = Float.isNaN(xf) ? f : xf;
         float y = Float.isNaN(yf) ? g : yf;
         return instance.prepareText(formattedCharSequence, x, y, i, bl, j);

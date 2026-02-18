@@ -328,10 +328,10 @@ public class GuiMixin {
             method = "renderChat",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/GuiGraphics;IIIZ)V"
+                    target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V"
             )
     )
-    private void devonian$onRenderChat(ChatComponent instance, GuiGraphics guiGraphics, int i, int j, int k, boolean bl, Operation<Void> original) {
-        original.call(instance, guiGraphics, i, j, k, PeekChatKeybind.INSTANCE.isEnabled() ? PeekChatKeybind.INSTANCE.getKeybind().isDown() : bl);
+    private void devonian$onRenderChat(ChatComponent instance, GuiGraphics guiGraphics, Font font, int i, int j, int k, boolean bl, boolean bl2, Operation<Void> original) {
+        original.call(instance, guiGraphics, font, i, j, k, PeekChatKeybind.INSTANCE.isEnabled() ? PeekChatKeybind.INSTANCE.getKeybind().isDown() : bl, bl2);
     }
 }

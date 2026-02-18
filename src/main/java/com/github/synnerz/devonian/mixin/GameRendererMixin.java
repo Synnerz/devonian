@@ -71,7 +71,7 @@ public class GameRendererMixin {
             mh.devonian$setGuiScaledWidthOverride(origW);
             mh.devonian$setGuiScaledHeightOverride(origH);
 
-            instance.resize(mc, w.getGuiScaledWidth(), w.getGuiScaledHeight());
+            instance.resize(w.getGuiScaledWidth(), w.getGuiScaledHeight());
         }
 
         original.call(instance, guiGraphics, i, j, f);

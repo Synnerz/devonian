@@ -19,7 +19,7 @@ public class OverlayTextureMixin {
 
     @Inject(
         method = "<init>",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/DynamicTexture;setClamp(Z)V")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/DynamicTexture;upload()V")
     )
     private void devonian$recolorDragons(CallbackInfo ci) {
         int[] cols = RecolorDragons.INSTANCE.getCOLORS();

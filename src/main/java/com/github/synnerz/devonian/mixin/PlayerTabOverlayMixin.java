@@ -7,7 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
 import net.minecraft.client.multiplayer.PlayerInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,10 +29,10 @@ public class PlayerTabOverlayMixin {
             method = "render",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/components/PlayerFaceRenderer;draw(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/ResourceLocation;IIIZZI)V"
+                    target = "Lnet/minecraft/client/gui/components/PlayerFaceRenderer;draw(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/Identifier;IIIZZI)V"
             )
     )
-    private void devonian$onTabPlayerRender(GuiGraphics guiGraphics, ResourceLocation resourceLocation, int i, int j, int k, boolean bl, boolean bl2, int l, Operation<Void> original) {
+    private void devonian$onTabPlayerRender(GuiGraphics guiGraphics, Identifier resourceLocation, int i, int j, int k, boolean bl, boolean bl2, int l, Operation<Void> original) {
         if (!RemoveTabHead.INSTANCE.isEnabled()) {
             original.call(guiGraphics, resourceLocation, i, j, k, bl, bl2, l);
             return;
