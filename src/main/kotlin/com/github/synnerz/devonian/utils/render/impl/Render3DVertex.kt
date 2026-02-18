@@ -9,8 +9,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.ShapeRenderer
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Vector3d
@@ -67,6 +67,7 @@ object Render3DVertex {
             shape,
             ox, oy, oz,
             color.rgb,
+            1f // line width - thanks a lot mojang
         )
     }
 
@@ -169,8 +170,8 @@ object Render3DVertex {
     fun renderBeamInner(
         stack: PoseStack,
         bufferSource: MultiBufferSource.BufferSource,
-        opaqueLayer: RenderType.CompositeRenderType,
-        translucentLayer: RenderType.CompositeRenderType,
+        opaqueLayer: RenderType,
+        translucentLayer: RenderType,
         color: Color,
         h: Double,
     ) {
@@ -189,8 +190,8 @@ object Render3DVertex {
     fun renderBeamOuter(
         stack: PoseStack,
         bufferSource: MultiBufferSource.BufferSource,
-        opaqueLayer: RenderType.CompositeRenderType,
-        translucentLayer: RenderType.CompositeRenderType,
+        opaqueLayer: RenderType,
+        translucentLayer: RenderType,
         color: Color,
         h: Double,
     ) {

@@ -84,7 +84,7 @@ object Deployables : TextHudFeature(
             while (--l >= 0) {
                 val (ttl, id, orb) = orbIds.poll() ?: break
                 val ent = minecraft.level?.getEntity(id) as? ArmorStand?
-                if (ent != null) {
+                if (ent !== null) {
                     orb.ent = ent
                     orb.y = ent.y + (if (orb.type.isFlare) 0.0 else 1.0)
                     orbs.add(orb)
@@ -148,18 +148,18 @@ object Deployables : TextHudFeature(
             val entScale = ent.scale
             val renderScale = scale * bounds.h.toFloat() / entScale
             val offset = Vector3f(0f, 2f * entScale * scale, 0f)
+            val state = InventoryScreen.extractRenderState(ent)
 
-            InventoryScreen.renderEntityInInventory(
-                event.ctx,
-                bounds.x.toInt(),
-                bounds.y.toInt(),
-                ceil(bounds.x + bounds.h).toInt(),
-                ceil(bounds.y + bounds.h).toInt(),
+            event.ctx.submitEntityRenderState(
+                state,
                 renderScale,
                 offset,
                 entRotation,
                 cameraRotation,
-                ent,
+                bounds.x.toInt(),
+                bounds.y.toInt(),
+                ceil(bounds.x + bounds.h).toInt(),
+                ceil(bounds.y + bounds.h).toInt(),
             )
 
             ent.yBodyRot = f1
@@ -186,7 +186,7 @@ object Deployables : TextHudFeature(
             val type: Deployable?
 
             val data = ItemUtils.extraAttributes(item)
-            if (data != null) {
+            if (data !== null) {
                 val id = data.getString("id")
                 if (id.isEmpty) return@on
                 type = Deployable.fromSbId(id.get())

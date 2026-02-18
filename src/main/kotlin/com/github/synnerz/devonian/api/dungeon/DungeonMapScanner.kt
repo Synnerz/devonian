@@ -48,7 +48,7 @@ object DungeonMapScanner {
             }
         }
         val id = lastMapId ?: return
-        Devonian.minecraft.level?.overrideMapData(id, null)
+        Devonian.minecraft.level?.overrideMapData(id, null as MapItemSavedData)
         lastMapId = null
         swapCd = System.currentTimeMillis() + 6000L
     }

@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.config.Config
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvent
 
 object CustomSounds {
@@ -24,7 +24,7 @@ object CustomSounds {
             Config.set(key, value)
             Config.set("$key\$Volume", 1f)
             Config.set("$key\$Pitch", 1f)
-            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(value))
+            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(value))
 
             Config.onAfterLoad {
                 Config.get<Float>("$key\$Volume")?.let { setVolume(it) }
@@ -46,7 +46,7 @@ object CustomSounds {
         fun setValue(value: String) {
             this.value = value
             Config.set(key, value)
-            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(value))
+            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(value))
         }
 
         fun setValues(value: String, volume: Float, pitch: Float) {

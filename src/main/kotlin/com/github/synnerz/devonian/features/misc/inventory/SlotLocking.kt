@@ -16,7 +16,7 @@ import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.render.TextureSetup
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import org.joml.Matrix3x2f
@@ -131,7 +131,7 @@ object SlotLocking : Feature(
         }
 
         on<PostRenderSlotsEvent> { event ->
-            val lock = TextureSetup.singleTexture(lockUploader.textureView)
+            val lock = TextureSetup(lockUploader.textureView, null, null, null, null, null)
             val inv = minecraft.player?.inventory
             val mat = Matrix3x2f(event.ctx.pose())
 
@@ -160,7 +160,7 @@ object SlotLocking : Feature(
     }
 
     // from sba
-    private val mcidLock = ResourceLocation.fromNamespaceAndPath("devonian", "lock")!!
+    private val mcidLock = Identifier.fromNamespaceAndPath("devonian", "lock")
     private val lockUploader = BufferedImageUploader.fromResource("/assets/devonian/lock.png")!!
         .register(mcidLock)
 }

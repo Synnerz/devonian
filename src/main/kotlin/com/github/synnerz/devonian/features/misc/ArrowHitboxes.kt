@@ -34,7 +34,7 @@ object ArrowHitboxes : Feature(
     override fun initialize() {
         on<PreRenderEntityEvent> { event ->
             val state = event.entityState as? ArrowRenderState ?: return@on
-            if (state.hitboxesRenderState != null) return@on
+//            if (state.hitboxesRenderState != null) return@on
 
             val w = state.boundingBoxWidth
             val h = state.boundingBoxHeight

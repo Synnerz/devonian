@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.utils.render.Render3DTypes
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.world.phys.shapes.VoxelShape
 import java.awt.Color
@@ -22,7 +22,7 @@ object Render3DState {
     lateinit var poseStack: PoseStack
     lateinit var bufferSource: MultiBufferSource.BufferSource
 
-    private enum class Types(private val arr: Array<RenderType.CompositeRenderType>) {
+    private enum class Types(private val arr: Array<RenderType>) {
         TRIS(
             arrayOf(
                 Render3DTypes.TRIANGLE_STRIP_TRANSLUCENT,

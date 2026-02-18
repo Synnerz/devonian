@@ -72,7 +72,7 @@ object SecretsClickedBox : Feature(
                 ?.getShape(
                     EmptyBlockGetter.INSTANCE,
                     clickedBlock!!,
-                    CollisionContext.of(camera.entity)
+                    CollisionContext.of(camera.entity())
                 ) ?: return@on
 
             Render3DImmediate.renderWireframeShape(

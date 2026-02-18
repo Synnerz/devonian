@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.util.Mth
 import java.awt.Color
@@ -18,8 +18,8 @@ object BeaconBeamRenderer {
     fun renderBeamInner(
         matrices: PoseStack,
         bufferSource: MultiBufferSource,
-        opaqueLayer: RenderType.CompositeRenderType,
-        translucentLayer: RenderType.CompositeRenderType,
+        opaqueLayer: RenderType,
+        translucentLayer: RenderType,
         partialTicks: Float,
         worldTime: Long,
         color: Color,
@@ -59,8 +59,8 @@ object BeaconBeamRenderer {
     fun renderBeamOuter(
         matrices: PoseStack,
         bufferSource: MultiBufferSource,
-        opaqueLayer: RenderType.CompositeRenderType,
-        translucentLayer: RenderType.CompositeRenderType,
+        opaqueLayer: RenderType,
+        translucentLayer: RenderType,
         partialTicks: Float,
         worldTime: Long,
         color: Color,

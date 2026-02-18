@@ -13,7 +13,7 @@ import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import net.minecraft.client.gui.render.TextureSetup
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.joml.Matrix3x2f
 import kotlin.math.roundToInt
 
@@ -136,7 +136,7 @@ abstract class ImmunityTimer(val formattedName: String, itemName: String, config
             event.ctx.guiRenderState.submitGuiElement(
                 TexturedQuadRenderState(
                     BufferedImageRenderer.pipeline,
-                    TextureSetup.singleTexture(getIcon().textureView),
+                    TextureSetup(getIcon().textureView, null, null, null, null, null),
                     Matrix3x2f(event.ctx.pose()),
                     (bounds.x + bounds.h * 0.1).toFloat(), (bounds.y + bounds.h * 0.1).toFloat(),
                     (bounds.x + bounds.h * 1.0).toFloat(), (bounds.y + bounds.h * 1.0).toFloat(),
@@ -186,7 +186,7 @@ object BonzoMask : ImmunityTimer(
         return time * 1000L
     }
 
-    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "dungeons/bonzo_mask")!!
+    private val mcidIcon = Identifier.fromNamespaceAndPath("devonian", "dungeons/bonzo_mask")
     private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/bonzo_mask.png")!!
         .register(mcidIcon)
 
@@ -202,7 +202,7 @@ object SpiritMask : ImmunityTimer(
     override val triggerRegex: Regex = "^Second Wind Activated! Your Spirit Mask saved your life!$".toRegex()
     override fun getCooldown(): Long = 30_000L
 
-    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "dungeons/spirit_mask")!!
+    private val mcidIcon = Identifier.fromNamespaceAndPath("devonian", "dungeons/spirit_mask")
     private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/spirit_mask.png")!!
         .register(mcidIcon)
 
@@ -218,7 +218,7 @@ object PhoenixTimer : ImmunityTimer(
     override val triggerRegex: Regex = "^Your Phoenix Pet saved you from certain death!$".toRegex()
     override fun getCooldown(): Long = 60_000L
 
-    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "dungeons/phoenix")!!
+    private val mcidIcon = Identifier.fromNamespaceAndPath("devonian", "dungeons/phoenix")
     private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/phoenix.png")!!
         .register(mcidIcon)
 

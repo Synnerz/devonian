@@ -795,7 +795,7 @@ object DungeonMap : HudFeature(
                 ctx.guiRenderState.submitGuiElement(
                     TexturedQuadRenderState(
                         BufferedImageRenderer.pipeline,
-                        TextureSetup.singleTexture(textureView),
+                        TextureSetup(textureView, null, null, null, null, null),
                         Matrix3x2f(ctx.pose()),
                         px + dxf - dxr, py + dyf - dyr,
                         px - dxf - dxr, py - dyf - dyr,

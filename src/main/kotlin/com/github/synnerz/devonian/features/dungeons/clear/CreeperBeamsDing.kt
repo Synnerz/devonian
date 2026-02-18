@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvents
 
 object CreeperBeamsDing : Feature(
@@ -60,7 +60,7 @@ object CreeperBeamsDing : Feature(
             val soundRegistry = args.first() as String
 
 
-            val sound = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundRegistry))
+            val sound = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(soundRegistry))
             if (sound == null) {
                 ChatUtils.sendMessage("&4Cannot find sound: &6$soundRegistry", true)
                 return@subcommand 0
@@ -79,7 +79,7 @@ object CreeperBeamsDing : Feature(
 
         Config.onAfterLoad {
             val savedRegistry = Config.get<String>(KEY) ?: "minecraft:block.note_block.iron_xylophone"
-            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(savedRegistry))
+            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(savedRegistry))
                 ?: SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value()
         }
 

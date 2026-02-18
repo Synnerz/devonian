@@ -16,7 +16,7 @@ import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
 import net.minecraft.network.chat.Style
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.joml.Matrix3x2f
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -147,7 +147,7 @@ object CenturyCakeTimer : TextHudFeature(
             event.ctx.guiRenderState.submitGuiElement(
                 TexturedQuadRenderState(
                     BufferedImageRenderer.pipeline,
-                    TextureSetup.singleTexture(iconUploader.textureView),
+                    TextureSetup(iconUploader.textureView, null, null, null, null, null),
                     Matrix3x2f(event.ctx.pose()),
                     (bounds.x + bounds.h * 0.1).toFloat(), (bounds.y + bounds.h * 0.1).toFloat(),
                     (bounds.x + bounds.h * 1.0).toFloat(), (bounds.y + bounds.h * 1.0).toFloat(),
@@ -173,7 +173,7 @@ object CenturyCakeTimer : TextHudFeature(
 
     override fun getEditText(): List<String> = listOf("1d 12h 34m 56s")
 
-    private val mcidIcon = ResourceLocation.fromNamespaceAndPath("devonian", "cake")!!
+    private val mcidIcon = Identifier.fromNamespaceAndPath("devonian", "cake")!!
     private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/cake.png")!!
         .register(mcidIcon)
 

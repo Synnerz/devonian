@@ -5,12 +5,12 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.talium.components.*
-import net.minecraft.Util
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.network.chat.Component
+import net.minecraft.util.Util
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream

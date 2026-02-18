@@ -1,16 +1,15 @@
 package com.github.synnerz.devonian.utils.render
 
-import net.minecraft.client.renderer.RenderStateShard
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BeaconRenderer
+import net.minecraft.client.renderer.rendertype.RenderType
 import java.util.*
 import kotlin.math.ceil
 
 object Render3DTypes {
     private data class LineLayerKey(val lineWidth: Double, val phase: Boolean, val opaque: Boolean)
-    private val cachedLineLayers = mutableMapOf<LineLayerKey, RenderType.CompositeRenderType>()
+    private val cachedLineLayers = mutableMapOf<LineLayerKey, RenderType>()
 
-    fun lines(lineWidth: Double = 1.0, phase: Boolean = false, opaque: Boolean): RenderType.CompositeRenderType {
+    fun lines(lineWidth: Double = 1.0, phase: Boolean = false, opaque: Boolean): RenderType {
         val lineWidth = ceil(lineWidth * 10.0) / 10.0
         return cachedLineLayers.getOrPut(LineLayerKey(lineWidth, phase, opaque)) {
             val name = if (phase) "lines_esp_${lineWidth}_$opaque" else "lines_${lineWidth}_$opaque"

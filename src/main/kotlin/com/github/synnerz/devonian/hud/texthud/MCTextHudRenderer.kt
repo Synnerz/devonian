@@ -87,6 +87,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         0xFF000000.toInt(),
                         0,
                         false,
+                        false,
                         ctx.scissorStack.peek()
                     ).also {
                         val that = it as? GuiTextRenderStateAccessor ?: return@also
@@ -102,6 +103,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         x.toInt() + 1, y.toInt() + 2,
                         0xFF000000.toInt(),
                         0,
+                        false,
                         false,
                         ctx.scissorStack.peek()
                     ).also {
@@ -119,6 +121,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         0xFF000000.toInt(),
                         0,
                         false,
+                        false,
                         ctx.scissorStack.peek()
                     ).also {
                         val that = it as? GuiTextRenderStateAccessor ?: return@also
@@ -134,6 +137,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         x.toInt(), y.toInt() + 2 + 1,
                         0xFF000000.toInt(),
                         0,
+                        false,
                         false,
                         ctx.scissorStack.peek()
                     ).also {

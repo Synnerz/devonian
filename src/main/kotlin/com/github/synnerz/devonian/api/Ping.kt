@@ -7,9 +7,9 @@ import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
-import net.minecraft.Util
 import net.minecraft.network.protocol.ping.ClientboundPongResponsePacket
 import net.minecraft.network.protocol.ping.ServerboundPingRequestPacket
+import net.minecraft.util.Util
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
 

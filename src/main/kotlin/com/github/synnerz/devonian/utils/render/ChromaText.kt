@@ -16,7 +16,7 @@ import net.fabricmc.fabric.api.resource.ResourcePackActivationType
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.TextColor
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.lwjgl.system.MemoryStack
 import kotlin.math.pow
 
@@ -76,7 +76,7 @@ object ChromaText {
 
     fun initialize() {
         ResourceManagerHelper.registerBuiltinResourcePack(
-            ResourceLocation.fromNamespaceAndPath("devonian", "chroma_text_shader"),
+            Identifier.fromNamespaceAndPath("devonian", "chroma_text_shader"),
             Devonian.container,
             ResourcePackActivationType.ALWAYS_ENABLED,
         )

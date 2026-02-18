@@ -13,7 +13,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.network.chat.TextColor
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import org.joml.Matrix3x2f
 import java.util.*
@@ -110,7 +110,7 @@ object ItemRarityBackground : Feature(
                 ctx.guiRenderState.submitGuiElement(
                     TexturedQuadRenderState(
                         BufferedImageRenderer.pipeline,
-                        TextureSetup.singleTexture(blurImg.textureView),
+                        TextureSetup(blurImg.textureView, null, null, null, null, null),
                         Matrix3x2f(ctx.pose()),
                         x + 0f, y + 0f,
                         x + 16f, y + 16f,
@@ -156,7 +156,7 @@ object ItemRarityBackground : Feature(
         return rarities.find { str.startsWith(it.first) }?.second
     }
 
-    private val blurId = ResourceLocation.fromNamespaceAndPath("devonian", "blur")!!
+    private val blurId = Identifier.fromNamespaceAndPath("devonian", "blur")!!
     private val blurImg = BufferedImageUploader.fromResource("/assets/devonian/blur.png")!!
         .register(blurId)
 }
