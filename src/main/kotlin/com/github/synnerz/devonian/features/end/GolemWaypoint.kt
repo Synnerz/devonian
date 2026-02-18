@@ -41,7 +41,8 @@ object GolemWaypoint : Feature(
             if (Location.subarea == null) return@on
             val ( stage ) = event.matches(protectorRegex) ?: return@on
             val idx = golemStages.indexOf(stage)
-            ChatUtils.sendMessage("&aGolem Stage is &b$stage &7($idx)", true)
+            if (currentStage != idx)
+                ChatUtils.sendMessage("&aGolem Stage is &b$stage &7($idx)", true)
             if (idx <= 0) {
                 pos = null
                 return@on
