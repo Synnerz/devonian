@@ -120,7 +120,7 @@ abstract class TextHudFeature(
     override fun coerceX(v: Double): Double {
         if (!isEditing) return super.coerceX(v)
 
-        val editText = getEditText()
+        val editText = if (dirty) getEditText() else emptyList()
         val w = if (dirty && editText.isNotEmpty()) editText.maxOf { it.width() }.toDouble() else getBounds().w
         val ax = when (anchor) {
             Anchor.NW, Anchor.SW -> 0.0
@@ -137,7 +137,7 @@ abstract class TextHudFeature(
     override fun coerceY(v: Double): Double {
         if (!isEditing) return super.coerceY(v)
 
-        val editText = getEditText()
+        val editText = if (dirty) getEditText() else emptyList()
         val h = if (dirty && editText.isNotEmpty()) editText.maxOf { it.height() }.toDouble() else getBounds().h
         val ay = when (anchor) {
             Anchor.NW, Anchor.NE -> 0.0
