@@ -578,3 +578,9 @@ class GuiCharTypeEvent(
     val str: String,
     val event: CharacterEvent,
 ) : CancellableEvent()
+/** - Triggers whenever a block update packet is received, be it multi block or single block update */
+class ClientBlockUpdateEvent(
+    val oldBlockState: BlockState,
+    val blockState: BlockState,
+    val blockPos: BlockPos,
+) : Event
