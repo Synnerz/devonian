@@ -44,7 +44,7 @@ object WatcherKillAlert : Feature(
                 val prediction = when {
                     ticks < 390 -> 22
                     ticks < 441 -> 23
-                    ticks < 460 -> 24
+                    ticks < 460 -> 25
                     ticks < 490 -> 26
                     ticks < 510 -> 27
                     ticks < 550 -> 29
