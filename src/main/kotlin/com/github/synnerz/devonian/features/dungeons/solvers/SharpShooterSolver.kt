@@ -1,10 +1,11 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.ClientBlockUpdateEvent
+import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
@@ -40,6 +41,12 @@ object SharpShooterSolver : Feature(
         "Makes the alert play a sound (ONLY WORKS IF ALERT IS ENABLED)",
         "SharpShooter Sound"
     )
+    private val SETTING_USE_SCANNER = addSwitch(
+        "useScanner",
+        false,
+        "Uses the scanner to check if 8 emerald blocks have been displayed, this is not enabled by default as this may be inaccurate so use at your own will",
+        "SharpShooter Alert Scanner"
+    )
     private val deviceCompletedRegex = "^(\\w{1,16}) completed a device! \\(\\d/7\\)$".toRegex()
     private val emeraldPositions = listOf(
         SolverPosition(68, 130, 50),
@@ -71,32 +78,24 @@ object SharpShooterSolver : Feature(
             }
         }
 
-        on<BlockUpdateEvent> { event ->
+        on<ClientBlockUpdateEvent> { event ->
             if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
 
-            val bp = event.blockPos
-            if (event.blockState.block != Blocks.EMERALD_BLOCK) {
-                if (event.blockState.block == Blocks.BLUE_TERRACOTTA)
-                    onBlueTerracotta(bp)
+            val oldBlockState = event.oldBlockState
+            val blockState = event.blockState
+            val block = blockState.block
+            val blockPos = event.blockPos
+
+            if (oldBlockState.block == Blocks.EMERALD_BLOCK && block == Blocks.BLUE_TERRACOTTA) {
+                onBlueTerracotta(blockPos)
                 return@on
             }
-            Scheduler.scheduleTask { onEmeraldBlock(bp) }
+            if (block != Blocks.EMERALD_BLOCK) return@on
+
+            onEmeraldBlock(blockPos)
         }
 
-        on<MultiBlockUpdateEvent> { event ->
-            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
-
-            event.forEach { blockPos, blockState ->
-                if (blockState.block != Blocks.EMERALD_BLOCK) {
-                    if (blockState.block == Blocks.BLUE_TERRACOTTA)
-                        onBlueTerracotta(blockPos)
-                    return@forEach
-                }
-                Scheduler.scheduleTask { onEmeraldBlock(blockPos) }
-            }
-        }
-
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
             if (whitelist.isEmpty()) return@on
 
@@ -109,6 +108,8 @@ object SharpShooterSolver : Feature(
                 )
             }
 
+            if (whitelist.size == 8 && SETTING_SHOW_ALERT.get() && SETTING_USE_SCANNER.get())
+                Alert.show("&aSharpShooter Done", 1500, SETTING_PLAY_SOUND.get())
             if (whitelist.size >= 9) whitelist.clear()
         }
     }
@@ -118,16 +119,9 @@ object SharpShooterSolver : Feature(
     }
 
     private fun onEmeraldBlock(bp: BlockPos) {
-        val blockAt = WorldUtils.getBlockState(bp.x, bp.y, bp.z)
-        var ox = 0
-        if (blockAt?.block != Blocks.EMERALD_BLOCK) {
-            val blockAt2 = WorldUtils.getBlockState(bp.x + 1, bp.y, bp.z)
-            ox = if (blockAt2?.block == Blocks.EMERALD_BLOCK) 1
-                else -1
-        }
-        emeraldPositions.find { it.x == bp.x + ox && it.y == bp.y && it.z == bp.z } ?: return
+        emeraldPositions.find { it.x == bp.x && it.y == bp.y && it.z == bp.z } ?: return
 
-        val pos = SolverPosition(bp.x + ox, bp.y, bp.z)
+        val pos = SolverPosition(bp.x, bp.y, bp.z)
         if (whitelist.contains(pos)) return
 
         val player = minecraft.player ?: return
