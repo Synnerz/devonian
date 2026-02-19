@@ -45,6 +45,18 @@ object KeyPickup : Feature(
         "",
         "Key Fill Color",
     )
+    private val SETTING_KEY_WIRE_PHASE = addSwitch(
+        "wirePhase",
+        false,
+        "",
+        "Key Outline Phase"
+    )
+    private val SETTING_KEY_FILL_PHASE = addSwitch(
+        "fillPhase",
+        false,
+        "",
+        "Key Fill Phase"
+    )
     private val SETTING_KEY_LINE_WIDTH = addSlider(
         "lineWidth",
         3.0,
@@ -161,7 +173,7 @@ object KeyPickup : Feature(
                     pos.z,
                     1.0, 1.0,
                     SETTING_KEY_WIRE_COLOR.getColor(),
-                    phase = true,
+                    phase = SETTING_KEY_WIRE_PHASE.get(),
                     lineWidth = SETTING_KEY_LINE_WIDTH.get(),
                     centered = true,
                 )
@@ -171,7 +183,7 @@ object KeyPickup : Feature(
                     pos.z,
                     1.0, 1.0,
                     SETTING_KEY_FILL_COLOR.getColor(),
-                    phase = false,
+                    phase = SETTING_KEY_FILL_PHASE.get(),
                     centered = true,
                 )
                 return@removeIf false
