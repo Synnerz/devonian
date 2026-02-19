@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.config
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import java.awt.Color
+import kotlin.math.max
 
 open class ConfigData<T>(
     val configName: String?,
@@ -17,8 +18,16 @@ open class ConfigData<T>(
 ) {
     val description = description ?: ""
     val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
-    val searchTags = (searchTags + this.description.split(' ') + this.displayName.split(' '))
-        .map { it.lowercase().replace(searchStripReg, "") }
+    val searchTags = buildMap {
+        fun add(k: String, v: Int) {
+            val k = k.lowercase().replace(searchStripReg, "")
+            if (k.isEmpty()) return
+            merge(k, v, ::max)
+        }
+        searchTags.forEach { add(it, 3) }
+        this@ConfigData.displayName.split(searchSplitReg).forEach { add(it, 5) }
+        this@ConfigData.description.split(searchSplitReg).forEach { add(it, 1) }
+    }
 
     val state = BasicState(value)
 
@@ -236,6 +245,7 @@ open class ConfigData<T>(
     }
 
     companion object {
+        val searchSplitReg = "[ /]".toRegex()
         val searchStripReg = "[^a-z0-9]".toRegex(RegexOption.IGNORE_CASE)
     }
 }

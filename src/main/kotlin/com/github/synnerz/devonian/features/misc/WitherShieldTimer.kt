@@ -17,6 +17,7 @@ object WitherShieldTimer : TextHudFeature(
     "witherShieldTimer",
     "",
     subcategory = "General",
+    searchTags = setOf("impact", "wimpact"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Location.stateInSkyblock)
@@ -25,14 +26,14 @@ object WitherShieldTimer : TextHudFeature(
     private val SETTING_HIDE_READY = addSwitch(
         "hideReady",
         false,
-        "Hides the WitherShieldTimer whenever its cooldown is done (instead of staying on with \"READY\" as text)",
-        "WitherShieldTimer Hide",
+        "Hides the timer whenever its cooldown is done (instead of staying on with \"READY\" as text).",
+        "Hide When Ready",
     )
     private val SETTING_COMPACT_MODE = addSwitch(
         "compactMode",
         false,
-        "When enabled, it'll make the WitherShieldTimer not have any words only numbers",
-        "WitherShieldTimer Compact"
+        "When enabled, it'll make the timer not have any words only numbers.",
+        "Compact Mode"
     )
 
     private var useTime = 0
