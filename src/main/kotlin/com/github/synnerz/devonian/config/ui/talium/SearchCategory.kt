@@ -101,7 +101,7 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
             matchesConfig(it, str)
         }
         val featMaxHits = subConfigHits.entries.associate { (feat, sub) ->
-            feat to max(featHits[feat] ?: 0, sub.entries.maxOfOrNull { it.value } ?: 0)
+            feat to max((featHits[feat] ?: 0) * 2, sub.entries.maxOfOrNull { it.value } ?: 0)
         }
         val hitCount = mutableListOf<Int>()
         val featOrdering = featMaxHits.entries.associate { (key, maxHits) ->
@@ -138,9 +138,9 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
     private fun matchesConfig(config: ConfigData<*>, str: String): Int {
         val tags = str.split(' ').map { it.lowercase().replace(ConfigData.searchStripReg, "") }
         return tags.sumOf { s ->
-            config.searchTags.sumOf {
-                if (it.startsWith(s)) 10
-                else if (it.contains(s)) 1
+            config.searchTags.entries.sumOf { (k, v) ->
+                if (k.startsWith(s)) 5 * v
+                else if (k.contains(s)) v
                 // yes this is necessary
                 else 0.toInt()
             }
