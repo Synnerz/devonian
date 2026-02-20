@@ -68,13 +68,13 @@ object EventBus {
         }
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
             ScreenMouseEvents.allowMouseClick(screen).register { _, event ->
-                val event = GuiClickEvent(event.x, event.y, event.button(), true, screen)
+                val event = GuiClickEvent(event.x, event.y, event.button(), true, screen, event)
                 post(event)
                 !event.isCancelled()
             }
 
             ScreenMouseEvents.allowMouseRelease(screen).register { _, event ->
-                val event = GuiClickEvent(event.x, event.y, event.button(), false, screen)
+                val event = GuiClickEvent(event.x, event.y, event.button(), false, screen, event)
                 post(event)
                 !event.isCancelled()
             }

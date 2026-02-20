@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
+import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.particle.Particle
 import net.minecraft.client.renderer.SubmitNodeCollector
@@ -188,7 +189,8 @@ class GuiClickEvent(
     val my: Double,
     val mbtn: Int,
     val state: Boolean,
-    val screen: Screen
+    val screen: Screen,
+    val event: MouseButtonEvent,
 ) : CancellableEvent()
 
 class GuiKeyDownEvent(
