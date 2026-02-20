@@ -17,7 +17,10 @@ object SpringBootsProgress : TextHudFeature(
 
     override fun initialize() {
         on<SoundPlayEvent> { event ->
-            if (event.sound == "minecraft:entity.firework_rocket.launch" && event.pitch == 1.6984127f) {
+            if (
+                event.sound == "minecraft:entity.firework_rocket.launch" && event.pitch == 1.6984127f ||
+                event.sound == "minecraft:entity.generic.eat" && event.pitch == 0.0952381f
+            ) {
                 progress = 0
                 return@on
             }
