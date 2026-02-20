@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.utils.render.ChromaText;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -26,7 +27,7 @@ public class StringDecomposerMixin {
     private static ChatFormatting devonian$chromaText(char c, Operation<ChatFormatting> original, @Local(ordinal = 2) LocalRef<Style> style3) {
         ChatFormatting o = original.call(c);
 
-        if (Character.toLowerCase(c) == 'z') {
+        if (Character.toLowerCase(c) == 'z' && ChromaText.INSTANCE.getSETTING_FORMAT().get()) {
             Style old = style3.get();
             style3.set(
                 new Style(

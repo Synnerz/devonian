@@ -29,6 +29,14 @@ object ChromaText {
         .putFloat() // chroma
         .get()
     lateinit var ubo: GpuBuffer
+    val SETTING_FORMAT = ConfigData.Switch(
+        "chroma\$format",
+        true,
+        null,
+        "",
+        "Changes &z formatting codes to be chroma colored (pretend that's a section sign). " +
+        "Disable this to prevent overriding other mod's chromas (the ones that use &z)."
+    )
     val SETTING_SIZE = ConfigData.DecimalSlider(
         "chroma\$size",
         3.0,
