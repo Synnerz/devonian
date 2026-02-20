@@ -7,7 +7,9 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.EnchantRegistry
 import com.github.synnerz.devonian.utils.Enchantment
+import com.github.synnerz.devonian.utils.UltimateEnchant
 import com.github.synnerz.devonian.utils.UnknownEnchant
+import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -62,7 +64,9 @@ object EnchantAbbreviation : Feature(
                     .translate(it.x + 0f, it.y + 0f)
                     .scale(0.6f)
                 event.ctx.drawString(
-                    f, data.first.abbreviation,
+                    f,
+                    if (data.first is UltimateEnchant) data.first.getFormatted(1, data.first.abbreviation)
+                    else Component.literal(data.first.abbreviation),
                     0, 0, -1,
                 )
                 event.ctx.pose().popMatrix()
