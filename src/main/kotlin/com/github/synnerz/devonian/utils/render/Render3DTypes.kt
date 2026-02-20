@@ -17,24 +17,27 @@ object Render3DTypes {
         val lineWidth = ceil(lineWidth * 10.0) / 10.0
         return cachedLineLayers.getOrPut(LineLayerKey(lineWidth, phase, opaque)) {
             val name = if (phase) "lines_esp_${lineWidth}_$opaque" else "lines_${lineWidth}_$opaque"
-            val lw = RenderStateShard.LineStateShard(OptionalDouble.of(lineWidth))
-            RenderType.create(
-                "devonian/$name",
-                1536,
-                false,
-                !opaque,
-                if (phase) {
-                    if (opaque) Render3DPipelines.LINES_OPAQUE_ESP
-                    else Render3DPipelines.LINES_TRANSLUCENT_ESP
-                } else {
-                    if (opaque) Render3DPipelines.LINES_OPAQUE
-                    else Render3DPipelines.LINES_TRANSLUCENT
-                },
-                RenderType.CompositeState
-                    .builder()
-                    .setLineState(lw)
-                    .createCompositeState(false)
-            )
+//            val lw = RenderStateShard.LineStateShard(OptionalDouble.of(lineWidth))
+            RenderType.create("devonian/$name", RenderSetup.builder(Render3DPipelines.LINES_OPAQUE_ESP)
+                .sortOnUpload()
+                .createRenderSetup())
+//            RenderType.create(
+//                "devonian/$name",
+//                1536,
+//                false,
+//                !opaque,
+//                if (phase) {
+//                    if (opaque) Render3DPipelines.LINES_OPAQUE_ESP
+//                    else Render3DPipelines.LINES_TRANSLUCENT_ESP
+//                } else {
+//                    if (opaque) Render3DPipelines.LINES_OPAQUE
+//                    else Render3DPipelines.LINES_TRANSLUCENT
+//                },
+//                RenderType.CompositeState
+//                    .builder()
+//                    .setLineState(lw)
+//                    .createCompositeState(false)
+//            )
         }
     }
 

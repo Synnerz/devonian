@@ -12,6 +12,10 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.ShapeRenderer
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.CameraRenderState
+import net.minecraft.gizmos.GizmoStyle
+import net.minecraft.gizmos.Gizmos
+import net.minecraft.util.ARGB
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Vector3d
 import java.awt.Color
@@ -83,16 +87,20 @@ object Render3DVertex {
         color: Color,
     ) {
         // TODO: use gizmos (look into src)
-        ShapeRenderer.addChainedFilledBoxVertices(
-            stack,
-            consumer,
-            x, y, z,
-            x + wx, y + h, z + wz,
-            color.red / 255f,
-            color.green / 255f,
-            color.blue / 255f,
-            color.alpha / 255f,
+        Gizmos.cuboid(
+            AABB(x, y, z, x + wx, y + h, z + wz),
+            GizmoStyle.fill(ARGB.colorFromFloat(color.alpha / 255f, color.red / 255f, color.green / 255f, color.blue / 255f))
         )
+//        ShapeRenderer.addChainedFilledBoxVertices(
+//            stack,
+//            consumer,
+//            x, y, z,
+//            x + wx, y + h, z + wz,
+//            color.red / 255f,
+//            color.green / 255f,
+//            color.blue / 255f,
+//            color.alpha / 255f,
+//        )
     }
 
     fun renderWireframeBox(
@@ -106,16 +114,21 @@ object Render3DVertex {
         wz: Double,
         color: Color,
     ) {
-        ShapeRenderer.renderLineBox(
-            stack.last(),
-            consumer,
-            x, y, z,
-            x + wx, y + h, z + wz,
-            color.red / 255f,
-            color.green / 255f,
-            color.blue / 255f,
-            color.alpha / 255f,
+        Gizmos.cuboid(
+            AABB(x, y, z, x + wx, y + h, z + wz),
+            GizmoStyle.stroke(ARGB.colorFromFloat(color.alpha / 255f, color.red / 255f, color.green / 255f, color.blue / 255f)),
+            true
         )
+//        ShapeRenderer.renderLineBox(
+//            stack.last(),
+//            consumer,
+//            x, y, z,
+//            x + wx, y + h, z + wz,
+//            color.red / 255f,
+//            color.green / 255f,
+//            color.blue / 255f,
+//            color.alpha / 255f,
+//        )
     }
 
     fun renderString(

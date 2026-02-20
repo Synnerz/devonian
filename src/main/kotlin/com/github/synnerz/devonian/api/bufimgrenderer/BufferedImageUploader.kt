@@ -29,7 +29,7 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
         w = img.width
         h = img.height
         texture = RenderSystem.getDevice().createTexture(name, 0, TextureFormat.RGBA8, w, h, 1, 1)
-        (texture as? GlTextureAccessor)?.setModesDirty(false)
+//        (texture as? GlTextureAccessor)?.setModesDirty(false)
         textureView = RenderSystem.getDevice().createTextureView(texture!!, 0, 1)
         texId = (texture as GlTexture).glId()
         GlStateManager._bindTexture(texId)

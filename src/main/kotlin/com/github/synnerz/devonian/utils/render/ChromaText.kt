@@ -85,7 +85,7 @@ object ChromaText {
             ubo = RenderSystem.getDevice().createBuffer(
                 { "Devonian Chroma Info" },
                 136,
-                UBO_SIZE,
+                UBO_SIZE.toLong(),
             )
         }
     }
