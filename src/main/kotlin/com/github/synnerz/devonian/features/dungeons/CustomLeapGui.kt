@@ -34,7 +34,7 @@ object CustomLeapGui : Feature(
     private val SETTING_PLAYER_SORTING = addSelection(
         "playerSorting",
         0,
-        listOf("a-z", "z-a", "a-z name", "z-a name"),
+        listOf("a-z", "z-a", "a-z name", "z-a name", "dynamic"),
         "Sorting order for CustomLeapGui",
         "CustomLeap Sorting",
     )
@@ -68,8 +68,16 @@ object CustomLeapGui : Feature(
         compareBy { it.name.lowercase() },
         compareByDescending { it.name.lowercase() },
     )
+    private val dynamicSortData = mapOf(
+        DungeonClass.Archer to DynamicLeap(DungeonClass.Archer, 0, 2),
+        DungeonClass.Berserk to DynamicLeap(DungeonClass.Berserk, 1, 0),
+        DungeonClass.Healer to DynamicLeap(DungeonClass.Healer, 2, 2),
+        DungeonClass.Mage to DynamicLeap(DungeonClass.Mage, 3, 2),
+        DungeonClass.Tank to DynamicLeap(DungeonClass.Tank, 3, 1),
+    )
 
     val leapComparator get() = sortingComparators[SETTING_PLAYER_SORTING.get()]
+    data class DynamicLeap(val role: DungeonClass, val slot: Int, val priority: Int)
     data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val isDead: Boolean)
 
     override fun initialize() {
@@ -122,7 +130,18 @@ object CustomLeapGui : Feature(
                     else -> playerList
                 }
 
-                val list = pl.sortedWith(leapComparator)
+                val list = if (SETTING_PLAYER_SORTING.get() == 4) {
+                    if (player == null || player.role == DungeonClass.Unknown)
+                        pl.sortedWith(sortingComparators.first())
+                    else {
+                        val ll = mutableListOf<LeapPlayer>()
+                        val currentRole = player.role.name
+                        val curr = roles.toMutableSet().apply { remove(currentRole) }
+                        val cr = curr.map { dynamicSortData[DungeonClass.from(it)]!! }
+                        ll.addAll(dynamicSorting(cr).mapNotNull { m -> pl.find { it.role == m.role } })
+                        ll
+                    }
+                } else pl.sortedWith(leapComparator)
                 playerList.clear()
                 Scheduler.scheduleTask {
                     list.forEachIndexed { i, v -> create(v, i) }
@@ -229,5 +248,22 @@ object CustomLeapGui : Feature(
                 Scheduler.scheduleTask { background.clearChildren() }
             }
         }
+    }
+
+    private fun dynamicSorting(items: List<DynamicLeap>): List<DynamicLeap> {
+        val slots = MutableList<DynamicLeap?>(4) { null }
+
+        items.forEach { item ->
+            if (item.slot in slots.indices && slots[item.slot] == null) {
+                slots[item.slot] = item
+            }
+        }
+
+        slots.indices
+            .filter { slots[it] == null }
+            .zip(items.filter { it !in slots }.sortedByDescending { it.priority })
+            .forEach { (index, item) -> slots[index] = item }
+
+        return slots.filterNotNull()
     }
 }
