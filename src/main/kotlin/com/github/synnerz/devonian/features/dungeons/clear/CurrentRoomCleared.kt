@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
+import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Stages
@@ -43,6 +44,12 @@ object CurrentRoomCleared : Feature(
         "",
         "No Blood Room Alert",
     )
+    private val SETTING_SECRETS_DONE = addSwitch(
+        "secretsDone",
+        false,
+        "Displays an alert whenever the current room is green checked (only triggers whenever the room has already been white check marked)",
+        "Secrets Done"
+    )
 
     private var lastRoom: DungeonRoom? = null
     private var wasCleared = false
@@ -59,6 +66,17 @@ object CurrentRoomCleared : Feature(
             }
             lastRoom = room
             wasCleared = isCleared
+        }
+
+        on<DungeonEvent.RoomUpdateEvent> { event ->
+            if (!SETTING_SECRETS_DONE.get()) return@on
+            if (event.previousCheck != CheckmarkTypes.WHITE || event.currentCheck != CheckmarkTypes.GREEN) return@on
+            val currentRoom = DungeonScanner.currentRoom ?: return@on
+            val room = event.room
+            if (room != currentRoom) return@on
+            if (room.totalSecrets < 1) return@on
+
+            Alert.show("&bSecrets Done!", (SETTING_ALERT_TIME.get() * 1000.0).toInt())
         }
     }
 
