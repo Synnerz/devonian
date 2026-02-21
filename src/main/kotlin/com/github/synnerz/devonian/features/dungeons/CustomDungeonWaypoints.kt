@@ -268,6 +268,16 @@ object CustomDungeonWaypoints : Feature(
                     WaypointType.SUPERBOOM -> Color(255, 0, 0, 255)
                 }
 
+                if (it.type != WaypointType.TEXT) {
+                    Render3DImmediate.renderWireframeShape(
+                        it.type.shape,
+                        pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(),
+                        color,
+                        phase = SETTING_PHASE_MODE.get(),
+                        lineWidth = SETTING_LINE_WIDTH.get()
+                    )
+                }
+
                 if (it.text != null && SETTING_RENDER_TEXT.get()) {
                     Render3DImmediate.renderString(
                         it.text!!,
@@ -275,7 +285,8 @@ object CustomDungeonWaypoints : Feature(
                         2f,
                         phase = SETTING_TEXT_PHASE_MODE.get()
                     )
-                } else if (it.type == WaypointType.ETHERWARP && SETTING_ORDERED_ETHERS.get()) {
+                }
+                else if (it.type == WaypointType.ETHERWARP && SETTING_ORDERED_ETHERS.get()) {
                     // TODO: make more efficient
                     val idx = currentParent!!.waypoints.filter { f -> f.type == WaypointType.ETHERWARP }.indexOf(it)
                     if (idx != -1) {
@@ -287,15 +298,6 @@ object CustomDungeonWaypoints : Feature(
                         )
                     }
                 }
-                if (it.type == WaypointType.TEXT) return@forEach
-
-                Render3DImmediate.renderWireframeShape(
-                    it.type.shape,
-                    pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(),
-                    color,
-                    phase = SETTING_PHASE_MODE.get(),
-                    lineWidth = SETTING_LINE_WIDTH.get()
-                )
             }
         }
 
