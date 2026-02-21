@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.math.MathUtils
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
@@ -120,7 +121,14 @@ object BoxStarMob : Feature(
         else -> null
     }
 
-    private data class MobData(val height: Double, val color: Color)
+    private data class MobData(val height: Double, val color: Color) {
+        val offset = MathUtils.rescale(
+            color.rgb.toDouble(),
+            Int.MIN_VALUE.toDouble(),
+            Int.MAX_VALUE.toDouble(),
+            0.0, 0.01,
+        )
+    }
 
     override fun initialize() {
         on<NameChangeEvent> { event ->
@@ -187,7 +195,7 @@ object BoxStarMob : Feature(
                     pos.x,
                     pos.y,
                     pos.z,
-                    0.8, data.height,
+                    0.8 + data.offset, data.height,
                     data.color,
                     phase = SETTING_PHASE,
                     lineWidth = SETTING_LINE_WIDTH.get(),
@@ -197,7 +205,7 @@ object BoxStarMob : Feature(
                     pos.x,
                     pos.y,
                     pos.z,
-                    0.8, data.height,
+                    0.8 + data.offset, data.height,
                     data.color.let {
                         Color(it.red, it.green, it.blue, (SETTING_FILL_ALPHA.get() * 255.0).toInt())
                     },
