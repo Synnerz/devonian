@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.chunk.LevelChunk
 import kotlin.math.abs
 
 object WorldUtils {
@@ -24,7 +25,8 @@ object WorldUtils {
         val cz = z shr 4
         val pcx = player.lastXClient.toInt() shr 4
         val pcz = player.lastZClient.toInt() shr 4
-        val b1 = chunkManager?.hasChunk(x shr 4, z shr 4) ?: false
+        val c = chunkManager?.getChunk(x shr 4, z shr 4, false)
+        val b1 = c != null && c.javaClass === LevelChunk::class.java
         val b2 = abs(cx - pcx) + abs(cz - pcz) <= 9
         return b1 && b2
     }
