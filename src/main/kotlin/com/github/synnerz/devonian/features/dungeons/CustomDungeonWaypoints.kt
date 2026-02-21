@@ -478,7 +478,7 @@ object CustomDungeonWaypoints : Feature(
 
             "switch" -> {
                 val waypointType = args.getOrNull(1) as? String?
-                if (!waypointType.isNullOrEmpty()) {
+                if (!waypointType.isNullOrEmpty() && waypointType != "back") {
                     val enum = WaypointType.byName(waypointType)
                     if (enum == null) {
                         ChatUtils.sendMessage("&cCDW Waypoint Type with name \"$waypointType\" does not exist", true)
@@ -488,8 +488,9 @@ object CustomDungeonWaypoints : Feature(
                     ChatUtils.sendMessage("&bCDW Set current waypoint type to &a$currentWaypointType", true)
                     return 1
                 }
-                var nextIdx = currentWaypointType.ordinal + 1
+                var nextIdx = currentWaypointType.ordinal + if (waypointType == "back") -1 else 1
                 val entries = WaypointType.entries.toTypedArray()
+                if (nextIdx < 0) nextIdx = entries.size - 1
                 if (nextIdx > entries.size - 1) nextIdx = 0
 
                 currentWaypointType = entries[nextIdx]
