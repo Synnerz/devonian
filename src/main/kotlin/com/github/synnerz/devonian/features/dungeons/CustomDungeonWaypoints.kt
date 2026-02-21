@@ -161,7 +161,9 @@ object CustomDungeonWaypoints : Feature(
         ETHERWARPPEARL,
         DOUBLEPEARL,
         TEXT,
-        MINE;
+        MINE,
+        LEVER(Block.column(6.0, 8.0, 10.0, 16.0)),
+        SUPERBOOM;
 
         companion object {
             fun byName(name: String) =
@@ -262,6 +264,8 @@ object CustomDungeonWaypoints : Feature(
                     WaypointType.DOUBLEPEARL -> Color(249, 117, 0)
                     WaypointType.TEXT -> Color(0, 0, 0, 0)
                     WaypointType.MINE -> Color(230, 250, 50, 255)
+                    WaypointType.LEVER -> Color(0, 150, 255, 255)
+                    WaypointType.SUPERBOOM -> Color(255, 0, 0, 255)
                 }
 
                 if (it.text != null && SETTING_RENDER_TEXT.get()) {
