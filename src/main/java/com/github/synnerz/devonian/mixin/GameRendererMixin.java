@@ -90,8 +90,7 @@ public class GameRendererMixin {
     @ModifyReturnValue(method = "getFov", at = @At(value = "RETURN", ordinal = 1))
     private float devonian$onGetFov(float original) {
         if (ZoomKeybind.INSTANCE.isEnabled()) {
-            if (ZoomKeybind.INSTANCE.getKeybind().isDown()) return ZoomKeybind.INSTANCE.getSteps();
-            else ZoomKeybind.INSTANCE.setSteps(50f);
+            return original * ZoomKeybind.cachedFactor;
         }
 
         return original;
