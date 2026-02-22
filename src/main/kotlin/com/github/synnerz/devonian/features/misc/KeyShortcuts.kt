@@ -3,6 +3,9 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.KeyPressEvent
+import com.github.synnerz.devonian.api.events.MousePressEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.talium.components.*
@@ -17,7 +20,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
-import net.minecraft.client.input.MouseButtonInfo
 import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -110,6 +112,14 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
             }
 
             rebuildCache()
+        }
+
+        EventBus.on<KeyPressEvent> { event ->
+            triggerBind(event.key)
+        }
+
+        EventBus.on<MousePressEvent> { event ->
+            triggerBind(-100 + event.button)
         }
 
         DevonianCommand.command.subcommand("ksho") { _, args ->
@@ -213,14 +223,6 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         keyCache.get(bind).forEach {
             ChatUtils.say(it)
         }
-    }
-
-    fun onKeyPress(event: KeyEvent) {
-        triggerBind(event.key)
-    }
-
-    fun onButtonPress(btnInfo: MouseButtonInfo) {
-        triggerBind(-100 + btnInfo.button)
     }
 
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {

@@ -1,11 +1,13 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.MouseHandlerAccessor;
+import com.github.synnerz.devonian.api.events.MousePressEvent;
+import com.github.synnerz.devonian.api.events.MouseReleaseEvent;
+import com.github.synnerz.devonian.api.events.MouseScrollEvent;
 import com.github.synnerz.devonian.features.debug.MousePositionLogger;
-import com.github.synnerz.devonian.features.misc.KeyShortcuts;
-import com.github.synnerz.devonian.features.misc.ZoomKeybind;
 import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.platform.Window;
@@ -24,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MouseHandler.class)
-public class MouseHandlerMixin implements MouseHandlerAccessor {
+public abstract class MouseHandlerMixin implements MouseHandlerAccessor {
     @Shadow @Final private Minecraft minecraft;
 
     @Shadow
@@ -35,6 +37,12 @@ public class MouseHandlerMixin implements MouseHandlerAccessor {
 
     @Shadow
     private boolean ignoreFirstMove;
+
+    @Shadow
+    public abstract double getScaledXPos(Window window);
+
+    @Shadow
+    public abstract double getScaledYPos(Window window);
 
     @WrapWithCondition(
         method = "releaseMouse",
@@ -107,13 +115,25 @@ public class MouseHandlerMixin implements MouseHandlerAccessor {
         return !NoCursorReset.INSTANCE.isEnabled();
     }
 
-    @Inject(method = "onButton", at = @At("TAIL"))
-    private void devonian$onButton(long l, MouseButtonInfo mouseButtonInfo, int i, CallbackInfo ci) {
-        if (l != minecraft.getWindow().handle()) return;
-        if (minecraft.screen != null || minecraft.level == null) return;
-        if (i != GLFW.GLFW_PRESS) return;
+    @WrapMethod(method = "onButton")
+    private void devonian$onButton(long l, MouseButtonInfo mouseButtonInfo, int i, Operation<Void> original) {
+        original.call(l, mouseButtonInfo, i);
 
-        KeyShortcuts.INSTANCE.onButtonPress(mouseButtonInfo);
+        Window w = minecraft.getWindow();
+        if (l != w.handle()) return;
+        if (minecraft.screen != null || minecraft.level == null) return;
+
+        double x = getScaledXPos(w);
+        double y = getScaledYPos(w);
+        switch (i) {
+            case GLFW.GLFW_RELEASE:
+                new MouseReleaseEvent(x, y, mouseButtonInfo).post();
+                break;
+
+            case GLFW.GLFW_PRESS:
+                new MousePressEvent(x, y, mouseButtonInfo).post();
+                break;
+        }
     }
 
     @Inject(
@@ -182,6 +202,6 @@ public class MouseHandlerMixin implements MouseHandlerAccessor {
             cancellable = true
     )
     private void devonian$onScroll(long l, double d, double e, CallbackInfo ci) {
-        if (ZoomKeybind.INSTANCE.onScroll(e)) ci.cancel();
+        if (new MouseScrollEvent(e).post()) ci.cancel();
     }
 }
