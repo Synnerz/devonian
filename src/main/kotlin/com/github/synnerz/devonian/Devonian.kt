@@ -99,6 +99,7 @@ object Devonian : ClientModInitializer {
     val features = mutableListOf<Feature>()
     private val featureInstances by lazy {
         mutableListOf(
+            CheckForUpdates,
             NoCursorReset,
             BoxStarMob,
             RemoveBlockBreakParticle,
@@ -328,7 +329,6 @@ object Devonian : ClientModInitializer {
             ChatEmotes,
             PartyCommands,
             MutePartySpam,
-            CheckForUpdates,
             Searchbar,
             PartyFinderCount,
             HighlightTeammates,
