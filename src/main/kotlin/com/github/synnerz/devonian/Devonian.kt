@@ -363,6 +363,7 @@ object Devonian : ClientModInitializer {
             StackingEnchantProgressHud,
             StackingEnchantProgress,
             ArmorHexColor,
+            HudManagerGrid,
 
             // Debug
             CopyItem,

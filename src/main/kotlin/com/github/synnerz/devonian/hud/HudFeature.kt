@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.NullableHudData
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.HudManagerGrid
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
@@ -100,8 +101,13 @@ abstract class HudFeature(
     }
 
     open fun onMouseDrag(dx: Double, dy: Double) {
-        x = coerceX(x + dx)
-        y = coerceY(y + dy)
+        if (HudManagerGrid.isEnabled()) {
+            x = coerceX(snapGrid(HudManager.startDragX + HudManager.cumDragX))
+            y = coerceY(snapGrid(HudManager.startDragY + HudManager.cumDragY))
+        } else {
+            x = coerceX(x + dx)
+            y = coerceY(y + dy)
+        }
     }
 
     open fun onMouseClick(mx: Double, my: Double, mbtn: Int) {
@@ -180,6 +186,8 @@ abstract class HudFeature(
     fun isVisibleEdit() =
         (isEnabled() || isInternal || !HudManagerHider.isEnabled()) &&
         (!isHidden || Devonian.isDev)
+
+    fun snapGrid(v: Double): Double = HudManager.gridSize * (v / HudManager.gridSize).roundToInt()
 
     open fun coerceX(v: Double): Double {
         return max(MARGIN, min(window.guiScaledWidth - MARGIN, v))
