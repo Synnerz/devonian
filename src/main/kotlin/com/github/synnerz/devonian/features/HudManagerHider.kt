@@ -12,4 +12,11 @@ object HudManagerHider : TextHudFeature(
     isInternal = true,
 ) {
     override fun getEditText(): List<String> = listOf("Hide &cDisabled&r HUDs")
+
+    override fun setDefaultValues() {
+        super.setDefaultValues()
+
+        x = window.guiScaledWidth / 2.0
+        y = window.guiScaledHeight / 4.0
+    }
 }
