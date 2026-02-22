@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.config.ui.talium
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.talium.components.UIBase
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIScrollable
@@ -73,11 +74,16 @@ class Category(
             )
         }
 
-        configs.forEach { (subname, list) ->
+        configs.entries.forEach { (subname, list) ->
             val scrollable = subcategoriesRect[subname]!!
 
             var idx = 0
-            list.forEach { data ->
+            list.sortedBy {
+                if (it is ConfigData.Button)
+                    it.parent?.configName?.trim()?.lowercase()
+                else
+                    it.configName?.trim()?.lowercase()
+            }.forEach { data ->
                 if (data.isHidden && !Devonian.isDev) return@forEach
                 val i = idx++
 
