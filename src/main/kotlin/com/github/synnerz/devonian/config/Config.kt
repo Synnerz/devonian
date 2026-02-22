@@ -14,6 +14,7 @@ object Config : PersistentData by jsonLoader {
 
     fun <T> set(key: String, value: T) = apply { getData().set(key, value) }
     inline fun <reified T> get(key: String) = getData().get<T>(key)
+    fun getObject(key: String) = getData().getObject(key)
 
     fun <T> setConfig(name: String, value: T) = apply { configRoot.set(name, value) }
     inline fun <reified T> getConfig(name: String): T? = configRoot.get<T>(name)

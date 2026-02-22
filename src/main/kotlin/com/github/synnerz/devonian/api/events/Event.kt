@@ -327,10 +327,10 @@ class RenderOverlayEvent(
 
 class RenderTickEvent : Event
 
-@Threaded class TabAddEvent(override val message: String) : CriteriaEvent
-@Threaded class TabUpdateEvent(override val message: String) : CriteriaEvent
-@Threaded class TabFooterEvent(override val message: String) : CriteriaEvent
-@Threaded class TabHeaderEvent(override val message: String) : CriteriaEvent
+@Threaded class TabAddEvent(override val message: String, comp: Component) : CriteriaEvent
+@Threaded class TabUpdateEvent(override val message: String, val comp: Component) : CriteriaEvent
+@Threaded class TabFooterEvent(override val message: String, val comp: Component) : CriteriaEvent
+@Threaded class TabHeaderEvent(override val message: String, val comp: Component) : CriteriaEvent
 
 @Threaded class ServerTickEvent(val ticks: Int) : Event
 
