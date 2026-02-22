@@ -8,12 +8,12 @@ import com.github.synnerz.talium.components.UIBase
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIScrollable
 import com.github.synnerz.talium.components.UIText
+import com.github.synnerz.talium.constraints.UIFlexWrapConstraint
 
 class Category(
     val category: Categories,
     rightPanel: UIBase,
     leftPanel: UIBase,
-    idx: Int,
 ) : SharedCategory(category.displayName) {
     val configs = Config.categories[category]!!
     private val subcategoryPanel = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
@@ -24,10 +24,11 @@ class Category(
 
     init {
         UIRect(
-            0.0, 12.0 + 9 * idx,
+            0.0, 0.0,
             100.0, 8.0,
             parent = leftPanel
         ).apply {
+            yConstraint = UIFlexWrapConstraint(7.0)
             onMouseRelease {
                 if (ConfigGui.selectedCategory === this@Category) return@onMouseRelease
                 if (ConfigGui.selectedCategory == null)

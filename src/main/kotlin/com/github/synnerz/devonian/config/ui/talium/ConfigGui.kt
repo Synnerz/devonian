@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.talium.components.UIRect
+import com.github.synnerz.talium.components.UIScrollable
 import com.github.synnerz.talium.components.UIText
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
@@ -21,6 +22,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     private val leftPanel = UIRect(0.0, 0.0, 20.0, 100.0, parent = main).apply {
         setColor(ColorPalette.SECONDARY_COLOR)
     }
+    private val leftPanelScroll = UIScrollable(0.0, 12.0, 100.0, 78.0, parent = leftPanel)
     private val rightPanel = UIRect(21.0, 1.0, 78.5, 98.0, parent = main).apply {
         setColor(ColorPalette.SECONDARY_COLOR)
     }
@@ -49,8 +51,8 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     var opened = false
 
     fun initialize() {
-        categories = Config.categories.keys.mapIndexed { i, v ->
-            Category(v, rightPanel, leftPanel, i)
+        categories = Config.categories.keys.map {
+            Category(it, rightPanel, leftPanelScroll)
         }
         searchCategory = SearchCategory(rightPanel)
         selectedCategory = categories.first()
