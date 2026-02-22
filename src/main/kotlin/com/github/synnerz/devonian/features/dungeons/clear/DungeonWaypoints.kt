@@ -101,7 +101,7 @@ object DungeonWaypoints : Feature(
         "The color of the highlight filled for redstone key waypoints.",
         "Dungeon Waypoints Redstone Filled",
     )
-    private val waypointsData = Gson().fromJson(
+    val waypointsData = Gson().fromJson(
         this::class.java.getResourceAsStream("/assets/devonian/dungeons/DungeonWaypoints.json")
             ?.bufferedReader()
             .use { it?.readText() },
