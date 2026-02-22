@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.input.MouseButtonEvent
+import net.minecraft.client.input.MouseButtonInfo
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.particle.Particle
 import net.minecraft.client.renderer.SubmitNodeCollector
@@ -76,7 +77,7 @@ abstract class CancellableEvent : CancellableEventI {
 
 interface CriteriaEvent : Event {
     val message: String
-    
+
     fun matches(criteria: Regex): List<String>? {
         val matches = criteria.matchEntire(message) ?: return null
         return matches.groupValues.drop(1)
@@ -477,10 +478,42 @@ class QuickCraftMoveEvent(
 ) : Event
 
 class KeyPressEvent(
-    val key: Int,
-    val scancode: Int,
     val underlying: KeyEvent,
-) : Event
+) : Event {
+    val key = underlying.key
+    val scancode = underlying.scancode
+}
+
+class MousePressEvent(
+    val x: Double,
+    val y: Double,
+    val underlying: MouseButtonInfo,
+) : Event {
+    val button = underlying.button
+    val modifiers = underlying.modifiers
+    val mcEvent = MouseButtonEvent(x, y, underlying)
+}
+
+class KeyReleaseEvent(
+    val underlying: KeyEvent,
+) : Event {
+    val key = underlying.key
+    val scancode = underlying.scancode
+}
+
+class MouseReleaseEvent(
+    val x: Double,
+    val y: Double,
+    val underlying: MouseButtonInfo,
+) : Event {
+    val button = underlying.button
+    val modifiers = underlying.modifiers
+    val mcEvent = MouseButtonEvent(x, y, underlying)
+}
+
+class MouseScrollEvent(
+    val delta: Double,
+) : CancellableEvent()
 
 class RenderGuiEvent(
     val screen: Screen,
