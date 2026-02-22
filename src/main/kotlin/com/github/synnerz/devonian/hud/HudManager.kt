@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.features.HudManagerGrid
 import com.github.synnerz.devonian.features.HudManagerHider
 import com.github.synnerz.devonian.features.HudManagerInstructions
 import com.github.synnerz.devonian.features.HudManagerName
@@ -27,6 +28,13 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     private var mouseDown = false
     private var lastMouseX = 0.0
     private var lastMouseY = 0.0
+
+    val gridSize: Double
+        get() = 5.0 * HudManagerGrid.scale
+    var cumDragX = 0.0
+    var cumDragY = 0.0
+    var startDragX = 0.0
+    var startDragY = 0.0
 
     fun initialize() {
         DevonianCommand.command.subcommand("huds") { _, args ->
@@ -71,14 +79,22 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
 
     override fun mouseClicked(mouseButtonEvent: MouseButtonEvent, bl: Boolean): Boolean {
         mouseDown = true
-        updateSelected()
+        // updateSelected()
         selectedHud?.onMouseClick(mouseButtonEvent.x, mouseButtonEvent.y, mouseButtonEvent.button())
+        cumDragX = 0.0
+        cumDragY = 0.0
+        startDragX = selectedHud?.x ?: 0.0
+        startDragY = selectedHud?.y ?: 0.0
 
         return false
     }
 
     override fun mouseReleased(mouseButtonEvent: MouseButtonEvent): Boolean {
         mouseDown = false
+        cumDragX = 0.0
+        cumDragY = 0.0
+        startDragX = 0.0
+        startDragY = 0.0
 
         return false
     }
@@ -86,7 +102,9 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     override fun mouseDragged(mouseButtonEvent: MouseButtonEvent, d: Double, e: Double): Boolean {
         if (mouseButtonEvent.button() != 0) return false
 
-        updateSelected()
+        // updateSelected()
+        cumDragX += d
+        cumDragY += e
         selectedHud?.onMouseDrag(d, e)
 
         return false
@@ -98,7 +116,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         horizontalAmount: Double,
         verticalAmount: Double
     ): Boolean {
-        updateSelected()
+        // updateSelected()
         selectedHud?.onMouseScroll(verticalAmount)
 
         return false
@@ -125,6 +143,32 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         val window = minecraft?.window ?: return
         context.fill(0, 0, window.guiScaledWidth, window.guiScaledHeight, 0x80000000.toInt())
         super.render(context, mouseX, mouseY, deltaTicks)
+
+        if (HudManagerGrid.isEnabled()) {
+            var x = gridSize
+            while (x < window.guiScaledWidth) {
+                Render2D.drawLine(
+                    context,
+                    x.toFloat(), 0f,
+                    x.toFloat(), window.guiScaledHeight.toFloat(),
+                    Color(152, 191, 216, 50),
+                    1f / window.guiScale,
+                )
+                x += gridSize
+            }
+
+            var y = gridSize
+            while (y < window.guiScaledHeight) {
+                Render2D.drawLine(
+                    context,
+                    0f, y.toFloat(),
+                    window.guiScaledWidth.toFloat(), y.toFloat(),
+                    Color(152, 191, 216, 50),
+                    1f / window.guiScale,
+                )
+                y += gridSize
+            }
+        }
 
         Render2D.drawString(
             context,
