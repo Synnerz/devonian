@@ -151,7 +151,7 @@ object EventBus {
                     if (action === ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER) {
                         packet.entries().forEach {
                             val name = it.displayName ?: return@forEach
-                            TabAddEvent(name.string.clearCodes()).post()
+                            TabAddEvent(name.string.clearCodes(), name).post()
                         }
                         return@on
                     }
@@ -159,14 +159,14 @@ object EventBus {
 
                     packet.entries().forEach {
                         val name = it.displayName ?: return@forEach
-                        TabUpdateEvent(name.string.clearCodes()).post()
+                        TabUpdateEvent(name.string.clearCodes(), name).post()
                     }
                     return@on
                 }
 
                 is ClientboundTabListPacket -> {
-                    packet.footer.string.split("\n").forEach { TabFooterEvent(it).post() }
-                    packet.header.string.split("\n").forEach { TabHeaderEvent(it).post() }
+                    packet.footer.string.split("\n").forEach { TabFooterEvent(it, packet.footer).post() }
+                    packet.header.string.split("\n").forEach { TabHeaderEvent(it, packet.header).post() }
                 }
 
                 is ClientboundPingPacket -> {
