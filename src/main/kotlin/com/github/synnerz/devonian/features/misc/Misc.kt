@@ -2,8 +2,6 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.features.Feature
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
-import net.minecraft.client.KeyMapping
 import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -124,48 +122,4 @@ object ConfirmDisconnect : Feature(
         "The threshold time",
         "ConfirmDisconnect Threshold"
     )
-}
-object PeekChatKeybind : Feature(
-    "peekChatKeybind",
-    "Allows you to quickly peek into the chat screen without opening the textinput (change the keybind in minecraft controls)",
-    subcategory = "Tweaks"
-) {
-    val keybind = KeyBindingHelper.registerKeyBinding(
-        KeyMapping(
-            "key.devonian.peekchatkey",
-            GLFW.GLFW_KEY_UNKNOWN,
-            Devonian.keybindCategory
-        )
-    )
-}
-object ZoomKeybind : Feature(
-    "zoomKeybind",
-    "Hold key to zoom and/or scroll to zoom further/less (change the keybind in minecraft controls)",
-    subcategory = "Tweaks"
-) {
-    private val SETTING_SCROLL_STEPS = addSlider(
-        "scrollSteps",
-        1.0,
-        1.0, 10.0,
-        "The steps it will go up/down whenever scrolling",
-        "Zoom Steps"
-    )
-    val keybind = KeyBindingHelper.registerKeyBinding(
-        KeyMapping(
-            "key.devonian.zoomkey",
-            GLFW.GLFW_KEY_UNKNOWN,
-            Devonian.keybindCategory
-        )
-    )
-    var steps = 50f
-
-    fun onScroll(delta: Double): Boolean {
-        if (!isEnabled() || !keybind.isDown) return false
-
-        if (delta < 0) steps += SETTING_SCROLL_STEPS.get().toFloat()
-        else steps -= SETTING_SCROLL_STEPS.get().toFloat()
-        steps = steps.coerceIn(1f..90f)
-
-        return true
-    }
 }
