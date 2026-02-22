@@ -162,7 +162,7 @@ object CustomDungeonWaypoints : Feature(
         DOUBLEPEARL,
         TEXT,
         MINE,
-        LEVER(Block.column(6.0, 8.0, 10.0, 16.0)),
+        LEVER(Block.column(7.2, 0.0, 7.2)),
         SUPERBOOM;
 
         companion object {
