@@ -313,6 +313,14 @@ object EventBus {
         return obj
     }
 
+    inline fun <reified T : Event> once(noinline cb: (T) -> Unit) {
+        var evn: EventListener<T>? = null
+        evn = on {
+            evn!!.unregister()
+            cb(it)
+        }
+    }
+
     private fun removeImpl(T: KClass<*>, listener: EventListener<*>) {
         events[T]?.remove(listener)
     }
