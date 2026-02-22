@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.hud
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.NullableHudData
@@ -50,17 +52,22 @@ abstract class HudFeature(
     var x = 10.0
     var y = 10.0
     var scale = 1f
+    var fromConfig = false
 
     init {
         HudManager.addHud(this)
+
+        EventBus.once<RenderOverlayEvent> {
+            if (!fromConfig) setDefaultValues()
+        }
     }
 
     open fun load() {
         val data = Config.getHud(legacyName)
 
-        data.x?.let { x = it }
-        data.y?.let { y = it }
-        data.scale?.let { scale = it }
+        data.x?.let { fromConfig = true; x = it }
+        data.y?.let { fromConfig = true; y = it }
+        data.scale?.let { fromConfig = true; scale = it }
     }
 
     open fun save() {
@@ -180,5 +187,11 @@ abstract class HudFeature(
 
     open fun coerceY(v: Double): Double {
         return max(MARGIN, min(window.guiScaledHeight - MARGIN, v))
+    }
+
+    open fun setDefaultValues() {
+        x = 10.0
+        y = 10.0
+        scale = 1f
     }
 }

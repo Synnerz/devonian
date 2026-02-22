@@ -35,4 +35,11 @@ object HudManagerRenderer : TextHudFeature(
             }
         )
     }
+
+    override fun setDefaultValues() {
+        super.setDefaultValues()
+
+        x = window.guiScaledWidth / 2.0
+        y = window.guiScaledHeight * 3.0 / 8.0
+    }
 }

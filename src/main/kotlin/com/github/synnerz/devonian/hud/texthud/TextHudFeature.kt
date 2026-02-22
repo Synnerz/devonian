@@ -58,13 +58,13 @@ abstract class TextHudFeature(
     override fun load() {
         val data = Config.getHud(legacyName)
 
-        data.x?.let { x = it }
-        data.y?.let { y = it }
-        data.scale?.let { scale = it }
-        data.anchor?.let { anchor = Anchor.from(it) }
-        data.align?.let { align = Align.from(it) }
-        data.shadow?.let { shadow = Shadow.from(it) }
-        data.backdrop?.let { backdrop = Backdrop.from(it) }
+        data.x?.let { fromConfig = true; x = it }
+        data.y?.let { fromConfig = true; y = it }
+        data.scale?.let { fromConfig = true; scale = it }
+        data.anchor?.let { fromConfig = true; anchor = Anchor.from(it) }
+        data.align?.let { fromConfig = true; align = Align.from(it) }
+        data.shadow?.let { fromConfig = true; shadow = Shadow.from(it) }
+        data.backdrop?.let { fromConfig = true; backdrop = Backdrop.from(it) }
     }
 
     override fun save() {
@@ -149,5 +149,13 @@ abstract class TextHudFeature(
             MARGIN + ay,
             window.guiScaledHeight - MARGIN - (h - ay)
         )
+    }
+
+    override fun setDefaultValues() {
+        super.setDefaultValues()
+        anchor = Anchor.NW
+        align = Align.Left
+        shadow = Shadow.Drop
+        backdrop = Backdrop.None
     }
 }

@@ -16,4 +16,11 @@ object HudManagerInstructions : TextHudFeature("hudManagerInstructions", isInter
         "&l3&r to toggle the text shadow.",
         "&l4&r to change the backdrop."
     )
+
+    override fun setDefaultValues() {
+        super.setDefaultValues()
+
+        x = window.guiScaledWidth / 2.0
+        y = window.guiScaledHeight / 2.0 + 10.0
+    }
 }

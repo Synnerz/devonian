@@ -47,15 +47,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
 
     override fun init() {
         isEditing = true
-        val window = minecraft?.window ?: return
-        HudManagerInstructions.x = window.guiScaledWidth / 2.0
-        HudManagerInstructions.y = window.guiScaledHeight / 2.0 + 10.0
-        HudManagerHider.x = window.guiScaledWidth / 2.0
-        HudManagerHider.y = window.guiScaledHeight / 4.0
-        HudManagerRenderer.x = window.guiScaledWidth / 2.0
-        HudManagerRenderer.y = window.guiScaledHeight * 3.0 / 8.0
-        HudManagerName.x = window.guiScaledWidth * 3.0 / 4.0
-        HudManagerName.y = window.guiScaledHeight / 2.0
+        huds.forEach { if (!it.fromConfig) it.setDefaultValues() }
     }
 
     override fun removed() {
