@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.api.Location;
 import com.github.synnerz.devonian.features.misc.ChangeCrouchHeight;
 import com.github.synnerz.devonian.features.misc.DisableSwim;
@@ -11,8 +12,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.time.LocalDateTime;
 
 @Mixin(Entity.class)
 public class EntityMixin {
@@ -36,7 +35,7 @@ public class EntityMixin {
         argsOnly = true
     )
     private boolean devonian$disableSwim(boolean value) {
-        if (LocalDateTime.now().getDayOfMonth() >= 22 || !DisableSwim.INSTANCE.isEnabled() || Location.INSTANCE.getStateInLatestArea().getValue()) return value;
+        if (!Devonian.INSTANCE.getSETTING_KEEP_189().get() || !DisableSwim.INSTANCE.isEnabled() || Location.INSTANCE.getStateInLatestArea().getValue()) return value;
         Entity that = (Entity) (Object) this;
         if (!(that instanceof LocalPlayer)) return value;
         return false;

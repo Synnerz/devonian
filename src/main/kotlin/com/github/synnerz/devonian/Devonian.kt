@@ -6,7 +6,9 @@ import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.garden.GardenEvents
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
@@ -94,6 +96,18 @@ object Devonian : ClientModInitializer {
                 "keybinds"
             )
         )
+    }
+
+    // TODO: delete me
+    val SETTING_KEEP_189 = ConfigData.Switch(
+        "keep189",
+        false,
+        null,
+        "§4Warning: use at your own risk. Forcibly reenables 1.8.9 features (sc. crouch/swim) past the set expiration date (previously the 22nd).",
+        "Reenable 1.8.9 Features",
+        "Mod",
+    ).also {
+        Config.registerCategory(it, Categories.GLOBAL, "Mod")
     }
 
     val features = mutableListOf<Feature>()
