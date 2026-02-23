@@ -413,6 +413,7 @@ object Devonian : ClientModInitializer {
         CancelMessages.initialize()
         TitleMessages.initialize()
         LogSearch.initialize()
+        WorldUtils.initialize()
         Config.onAfterLoad {
             featureInstances.forEach { feature ->
                 Config.getConfig<Boolean>(feature.configName)?.let {

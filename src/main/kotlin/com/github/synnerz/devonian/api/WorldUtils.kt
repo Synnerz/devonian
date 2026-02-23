@@ -1,6 +1,9 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
 import com.github.synnerz.devonian.utils.math.DDA
@@ -8,14 +11,48 @@ import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.protocol.game.ClientboundForgetLevelChunkPacket
+import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.chunk.LevelChunk
 import kotlin.math.abs
 
 object WorldUtils {
     val world: ClientLevel? get() = Devonian.minecraft.level
     val chunkManager: ClientChunkCache? get() = world?.chunkSource
+
+    private val knownChunks = mutableSetOf<Int>()
+
+    private fun zigzag(v: Int): Int =
+        if (v >= 0) 2 * v
+        else -2 * v - 1
+    private fun szudzik(x: Int, z: Int): Int {
+        val x = zigzag(x)
+        val z = zigzag(z)
+        return if(x >= z) x * x + x + z
+            else z * z + x
+    }
+
+    fun initialize() {
+        EventBus.on<PacketReceivedEvent> { event ->
+            when (val packet = event.packet) {
+                is ClientboundLevelChunkWithLightPacket -> {
+                    Scheduler.scheduleAfterPacket {
+                        knownChunks.add(szudzik(packet.x, packet.z))
+                    }
+                }
+                is ClientboundForgetLevelChunkPacket -> {
+                    Scheduler.scheduleAfterPacket {
+                        knownChunks.remove(szudzik(packet.pos.x, packet.pos.z))
+                    }
+                }
+            }
+        }
+
+        EventBus.on<WorldChangeEvent> {
+            knownChunks.clear()
+        }
+    }
 
     fun isChunkLoaded(x: Double, z: Double): Boolean = isChunkLoaded(x.toInt(), z.toInt())
 
@@ -25,9 +62,8 @@ object WorldUtils {
         val cz = z shr 4
         val pcx = player.lastXClient.toInt() shr 4
         val pcz = player.lastZClient.toInt() shr 4
-        val c = chunkManager?.getChunk(x shr 4, z shr 4, false)
-        val b1 = c != null && c.javaClass === LevelChunk::class.java
-        val b2 = abs(cx - pcx) + abs(cz - pcz) <= 9
+        val b1 = knownChunks.contains(szudzik(cx, cz))
+        val b2 = abs(cx - pcx) <= 7 && abs(cz - pcz) <= 7
         return b1 && b2
     }
 
