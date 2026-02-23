@@ -155,6 +155,7 @@ object DungeonScanner {
             val player = Devonian.minecraft.player ?: return@on
             if (!WorldUtils.isChunkLoaded(player.x, player.z)) return@on
             val comp = WorldPosition(player.x.toInt(), player.z.toInt()).toComponent()
+            if (!comp.isValid()) return@on
             val jdx = comp.getRoomIdx()
 
             if (jdx !in 0..35) return@on
