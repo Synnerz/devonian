@@ -110,7 +110,9 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
                 cachedRegex = Regex(Regex.escape(reg)
                     .replace(Regex("\\\$\\{[^*]+?}"), "\\\\E(.+)\\\\Q")
                     .replace(Regex("\\$\\{\\*?}"), "\\\\E(?:.+)\\\\Q"))
-            } catch (_: IllegalArgumentException) {  }
+            } catch (_: IllegalArgumentException) {
+                println("Devonian\$CancelMessage(IllegalArgumentException, $reg, $message)")
+            }
         }
     }
 
