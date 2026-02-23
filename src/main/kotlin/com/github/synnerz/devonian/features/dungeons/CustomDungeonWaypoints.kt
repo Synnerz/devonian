@@ -230,6 +230,7 @@ object CustomDungeonWaypoints : Feature(
         on<DungeonEvent.RoomEnter> { event ->
             waypointData.data!!.forEach { it.onRoomEnter(event.room) }
             currentRoom = event.room.roomID
+            if (currentRoom == null) return@on
             currentParent = waypointData.data!!
                 .find { it.name == currentProfile.lowercase() }?.parents?.find { it.id == currentRoom }
                 ?: ParentWaypoint(currentRoom!!, mutableListOf())
