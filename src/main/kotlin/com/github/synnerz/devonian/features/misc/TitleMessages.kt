@@ -158,13 +158,12 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
 
             regexList.forEach { (reg, msg) ->
                 val m = reg.matchEntire(event.message) ?: return@forEach
-                val alertMessage = buildString {
-                    for (i in 1 until m.groupValues.size) {
-                        append(msg.replace("\${${i}}", m.groupValues[i]))
-                    }
+                var _msg = msg
+                for (i in 1 until m.groupValues.size) {
+                    _msg = _msg.replace("\${${i}}", m.groupValues[i])
                 }
 
-                Alert.show(alertMessage, 1500, false)
+                Alert.show(_msg, 1500, false)
             }
         }
     }
