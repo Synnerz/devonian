@@ -195,8 +195,12 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
                 // i was lazy
                 cachedRegex = Regex(Regex.escape(reg)
                     .replace(Regex("\\\$\\{[^*]+?}"), "\\\\E(.*)\\\\Q")
-                    .replace(Regex("\\$\\{\\*?}"), "\\\\E(?:.*)\\\\Q"))
-            } catch (_: IllegalArgumentException) { println("failed creating regex for titlemsg") }
+                    .replace(Regex("\\$\\{\\*?}"), "\\\\E(?:.*)\\\\Q")
+                    .replace(Regex("\\\$\\{[^+]+?}"), "\\\\E(.+)\\\\Q")
+                    .replace(Regex("\\$\\{\\+?}"), "\\\\E(?:.+)\\\\Q"))
+            } catch (_: IllegalArgumentException) {
+                println("Devonian\$TitleMessage(IllegalArgumentException, $reg, $message)")
+            }
         }
     }
 

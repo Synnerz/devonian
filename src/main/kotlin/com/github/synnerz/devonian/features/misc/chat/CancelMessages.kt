@@ -108,8 +108,10 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
                 // Regex taken from <https://github.com/ChatTriggers/ChatTriggers> under MIT license
                 // i wasn't lazy this simply works better for this specific feature
                 cachedRegex = Regex(Regex.escape(reg)
-                    .replace(Regex("\\\$\\{[^*]+?}"), "\\\\E(.+)\\\\Q")
-                    .replace(Regex("\\$\\{\\*?}"), "\\\\E(?:.+)\\\\Q"))
+                    .replace(Regex("\\\$\\{[^*]+?}"), "\\\\E(.*)\\\\Q")
+                    .replace(Regex("\\$\\{\\*?}"), "\\\\E(?:.*)\\\\Q")
+                    .replace(Regex("\\\$\\{[^+]+?}"), "\\\\E(.+)\\\\Q")
+                    .replace(Regex("\\$\\{\\+?}"), "\\\\E(?:.+)\\\\Q"))
             } catch (_: IllegalArgumentException) {
                 println("Devonian\$CancelMessage(IllegalArgumentException, $reg, $message)")
             }
