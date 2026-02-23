@@ -175,7 +175,7 @@ object CustomDungeonWaypoints : Feature(
         Config.set(KEY, "default")
 
         waypointData.load()
-        if (waypointData.data?.isEmpty() != false) waypointData.onLoadDefault()
+        if (waypointData.data.isNullOrEmpty()) waypointData.onLoadDefault()
 
         Config.onAfterLoad {
             currentProfile = Config.get<String>(KEY) ?: "default"
