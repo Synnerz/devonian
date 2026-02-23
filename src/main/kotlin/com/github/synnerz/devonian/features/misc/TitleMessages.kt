@@ -10,7 +10,6 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ui.talium.UISpecialText
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.utils.PersistentJson
-import com.github.synnerz.talium.components.UIElement
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.components.UITextInput
