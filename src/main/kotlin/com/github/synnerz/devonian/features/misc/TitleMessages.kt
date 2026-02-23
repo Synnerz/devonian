@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ui.talium.UISpecialText
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.utils.PersistentJson
 import com.github.synnerz.talium.components.UIElement
@@ -148,25 +149,6 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
     }
 
     data class SpecialTitle(val titleCriteria: TitleCriteria, val text: UISpecialText)
-    class UISpecialText(
-        _x: Double,
-        _y: Double,
-        _width: Double,
-        _height: Double,
-        text: String = "",
-        centered: Boolean = false,
-        parent: UIElement? = null
-    ) : UIText(_x, _y, _width, _height, text, centered, parent) {
-        var _onSelectHook: ((Boolean) -> Unit)? = null
-
-        fun select(state: Boolean) {
-            _onSelectHook?.invoke(state)
-        }
-
-        fun onSelect(cb: (Boolean) -> Unit) {
-            _onSelectHook = cb
-        }
-    }
     data class TitleCriteria(var criteria: String, var message: String) {
         var cachedRegex: Regex? = null
 
