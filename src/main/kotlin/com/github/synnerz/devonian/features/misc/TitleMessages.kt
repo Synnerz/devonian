@@ -239,7 +239,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
                     _msg = _msg.replace("\${${i}}", m.groupValues[i])
                 }
 
-                Alert.show(_msg, 1500, false)
+                Alert.show(_msg, 1500, true)
             }
         }
     }
