@@ -159,7 +159,6 @@ object Render3DImmediate : IRender3D {
 
     override fun renderLines(
         opaque: Boolean,
-        lineWidth: Double,
         phase: Boolean,
         translate: Boolean,
         supplier: IRender3D.LinesBuilder.() -> Unit
@@ -169,14 +168,13 @@ object Render3DImmediate : IRender3D {
             poseStack.translate(camera.pos.reverse())
         }
 
-        Render3DState.renderLines(opaque, lineWidth, phase, supplier)
+        Render3DState.renderLines(opaque, phase, supplier)
 
         if (translate) poseStack.popPose()
     }
 
     override fun renderLineStrip(
         opaque: Boolean,
-        lineWidth: Double,
         phase: Boolean,
         translate: Boolean,
         supplier: IRender3D.VertexBuilder.() -> Unit
@@ -186,7 +184,7 @@ object Render3DImmediate : IRender3D {
             poseStack.translate(camera.pos.reverse())
         }
 
-        Render3DState.renderLineStrip(opaque, lineWidth, phase, supplier)
+        Render3DState.renderLineStrip(opaque, phase, supplier)
 
         if (translate) poseStack.popPose()
     }

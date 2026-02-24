@@ -288,12 +288,13 @@ object CustomMageBeam : Feature(
         on<RenderWorldEvent> {
             val c0 = SETTING_START_COLOR.getColor()
             val c1 = SETTING_END_COLOR.getColor()
-            Render3DImmediate.renderLines(c0.alpha == 255 && c1.alpha == 255, SETTING_LINE_WIDTH.get()) {
+            Render3DImmediate.renderLines(c0.alpha == 255 && c1.alpha == 255) {
                 renderedBeams.forEach {
                     submit(
                         it.x0, it.y0, it.z0,
                         it.x1, it.y1, it.z1,
                         c0, c1,
+                        SETTING_LINE_WIDTH.get(),
                     )
                 }
             }

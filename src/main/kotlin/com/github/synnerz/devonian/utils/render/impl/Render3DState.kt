@@ -23,6 +23,14 @@ object Render3DState {
     lateinit var bufferSource: MultiBufferSource.BufferSource
 
     private enum class Types(private val arr: Array<RenderType>) {
+        LINES(
+            arrayOf(
+                Render3DTypes.LINES_TRANSLUCENT,
+                Render3DTypes.LINES_TRANSLUCENT_ESP,
+                Render3DTypes.LINES_OPAQUE,
+                Render3DTypes.LINES_OPAQUE_ESP,
+            )
+        ),
         TRIS(
             arrayOf(
                 Render3DTypes.TRIANGLE_STRIP_TRANSLUCENT,
@@ -44,7 +52,7 @@ object Render3DState {
                 Render3DTypes.BEACON_BEAM_TRANSLUCENT,
                 Render3DTypes.BEACON_BEAM_TRANSLUCENT_ESP,
                 Render3DTypes.BEACON_BEAM_OPAQUE,
-                Render3DTypes.QUADS_OPAQUE_ESP,
+                Render3DTypes.BEACON_BEAM_OPAQUE_ESP,
             )
         );
 
@@ -86,7 +94,7 @@ object Render3DState {
     ) {
         if (!::camera.isInitialized) return
 
-        val type = Render3DTypes.lines(lineWidth, phase, color.alpha == 255)
+        val type = Types.LINES.get(color.alpha == 255, phase)
 
         Render3DVertex.renderWireframeShape(
             poseStack,
@@ -94,6 +102,7 @@ object Render3DState {
             shape,
             ox, oy, oz,
             color,
+            lineWidth,
         )
     }
 
@@ -167,7 +176,7 @@ object Render3DState {
             false,
         )
 
-        val type = Render3DTypes.lines(lineWidth, phase, color.alpha == 255)
+        val type = Types.LINES.get(color.alpha == 255, phase)
 
         Render3DVertex.renderWireframeBox(
             poseStack,
@@ -241,13 +250,12 @@ object Render3DState {
 
     fun renderLines(
         opaque: Boolean,
-        lineWidth: Double,
         phase: Boolean,
         supplier: IRender3D.LinesBuilder.() -> Unit
     ) {
         if (!::camera.isInitialized) return
 
-        val type = Render3DTypes.lines(lineWidth, phase, opaque)
+        val type = Types.LINES.get(opaque, phase)
 
         Render3DVertex.renderLines(
             poseStack,
@@ -258,13 +266,12 @@ object Render3DState {
 
     fun renderLineStrip(
         opaque: Boolean,
-        lineWidth: Double,
         phase: Boolean,
         supplier: IRender3D.VertexBuilder.() -> Unit
     ) {
         if (!::camera.isInitialized) return
 
-        val type = Render3DTypes.lines(lineWidth, phase, opaque)
+        val type = Types.LINES.get(opaque, phase)
 
         Render3DVertex.renderLineStrip(
             poseStack,

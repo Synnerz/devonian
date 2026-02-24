@@ -97,7 +97,6 @@ interface IRender3D {
 
     fun renderLines(
         opaque: Boolean = false,
-        lineWidth: Double = 1.0,
         phase: Boolean = false,
         translate: Boolean = true,
         supplier: LinesBuilder.() -> Unit,
@@ -105,7 +104,6 @@ interface IRender3D {
 
     fun renderLineStrip(
         opaque: Boolean = false,
-        lineWidth: Double = 1.0,
         phase: Boolean = false,
         translate: Boolean = true,
         supplier: VertexBuilder.() -> Unit,
@@ -115,12 +113,13 @@ interface IRender3D {
         x0: Double, y0: Double, z0: Double,
         x1: Double, y1: Double, z1: Double,
         c0: Color,
-        lineWidth: Double = 1.0,
+        lineWidth0: Double = 1.0,
         phase: Boolean = false,
         translate: Boolean = true,
         c1: Color = c0,
-    ) = renderLines(c0.alpha == 255 && c1.alpha == 255, lineWidth, phase, translate) {
-        submit(x0, y0, z0, x1, y1, z1, c0, c1)
+        lineWidth1: Double = lineWidth0,
+    ) = renderLines(c0.alpha == 255 && c1.alpha == 255, phase, translate) {
+        submit(x0, y0, z0, x1, y1, z1, c0, c1, lineWidth0, lineWidth1)
     }
 
     fun renderLine(
@@ -131,8 +130,8 @@ interface IRender3D {
         phase: Boolean = false,
         translate: Boolean = true,
         c1: Color = c0,
-    ) = renderLines(c0.alpha == 255 && c1.alpha == 255, lineWidth, phase, translate) {
-        submit(p0, p1, c0, c1)
+    ) = renderLines(c0.alpha == 255 && c1.alpha == 255, phase, translate) {
+        submit(p0, p1, c0, c1, lineWidth)
     }
 
     /**
@@ -240,6 +239,28 @@ interface IRender3D {
             x1: Double, y1: Double, z1: Double,
             c0: Color,
             c1: Color = c0,
+            lineWidth0: Double,
+            lineWidth1: Double = lineWidth0,
+        )
+
+        fun submit(
+            x0: Double, y0: Double, z0: Double,
+            x1: Double, y1: Double, z1: Double,
+            c0: Color,
+            c1: Color = c0,
+        ) = submit(x0, y0, z0, x1, y1, z1, c0, c1, 1.0, 1.0)
+
+        fun submit(
+            p0: Vec3,
+            p1: Vec3,
+            c0: Color,
+            c1: Color = c0,
+            lineWidth0: Double,
+            lineWidth1: Double = lineWidth0,
+        ) = submit(
+            p0.x, p0.y, p0.z,
+            p1.x, p1.y, p1.z,
+            c0, c1, lineWidth0, lineWidth1,
         )
 
         fun submit(
@@ -257,8 +278,15 @@ interface IRender3D {
     interface VertexBuilder {
         fun submit(
             x: Double, y: Double, z: Double,
-            c: Color,
+            c: Color, lineWidth: Double,
         )
+
+        fun submit(
+            x: Double, y: Double, z: Double,
+            c: Color,
+        ) = submit(x, y, z, c, 1.0)
+
+        fun submit(p: Vec3, c: Color, lineWidth: Double) = submit(p.x, p.y, p.z, c, lineWidth)
 
         fun submit(p: Vec3, c: Color) = submit(p.x, p.y, p.z, c)
 

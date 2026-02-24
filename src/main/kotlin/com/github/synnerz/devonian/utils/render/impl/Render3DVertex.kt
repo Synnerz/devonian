@@ -64,6 +64,7 @@ object Render3DVertex {
         oy: Double,
         oz: Double,
         color: Color,
+        lineWidth: Double,
     ) {
         ShapeRenderer.renderShape(
             stack,
@@ -71,7 +72,7 @@ object Render3DVertex {
             shape,
             ox, oy, oz,
             color.rgb,
-            1f // line width - thanks a lot mojang
+            lineWidth.toFloat(),
         )
     }
 
@@ -86,21 +87,43 @@ object Render3DVertex {
         wz: Double,
         color: Color,
     ) {
-        // TODO: use gizmos (look into src)
-        Gizmos.cuboid(
-            AABB(x, y, z, x + wx, y + h, z + wz),
-            GizmoStyle.fill(ARGB.colorFromFloat(color.alpha / 255f, color.red / 255f, color.green / 255f, color.blue / 255f))
-        )
-//        ShapeRenderer.addChainedFilledBoxVertices(
-//            stack,
-//            consumer,
-//            x, y, z,
-//            x + wx, y + h, z + wz,
-//            color.red / 255f,
-//            color.green / 255f,
-//            color.blue / 255f,
-//            color.alpha / 255f,
-//        )
+        val x1 = x.toFloat()
+        val y1 = y.toFloat()
+        val z1 = z.toFloat()
+        val x2 = (x + wx).toFloat()
+        val y2 = (y + h).toFloat()
+        val z2 = (z + wz).toFloat()
+        val c = color.rgb
+        val m = stack.last()
+
+        consumer.addVertex(m, x1, y1, z1).setColor(c)
+        consumer.addVertex(m, x1, y2, z1).setColor(c)
+        consumer.addVertex(m, x2, y1, z1).setColor(c)
+        consumer.addVertex(m, x2, y2, z1).setColor(c)
+
+        consumer.addVertex(m, x2, y1, z2).setColor(c)
+        consumer.addVertex(m, x2, y2, z2).setColor(c)
+
+        consumer.addVertex(m, x1, y1, z2).setColor(c)
+        consumer.addVertex(m, x1, y2, z2).setColor(c)
+
+        consumer.addVertex(m, x1, y1, z1).setColor(c)
+        consumer.addVertex(m, x1, y2, z1).setColor(c)
+
+        consumer.addVertex(m, x1, y2, z1).setColor(c)
+
+        consumer.addVertex(m, x1, y2, z2).setColor(c)
+        consumer.addVertex(m, x2, y2, z1).setColor(c)
+        consumer.addVertex(m, x2, y2, z2).setColor(c)
+
+        consumer.addVertex(m, x2, y2, z2).setColor(c)
+        consumer.addVertex(m, x1, y1, z2).setColor(c)
+
+        consumer.addVertex(m, x1, y1, z2).setColor(c)
+        consumer.addVertex(m, x1, y1, z1).setColor(c)
+        consumer.addVertex(m, x2, y1, z2).setColor(c)
+        consumer.addVertex(m, x2, y1, z1).setColor(c)
+
     }
 
     fun renderWireframeBox(
@@ -114,21 +137,27 @@ object Render3DVertex {
         wz: Double,
         color: Color,
     ) {
-        Gizmos.cuboid(
-            AABB(x, y, z, x + wx, y + h, z + wz),
-            GizmoStyle.stroke(ARGB.colorFromFloat(color.alpha / 255f, color.red / 255f, color.green / 255f, color.blue / 255f)),
-            true
-        )
-//        ShapeRenderer.renderLineBox(
-//            stack.last(),
-//            consumer,
-//            x, y, z,
-//            x + wx, y + h, z + wz,
-//            color.red / 255f,
-//            color.green / 255f,
-//            color.blue / 255f,
-//            color.alpha / 255f,
-//        )
+        val x1 = x.toFloat()
+        val y1 = y.toFloat()
+        val z1 = z.toFloat()
+        val x2 = (x + wx).toFloat()
+        val y2 = (y + h).toFloat()
+        val z2 = (z + wz).toFloat()
+        val c = color.rgb
+        val m = stack.last()
+
+        consumer.addVertex(m, x1, y1, z1).setColor(c); consumer.addVertex(m, x2, y1, z1).setColor(c)
+        consumer.addVertex(m, x1, y2, z1).setColor(c); consumer.addVertex(m, x2, y2, z1).setColor(c)
+        consumer.addVertex(m, x1, y1, z1).setColor(c); consumer.addVertex(m, x1, y2, z1).setColor(c)
+        consumer.addVertex(m, x2, y1, z1).setColor(c); consumer.addVertex(m, x2, y2, z1).setColor(c)
+        consumer.addVertex(m, x1, y1, z2).setColor(c); consumer.addVertex(m, x2, y1, z2).setColor(c)
+        consumer.addVertex(m, x1, y2, z2).setColor(c); consumer.addVertex(m, x2, y2, z2).setColor(c)
+        consumer.addVertex(m, x1, y1, z2).setColor(c); consumer.addVertex(m, x1, y2, z2).setColor(c)
+        consumer.addVertex(m, x2, y1, z2).setColor(c); consumer.addVertex(m, x2, y2, z2).setColor(c)
+        consumer.addVertex(m, x1, y1, z1).setColor(c); consumer.addVertex(m, x1, y1, z2).setColor(c)
+        consumer.addVertex(m, x1, y2, z1).setColor(c); consumer.addVertex(m, x1, y2, z2).setColor(c)
+        consumer.addVertex(m, x2, y1, z1).setColor(c); consumer.addVertex(m, x2, y1, z2).setColor(c)
+        consumer.addVertex(m, x2, y2, z1).setColor(c); consumer.addVertex(m, x2, y2, z2).setColor(c)
     }
 
     fun renderString(
@@ -234,6 +263,7 @@ object Render3DVertex {
                     x0: Double, y0: Double, z0: Double,
                     x1: Double, y1: Double, z1: Double,
                     c0: Color, c1: Color,
+                    lineWidth0: Double, lineWidth1: Double,
                 ) {
                     var dx = (x1 - x0).toFloat()
                     var dy = (y1 - y0).toFloat()
@@ -247,11 +277,13 @@ object Render3DVertex {
                         .addVertex(mat, x0.toFloat(), y0.toFloat(), z0.toFloat())
                         .setColor(c0.rgb)
                         .setNormal(mat, dx, dy, dz)
+                        .setLineWidth(lineWidth0.toFloat())
 
                     consumer
                         .addVertex(mat, x1.toFloat(), y1.toFloat(), z1.toFloat())
                         .setColor(c1.rgb)
                         .setNormal(mat, dx, dy, dz)
+                        .setLineWidth(lineWidth1.toFloat())
                 }
             }
         )
@@ -267,19 +299,21 @@ object Render3DVertex {
         var py = 0.0
         var pz = 0.0
         var pc = Color(0, true)
+        var pw = 1.0
 
         renderLines(stack, consumer) {
             supplier.invoke(
                 object : VertexBuilder {
-                    override fun submit(x: Double, y: Double, z: Double, c: Color) {
+                    override fun submit(x: Double, y: Double, z: Double, c: Color, lineWidth: Double) {
                         if (!first) {
-                            submit(px, py, pz, x, y, z, pc, c)
+                            submit(px, py, pz, x, y, z, pc, c, lineWidth, lineWidth)
                         }
                         first = false
                         px = x
                         py = y
                         pz = z
                         pc = c
+                        pw = lineWidth
                     }
 
                     override fun endBatch() {

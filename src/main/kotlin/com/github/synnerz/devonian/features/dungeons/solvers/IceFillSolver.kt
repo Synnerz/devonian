@@ -175,7 +175,7 @@ object IceFillSolver : Feature(
             }
 
             val color = SETTING_LINE_COLOR.getColor()
-            Render3DImmediate.renderLineStrip(color.alpha == 255, SETTING_LINE_WIDTH.get()) {
+            Render3DImmediate.renderLineStrip(color.alpha == 255) {
                 platforms.forEach {
                     val sol = it.solution ?: return@forEach
 
@@ -185,6 +185,7 @@ object IceFillSolver : Feature(
                             pos.y + 1.1,
                             pos.z + 0.5,
                             color,
+                            SETTING_LINE_WIDTH.get(),
                         )
                     }
                     endBatch()
