@@ -501,7 +501,7 @@ object CustomDungeonWaypoints : Feature(
             "import" -> {
                 var encode = args.getOrNull(1) as? String?
                 if (encode.isNullOrEmpty()) encode = minecraft.keyboardHandler.clipboard
-                if (encode == null) {
+                if (encode.isNullOrEmpty()) {
                     ChatUtils.sendMessage("&cCDW Invalid import", true)
                     return 0
                 }

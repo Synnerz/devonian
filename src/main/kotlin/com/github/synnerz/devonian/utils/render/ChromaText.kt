@@ -11,8 +11,8 @@ import com.mojang.blaze3d.buffers.Std140Builder
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
 import com.mojang.blaze3d.systems.RenderPass
 import com.mojang.blaze3d.systems.RenderSystem
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.TextColor
@@ -75,10 +75,10 @@ object ChromaText {
     }
 
     fun initialize() {
-        ResourceManagerHelper.registerBuiltinResourcePack(
+        ResourceLoader.registerBuiltinPack(
             Identifier.fromNamespaceAndPath("devonian", "chroma_text_shader"),
             Devonian.container,
-            ResourcePackActivationType.ALWAYS_ENABLED,
+            PackActivationType.DEFAULT_ENABLED,
         )
 
         EventBus.on<PostClientInitEvent> {
