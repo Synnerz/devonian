@@ -13,18 +13,6 @@ public interface ChatComponentAccessor {
     @Accessor("allMessages")
     List<GuiMessage> getMessages();
 
-    @Accessor("trimmedMessages")
-    List<GuiMessage.Line> getVisibleMessages();
-
-    @Invoker("screenToChatX")
-    double toChatLineMX(double x);
-
-    @Invoker("screenToChatY")
-    double toChatLineMY(double y);
-
-    @Invoker("getMessageLineIndexAt")
-    int getMessageLineIdx(double chatLineX, double chatLineY);
-
     @Invoker("refreshTrimmedMessages")
     void invokeRefresh();
 }

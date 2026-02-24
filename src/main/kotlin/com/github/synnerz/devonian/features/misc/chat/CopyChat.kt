@@ -1,11 +1,8 @@
-package com.github.synnerz.devonian.features.chat
+package com.github.synnerz.devonian.features.misc.chat
 
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.GuiClickEvent
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.mixin.accessor.ChatComponentAccessor
-import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.client.gui.screens.ChatScreen
 
 object CopyChat : Feature(
@@ -19,18 +16,27 @@ object CopyChat : Feature(
 
             val screen = event.screen
             if (screen !is ChatScreen) return@on
-            val chatHud = Devonian.minecraft.gui.chat as ChatComponentAccessor
-            val dx = chatHud.toChatLineMX(event.mx)
-            val dy = chatHud.toChatLineMY(event.my)
-            val idx = chatHud.getMessageLineIdx(dx, dy)
-            if (idx < 0 || idx >= chatHud.visibleMessages.size) return@on
 
-            val text = chatHud.visibleMessages.getOrNull(idx) ?: return@on
-            val comp = ChatUtils.getMessageFromLine(text) ?: return@on
-            val str = comp.content.string.clearCodes()
+            ChatUtils.sendMessage("&4Broken in 1.21.11 for now :(")
 
-            minecraft.keyboardHandler.clipboard = str
-            ChatUtils.sendMessage("&aCopied message to clipboard", true)
+            // val finder = ActiveTextCollector.ClickableStyleFinder(
+            //     minecraft.font,
+            //     event.mx.toInt(),
+            //     event.my.toInt(),
+            // ).includeInsertions(true)
+            // minecraft.gui.chat.captureClickableText(
+            //     finder,
+            //     minecraft.window.guiScaledHeight,
+            //     minecraft.gui.guiTicks,
+            //     true,
+            // )
+
+            // val text: Component = TODO()
+            // val comp = ChatUtils.getMessageFromLine(text) ?: return@on
+            // val str = comp.content.string.clearCodes()
+            //
+            // minecraft.keyboardHandler.clipboard = str
+            // ChatUtils.sendMessage("&aCopied message to clipboard", true)
         }
     }
 }

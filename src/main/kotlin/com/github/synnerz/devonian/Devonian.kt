@@ -12,7 +12,7 @@ import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
 import com.github.synnerz.devonian.features.bossbar.BossBarHealth
 import com.github.synnerz.devonian.features.chat.CommandAliases
-import com.github.synnerz.devonian.features.chat.CopyChat
+import com.github.synnerz.devonian.features.misc.chat.CopyChat
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.MousePositionLogger
 import com.github.synnerz.devonian.features.debug.MousePositionRenderer
