@@ -10,7 +10,7 @@ object HidePlayers : Feature(
     "Hides players in a specified radius so they cannot be rendered near you",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL"
+    subcategory = "Hiders"
 ) {
     private val SETTING_CANCEL_RADIUS = addSlider(
         "radius",

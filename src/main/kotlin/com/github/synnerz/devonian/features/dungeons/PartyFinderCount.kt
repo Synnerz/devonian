@@ -9,8 +9,7 @@ import com.github.synnerz.devonian.features.Feature
 object PartyFinderCount : Feature(
     "partyFinderCount",
     "Displays the partys' user count without having to hover over the item",
-    Categories.DUNGEONS,
-    subcategory = "QOL",
+    Categories.PARTY_FINDER,
     searchTags = setOf("pf"),
 ) {
     private val parties = mutableListOf<PartyFinderListener.PartyFinderData>()

@@ -19,9 +19,9 @@ import kotlin.math.roundToInt
 object DragonHealth : Feature(
     "dragonHealth",
     "renders hp of m7 dragon below it",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
+    subcategory = "Highlight",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)

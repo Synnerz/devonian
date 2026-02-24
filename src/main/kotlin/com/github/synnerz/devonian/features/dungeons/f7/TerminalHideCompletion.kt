@@ -12,10 +12,10 @@ import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket
 object TerminalHideCompletion : Feature(
     "terminalHideCompletion",
     "Hides the completed title during terminals.",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
     searchTags = setOf("title"),
+    subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

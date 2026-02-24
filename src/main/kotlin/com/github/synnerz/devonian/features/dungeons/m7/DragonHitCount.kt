@@ -24,9 +24,8 @@ import kotlin.math.min
 object DragonHitCount : Feature(
     "dragonHitCount",
     "tracks number of arrows you hit",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
     searchTags = setOf("arrow"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {

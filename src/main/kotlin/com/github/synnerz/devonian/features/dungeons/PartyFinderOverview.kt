@@ -21,9 +21,9 @@ import java.util.concurrent.CopyOnWriteArrayList
 object PartyFinderOverview : Feature(
     "partyFinderOverview",
     "Customizes the tooltip for party finder parties so they show more information.",
-    Categories.DUNGEONS,
-    subcategory = "QOL",
+    Categories.PARTY_FINDER,
     searchTags = setOf("pf"),
+    subcategory = "Tooltip",
 ) {
     private const val DUNGEONS_API = "https://dungeons.docilelm.workers.dev/?names="
     private val SETTING_PB_MODE = addSelection(

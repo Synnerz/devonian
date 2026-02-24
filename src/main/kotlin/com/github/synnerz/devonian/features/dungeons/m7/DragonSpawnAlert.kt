@@ -13,9 +13,8 @@ import com.github.synnerz.devonian.utils.BasicState
 object DragonSpawnAlert : Feature(
     "dragonSpawnAlert",
     "alerts with dragon spawning",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
     searchTags = setOf("priority", "dragprio"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {

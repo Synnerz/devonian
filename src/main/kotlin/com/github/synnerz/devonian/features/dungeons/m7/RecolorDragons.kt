@@ -13,10 +13,10 @@ import java.util.concurrent.ConcurrentHashMap
 object RecolorDragons : Feature(
     "recolorDragons",
     "remove hurt color + color based on type",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
     searchTags = setOf("hurt"),
+    subcategory = "Highlight",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)

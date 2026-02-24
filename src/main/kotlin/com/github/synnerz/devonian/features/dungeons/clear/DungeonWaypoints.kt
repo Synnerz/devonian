@@ -19,9 +19,8 @@ import kotlin.math.abs
 object DungeonWaypoints : Feature(
     "dungeonWaypoints",
     "Highlights chest/items/bat spots where they would spawn at.",
-    Categories.DUNGEONS,
+    Categories.DUNGEON_WAYPOINTS,
     "catacombs",
-    subcategory = "Highlights",
     searchTags = setOf("secrets"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {

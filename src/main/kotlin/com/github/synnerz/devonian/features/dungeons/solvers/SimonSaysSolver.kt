@@ -20,10 +20,10 @@ import java.util.concurrent.CopyOnWriteArrayList
 object SimonSaysSolver : Feature(
     "simonSaysSolver",
     "Highlights the correct buttons to press.",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
     searchTags = setOf("device"),
+    subcategory = "Solvers",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.S1.isActiveState)

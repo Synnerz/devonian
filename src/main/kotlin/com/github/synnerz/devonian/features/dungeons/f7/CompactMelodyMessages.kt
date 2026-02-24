@@ -11,8 +11,8 @@ import net.minecraft.network.chat.Component
 object CompactMelodyMessages : Feature(
     "compactMelodyMessage",
     "Makes party chat spam more bearable.",
-    Categories.DUNGEONS,
-    subcategory = "F7",
+    Categories.F7,
+    subcategory = "Terminals",
 ) {
     private val SETTING_MUTE = addSwitch(
         "mute",

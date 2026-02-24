@@ -10,9 +10,9 @@ import com.github.synnerz.devonian.utils.StringUtils
 object GoldorFrenzyTimer : TextHudFeature(
     "goldorFrenzyTimer",
     "timer until goldor damage tick",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
+    subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(

@@ -10,10 +10,10 @@ import com.github.synnerz.devonian.utils.BasicState
 object SimonSaysProgressDisplay : TextHudFeature(
     "simonSaysProgressDisplay",
     "display stage of ss, must have solver on",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
     searchTags = setOf("ee2", "ss"),
+    subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.S1.isActiveState)

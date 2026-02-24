@@ -11,9 +11,9 @@ import com.github.synnerz.devonian.utils.BasicState
 object TerminalDisplay : TextHudFeature(
     "terminalDisplay",
     "displays current terminals status (# done, gate, etc)",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
+    subcategory = "HUD"
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

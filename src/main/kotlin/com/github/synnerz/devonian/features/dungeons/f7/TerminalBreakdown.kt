@@ -12,9 +12,9 @@ import com.github.synnerz.devonian.utils.BasicState
 object TerminalBreakdown : Feature(
     "terminalBreakdown",
     "Displays breakdown how many terms/devs/levers each person got.",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
+    subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState)

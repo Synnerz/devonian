@@ -17,9 +17,8 @@ import net.minecraft.world.entity.EntityType
 object HideWitherKing : Feature(
     "hideWitherKing",
     "",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })

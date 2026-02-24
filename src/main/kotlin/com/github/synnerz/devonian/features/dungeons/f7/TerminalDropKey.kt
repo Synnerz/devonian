@@ -18,9 +18,9 @@ import org.lwjgl.glfw.GLFW
 object TerminalDropKey : Feature(
     "terminalDropKey",
     "Changes your drop key while inside of terminal (you can change the key in minecraft controls for this feature)",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7"
+    subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

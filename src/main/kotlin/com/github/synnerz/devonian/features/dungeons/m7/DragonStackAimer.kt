@@ -19,9 +19,9 @@ import kotlin.math.sin
 object DragonStackAimer : TextHudFeature(
     "dragonStackAimer",
     "Shows where to aim for arrow stack or arch/bers.",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
+    subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(

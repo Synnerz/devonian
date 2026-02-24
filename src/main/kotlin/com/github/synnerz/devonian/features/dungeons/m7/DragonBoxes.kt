@@ -14,10 +14,10 @@ import java.util.*
 object DragonBoxes : Feature(
     "dragonBoxes",
     "Renders boxes around the wither king dragon statues.",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
     searchTags = setOf("statue"),
+    subcategory = "Highlight",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + Stages.WitherKing.isActiveState
