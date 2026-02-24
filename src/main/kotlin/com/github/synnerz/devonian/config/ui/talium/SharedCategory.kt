@@ -75,7 +75,7 @@ abstract class SharedCategory(displayName: String) {
     }
 
     private fun createTitle(text: String, parent: UIElement? = null): UIText =
-        UIText(0.0, 2.0, 100.0, 25.0, text, true, parent).apply {
+        UIText(0.0, 8.0, 100.0, 25.0, text, true, parent).apply {
             setColor(ColorPalette.TEXT_COLOR)
             onResize { _, w ->
                 textScale = NORMAL_TEXT_SCALE / w.scaleFactor
@@ -83,7 +83,7 @@ abstract class SharedCategory(displayName: String) {
         }
 
     private fun createDescription(text: String, parent: UIElement? = null): UIWrappedText =
-        UIWrappedText(2.0, 29.0, 75.0, 75.0, text, parent = parent).apply {
+        UIWrappedText(2.0, 37.0, 75.0, 62.0, text, parent = parent).apply {
             setColor(ColorPalette.LIGHT_TEXT_COLOR)
             onResize { _, w ->
                 textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
