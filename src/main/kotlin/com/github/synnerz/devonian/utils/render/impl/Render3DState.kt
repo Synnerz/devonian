@@ -184,6 +184,7 @@ object Render3DState {
             x, y, z,
             w, h, wz,
             color,
+            lineWidth,
         )
     }
 

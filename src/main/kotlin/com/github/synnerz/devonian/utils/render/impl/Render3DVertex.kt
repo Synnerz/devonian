@@ -12,10 +12,6 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.ShapeRenderer
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.CameraRenderState
-import net.minecraft.gizmos.GizmoStyle
-import net.minecraft.gizmos.Gizmos
-import net.minecraft.util.ARGB
-import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Vector3d
 import java.awt.Color
@@ -136,28 +132,29 @@ object Render3DVertex {
         h: Double,
         wz: Double,
         color: Color,
+        lineWidth: Double,
     ) {
-        val x1 = x.toFloat()
-        val y1 = y.toFloat()
-        val z1 = z.toFloat()
-        val x2 = (x + wx).toFloat()
-        val y2 = (y + h).toFloat()
-        val z2 = (z + wz).toFloat()
-        val c = color.rgb
-        val m = stack.last()
+        val x1 = x
+        val y1 = y
+        val z1 = z
+        val x2 = x + wx
+        val y2 = y + h
+        val z2 = z + wz
 
-        consumer.addVertex(m, x1, y1, z1).setColor(c); consumer.addVertex(m, x2, y1, z1).setColor(c)
-        consumer.addVertex(m, x1, y2, z1).setColor(c); consumer.addVertex(m, x2, y2, z1).setColor(c)
-        consumer.addVertex(m, x1, y1, z1).setColor(c); consumer.addVertex(m, x1, y2, z1).setColor(c)
-        consumer.addVertex(m, x2, y1, z1).setColor(c); consumer.addVertex(m, x2, y2, z1).setColor(c)
-        consumer.addVertex(m, x1, y1, z2).setColor(c); consumer.addVertex(m, x2, y1, z2).setColor(c)
-        consumer.addVertex(m, x1, y2, z2).setColor(c); consumer.addVertex(m, x2, y2, z2).setColor(c)
-        consumer.addVertex(m, x1, y1, z2).setColor(c); consumer.addVertex(m, x1, y2, z2).setColor(c)
-        consumer.addVertex(m, x2, y1, z2).setColor(c); consumer.addVertex(m, x2, y2, z2).setColor(c)
-        consumer.addVertex(m, x1, y1, z1).setColor(c); consumer.addVertex(m, x1, y1, z2).setColor(c)
-        consumer.addVertex(m, x1, y2, z1).setColor(c); consumer.addVertex(m, x1, y2, z2).setColor(c)
-        consumer.addVertex(m, x2, y1, z1).setColor(c); consumer.addVertex(m, x2, y1, z2).setColor(c)
-        consumer.addVertex(m, x2, y2, z1).setColor(c); consumer.addVertex(m, x2, y2, z2).setColor(c)
+        renderLines(stack, consumer) {
+            submit(x1, y1, z1, x2, y1, z1, color, color, lineWidth, lineWidth)
+            submit(x1, y2, z1, x2, y2, z1, color, color, lineWidth, lineWidth)
+            submit(x1, y1, z1, x1, y2, z1, color, color, lineWidth, lineWidth)
+            submit(x2, y1, z1, x2, y2, z1, color, color, lineWidth, lineWidth)
+            submit(x1, y1, z2, x2, y1, z2, color, color, lineWidth, lineWidth)
+            submit(x1, y2, z2, x2, y2, z2, color, color, lineWidth, lineWidth)
+            submit(x1, y1, z2, x1, y2, z2, color, color, lineWidth, lineWidth)
+            submit(x2, y1, z2, x2, y2, z2, color, color, lineWidth, lineWidth)
+            submit(x1, y1, z1, x1, y1, z2, color, color, lineWidth, lineWidth)
+            submit(x1, y2, z1, x1, y2, z2, color, color, lineWidth, lineWidth)
+            submit(x2, y1, z1, x2, y1, z2, color, color, lineWidth, lineWidth)
+            submit(x2, y2, z1, x2, y2, z2, color, color, lineWidth, lineWidth)
+        }
     }
 
     fun renderString(
@@ -306,7 +303,7 @@ object Render3DVertex {
                 object : VertexBuilder {
                     override fun submit(x: Double, y: Double, z: Double, c: Color, lineWidth: Double) {
                         if (!first) {
-                            submit(px, py, pz, x, y, z, pc, c, lineWidth, lineWidth)
+                            submit(px, py, pz, x, y, z, pc, c, pw, lineWidth)
                         }
                         first = false
                         px = x
