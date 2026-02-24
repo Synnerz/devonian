@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.ChatComponentAccessor2;
 import com.github.synnerz.devonian.api.ChatUtils;
 import com.github.synnerz.devonian.features.misc.DisableChatAutoScroll;
 import com.github.synnerz.devonian.features.misc.RemoveChatLimit;
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -19,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Mixin(ChatComponent.class)
-public class ChatComponentMixin {
+public class ChatComponentMixin implements ChatComponentAccessor2 {
     @Shadow
     @Final
     private List<GuiMessage.Line> trimmedMessages;
@@ -83,4 +85,17 @@ public class ChatComponentMixin {
 
     @Shadow
     private List<GuiMessage> allMessages = new LinkedList<>();
+
+    @Unique
+    private GuiMessage lastHovered = null;
+
+    @Override
+    public GuiMessage devonian$getLastHoveredMessage() {
+        return lastHovered;
+    }
+
+    @Override
+    public void devonian$setLastHoveredMessage(GuiMessage msg) {
+        lastHovered = msg;
+    }
 }

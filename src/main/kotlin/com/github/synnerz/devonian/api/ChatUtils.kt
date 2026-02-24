@@ -19,8 +19,8 @@ object ChatUtils {
     const val prefix = "&7[&cDevonian&7]"
     val chatLineIds = mutableMapOf<GuiMessage, Int>()
     val lineCache = IdentityHashMap<GuiMessage.Line, GuiMessage>()
-    val chatComponentAccessor get() = Minecraft.getInstance().gui?.chat as ChatComponentAccessor
-    val chatGui get() = Minecraft.getInstance().gui?.chat
+    val chatComponentAccessor get() = Minecraft.getInstance().gui.chat as ChatComponentAccessor
+    val chatGui get() = Minecraft.getInstance().gui.chat
 
     data class TextComponent(var text: Component, var id: Int = 0)
 
@@ -34,9 +34,7 @@ object ChatUtils {
     }
 
     fun sendMessageWithId(message: Component, id: Int) {
-        val gui = chatGui ?: return
-
-        gui.addMessage(message)
+        chatGui.addMessage(message)
 
         chatLineIds[chatComponentAccessor.messages[0]] = id
     }

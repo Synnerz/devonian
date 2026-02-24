@@ -76,6 +76,7 @@
   "mixins": [
     "AvatarMixin",
     "BlockEntityRenderDispatcherMixin",
+    "ChatComponentInnerMixin",
     "EnderDragonRendererMixin",
     "EntityMixin",
     "GLFWMixin",
