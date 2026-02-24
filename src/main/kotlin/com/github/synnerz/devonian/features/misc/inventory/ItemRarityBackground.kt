@@ -110,7 +110,10 @@ object ItemRarityBackground : Feature(
                 ctx.guiRenderState.submitGuiElement(
                     TexturedQuadRenderState(
                         BufferedImageRenderer.pipeline,
-                        TextureSetup(blurImg.textureView, null, null, null, null, null),
+                        TextureSetup(
+                            blurImg.textureView, null, null,
+                            blurImg.sampler, null, null,
+                        ),
                         Matrix3x2f(ctx.pose()),
                         x + 0f, y + 0f,
                         x + 16f, y + 16f,

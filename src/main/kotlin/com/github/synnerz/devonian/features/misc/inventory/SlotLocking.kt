@@ -131,7 +131,10 @@ object SlotLocking : Feature(
         }
 
         on<PostRenderSlotsEvent> { event ->
-            val lock = TextureSetup(lockUploader.textureView, null, null, null, null, null)
+            val lock = TextureSetup(
+                lockUploader.textureView, null, null,
+                lockUploader.sampler, null, null,
+            )
             val inv = minecraft.player?.inventory
             val mat = Matrix3x2f(event.ctx.pose())
 

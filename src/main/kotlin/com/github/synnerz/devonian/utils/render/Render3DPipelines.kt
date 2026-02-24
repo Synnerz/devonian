@@ -10,7 +10,7 @@ import java.util.*
 
 object Render3DPipelines {
     @JvmStatic
-    val ALWAYS_PASS_RENDER_PIPELINES = Collections.newSetFromMap<RenderPipeline>(IdentityHashMap())
+    val ALWAYS_PASS_RENDER_PIPELINES = Collections.newSetFromMap<RenderPipeline>(IdentityHashMap())!!
 
     val LINES_OPAQUE = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
         .withLocation("devonian/lines_opaque")

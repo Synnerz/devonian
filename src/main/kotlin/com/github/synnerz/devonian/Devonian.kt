@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
 import com.github.synnerz.devonian.features.bossbar.BossBarHealth
-import com.github.synnerz.devonian.features.chat.CommandAliases
+import com.github.synnerz.devonian.features.misc.chat.CommandAliases
 import com.github.synnerz.devonian.features.misc.chat.CopyChat
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.MousePositionLogger
@@ -68,23 +68,23 @@ object Devonian : ClientModInitializer {
             this::class.java.getResourceAsStream("/assets/devonian/build.properties")
         )
     }
-    val GIT_COMMIT_HASH = buildProperties.getProperty("git.commit.hash", "<UNKNOWN HASH>")
+    val GIT_COMMIT_HASH = buildProperties.getProperty("git.commit.hash", "<UNKNOWN HASH>")!!
     val GIT_COMMIT_TIME = buildProperties.getProperty("git.commit.time")?.let {
         try {
             Instant.parse(it)
         } catch (_: Exception) {
             null
         }
-    } ?: Instant.EPOCH
-    val GIT_COMMIT_MESSAGE = buildProperties.getProperty("git.commit.message", "<UNKNOWN MESSAGE>")
+    } ?: Instant.EPOCH!!
+    val GIT_COMMIT_MESSAGE = buildProperties.getProperty("git.commit.message", "<UNKNOWN MESSAGE>")!!
     val BUILD_TIME = buildProperties.getProperty("build.time")?.let {
         try {
             Instant.parse(it)
         } catch (_: Exception) {
             null
         }
-    } ?: Instant.EPOCH
-    val DEVONIAN_VERSION = buildProperties.getProperty("devonian.version", "<UNKNOWN VERSION>")
+    } ?: Instant.EPOCH!!
+    val DEVONIAN_VERSION = buildProperties.getProperty("devonian.version", "<UNKNOWN VERSION>")!!
     val IS_LOCAL_BUILD = GIT_COMMIT_MESSAGE == "<LOCAL BUILD>"
 
     val keybindCategory by lazy {

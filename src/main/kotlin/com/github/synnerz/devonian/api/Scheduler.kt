@@ -18,7 +18,7 @@ object Scheduler {
     private val beforePacketTasks = ConcurrentLinkedQueue<() -> Unit>()
     private val afterPacketTasks = ConcurrentLinkedQueue<() -> Unit>()
 
-    val schedulePool = Executors.newScheduledThreadPool(0)
+    val schedulePool = Executors.newScheduledThreadPool(0)!!
 
     data class Task(var delay: Int, val cb: () -> Unit, val id: Int)
 

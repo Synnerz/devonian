@@ -102,18 +102,17 @@ public class ItemInHandRendererMixin {
         ItemAnimations.INSTANCE.applyScale(poseStack);
     }
 
-    // why tf is this erroring if its the right thing
-//    @Inject(
-//        method = "renderMap",
-//        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitCustomGeometry(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;L;)V")
-//    )
-//    private void devonian$itemAnimations4(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, ItemStack itemStack, CallbackInfo ci) {
-//        if (!ItemAnimations.INSTANCE.isEnabled()) return;
-//        if (!ItemAnimations.INSTANCE.affectMap()) return;
-//        poseStack.translate(64f, 64f, 0f);
-//        ItemAnimations.INSTANCE.applyScale(poseStack);
-//        poseStack.translate(-64f, -64f, 0f);
-//    }
+   @Inject(
+       method = "renderMap",
+       at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitCustomGeometry(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;Lnet/minecraft/client/renderer/SubmitNodeCollector$CustomGeometryRenderer;)V")
+   )
+   private void devonian$itemAnimations4(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, ItemStack itemStack, CallbackInfo ci) {
+       if (!ItemAnimations.INSTANCE.isEnabled()) return;
+       if (!ItemAnimations.INSTANCE.affectMap()) return;
+       poseStack.translate(64f, 64f, 0f);
+       ItemAnimations.INSTANCE.applyScale(poseStack);
+       poseStack.translate(-64f, -64f, 0f);
+   }
 
     @ModifyVariable(
         method = "renderPlayerArm",

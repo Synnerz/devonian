@@ -19,6 +19,7 @@ import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.math.MathUtils
 import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
+import com.mojang.blaze3d.textures.GpuSampler
 import com.mojang.blaze3d.textures.GpuTextureView
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.ChatComponent
@@ -728,6 +729,7 @@ object DungeonMap : HudFeature(
             val v1: Float
             val maxDy: Float
             val textureView: GpuTextureView
+            val sampler: GpuSampler
             if (isHead) {
                 dxf *= 4f
                 dyf *= 4f
@@ -738,9 +740,11 @@ object DungeonMap : HudFeature(
                 u1 = (SKIN_HEAD_U + SKIN_HEAD_WIDTH).toFloat() / SKIN_TEX_WIDTH
                 v1 = (SKIN_HEAD_V + SKIN_HEAD_HEIGHT).toFloat() / SKIN_TEX_HEIGHT
                 maxDy = 4f
-                val skin = info?.skin ?: return@forEach
+                val skin = info.skin
                 val rl = skin.body.texturePath()
-                textureView = Devonian.minecraft.textureManager.getTexture(rl).textureView
+                val texture = Devonian.minecraft.textureManager.getTexture(rl)
+                textureView = texture.textureView
+                sampler = texture.sampler
             } else {
                 dxf *= 2.8f
                 dyf *= 2.8f
@@ -752,6 +756,7 @@ object DungeonMap : HudFeature(
                 v1 = if (i == 0) MARKER_SELF_V1 else MARKER_OTHER_V1
                 maxDy = 2.8f
                 textureView = markerAtlasUploader.textureView
+                sampler = markerAtlasUploader.sampler
             }
 
             if (renderNames) {
@@ -777,7 +782,10 @@ object DungeonMap : HudFeature(
             ctx.guiRenderState.submitGuiElement(
                 TexturedQuadRenderState(
                     BufferedImageRenderer.pipeline,
-                    TextureSetup(textureView, null, null, null, null, null),
+                    TextureSetup(
+                        textureView, null, null,
+                        sampler, null, null,
+                    ),
                     Matrix3x2f(ctx.pose()),
                     px + dxf - dxr, py + dyf - dyr,
                     px - dxf - dxr, py - dyf - dyr,
@@ -795,7 +803,10 @@ object DungeonMap : HudFeature(
                 ctx.guiRenderState.submitGuiElement(
                     TexturedQuadRenderState(
                         BufferedImageRenderer.pipeline,
-                        TextureSetup(textureView, null, null, null, null, null),
+                        TextureSetup(
+                            textureView, null, null,
+                            sampler, null, null,
+                        ),
                         Matrix3x2f(ctx.pose()),
                         px + dxf - dxr, py + dyf - dyr,
                         px - dxf - dxr, py - dyf - dyr,
@@ -831,7 +842,10 @@ object DungeonMap : HudFeature(
                 ctx.guiRenderState.submitGuiElement(
                     TexturedQuadRenderState(
                         BufferedImageRenderer.pipeline,
-                        TextureSetup(markerAtlasUploader.textureView, null, null, null, null, null),
+                        TextureSetup(
+                            markerAtlasUploader.textureView, null, null,
+                            markerAtlasUploader.sampler, null, null,
+                        ),
                         Matrix3x2f(ctx.pose()),
                         px + dxf - dxr, py + dyf - dyr,
                         px - dxf - dxr, py - dyf - dyr,
@@ -870,7 +884,7 @@ object DungeonMap : HudFeature(
         mapRenderer.invalidate()
     }
 
-    val mcidMarkerAtlas = Identifier.fromNamespaceAndPath("devonian", "dungeons/map/marker_atlas")!!
+    val mcidMarkerAtlas = Identifier.fromNamespaceAndPath("devonian", "dungeons/map/marker_atlas")
     val markerAtlasUploader = BufferedImageUploader.fromResource("/assets/devonian/dungeons/map/marker_atlas.png")!!
         .register(mcidMarkerAtlas)
 

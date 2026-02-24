@@ -13,13 +13,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InventoryScreen.class)
-abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMenu> {
+abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<@NotNull InventoryMenu> {
     public InventoryScreenMixin(InventoryMenu recipeBookMenu, RecipeBookComponent<?> recipeBookComponent, Inventory inventory, Component component) {
         super(recipeBookMenu, recipeBookComponent, inventory, component);
     }

@@ -147,7 +147,10 @@ object CenturyCakeTimer : TextHudFeature(
             event.ctx.guiRenderState.submitGuiElement(
                 TexturedQuadRenderState(
                     BufferedImageRenderer.pipeline,
-                    TextureSetup(iconUploader.textureView, null, null, null, null, null),
+                    TextureSetup(
+                        iconUploader.textureView, null, null,
+                        iconUploader.sampler, null, null,
+                    ),
                     Matrix3x2f(event.ctx.pose()),
                     (bounds.x + bounds.h * 0.1).toFloat(), (bounds.y + bounds.h * 0.1).toFloat(),
                     (bounds.x + bounds.h * 1.0).toFloat(), (bounds.y + bounds.h * 1.0).toFloat(),

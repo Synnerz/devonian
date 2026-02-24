@@ -18,6 +18,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
 import net.minecraft.network.chat.Component;
@@ -139,10 +140,14 @@ public class GuiMixin {
         }
         GuiGraphicsAccessor accessor = (GuiGraphicsAccessor) instance;
         TextureAtlasSprite sprite = accessor.getGuiSprites().getSprite(identifier);
+        AbstractTexture tex = minecraft.getTextureManager().getTexture(
+            accessor.getGuiSprites().getSprite(identifier).atlasLocation()
+        );
         GuiSpriteScaling scaling = GuiGraphicsAccessor.invokeSpriteScaling(sprite);
-        TextureSetup texture = new TextureSetup(minecraft.getTextureManager().getTexture(
-                accessor.getGuiSprites().getSprite(identifier).atlasLocation()
-        ).getTextureView(), null, null, null, null, null);
+        TextureSetup texture = new TextureSetup(
+            tex.getTextureView(), null, null,
+            tex.getSampler(), null, null
+        );
         Matrix3x2f mat = new Matrix3x2f(instance.pose());
 
         instance.guiRenderState.submitGuiElement(

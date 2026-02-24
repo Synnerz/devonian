@@ -136,7 +136,10 @@ abstract class ImmunityTimer(val formattedName: String, itemName: String, config
             event.ctx.guiRenderState.submitGuiElement(
                 TexturedQuadRenderState(
                     BufferedImageRenderer.pipeline,
-                    TextureSetup(getIcon().textureView, null, null, null, null, null),
+                    TextureSetup(
+                        getIcon().textureView, null, null,
+                        getIcon().sampler, null, null,
+                    ),
                     Matrix3x2f(event.ctx.pose()),
                     (bounds.x + bounds.h * 0.1).toFloat(), (bounds.y + bounds.h * 0.1).toFloat(),
                     (bounds.x + bounds.h * 1.0).toFloat(), (bounds.y + bounds.h * 1.0).toFloat(),

@@ -494,7 +494,7 @@ class DungeonMapBaseRenderer :
 
                         val w = ceil(width + options.stringShadow.getSizeIncrease(fontSizeF) + 5.0f).toInt()
                         val h = fontSize * lines.size + ascent
-                        val img = bimgProvider.createNative(w, h)
+                        val img = bimgProvider.createJava(w, h)
 
                         TextRendererImpl.drawImage(
                             img, TextRenderer.RenderParams(

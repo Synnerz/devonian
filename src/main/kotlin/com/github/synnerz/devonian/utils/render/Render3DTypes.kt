@@ -3,7 +3,6 @@ package com.github.synnerz.devonian.utils.render
 import net.minecraft.client.renderer.blockentity.BeaconRenderer
 import net.minecraft.client.renderer.rendertype.RenderSetup
 import net.minecraft.client.renderer.rendertype.RenderType
-import java.util.*
 import kotlin.math.ceil
 
 object Render3DTypes {
@@ -44,14 +43,12 @@ object Render3DTypes {
     val TRIANGLE_STRIP_OPAQUE = RenderType.create(
         "devonian/triangle_strip_opaque",
         RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP_OPAQUE)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 
     val TRIANGLE_STRIP_OPAQUE_ESP = RenderType.create(
         "devonian/triangle_strip_opaque_esp",
         RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP_OPAQUE_ESP)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 
@@ -72,14 +69,12 @@ object Render3DTypes {
     val QUADS_OPAQUE = RenderType.create(
         "devonian/quads_opaque",
         RenderSetup.builder(Render3DPipelines.QUADS_OPAQUE)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 
     val QUADS_OPAQUE_ESP = RenderType.create(
         "devonian/quads_opaque_esp",
         RenderSetup.builder(Render3DPipelines.QUADS_OPAQUE_ESP)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 
@@ -101,7 +96,6 @@ object Render3DTypes {
         "devonian/beacon_beam_opaque",
         RenderSetup.builder(Render3DPipelines.BEACON_BEAM_OPAQUE)
             .withTexture("Sampler0", BeaconRenderer.BEAM_LOCATION)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 
@@ -109,7 +103,6 @@ object Render3DTypes {
         "devonian/beacon_beam_opaque_esp",
         RenderSetup.builder(Render3DPipelines.BEACON_BEAM_OPAQUE_ESP)
             .withTexture("Sampler0", BeaconRenderer.BEAM_LOCATION)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 

@@ -38,7 +38,7 @@ object EventBus {
     val events = ConcurrentHashMap<KClass<*>, MutableList<EventListener<Event>>>()
     private val entityTypes = mutableMapOf<Int, EntityType<*>>()
     private val entityPos = mutableMapOf<Int, Vec3>()
-    var _internalSkipPing = Collections.newSetFromMap<Int>(ConcurrentHashMap())
+    var _internalSkipPing = Collections.newSetFromMap<Int>(ConcurrentHashMap())!!
 
     init {
         ClientEntityEvents.ENTITY_LOAD.register { entity, _ ->

@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.EnderDragonRenderer;
 import net.minecraft.client.renderer.entity.state.EnderDragonRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EnderDragonRenderer.class)
 public class EnderDragonRendererMixin {
     @Unique
-    private final RenderStateDataKey<Integer> idKey = RenderStateDataKey.create(() -> "devonian$recolorDragonsId");
+    private final RenderStateDataKey<@NotNull Integer> idKey = RenderStateDataKey.create(() -> "devonian$recolorDragonsId");
 
     @WrapOperation(
         method = "submit(Lnet/minecraft/client/renderer/entity/state/EnderDragonRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",

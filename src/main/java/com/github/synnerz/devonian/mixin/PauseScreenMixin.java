@@ -23,7 +23,7 @@ public abstract class PauseScreenMixin {
             return;
         }
         if (lastClick == -1L || System.currentTimeMillis() - lastClick < ConfirmDisconnect.INSTANCE.getSETTING_THRESHOLD().get()) {
-            disconnectButton.active = true;
+            if (disconnectButton != null) disconnectButton.active = true;
             lastClick = System.currentTimeMillis();
             return;
         }

@@ -126,7 +126,7 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
 
         var fontMainBase: Font = customFonts.firstEntry().value
             private set
-        var fontMainName = customFonts.firstEntry().key
+        var fontMainName = customFonts.firstEntry().key!!
             private set
 
         fun setActiveFont(fontName: String) {

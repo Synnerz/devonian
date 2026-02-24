@@ -23,7 +23,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
     ): LineData {
         val font = Devonian.minecraft.font
         val comp = Component.literal(str.replaceCodes())
-        val w = (font?.width(comp) ?: 0) * parent.scale / parent.renderScale.toFloat()
+        val w = font.width(comp) * parent.scale / parent.renderScale.toFloat()
         return CompLineData(
             w,
             parent.fontSize,
@@ -34,7 +34,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
     }
 
     override fun renderText(ctx: GuiGraphics) {
-        val font = Devonian.minecraft.font ?: return
+        val font = Devonian.minecraft.font
         val bounds = parent.getBounds()
         ctx.pose()
             .pushMatrix()

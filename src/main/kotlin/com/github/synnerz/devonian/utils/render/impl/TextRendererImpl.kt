@@ -33,7 +33,7 @@ object TextRendererImpl {
 
         val isDrop = rp.shadow == StylizedTextHud.Shadow.Drop
 
-        val tmpImg = if (isDrop) bimgFactory.createNative(img.width, img.height) else img
+        val tmpImg = if (isDrop) bimgFactory.createJava(img.width, img.height) else img
         val tmpG = if (isDrop) {
             val tmp = tmpImg.createGraphics()
             tmp.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa)
@@ -109,7 +109,7 @@ object TextRendererImpl {
         }
 
         if (isDrop) {
-            val tmp2 = bimgFactory.createNative(img.width, img.height)
+            val tmp2 = bimgFactory.createJava(img.width, img.height)
             dropShadowOp.filter(tmpImg, tmp2)
             val offset = rp.fontSize * 0.1
             g.drawImage(tmp2, AffineTransform.getTranslateInstance(offset, offset), null)
