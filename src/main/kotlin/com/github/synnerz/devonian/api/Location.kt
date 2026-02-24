@@ -11,7 +11,7 @@ object Location {
     var subarea: String? = null
     val stateArea = BasicState<String?>(null)
     val stateSubarea = BasicState<String?>(null)
-    val stateInLatestArea = stateInArea(null, "the park", "galatea")
+    val stateInLatestArea = stateInArea(null, "the park", "galatea", "hub")
     val stateInSkyblock = stateArea.map { it != null }
 
     fun stateInArea(vararg area: String?) = stateArea.map { area.contains(it) }
