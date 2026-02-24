@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
+import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactory
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
 import com.github.synnerz.devonian.hud.texthud.StringParser
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
@@ -35,6 +35,10 @@ object FontPreviewRenderer : BufferedImageRenderer<FontPreviewRenderer.FontPrevi
         draw(ctx, x, y, data.w, data.h, data.u0, data.v0, data.u1, data.v1)
     }
 
+    override fun createImage(w: Int, h: Int): BufferedImage {
+        return bimgProvider.createJava(w, h)
+    }
+
     override fun drawImage(
         img: BufferedImage,
         param: FontPreviewData
@@ -43,7 +47,7 @@ object FontPreviewRenderer : BufferedImageRenderer<FontPreviewRenderer.FontPrevi
         tmpG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF)
         tmpG.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF)
 
-        val scale = Devonian.minecraft.window?.guiScale?.toFloat() ?: 1f
+        val scale = Devonian.minecraft.window.guiScale.toFloat()
 
         val fontData = mutableMapOf<String, Pair<StringParser.LayoutLineData, Float>>()
         var padding = 0f
@@ -71,8 +75,8 @@ object FontPreviewRenderer : BufferedImageRenderer<FontPreviewRenderer.FontPrevi
         }
 
         tmpG.dispose()
-        val factory = BufferedImageFactoryImpl()
-        val img = factory.create(ceil(width).toInt(), ceil(height).toInt())
+        val factory = BufferedImageFactory()
+        val img = factory.createNative(ceil(width).toInt(), ceil(height).toInt())
         val g = img.createGraphics()
 
         padding = 0f
@@ -93,7 +97,7 @@ object FontPreviewRenderer : BufferedImageRenderer<FontPreviewRenderer.FontPrevi
                 size,
             )
             val text = TextRendererImpl.drawImage(
-                factory.create(w, h),
+                factory.createJava(w, h),
                 TextRenderer.RenderParams(
                     textParams,
                     listOf(line),

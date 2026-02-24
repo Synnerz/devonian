@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.utils.render.impl
 
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactory
-import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
 import com.github.synnerz.devonian.hud.texthud.BImgTextHudRenderer
 import com.github.synnerz.devonian.hud.texthud.StringParser
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
@@ -17,7 +16,7 @@ import java.awt.image.RescaleOp
 import kotlin.math.ceil
 
 object TextRendererImpl {
-    private val bimgFactory: BufferedImageFactory = BufferedImageFactoryImpl()
+    private val bimgFactory: BufferedImageFactory = BufferedImageFactory()
 
     fun drawImage(img: BufferedImage, param: TextRenderer.RenderParams): BufferedImage {
         val rp = param.renderParams
@@ -34,7 +33,7 @@ object TextRendererImpl {
 
         val isDrop = rp.shadow == StylizedTextHud.Shadow.Drop
 
-        val tmpImg = if (isDrop) bimgFactory.create(img.width, img.height) else img
+        val tmpImg = if (isDrop) bimgFactory.createNative(img.width, img.height) else img
         val tmpG = if (isDrop) {
             val tmp = tmpImg.createGraphics()
             tmp.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa)
@@ -110,7 +109,7 @@ object TextRendererImpl {
         }
 
         if (isDrop) {
-            val tmp2 = bimgFactory.create(img.width, img.height)
+            val tmp2 = bimgFactory.createNative(img.width, img.height)
             dropShadowOp.filter(tmpImg, tmp2)
             val offset = rp.fontSize * 0.1
             g.drawImage(tmp2, AffineTransform.getTranslateInstance(offset, offset), null)

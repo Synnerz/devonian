@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.hud.texthud
 
-import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactoryImpl
+import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactory
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.minecraft.client.gui.GuiGraphics
@@ -41,7 +41,7 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
         params: StylizedTextHud.TextRenderParams
     ): StylizedTextHud.LineData {
         if (cachedGraphics == null) {
-            cachedGraphics = BufferedImageFactoryImpl.BLANK_IMAGE.createGraphics()
+            cachedGraphics = BufferedImageFactory.BLANK_IMAGE.createGraphics()
             cachedGraphics!!.font = fontMain
             cachedGraphics!!.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF)
             cachedGraphics!!.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF)

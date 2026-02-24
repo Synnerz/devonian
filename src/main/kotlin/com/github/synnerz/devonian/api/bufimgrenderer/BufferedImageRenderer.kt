@@ -3,7 +3,6 @@ package com.github.synnerz.devonian.api.bufimgrenderer
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.mojang.blaze3d.pipeline.RenderPipeline
-import com.mojang.blaze3d.textures.GpuSampler
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat.Mode
 import kotlinx.atomicfu.atomic
@@ -19,7 +18,7 @@ import java.util.concurrent.Future
 abstract class BufferedImageRenderer<T>(val name: String) {
     protected val uploader = BufferedImageUploader(name)
     protected val dirtyImage = atomic<BufferedImage?>(null)
-    protected val bimgProvider: BufferedImageFactory = BufferedImageFactoryImpl()
+    protected val bimgProvider: BufferedImageFactory = BufferedImageFactory()
     protected var running = false
     protected var waiting: Triple<Int, Int, T>? = null
     protected var lastFuture: Future<*>? = null
@@ -33,6 +32,10 @@ abstract class BufferedImageRenderer<T>(val name: String) {
 
     protected abstract fun drawImage(img: BufferedImage, param: T): BufferedImage
 
+    protected open fun createImage(w: Int, h: Int): BufferedImage {
+        return bimgProvider.createNative(w, h)
+    }
+
     fun update(w: Int, h: Int, param: T) {
         if (running) {
             waiting = Triple(w, h, param)
@@ -42,7 +45,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         old = false
         lastFuture = pool.submit {
             try {
-                val img = bimgProvider.create(w, h)
+                val img = createImage(w, h)
                 dirtyImage.value = drawImage(img, param)
             } catch (e: Exception) {
                 println("error trying to render BufferedImage in $name")
@@ -85,14 +88,18 @@ abstract class BufferedImageRenderer<T>(val name: String) {
 
     protected fun draw(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float, u0: Float, v0: Float, u1: Float, v1: Float) {
         if (Devonian.minecraft.options.hideGui) return
-        if (uploader.texId == -1) return
+        if (!uploader.hasImg) return
         if (!valid) return
 
         val textureView = uploader.textureView
+        val sampler = uploader.sampler
         ctx.guiRenderState.submitGuiElement(
             TexturedQuadRenderState(
                 pipeline,
-                TextureSetup(textureView, null, null, null, null, null),
+                TextureSetup(
+                    textureView, null, null,
+                    sampler, null, null,
+                ),
                 Matrix3x2f(ctx.pose()),
                 x,
                 y,
