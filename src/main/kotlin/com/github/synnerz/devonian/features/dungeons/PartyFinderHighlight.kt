@@ -12,9 +12,9 @@ import java.util.concurrent.CopyOnWriteArrayList
 object PartyFinderHighlight : Feature(
     "partyFinderHighlight",
     "Highlights a party finder party if you meet the requirements to join it.",
-    Categories.DUNGEONS,
-    subcategory = "QOL",
+    Categories.PARTY_FINDER,
     searchTags = setOf("pf"),
+    subcategory = "Highlight"
 ) {
     private val SETTING_IGNORE_CATA_REQUIREMENT = addSwitch(
         "ignoreCataRequirement",

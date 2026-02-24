@@ -12,10 +12,10 @@ import com.github.synnerz.devonian.utils.BasicState
 object PurplePadTimer : TextHudFeature(
     "purplePadTimer",
     "Timer until you should step onto purple pad for py.",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
     searchTags = setOf("storm", "py"),
+    subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Storm.isActiveState)

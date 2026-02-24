@@ -18,9 +18,8 @@ import java.util.*
 object PositionMessages : Feature(
     "positionMessages",
     "Sends a party chat message if you're standing near a specified area for your Dungeon Class (f7 boss fight).",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.StormLightning.hasFinishedState)

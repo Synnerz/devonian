@@ -12,8 +12,7 @@ import net.minecraft.world.item.Items
 object PartyFinderRightClick : Feature(
     "partyFinderRightClick",
     "Sends the selected command whenever you right click on a party finder party",
-    Categories.DUNGEONS,
-    subcategory = "QOL"
+    Categories.PARTY_FINDER,
 ) {
     private val SETTING_MODE = addSelection(
         "rightClickMode",

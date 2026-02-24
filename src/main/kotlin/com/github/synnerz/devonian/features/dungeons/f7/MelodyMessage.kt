@@ -10,9 +10,9 @@ import net.minecraft.world.item.Items
 object MelodyMessage : Feature(
     "melodyMessage",
     "",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7"
+    subcategory = "Terminals",
 ) {
     private val SETTING_ANNOUNCE_IN_MELODY = addSwitch(
         "announceIn",

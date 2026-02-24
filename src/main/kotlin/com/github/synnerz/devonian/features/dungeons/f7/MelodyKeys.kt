@@ -11,10 +11,10 @@ import org.lwjgl.glfw.GLFW
 object MelodyKeys : Feature(
     "melodyKeys",
     "use 1-4 to click melody terminal buttons",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
     searchTags = setOf("terminal"),
+    subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

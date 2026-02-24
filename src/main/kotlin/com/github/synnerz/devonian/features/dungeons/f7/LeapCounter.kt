@@ -16,9 +16,9 @@ import com.github.synnerz.devonian.utils.StringUtils
 object LeapCounter : TextHudFeature(
     "leapCounter",
     "Displays a counter for how many people have leaped to you",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7"
+    subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState)

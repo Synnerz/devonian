@@ -10,9 +10,9 @@ import kotlin.math.roundToInt
 object CustomTerminalScale : Feature(
     "customTerminalScale",
     "Changes GUI scale when inside of a terminal.",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
+    subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

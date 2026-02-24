@@ -34,9 +34,9 @@ import kotlin.math.min
 object TerminalSolvers : Feature(
     "terminalSolvers",
     "Shows the correct slots to click to solve the current terminal.",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
+    subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

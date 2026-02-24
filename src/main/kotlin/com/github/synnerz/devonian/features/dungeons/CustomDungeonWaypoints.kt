@@ -34,9 +34,9 @@ import kotlin.math.abs
 object CustomDungeonWaypoints : Feature(
     "customDungeonWaypoints",
     "Enables custom dungeon waypoints do /dv cdw help or /dv dwc help.",
-    Categories.DUNGEONS,
+    Categories.DUNGEON_WAYPOINTS,
     "catacombs",
-    subcategory = "Highlights",
+    subcategory = "Custom",
 ) {
     private val SETTING_REMOVE_ON_COLLECT = addSwitch(
         "removeOnCollect",

@@ -14,9 +14,9 @@ import java.awt.Color
 object WitherHighlight : Feature(
     "witherHighlight",
     "",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
+    subcategory = "Highlight",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState, Stages.WitherKing.isActiveState.map(Boolean::not))

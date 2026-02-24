@@ -21,10 +21,10 @@ import kotlin.math.max
 object ArrowAlignSolver : Feature(
     "arrowAlignSolver",
     "s3 dev",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
     searchTags = setOf("device"),
+    subcategory = "Solvers",
 ) {
     private val SETTING_BLOCK_INCORRECT = addSelection(
         "blockClicks",

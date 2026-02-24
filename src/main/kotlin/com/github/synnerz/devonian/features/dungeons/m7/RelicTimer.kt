@@ -11,9 +11,9 @@ import com.github.synnerz.devonian.utils.BasicState
 object RelicTimer : TextHudFeature(
     "relicTimer",
     "Displays a timer that tells you when the relics are going to spawn in M7.",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
+    subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })

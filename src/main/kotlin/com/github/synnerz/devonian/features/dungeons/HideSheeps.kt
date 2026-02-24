@@ -10,7 +10,7 @@ object HideSheeps : Feature(
     "Hides any sheeps inside of dungeons",
     Categories.DUNGEONS,
     "catacombs",
-    subcategory = "QOL"
+    subcategory = "Hiders"
 ) {
     override fun initialize() {
         on<PreExtractRenderEntityEvent> { event ->

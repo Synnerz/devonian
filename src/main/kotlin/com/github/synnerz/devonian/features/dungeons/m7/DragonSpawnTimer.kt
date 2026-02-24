@@ -11,9 +11,9 @@ import java.util.*
 object DragonSpawnTimer : TextHudFeature(
     "dragonSpawnTimer",
     "",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
+    subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)

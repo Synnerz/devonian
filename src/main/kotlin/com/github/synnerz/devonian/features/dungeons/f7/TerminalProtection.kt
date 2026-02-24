@@ -11,9 +11,9 @@ import net.minecraft.sounds.SoundSource
 object TerminalProtection : Feature(
     "terminalProtection",
     "Allows you to set a threshold for when you should be able to start clicking terminal slots.",
-    Categories.DUNGEONS,
+    Categories.F7,
     "catacombs",
-    subcategory = "F7",
+    subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)

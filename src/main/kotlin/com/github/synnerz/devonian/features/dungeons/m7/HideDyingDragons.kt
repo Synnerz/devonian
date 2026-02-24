@@ -10,9 +10,8 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 object HideDyingDragons : Feature(
     "hideDyingDragons",
     "",
-    Categories.DUNGEONS,
+    Categories.M7,
     "catacombs",
-    subcategory = "M7",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
