@@ -20,6 +20,20 @@ object EnchantAbbreviation : Feature(
     Categories.MISC,
     subcategory = "Inventory",
 ) {
+    private val SETTING_NAME_SCALE = addDecimalSlider(
+        "nameScale",
+        0.6,
+        0.1, 3.0,
+        "The Name scale for enchants",
+        "Name Scale"
+    )
+    private val SETTING_LEVEL_SCALE = addDecimalSlider(
+        "levelScale",
+        0.8,
+        0.1, 3.0,
+        "The Level scale for enchants",
+        "Level Scale"
+    )
     private val EMPTY = UnknownEnchant("_", "_") to 0
     private val cache = IdentityHashMap<ItemStack, Pair<Enchantment, Int>>()
 
@@ -52,7 +66,7 @@ object EnchantAbbreviation : Feature(
                 event.ctx.pose()
                     .pushMatrix()
                     .translate(it.x + 14f, it.y + 10f)
-                    .scale(0.8f)
+                    .scale(SETTING_LEVEL_SCALE.get().toFloat())
                 event.ctx.drawCenteredString(
                     f, "${data.second}",
                     0, 0, -1,
@@ -62,7 +76,7 @@ object EnchantAbbreviation : Feature(
                 event.ctx.pose()
                     .pushMatrix()
                     .translate(it.x + 0f, it.y + 0f)
-                    .scale(0.6f)
+                    .scale(SETTING_NAME_SCALE.get().toFloat())
                 event.ctx.drawString(
                     f,
                     if (data.first is UltimateEnchant) data.first.getFormatted(1, data.first.abbreviation)
