@@ -36,7 +36,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	include modImplementation("com.github.Synnerz:talium:c3be156385")
+	include modImplementation("com.github.Synnerz:talium:0241cf854c")
 	modImplementation "net.hypixel:mod-api:1.0.1"
 
 	modApi("com.terraformersmc:modmenu:17.0.0-beta.2")
