@@ -123,3 +123,8 @@ object ConfirmDisconnect : Feature(
         "ConfirmDisconnect Threshold"
     )
 }
+object FixRidingCamera : Feature(
+    "fixRidingCamera",
+    "Fixes MC-259512 (camera lags when riding something). (only visual)",
+    subcategory = "Tweaks",
+)
