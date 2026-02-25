@@ -6,14 +6,14 @@ import net.minecraft.world.BossEvent
 import java.util.*
 
 class BossEventWrapper(val orig: LerpingBossEvent, var ov: Component) : LerpingBossEvent(
-    null as UUID,
-    null as Component,
-    0f,
-    null as BossBarColor,
-    null as BossBarOverlay,
-    false,
-    false,
-    false,
+    orig.id,
+    orig.name,
+    orig.progress,
+    orig.color,
+    orig.overlay,
+    orig.shouldDarkenScreen(),
+    orig.shouldPlayBossMusic(),
+    orig.shouldCreateWorldFog(),
 ) {
     override fun getName(): Component = ov
 
