@@ -60,33 +60,35 @@ object PetDisplay : TextHudFeature(
         "Show Skinned Icon",
     )
 
-    private const val CURRENT_KEY_NAME = "petDisplayCurrent"
-    private const val SAVED_KEY_NAME = "petDisplaySaved"
+    private const val CURRENT_KEY_NAME = "petDisplayCurrent2"
+    private const val SAVED_KEY_NAME = "petDisplaySaved2"
 
-    // https://regex101.com/r/GssBdA/1
+    // https://regex101.com/r/yLlhXf/1
     // 1: pet name, 2: skin
     private val equippedPetRegex = "^You summoned your ([\\w\\s]+)( ✦)?!$".toRegex()
     // 1: color code, 2: pet name, 3: skin
-    private val formattedEquippedPetRegex = "^§r§aYou summoned your §r((?:§.)*)([\\w\\s]+)((?:§.)* ✦)?§r§a!$".toRegex()
+    private val formattedEquippedPetRegex = "^§r§aYou summoned your §r((?:§.)*)([\\w\\s]+)(?:§r((?:§.)* ✦))?§r§a!$".toRegex()
     // 1: level, 2: cosmetic level, 3: color code, 4: pet name, 5: skin
     private val autoPetRuleRegex = "^§cAutopet §eequipped your §7\\[Lvl (\\d+)](?: §8\\[§6(\\d+)§8§4✦§8])? ((?:§.)*)([\\w\\s]+)((?:§.)* ✦)?§e! §a§lVIEW RULE$".toRegex()
     // 1: pet name, 2: skin
     private val despawnedPetRegex = "^You despawned your ([\\w\\s]+)( ✦)?!$".toRegex()
     // 1: color code, 2: pet name, 3: skin
-    // private val formattedDespawnedPetRegex = "^§r§aYou despawned your §r((?:§.)*)([\\w\\s]+)((?:§.)* ✦)?§r§a!$".toRegex()
+    // private val formattedDespawnedPetRegex = "^§r§aYou despawned your §r((?:§.)*)([\w\s]+)(?:§r((?:§.)* ✦))?§r§a!$".toRegex()
     // 1: level, 2: cosmetic level, 3: pet name, 4: skin
     private val tabPetRegex = "^ \\[Lvl (\\d+)](?: \\[(\\d+)✦])? ([\\w\\s]+)( ✦)?$".toRegex()
     // 1: level, 2: cosmetic level, 3: color code, 4: pet name, 5: skin
-    private val formattedTabPetRegex = "^§r §r§7\\[Lvl (\\d+)](?: §r§8\\[§r§6(\\d+)§r§4✦§r§8])? §r((?:§.)*)([\\w\\s]+)((?:§.)* ✦)?$".toRegex()
+    private val formattedTabPetRegex = "^§r §r§7\\[Lvl (\\d+)](?: §r§8\\[§r§6(\\d+)§r§4✦§r§8])? §r((?:§.)*)([\\w\\s]+)(?:§r((?:§.)* ✦))?$".toRegex()
 
-    // https://regex101.com/r/f9xwqQ/1
+    // https://regex101.com/r/f9xwqQ/2
     private val petsMenuRegex = "^Pets(?: \\((\\d+)/(\\d+)\\))? ?$".toRegex()
+    // 1: level, 2: cosmetic level, 3: pet name, 4: skin
+    private val petsMenuNameRegex = "^\\[Lvl (\\d+)](?: \\[(\\d+)✦])? ([\\w\\s]+)( ✦)?$".toRegex()
     // 1: level, 2: cosmetic level, 3: color code, 4: pet name, 5: skin
-    private val petsMenuNameRegex = "^§r§7\\[Lvl (\\d+)](?: §r§8\\[§r§6(\\d+)§r§4✦§r§8])? §r((?:§.)*)([\\w\\s]+)((?:§.)* .+?)?$".toRegex()
+    private val formattedPetsMenuNameRegex = "^§r§7\\[Lvl (\\d+)](?: §r§8\\[§r§6(\\d+)§r§4✦§r§8])? §r((?:§.)*)([\\w\\s]+)(?:§r((?:§.)* ✦))?$".toRegex()
 
     private data class Pet(
         val name: String,
-        val skinned: Boolean,
+        val skinned: String,
         val colorCode: String,
 
         val level: Int = -1,
@@ -117,7 +119,7 @@ object PetDisplay : TextHudFeature(
         companion object {
             fun from(obj: DataObject): Pet? {
                 val name = obj.get<String>("name") ?: return null
-                val skinned = obj.get<Boolean>("skinned") ?: return null
+                val skinned = obj.get<String>("skinned") ?: return null
                 val colorCode = obj.get<String>("colorCode") ?: return null
                 val page = obj.get<Int>("page") ?: return null
                 val level = obj.get<Int>("level")
@@ -238,7 +240,7 @@ object PetDisplay : TextHudFeature(
                 val petName = match.groupValues.getOrNull(4) ?: return@on
                 val skinned = match.groupValues.getOrNull(5) ?: return@on
 
-                val pet = Pet(petName, !skinned.isEmpty() || cosmeticLevel != -1, colorCode, level, cosmeticLevel)
+                val pet = Pet(petName, skinned, colorCode, level, cosmeticLevel)
                 currentPet = allPets.getOrElse(pet) { reducedPets.get(PetKeyView(pet)).firstOrNull() ?: pet }
                 lastSkin = null
 
@@ -250,7 +252,7 @@ object PetDisplay : TextHudFeature(
                 val petName = match.groupValues.getOrNull(2) ?: return@on
                 val skinned = match.groupValues.getOrNull(3) ?: return@on
 
-                val pet = Pet(petName, !skinned.isEmpty(), colorCode)
+                val pet = Pet(petName, skinned, colorCode)
                 val arr = reducedPets.get(PetKeyView(pet))
                 currentPet = arr.find { it != pet } ?: arr.firstOrNull() ?: pet
                 lastSkin = null
@@ -275,7 +277,7 @@ object PetDisplay : TextHudFeature(
             val petName = match.groupValues.getOrNull(4) ?: return@on
             val skinned = match.groupValues.getOrNull(5) ?: return@on
 
-            val pet = Pet(petName, !skinned.isEmpty() || cosmeticLevel != -1, colorCode, level, cosmeticLevel)
+            val pet = Pet(petName, skinned, colorCode, level, cosmeticLevel)
             Scheduler.scheduleTask {
                 currentPet = allPets.getOrElse(pet) { reducedPets.get(PetKeyView(pet)).firstOrNull() ?: pet }
                 lastSkin = null
@@ -322,7 +324,8 @@ object PetDisplay : TextHudFeature(
             if (event.itemStack.item !== Items.PLAYER_HEAD) return@on
 
             val itemName = event.itemStack.get(DataComponents.CUSTOM_NAME) ?: return@on
-            val match = petsMenuNameRegex.matchEntire(itemName.colorCodes()) ?: return@on
+            if (!petsMenuNameRegex.matches(itemName.string)) return@on
+            val match = formattedPetsMenuNameRegex.matchEntire(itemName.colorCodes()) ?: return@on
 
             val levelS = match.groupValues.getOrNull(1) ?: return@on
             val level = levelS.toIntOrNull() ?: -1
@@ -332,7 +335,7 @@ object PetDisplay : TextHudFeature(
             val petName = match.groupValues.getOrNull(4) ?: return@on
             val skinned = match.groupValues.getOrNull(5) ?: return@on
 
-            val pet = Pet(petName, !skinned.isEmpty() || cosmeticLevel != -1, colorCode, level, cosmeticLevel)
+            val pet = Pet(petName, skinned, colorCode, level, cosmeticLevel)
             pet.page = petMenuPage
             val isSelected = ItemUtils.lore(event.itemStack)?.contains("Click to despawn!") ?: false
 
@@ -367,7 +370,7 @@ object PetDisplay : TextHudFeature(
                     if (SETTING_COSMETIC_LEVEL.get() && p.cosmeticLevel != -1) append("§b[${p.cosmeticLevel}✦] ")
                     append(p.colorCode)
                     append(p.name)
-                    if (SETTING_SKINNED.get() && p.skinned) append(" ✦")
+                    if (SETTING_SKINNED.get()) append(p.skinned)
                 }
             )
 
