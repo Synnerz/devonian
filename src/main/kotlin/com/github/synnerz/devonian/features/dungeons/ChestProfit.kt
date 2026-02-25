@@ -42,12 +42,12 @@ object ChestProfit : TextHudFeature(
         "Chest Profit Compact Mode",
     )
     private val chestNames = listOf(
-        "Wood Chest",
-        "Gold Chest",
-        "Diamond Chest",
-        "Emerald Chest",
-        "Obsidian Chest",
-        "Bedrock Chest"
+        "Wood",
+        "Gold",
+        "Diamond",
+        "Emerald",
+        "Obsidian",
+        "Bedrock",
     )
     private val essenceRegex = "^(Wither|Undead) Essence x(\\d+)\$".toRegex()
     private val enchantedBookRegex = "^([\\w ]+) ([IVXLCDM]+)$".toRegex()
