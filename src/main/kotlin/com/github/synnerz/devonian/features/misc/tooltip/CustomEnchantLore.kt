@@ -33,7 +33,7 @@ object CustomEnchantLore : Feature(
     private val SETTING_LINE_WIDTH = addSlider(
         "maxWidth",
         200.0,
-        0.0, 1000.0,
+        0.0, 400.0,
         "",
         "Max Line Width",
     )
