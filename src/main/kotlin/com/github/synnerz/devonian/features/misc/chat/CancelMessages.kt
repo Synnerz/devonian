@@ -73,6 +73,8 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
                 if (messageSelection.any { it.data.message == v }) return@forEach
                 createCancel(if (components.isEmpty()) 1 else 1 + (components.size % 7), v)
             }
+            updateCache()
+            rebuildCache()
             ChatUtils.sendMessage("&bImported CancelMessage from clipboard", true)
         }
     }
@@ -231,7 +233,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         }
     }
 
-    private fun createCancel(idx: Int, message: String) {
+    private fun createCancel(idx: Int, message: String, imported: Boolean = false) {
         val data = MessageData(message)
         val yy = (11 * idx) + 1.0
         val parentBg = UIRect(0.0, yy, 100.0, 10.0, parent = main).apply {
@@ -285,6 +287,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
 
         components.add(parentBg)
         messagesList.add(data)
+        if (imported) data.checkRegex()
         onUpdate()
     }
 
