@@ -71,7 +71,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
             if (json.isNullOrEmpty()) return@onMouseRelease
             json.forEach { v ->
                 if (messageSelection.any { it.data.message == v }) return@forEach
-                createCancel(if (components.isEmpty()) 1 else 1 + (components.size % 7), v)
+                createCancel(if (components.isEmpty()) 1 else 1 + (components.size % 7), v, true)
             }
             updateCache()
             rebuildCache()

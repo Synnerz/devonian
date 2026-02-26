@@ -79,8 +79,10 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
             if (json.isNullOrEmpty()) return@onMouseRelease
             json.forEach { (k, v) ->
                 if (specialTitles.any { it.titleCriteria.criteria == k }) return@forEach
-                createCriteria(if (components.isEmpty()) 1 else 1 + (components.size % 7), k, v)
+                createCriteria(if (components.isEmpty()) 1 else 1 + (components.size % 7), k, v, true)
             }
+            updateCache()
+            rebuildCache()
             ChatUtils.sendMessage("&bImported TitleMessages from clipboard", true)
         }
     }
@@ -255,7 +257,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         }
     }
 
-    private fun createCriteria(idx: Int, criteria: String, message: String) {
+    private fun createCriteria(idx: Int, criteria: String, message: String, imported: Boolean = false) {
         val data = TitleCriteria(criteria, message)
         val yy = (11 * idx) + 1.0
         val parentBg = UIRect(0.0, yy, 100.0, 10.0, parent = main).apply {
@@ -318,6 +320,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
 
         components.add(parentBg)
         titleCriterias.add(data)
+        if (imported) data.checkRegex()
         onUpdate()
     }
 
