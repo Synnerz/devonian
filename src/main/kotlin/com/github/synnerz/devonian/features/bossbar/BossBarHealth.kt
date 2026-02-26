@@ -18,7 +18,7 @@ object BossBarHealth : Feature(
     private val STYLE1 = Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)
     private val STYLE2 = Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)
 
-    fun modify(comp: Component, event: LerpingBossEvent): Component? {
+    fun modify(comp: Component, event: LerpingBossEvent): Component {
         if (!isEnabled()) return comp
 
         val clone = comp.copy()

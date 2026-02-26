@@ -87,7 +87,7 @@ object WorldUtils {
 
     fun getBlockIdAt(x: Double, y: Double, z: Double): Int? {
         val blockState = getBlockState(x, y, z) ?: return null
-        val block = blockState.block ?: return null
+        val block = blockState.block
 
         return getBlockId(block)
     }

@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.PriorityBlockingQueue
+import java.util.concurrent.ScheduledExecutorService
 
 object Scheduler {
     private val taskComp = compareBy<Task>({ it.delay }, { it.id })
@@ -18,7 +19,7 @@ object Scheduler {
     private val beforePacketTasks = ConcurrentLinkedQueue<() -> Unit>()
     private val afterPacketTasks = ConcurrentLinkedQueue<() -> Unit>()
 
-    val schedulePool = Executors.newScheduledThreadPool(0)!!
+    val schedulePool: ScheduledExecutorService = Executors.newScheduledThreadPool(0)
 
     data class Task(var delay: Int, val cb: () -> Unit, val id: Int)
 
