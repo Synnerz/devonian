@@ -33,10 +33,12 @@ object ChromaText {
         "chroma\$format",
         true,
         null,
-        "",
         "Changes &z formatting codes to be chroma colored (pretend that's a section sign). " +
-        "Disable this to prevent overriding other mod's chromas (the ones that use &z)."
-    )
+        "Disable this to prevent overriding other mod's chromas (the ones that use &z).",
+        "Disable Chroma Format",
+    ).also {
+        Config.registerCategory(it, Categories.GLOBAL, "Chroma")
+    }
     val SETTING_SIZE = ConfigData.DecimalSlider(
         "chroma\$size",
         3.0,
