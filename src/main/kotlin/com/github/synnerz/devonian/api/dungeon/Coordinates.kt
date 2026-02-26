@@ -41,6 +41,7 @@ data class ComponentPosition(val x: Int, val z: Int) {
             z and (1.inv()),
         )
 
+    fun isInBounds() = x in 0 .. 11 && z in 0 .. 11
     fun isValid() = x in 0 .. 10 && z in 0 .. 10
     fun isValidRoom() = (x and 1) == 0 && (z and 1) == 0
     fun isValidDoor() = ((x and 1) xor (z and 1)) == 1
