@@ -89,7 +89,7 @@ object BoxStarMob : Feature(
     private fun getMobDataFromArmorStand(name: String): MobData {
         if (name.contains("Shadow Assassin")) return MobData(2.0, SETTING_SA_COLOR.getColor())
 
-        if (name.contains("Fels")) return MobData(3.0, SETTING_FEL_COLOR.getColor())
+        if (name.contains("Fels")) return MobData(3.0, SETTING_FEL_COLOR.getColor(), true)
 
         if (name.contains("Skeleton Master")) return MobData(2.0, SETTING_SM_COLOR.getColor())
 
@@ -121,7 +121,7 @@ object BoxStarMob : Feature(
         else -> null
     }
 
-    private data class MobData(val height: Double, val color: Color) {
+    private data class MobData(val height: Double, val color: Color, val isFel: Boolean = false) {
         val offset = MathUtils.rescale(
             color.rgb.toDouble(),
             Int.MIN_VALUE.toDouble(),
@@ -191,11 +191,13 @@ object BoxStarMob : Feature(
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 
                 val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
+                val height = if (data.isFel && ent.isInvisible) 0.8 else data.height
+
                 Render3DImmediate.renderWireframeBox(
                     pos.x,
                     pos.y,
                     pos.z,
-                    0.8 + data.offset, data.height,
+                    0.8 + data.offset, height,
                     data.color,
                     phase = SETTING_PHASE,
                     lineWidth = SETTING_LINE_WIDTH.get(),
@@ -205,7 +207,7 @@ object BoxStarMob : Feature(
                     pos.x,
                     pos.y,
                     pos.z,
-                    0.8 + data.offset, data.height,
+                    0.8 + data.offset, height,
                     data.color.let {
                         Color(it.red, it.green, it.blue, (SETTING_FILL_ALPHA.get() * 255.0).toInt())
                     },
