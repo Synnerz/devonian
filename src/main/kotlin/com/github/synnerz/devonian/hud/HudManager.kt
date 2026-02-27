@@ -55,7 +55,10 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
 
     override fun init() {
         isEditing = true
-        huds.forEach { if (!it.fromConfig) it.setDefaultValues() }
+        huds.forEach {
+            if (!it.fromConfig) it.setDefaultValues()
+            it.fromConfig = true
+        }
     }
 
     override fun removed() {
