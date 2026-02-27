@@ -27,8 +27,15 @@ object ScoreTime : Feature(
         "Plays a sound whenever the Alert is displayed (MUST have the alert enabled)",
         "ScoreTime Sound"
     )
+    private val SETTING_SHOW_MIN_SEC = addSwitch(
+        "showMinSec",
+        false,
+        "Displays the time of when the Minimum Secrets for S+ was reached",
+        "ScoreTime MinSecrets"
+    )
     private var trigger270 = false
     private var trigger300 = false
+    private var triggerMinSec = false
 
     override fun initialize() {
         Dungeons.score.listen {
@@ -48,10 +55,24 @@ object ScoreTime : Feature(
             if (SETTING_SHOW_ALERT.get())
                 Alert.show("&6S+ &breached at &a${StringUtils.formatSeconds(Dungeons.timeElapsed.value.toLong())} &7(${Dungeons.floor.shortName})", 1500, SETTING_PLAY_SOUND.get())
         }
+
+        Dungeons.remainingMinSecrets.listen {
+            if (!isEnabled() || !SETTING_SHOW_MIN_SEC.get()) return@listen
+            if (triggerMinSec || it > 0 || !Dungeons.started.value) return@listen
+
+            val timeElapsed = Dungeons.timeElapsed.value.toLong()
+            if (timeElapsed < 20L) return@listen
+            triggerMinSec = true
+
+            ChatUtils.sendMessage("&bMinSecrets &breached at &a${StringUtils.formatSeconds(timeElapsed)} &7(${Dungeons.floor.shortName})", true)
+            if (SETTING_SHOW_ALERT.get())
+                Alert.show("&bMinSecrets &breached at &a${StringUtils.formatSeconds(timeElapsed)} &7(${Dungeons.floor.shortName})", 1500, SETTING_PLAY_SOUND.get())
+        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         trigger270 = false
         trigger300 = false
+        triggerMinSec = false
     }
 }
