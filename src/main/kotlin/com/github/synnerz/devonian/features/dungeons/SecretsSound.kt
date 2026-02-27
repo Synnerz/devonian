@@ -17,8 +17,15 @@ object SecretsSound : Feature(
     "catacombs",
     subcategory = "QOL",
 ) {
+    private val SETTING_SEPARATE_LEVER = addSwitch(
+        "separateLever",
+        false,
+        "Separates the sound from levers only into their own sound",
+        "Separate Lever Sound"
+    )
     private val lockedChestRegex = "^That chest is locked!$".toRegex()
     private val successOpt = CustomSounds.create("SecretsSoundSuccess", "minecraft:entity.blaze.hurt")
+    private val leverOpt = CustomSounds.create("SecretsSoundLever", "minecraft:entity.blaze.hurt")
     private val declineOpt = CustomSounds.create("SecretsSoundDecline", "minecraft:block.anvil.place")
 
     override fun initialize() {
@@ -28,8 +35,11 @@ object SecretsSound : Feature(
             val pitch = args.getOrNull(2) as? String?
             var soundName = args.getOrNull(3) as? String
             if (soundName.isNullOrEmpty()) {
-                soundName = if (type == "SUCCESS") "minecraft:entity.blaze.hurt"
-                else "minecraft:block.anvil.place"
+                soundName = when (type) {
+                    "SUCCESS" -> "minecraft:entity.blaze.hurt"
+                    "LEVER" -> "minecraft:entity.blaze.hurt"
+                    else -> "minecraft:block.anvil.place"
+                }
             }
             if (type == "SUCCESS")
                 successOpt.setValues(
@@ -37,6 +47,13 @@ object SecretsSound : Feature(
                     if (volume.isNullOrEmpty()) 1f else volume.toFloatOrNull() ?: 1f,
                     if (pitch.isNullOrEmpty()) 1f else pitch.toFloatOrNull() ?: 1f
                 )
+            else if (type == "LEVER") {
+                leverOpt.setValues(
+                    soundName,
+                    if (volume.isNullOrEmpty()) 1f else volume.toFloatOrNull() ?: 1f,
+                    if (pitch.isNullOrEmpty()) 1f else pitch.toFloatOrNull() ?: 1f
+                )
+            }
             else
                 declineOpt.setValues(
                     soundName,
@@ -50,11 +67,11 @@ object SecretsSound : Feature(
             .float("volume", 0f, 10f)
             .float("pitch", 0f, 10f)
             .greedyString("sound")
-            .suggest("type", *listOf("SUCCESS", "DECLINE").toTypedArray())
+            .suggest("type", *listOf("SUCCESS", "LEVER", "DECLINE").toTypedArray())
             .suggest("sound", *BuiltInRegistries.SOUND_EVENT.entrySet().map { "${it.value.location.namespace}:${it.value.location.path}" }.toTypedArray())
 
         on<DungeonEvent.SecretPickup> { playSound() }
-        on<DungeonEvent.SecretClicked> { playSound() }
+        on<DungeonEvent.SecretClicked> { playSound(isLever = it.isLever) }
         on<DungeonEvent.SecretBatSound> {
             it.cancel()
             Scheduler.scheduleTask {
@@ -68,8 +85,9 @@ object SecretsSound : Feature(
         }
     }
 
-    private fun playSound(declined: Boolean = false) {
+    private fun playSound(declined: Boolean = false, isLever: Boolean = false) {
         if (declined) return declineOpt.play()
+        if (isLever && SETTING_SEPARATE_LEVER.get()) return leverOpt.play()
         successOpt.play()
     }
 }
