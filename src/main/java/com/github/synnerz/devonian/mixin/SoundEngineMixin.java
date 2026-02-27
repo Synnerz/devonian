@@ -20,7 +20,7 @@ public class SoundEngineMixin {
     @WrapMethod(method = "calculateVolume(FLnet/minecraft/sounds/SoundSource;)F")
     private float devonian$onSoundEnginePlay(float f, SoundSource soundSource, Operation<Float> original) {
         if (CustomHypeSound.INSTANCE.getPlaySound())
-            return Mth.clamp(CustomHypeSound.INSTANCE.getCustomSound().volume, 0.0f, 10.0f) * Mth.clamp(this.options.getFinalSoundSourceVolume(soundSource), 0.0F, 1.0F);
+            return Mth.clamp(CustomHypeSound.INSTANCE.getCustomSound().volume, 0.0f, 10.0f) * Mth.clamp(this.options.getFinalSoundSourceVolume(soundSource), 0.0F, 10.0F);
         return original.call(f, soundSource);
     }
 }
