@@ -31,6 +31,7 @@ abstract class DungeonEvent {
         val x: Double, val y: Double, val z: Double,
         val isSkull: Boolean = false,
         val isRedstone: Boolean = false,
+        val isLever: Boolean = false,
     ) : Event {
         companion object {
             @JvmStatic

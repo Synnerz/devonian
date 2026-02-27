@@ -420,7 +420,7 @@ object Dungeons {
             }
             if (!DungeonEvent.SecretClicked.SECRET_BLOCKS.contains("${registryName.namespace}:${registryName.path}"))
                 return@on
-            DungeonEvent.SecretClicked(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble()).post()
+            DungeonEvent.SecretClicked(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(), isLever = registryName.path == "lever").post()
         }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<SoundPlayEvent> { event ->
