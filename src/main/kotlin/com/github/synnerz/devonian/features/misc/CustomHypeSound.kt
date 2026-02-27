@@ -27,9 +27,10 @@ object CustomHypeSound : Feature(
         "minecraft:block.ender_chest.close",
         "minecraft:block.note_block.iron_xylophone",
     )
-    private val customSound = CustomSounds.create("witherBladeSound", "minecraft:block.note_block.iron_xylophone")
+    val customSound = CustomSounds.create("witherBladeSound", "minecraft:block.note_block.iron_xylophone")
     private val witherBlades = listOf("HYPERION", "VALKYRIE", "SCYLLA", "ASTRAEA")
     private var lastClick = -1
+    var playSound = false
 
     override fun initialize() {
         DevonianCommand.command.subcommand("hypesound") { _, args ->
@@ -75,7 +76,11 @@ object CustomHypeSound : Feature(
             if (event.sound != "minecraft:entity.generic.explode" || event.volume != 1f || event.pitch != 1f) return@on
 
             event.cancel()
-            Scheduler.scheduleTask { customSound.playWithEvent(event) }
+            playSound = true
+            Scheduler.scheduleTask {
+                customSound.playWithEvent(event)
+                playSound = false
+            }
         }
 
         on<PacketSentEvent> { event ->
