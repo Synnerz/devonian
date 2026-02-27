@@ -34,15 +34,15 @@ object CustomHypeSound : Feature(
 
     override fun initialize() {
         DevonianCommand.command.subcommand("hypesound") { _, args ->
-            val volume = args.firstOrNull() as? String?
-            val pitch = args.getOrNull(1) as? String
+            val volume = args.firstOrNull() as? Float?
+            val pitch = args.getOrNull(1) as? Float?
             var soundName = args.getOrNull(2) as? String
             if (soundName.isNullOrEmpty()) soundName = "minecraft:block.note_block.iron_xylophone"
 
             customSound.setValues(
                 soundName,
-                if (volume.isNullOrEmpty()) 1f else volume.toFloatOrNull() ?: 1f,
-                if (pitch.isNullOrEmpty()) 1f else pitch.toFloatOrNull() ?: 1f
+                volume ?: 1f,
+                pitch ?: 1f
             )
 
             if (customSound.soundEvent == null) {
