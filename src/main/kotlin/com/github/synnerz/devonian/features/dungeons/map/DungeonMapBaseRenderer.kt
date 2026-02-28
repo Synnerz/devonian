@@ -368,7 +368,7 @@ class DungeonMapBaseRenderer :
                 decoration == null &&
                 options.renderCheckIf0Secret &&
                 room.totalSecrets == 0 &&
-                (room.type == RoomTypes.YELLOW || room.type == RoomTypes.NORMAL) &&
+                (room.type == RoomTypes.YELLOW || room.type == RoomTypes.NORMAL || room.type == RoomTypes.BLOOD) &&
                 room.checkmark != CheckmarkTypes.UNEXPLORED &&
                 room.checkmark != CheckmarkTypes.NONE
             )
