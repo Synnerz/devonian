@@ -30,7 +30,7 @@ object BossSlainTime : Feature(
 
         on<ScoreboardEvent> { event ->
             val questStarted = event.matches(questStartedRegex)
-            if (questStarted != null) {
+            if (questStarted != null && spawnedAtTicks == 0) {
                 spawnedAtTicks = serverTicks
                 spawnedAtTime = System.currentTimeMillis()
                 return@on
