@@ -351,7 +351,7 @@ class DungeonMapBaseRenderer :
                 (if (room.type == RoomTypes.PUZZLE) options.puzzleName else options.roomName) &&
                 (!options.roomCheckGreen || room.checkmark != CheckmarkTypes.GREEN)
 
-            val decoration =
+            var decoration =
                 (if (
                     (
                         options.checkMark ||
@@ -364,6 +364,15 @@ class DungeonMapBaseRenderer :
                     else CHECKMARK[options.iconStyle][room.checkmark]
                 } else null) ?:
                 (if (renderRoomInfo && options.puzzleIcon) SPECIAL_ROOMS[room.name] else null)
+            if (
+                decoration == null &&
+                options.renderCheckIf0Secret &&
+                room.totalSecrets == 0 &&
+                (room.type == RoomTypes.YELLOW || room.type == RoomTypes.NORMAL) &&
+                room.checkmark != CheckmarkTypes.UNEXPLORED &&
+                room.checkmark != CheckmarkTypes.NONE
+            )
+                decoration = CHECKMARK[options.iconStyle][room.checkmark]
             val text = mutableListOf<String>()
 
             if (renderName) room.name?.also { name ->

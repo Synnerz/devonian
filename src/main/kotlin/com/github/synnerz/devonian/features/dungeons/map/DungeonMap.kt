@@ -432,6 +432,13 @@ object DungeonMap : HudFeature(
         "Don't Render 1 Secret Count",
         subcategory = "Behavior",
     )
+    private val SETTING_RENDER_CHECK_IF_0 = addSwitch(
+        "renderCheckIf0",
+        false,
+        "Renders a checkmark instead of nothing if the room secrets are 0",
+        "Render Checkmark If 0",
+        subcategory = "Behavior",
+    )
     private val SETTING_RENDER_PUZZLE_NAME = addSwitch(
         "renderPuzzleName",
         false,
@@ -588,6 +595,7 @@ object DungeonMap : HudFeature(
                     SETTING_CHECK_IF_GREEN.get(),
                     SETTING_RENDER_SECRET_COUNT.get(),
                     SETTING_DONT_RENDER_SECRET_1.get(),
+                    SETTING_RENDER_CHECK_IF_0.get(),
                     SETTING_RENDER_PUZZLE_NAME.get(),
                     SETTING_ICON_SIZE.get(),
                     DungeonMapRoomInfoAlignment.from(SETTING_ICON_ALIGNMENT.getCurrent()),
