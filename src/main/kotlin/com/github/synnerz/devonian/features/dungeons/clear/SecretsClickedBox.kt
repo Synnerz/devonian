@@ -4,12 +4,14 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.UseItemOnEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.EmptyBlockGetter
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.phys.shapes.CollisionContext
 import java.awt.Color
 
@@ -46,56 +48,115 @@ object SecretsClickedBox : Feature(
         "",
         "Locked Chest Filled Color",
     )
-    var clickedBlock: BlockPos? = null
-    var wasLocked = false
+    private val SETTING_OUTLINE_PHASE = addSwitch(
+        "outlinePhase",
+        true,
+        "Whether it should show the outline through walls",
+        "Outline Phase"
+    )
+    private val SETTING_FILLED_PHASE = addSwitch(
+        "filledPhase",
+        false,
+        "Whether it should show the filled through walls",
+        "Filled Phase"
+    )
+    private val blocks = mutableListOf<SecretData>()
+    private var lastChest: BlockPos? = null
+
+    data class SecretData(
+        val x: Double,
+        val y: Double,
+        val z: Double,
+        val isItem: Boolean = false,
+        val isBat: Boolean = false,
+        var locked: Boolean = false,
+    ) {
+        val blockPos = BlockPos(x.toInt(), y.toInt(), z.toInt())
+
+        init {
+            if (!blocks.any { it.blockPos == blockPos }) {
+                blocks.add(this)
+                Scheduler.scheduleTask(20) {
+                    blocks.remove(this)
+                }
+            }
+        }
+
+        fun render() {
+            if (isItem || isBat) {
+                Render3DImmediate.renderWireframeShape(
+                    SMALL_SHAPE,
+                    x + 0.5, y, z + 0.5,
+                    SETTING_OUTLINE_SUCCESS_COLOR.getColor(),
+                    phase = SETTING_OUTLINE_PHASE.get(),
+                )
+                Render3DImmediate.renderFilledShape(
+                    SMALL_SHAPE,
+                    x + 0.5, y, z + 0.5,
+                    SETTING_FILLED_SUCCESS_COLOR.getColor(),
+                    phase = SETTING_FILLED_PHASE.get(),
+                )
+                return
+            }
+
+            val camera = minecraft.gameRenderer.mainCamera
+            val blockShape = minecraft.level?.getBlockState(blockPos)
+                ?.getShape(
+                    EmptyBlockGetter.INSTANCE,
+                    blockPos,
+                    CollisionContext.of(camera.entity)
+                ) ?: return
+
+            Render3DImmediate.renderWireframeShape(
+                blockShape,
+                x, y, z,
+                if (locked) SETTING_OUTLINE_FAILED_COLOR.getColor() else SETTING_OUTLINE_SUCCESS_COLOR.getColor(),
+                phase = SETTING_OUTLINE_PHASE.get(),
+            )
+            Render3DImmediate.renderFilledShape(
+                blockShape,
+                x, y, z,
+                if (locked) SETTING_FILLED_FAILED_COLOR.getColor() else SETTING_FILLED_SUCCESS_COLOR.getColor(),
+                phase = SETTING_FILLED_PHASE.get(),
+            )
+        }
+
+        companion object {
+            val SMALL_SHAPE = Block.column(8.0, 0.0, 8.0)
+        }
+    }
 
     override fun initialize() {
         on<DungeonEvent.SecretClicked> {
-            clickedBlock = BlockPos(it.x.toInt(), it.y.toInt(), it.z.toInt())
-            val prevBlock = clickedBlock
-            Scheduler.scheduleTask(20) {
-                if (clickedBlock !== prevBlock) return@scheduleTask
-                clickedBlock = null
-                wasLocked = false
+            SecretData(it.x, it.y, it.z)
+        }
+        on<DungeonEvent.SecretPickup> {
+            SecretData(it.x, it.y, it.z, true)
+        }
+        on<DungeonEvent.SecretBat> {
+            SecretData(it.x, it.y, it.z, isBat = true)
+        }
+        on<DungeonEvent.SecretBatSound> {
+            Scheduler.scheduleTask {
+                SecretData(it.x, it.y, it.z, isBat = true)
             }
         }
 
         on<ChatEvent> { event ->
             event.matches(lockedChestRegex) ?: return@on
-            wasLocked = true
+            blocks.find { it.blockPos == lastChest }?.let { it.locked = true }
+        }
+
+        on<UseItemOnEvent> { event ->
+            lastChest = event.blockHitResult.blockPos
         }
 
         on<RenderWorldEvent> {
-            val pos = clickedBlock ?: return@on
-            val camera = minecraft.gameRenderer.mainCamera
-            val blockShape = minecraft.level?.getBlockState(clickedBlock!!)
-                ?.getShape(
-                    EmptyBlockGetter.INSTANCE,
-                    clickedBlock!!,
-                    CollisionContext.of(camera.entity)
-                ) ?: return@on
-
-            Render3DImmediate.renderWireframeShape(
-                blockShape,
-                pos.x.toDouble(),
-                pos.y.toDouble(),
-                pos.z.toDouble(),
-                if (wasLocked) SETTING_OUTLINE_FAILED_COLOR.getColor() else SETTING_OUTLINE_SUCCESS_COLOR.getColor(),
-                phase = true,
-            )
-            Render3DImmediate.renderFilledShape(
-                blockShape,
-                pos.x.toDouble(),
-                pos.y.toDouble(),
-                pos.z.toDouble(),
-                if (wasLocked) SETTING_FILLED_FAILED_COLOR.getColor() else SETTING_FILLED_SUCCESS_COLOR.getColor(),
-                phase = false,
-            )
+            blocks.forEach(SecretData::render)
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        clickedBlock = null
-        wasLocked = false
+        blocks.clear()
     }
 }
