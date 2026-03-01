@@ -1,17 +1,22 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.effects.OutlineEffect
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
@@ -29,13 +34,14 @@ object CustomLeapGui : Feature(
         return super.createRequirements() + listOf(Stages.Root.isActiveState)
     }
 
+    private const val KEY_NAME = "customleap"
     // TODO: integrate keybinds here instead of being standalone (maybe)
     //  also implement different type of scales since people don't like current sizes ):
     private val SETTING_PLAYER_SORTING = addSelection(
         "playerSorting",
         0,
-        listOf("a-z", "z-a", "a-z name", "z-a name", "dynamic"),
-        "Sorting order for CustomLeapGui",
+        listOf("a-z", "z-a", "a-z name", "z-a name", "dynamic", "custom"),
+        "Sorting order for CustomLeapGui if \"custom\" is set you can edit it via /dv clg <ign1> <ign2> <ign3> <ign4>",
         "CustomLeap Sorting",
     )
     private val SETTING_STATIC = addSwitch(
@@ -75,12 +81,70 @@ object CustomLeapGui : Feature(
         DungeonClass.Mage to DynamicLeap(DungeonClass.Mage, 3, 2),
         DungeonClass.Tank to DynamicLeap(DungeonClass.Tank, 3, 1),
     )
+    private var customOrder = mutableMapOf<String, Int>()
 
     val leapComparator get() = sortingComparators[SETTING_PLAYER_SORTING.get()]
     data class DynamicLeap(val role: DungeonClass, val slot: Int, val priority: Int)
     data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val isDead: Boolean)
 
     override fun initialize() {
+        Config.set(KEY_NAME, JsonObject())
+
+        Config.onAfterLoad {
+            Config.get<Map<String, JsonPrimitive>>(KEY_NAME)?.forEach { (k, v) ->
+                if (!v.isNumber) return@forEach
+                customOrder[k] = v.asInt
+            }
+        }
+
+        Config.onPreSave {
+            val obj = JsonObject()
+
+            customOrder.forEach { (k, v) ->
+                obj.addProperty(k, v)
+            }
+
+            Config.set(KEY_NAME, obj)
+        }
+
+        DevonianCommand.command.subcommand("clg") { _, args ->
+            if (args.isEmpty()) {
+                ChatUtils.sendMessage("&cCustomLeapOrder provided invalid arguments", true)
+                return@subcommand 0
+            }
+            val left = args.getOrNull(0) as? String?
+            if (left.isNullOrEmpty()) {
+                ChatUtils.sendMessage("&cCustomLeapOrder provided invalid top left argument", true)
+                return@subcommand 0
+            }
+            val right = args.getOrNull(1) as? String?
+            if (right.isNullOrEmpty()) {
+                ChatUtils.sendMessage("&cCustomLeapOrder provided invalid top right argument", true)
+                return@subcommand 0
+            }
+            val left2 = args.getOrNull(2) as? String?
+            if (left2.isNullOrEmpty()) {
+                ChatUtils.sendMessage("&cCustomLeapOrder provided invalid bottom left argument", true)
+                return@subcommand 0
+            }
+            val right2 = args.getOrNull(3) as? String?
+            if (right2.isNullOrEmpty()) {
+                ChatUtils.sendMessage("&cCustomLeapOrder provided invalid bottom right argument", true)
+                return@subcommand 0
+            }
+
+            customOrder.clear()
+            customOrder[left] = 0
+            customOrder[right] = 1
+            customOrder[left2] = 2
+            customOrder[right2] = 3
+            1
+        }
+            .string("topleft")
+            .string("topright")
+            .string("bottomleft")
+            .string("bottomright")
+
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (packet is ClientboundContainerClosePacket) {
@@ -139,6 +203,25 @@ object CustomLeapGui : Feature(
                         val curr = roles.toMutableSet().apply { remove(currentRole) }
                         val cr = curr.map { dynamicSortData[DungeonClass.from(it)]!! }
                         ll.addAll(dynamicSorting(cr).mapNotNull { m -> pl.find { it.role == m.role } })
+                        ll
+                    }
+                } else if (SETTING_PLAYER_SORTING.get() == 5) {
+                    // I'm extremely sleep-deprived and just wanted this to work
+                    if (player == null || player.role == DungeonClass.Unknown)
+                        pl.sortedWith(sortingComparators.first())
+                    else {
+                        val ll = MutableList(5) { LeapPlayer(100 + it, "FAKE", DungeonClass.Berserk, true) }
+                        val fakeSort = mutableListOf<LeapPlayer>()
+                        customOrder.forEach { (k, v) ->
+                            val data = pl.find { it.name == k }
+                            if (data == null) return@forEach
+                            ll.add(v, data)
+                        }
+                        pl.forEach { h ->
+                            if (ll.contains(h) || ll.any { it.name == h.name }) return@forEach
+                            fakeSort.add(h)
+                        }
+                        ll.addAll(fakeSort.sortedWith(sortingComparators[2]))
                         ll
                     }
                 } else pl.sortedWith(leapComparator)
