@@ -384,10 +384,9 @@ object Dungeons {
                 if (type?.potion?.get() != Potions.HEALING) return@on
             }
 
-            val minecraft = Devonian.minecraft
-            val player = minecraft.player ?: return@on
+            val entity = event.entity
 
-            DungeonEvent.SecretPickup(player.x, player.y, player.z).post()
+            DungeonEvent.SecretPickup(entity.xo, entity.yo, entity.zo).post()
         }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<PrePacketSentEvent> { event ->
