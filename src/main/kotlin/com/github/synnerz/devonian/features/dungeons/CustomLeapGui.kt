@@ -134,10 +134,10 @@ object CustomLeapGui : Feature(
             }
 
             customOrder.clear()
-            customOrder[left] = 0
-            customOrder[right] = 1
-            customOrder[left2] = 2
-            customOrder[right2] = 3
+            customOrder[left.lowercase()] = 0
+            customOrder[right.lowercase()] = 1
+            customOrder[left2.lowercase()] = 2
+            customOrder[right2.lowercase()] = 3
             1
         }
             .string("topleft")
@@ -213,12 +213,12 @@ object CustomLeapGui : Feature(
                         val ll = MutableList(5) { LeapPlayer(100 + it, "FAKE", DungeonClass.Berserk, true) }
                         val fakeSort = mutableListOf<LeapPlayer>()
                         customOrder.forEach { (k, v) ->
-                            val data = pl.find { it.name == k }
+                            val data = pl.find { it.name.equals(k, ignoreCase = true) }
                             if (data == null) return@forEach
                             ll.add(v, data)
                         }
                         pl.forEach { h ->
-                            if (ll.contains(h) || ll.any { it.name == h.name }) return@forEach
+                            if (ll.contains(h) || ll.any { it.name.equals(h.name, ignoreCase = true) }) return@forEach
                             fakeSort.add(h)
                         }
                         ll.addAll(fakeSort.sortedWith(sortingComparators[2]))
