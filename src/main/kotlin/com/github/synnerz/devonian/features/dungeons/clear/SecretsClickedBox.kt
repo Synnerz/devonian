@@ -86,13 +86,13 @@ object SecretsClickedBox : Feature(
             if (isItem || isBat) {
                 Render3DImmediate.renderWireframeShape(
                     SMALL_SHAPE,
-                    x + 0.5, y, z + 0.5,
+                    x, y, z,
                     SETTING_OUTLINE_SUCCESS_COLOR.getColor(),
                     phase = SETTING_OUTLINE_PHASE.get(),
                 )
                 Render3DImmediate.renderFilledShape(
                     SMALL_SHAPE,
-                    x + 0.5, y, z + 0.5,
+                    x, y, z,
                     SETTING_FILLED_SUCCESS_COLOR.getColor(),
                     phase = SETTING_FILLED_PHASE.get(),
                 )
