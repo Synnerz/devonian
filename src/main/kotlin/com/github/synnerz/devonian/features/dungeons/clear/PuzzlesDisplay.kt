@@ -37,6 +37,24 @@ object PuzzlesDisplay : TextHudFeature(
         "Displays the puzzles even if the run has started",
         "Show In Clear"
     )
+    private val SETTING_SHOW_MISSING = addSwitch(
+        "showMissing",
+        false,
+        "Displays the missing puzzles count",
+        "Show Missing Count"
+    )
+    private val SETTING_SHOW_FAILED = addSwitch(
+        "showFailed",
+        false,
+        "Displays the failed puzzles count",
+        "Show Failed Count"
+    )
+    private val SETTING_ONLY_SHOW_MF = addSwitch(
+        "onlyShowMF",
+        false,
+        "Only displays Failed and Missing count",
+        "Only Show M/F"
+    )
     private val puzzleStates = mutableListOf("✦", "✔", "✖")
     private val puzzleStatesColores = mutableListOf("&6✦", "&a✔", "&c✖")
     private val puzzlesRegex = "^ ([\\w ?]+): \\[(✦|✔|✖)] ?\\(?(\\w+)?\\)?$".toRegex()
@@ -46,6 +64,7 @@ object PuzzlesDisplay : TextHudFeature(
     private var puzzlesFormat = mutableListOf<String>()
     private var puzzleTitle = ""
     private var missingCount = 0
+    private var failedCount = 0
     private var unfoundPuzzles = 0
 
     override fun initialize() {
@@ -57,6 +76,7 @@ object PuzzlesDisplay : TextHudFeature(
                 Scheduler.scheduleTask { puzzlesFormat.clear() }
                 puzzleTitle = if (SETTING_USE_HYPIXEL_FORMAT.get()) "&l&bPuzzles: &f($puzzlesCount)"
                 else "&d&lPuzzles&f: ${if (puzzlesCount > 3) "&6" else "&a"}$puzzlesCount"
+                missingCount = puzzlesCount
                 return@on
             }
 
@@ -67,14 +87,17 @@ object PuzzlesDisplay : TextHudFeature(
             else "&d&lPuzzles&f: ${if (puzzlesCount > 3) "&6" else "&a"}$puzzlesCount"
 
             val (puzzleName, state, failedBy) = matches
-            if (state == "✦") missingCount = (missingCount + 1).coerceAtMost(puzzlesCount)
-            if (state == "✔") missingCount = (missingCount - 1).coerceAtLeast(0)
+            val cached = puzzles[puzzleName]
+            if (state == "✖") failedCount = (failedCount + 1).coerceAtMost(puzzlesCount)
             if (puzzleName == "???") {
                 unfoundPuzzles = (unfoundPuzzles + 1).coerceAtMost(puzzlesCount)
                 return@on
             }
+            if (cached != null && cached.first == 2 && state != "✖")
+                failedCount = (failedCount - 1).coerceAtLeast(0)
 
-            val existed = puzzles.containsKey(puzzleName)
+            if (state == "✔")
+                missingCount = (missingCount - 1).coerceIn(0, puzzlesCount)
 
             puzzles[puzzleName] = Pair(puzzleStates.indexOf(state), failedBy)
             puzzles.entries.forEach {
@@ -88,17 +111,32 @@ object PuzzlesDisplay : TextHudFeature(
                     Scheduler.scheduleTask { puzzlesFormat.add("&d&l$name ${puzzleStatesColores[entryState]}${failed}") }
             }
 
-            if (!existed)
+            if (cached == null)
                 unfoundPuzzles = (unfoundPuzzles - 1).coerceAtLeast(0)
         }
 
         on<TickEvent> {
+            if (SETTING_ONLY_SHOW_MF.get()) {
+                setLines(
+                    listOf(
+                        if (SETTING_SHOW_FAILED.get()) "&cFailed&f: &c$failedCount" else "",
+                        if (SETTING_SHOW_MISSING.get()) "&eMissing&f: &c$missingCount" else "",
+                    )
+                )
+                return@on
+            }
+
             if (SETTING_USE_HYPIXEL_FORMAT.get() && unfoundPuzzles > 0 && puzzlesFormat.size < puzzlesCount) {
                 for (idx in unfoundPuzzles downTo 1) {
                     puzzlesFormat.add(" &f???: &7[&6✦&7]")
                 }
             }
-            setLines(mutableListOf(puzzleTitle).apply { addAll(puzzlesFormat) })
+
+            setLines(mutableListOf(puzzleTitle).apply {
+                addAll(puzzlesFormat)
+                if (SETTING_SHOW_FAILED.get()) add("&cFailed&f: ${if (failedCount > 0) "&c" else "&a"}$failedCount")
+                if (SETTING_SHOW_MISSING.get()) add("&eMissing&f: ${if (missingCount > 0) "&c" else "&a"}$missingCount")
+            })
         }
 
         on<RenderOverlayEvent> { event ->
@@ -125,6 +163,9 @@ object PuzzlesDisplay : TextHudFeature(
         puzzlesFormat.clear()
         puzzleTitle = ""
         puzzlesCount = 0
+        missingCount = 0
+        failedCount = 0
+        unfoundPuzzles = 0
         puzzles.clear()
     }
 }
