@@ -60,7 +60,7 @@ abstract class ImmunityTimer(val formattedName: String, itemName: String, config
     private val SETTING_PROC_ALERT = addSwitch(
         "procAlert",
         false,
-        "Displays an alert whenever the bonzo mask is used.",
+        "Displays an alert whenever the $itemName is used.",
         "Proc Alert",
         subcategory = "Alerts",
     )
