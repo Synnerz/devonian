@@ -15,6 +15,7 @@ import net.minecraft.world.phys.Vec3
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.roundToInt
 
 object ThreeWeirdosSolver : Feature(
     "threeWeirdosSolver",
@@ -176,14 +177,14 @@ object ThreeWeirdosSolver : Feature(
     private fun createChest(name: String, isCorrect: Boolean): AnswerData? {
         val entityId = entityList[name] ?: return null
         val entity = minecraft.level?.getEntity(entityId) ?: return null
-        val pos = entity.position() ?: return null
+        val pos = entity.position()
         val x0 = pos.x - 0.5
         val z0 = pos.z - 0.5
         var chestPos: Pair<Double, Double>? = null
 
         for (dir in dirs) {
             val ( dx, dz ) = dir
-            val blockAt = WorldUtils.getBlockState(x0 + dx, 69.0, z0 + dz) ?: continue
+            val blockAt = WorldUtils.getBlockState((x0 + dx).roundToInt(), 69, (z0 + dz).roundToInt()) ?: continue
             if (blockAt.block != Blocks.CHEST) continue
             chestPos = x0 + dx to z0 + dz
         }
