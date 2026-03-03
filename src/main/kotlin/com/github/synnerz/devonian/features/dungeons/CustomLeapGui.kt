@@ -37,7 +37,7 @@ object CustomLeapGui : Feature(
     private const val KEY_NAME = "customleap"
     // TODO: integrate keybinds here instead of being standalone (maybe)
     //  also implement different type of scales since people don't like current sizes ):
-    private val SETTING_PLAYER_SORTING = addSelection(
+    val SETTING_PLAYER_SORTING = addSelection(
         "playerSorting",
         0,
         listOf("a-z", "z-a", "a-z name", "z-a name", "dynamic", "custom"),

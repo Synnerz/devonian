@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ScreenUtils
-import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
@@ -32,11 +31,15 @@ object SpiritLeapKeys : Feature(
         GLFW.GLFW_KEY_3,
         GLFW.GLFW_KEY_4,
     )
-    private val playersData = mutableListOf<LeapPlayer>()
-    val leapComparator = Comparator.comparing<LeapPlayer, Char> { it.role.singleLetter }.thenBy { it.name.lowercase() }
+    private val playersData = mutableListOf<CustomLeapGui.LeapPlayer>()
+    val leapComparator: Comparator<CustomLeapGui.LeapPlayer> get() {
+        // TODO: make this work with Dynamic and Custom sorting (4-5)
+        if (CustomLeapGui.isEnabled() && CustomLeapGui.SETTING_PLAYER_SORTING.get() < 4) {
+            return CustomLeapGui.leapComparator
+        }
+        return Comparator.comparing<CustomLeapGui.LeapPlayer, Char> { it.role.singleLetter }.thenBy { it.name.lowercase() }
+    }
     private var containerId = -1
-
-    data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val isDead: Boolean)
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
@@ -57,7 +60,7 @@ object SpiritLeapKeys : Feature(
                 val name = itemStack.customName?.string ?: continue
 
                 val data = Dungeons.players[name] ?: continue
-                playersData.add(LeapPlayer(idx, name, data.role, data.isDead))
+                playersData.add(CustomLeapGui.LeapPlayer(idx, name, data.role, data.isDead))
             }
 
             playersData.sortWith(leapComparator)
