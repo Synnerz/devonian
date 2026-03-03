@@ -344,6 +344,14 @@ class RenderTickEvent : Event
     fun isInventory(): Boolean = slot.container == Devonian.minecraft.player?.inventory
 }
 
+@Ordered class PostRenderSlotEvent(
+    val slot: Slot,
+    val ctx: GuiGraphics,
+    val screen: AbstractContainerScreen<*>,
+) : CancellableEvent() {
+    fun isInventory(): Boolean = slot.container == Devonian.minecraft.player?.inventory
+}
+
 @Ordered class RenderHotbarSlotEvent(
     val item: ItemStack,
     val x: Int,
