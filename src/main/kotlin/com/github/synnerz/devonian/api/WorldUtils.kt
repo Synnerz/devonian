@@ -15,7 +15,9 @@ import net.minecraft.network.protocol.game.ClientboundForgetLevelChunkPacket
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.chunk.LevelChunk
 import kotlin.math.abs
+import kotlin.math.floor
 
 object WorldUtils {
     val world: ClientLevel? get() = Devonian.minecraft.level
@@ -54,7 +56,7 @@ object WorldUtils {
         }
     }
 
-    fun isChunkLoaded(x: Double, z: Double): Boolean = isChunkLoaded(x.toInt(), z.toInt())
+    fun isChunkLoaded(x: Double, z: Double): Boolean = isChunkLoaded(floor(x).toInt(), floor(z).toInt())
 
     fun isChunkLoaded(x: Int, z: Int): Boolean {
         val player = Devonian.minecraft.player as? LocalPlayerAccessor ?: return false
@@ -62,13 +64,13 @@ object WorldUtils {
         val cz = z shr 4
         val pcx = player.lastXClient.toInt() shr 4
         val pcz = player.lastZClient.toInt() shr 4
-        val b1 = knownChunks.contains(szudzik(cx, cz))
-        val b2 = abs(cx - pcx) <= 7 && abs(cz - pcz) <= 7
-        return b1 && b2
+        return abs(cx - pcx) <= 7 && abs(cz - pcz) <= 7 &&
+            knownChunks.contains(szudzik(cx, cz)) &&
+            chunkManager?.getChunk(cx, cz, false)?.let { it.javaClass === LevelChunk::class.java } ?: false
     }
 
     fun fromBlockTypeOrNull(x: Double, y: Double, z: Double, blockType: Block): BlockState? =
-        fromBlockTypeOrNull(x.toInt(), y.toInt(), z.toInt(), blockType)
+        fromBlockTypeOrNull(floor(x).toInt(), floor(y).toInt(), floor(z).toInt(), blockType)
 
     fun fromBlockTypeOrNull(x: Int, y: Int, z: Int, blockType: Block): BlockState? {
         val blockState = getBlockState(x, y, z) ?: return null
@@ -78,7 +80,7 @@ object WorldUtils {
     }
 
     fun getBlockState(x: Double, y: Double, z: Double): BlockState? =
-        getBlockState(x.toInt(), y.toInt(), z.toInt())
+        getBlockState(floor(x).toInt(), floor(y).toInt(), floor(z).toInt())
 
     fun getBlockState(x: Int, y: Int, z: Int): BlockState? =
         world?.getBlockState(BlockPos(x, y, z))
