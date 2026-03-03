@@ -82,6 +82,7 @@ class Category(
             list.sortedBy {
                 if (it is ConfigData.Button)
                     it.parent?.configName?.trim()?.lowercase()
+                        ?: it.displayName.trim().lowercase()
                 else
                     it.configName?.trim()?.lowercase()
             }.forEach { data ->
