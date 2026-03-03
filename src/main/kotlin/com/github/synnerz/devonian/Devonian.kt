@@ -379,6 +379,7 @@ object Devonian : ClientModInitializer {
             ArmorHexColor,
             HudManagerGrid,
             FixRidingCamera,
+            StarsStackSize,
 
             // Debug
             CopyItem,
