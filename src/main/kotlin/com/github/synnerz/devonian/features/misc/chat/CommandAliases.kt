@@ -5,7 +5,9 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.CancellableEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.components.UITextInput
@@ -97,6 +99,20 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
     }
 
     fun initialize() {
+        ConfigData.Button(
+            {
+                Scheduler.scheduleTask {
+                    Devonian.minecraft.setScreen(this)
+                }
+            },
+            "Run",
+            null,
+            "Opens a gui where you can add your own command aliases (/dv cmdali)",
+            "Command Aliases",
+        ).also {
+            Config.registerCategory(it, Categories.GLOBAL, "Commands")
+        }
+
         Config.set(KEY_NAME, JsonObject())
 
         Config.onAfterLoad {
