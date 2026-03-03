@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.api.events.PostRenderHotbarSlotEvent;
 import com.github.synnerz.devonian.api.events.RenderHotbarSlotEvent;
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent;
 import com.github.synnerz.devonian.api.events.SelectedItemRenderEvent;
@@ -195,6 +196,18 @@ public class GuiMixin {
     )
     private void devonian$onRenderHotbarSlot(GuiGraphics guiGraphics, int i, int j, DeltaTracker deltaTracker, Player player, ItemStack itemStack, int k, CallbackInfo ci) {
         if (new RenderHotbarSlotEvent(itemStack, i, j, guiGraphics).post()) ci.cancel();
+    }
+
+    @Inject(
+            method = "renderSlot",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/GuiGraphics;renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V",
+                    shift = Shift.AFTER
+            )
+    )
+    private void devonian$onPostRenderHotbarSlot(GuiGraphics guiGraphics, int i, int j, DeltaTracker deltaTracker, Player player, ItemStack itemStack, int k, CallbackInfo ci) {
+        new PostRenderHotbarSlotEvent(itemStack, i, j, guiGraphics).post();
     }
 
     @WrapOperation(

@@ -351,6 +351,13 @@ class RenderTickEvent : Event
     val ctx: GuiGraphics,
 ) : CancellableEvent()
 
+@Ordered class PostRenderHotbarSlotEvent(
+    val item: ItemStack,
+    val x: Int,
+    val y: Int,
+    val ctx: GuiGraphics,
+) : Event
+
 @Threaded class SoundPlayEvent(
     val sound: String,
     val pitch: Float,
