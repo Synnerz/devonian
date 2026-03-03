@@ -4,7 +4,7 @@ enum class Categories(
     val displayName: String,
     val subcategories: List<String> = listOf("General"),
 ) {
-    GLOBAL("Global", listOf("Mod", "Dungeon Colors", "Chroma")),
+    GLOBAL("Global", listOf("Mod", "Commands", "Dungeon Colors", "Chroma")),
     DUNGEONS("Dungeons", listOf("QOL", "Solvers", "HUD", "Alerts", "Highlights", "Hiders")),
     DUNGEON_MAP("Dungeon Map", listOf("Toggle", "Markers", "Colors", "Behavior", "Style")),
     DUNGEON_WAYPOINTS("Dungeon Waypoints", listOf("General", "Custom")),

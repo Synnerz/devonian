@@ -6,7 +6,9 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.config.ui.talium.UISpecialText
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.utils.PersistentJson
@@ -188,6 +190,20 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
     }
 
     fun initialize() {
+        ConfigData.Button(
+            {
+                Scheduler.scheduleTask {
+                    Devonian.minecraft.setScreen(this)
+                }
+            },
+            "Run",
+            null,
+            "Opens a gui where you can add alerts that are triggered via chat messages (/dv titlemsg)",
+            "Title Messages",
+        ).also {
+            Config.registerCategory(it, Categories.GLOBAL, "Commands")
+        }
+
         Config.set(KEY_NAME, JsonObject())
 
         Config.onAfterLoad {

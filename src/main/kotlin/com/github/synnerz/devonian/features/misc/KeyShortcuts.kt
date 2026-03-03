@@ -7,7 +7,9 @@ import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.KeyPressEvent
 import com.github.synnerz.devonian.api.events.MousePressEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.events.UIClickEvent
 import com.github.synnerz.talium.events.UIFocusEvent
@@ -100,6 +102,20 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
     }
 
     fun initialize() {
+        ConfigData.Button(
+            {
+                Scheduler.scheduleTask {
+                    Devonian.minecraft.setScreen(this)
+                }
+            },
+            "Run",
+            null,
+            "Opens a gui where you can add your own keybind shortcuts (/dv ksho)",
+            "Key Shortcuts",
+        ).also {
+            Config.registerCategory(it, Categories.GLOBAL, "Commands")
+        }
+
         Config.set(KEY_NAME, JsonObject())
 
         Config.onAfterLoad {
