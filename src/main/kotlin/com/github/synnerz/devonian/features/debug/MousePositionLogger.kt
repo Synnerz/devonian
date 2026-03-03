@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.json.JsonDataObject
+import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.DebugLogger
 
@@ -35,7 +36,7 @@ object MousePositionLogger : TextHudFeature(
         mouseLogger.stopAndPrint()
     }
 
-    fun onMove(l: Long, x: Double, y: Double) {
+    fun onMove(l: Long, x: Double, y: Double, first: Boolean, x1: Double, y1: Double) {
         if (!isEnabled()) return
 
         val o = JsonDataObject()
@@ -44,6 +45,10 @@ object MousePositionLogger : TextHudFeature(
         o.set("x", x)
         o.set("y", y)
         o.set("time", System.currentTimeMillis() - mouseLogger.startTime)
+        o.set("ignore", NoCursorReset.ignoreFirstBatch)
+        o.set("first", first)
+        o.set("x1", x1)
+        o.set("y1", y1)
 
         mouseLogger.offer(o)
     }

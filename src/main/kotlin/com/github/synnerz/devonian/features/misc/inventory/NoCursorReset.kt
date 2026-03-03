@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
+import org.lwjgl.glfw.GLFW
 
 object NoCursorReset : Feature(
     "noCursorReset",
@@ -15,6 +16,12 @@ object NoCursorReset : Feature(
     private var lastCloseTime = 0L
     @JvmField
     var ignoreFirstBatch = 0
+    @JvmField
+    var setCursorPos = false
+    @JvmField
+    var cursorPosX = 0.0
+    @JvmField
+    var cursorPosY = 0.0
 
     override fun initialize() {
         on<ServerContainerOpenEvent> {
@@ -36,6 +43,13 @@ object NoCursorReset : Feature(
         on<ClientContainerCloseEvent> {
             lastOpenTick = -1
             lastOpenTime = 0L
+        }
+
+        on<RenderTickEvent> {
+            if (!setCursorPos) return@on
+            val window = minecraft.window
+            GLFW.glfwSetCursorPos(window.handle(), cursorPosX, cursorPosY)
+            setCursorPos = false
         }
     }
 

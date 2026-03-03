@@ -78,8 +78,11 @@ public abstract class MouseHandlerMixin implements MouseHandlerAccessor {
             return;
         }
         GLFW.glfwSetInputMode(window.handle(), 208897, i);
-        GLFW.glfwSetCursorPos(window.handle(), xpos, ypos);
+        // GLFW.glfwSetCursorPos(window.handle(), xpos, ypos);
         NoCursorReset.ignoreFirstBatch = 3;
+        NoCursorReset.setCursorPos = true;
+        NoCursorReset.cursorPosX = xpos;
+        NoCursorReset.cursorPosY = ypos;
         // ignoreFirstMove = true;
     }
 
@@ -138,10 +141,10 @@ public abstract class MouseHandlerMixin implements MouseHandlerAccessor {
 
     @Inject(
         method = "onMove",
-        at = @At("HEAD")
+        at = @At("TAIL")
     )
     private void devonian$mouseLoggerMove(long l, double d, double e, CallbackInfo ci) {
-        MousePositionLogger.INSTANCE.onMove(l, d, e);
+        MousePositionLogger.INSTANCE.onMove(l, d, e, ignoreFirstMove, xpos, ypos);
     }
 
     @Inject(
