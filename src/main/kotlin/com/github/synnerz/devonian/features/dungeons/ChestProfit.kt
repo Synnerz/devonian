@@ -72,12 +72,12 @@ object ChestProfit : TextHudFeature(
         "Bedrock Chest" to "&8Bedrock Chest"
     )
     val currentChestData = mapOf(
-        "Wood Chest" to ChestData("&fWood Chest&r"),
-        "Gold Chest" to ChestData("&6Gold Chest&r"),
-        "Diamond Chest" to ChestData("&bDiamond Chest&r"),
-        "Emerald Chest" to ChestData("&2Emerald Chest&r"),
-        "Obsidian Chest" to ChestData("&5Obsidian Chest&r"),
-        "Bedrock Chest" to ChestData("&8Bedrock Chest&r"),
+        "Wood" to ChestData("&fWood Chest&r"),
+        "Gold" to ChestData("&6Gold Chest&r"),
+        "Diamond" to ChestData("&bDiamond Chest&r"),
+        "Emerald" to ChestData("&2Emerald Chest&r"),
+        "Obsidian" to ChestData("&5Obsidian Chest&r"),
+        "Bedrock" to ChestData("&8Bedrock Chest&r"),
     )
     var inChest = false
     var currentChest: String? = null
