@@ -91,6 +91,7 @@ public abstract class AbstractContainerScreenMixin {
     private void devonian$drawSlots(AbstractContainerScreen instance, GuiGraphics guiGraphics, Slot slot, int i, int j, Operation<Void> original) {
         if (new RenderSlotEvent(slot, guiGraphics, instance).post()) return;
         original.call(instance, guiGraphics, slot, i, j);
+        new PostRenderSlotEvent(slot, guiGraphics, instance).post();
     }
 
     @Inject(
