@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
-import com.github.synnerz.devonian.features.misc.CustomHypeSound;
+import com.github.synnerz.devonian.utils.CustomSounds;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.client.Options;
@@ -19,8 +19,10 @@ public class SoundEngineMixin {
 
     @WrapMethod(method = "calculateVolume(FLnet/minecraft/sounds/SoundSource;)F")
     private float devonian$onSoundEnginePlay(float f, SoundSource soundSource, Operation<Float> original) {
-        if (CustomHypeSound.INSTANCE.getPlaySound())
-            return Mth.clamp(CustomHypeSound.INSTANCE.getCustomSound().volume, 0.0f, 10.0f) * Mth.clamp(this.options.getFinalSoundSourceVolume(soundSource), 0.0F, 10.0F);
+        var que = CustomSounds.INSTANCE.getQueued();
+        if (que != null) {
+            return Mth.clamp(que.volume, 0.0f, 10.0f) * Mth.clamp(this.options.getFinalSoundSourceVolume(soundSource), 0.0F, 10.0F);
+        }
         return original.call(f, soundSource);
     }
 }
