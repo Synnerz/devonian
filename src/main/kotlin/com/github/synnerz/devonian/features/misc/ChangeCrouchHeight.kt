@@ -50,6 +50,7 @@ object ChangeCrouchHeight : Feature(
     private var wasCrouching = false
 
     fun tick(camera: Camera): Boolean {
+        if (!isEnabled()) return false
         if (camera !is CameraAccessor) return false
 
         if (camera.entity() !== minecraft.player) return false
