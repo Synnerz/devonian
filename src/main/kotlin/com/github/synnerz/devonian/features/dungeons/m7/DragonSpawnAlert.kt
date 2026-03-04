@@ -91,7 +91,7 @@ object DragonSpawnAlert : Feature(
             var drag = event.dragon
             if (count == 2) {
                 other?.let { drag2 ->
-                    val role = Dungeons.players.firstEntry()?.value?.role ?: return@let
+                    val role = Dungeons.selfPlayer.role
                     val prio = if (SETTING_DO_SPLIT.get()) SETTING_SPLIT_PRIO.get() else SETTING_NO_SPLIT_PRIO.get()
                     val team = if (SETTING_DO_SPLIT.get()) SETTING_BERS_TEAM.get() else "bmhat"
                     val i1 = prio.indexOf(drag.singleLetter)

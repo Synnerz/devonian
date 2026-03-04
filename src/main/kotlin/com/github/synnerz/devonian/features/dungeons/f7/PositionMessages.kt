@@ -100,7 +100,7 @@ object PositionMessages : Feature(
     override fun initialize() {
         on<TickEvent> {
             if (currentPos == null) {
-                val player = Dungeons.players.firstEntry()?.value ?: return@on
+                val player = Dungeons.selfPlayer
                 if (player.role == DungeonClass.Unknown || player.isDead) return@on
                 currentPos = if (SETTING_USE_ALL.get()) positionList.values.flatMapTo(mutableListOf()) {
                     it.map { it.copy() }
