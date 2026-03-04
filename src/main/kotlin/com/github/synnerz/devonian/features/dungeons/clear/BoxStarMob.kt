@@ -79,6 +79,12 @@ object BoxStarMob : Feature(
         "if you want to change the color of each fill individually, seek help",
         "Starred Mobs Fill Alpha",
     )
+    private val SETTING_SHOW_FULL_SHADOW = addSwitch(
+        "showFullShadow",
+        true,
+        "Shows the full hitbox of shadow assassins even if they are invisible (if disabled it'll only show boots hitbox on invis then full hitbox)",
+        "Show Full ShadowAssassin"
+    )
     var SETTING_PHASE = false
 
     private val starred = mutableListOf<Pair<LivingEntity, MobData>>()
@@ -87,7 +93,7 @@ object BoxStarMob : Feature(
     private var lastStand: Int = 0
 
     private fun getMobDataFromArmorStand(name: String): MobData {
-        if (name.contains("Shadow Assassin")) return MobData(2.0, SETTING_SA_COLOR.getColor())
+        if (name.contains("Shadow Assassin")) return MobData(2.0, SETTING_SA_COLOR.getColor(), isShadowAssassin = true)
 
         if (name.contains("Fels")) return MobData(3.0, SETTING_FEL_COLOR.getColor())
 
@@ -121,7 +127,12 @@ object BoxStarMob : Feature(
         else -> null
     }
 
-    private data class MobData(val height: Double, val color: Color) {
+    private data class MobData(
+        val height: Double,
+        val color: Color,
+        val isFel: Boolean = false,
+        val isShadowAssassin: Boolean = false,
+    ) {
         val offset = MathUtils.rescale(
             color.rgb.toDouble(),
             Int.MIN_VALUE.toDouble(),
@@ -191,11 +202,17 @@ object BoxStarMob : Feature(
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 
                 val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
+                val height = when {
+                    data.isFel && ent.isInvisible -> 0.8
+                    !SETTING_SHOW_FULL_SHADOW.get() && ent.isInvisible -> 0.8
+                    else -> data.height
+                }
+
                 Render3DImmediate.renderWireframeBox(
                     pos.x,
                     pos.y,
                     pos.z,
-                    0.8 + data.offset, data.height,
+                    0.8 + data.offset, height,
                     data.color,
                     phase = SETTING_PHASE,
                     lineWidth = SETTING_LINE_WIDTH.get(),
@@ -205,7 +222,7 @@ object BoxStarMob : Feature(
                     pos.x,
                     pos.y,
                     pos.z,
-                    0.8 + data.offset, data.height,
+                    0.8 + data.offset, height,
                     data.color.let {
                         Color(it.red, it.green, it.blue, (SETTING_FILL_ALPHA.get() * 255.0).toInt())
                     },
