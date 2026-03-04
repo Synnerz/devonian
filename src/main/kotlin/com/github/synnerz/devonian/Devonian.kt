@@ -381,6 +381,7 @@ object Devonian : ClientModInitializer {
             FixRidingCamera,
             StarsStackSize,
             FavoriteAbiphone,
+            WarpCooldown,
 
             // Debug
             CopyItem,
