@@ -7,9 +7,8 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
-import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
-import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
+import com.github.synnerz.devonian.utils.render.Render2D
+import com.github.synnerz.devonian.utils.render.Render2D.width
 import net.minecraft.world.item.Items
 import java.awt.Color
 import kotlin.math.roundToInt
@@ -36,6 +35,7 @@ object CroesusProfit : TextHudFeature(
     private val chestRegex = "^(?:Master )?Catacombs - Floor [IV]+$".toRegex()
     private val enchantedBookRegex = "^Enchanted Book \\(([\\w ]+) ([IV]+)\\)$".toRegex()
     private val essenceRegex = "^(Wither|Undead) Essence x(\\d+)$".toRegex()
+    private val costRegex = "^(\\d[\\d,]+) Coins$".toRegex()
     private val specialIds = mapOf(
         // big thank Unclaimed NOOB Six
         "WITHER_SHARD" to "SHARD_WITHER",
@@ -58,6 +58,7 @@ object CroesusProfit : TextHudFeature(
         "Obsidian" to ChestData("&5Obsidian"),
         "Bedrock" to ChestData("&8Bedrock"),
     )
+    private val chestSlots = mutableMapOf<Int, String>()
     private val PROFITABLE_COLOR = Color.GREEN.rgb
     private val SECOND_PROFITABLE_COLOR = Color.YELLOW.rgb
     private var inChest = false
@@ -81,11 +82,32 @@ object CroesusProfit : TextHudFeature(
         var chestPrice: Int = 0,
         var requiresKey: Boolean = false,
         var slotIdx: Int = -1,
+        var bought: Boolean = false,
     ) {
-        fun totalProfit(): Int = items.sumOf { it.price() } - chestPrice
+        fun totalProfit(): Int = if (bought) Int.MIN_VALUE else  items.sumOf { it.price() } - chestPrice
     }
 
     override fun initialize() {
+        on<ServerContainerOpenEvent> { event ->
+            inChest = event.titleStr.matches(chestRegex)
+            if (!inChest) Scheduler.scheduleTask {
+                clearLines()
+                reset()
+            }
+        }
+
+        on<ServerContainerCloseEvent> {
+            Scheduler.scheduleTask {
+                clearLines()
+                reset()
+            }
+        }
+
+        on<ClientContainerCloseEvent> {
+            clearLines()
+            reset()
+        }
+
         on<ServerContainerSetSlotEvent> { event ->
             if (!inChest) return@on
             val slot = event.slot
@@ -97,6 +119,7 @@ object CroesusProfit : TextHudFeature(
             val lore = ItemUtils.lore(itemStack) ?: return@on
             val formatLore = ItemUtils.lore(itemStack, true) ?: return@on
             val data = chestsData[chestName] ?: return@on
+            chestSlots[slot] = chestName
             data.slotIdx = slot
 
             for (jdx in 0..lore.lastIndex) {
@@ -105,6 +128,7 @@ object CroesusProfit : TextHudFeature(
                 if (line.isBlank()) continue
 
                 if (line == "Already opened!") {
+                    data.bought = true
                     // chest has already been opened do something
                     break
                 }
@@ -112,7 +136,7 @@ object CroesusProfit : TextHudFeature(
                 if (line == "Cost") {
                     val chestPriceLore = lore[jdx + 1]
                     val possibleKey = lore[jdx + 2]
-                    var price = "^(\\d[\\d,]+) Coins\$".toRegex()
+                    var price = costRegex
                         .matchEntire(chestPriceLore)
                         ?.groupValues
                         ?.drop(1)
@@ -126,9 +150,13 @@ object CroesusProfit : TextHudFeature(
 
                     data.chestPrice = price
                     Scheduler.scheduleTask {
-                        val sorted = chestsData.values.sortedByDescending { it.totalProfit() }
-                        mostProfitable = sorted.firstOrNull()?.slotIdx ?: -1
-                        secondMostProfitable = sorted.getOrNull(1)?.slotIdx ?: -1
+                        val sorted = chestsData.values.map { it to it.totalProfit() }.sortedByDescending { it.second }
+                        mostProfitable = sorted.firstOrNull()?.let {
+                            if (it.second <= 0) -1 else it.first.slotIdx
+                        } ?: -1
+                        secondMostProfitable = sorted.getOrNull(1)?.let {
+                            if (it.second <= 0) -1 else it.first.slotIdx
+                        } ?: -1
                         updateDisplay()
                     }
                     break
@@ -181,54 +209,51 @@ object CroesusProfit : TextHudFeature(
             }
         }
 
-        on<PacketReceivedEvent> { event ->
-            val packet = event.packet
-            if (packet is ClientboundOpenScreenPacket) {
-                inChest = packet.title.string.matches(chestRegex)
-                if (!inChest) Scheduler.scheduleTask {
-                    clearLines()
-                    reset()
-                }
-                return@on
-            }
-
-            if (packet is ClientboundContainerClosePacket) {
-                Scheduler.scheduleTask {
-                    clearLines()
-                    reset()
-                }
-                return@on
-            }
-        }
-
-        on<PacketSentEvent> { event ->
-            val packet = event.packet
-            if (packet !is ServerboundContainerClosePacket) return@on
-
-            Scheduler.scheduleTask {
-                clearLines()
-                reset()
-            }
-        }
-
-        on<RenderOverlayEvent> {
-            if (chestsData["Wood"]!!.items.isEmpty()) return@on
-            draw(it.ctx)
+        on<PostRenderGuiEvent> { event ->
+            if (!inChest) return@on
+            draw(event.ctx)
         }
 
         on<RenderSlotEvent> { event ->
             val slot = event.slot
-            if (secondMostProfitable != -1 && slot.containerSlot == secondMostProfitable) {
-                if (slot.container == minecraft.player?.inventory) return@on
-                event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, SECOND_PROFITABLE_COLOR)
-                return@on
+            if (event.isInventory()) return@on
+
+            val color = when (slot.containerSlot) {
+                mostProfitable -> PROFITABLE_COLOR
+                secondMostProfitable -> SECOND_PROFITABLE_COLOR
+                else -> return@on
             }
 
-            if (mostProfitable == -1 || slot.containerSlot != mostProfitable) return@on
-            if (slot.container == minecraft.player?.inventory) return@on
-
-            event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, PROFITABLE_COLOR)
+            event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color)
         }.prio = -1
+
+        on<PostRenderSlotsEvent> { event ->
+            val inv = minecraft.player?.inventory ?: return@on
+            event.container.menu.slots.forEach { slot ->
+                if (slot.container === inv) return@forEach
+
+                val name = chestSlots[slot.containerSlot] ?: return@forEach
+                val data = chestsData[name] ?: return@forEach
+                if (data.bought) return@forEach
+                val profit = data.totalProfit()
+
+                val str = StringUtils.shortenNumber(profit)
+                val color = when {
+                    profit <= 0 -> "§c"
+                    profit <= 500_000 -> "§e"
+                    profit <= 10_000_000 -> "§a"
+                    else -> "§z"
+                }
+                val w = str.width()
+                Render2D.drawString(
+                    event.ctx,
+                    "$color$str",
+                    slot.x + 8 - w / 4,
+                    slot.y + 20,
+                    0.5f,
+                )
+            }
+        }
     }
 
     // lazy part 2
@@ -247,7 +272,9 @@ object CroesusProfit : TextHudFeature(
             v.chestPrice = 0
             v.requiresKey = false
             v.slotIdx = -1
+            v.bought = false
         }
+        chestSlots.clear()
         mostProfitable = -1
         secondMostProfitable = -1
     }
@@ -256,6 +283,7 @@ object CroesusProfit : TextHudFeature(
         clearLines()
         for (data in chestsData.entries.toList().sortedByDescending { it.value.totalProfit() }) {
             val v = data.value
+            if (v.bought) continue
             val items = v.items
             if (items.isEmpty()) continue
             val profit = v.totalProfit()
