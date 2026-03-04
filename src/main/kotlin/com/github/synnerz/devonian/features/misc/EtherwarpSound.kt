@@ -36,7 +36,6 @@ object EtherwarpSound : Feature(
             if (args.isEmpty()) return@subcommand 0
             val soundRegistry = args.first() as String
 
-
             val sound = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(soundRegistry))
             if (sound == null) {
                 ChatUtils.sendMessage("&4Cannot find sound: &6$soundRegistry", true)
@@ -68,8 +67,13 @@ object EtherwarpSound : Feature(
                 soundEvent == SoundEvents.ENDER_DRAGON_HURT
             ) return@on
 
+            val player = minecraft.player ?: return@on
+
             event.cancel()
             Scheduler.scheduleTask(0) {
+                // using toInt() in y because player's position is ~0.05 off
+                if (event.x != player.x || event.y.toInt() != player.y.toInt() || event.z != player.z) return@scheduleTask
+
                 minecraft.level?.playLocalSound(
                     event.x, event.y, event.z,
                     soundEvent, event.category,
