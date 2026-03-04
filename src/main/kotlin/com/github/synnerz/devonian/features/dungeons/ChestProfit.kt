@@ -4,8 +4,10 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.events.PostRenderGuiEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
+import com.github.synnerz.devonian.api.events.ServerContainerSetContentEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
@@ -14,7 +16,6 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import net.minecraft.world.item.Items
 import kotlin.math.roundToInt
 
@@ -41,7 +42,7 @@ object ChestProfit : TextHudFeature(
         "Compact mode stops showing the entire item list and only shows the chest name with its profit.",
         "Chest Profit Compact Mode",
     )
-    private val chestNames = listOf(
+    private val chestNames = setOf(
         "Wood",
         "Gold",
         "Diamond",
@@ -49,9 +50,9 @@ object ChestProfit : TextHudFeature(
         "Obsidian",
         "Bedrock",
     )
-    private val essenceRegex = "^(Wither|Undead) Essence x(\\d+)\$".toRegex()
+    private val essenceRegex = "^(Wither|Undead) Essence x(\\d+)$".toRegex()
     private val enchantedBookRegex = "^([\\w ]+) ([IVXLCDM]+)$".toRegex()
-    private val ultimateEnchants = listOf(
+    private val ultimateEnchants = setOf(
         "Wisdom",
         "Swarm",
         "Soul Eater",
@@ -63,14 +64,6 @@ object ChestProfit : TextHudFeature(
         "Combo",
         "Bank"
     )
-    private val formattedNames = mapOf(
-        "Wood Chest" to "&fWood Chest",
-        "Gold Chest" to "&6Gold Chest",
-        "Diamond Chest" to "&bDiamond Chest",
-        "Emerald Chest" to "&2Emerald Chest",
-        "Obsidian Chest" to "&5Obsidian Chest",
-        "Bedrock Chest" to "&8Bedrock Chest"
-    )
     val currentChestData = mapOf(
         "Wood" to ChestData("&fWood Chest&r"),
         "Gold" to ChestData("&6Gold Chest&r"),
@@ -81,6 +74,7 @@ object ChestProfit : TextHudFeature(
     )
     var inChest = false
     var currentChest: String? = null
+    var openedChest = false
 
     data class ItemData(
         val itemName: String,
@@ -106,8 +100,21 @@ object ChestProfit : TextHudFeature(
     }
 
     override fun initialize() {
+        on<ServerContainerOpenEvent> { event ->
+            val name = event.titleStr
+            inChest = chestNames.contains(name)
+            if (inChest) openedChest = true
+            currentChest = if (inChest) name else null
+
+            if (!inChest) return@on
+            val data = currentChestData[name] ?: return@on
+            data.itemData.clear()
+            data.chestPrice = 0
+        }
+
         on<ServerContainerSetSlotEvent> { event ->
             if (!inChest) return@on
+
             val slot = event.slot
             if (slot == 31) {
                 val currentData = currentChestData[currentChest!!] ?: return@on
@@ -129,7 +136,6 @@ object ChestProfit : TextHudFeature(
                 }
 
                 currentData.chestPrice = chestPrice
-                Scheduler.scheduleTask { updateDisplay() }
 
                 return@on
             }
@@ -143,7 +149,7 @@ object ChestProfit : TextHudFeature(
             ) return@on
 
             val customName = itemStack.customName ?: return@on
-            val customNameStr = customName.string ?: return@on
+            val customNameStr = customName.string
             val isEnchantedBook = customNameStr == "Enchanted Book"
             val itemName =
                 if (isEnchantedBook)
@@ -181,23 +187,20 @@ object ChestProfit : TextHudFeature(
             ))
         }
 
-        on<PacketReceivedEvent> { event ->
-            val packet = event.packet
-            if (packet !is ClientboundOpenScreenPacket) return@on
-
-            inChest = chestNames.contains(packet.title.string)
-            if (inChest) {
-                currentChest = packet.title.string
-
-                val data = currentChestData[currentChest] ?: return@on
-                data.itemData.clear()
-                data.chestPrice = 0
-                Scheduler.scheduleTask { updateDisplay() }
+        on<ServerContainerSetContentEvent> {
+            Scheduler.scheduleTask {
+                updateDisplay()
             }
         }
 
         on<RenderOverlayEvent> {
-            if (currentChest == null) return@on
+            if (!openedChest) return@on
+            if (inChest) return@on
+            draw(it.ctx)
+        }
+
+        on<PostRenderGuiEvent> {
+            if (!openedChest) return@on
             draw(it.ctx)
         }
     }
@@ -205,6 +208,7 @@ object ChestProfit : TextHudFeature(
     override fun onWorldChange(event: WorldChangeEvent) {
         inChest = false
         currentChest = null
+        openedChest = false
         clearLines()
         reset()
     }
@@ -220,7 +224,6 @@ object ChestProfit : TextHudFeature(
     }
 
     private fun updateDisplay() {
-        // TODO: add sort by most profitable
         clearLines()
         for (data in currentChestData.entries.toList().sortedByDescending { it.value.profit() }) {
             val v = data.value
