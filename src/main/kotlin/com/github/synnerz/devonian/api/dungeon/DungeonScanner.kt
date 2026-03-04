@@ -160,7 +160,7 @@ object DungeonScanner {
 
             if (jdx !in 0..35) return@on
 
-            scan()
+            var updateMap = scan()
 
             val newRoom = rooms[jdx]
             if (!wasInEntrance) {
@@ -178,10 +178,17 @@ object DungeonScanner {
                 DungeonEvent.RoomLeave(currentRoom, lastIdx!!).post()
 
             currentRoom = rooms[jdx]
-            if (currentRoom != null && !currentRoom!!.explored)
+            if (currentRoom?.explored == false) {
                 Dungeons.totalRoomSecrets.value += currentRoom!!.totalSecrets
-            currentRoom?.explored = true
-            if (currentRoom?.checkmark == CheckmarkTypes.UNEXPLORED) currentRoom?.checkmark = CheckmarkTypes.NONE
+                currentRoom?.explored = true
+                updateMap = true
+            }
+            if (currentRoom?.checkmark == CheckmarkTypes.UNEXPLORED) {
+                currentRoom?.checkmark = CheckmarkTypes.NONE
+                updateMap = true
+            }
+
+            if (updateMap) DungeonMap.redrawMap(rooms.toList(), doors.toList())
 
             if (lastIdx == jdx) return@on
             lastIdx = jdx
@@ -321,9 +328,9 @@ object DungeonScanner {
         availablePos = findAvailablePos().asReversed()
     }
 
-    fun scan() {
+    fun scan(): Boolean {
         foundEntrance--
-        if (availablePos.isEmpty()) return
+        if (availablePos.isEmpty()) return false
 
         val startLen = availablePos.size
         availablePos.removeIf { pos ->
@@ -396,6 +403,6 @@ object DungeonScanner {
             return@removeIf true
         }
 
-        if (availablePos.size != startLen) DungeonMap.redrawMap(rooms.toList(), doors.toList())
+        return availablePos.size != startLen
     }
 }
