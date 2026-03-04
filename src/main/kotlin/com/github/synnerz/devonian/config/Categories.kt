@@ -6,7 +6,7 @@ enum class Categories(
 ) {
     GLOBAL("Global", listOf("Mod", "Commands", "Dungeon Colors", "Chroma")),
     DUNGEONS("Dungeons", listOf("QOL", "Solvers", "HUD", "Alerts", "Highlights", "Hiders")),
-    DUNGEON_MAP("Dungeon Map", listOf("Toggle", "Markers", "Colors", "Behavior", "Style")),
+    DUNGEON_MAP("Dungeon Map", listOf("Toggle", "Markers", "Colors", "Behavior", "Style", "Presets")),
     DUNGEON_WAYPOINTS("Dungeon Waypoints", listOf("General", "Custom")),
     PARTY_FINDER("PartyFinder", listOf("General", "Highlight", "Tooltip")),
     F7("F7", listOf("General", "Solvers", "Terminals", "HUD", "Highlight")),

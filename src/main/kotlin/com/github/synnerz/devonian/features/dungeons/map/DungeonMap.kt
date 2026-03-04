@@ -62,6 +62,98 @@ object DungeonMap : HudFeature(
         displayName = "\"guys how do i change map font\"",
         subcategory = "Style",
     )
+    private val SETTING_DOC_STYLE = addButton(
+        {
+            SETTING_DOOR_SIZE.set(0.36)
+            SETTING_MARKER_SCALE.set(2.4)
+            SETTING_HEAD_SCALE.set(2.46)
+            SETTING_NAME_SCALE.set(2.4)
+            SETTING_TEXT_SIZE.set(1.27)
+            SETTING_MAP_BORDER.set(0.0)
+            SETTING_MAP_PADDING.set(0.0)
+            SETTING_ROOM_SIZE.set(0.8)
+            SETTING_ICON_SIZE.set(0.6) // not used
+            SETTING_HIDDEN_ROOM_DARKEN.set(0.7)
+            SETTING_TEXT_ALIGNMENT.set(5)
+            SETTING_ICON_ALIGNMENT.set(0) // not used
+            SETTING_TEXT_SHADOW.set(2)
+            SETTING_ICON_STYLE.set(0) // not used
+            SETTING_RENDER_NAMES_ONLY_LEAP.set(false)
+            SETTING_USE_PLAYER_HEADS.set(true)
+            SETTING_USE_MARKER_SELF.set(false)
+            SETTING_RENDER_ROOM_NAMES.set(false)
+            SETTING_RENDER_PUZZLE_ICON.set(false)
+            SETTING_RENDER_PUZZLE_NAME.set(true)
+            SETTING_NORMAL_DOOR_DYNAMIC.set(true)
+            SETTING_RENDER_FAIRY_CHECK.set(false)
+            SETTING_RENDER_ROOM_NAMES_NOT_EFB.set(false)
+            SETTING_DONT_RENDER_YELLOW_NAME.set(false)
+            SETTING_RENDER_NAMES.set(true)
+            SETTING_MC_TEXT.set(true)
+            SETTING_USE_CLASS_NAME.set(true)
+            SETTING_COLOR_NAME_BY_CLASS.set(true)
+            SETTING_COLOR_MARKER_BY_CLASS.set(true)
+            SETTING_RENDER_CHECKMARK.set(false)
+            SETTING_RENDER_SECRET_COUNT.set(true)
+            SETTING_COLOR_ROOM_TEXT.set(true)
+            SETTING_ROTATE.set(false)
+            SETTING_DONT_RENDER_CHECK_IF_NAME.set(false)
+            SETTING_DONT_RENDER_SECRET_1.set(false)
+            SETTING_CHECK_IF_GREEN.set(false)
+            SETTING_RENDER_CHECK_IF_0.set(true)
+            SETTING_MAP_BACKGROUND_COLOR.set(50462977)
+        },
+        "Set",
+        "Changes the majority of settings to fit a style that docilelm (aka doc) uses NOTE: room colors are not changed",
+        displayName = "Doc Style",
+        subcategory = "Presets"
+    )
+    private val SETTING_LEG_STYLE = addButton(
+        {
+            SETTING_DOOR_SIZE.set(0.4)
+            SETTING_MARKER_SCALE.set(2.2)
+            SETTING_HEAD_SCALE.set(2.5)
+            SETTING_NAME_SCALE.set(1.9)
+            SETTING_TEXT_SIZE.set(1.08)
+            SETTING_MAP_BORDER.set(0.0)
+            SETTING_MAP_PADDING.set(0.0)
+            SETTING_ROOM_SIZE.set(0.8)
+            SETTING_ICON_SIZE.set(0.4) // not used
+            SETTING_HIDDEN_ROOM_DARKEN.set(0.61)
+            SETTING_TEXT_ALIGNMENT.set(4)
+            SETTING_ICON_ALIGNMENT.set(0) // not used
+            SETTING_TEXT_SHADOW.set(2)
+            SETTING_ICON_STYLE.set(0) // not used
+            SETTING_RENDER_NAMES_ONLY_LEAP.set(true)
+            SETTING_USE_PLAYER_HEADS.set(true)
+            SETTING_USE_MARKER_SELF.set(true)
+            SETTING_RENDER_ROOM_NAMES.set(true)
+            SETTING_RENDER_PUZZLE_ICON.set(false)
+            SETTING_RENDER_PUZZLE_NAME.set(true)
+            SETTING_NORMAL_DOOR_DYNAMIC.set(false)
+            SETTING_RENDER_FAIRY_CHECK.set(false)
+            SETTING_RENDER_ROOM_NAMES_NOT_EFB.set(true)
+            SETTING_DONT_RENDER_YELLOW_NAME.set(false)
+            SETTING_RENDER_NAMES.set(true)
+            SETTING_MC_TEXT.set(false)
+            SETTING_USE_CLASS_NAME.set(true)
+            SETTING_COLOR_NAME_BY_CLASS.set(true)
+            SETTING_COLOR_MARKER_BY_CLASS.set(true)
+            SETTING_RENDER_CHECKMARK.set(false)
+            SETTING_RENDER_SECRET_COUNT.set(true)
+            SETTING_COLOR_ROOM_TEXT.set(true)
+            SETTING_ROTATE.set(false)
+            SETTING_DONT_RENDER_CHECK_IF_NAME.set(true)
+            SETTING_DONT_RENDER_SECRET_1.set(true)
+            SETTING_CHECK_IF_GREEN.set(false)
+            SETTING_RENDER_CHECK_IF_0.set(false)
+            SETTING_MAP_BACKGROUND_COLOR.set(772723641)
+        },
+        "Set",
+        "Changes the majority of settings to fit a style that legendary_jg (aka leg) uses NOTE: room colors are not changed",
+        displayName = "Leg Style",
+        subcategory = "Presets"
+    )
     private val SETTING_USE_PLAYER_HEADS = addSwitch(
         "playerHeads",
         false,
