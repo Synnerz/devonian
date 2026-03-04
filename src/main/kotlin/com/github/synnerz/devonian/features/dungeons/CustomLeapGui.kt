@@ -171,10 +171,10 @@ object CustomLeapGui : Feature(
             val idx = event.slot
             if (idx !in 9..18) return@on
             if (idx == 17) {
-                val player = Dungeons.players.firstEntry()?.value
+                val player = Dungeons.selfPlayer
                 val pl = when {
                     SETTING_STATIC.get() && playerList.size < 4 -> {
-                        if (player == null || player.role == DungeonClass.Unknown || player.isDead)
+                        if (player.role == DungeonClass.Unknown || player.isDead)
                             playerList
                         else {
                             val mut = mutableListOf<LeapPlayer>()
@@ -195,7 +195,7 @@ object CustomLeapGui : Feature(
                 }
 
                 val list = if (SETTING_PLAYER_SORTING.get() == 4) {
-                    if (player == null || player.role == DungeonClass.Unknown)
+                    if (player.role == DungeonClass.Unknown)
                         pl.sortedWith(sortingComparators.first())
                     else {
                         val ll = mutableListOf<LeapPlayer>()
@@ -207,7 +207,7 @@ object CustomLeapGui : Feature(
                     }
                 } else if (SETTING_PLAYER_SORTING.get() == 5) {
                     // I'm extremely sleep-deprived and just wanted this to work
-                    if (player == null || player.role == DungeonClass.Unknown)
+                    if (player.role == DungeonClass.Unknown)
                         pl.sortedWith(sortingComparators.first())
                     else {
                         val ll = MutableList(5) { LeapPlayer(100 + it, "FAKE", DungeonClass.Berserk, true) }

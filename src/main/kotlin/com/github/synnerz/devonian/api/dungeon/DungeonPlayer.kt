@@ -12,7 +12,7 @@ import kotlin.math.PI
 
 data class DungeonPlayer(
     val name: String,
-    val profileInfo: PlayerInfo?,
+    var profileInfo: PlayerInfo?,
     var role: DungeonClass,
     var classLevel: Int,
     var isDead: Boolean,

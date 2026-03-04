@@ -47,9 +47,20 @@ object Dungeons {
     private var wasInDungeons = false
     private val attemptGuessState = BasicState(false)
 
-    val players = linkedMapOf<String, DungeonPlayer>()
-    val playerClasses = ConcurrentHashMap<String, DungeonClass>()
-    val selfClass = BasicState(DungeonClass.Unknown)
+    var selfPlayer = Devonian.minecraft.let { mc ->
+        val prof = mc.gameProfile
+        return@let DungeonPlayer(
+            prof.name,
+            mc.connection?.getPlayerInfo(prof.id),
+            DungeonClass.Unknown,
+            0,
+            false,
+        )
+    }
+    private var scannedSelf = false
+    val players = linkedMapOf(selfPlayer.name to selfPlayer)
+    val playerClasses = ConcurrentHashMap(mapOf(selfPlayer.name to selfPlayer.role))
+    val selfClass = BasicState(selfPlayer.role)
     private var needReset = true
     private var worldId = 0
 
@@ -237,6 +248,14 @@ object Dungeons {
                         false
                     )
                 }
+                // nick
+                if (players.size > 1 && !scannedSelf) {
+                    players.remove(selfPlayer.name)
+                    playerClasses.remove(selfPlayer.name)
+                    player.profileInfo = selfPlayer.profileInfo
+                    selfPlayer = player
+                }
+                scannedSelf = true
 
                 if (role == "DEAD") player.isDead = true
                 else {
@@ -258,7 +277,7 @@ object Dungeons {
 
             // TODO: check when each player is being updated by the server
             // players.forEach { it.value.tick() }
-            players.firstEntry()?.value?.tick()
+            selfPlayer.tick()
 
             mc.level?.players()?.forEach {
                 val ping = mc.connection?.getPlayerInfo(it.uuid)?.latency ?: return@forEach
@@ -469,9 +488,22 @@ object Dungeons {
     private fun reset() {
         attemptGuessState.value = false
 
+        selfPlayer = Devonian.minecraft.let { mc ->
+            val prof = mc.gameProfile
+            return@let DungeonPlayer(
+                prof.name,
+                mc.connection?.getPlayerInfo(prof.id),
+                DungeonClass.Unknown,
+                0,
+                false,
+            )
+        }
+        scannedSelf = false
         players.clear()
+        players[selfPlayer.name] = selfPlayer
         playerClasses.clear()
-        selfClass.value = DungeonClass.Unknown
+        playerClasses[selfPlayer.name] = selfPlayer.role
+        selfClass.value = selfPlayer.role
         worldId++
 
         floor = FloorType.None

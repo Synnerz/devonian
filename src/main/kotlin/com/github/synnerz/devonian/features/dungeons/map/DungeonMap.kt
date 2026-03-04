@@ -761,7 +761,7 @@ object DungeonMap : HudFeature(
                 )
             )
 
-            val pos = Dungeons.players.firstEntry()?.value?.getLerpedPosition()
+            val pos = Dungeons.selfPlayer.getLerpedPosition()
             if (pos != null) {
                 val px = MathUtils.rescale(
                     pos.x,
