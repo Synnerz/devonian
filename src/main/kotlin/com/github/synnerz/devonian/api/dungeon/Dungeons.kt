@@ -11,6 +11,7 @@ import com.github.synnerz.devonian.features.dungeons.m7.M7Events
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.State
 import com.github.synnerz.devonian.utils.StringUtils
+import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
@@ -51,7 +52,7 @@ object Dungeons {
         val prof = mc.gameProfile
         return@let DungeonPlayer(
             prof.name,
-            mc.connection?.getPlayerInfo(prof.id),
+            PlayerInfo(prof, false),
             DungeonClass.Unknown,
             0,
             false,
@@ -492,7 +493,7 @@ object Dungeons {
             val prof = mc.gameProfile
             return@let DungeonPlayer(
                 prof.name,
-                mc.connection?.getPlayerInfo(prof.id),
+                PlayerInfo(prof, false),
                 DungeonClass.Unknown,
                 0,
                 false,

@@ -4,8 +4,10 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.events.ClientContainerCloseEvent
 import com.github.synnerz.devonian.api.events.PostRenderGuiEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
 import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetContentEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
@@ -110,6 +112,18 @@ object ChestProfit : TextHudFeature(
             val data = currentChestData[name] ?: return@on
             data.itemData.clear()
             data.chestPrice = 0
+
+            Scheduler.scheduleTask {
+                updateDisplay()
+            }
+        }
+
+        on<ServerContainerCloseEvent> {
+            inChest = false
+        }
+
+        on<ClientContainerCloseEvent> {
+            inChest = false
         }
 
         on<ServerContainerSetSlotEvent> { event ->
