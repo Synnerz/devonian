@@ -14,6 +14,7 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.google.gson.JsonArray
+import com.google.gson.JsonPrimitive
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
@@ -72,9 +73,12 @@ object FavoriteAbiphone : Feature(
                 showAll = it
             }
 
-            Config.get<List<String>>(CONFIG_FAV_KEY)?.let {
+            Config.get<List<JsonPrimitive>>(CONFIG_FAV_KEY)?.let {
                 favoriteContacts.clear()
-                favoriteContacts.addAll(it)
+                it.forEach { v ->
+                    if (!v.isString) return@forEach
+                    favoriteContacts.add(v.asString)
+                }
             }
         }
 
