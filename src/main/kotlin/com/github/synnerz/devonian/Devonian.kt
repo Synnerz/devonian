@@ -380,6 +380,7 @@ object Devonian : ClientModInitializer {
             HudManagerGrid,
             FixRidingCamera,
             StarsStackSize,
+            FavoriteAbiphone,
 
             // Debug
             CopyItem,
