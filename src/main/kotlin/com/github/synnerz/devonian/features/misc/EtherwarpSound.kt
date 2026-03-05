@@ -1,14 +1,19 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
+import com.github.synnerz.devonian.api.events.UseItemEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvents
+import net.minecraft.world.item.Items
 
 object EtherwarpSound : Feature(
     "etherwarpSound",
@@ -26,6 +31,8 @@ object EtherwarpSound : Feature(
         "minecraft:block.ender_chest.close"
     )
     private var soundEvent = SoundEvents.ENDER_DRAGON_HURT
+    private val itemIds = setOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
+    private var lastClick = -1
 
     override fun initialize() {
         Config.set(KEY, "minecraft:entity.ender_dragon.hurt")
@@ -59,6 +66,17 @@ object EtherwarpSound : Feature(
                 ?: SoundEvents.ENDER_DRAGON_HURT
         }
 
+        on<UseItemEvent> { event ->
+            val player = minecraft.player ?: return@on
+            val itemStack = player.getItemInHand(event.hand)
+            val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
+            if (sbId !in itemIds) return@on
+            val requireSneak = itemStack.item == Items.DIAMOND_SHOVEL || itemStack.item == Items.DIAMOND_SWORD
+            if (requireSneak && !player.isSteppingCarefully) return@on
+
+            lastClick = EventBus.serverTicks(true)
+        }
+
         on<SoundPlayEvent> { event ->
             if (
                 event.sound != "minecraft:entity.ender_dragon.hurt" ||
@@ -66,14 +84,10 @@ object EtherwarpSound : Feature(
                 event.pitch != 0.53968257f ||
                 soundEvent == SoundEvents.ENDER_DRAGON_HURT
             ) return@on
-
-            val player = minecraft.player ?: return@on
+            if (lastClick == -1 || lastClick - EventBus.serverTicks() !in 0..14) return@on
 
             event.cancel()
             Scheduler.scheduleTask(0) {
-                // using toInt() in y because player's position is ~0.05 off
-                if (event.x != player.x || event.y.toInt() != player.y.toInt() || event.z != player.z) return@scheduleTask
-
                 minecraft.level?.playLocalSound(
                     event.x, event.y, event.z,
                     soundEvent, event.category,
@@ -82,5 +96,9 @@ object EtherwarpSound : Feature(
                 )
             }
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        lastClick = -1
     }
 }
