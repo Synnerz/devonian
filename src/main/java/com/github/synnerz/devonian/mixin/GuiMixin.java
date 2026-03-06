@@ -281,7 +281,7 @@ public class GuiMixin {
     )
     private void devonian$removeHypixelScoreboard(Scoreboard scoreboard, NumberFormat numberFormat, PlayerScoreEntry playerScoreEntry, CallbackInfoReturnable cir, @Local(ordinal = 1) Component component2) {
         if (!RemoveHypixelScoreboard.INSTANCE.isEnabled()) return;
-        if (component2.getString().startsWith("www.hypixel")) removeHypixel = true;
+        if (component2.getString().startsWith("§ewww.hypixel")) removeHypixel = true;
     }
 
     @WrapOperation(
