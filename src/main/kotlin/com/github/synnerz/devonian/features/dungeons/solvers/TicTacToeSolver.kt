@@ -33,6 +33,12 @@ object TicTacToeSolver : Feature(
         "Sends \"Tic Tac Toe done\" in party chat",
         "TTT Done Message"
     )
+    private val SETTING_PREDICT_NEXT = addSwitch(
+        "predictNext",
+        false,
+        "Predicts the next best move and highlights it in orange (NOTE: may not be 100% accurate)",
+        "TTT Prediction"
+    )
     private val completedPuzzleRegex = "^PUZZLE SOLVED! \\w+ tied Tic Tac Toe! Good job!$".toRegex()
     private val failedPuzzleRegex = "^PUZZLE FAIL! \\w+ lost Tic Tac Toe! Yikes!$".toRegex()
     private val boardPos = listOf(
@@ -50,6 +56,7 @@ object TicTacToeSolver : Feature(
     var hasMoved = false
     var lastStatus: String? = null
     var currentBestMove = -1
+    var predictedMove = -1
     var enteredAt = -1
     var hasSent = false
 
@@ -143,6 +150,24 @@ object TicTacToeSolver : Feature(
         on<RenderWorldEvent> {
             if (currentBestMove == -1 || !inTTT) return@on
 
+            if (SETTING_PREDICT_NEXT.get() && predictedMove != -1) {
+                val currentRoom = DungeonScanner.currentRoom ?: return@on
+                val bestMove = boardPos.getOrNull(predictedMove) ?: return@on
+                val roomPos = currentRoom.fromComp(bestMove.first - 1, bestMove.third) ?: return@on
+
+                Render3DImmediate.renderWireframeBox(
+                    roomPos.first.toDouble(), bestMove.second.toDouble(), roomPos.second.toDouble(),
+                    1.0, 1.0,
+                    Color.ORANGE,
+                    phase = false,
+                )
+                Render3DImmediate.renderFilledBox(
+                    roomPos.first.toDouble(), bestMove.second.toDouble(), roomPos.second.toDouble(),
+                    1.0, 1.0,
+                    Color(255, 165, 0, 80),
+                )
+            }
+
             val currentRoom = DungeonScanner.currentRoom ?: return@on
             val bestMove = boardPos.getOrNull(currentBestMove) ?: return@on
             val roomPos = currentRoom.fromComp(bestMove.first - 1, bestMove.third) ?: return@on
@@ -172,12 +197,23 @@ object TicTacToeSolver : Feature(
         entityPositions.clear()
         hasMoved = false
         currentBestMove = -1
+        predictedMove = -1
         lastStatus = null
         enteredAt = -1
     }
 
     private fun onAIMove(board: List<String?>) {
         currentBestMove = bestMove(board, "O")
+        if (!SETTING_PREDICT_NEXT.get() || board.filterNotNull().isEmpty()) return
+
+        val nextBoard = buildList {
+            board.forEachIndexed { idx, str -> add(if (idx == currentBestMove) "O" else str) }
+        }
+        val predictX = bestMove(nextBoard, "X")
+        val postBoard = buildList {
+            nextBoard.forEachIndexed { idx, str -> add(if (idx == predictX) "X" else str) }
+        }
+        predictedMove = bestMove(postBoard, "O")
     }
 
     // Algorithm
