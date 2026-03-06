@@ -18,6 +18,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.gui.contextualbar.ContextualBarRenderer;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -306,40 +307,28 @@ public class GuiMixin {
         if (HideHotbar.INSTANCE.isEnabled()) ci.cancel();
     }
 
-    @Inject(
+    @WrapOperation(
             method = "renderHotbarAndDecorations",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/contextualbar/ContextualBarRenderer;renderExperienceLevel(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;I)V"
-            ),
-            cancellable = true
+            )
     )
-    private void devonian$onExperienceLevelRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (HideExperience.INSTANCE.isEnabled()) ci.cancel();
+    private void devonian$onExperienceLevelRender(GuiGraphics guiGraphics, Font font, int i, Operation<Void> original) {
+        if (HideExperience.INSTANCE.isEnabled() && HideExperience.INSTANCE.getSETTING_REMOVE_LEVEL().get()) return;
+        original.call(guiGraphics, font, i);
     }
 
-    @Inject(
+    @WrapOperation(
             method = "renderHotbarAndDecorations",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/contextualbar/ContextualBarRenderer;renderBackground(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V"
-            ),
-            cancellable = true
+            )
     )
-    private void devonian$onExperienceBackgroundRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (HideExperience.INSTANCE.isEnabled()) ci.cancel();
-    }
-
-    @Inject(
-            method = "renderHotbarAndDecorations",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/contextualbar/ContextualBarRenderer;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V"
-            ),
-            cancellable = true
-    )
-    private void devonian$onExperienceBarRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (HideExperience.INSTANCE.isEnabled()) ci.cancel();
+    private void devonian$onExperienceBackgroundRender(ContextualBarRenderer instance, GuiGraphics guiGraphics, DeltaTracker deltaTracker, Operation<Void> original) {
+        if (HideExperience.INSTANCE.isEnabled() && HideExperience.INSTANCE.getSETTING_REMOVE_BAR().get()) return;
+        original.call(instance, guiGraphics, deltaTracker);
     }
 
     @WrapOperation(

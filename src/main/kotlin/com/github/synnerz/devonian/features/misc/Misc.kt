@@ -109,7 +109,20 @@ object HideExperience : Feature(
     "hideExperience",
     "Does not render the experience bar and level",
     subcategory = "Hiders"
-)
+) {
+    val SETTING_REMOVE_BAR = addSwitch(
+        "removeBar",
+        true,
+        "Removes the experience bar",
+        "HideExperienceBar"
+    )
+    val SETTING_REMOVE_LEVEL = addSwitch(
+        "removeLevel",
+        true,
+        "Removes the experience level",
+        "HideExperienceLevel"
+    )
+}
 object ConfirmDisconnect : Feature(
     "confirmDisconnect",
     "Allows you to set a time threshold of when your disconnect click should register rather than instantly disconnecting",
