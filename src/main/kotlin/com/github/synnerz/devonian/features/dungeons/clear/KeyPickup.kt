@@ -86,6 +86,13 @@ object KeyPickup : Feature(
         "Key Pickup Time",
         subcategory = "Alerts",
     )
+    private val SETTING_REMOVE_ROLE = addSwitch(
+        "removeRole",
+        false,
+        "Removes the (class)role name from the title",
+        "KeyPickup Role Name",
+        subcategory = "Alerts"
+    )
 
     private val pickupSound = SoundEvents.VAULT_OPEN_SHUTTER
 
@@ -103,7 +110,7 @@ object KeyPickup : Feature(
         // TODO: handle nicks
         if (name == minecraft.gameProfile.name) "&bYou"
         else Dungeons.playerClasses[name].let {
-        if (it == null || it == DungeonClass.Unknown) "&f$name"
+        if (it == null || it == DungeonClass.Unknown || SETTING_REMOVE_ROLE.get()) "&f$name"
         else "${it.colorCode}${it.shortName}"
     }
 
