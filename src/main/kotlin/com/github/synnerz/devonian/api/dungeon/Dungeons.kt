@@ -388,7 +388,8 @@ object Dungeons {
                 return@on
             }
             if (entity !is Zombie) return@on
-            if (!entity.isBaby || entity.hasItemInSlot(EquipmentSlot.HEAD)) return@on
+            // surely nothing can go wrong here
+            if (!entity.isBaby) return@on
 
             mimicKilled.value = true
             DungeonEvent.MimicKilled().post()
