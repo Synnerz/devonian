@@ -6,7 +6,6 @@ import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.features.dungeons.SecretsSound
 import com.github.synnerz.devonian.features.dungeons.m7.M7Events
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.State
@@ -15,7 +14,6 @@ import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
-import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.ambient.Bat
 import net.minecraft.world.entity.monster.zombie.Zombie
 import net.minecraft.world.item.alchemy.Potions
@@ -421,7 +419,7 @@ object Dungeons {
             val registryName = BuiltInRegistries.BLOCK.getKey(blockState.block)
 
             if (registryName.path == "player_head" && blockState.hasBlockEntity()) {
-                val entityBlock = SecretsSound.minecraft.level?.getBlockEntity(pos) ?: return@on
+                val entityBlock = minecraft.level?.getBlockEntity(pos) ?: return@on
                 if (entityBlock.type != BlockEntityType.SKULL) return@on
                 val skullBlock = entityBlock as SkullBlockEntity
                 val owner = skullBlock.ownerProfile ?: return@on
