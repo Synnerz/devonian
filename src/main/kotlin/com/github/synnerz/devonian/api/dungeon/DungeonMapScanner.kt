@@ -215,9 +215,6 @@ object DungeonMapScanner {
                         else CheckmarkTypes.UNEXPLORED
                     else -> CheckmarkTypes.NONE
                 }
-                if (room.type == RoomTypes.TRAP && room.checkmark == CheckmarkTypes.WHITE) {
-                    room.secretsCompleted = max(room.secretsCompleted, 1)
-                }
                 if (previousCheck != room.checkmark) DungeonEvent.RoomUpdateEvent(room, previousCheck, room.checkmark).post()
             }
         }
