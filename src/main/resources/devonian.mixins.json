@@ -6,6 +6,7 @@
     "AbstractContainerScreenMixin",
     "AbstractRecipeBookScreenMixin",
     "AbstractSignEditScreenMixin",
+    "AvatarRendererMixin",
     "BossHealthOverlayMixin",
     "CameraMixin",
     "CameraTypeMixin",

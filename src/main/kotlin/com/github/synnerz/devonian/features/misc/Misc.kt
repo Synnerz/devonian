@@ -141,3 +141,18 @@ object FixRidingCamera : Feature(
     "Fixes MC-259512 (camera lags when riding something). (only visual)",
     subcategory = "Tweaks",
 )
+object PlayerScale : Feature(
+    "playerScale",
+    "Changes your own player model's scale",
+    subcategory = "Tweaks"
+) {
+    val SETTING_SCALE = addDecimalSlider(
+        "scale",
+        1.0,
+        0.1, 10.0,
+        "Scale",
+        "Scale"
+    )
+
+    fun scale(): Float = if (!isEnabled()) -1f else SETTING_SCALE.get().toFloat()
+}

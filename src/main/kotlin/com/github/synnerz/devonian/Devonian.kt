@@ -382,6 +382,7 @@ object Devonian : ClientModInitializer {
             StarsStackSize,
             FavoriteAbiphone,
             WarpCooldown,
+            PlayerScale,
 
             // Debug
             CopyItem,
