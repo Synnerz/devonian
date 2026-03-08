@@ -3,11 +3,13 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.ChatComponentAccessor2;
 import com.github.synnerz.devonian.api.ChatUtils;
 import com.github.synnerz.devonian.features.misc.DisableChatAutoScroll;
+import com.github.synnerz.devonian.features.misc.PeekChatKeybind;
 import com.github.synnerz.devonian.features.misc.RemoveChatLimit;
 import com.github.synnerz.devonian.features.misc.chat.CompactChat;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.GuiMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
@@ -21,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Mixin(ChatComponent.class)
-public class ChatComponentMixin implements ChatComponentAccessor2 {
+public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     @Shadow
     @Final
     private List<GuiMessage.Line> trimmedMessages;
@@ -86,6 +88,15 @@ public class ChatComponentMixin implements ChatComponentAccessor2 {
     @Shadow
     private List<GuiMessage> allMessages = new LinkedList<>();
 
+    @Shadow
+    @Final
+    private Minecraft minecraft;
+
+    @Shadow
+    public static int getHeight(double d) {
+        return 0;
+    }
+
     @Unique
     private GuiMessage lastHovered = null;
 
@@ -97,5 +108,11 @@ public class ChatComponentMixin implements ChatComponentAccessor2 {
     @Override
     public void devonian$setLastHoveredMessage(GuiMessage msg) {
         lastHovered = msg;
+    }
+
+    @WrapOperation(method = "getHeight()I", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;getHeight(D)I"))
+    private int devonian$onGetHeight(double d, Operation<Integer> original) {
+        if (!PeekChatKeybind.INSTANCE.isEnabled()) return original.call(d);
+        return getHeight(PeekChatKeybind.INSTANCE.getKeybind().isDown() ? minecraft.options.chatHeightFocused().get() : d);
     }
 }
