@@ -383,6 +383,7 @@ object Devonian : ClientModInitializer {
             FavoriteAbiphone,
             WarpCooldown,
             PlayerScale,
+            OwnNameTag,
 
             // Debug
             CopyItem,

@@ -156,3 +156,8 @@ object PlayerScale : Feature(
 
     fun scale(): Float = if (!isEnabled()) -1f else SETTING_SCALE.get().toFloat()
 }
+object OwnNameTag : Feature(
+    "ownNameTag",
+    "Shows your own name tag on third person",
+    subcategory = "Tweaks"
+)
