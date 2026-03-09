@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.features.misc.PlayerScale;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.model.player.PlayerModel;
@@ -30,9 +31,10 @@ public abstract class AvatarRendererMixin<AvatarlikeEntity extends Avatar & Clie
                     target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"
             )
     )
-    private void devonian$onAvatarScale(PoseStack instance, float f, float g, float h, Operation<Void> original) {
+    private void devonian$onAvatarScale(PoseStack instance, float f, float g, float h, Operation<Void> original, @Local(argsOnly = true) AvatarRenderState avatarRenderState) {
+        var player = Devonian.INSTANCE.getMinecraft().player;
         float scale = PlayerScale.INSTANCE.scale();
-        if (scale == -1f) {
+        if (scale == -1f || player == null || player.getId() != avatarRenderState.id) {
             original.call(instance, f, g, h);
             return;
         }
