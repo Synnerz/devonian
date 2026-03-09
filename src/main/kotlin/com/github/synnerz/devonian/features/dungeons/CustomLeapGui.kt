@@ -82,6 +82,7 @@ object CustomLeapGui : Feature(
         DungeonClass.Tank to DynamicLeap(DungeonClass.Tank, 3, 1),
     )
     private var customOrder = mutableMapOf<String, Int>()
+    private var inHaunt = false
 
     val leapComparator get() = sortingComparators[SETTING_PLAYER_SORTING.get()]
     data class DynamicLeap(val role: DungeonClass, val slot: Int, val priority: Int)
@@ -150,22 +151,104 @@ object CustomLeapGui : Feature(
             if (packet is ClientboundContainerClosePacket) {
                 Scheduler.scheduleTask { background.clearChildren() }
                 containerId = -1
+                inHaunt = false
                 return@on
             }
 
             if (packet is ClientboundOpenScreenPacket) {
-                if (packet.title.string != CONTAINER_NAME) {
+                if (!validTitle(packet.title.string)) {
                     Scheduler.scheduleTask { background.clearChildren() }
                     containerId = -1
                     return@on
                 }
                 if (containerId != -1) Scheduler.scheduleTask { background.clearChildren() }
                 containerId = packet.containerId
+                inHaunt = packet.title.string == "Teleport to Player"
                 return@on
             }
         }
 
+        on<ServerContainerSetContentEvent> { event ->
+            if (!inHaunt || containerId == -1) return@on
+
+            event.forEach { idx, itemStack ->
+                if (idx !in 9..20) return@forEach
+                if (itemStack == null) return@forEach
+                if (itemStack.item != Items.PLAYER_HEAD) return@forEach
+                val customName = itemStack.customName?.string ?: return@forEach
+                if (customName == "Haunt") return@forEach
+                val name = customName.replace("\\[[^ ]+] ".toRegex(), "")
+
+                val data = Dungeons.players[name] ?: return@forEach
+                playerList.add(LeapPlayer(idx, name, data.role, data.isDead))
+            }
+
+            val player = Dungeons.selfPlayer
+            val pl = when {
+                SETTING_STATIC.get() && playerList.size < 4 -> {
+                    if (player.role == DungeonClass.Unknown)
+                        playerList
+                    else {
+                        val mut = mutableListOf<LeapPlayer>()
+                        val currentRoles = playerList.map { it.role.name }
+                        val amounts = currentRoles.groupingBy { it }.eachCount()
+                        if (amounts.any { it.value > 1 }) {
+                            playerList
+                        } else {
+                            val currentRole = player.role.name
+                            val missing = roles.toMutableSet().apply { remove(currentRole) } - currentRoles.toSet()
+                            mut.addAll(playerList)
+                            missing.forEachIndexed { jdx, it -> mut.add(LeapPlayer(100 + jdx, "FAKE", DungeonClass.from(it), true)) }
+                            mut
+                        }
+                    }
+                }
+                else -> playerList
+            }
+
+            val list = if (SETTING_PLAYER_SORTING.get() == 4) {
+                if (player.role == DungeonClass.Unknown)
+                    pl.sortedWith(sortingComparators.first())
+                else {
+                    val ll = mutableListOf<LeapPlayer>()
+                    val currentRole = player.role.name
+                    val curr = roles.toMutableSet().apply { remove(currentRole) }
+                    val cr = curr.map { dynamicSortData[DungeonClass.from(it)]!! }
+                    ll.addAll(dynamicSorting(cr).mapNotNull { m -> pl.find { it.role == m.role } })
+                    ll
+                }
+            } else if (SETTING_PLAYER_SORTING.get() == 5) {
+                // I'm extremely sleep-deprived and just wanted this to work
+                if (player.role == DungeonClass.Unknown)
+                    pl.sortedWith(sortingComparators.first())
+                else {
+                    val ll = MutableList(5) { LeapPlayer(100 + it, "FAKE", DungeonClass.Berserk, true) }
+                    val fakeSort = mutableListOf<LeapPlayer>()
+                    customOrder.forEach { (k, v) ->
+                        val data = pl.find { it.name.equals(k, ignoreCase = true) }
+                        if (data == null) return@forEach
+                        ll.add(v, data)
+                    }
+                    pl.forEach { h ->
+                        if (ll.contains(h) || ll.any { it.name.equals(h.name, ignoreCase = true) }) return@forEach
+                        fakeSort.add(h)
+                    }
+                    ll.addAll(fakeSort.sortedWith(sortingComparators[2]))
+                    ll
+                }
+            } else pl.sortedWith(leapComparator)
+            playerList.clear()
+            Scheduler.scheduleTask {
+                list.forEachIndexed { i, v -> create(v, i) }
+                background.scaledResolution?.let {
+                    background.propagateResize(background, it)
+                }
+            }
+            inHaunt = false
+        }
+
         on<ServerContainerSetSlotEvent> { event ->
+            if (inHaunt) return@on
             if (containerId == -1) return@on
 
             val idx = event.slot
@@ -252,7 +335,7 @@ object CustomLeapGui : Feature(
 
         on<RenderGuiEvent> { event ->
             val screen = event.screen
-            if (screen.title.string != CONTAINER_NAME) return@on
+            if (!validTitle(screen.title.string)) return@on
 
             event.cancel()
             background.draw()
@@ -260,13 +343,13 @@ object CustomLeapGui : Feature(
 
         on<GuiClickEvent> { event ->
             val screen = event.screen
-            if (screen.title.string != CONTAINER_NAME) return@on
+            if (!validTitle(screen.title.string)) return@on
             event.cancel()
         }
 
         on<GuiKeyDownEvent> { event ->
             val screen = event.screen
-            if (screen.title.string != CONTAINER_NAME) return@on
+            if (!validTitle(screen.title.string)) return@on
             if (event.event.isEscape || closeChestKey.matches(event.event)) return@on
             event.cancel()
         }
@@ -274,8 +357,11 @@ object CustomLeapGui : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         containerId = -1
+        inHaunt = false
         background.clearChildren()
     }
+
+    private fun validTitle(title: String): Boolean = title == CONTAINER_NAME || title == "Teleport to Player"
 
     private fun create(data: LeapPlayer, idx: Int) {
         if (data.slot >= 100 && data.isDead) return
