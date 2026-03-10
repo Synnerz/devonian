@@ -19,7 +19,7 @@ object PartyFinderRightClick : Feature(
         0,
         listOf("CopyLeader", "LeaveParty"),
         "CopyLeader = copies the party's leader name, LeaveParty = leaves your current party",
-        "PFRC Mode"
+        "Mode"
     )
     private val nameRegex = "^(\\w{1,16})'s Party$".toRegex()
     private var inPF = false

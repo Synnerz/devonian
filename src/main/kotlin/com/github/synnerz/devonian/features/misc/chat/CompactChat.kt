@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc.chat
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.ChatFormatting
@@ -18,6 +19,7 @@ import java.util.*
 object CompactChat : Feature(
     "compactChat",
     "Stacks the messages if they are repeated and adds the amount of times it was repeated.",
+    Categories.VANILLA_TWEAKS,
     subcategory = "Chat",
 ) {
     private val STYLE = Style.EMPTY

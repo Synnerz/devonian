@@ -20,19 +20,19 @@ object PartyFinderHighlight : Feature(
         "ignoreCataRequirement",
         false,
         "Ignores the cata level requirement.",
-        "Party Finder Highlight Cata Level",
+        "Cata Level",
     )
     private val SETTING_IGNORE_ROLE_LEVEL = addSwitch(
         "ignoreRoleLevel",
         false,
         "Ignores the class level requirement.",
-        "Party Finder Highlight Role Level",
+        "Role Level",
     )
     private val SETTING_IGNORE_OWN_ROLE = addSwitch(
         "ignoreOwnRole",
         false,
         "Ignores your own class (if dupe class it wont be red highlight).",
-        "Party Finder Highlight Role",
+        "Own Role",
     )
     private val whitelist = CopyOnWriteArrayList<Boolean>()
     private val blacklist = CopyOnWriteArrayList<Boolean>()

@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.KeyReleaseEvent
 import com.github.synnerz.devonian.api.events.MousePressEvent
 import com.github.synnerz.devonian.api.events.MouseReleaseEvent
 import com.github.synnerz.devonian.api.events.MouseScrollEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
@@ -17,7 +18,7 @@ import kotlin.math.withSign
 object ZoomKeybind : Feature(
     "zoomKeybind",
     "Hold key to zoom and/or scroll to zoom further/less (change the keybind in minecraft controls)",
-    subcategory = "Tweaks"
+    Categories.VANILLA_TWEAKS,
 ) {
     private val SETTING_SCROLL_STEPS = addSlider(
         "scrollSteps",

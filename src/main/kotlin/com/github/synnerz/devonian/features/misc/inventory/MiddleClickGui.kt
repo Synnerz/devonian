@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.api.events.PickupItemInventoryEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.google.gson.JsonArray
@@ -19,7 +20,8 @@ object MiddleClickGui : Feature(
     "middleClickGui",
     "Cancels your left clicks and turns it into a middle clicks on certain guis. " +
     "Keybind in controls to blacklist a gui.",
-    subcategory = "Inventory",
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Container",
 ) {
     private const val KEY_NAME = "mcgBlacklist"
     private var blacklisted = mutableListOf<String>()

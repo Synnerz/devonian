@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc.hiders
 
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket
 import net.minecraft.world.effect.MobEffects
@@ -8,7 +9,9 @@ import net.minecraft.world.effect.MobEffects
 object DisableBlindness : Feature(
     "disableBlindness",
     "Disables the blindness effect (from the server idk you can still get blind).",
-    subcategory = "Tweaks",
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Hider",
+    cheeto = true,
 ) {
     override fun initialize() {
         on<PacketReceivedEvent> { event ->

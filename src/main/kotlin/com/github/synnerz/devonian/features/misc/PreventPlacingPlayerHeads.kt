@@ -24,7 +24,7 @@ object PreventPlacingPlayerHeads : Feature(
         "exceptGarden",
         true,
         "Stops prevent placing heads from working while inside garden",
-        "PPH Except Garden"
+        "Except Garden"
     )
     private const val KEY_NAME = "pphBlacklist"
     private var blacklisted = mutableListOf<String>()

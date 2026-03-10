@@ -1,13 +1,15 @@
 package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import org.lwjgl.glfw.GLFW
 
 object NoCursorReset : Feature(
     "noCursorReset",
     "Avoids resetting your cursor whenever navigating guis.",
-    subcategory = "Inventory",
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Container",
     searchTags = setOf("keep"),
 ) {
     private var lastOpenTick = -1

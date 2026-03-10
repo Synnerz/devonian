@@ -1,19 +1,20 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 
-object RemoveFallingBlocks : Feature("removeFallingBlocks", subcategory = "Hiders")
-object RemoveFireOverlay : Feature("removeFireOverlay", subcategory = "Hiders")
-object NoHurtCamera : Feature("noHurtCamera", subcategory = "Hiders")
-object RemoveLightning : Feature("removeLightning", subcategory = "Hiders")
-object HideInventoryEffects : Feature("hideInventoryEffects", subcategory = "Hiders")
-object HidePotionEffectOverlay : Feature("hidePotionEffectOverlay", subcategory = "Hiders")
-object RemoveFrontView : Feature("removeFrontView", subcategory = "Tweaks")
-object RemoveChatLimit : Feature("removeChatLimit", subcategory = "Chat") {
+object RemoveFallingBlocks : Feature("removeFallingBlocks", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object RemoveFireOverlay : Feature("removeFireOverlay", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object NoHurtCamera : Feature("noHurtCamera", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object RemoveLightning : Feature("removeLightning", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object HideInventoryEffects : Feature("hideInventoryEffects", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object HidePotionEffectOverlay : Feature("hidePotionEffectOverlay", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object RemoveFrontView : Feature("removeFrontView", category = Categories.VANILLA_TWEAKS)
+object RemoveChatLimit : Feature("removeChatLimit", category = Categories.VANILLA_TWEAKS, subcategory = "Chat") {
     val SETTING_MAX_MESSAGES = addSlider(
         "maxMessages",
         1000.0,
@@ -22,18 +23,18 @@ object RemoveChatLimit : Feature("removeChatLimit", subcategory = "Chat") {
         "Max Chat Messages",
     )
 }
-object RemoveTabPing : Feature("removeTabPing", subcategory = "Hiders")
-object RemoveTabHead : Feature("removeTabUselessHeads", "Removes the gray heads that hypixel sets in tablist", subcategory = "Hiders")
-object DisableAttachedArrows : Feature("disableAttachedArrows", subcategory = "Hiders")
-object DisableVignette : Feature("disableVignette", subcategory = "Hiders")
-object DisableWaterOverlay : Feature("disableWaterOverlay", subcategory = "Hiders")
-object DisableSuffocatingOverlay : Feature("disableSuffocatingOverlay", subcategory = "Hiders")
-object DisableVanillaArmor : Feature("disableVanillaArmor", subcategory = "Hiders")
-object DisableFog : Feature("disableFog", subcategory = "Hiders")
-object ThirdPersonCrosshair : Feature("thirdPersonCrosshair", subcategory = "Tweaks")
-object RemoveRecipeBook : Feature("removeRecipeBook", subcategory = "Hiders")
-object RemoveContainerBackground : Feature("removeContainerBackground", subcategory = "Hiders")
-object CustomContainerColor : Feature("customContainerColor", subcategory = "Tweaks") {
+object RemoveTabPing : Feature("removeTabPing", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object RemoveTabHead : Feature("removeTabUselessHeads", "Removes the gray heads that hypixel sets in tablist", Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object DisableAttachedArrows : Feature("disableAttachedArrows", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object DisableVignette : Feature("disableVignette", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object DisableWaterOverlay : Feature("disableWaterOverlay", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object DisableSuffocatingOverlay : Feature("disableSuffocatingOverlay", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object DisableVanillaArmor : Feature("disableVanillaArmor", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object DisableFog : Feature("disableFog", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object ThirdPersonCrosshair : Feature("thirdPersonCrosshair", category = Categories.VANILLA_TWEAKS)
+object RemoveRecipeBook : Feature("removeRecipeBook", category = Categories.VANILLA_TWEAKS, subcategory = "Container")
+object RemoveContainerBackground : Feature("removeContainerBackground", category = Categories.VANILLA_TWEAKS, subcategory = "Container")
+object CustomContainerColor : Feature("customContainerColor", category = Categories.VANILLA_TWEAKS, subcategory = "Container") {
     val SETTING_CONTAINER_COLOR = addColorPicker(
         "containerColor",
         Color.WHITE.rgb,
@@ -44,18 +45,19 @@ object CustomContainerColor : Feature("customContainerColor", subcategory = "Twe
 object DisableChatAutoScroll : Feature(
     "disableChatAutoScroll",
     "Disables the auto scrolling to the latest message whenever the chat gui is focused",
+    Categories.VANILLA_TWEAKS,
     subcategory = "Chat"
 )
-object DisableSwim : Feature("disableSwim", subcategory = "Tweaks", cheeto = true)
-object CenteredCrosshair : Feature("centeredCrosshair", subcategory = "Tweaks")
-object DisableEnderPearlCooldown : Feature("disableEnderPearlCooldown", subcategory = "Hiders")
-object DisableHungerBar : Feature("disableHungerBar", subcategory = "Hiders")
-object FixRedVignette : Feature("fixRedVignette", "fixes red vignettes (SA tp) from blocking clicks", subcategory = "Tweaks", cheeto = true)
-object HideCraftingText : Feature("hideCraftingText", "in inventory above craftin menu", subcategory = "Hiders")
-object DisableNametagBackground : Feature("disableNametagBackground", subcategory = "Tweaks")
-object DisableTextShadow : Feature("disableTextShadow", subcategory = "Tweaks")
-object FixObfuscatedText : Feature("fixObfuscatedText", "fixes shifting around text", subcategory = "Tweaks")
-object CustomSidebarColor : Feature("customSideBarColor", "Sets the color for scoreboard", subcategory = "Tweaks") {
+object DisableSwim : Feature("disableSwim", category = Categories.VANILLA_TWEAKS, cheeto = true)
+object CenteredCrosshair : Feature("centeredCrosshair", category = Categories.VANILLA_TWEAKS)
+object DisableEnderPearlCooldown : Feature("disableEnderPearlCooldown", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object DisableHungerBar : Feature("disableHungerBar", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object FixRedVignette : Feature("fixRedVignette", "fixes red vignettes (SA tp) from blocking clicks", category = Categories.VANILLA_TWEAKS, cheeto = true)
+object HideCraftingText : Feature("hideCraftingText", "in inventory above craftin menu", category = Categories.VANILLA_TWEAKS, subcategory = "Container")
+object DisableNametagBackground : Feature("disableNametagBackground", category = Categories.VANILLA_TWEAKS,)
+object DisableTextShadow : Feature("disableTextShadow", category = Categories.VANILLA_TWEAKS,)
+object FixObfuscatedText : Feature("fixObfuscatedText", "fixes shifting around text", category = Categories.VANILLA_TWEAKS,)
+object CustomSidebarColor : Feature("customSideBarColor", "Sets the color for scoreboard", category = Categories.VANILLA_TWEAKS,) {
     val SETTING_TITLE_COLOR = addColorPicker(
         "titleColor",
         Color(0, 0, 0, 100).rgb,
@@ -69,22 +71,22 @@ object CustomSidebarColor : Feature("customSideBarColor", "Sets the color for sc
         "Sidebar Body Color"
     )
 }
-object NametagShadow : Feature("nametagShadow", "Enables shadows on name tags", subcategory = "Tweaks")
-object RemoveGlowEffect : Feature("removeGlowEffect", "Removes the glowing effect of every entity", subcategory = "Hiders")
-object SidebarTextShadow : Feature("sidebarTextShadow", "Adds shadows to the text that is rendered in the sidebar", subcategory = "Tweaks")
-object AutoSprint : Feature("autoSprint", "Automatically sets the sprint key to true whenever you are walking", subcategory = "Tweaks")
+object NametagShadow : Feature("nametagShadow", "Enables shadows on name tags", category = Categories.VANILLA_TWEAKS,)
+object RemoveGlowEffect : Feature("removeGlowEffect", "Removes the glowing effect of every entity", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object SidebarTextShadow : Feature("sidebarTextShadow", "Adds shadows to the text that is rendered in the sidebar", category = Categories.VANILLA_TWEAKS,)
+object AutoSprint : Feature("autoSprint", "Automatically sets the sprint key to true whenever you are walking", category = Categories.VANILLA_TWEAKS,)
 object SignEnterKey : Feature(
     "signEnterKey",
     "Whenever pressing enter inside specific signs it'll act as if you hit confirm button. Shift to bypass.",
-    subcategory = "Tweaks"
+    Categories.VANILLA_TWEAKS,
 ) {
     fun shouldEnter(comps: List<Component>): Boolean {
         if (!isEnabled()) return false
         return GLFW.glfwGetKey(Devonian.minecraft.window.handle(), GLFW.GLFW_KEY_LEFT_SHIFT) != GLFW.GLFW_PRESS
     }
 }
-object RemoveHypixelScoreboard : Feature("removeHypixelScoreboard", "www.hypixel.net", subcategory = "Hiders")
-object DisableGlassPaneHighlight : Feature("disableGlassPaneHighlight", subcategory = "Hiders")
+object RemoveHypixelScoreboard : Feature("removeHypixelScoreboard", "www.hypixel.net", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
+object DisableGlassPaneHighlight : Feature("disableGlassPaneHighlight", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
 object HideUselessBossBar : Feature(
     "hideUselessBossBar",
     "",
@@ -93,22 +95,26 @@ object HideUselessBossBar : Feature(
 object HideHotbar : Feature(
     "hideHotbar",
     "Stops your hotbar from rendering",
-    subcategory = "Hiders"
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Hider"
 )
 object HideHearts : Feature(
     "hideHearts",
     "Does not render your hearts",
-    subcategory = "Hiders"
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Hider"
 )
 object HideScoreboard : Feature(
     "hideScoreboard",
     "Does not render your scoreboard",
-    subcategory = "Hiders"
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Hider"
 )
 object HideExperience : Feature(
     "hideExperience",
     "Does not render the experience bar and level",
-    subcategory = "Hiders"
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Hider"
 ) {
     val SETTING_REMOVE_BAR = addSwitch(
         "removeBar",
@@ -126,25 +132,25 @@ object HideExperience : Feature(
 object ConfirmDisconnect : Feature(
     "confirmDisconnect",
     "Allows you to set a time threshold of when your disconnect click should register rather than instantly disconnecting",
-    subcategory = "Tweaks"
+    Categories.VANILLA_TWEAKS,
 ) {
     val SETTING_THRESHOLD = addSlider(
         "threshold",
         150.0,
         0.0, 1000.0,
         "The threshold time",
-        "ConfirmDisconnect Threshold"
+        "Threshold"
     )
 }
 object FixRidingCamera : Feature(
     "fixRidingCamera",
     "Fixes MC-259512 (camera lags when riding something). (only visual)",
-    subcategory = "Tweaks",
+    Categories.VANILLA_TWEAKS,
 )
 object PlayerScale : Feature(
     "playerScale",
     "Changes your own player model's scale",
-    subcategory = "Tweaks"
+    Categories.VANILLA_TWEAKS,
 ) {
     val SETTING_SCALE = addDecimalSlider(
         "scale",
@@ -159,5 +165,5 @@ object PlayerScale : Feature(
 object OwnNameTag : Feature(
     "ownNameTag",
     "Shows your own name tag on third person",
-    subcategory = "Tweaks"
+    Categories.VANILLA_TWEAKS,
 )

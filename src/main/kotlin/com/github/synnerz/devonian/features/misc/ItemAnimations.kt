@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -11,7 +12,8 @@ import kotlin.math.pow
 
 object ItemAnimations : Feature(
     "itemAnimations",
-    subcategory = "Tweaks",
+    category = Categories.VANILLA_TWEAKS,
+    subcategory = "Animation",
 ) {
     private val SETTING_RESET = addButton(
         ::resetSettings,

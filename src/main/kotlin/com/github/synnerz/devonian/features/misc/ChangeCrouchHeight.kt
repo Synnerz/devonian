@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Location
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.CameraAccessor
 import net.minecraft.client.Camera
@@ -10,8 +11,8 @@ import net.minecraft.world.entity.Pose
 object ChangeCrouchHeight : Feature(
     "changeCrouchHeight",
     "All changes are visual only, unless otherwise listed.",
+    Categories.VANILLA_TWEAKS,
     displayName = "Change Crouch",
-    subcategory = "Tweaks",
     searchTags = setOf("sneak"),
 ) {
     private val SETTING_INSTANT_CROUCH = addSwitch(

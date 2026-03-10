@@ -3,13 +3,14 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import java.awt.Color
 
 object BazaarOverlay : Feature(
     "bazaarOverlay",
     "Highlights filled/partially filled/unfilled orders in bazaar",
-    subcategory = "General"
+    Categories.BAZAAR,
 ) {
     private val SETTING_FILLED_COLOR = addColorPicker(
         "filledColor",

@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.misc.inventory
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.api.events.GuiKeyUpEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.google.gson.JsonObject
@@ -17,7 +18,8 @@ import kotlin.math.sign
 object ScrollableTooltip : Feature(
     "scrollableTooltip",
     "Allows you to use move a tooltip.",
-    subcategory = "Inventory",
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Tooltip",
 ) {
     private const val KEY_NAME = "scrollableTooltip"
     private val SETTING_ALLOW_HORIZONTAL = addSwitch(

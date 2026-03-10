@@ -1,12 +1,17 @@
 package com.github.synnerz.devonian.features.misc.hiders
 
 import com.github.synnerz.devonian.api.events.ParticleSpawnEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.client.particle.HugeExplosionParticle
 import net.minecraft.client.particle.SmokeParticle
 import net.minecraft.client.particle.TerrainParticle
 
-object RemoveBlockBreakParticle : Feature("removeBlockBreakParticle", subcategory = "Hiders") {
+object RemoveBlockBreakParticle : Feature(
+    "removeBlockBreakParticle",
+    category = Categories.VANILLA_TWEAKS,
+    subcategory = "Hider"
+) {
     override fun initialize() {
         on<ParticleSpawnEvent> { event ->
             if (event.particle !is TerrainParticle) return@on
@@ -16,7 +21,11 @@ object RemoveBlockBreakParticle : Feature("removeBlockBreakParticle", subcategor
     }
 }
 
-object RemoveExplosionParticle : Feature("removeExplosionParticle", subcategory = "Hiders") {
+object RemoveExplosionParticle : Feature(
+    "removeExplosionParticle",
+    category = Categories.VANILLA_TWEAKS,
+    subcategory = "Hider"
+) {
     override fun initialize() {
         on<ParticleSpawnEvent> { event ->
             if (event.particle !is HugeExplosionParticle) return@on
@@ -26,7 +35,11 @@ object RemoveExplosionParticle : Feature("removeExplosionParticle", subcategory 
     }
 }
 
-object RemoveSmokeParticle : Feature("removeSmokeParticle", subcategory = "Hiders") {
+object RemoveSmokeParticle : Feature(
+    "removeSmokeParticle",
+    category = Categories.VANILLA_TWEAKS,
+    subcategory = "Hider"
+) {
     override fun initialize() {
         on<ParticleSpawnEvent> { event ->
             if (event.particle !is SmokeParticle) return@on

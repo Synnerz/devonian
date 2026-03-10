@@ -2,12 +2,14 @@ package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.DropItemEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 
 object PreventDroppingHotbar : Feature(
     "preventDroppingHotbar",
     "Prevent dropping items from the hotbar.",
-    subcategory = "Inventory",
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Container",
     searchTags = setOf("protect"),
 ) {
     override fun initialize() {

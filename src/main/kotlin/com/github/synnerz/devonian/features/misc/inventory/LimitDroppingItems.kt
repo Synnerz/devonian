@@ -3,13 +3,15 @@ package com.github.synnerz.devonian.features.misc.inventory
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.DropItemEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import java.util.*
 
 object LimitDroppingItems : Feature(
     "limitDroppingItems",
     "prevent sending too many drop item inputs when server lags",
-    subcategory = "Inventory",
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Container",
 ) {
     private const val MAX_DROPS = 7
     private const val TICK_SPAN = 3

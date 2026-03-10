@@ -2,11 +2,13 @@ package com.github.synnerz.devonian.features.misc.tooltip
 
 import com.github.synnerz.devonian.ClientTextTooltipStringAccessor
 import com.github.synnerz.devonian.api.events.TooltipRenderEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 
 object RemoveVanillaEnchants : Feature(
     "removeVanillaEnchants",
     "hides Aqua Affinity/Depth Strider from lore",
+    Categories.VANILLA_TWEAKS,
     subcategory = "Tooltip",
 ) {
     private val enchants = listOf(

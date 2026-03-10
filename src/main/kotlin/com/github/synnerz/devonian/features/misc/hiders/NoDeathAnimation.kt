@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc.hiders
 
 import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
@@ -11,7 +12,8 @@ import net.minecraft.world.entity.monster.skeleton.WitherSkeleton
 object NoDeathAnimation : Feature(
     "noDeathAnimation",
     "Removes the Death Animation from entities that die.",
-    subcategory = "Hiders",
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Hider",
 ) {
     private val SETTING_HIDE_DEAD_NAMETAGS = addSwitch(
         "hideTags",

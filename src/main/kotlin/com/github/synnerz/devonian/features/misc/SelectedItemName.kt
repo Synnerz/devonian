@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Style
 object SelectedItemNameRender : Feature(
     "selectedItemNameRender",
     "Does not render a custom hud.",
-    displayName = "HideSelectedItemName",
+    displayName = "Hide Selected ItemName",
     subcategory = "Tweaks"
 ) {
     override fun initialize() {

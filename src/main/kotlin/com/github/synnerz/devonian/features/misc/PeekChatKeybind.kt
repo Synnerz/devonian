@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.KeyReleaseEvent
 import com.github.synnerz.devonian.api.events.MouseReleaseEvent
 import com.github.synnerz.devonian.api.events.MouseScrollEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
@@ -12,7 +13,7 @@ import org.lwjgl.glfw.GLFW
 object PeekChatKeybind : Feature(
     "peekChatKeybind",
     "Allows you to quickly peek into the chat screen without opening the textinput (change the keybind in minecraft controls)",
-    subcategory = "Tweaks"
+    Categories.VANILLA_TWEAKS,
 ) {
     val keybind = KeyBindingHelper.registerKeyBinding(
         KeyMapping(

@@ -15,7 +15,10 @@ enum class Categories(
     SLAYERS("Slayers"),
     END("End"),
     DIANA("Diana"),
-    MISC("Misc", listOf("General", "Inventory", "Hiders", "Tweaks", "Tooltip", "Actionbar", "Chat")),
+    BAZAAR("Bazaar"),
+    Actionbar("Actionbar"),
+    VANILLA_TWEAKS("Vanilla Tweaks", listOf("General", "Container", "Hider", "Tooltip", "Animation", "Chat")),
+    MISC("Misc", listOf("General", "Inventory", "Hiders", "Tweaks", "Tooltip", "Chat")),
     DEBUG("Debug", listOf("Renderers", "Utils", "Packet Logger", "Misc"));
 
     init {

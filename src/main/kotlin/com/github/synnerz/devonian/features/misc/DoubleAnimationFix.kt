@@ -1,13 +1,14 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 
 object DoubleAnimationFix : Feature(
     "doubleAnimationFix",
     "fix animations playing twice sometimes (sneak)",
-    subcategory = "Tweaks",
+    Categories.VANILLA_TWEAKS,
     cheeto = true,
 ) {
     override fun initialize() {

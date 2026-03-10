@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.events.ActionbarEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.GuiAccessor
 import com.github.synnerz.devonian.mixin.accessor.HeartTypeAccessor
@@ -15,7 +16,7 @@ import kotlin.math.min
 object AccurateAbsorption : Feature(
     "accurateAbsorption",
     "Changes absorption hearts to accurately reflect the amount of absorption you have.",
-    subcategory = "Tweaks",
+    Categories.VANILLA_TWEAKS,
 ) {
     private val SETTING_MAX_ABSORPTION_HEARTS = addSlider(
         "maxAbsorptionHearts",

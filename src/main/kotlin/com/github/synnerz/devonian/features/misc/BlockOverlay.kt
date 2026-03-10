@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.events.BeforeBlockOutlineEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.level.EmptyBlockGetter
@@ -17,7 +18,7 @@ import java.awt.Color
 object BlockOverlay : Feature(
     "blockOverlay",
     "Adds a more customizable Block Overlay (highlighting the block you are looking at).",
-    subcategory = "Tweaks",
+    Categories.VANILLA_TWEAKS,
 ) {
     private val SETTING_BOX_ENTITY = addSwitch(
         "boxEntity",

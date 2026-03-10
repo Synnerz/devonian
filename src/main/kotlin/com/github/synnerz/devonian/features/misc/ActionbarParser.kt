@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ModifyActionbarEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -15,8 +16,8 @@ import net.minecraft.network.chat.Component
 object ActionbarParser : Feature(
     "actionbarParser",
     "Allows for moving/hiding elements from the actionbar (above your hotbar). " +
-    "This is a global toggle. None of the features below will work when this is disabled.",
-    subcategory = "Actionbar",
+    "This is a global toggle. §bNone of the features below will work when this is disabled.",
+    Categories.Actionbar,
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Location.stateInSkyblock)
@@ -103,7 +104,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customHealthHud",
                 "$desc Allows you to move the health that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§616,460/13,607❤")
@@ -111,7 +112,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideHealthActionbar",
                 "$desc Hides the health that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
             "",
@@ -122,7 +123,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customDefenseHud",
                 "$desc Allows you to move the defense that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§a7,952§a❈")
@@ -130,7 +131,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideDefenseActionbar",
                 "$desc Hides the defense that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ) {
@@ -164,7 +165,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customManaHud",
                 "$desc Allows you to move the mana that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§b469/1,154✎ §3600ʬ")
@@ -172,7 +173,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideManaActionbar",
                 "$desc Hides the mana that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ) {
@@ -187,7 +188,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customManaUseHud",
                 "$desc Allows you to move the mana used '18 Mana (Instant Transmission)' that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§b-18 Mana (§6Instant Transmission§b)")
@@ -195,7 +196,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideManaUseActionbar",
                 "$desc Hides the mana used '18 Mana (Instant Transmission)' that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
             startsWith = "§b",
@@ -206,7 +207,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customTrueDefenseHud",
                 "$desc Allows you to move the true defense that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§f69§f❂")
@@ -214,7 +215,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideTrueDefenseActionbar",
                 "$desc Hides the true defense that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ) {
@@ -248,7 +249,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customStatXpHud",
                 "$desc Allows you to move the stat xp '+163.7 Combat (141,560,940/0)' that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§3+163.7 Combat (141,560,940/0)")
@@ -256,7 +257,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideStatXpActionbar",
                 "$desc Hides the stat xp '+163.7 Combat (141,560,940/0)' that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
             startsWith = "§3",
@@ -267,8 +268,8 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "secretsHud",
                 "$desc Allows you to move the secret count that appears in the actionbar (above your hotbar).",
+                Categories.Actionbar,
                 displayName = "Custom Secret Count Hud",
-                subcategory = "Actionbar",
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§70&f/§a4")
@@ -276,7 +277,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideSecretCountActionbar",
                 "$desc Hides the secret count that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ) {
@@ -299,7 +300,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customTermLaserHud",
                 "$desc Allows you to move the term laser that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§a§lT3!")
@@ -307,7 +308,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideTermLaserActionbar",
                 "$desc Hides the term laser that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
             " ".repeat(2),
@@ -330,7 +331,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customDrillFuelHud",
                 "$desc Allows you to move the drill fuel that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§22,609/3k Drill Fuel")
@@ -338,7 +339,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideDrillFuelActionbar",
                 "$desc Hides the drill fuel that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ) {
@@ -350,7 +351,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customArmorStacksHud",
                 "$desc Allows you to move the armor stacks (nether armor) that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§610ᝐ")
@@ -358,7 +359,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideArmorStacksActionbar",
                 "$desc Hides the armor stacks (nether armor) that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
             " ".repeat(2),
@@ -371,7 +372,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customRiftTimeHud",
                 "$desc Allows you to move the rift time that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§a10m59sф Left")
@@ -379,7 +380,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideRiftTimeActionbar",
                 "$desc Hides the rift time that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ) {
@@ -391,7 +392,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customGeckoComboHud",
                 "$desc Allows you to move the gecko combo that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§a[⬛⬛⬛⬛⬛ §e§lx7 §a⬛⬛⬛⬜⬜]")
@@ -399,7 +400,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideGeckoComboActionbar",
                 "$desc Hides the gecko combo that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ),
@@ -409,7 +410,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customEssenceGainedHud",
                 "$desc Allows you to move the essence gained that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§d+1 Wither Essence")
@@ -417,7 +418,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideEssenceGainedActionbar",
                 "$desc Hides the essence gained that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ),
@@ -427,7 +428,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customRagAxeTimerHud",
                 "$desc Allows you to move the rag axe timer that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§a§lCASTING IN 3s")
@@ -435,7 +436,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideRagAxeTimerActionbar",
                 "$desc Hides the rag axe timer that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ) {
@@ -450,7 +451,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customAuroraStaffRuneHud",
                 "$desc Allows you to move the aurora staff rune that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§5§lVirtuoso")
@@ -458,7 +459,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideAuroraStaffRuneActionbar",
                 "$desc Hides the aurora staff rune that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ) {
@@ -470,7 +471,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customSoulEsowardHud",
                 "$desc Allows you to move the soul esoward's 'IMMUNITY' that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§9§lINVULNERABLE")
@@ -478,7 +479,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideSoulEsowardActionbar",
                 "$desc Hides the soul esoward's 'IMMUNITY' that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
         ) {
@@ -490,7 +491,7 @@ object ActionbarParser : Feature(
             object : TextHudFeature(
                 "customBitsGainedHud",
                 "$desc Allows you to move the bits gained that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = customTags,
             ) {
                 override fun getEditText(): List<String> = listOf("§9§lINVULNERABLE")
@@ -498,7 +499,7 @@ object ActionbarParser : Feature(
             object : Feature(
                 "hideBitsGainedActionbar",
                 "$desc Hides the bits gained that appears in the actionbar (above your hotbar).",
-                subcategory = "Actionbar",
+                Categories.Actionbar,
                 searchTags = hideTags,
             ) {},
             pad = "",

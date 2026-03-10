@@ -1,13 +1,18 @@
 package com.github.synnerz.devonian.features.misc.hiders
 
 import com.github.synnerz.devonian.api.events.GuiOpenEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LevelLoadingScreenAccessor
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.LevelLoadingScreen
 import net.minecraft.client.gui.screens.Overlay
 
-object DisableWorldLoadingScreen : Feature("disableWorldLoadingScreen", subcategory = "Tweaks") {
+object DisableWorldLoadingScreen : Feature(
+    "disableWorldLoadingScreen",
+    category = Categories.VANILLA_TWEAKS,
+    subcategory = "Hider"
+) {
     private var levelLoadingScreen: LevelLoadingScreenAccessor? = null
 
     override fun initialize() {

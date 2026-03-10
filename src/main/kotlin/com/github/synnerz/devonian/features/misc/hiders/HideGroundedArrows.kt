@@ -1,13 +1,15 @@
 package com.github.synnerz.devonian.features.misc.hiders
 
 import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractArrowAccessor
 
 object HideGroundedArrows : Feature(
     "hideGroundedArrows",
     "Prevents arrows stuck in the ground from rendering.",
-    subcategory = "Hiders",
+    Categories.VANILLA_TWEAKS,
+    subcategory = "Hider",
 ) {
     override fun initialize() {
         on<PreExtractRenderEntityEvent> { event ->

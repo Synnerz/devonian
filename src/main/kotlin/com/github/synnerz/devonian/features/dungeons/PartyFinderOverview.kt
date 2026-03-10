@@ -31,26 +31,26 @@ object PartyFinderOverview : Feature(
         0,
         listOf("Both", "S", "S+"),
         "The pb mode to use whenever displaying personal best time for the current floor. \"Both\" = if S+ does not exist it'll default to S.",
-        "Party Finder Overview PB",
+        "Overview PB",
     )
     private val SETTING_SHOW_MISSING = addSwitch(
         "showMissing",
         true,
         "Shows the missing classes at the bottom of the tooltip",
-        "Party Finder Overview Missing"
+        "Overview Missing"
     )
     private val SETTING_COMPACT_MODE = addSelection(
         "compactModes",
         0,
         listOf("NONE", "Style1", "Style2"),
         "If enabled, it'll compact most of the party finder data from the users",
-        "Party Finder Overview Compact"
+        "Overview Compact"
     )
     private val SETTING_COMPACT_NO_NAME = addSwitch(
         "compactNoName",
         false,
         "Whether the Compact Mode can change the color of the igns to their respective class(role) color",
-        "Party Finder Overview Compact Names"
+        "Overview Compact Names"
     )
     private val nameRegex = "^§r §r(§\\w)\\w{1,16}§r§f".toRegex()
     private val members = CopyOnWriteArrayList<String>()
