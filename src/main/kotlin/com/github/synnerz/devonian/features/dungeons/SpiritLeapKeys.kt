@@ -77,7 +77,7 @@ object SpiritLeapKeys : Feature(
             val name = itemStack.customName?.string ?: return@on
             val data = Dungeons.players[name] ?: return@on
 
-            Scheduler.scheduleTask { playersData.add(CustomLeapGui.LeapPlayer(idx, name, data.role, data.isDead)) }
+            Scheduler.scheduleTask { playersData.add(CustomLeapGui.LeapPlayer(idx, name, data.role, data)) }
         }
 
         on<GuiKeyDownEvent> { event ->

@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
+import com.github.synnerz.devonian.api.dungeon.DungeonPlayer
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
@@ -86,7 +87,7 @@ object CustomLeapGui : Feature(
 
     val leapComparator get() = sortingComparators[SETTING_PLAYER_SORTING.get()]
     data class DynamicLeap(val role: DungeonClass, val slot: Int, val priority: Int)
-    data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val isDead: Boolean)
+    data class LeapPlayer(val slot: Int, val name: String, val role: DungeonClass, val player: DungeonPlayer?)
 
     override fun initialize() {
         Config.set(KEY_NAME, JsonObject())
@@ -180,7 +181,7 @@ object CustomLeapGui : Feature(
                 val name = customName.replace("\\[[^ ]+] ".toRegex(), "")
 
                 val data = Dungeons.players[name] ?: return@forEach
-                playerList.add(LeapPlayer(idx, name, data.role, data.isDead))
+                playerList.add(LeapPlayer(idx, name, data.role, data))
             }
 
             val player = Dungeons.selfPlayer
@@ -198,7 +199,7 @@ object CustomLeapGui : Feature(
                             val currentRole = player.role.name
                             val missing = roles.toMutableSet().apply { remove(currentRole) } - currentRoles.toSet()
                             mut.addAll(playerList)
-                            missing.forEachIndexed { jdx, it -> mut.add(LeapPlayer(100 + jdx, "FAKE", DungeonClass.from(it), true)) }
+                            missing.forEachIndexed { jdx, it -> mut.add(LeapPlayer(100 + jdx, "FAKE", DungeonClass.from(it), null)) }
                             mut
                         }
                     }
@@ -222,7 +223,7 @@ object CustomLeapGui : Feature(
                 if (player.role == DungeonClass.Unknown)
                     pl.sortedWith(sortingComparators.first())
                 else {
-                    val ll = MutableList(5) { LeapPlayer(100 + it, "FAKE", DungeonClass.Berserk, true) }
+                    val ll = MutableList(5) { LeapPlayer(100 + it, "FAKE", DungeonClass.Berserk, null) }
                     val fakeSort = mutableListOf<LeapPlayer>()
                     customOrder.forEach { (k, v) ->
                         val data = pl.find { it.name.equals(k, ignoreCase = true) }
@@ -269,7 +270,7 @@ object CustomLeapGui : Feature(
                                 val currentRole = player.role.name
                                 val missing = roles.toMutableSet().apply { remove(currentRole) } - currentRoles.toSet()
                                 mut.addAll(playerList)
-                                missing.forEachIndexed { jdx, it -> mut.add(LeapPlayer(100 + jdx, "FAKE", DungeonClass.from(it), true)) }
+                                missing.forEachIndexed { jdx, it -> mut.add(LeapPlayer(100 + jdx, "FAKE", DungeonClass.from(it), null)) }
                                 mut
                             }
                         }
@@ -293,7 +294,7 @@ object CustomLeapGui : Feature(
                     if (player.role == DungeonClass.Unknown)
                         pl.sortedWith(sortingComparators.first())
                     else {
-                        val ll = MutableList(5) { LeapPlayer(100 + it, "FAKE", DungeonClass.Berserk, true) }
+                        val ll = MutableList(5) { LeapPlayer(100 + it, "FAKE", DungeonClass.Berserk, null) }
                         val fakeSort = mutableListOf<LeapPlayer>()
                         customOrder.forEach { (k, v) ->
                             val data = pl.find { it.name.equals(k, ignoreCase = true) }
@@ -322,7 +323,7 @@ object CustomLeapGui : Feature(
             val name = itemStack.customName?.string ?: return@on
 
             val data = Dungeons.players[name] ?: return@on
-            playerList.add(LeapPlayer(idx, name, data.role, data.isDead))
+            playerList.add(LeapPlayer(idx, name, data.role, data))
         }
 
         on<PrePacketSentEvent> { event ->
@@ -364,7 +365,7 @@ object CustomLeapGui : Feature(
     private fun validTitle(title: String): Boolean = title == CONTAINER_NAME || title == "Teleport to Player"
 
     private fun create(data: LeapPlayer, idx: Int) {
-        if (data.slot >= 100 && data.isDead) return
+        if (data.slot >= 100 || data.player == null) return
         // TODO: add customizable sorting
         val r = idx / 2
         val c = idx % 2
@@ -404,14 +405,14 @@ object CustomLeapGui : Feature(
         UIRect(if (idx % 2 == 0) 0.0 else x, if (idx < 2) 0.0 else y, 50.0, 50.0, parent = background).apply {
             onMouseRelease { event ->
                 if (SETTING_USE_ON_CLICK.get()) return@onMouseRelease
-                if (event.button !in 0..1 || data.isDead) return@onMouseRelease
+                if (event.button !in 0..1 || data.player.isDead) return@onMouseRelease
 
                 ScreenUtils.click(data.slot)
                 Scheduler.scheduleTask { background.clearChildren() }
             }
             onMouseClick { event ->
                 if (!SETTING_USE_ON_CLICK.get()) return@onMouseClick
-                if (event.button !in 0..1 || data.isDead) return@onMouseClick
+                if (event.button !in 0..1 || data.player.isDead) return@onMouseClick
 
                 ScreenUtils.click(data.slot)
                 Scheduler.scheduleTask { background.clearChildren() }
