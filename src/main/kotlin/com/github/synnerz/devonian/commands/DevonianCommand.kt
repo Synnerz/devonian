@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.commands
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.hud.texthud.BImgTextHudRenderer
+import net.minecraft.network.chat.Component
 
 object DevonianCommand {
     private val commandListeners = mutableListOf<() -> Int>()
@@ -34,6 +35,33 @@ object DevonianCommand {
         .suggest("name", *BImgTextHudRenderer.Fonts.keys.toTypedArray())
     private val clearChat = command.subcommand("clearchat") { _, args ->
         Devonian.minecraft.gui.chat.clearMessages(false)
+        1
+    }
+    private val colorCodes = command.subcommand("colorcodes") { _, args ->
+        ChatUtils.sendMessage(Component.literal("§8[§3§lDevonian§8] §eMinecraft Color Codes Guide" +
+                "\n§4&4 §f- §4Dark Red" +
+                "\n§c&c §f- §cRed" +
+                "\n§6&6 §f- §6Gold" +
+                "\n§e&e §f- §eYellow" +
+                "\n§2&2 §f- §2Dark Green" +
+                "\n§a&a §f- §aGreen" +
+                "\n§3&3 §f- §3Dark Aqua" +
+                "\n§b&b §f- §bAqua" +
+                "\n§1&1 §f- §1Dark Blue" +
+                "\n§9&9 §f- §9Blue" +
+                "\n§5&5 §f- §5Dark Purple" +
+                "\n§d&d §f- §dLight Purple" +
+                "\n§f&f §f- §fWhite" +
+                "\n§8&8 §f- §8Dark Gray" +
+                "\n§7&7 §f- §7Gray" +
+                "\n§0&0 §f- §0Black" +
+                "\n§fThe follow are color codes which can be added onto words" +
+                "\n§ktest§r &k §f- §fObfuscated" +
+                "\n§ltest§r &l §f- §fBold" +
+                "\n§mtest§r &m §f- §fStrikethrough" +
+                "\n§ntest§r &n §f- §fUnderline" +
+                "\n§otest§r &o §f- §fItalic" +
+                "\n§r&r §f- §fResets the colors back to default"))
         1
     }
 
