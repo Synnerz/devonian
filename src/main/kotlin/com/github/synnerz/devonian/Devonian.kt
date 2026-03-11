@@ -384,6 +384,7 @@ object Devonian : ClientModInitializer {
             WarpCooldown,
             PlayerScale,
             OwnNameTag,
+            CropFeverTimer,
 
             // Debug
             CopyItem,
