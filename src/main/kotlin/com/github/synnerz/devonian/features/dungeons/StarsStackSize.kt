@@ -28,7 +28,9 @@ object StarsStackSize : Feature(
 
         val entry = cache.getOrPut(stack) {
             val extraAttributes = ItemUtils.extraAttributes(stack) ?: return@getOrPut Entry.EMPTY
-            val stars = extraAttributes.getInt("upgrade_level").getOrNull() ?: return@getOrPut Entry.EMPTY
+            val stars = extraAttributes.getInt("upgrade_level").getOrNull()
+                ?: extraAttributes.getInt("dungeon_item_level").getOrNull()
+                    ?: return@getOrPut Entry.EMPTY
             val amount = "$stars"
             val width = minecraft.font.width(amount)
             return@getOrPut Entry(amount, width)
