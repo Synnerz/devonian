@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.WebRequests
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.PartyFinderListener
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
+import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.PersistentJson
@@ -42,9 +43,15 @@ object PartyFinderOverview : Feature(
     private val SETTING_COMPACT_MODE = addSelection(
         "compactModes",
         0,
-        listOf("NONE", "Style1", "Style2"),
+        listOf("NONE", "Style1", "Style2", "Custom"),
         "If enabled, it'll compact most of the party finder data from the users",
         "Overview Compact"
+    )
+    private val SETTING_CUSTOM_STYLE = addTextInput(
+        "customStyle",
+        "",
+        "Only works if \"Custom\" style mode is selected, do /dv pfo help for usage",
+        "Overview Custom"
     )
     private val SETTING_COMPACT_NO_NAME = addSwitch(
         "compactNoName",
@@ -76,6 +83,34 @@ object PartyFinderOverview : Feature(
     data class MultiDungeonApiResult(val result: Map<String /* player's name */, DungeonsApiResult>?)
 
     override fun initialize() {
+        DevonianCommand.command.subcommand("pfo") { _, args ->
+            val type = args.firstOrNull() as? String?
+            if (type.isNullOrEmpty()) {
+                return@subcommand 0
+            }
+            ChatUtils.sendMessage(Component.literal("§8[§3§lDevonian§8] §bCustom PartyFinderOverview Style Guide" +
+                    "\n§bUsing §6Style1§b as an example§f:" +
+                    "\n§f\"&8[§c\$RoleColor§r§e\$RoleSingle&8] §a\$NameColor§r§9\$Name§r &8[&e§d\$RoleLevel§r &7| &6§f\$Cata§r&8] &8[&3§7\$SecretsShort§r &7| &b§2\$SecretShortAvg§r&8] &8[&a§3\$PB§r&8]\"" +
+                    "\n§c\"\$RoleColor\" §f-> §ethe role color §8(ex: archer -> &c)" +
+                    "\n§e\"\$RoleSingle\" §f-> §eA" +
+                    "\n§b\"\$RoleShort\" §f-> §eArch" +
+                    "\n§b\"\$Role\" §f-> §eArcher" +
+                    "\n§a\"\$NameColor\" §f-> §eeither role color or the username rank color §8(depends on user's settings)" +
+                    "\n§9\"\$Name\" §f-> §eplayer's username" +
+                    "\n§d\"\$RoleLevel\" §f-> §ethe class level" +
+                    "\n§f\"\$Cata\" §f-> §ethe cata level" +
+                    "\n§b\"\$Secrets\" §f-> §eunformatted secrets" +
+                    "\n§7\"\$SecretsShort\" §f-> §eshortened/formatted secrets" +
+                    "\n§b\"\$SecretAvg\" §f-> §eaverage secrets with 2 decimal points" +
+                    "\n§2\"\$SecretShortAvg\" §f-> §eaverage secrets with 1 decimal point" +
+                    "\n§3\"\$PB\" §f-> §ethe player's personal best §8(depends on user's settings either S/S+ or Both)" +
+                    "\n" +
+                    "\n§bFor color codes do §6/dv colorcodes"))
+            1
+        }
+            .string("type")
+            .suggest("type", *listOf("help").toTypedArray())
+
         on<PartyFinderListener.PartyFinderEvent> { event ->
             members.clear()
             parties.clear()
@@ -148,6 +183,7 @@ object PartyFinderOverview : Feature(
                         newLore.add(l.copy())
                         return@forEach
                     }
+                    // TODO: this could make the custom break if the user does not use brackets
                     if (l.string.contains("[") && l.string.contains("]")) return@forEach
                     val personalBestMap = if (p.isMasterMode) data.personal_best_master else data.personal_best_normal
 
@@ -177,6 +213,41 @@ object PartyFinderOverview : Feature(
                                 append("&8[$roleCode${role.singleLetter.uppercase()} &e${match[2]}&8] $nameColor${match[0]} &8[&6${data.level.toInt()} &7| &3${StringUtils.shortenNumber(data.secrets)} &7| &b${"%.1f".format(data.averageSecrets)}&8]")
                                 if (personalBest == null) append(" &cNO PB")
                                 else append(" &a$personalBest")
+                            })
+                        }
+                        3 -> {
+                            val role = DungeonClass.from(match[1])
+                            val roleCode = role.colorCode
+                            val roleSingle = role.singleLetter.uppercase()
+                            val roleShort = role.shortName
+                            val roleName = role.name
+                            val roleLevel = match[2]
+                            val cataLevel = data.level
+                            val secrets = data.secrets
+                            val secretsShort = StringUtils.shortenNumber(data.secrets)
+                            val secretsAvg = "%.2f".format(data.averageSecrets)
+                            val secretsShortAvg = "%.1f".format(data.averageSecrets)
+                            val personalBest = if (personalBest == null) "&cNO PB" else "&a$personalBest"
+                            val nameColor = if (SETTING_COMPACT_NO_NAME.get() && matchName != null) matchName.groupValues[1] else roleCode
+                            val customKeys = mapOf(
+                                "RoleColor" to roleCode,
+                                "RoleSingle" to roleSingle,
+                                "RoleShort" to roleShort,
+                                "Role" to roleName,
+                                "RoleName" to roleName,
+                                "NameColor" to nameColor,
+                                "Name" to match[0],
+                                "RoleLevel" to roleLevel,
+                                "Cata" to "$cataLevel",
+                                "Secrets" to "$secrets",
+                                "SecretsShort" to secretsShort,
+                                "SecretAvg" to secretsAvg,
+                                "SecretShortAvg" to secretsShortAvg,
+                                "PB" to personalBest
+                            )
+
+                            ChatUtils.literal(Regex("""\$(\w+)""").replace(SETTING_CUSTOM_STYLE.get()) {
+                                customKeys[it.groupValues[1]] ?: it.value
                             })
                         }
                         else -> {
