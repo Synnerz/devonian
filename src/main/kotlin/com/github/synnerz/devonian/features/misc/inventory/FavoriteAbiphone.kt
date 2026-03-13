@@ -12,6 +12,7 @@ import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
@@ -21,7 +22,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.ItemLore
 import java.awt.Color
-import java.util.IdentityHashMap
 
 object FavoriteAbiphone : Feature(
     "favoriteAbiphone",
@@ -62,7 +62,7 @@ object FavoriteAbiphone : Feature(
         minecraft.player?.containerMenu?.getSlot(4)?.set(stack)
     }
 
-    private val nameCache = IdentityHashMap<ItemStack, String>()
+    private val nameCache = FixedIdentityMap<ItemStack, String>(128)
 
     override fun initialize() {
         Config.set(CONFIG_SHOW_KEY, true)
@@ -128,7 +128,7 @@ object FavoriteAbiphone : Feature(
 
             val name = nameCache.getOrPut(stack) {
                 stack.customName?.string ?: ""
-            } ?: return@on
+            }
             if (name.isEmpty()) return@on
 
             if (name in favoriteContacts) {

@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.events.RenderHotbarSlotEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.google.gson.JsonParser
 import net.minecraft.ChatFormatting
@@ -16,7 +17,6 @@ import net.minecraft.network.chat.TextColor
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import org.joml.Matrix3x2f
-import java.util.*
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.roundToInt
 
@@ -74,7 +74,7 @@ object ItemRarityBackground : Feature(
         "a SHINY MYTHIC" to TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE)!!.value,
     )
 
-    private val cache = IdentityHashMap<ItemStack, Int>()
+    private val cache = FixedIdentityMap<ItemStack, Int>(128)
 
     private fun render(x: Int, y: Int, item: ItemStack, ctx: GuiGraphics) {
         if (item.isEmpty) return
@@ -159,7 +159,7 @@ object ItemRarityBackground : Feature(
         return rarities.find { str.startsWith(it.first) }?.second
     }
 
-    private val blurId = Identifier.fromNamespaceAndPath("devonian", "blur")!!
+    private val blurId = Identifier.fromNamespaceAndPath("devonian", "blur")
     private val blurImg = BufferedImageUploader.fromResource("/assets/devonian/blur.png")!!
         .register(blurId)
 }

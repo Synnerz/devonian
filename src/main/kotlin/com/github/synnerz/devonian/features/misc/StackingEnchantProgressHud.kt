@@ -7,10 +7,10 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.EnchantRegistry
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import com.github.synnerz.devonian.utils.StackingEnchant
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.world.item.ItemStack
-import java.util.*
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
 
@@ -29,13 +29,13 @@ object StackingEnchantProgressHud : TextHudFeature(
 
     private val EMPTY = StackingEnchant("", "", "", "", "", listOf())
 
-    private val cache = IdentityHashMap<ItemStack, StackingEnchant>()
+    private val cache = FixedIdentityMap<ItemStack, StackingEnchant>(128)
     private var display = false
     override fun initialize() {
         on<TickEvent> {
             display = false
             val player = minecraft.player ?: return@on
-            val held = player.mainHandItem ?: return@on
+            val held = player.mainHandItem
             if (held.isEmpty) return@on
 
             val type = cache.getOrPut(held) {
@@ -47,8 +47,8 @@ object StackingEnchantProgressHud : TextHudFeature(
                     .map { EnchantRegistry.getOrUnknownNbt(it) }
                     .filter { it is StackingEnchant }
                     .findFirst()
-                    .getOrElse { EMPTY } as StackingEnchant?
-            } ?: return@on
+                    .getOrElse { EMPTY } as StackingEnchant
+            }
             if (type === EMPTY) return@on
 
             val data = ItemUtils.extraAttributes(held) ?: return@on

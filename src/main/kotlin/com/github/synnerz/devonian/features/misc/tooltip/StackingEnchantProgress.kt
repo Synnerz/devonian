@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.EnchantRegistry
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import com.github.synnerz.devonian.utils.StackingEnchant
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.ChatFormatting
@@ -14,7 +15,6 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.item.ItemStack
-import java.util.IdentityHashMap
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
 
@@ -36,7 +36,7 @@ object StackingEnchantProgress : Feature(
     private val STYLE_BG = Style.EMPTY.withColor(ChatFormatting.GRAY)
     private val STYLE_FG = Style.EMPTY.withColor(ChatFormatting.GREEN)
 
-    private val cache = IdentityHashMap<ItemStack, StackingEnchant>()
+    private val cache = FixedIdentityMap<ItemStack, StackingEnchant>(128)
     override fun initialize() {
         on<TooltipRenderEvent> { event ->
             val held = event.item ?: return@on
@@ -49,8 +49,8 @@ object StackingEnchantProgress : Feature(
                     .map { EnchantRegistry.getOrUnknownNbt(it) }
                     .filter { it is StackingEnchant }
                     .findFirst()
-                    .getOrElse { EMPTY } as StackingEnchant?
-            } ?: return@on
+                    .getOrElse { EMPTY } as StackingEnchant
+            }
             if (type === EMPTY) return@on
 
             val data = ItemUtils.extraAttributes(held) ?: return@on

@@ -47,7 +47,7 @@ object CustomEnchantLore : Feature(
         if (it.enchant is UltimateEnchant) 0 else 1
     }.then(compareBy(String.CASE_INSENSITIVE_ORDER) { it.enchant.loreName })
 
-    private val cachedLines = IdentityHashMap<ItemStack, List<ClientTooltipComponent>>()
+    private val cachedLines = FixedIdentityMap<ItemStack, List<ClientTooltipComponent>>(128)
     private val cachedDescriptions = mutableMapOf<EnchantBundle, List<ClientTooltipComponent>>()
     private val cachedLengths = mutableMapOf<EnchantBundle, Int>()
     override fun initialize() {
@@ -74,7 +74,7 @@ object CustomEnchantLore : Feature(
                 if (mode == 0 && parsed.size < 6) return@getOrPut layoutDescription(parsed, event.lore)
                 if (mode != 1 && parsed.size < 10) return@getOrPut layoutLines(parsed)
                 return@getOrPut layoutPacked(parsed)
-            } ?: return@on
+            }
             if (lines.isEmpty()) return@on
 
             val (s, e) = findBounds(event.lore) ?: return@on
@@ -145,7 +145,7 @@ object CustomEnchantLore : Feature(
     }
 
     private fun layoutPacked(ench: List<EnchantBundle>): List<ClientTooltipComponent> {
-        val f = minecraft.font ?: return emptyList()
+        val f = minecraft.font
         val spacer = ", "
         val spacerW = f.width(spacer)
         val maxW = SETTING_LINE_WIDTH.get()

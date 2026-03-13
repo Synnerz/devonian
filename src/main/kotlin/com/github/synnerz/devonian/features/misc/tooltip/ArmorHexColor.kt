@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.TooltipRenderEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.core.component.DataComponents
@@ -12,7 +13,6 @@ import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.TextColor
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.item.ItemStack
-import java.util.IdentityHashMap
 
 object ArmorHexColor : Feature(
     "armorHexColor",
@@ -38,7 +38,7 @@ object ArmorHexColor : Feature(
         "OXFORD_SHOES",
     )
 
-    private val cache = IdentityHashMap<ItemStack, Int>()
+    private val cache = FixedIdentityMap<ItemStack, Int>(128)
     override fun initialize() {
         on<TooltipRenderEvent> { event ->
             val held = event.item ?: return@on
@@ -50,7 +50,7 @@ object ArmorHexColor : Feature(
                     if (id !in seymourIds) return@getOrPut -1
                 }
                 return@getOrPut held.get(DataComponents.DYED_COLOR)?.rgb ?: -1
-            } ?: return@on
+            }
             if (color == -1) return@on
 
             event.lore.add(

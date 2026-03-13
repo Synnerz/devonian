@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.GuiTextRenderStateAccessor
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.Companion.BASE_FONT_SIZE
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 import com.github.synnerz.devonian.utils.render.states.QuadRenderState
@@ -185,7 +186,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
     )
 
     companion object {
-        private val cache = IdentityHashMap<Component, Component>()
+        private val cache = FixedIdentityMap<Component, Component>(128)
 
         private fun cloneBlack(c: Component): Component {
             return cache.getOrPut(c) {

@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.TooltipRenderEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
@@ -39,7 +40,7 @@ object ItemAge : Feature(
         "Show Item Age",
     )
 
-    private val timestamps = IdentityHashMap<ItemStack, ZonedDateTime>()
+    private val timestamps = FixedIdentityMap<ItemStack, ZonedDateTime>(128)
     private val EMPTY = ZonedDateTime.now()
 
     override fun initialize() {
@@ -82,7 +83,7 @@ object ItemAge : Feature(
 
                 ZonedDateTime.of(ldt, ZoneId.of("America/Toronto"))
                     .withZoneSameInstant(ZoneId.systemDefault())
-            } ?: return@on
+            }
 
             // Identity-sensitive operation on an instance of value type 'ZonedDateTime!' may cause unexpected behavior or errors
             if (time === EMPTY) return@on

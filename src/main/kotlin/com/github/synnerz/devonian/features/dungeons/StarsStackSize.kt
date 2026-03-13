@@ -5,9 +5,9 @@ import com.github.synnerz.devonian.api.events.PostRenderHotbarSlotEvent
 import com.github.synnerz.devonian.api.events.PostRenderSlotEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.world.item.ItemStack
-import java.util.IdentityHashMap
 import kotlin.jvm.optionals.getOrNull
 
 object StarsStackSize : Feature(
@@ -21,7 +21,7 @@ object StarsStackSize : Feature(
             val EMPTY = Entry("", 0)
         }
     }
-    private val cache = IdentityHashMap<ItemStack, Entry>()
+    private val cache = FixedIdentityMap<ItemStack, Entry>(128)
 
     private fun draw(stack: ItemStack, x: Int, y: Int, ctx: GuiGraphics) {
         if (stack.isEmpty) return
@@ -34,7 +34,7 @@ object StarsStackSize : Feature(
             val amount = "$stars"
             val width = minecraft.font.width(amount)
             return@getOrPut Entry(amount, width)
-        } ?: return
+        }
         if (entry === Entry.EMPTY) return
 
         ctx.drawString(

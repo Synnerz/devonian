@@ -7,11 +7,11 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.EnchantRegistry
 import com.github.synnerz.devonian.utils.Enchantment
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import com.github.synnerz.devonian.utils.UltimateEnchant
 import com.github.synnerz.devonian.utils.UnknownEnchant
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
-import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 object EnchantAbbreviation : Feature(
@@ -21,7 +21,7 @@ object EnchantAbbreviation : Feature(
     subcategory = "Inventory",
 ) {
     private val EMPTY = UnknownEnchant("_", "_") to 0
-    private val cache = IdentityHashMap<ItemStack, Pair<Enchantment, Int>>()
+    private val cache = FixedIdentityMap<ItemStack, Pair<Enchantment, Int>>(128)
 
     override fun initialize() {
         on<PostRenderSlotsEvent> { event ->
@@ -32,19 +32,19 @@ object EnchantAbbreviation : Feature(
                 val data = cache.getOrPut(item) {
                     val data = ItemUtils.extraAttributes(item) ?: return@getOrPut EMPTY
 
-                    val id = data.getString("id")?.getOrNull() ?: return@getOrPut EMPTY
+                    val id = data.getString("id").getOrNull() ?: return@getOrPut EMPTY
                     if (id != "ENCHANTED_BOOK") return@getOrPut EMPTY
 
-                    val enchs = data.getCompound("enchantments")?.getOrNull() ?: return@getOrPut EMPTY
+                    val enchs = data.getCompound("enchantments").getOrNull() ?: return@getOrPut EMPTY
                     if (enchs.size() != 1) return@getOrPut EMPTY
 
                     val entry = enchs.entrySet().firstOrNull() ?: return@getOrPut EMPTY
                     val name = entry.key
                     val ench = EnchantRegistry.getOrUnknownNbt(name)
 
-                    val tier = entry.value.asInt()?.getOrNull() ?: 1
+                    val tier = entry.value.asInt().getOrNull() ?: 1
                     return@getOrPut ench to tier
-                } ?: return@forEach
+                }
                 if (data === EMPTY) return@forEach
 
                 val f = minecraft.font

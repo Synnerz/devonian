@@ -2,10 +2,10 @@ package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.FixedIdentityMap
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.contents.PlainTextContents
-import java.util.*
 
 object OldMasterStar : Feature(
     "oldMasterStar",
@@ -14,7 +14,7 @@ object OldMasterStar : Feature(
 ) {
     private val masterStars = listOf("➊", "➋", "➌", "➍", "➎")
 
-    private val cache = IdentityHashMap<Component, Component>()
+    private val cache = FixedIdentityMap<Component, Component>(128)
 
     fun transformName(name: Component): Component {
         return cache.getOrPut(name) {
@@ -49,7 +49,7 @@ object OldMasterStar : Feature(
             }
 
             return@getOrPut comp
-        } ?: name
+        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
