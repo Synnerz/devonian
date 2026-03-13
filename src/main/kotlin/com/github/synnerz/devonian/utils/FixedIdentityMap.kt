@@ -8,9 +8,9 @@ class FixedIdentityMap<K, V>(val maxSize: Int) : MutableMap<K, V> {
     }
 
     override val size: Int = delegate.size
-    override val keys: MutableSet<K> = throw UnsupportedOperationException("lazy")
+    override val keys: MutableSet<K> get() = throw UnsupportedOperationException("lazy")
     override val values: MutableCollection<V> = delegate.values
-    override val entries: MutableSet<MutableMap.MutableEntry<K, V>> = throw UnsupportedOperationException("lazy")
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() = throw UnsupportedOperationException("lazy")
 
     override fun get(key: K): V? {
         return delegate[KeyWrapper(key)]
