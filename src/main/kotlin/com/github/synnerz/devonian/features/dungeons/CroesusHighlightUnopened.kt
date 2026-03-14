@@ -1,12 +1,10 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.dungeon.CroesusListener
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import net.minecraft.world.item.Items
 import java.awt.Color
-import java.util.concurrent.CopyOnWriteArraySet
 
 object CroesusHighlightUnopened : Feature(
     "croesusHighlightUnopened",
@@ -21,45 +19,29 @@ object CroesusHighlightUnopened : Feature(
         "Hides the croesus chests that have been opened.",
         "Croesus Hide Opened",
     )
-    private var inCroesus = false
-    private val whitelist = CopyOnWriteArraySet<Int>()
-    private val blacklist = CopyOnWriteArraySet<Int>()
+    private val whitelist = mutableListOf<Int>()
+    private val blacklist = mutableListOf<Int>()
 
     override fun initialize() {
-        on<ServerContainerOpenEvent> { event ->
-            inCroesus = event.titleStr == "Croesus"
-        }
-
-        on<ServerContainerCloseEvent> {
-            blacklist.clear()
-            whitelist.clear()
-        }
-
-        on<ClientContainerCloseEvent> {
-            blacklist.clear()
-            whitelist.clear()
-        }
-
-        on<ServerContainerSetSlotEvent> { event ->
-            if (event.slot == 0) {
-                blacklist.clear()
-                whitelist.clear()
+        on<CroesusListener.CroesusChestSet> { event ->
+            val data = event.data
+            if (data.hasNoChest || data.hasOpened) {
+                blacklist.add(data.slot)
+                return@on
             }
-            if (event.slot > 45) return@on
+            if (!data.canOpen) return@on
 
-            val itemStack = event.itemStack
-            if (itemStack.item != Items.PLAYER_HEAD) return@on
+            whitelist.add(data.slot)
+        }
 
-            val lore = ItemUtils.lore(itemStack) ?: return@on
-            for (line in lore) {
-                if (line.contains("Opened Chest: ") || line.contains("No more chests to open!")) {
-                    blacklist.add(event.slot)
-                    continue
-                }
-                if (line != "No chests opened yet!") continue
+        on<CroesusListener.CroesusPageSwitch> {
+            whitelist.clear()
+            blacklist.clear()
+        }
 
-                whitelist.add(event.slot)
-            }
+        on<CroesusListener.ClosedCroesus> {
+            whitelist.clear()
+            blacklist.clear()
         }
 
         on<RenderSlotEvent> { event ->
