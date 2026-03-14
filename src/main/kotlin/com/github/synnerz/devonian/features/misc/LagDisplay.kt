@@ -1,8 +1,10 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 
 object LagDisplay : TextHudFeature(
@@ -11,6 +13,10 @@ object LagDisplay : TextHudFeature(
     subcategory = "General",
     searchTags = setOf("zzz"),
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Location.stateInSkyblock)
+    }
+
     private val SETTING_THRESH = addSlider(
         "thresh",
         300.0,

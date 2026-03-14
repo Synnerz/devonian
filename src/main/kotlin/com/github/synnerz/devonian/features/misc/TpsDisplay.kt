@@ -1,14 +1,20 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 import java.util.*
 import kotlin.math.min
 
 object TpsDisplay : TextHudFeature("tpsDisplay") {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Location.stateInSkyblock)
+    }
+
     private val SETTING_SHOW_CUR = addSwitch(
         "showCurrent",
         true,
