@@ -440,6 +440,7 @@ object Devonian : ClientModInitializer {
         HypixelModApi.initialize()
         Party.initialize()
         CroesusListener.initialize()
+        MayorAPI.initialize()
         Stages.initialize()
         ChatUtils.initialize()
 
