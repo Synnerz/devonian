@@ -126,7 +126,7 @@ object CampHelper : Feature(
                 packet.xa,
                 packet.ya,
                 packet.za,
-                if (Stages.FirstWatcherSpawn.hasFinished()) 40 else 80,
+                if (Stages.WatcherDialog.hasFinished()) 40 else 80,
             )
         }
 

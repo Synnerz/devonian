@@ -13,9 +13,10 @@ object Stages {
     val Root: SequentialSplitStage
 
     val Clear: SplitStage
+    val WatcherSplit: SplitStage
 
     val BloodOpen = SplitStage().withName("&4Blood").withLongTime()
-    val FirstWatcherSpawn = SplitStage().withName("&cFirst Spawn").withLongTime()
+    val WatcherDialog = SplitStage().withName("&cDialog").withLongTime()
     val WatcherClear = SplitStage().withName("&cWatcher").withLongTime()
     val PortalEnter = SplitStage("[BOSS] The Watcher: You have proven yourself. You may pass.")
         .withName("&dPortal Enter").withLongTime()
@@ -67,7 +68,7 @@ object Stages {
                             arrayOf(
                                 SequentialSplitStage(
                                     arrayOf(
-                                        FirstWatcherSpawn,
+                                        WatcherDialog,
                                         SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
                                     )
                                 ),
@@ -80,6 +81,23 @@ object Stages {
                 BossEntry,
             )
         )
+
+        WatcherSplit = SplitStage(arrayOf(
+            SequentialSplitStage(arrayOf(
+                SplitStage(
+                    "^(\\[BOSS] The Watcher: .+?|The BLOOD DOOR has been opened!)$".toRegex(),
+                    arrayOf(
+                        SequentialSplitStage(
+                            arrayOf(
+                                WatcherDialog,
+                                SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
+                            )
+                        ),
+                        WatcherClear
+                    )
+                )
+            ))
+        ))
 
         F1 = SequentialSplitStage(
             "[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable.",

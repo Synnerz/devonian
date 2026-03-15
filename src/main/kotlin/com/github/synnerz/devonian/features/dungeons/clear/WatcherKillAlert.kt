@@ -17,7 +17,7 @@ object WatcherKillAlert : Feature(
     subcategory = "Alerts"
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.FirstWatcherSpawn.hasFinishedState)
+        return super.createRequirements() + listOf(Stages.WatcherDialog.hasFinishedState)
     }
 
     private val SETTING_PLAY_SOUND = addSwitch(
@@ -36,7 +36,7 @@ object WatcherKillAlert : Feature(
 
     override fun initialize() {
         on<ClientThreadServerTickEvent> {
-            val stage = Stages.FirstWatcherSpawn
+            val stage = Stages.WatcherDialog
             if (!stage.hasFinished()) return@on
 
             if (!assigned) {
