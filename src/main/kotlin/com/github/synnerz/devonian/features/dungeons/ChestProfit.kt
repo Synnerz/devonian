@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.SkyblockPrices
-import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ClientContainerCloseEvent
+import com.github.synnerz.devonian.api.events.GuiClickEvent
 import com.github.synnerz.devonian.api.events.PostRenderGuiEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
@@ -14,10 +16,11 @@ import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
-import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import net.minecraft.world.item.Items
 import kotlin.math.roundToInt
 
@@ -25,13 +28,8 @@ object ChestProfit : TextHudFeature(
     "chestProfit",
     "Displays the amount of profit that is in the dungeon chests you currently have opened (only works inside dungeons).",
     Categories.DUNGEONS,
-    "catacombs",
     subcategory = "HUD",
 ) {
-    override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.BossEnd.isActiveState)
-    }
-
     private val SETTING_USE_ESSENCE_PROFIT = addSwitch(
         "useEssenceProfit",
         true,
@@ -119,10 +117,18 @@ object ChestProfit : TextHudFeature(
         }
 
         on<ServerContainerCloseEvent> {
+            if (inChest && Location.area == "dungeon hub") Scheduler.scheduleTask {
+                clearLines()
+                reset()
+            }
             inChest = false
         }
 
         on<ClientContainerCloseEvent> {
+            if (inChest && Location.area == "dungeon hub") {
+                clearLines()
+                reset()
+            }
             inChest = false
         }
 
@@ -239,6 +245,11 @@ object ChestProfit : TextHudFeature(
 
     private fun updateDisplay() {
         clearLines()
+        if (currentChest == null && Location.area == "dungeon hub") {
+            reset()
+            return
+        }
+
         for (data in currentChestData.entries.toList().sortedByDescending { it.value.profit() }) {
             val v = data.value
             val items = v.itemData
