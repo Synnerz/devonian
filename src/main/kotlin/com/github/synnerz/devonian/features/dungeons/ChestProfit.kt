@@ -42,6 +42,19 @@ object ChestProfit : TextHudFeature(
         "Compact mode stops showing the entire item list and only shows the chest name with its profit.",
         "Chest Profit Compact Mode",
     )
+    private val SETTING_BLOCK_KISMET = addSwitch(
+        "blockKismet",
+        false,
+        "Blocks kismet if the profit is above the threshold",
+        "Block Kismet"
+    )
+    private val SETTING_KISMET_THRESHOLD = addSlider(
+        "kismetThreshold",
+        1.0,
+        1.0, 100.0,
+        "value will be multiplied by a million (so if 1 = 1m threshold)",
+        "Block Kismet Threshold"
+    )
     private val chestNames = setOf(
         "Wood",
         "Gold",
@@ -64,6 +77,7 @@ object ChestProfit : TextHudFeature(
         "Combo",
         "Bank"
     )
+    private val blockSound = SoundEvents.NOTE_BLOCK_BASS.value()
     val currentChestData = mapOf(
         "Wood" to ChestData("&fWood Chest&r"),
         "Gold" to ChestData("&6Gold Chest&r"),
@@ -217,6 +231,22 @@ object ChestProfit : TextHudFeature(
             if (!openedChest) return@on
             if (inChest) return@on
             draw(it.ctx)
+        }
+
+        on<GuiClickEvent> { event ->
+            val slot = ScreenUtils.cursorSlot(event.screen) ?: return@on
+            if (slot.container == minecraft.player?.inventory || slot.index != 50) return@on
+            if (currentChest == null || !SETTING_BLOCK_KISMET.get()) return@on
+            val chestData = currentChestData[currentChest] ?: return@on
+            val limit = SETTING_KISMET_THRESHOLD.get() * 1_000_000
+            if (chestData.profit() < limit) return@on
+
+            minecraft.level?.playPlayerSound(
+                blockSound,
+                SoundSource.MASTER,
+                1f, 0.5f,
+            )
+            event.cancel()
         }
 
         on<PostRenderGuiEvent> {
