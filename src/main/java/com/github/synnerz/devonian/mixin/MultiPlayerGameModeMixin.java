@@ -33,11 +33,25 @@ public class MultiPlayerGameModeMixin {
             method = "performUseItemOn",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;", shift = At.Shift.AFTER
+                    target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
+                    shift = At.Shift.AFTER
             ),
             cancellable = true
     )
     private void devonian$onItemUse(LocalPlayer localPlayer, InteractionHand interactionHand, BlockHitResult blockHitResult, CallbackInfoReturnable<InteractionResult> cir, @Local BlockPos blockPos, @Local ItemStack itemStack) {
+        if (new BlockInteractEvent(itemStack, blockPos).post()) cir.setReturnValue(InteractionResult.PASS);
+    }
+
+    @Inject(
+            method = "performUseItemOn",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/context/UseOnContext;<init>(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)V",
+                    shift = At.Shift.AFTER
+            ),
+            cancellable = true
+    )
+    private void devonian$onItemOnUIse(LocalPlayer localPlayer, InteractionHand interactionHand, BlockHitResult blockHitResult, CallbackInfoReturnable<InteractionResult> cir, @Local BlockPos blockPos, @Local ItemStack itemStack) {
         if (new BlockInteractEvent(itemStack, blockPos).post()) cir.setReturnValue(InteractionResult.PASS);
     }
 }
