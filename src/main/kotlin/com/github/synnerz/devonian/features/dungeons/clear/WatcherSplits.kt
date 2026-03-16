@@ -4,7 +4,9 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
@@ -27,7 +29,7 @@ object WatcherSplits : TextHudFeature(
         "format",
         0,
         listOf("Real Time", "Server Ticks", "Both"),
-        "\"Kill In\" cannot be set in real time because its ticks prediction",
+        "",
         "Time Format",
     )
     private val SETTING_SHOW_IN_BOSS = addSwitch(
@@ -37,55 +39,60 @@ object WatcherSplits : TextHudFeature(
         "Show In Boss",
     )
 
-    private var predictedTicks = -1
+    private var entityId = -1
+    private var sent = false
+    private var dialogTicks = -1
 
     override fun initialize() {
+        on<NameChangeEvent> { event ->
+            if (!event.name.contains(" The Watcher ")) return@on
+            entityId = event.entityId
+        }
+
         on<ClientThreadServerTickEvent> {
+            if (dialogTicks != -1) return@on
             val stage = Stages.WatcherDialog
             if (!stage.hasFinished()) return@on
 
-            if (predictedTicks == -1) {
-                val ticks = stage.getTime().tick
-                val guess = when {
-                    ticks < 390 -> 22
-                    ticks < 441 -> 23
-                    ticks < 460 -> 25
-                    ticks < 490 -> 26
-                    ticks < 510 -> 27
-                    ticks < 550 -> 29
-                    ticks < 570 -> 31
-                    ticks < 610 -> 32
-                    ticks < 630 -> 34
-                    ticks < 670 -> 35
-                    ticks < 690 -> 37
-                    ticks < 730 -> 38
-                    else -> ticks * 20 + 3
-                } / 0.05
+            dialogTicks = EventBus.serverTicks()
+        }
 
-                predictedTicks = EventBus.serverTicks() + guess.toInt() - ticks
-                ChatUtils.sendMessage("&cWatcher Guess&f: &b${"%.2fs".format(guess * 0.05)}", true)
+        on<TickEvent> {
+            if (Stages.WatcherClear.hasFinished() && !sent) {
+                Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]).forEach {
+                    ChatUtils.sendMessage(it)
+                }
+                sent = true
+                return@on
             }
+
+            if (entityId == -1) return@on
+            if (Stages.WatcherDialog.isActive() && !Stages.WatcherMove.isActive()) {
+                Stages.WatcherMove.start()
+            }
+            if (!Stages.WatcherDialog.hasFinished() || Stages.WatcherMove.hasFinished() || dialogTicks == -1) return@on
+            if (EventBus.serverTicks() - dialogTicks < 45) return@on
+
+            val entity = minecraft.level?.getEntity(entityId - 1) ?: return@on
+            if (
+                entity.xo == entity.x &&
+                entity.yo == entity.y &&
+                entity.zo == entity.z
+            ) return@on
+            Stages.WatcherMove.stop()
         }
 
         on<RenderOverlayEvent> {
-            setLines(buildList {
-                // this stupid splits system sucks
-                val stages = Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()])
-                addAll(stages)
-                if (stages.isEmpty()) return@buildList
-                if (predictedTicks != -1) {
-                    val ticks = (predictedTicks - EventBus.serverTicks()).coerceAtLeast(0)
-                    add("&cKill In&f: &b${"%.2fs".format(ticks * 0.05)}")
-                }
-                else
-                    add("&cKill In&f: &7...")
-            })
+            setLines(Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]))
             draw(it.ctx)
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        predictedTicks = -1
+        entityId = -1
+        dialogTicks = -1
+        sent = false
+        Stages.WatcherMove.reset()
     }
 
     override fun getEditText(): List<String> = Stages.WatcherSplit.getSplits(TimeUnit.Format.Both, TimeUnit.now())

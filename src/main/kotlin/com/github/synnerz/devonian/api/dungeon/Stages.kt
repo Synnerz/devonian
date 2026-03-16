@@ -16,10 +16,11 @@ object Stages {
     val WatcherSplit: SplitStage
 
     val BloodOpen = SplitStage().withName("&4Blood").withLongTime()
-    val WatcherDialog = SplitStage().withName("&cDialog").withLongTime()
+    val WatcherDialog = SplitStage().withName("&cWatcher Dialog").withLongTime()
     val WatcherClear = SplitStage().withName("&cWatcher").withLongTime()
     val PortalEnter = SplitStage("[BOSS] The Watcher: You have proven yourself. You may pass.")
         .withName("&dPortal Enter").withLongTime()
+    val WatcherMove = SplitStage().withName("&cWatcher Move")
 
     val BossEntry = SplitStage().withName("&9Boss Entry")
 
@@ -93,6 +94,7 @@ object Stages {
                                 SplitStage("[BOSS] The Watcher: Let's see how you can handle this.")
                             )
                         ),
+                        WatcherMove,
                         WatcherClear
                     )
                 )

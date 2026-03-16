@@ -41,9 +41,8 @@ object ItemUtils {
     }
 
     fun fakeSkull(texture: String): ItemStack {
-        val uuid = UUID.randomUUID()
         val gameProfile = GameProfile(
-            uuid,
+            UUID.randomUUID(),
             "devonian\$fakeSkull",
             PropertyMap(ImmutableMultimap.of(
                 "textures",
