@@ -199,7 +199,7 @@ object SimonSaysSolver : Feature(
             }
         }
 
-        on<BlockInteractEvent> { event ->
+        on<ClientBlockInteractEvent> { event ->
             val pos = event.pos
 
             if (pos.x != 110) {

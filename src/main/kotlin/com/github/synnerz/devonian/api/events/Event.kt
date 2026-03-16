@@ -180,7 +180,13 @@ class WorldChangeEvent(
     val subarea: String?
 ) : Event
 
+@Threaded
 class BlockInteractEvent(
+    val itemStack: ItemStack,
+    val pos: BlockPos
+) : CancellableEvent()
+
+class ClientBlockInteractEvent(
     val itemStack: ItemStack,
     val pos: BlockPos
 ) : CancellableEvent()
