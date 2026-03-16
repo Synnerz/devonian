@@ -67,7 +67,7 @@ object LeapCounter : TextHudFeature(
             lastLeap = System.currentTimeMillis()
         }
 
-        on<TickEvent> { event ->
+        on<TickEvent> {
             if (rolePositions.isEmpty()) {
                 rolePositions.addAll(leapPositions)
                 return@on
@@ -82,19 +82,20 @@ object LeapCounter : TextHudFeature(
                 pos = it
             }
 
-            if (pos == null || pos!!.triggered) {
+            if (pos == null || pos.triggered) {
                 leapedPlayers.clear()
                 clearLines()
                 return@on
             }
 
             Dungeons.players.forEach { (k, v) ->
-                val entity = v.entity ?: return@forEach
-                if (entity.id == player.id) return@forEach
+                val entityId = v.entity?.id ?: return@forEach
+                if (entityId == player.id) return@forEach
+                val entity = minecraft.level?.getEntity(entityId) ?: return@forEach
 
-                val dist = entity.distanceToSqr(pos!!.x, pos!!.y, pos!!.z)
+                val dist = entity.distanceToSqr(pos.x, pos.y, pos.z)
 
-                if (dist > pos!!.dist) return@forEach
+                if (dist > pos.dist * pos.dist) return@forEach
                 if (leapedPlayers.contains(v)) return@forEach
 
                 leapedPlayers.add(v)
@@ -104,12 +105,12 @@ object LeapCounter : TextHudFeature(
                 return@on
             }
 
-            if (leapedPlayers.size >= pos!!.playerCount) {
-                pos!!.triggered = true
+            if (leapedPlayers.size >= pos.playerCount) {
+                pos.triggered = true
                 if (SETTING_SHOW_ALERT.get())
-                    Alert.show("&9${pos!!.playerCount} have leaped", 1000, SETTING_PLAY_SOUND.get())
+                    Alert.show("&9${pos.playerCount} have leaped", 1000, SETTING_PLAY_SOUND.get())
             }
-            setLine("${StringUtils.colorForNumber(leapedPlayers.size, pos!!.playerCount)}${leapedPlayers.size}&f/&94 Leaped")
+            setLine("${StringUtils.colorForNumber(leapedPlayers.size, pos.playerCount)}${leapedPlayers.size}&f/&94 Leaped")
         }
 
         on<RenderOverlayEvent> {
