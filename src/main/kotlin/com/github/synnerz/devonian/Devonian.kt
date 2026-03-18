@@ -387,6 +387,7 @@ object Devonian : ClientModInitializer {
             OwnNameTag,
             CropFeverTimer,
             WatcherSplits,
+            TriviaSplits,
 
             // Debug
             CopyItem,
