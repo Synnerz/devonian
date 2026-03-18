@@ -61,6 +61,7 @@ object SharpShooterSolver : Feature(
     )
     private val basePosition = SolverPosition(63, 127, 35)
     private val whitelist = CopyOnWriteArraySet<SolverPosition>()
+    private var sentAlert = false
 
     private data class SolverPosition(val x: Int, val y: Int, val z: Int, var hit: Boolean = false)
 
@@ -108,14 +109,17 @@ object SharpShooterSolver : Feature(
                 )
             }
 
-            if (whitelist.size == 8 && SETTING_SHOW_ALERT.get() && SETTING_USE_SCANNER.get())
+            if (whitelist.size == 8 && SETTING_SHOW_ALERT.get() && SETTING_USE_SCANNER.get() && !sentAlert) {
+                sentAlert = false
                 Alert.show("&aSharpShooter Done", 1500, SETTING_PLAY_SOUND.get())
+            }
             if (whitelist.size >= 9) whitelist.clear()
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         whitelist.clear()
+        sentAlert = false
     }
 
     private fun onEmeraldBlock(bp: BlockPos) {
