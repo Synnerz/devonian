@@ -69,6 +69,10 @@ object WatcherSplits : TextHudFeature(
             if (Stages.WatcherDialog.isActive() && !Stages.WatcherMove.isActive()) {
                 Stages.WatcherMove.start()
             }
+            if (Stages.WatcherMove.hasStarted() && Stages.WatcherClear.hasFinished()) {
+                Stages.WatcherMove.stop()
+                return@on
+            }
             if (entityId == -1) return@on
             if (!Stages.WatcherDialog.hasFinished() || Stages.WatcherMove.hasFinished() || dialogTicks == -1) return@on
             if (EventBus.serverTicks() - dialogTicks < 45) return@on
