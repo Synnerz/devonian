@@ -59,9 +59,10 @@ object WatcherSplits : TextHudFeature(
 
         on<TickEvent> {
             if (Stages.WatcherClear.hasFinished() && !sent) {
-                Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]).forEach {
-                    ChatUtils.sendMessage(it)
-                }
+                ChatUtils.sendMessage(
+                    Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]).joinToString(" &f| "),
+                    true
+                )
                 sent = true
                 return@on
             }
