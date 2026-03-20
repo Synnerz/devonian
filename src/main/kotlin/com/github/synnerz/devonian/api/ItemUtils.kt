@@ -54,4 +54,7 @@ object ItemUtils {
             set(DataComponents.PROFILE, ResolvableProfile.createResolved(gameProfile))
         }
     }
+
+    fun texture(itemStack: ItemStack): String?
+        = itemStack.get(DataComponents.PROFILE)?.partialProfile()?.properties?.get("textures")?.firstOrNull()?.value
 }
