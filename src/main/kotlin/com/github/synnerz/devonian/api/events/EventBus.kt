@@ -242,7 +242,8 @@ object EventBus {
                 }
 
                 is ClientboundContainerSetSlotPacket -> {
-                    ServerContainerSetSlotEvent(packet.containerId, packet.stateId, packet.item, packet.slot).post()
+                    if (ServerContainerSetSlotEvent(packet.containerId, packet.stateId, packet.item, packet.slot).post())
+                        event.cancel()
                 }
             }
         }

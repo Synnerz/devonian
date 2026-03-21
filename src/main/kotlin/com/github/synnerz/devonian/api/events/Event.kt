@@ -613,7 +613,7 @@ class ContainerRenderEvent(
     val stateId: Int,
     val itemStack: ItemStack,
     val slot: Int,
-) : Event
+) : CancellableEvent()
 
 class ClientContainerCloseEvent(
     val containerId: Int
