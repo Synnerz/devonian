@@ -41,6 +41,12 @@ object ExperimentationTable : Feature(
         "Hides the wrong slots in chronomatron",
         "Hide Wrong Chrono"
     )
+    private val SETTING_NO_ABOVE_THIRD = addSwitch(
+        "noAboveThird",
+        true,
+        "Stops highlighting the chronomatron solutions that are above the third one",
+        "No Above Third"
+    )
     private val superpairsRegex = "^Superpairs \\(\\w+\\)$".toRegex()
     private val chronomatronRegex = "^Chronomatron \\([\\w ]+\\)$".toRegex()
     // TODO: this is only used for debugging, remove once feature is fully done
@@ -267,6 +273,7 @@ object ExperimentationTable : Feature(
                 event.cancel()
             return
         }
+        if (SETTING_NO_ABOVE_THIRD.get() && jdx > 2) return
 
         event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, if (jdx == 0) Color.GREEN.rgb else if (jdx == 1) Color.ORANGE.rgb else Color.RED.rgb)
     }
