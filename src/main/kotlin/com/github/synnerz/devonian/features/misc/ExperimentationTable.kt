@@ -242,7 +242,7 @@ object ExperimentationTable : Feature(
         val idx = slot.containerSlot
         val jdx = ultraSlots.indexOfFirst { it.slot == idx }
         if (jdx == -1) {
-            if (SETTING_HIDE_WRONG_ULTRA.get() && idx != 45)
+            if (SETTING_HIDE_WRONG_ULTRA.get() && idx != 49)
                 event.cancel()
             return
         }
@@ -263,7 +263,7 @@ object ExperimentationTable : Feature(
         val idx = slot.containerSlot
         val jdx = chronoSlots.indexOfFirst { it.slot1 == idx || it.slot2 == idx }
         if (jdx == -1) {
-            if (SETTING_HIDE_WRONG_CHRONO.get() && idx != 45)
+            if (SETTING_HIDE_WRONG_CHRONO.get() && idx != 49)
                 event.cancel()
             return
         }
