@@ -388,6 +388,7 @@ object Devonian : ClientModInitializer {
             CropFeverTimer,
             WatcherSplits,
             TriviaSplits,
+            ExperimentationTable,
 
             // Debug
             CopyItem,
