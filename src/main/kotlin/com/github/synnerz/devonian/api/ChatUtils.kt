@@ -16,7 +16,7 @@ import java.util.*
 import kotlin.math.roundToInt
 
 object ChatUtils {
-    const val prefix = "&8[&3&lDevonian&8]"
+    const val prefix = "&8&l[&3&lDevonian&8&l]&r"
     val chatLineIds = mutableMapOf<GuiMessage, Int>()
     val lineCache = IdentityHashMap<GuiMessage.Line, GuiMessage>()
     val chatComponentAccessor get() = Minecraft.getInstance().gui.chat as ChatComponentAccessor
