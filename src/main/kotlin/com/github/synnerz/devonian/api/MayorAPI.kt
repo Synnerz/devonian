@@ -58,4 +58,9 @@ object MayorAPI {
         if (mayorData == null) return false
         return mayorData!!.perks.any { it.name.lowercase() == "ezpz" } || mayorData!!.minister.perk.name.lowercase() == "ezpz"
     }
+
+    fun hasRitual(): Boolean {
+        if (mayorData == null) return false
+        return mayorData!!.perks.any { it.name.lowercase() == "mythological ritual" } || mayorData!!.minister.perk.name.lowercase() == "mythological ritual"
+    }
 }
