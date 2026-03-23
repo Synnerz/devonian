@@ -609,9 +609,16 @@ object DungeonMap : HudFeature(
         "Rotate Map Around Player",
         subcategory = "Behavior",
     )
+    private val SETTING_SHOW_IN_BOSS = addSwitch(
+        "showInBoss",
+        false,
+        "Shows the map in boss room",
+        "Show In Boss",
+        subcategory = "Behavior"
+    )
 
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Dungeons.inBoss.map(Boolean::not))
+        return super.createRequirements() + listOf(Dungeons.inBoss.map(Boolean::not).zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
     }
 
     private val mapRenderer = DungeonMapBaseRenderer()
