@@ -64,8 +64,40 @@ object DevonianCommand {
                 "\n§r&r §f- §fResets the colors back to default"))
         1
     }
+    private val catacombsFloors = listOf(
+        "catacombs_floor_one",
+        "catacombs_floor_two",
+        "catacombs_floor_three",
+        "catacombs_floor_four",
+        "catacombs_floor_five",
+        "catacombs_floor_six",
+        "catacombs_floor_seven",
+    )
+    private val kuudraTiers = listOf(
+        "normal",
+        "hot",
+        "burning",
+        "fiery",
+        "infernal",
+    )
 
     fun initialize() {
+        catacombsFloors.forEachIndexed { idx, cmd ->
+            BaseCommand("f${idx + 1}") {
+                ChatUtils.command("/joindungeon $cmd")
+                1
+            }.register()
+            BaseCommand("m${idx + 1}") {
+                ChatUtils.command("/joindungeon master_$cmd")
+                1
+            }.register()
+        }
+        kuudraTiers.forEachIndexed { idx, cmd ->
+            BaseCommand("k${idx + 1}") {
+                ChatUtils.command("joininstance kuudra_${cmd}")
+                1
+            }.register()
+        }
         command.register()
     }
 
