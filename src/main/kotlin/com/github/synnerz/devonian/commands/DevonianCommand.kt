@@ -97,6 +97,10 @@ object DevonianCommand {
                 ChatUtils.command("joininstance kuudra_${cmd}")
                 1
             }.register()
+            BaseCommand("t${idx + 1}") {
+                ChatUtils.command("joininstance kuudra_${cmd}")
+                1
+            }.register()
         }
         command.register()
     }
