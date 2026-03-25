@@ -59,6 +59,7 @@ object TriviaSplits : TextHudFeature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         sent = false
+        Stages.QuizSplits.reset()
     }
 
     override fun getEditText(): List<String> = Stages.QuizSplits.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()], TimeUnit.now())
