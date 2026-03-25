@@ -16,9 +16,24 @@ object Stages {
     val WatcherSplit: SplitStage
     val QuizSplits: SplitStage
 
-    val QuizQuestion1 = SplitStage("^\\[STATUE] Oruo the Omniscient: \\w+ answered Question #1 correctly!".toRegex()).withName("&dQ #1")
-    val QuizQuestion2 = SplitStage("^\\[STATUE] Oruo the Omniscient: \\w+ answered Question #2 correctly!".toRegex()).withName("&dQ #2")
-    val QuizQuestion3 = SplitStage("^\\[STATUE] Oruo the Omniscient: \\w+ answered the final question correctly!$".toRegex()).withName("&dQ #3")
+    val QuizQuestion1 = SequentialSplitStage(
+        arrayOf(
+            SplitStage("^ *Question #1$".toRegex()).withName("&dQ1"),
+            SplitStage("^\\[STATUE] Oruo the Omniscient: \\w+ answered Question #1 correctly!$".toRegex())
+        )
+    )
+    val QuizQuestion2 = SequentialSplitStage(
+        arrayOf(
+            SplitStage("^ *Question #2$".toRegex()).withName("&dQ2"),
+            SplitStage("^\\[STATUE] Oruo the Omniscient: \\w+ answered Question #2 correctly!$".toRegex())
+        )
+    )
+    val QuizQuestion3 = SequentialSplitStage(
+        arrayOf(
+            SplitStage("^ *Question #3$".toRegex()).withName("&dQ3"),
+            SplitStage("^\\[STATUE] Oruo the Omniscient: \\w+ answered the final question correctly!$".toRegex())
+        )
+    )
 
     val BloodOpen = SplitStage().withName("&4Blood").withLongTime()
     val WatcherDialog = SplitStage().withName("&cWatcher Dialog").withLongTime()
@@ -109,12 +124,12 @@ object Stages {
         QuizSplits = SplitStage(
             arrayOf(
                 SequentialSplitStage(
-                    "^\\[STATUE] Oruo the Omniscient: I am Oruo the Omniscient\\. I have lived many lives\\. I have learned all there is to know\\.$".toRegex(),
                     arrayOf(
-                    QuizQuestion1,
-                    QuizQuestion2,
-                    QuizQuestion3,
-                ))
+                        QuizQuestion1,
+                        QuizQuestion2,
+                        QuizQuestion3
+                    )
+                )
             )
         )
 
