@@ -100,5 +100,5 @@ object WatcherSplits : TextHudFeature(
         Stages.WatcherMove.reset()
     }
 
-    override fun getEditText(): List<String> = Stages.WatcherSplit.getSplits(TimeUnit.Format.Both, TimeUnit.now())
+    override fun getEditText(): List<String> = Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()], TimeUnit.now())
 }
