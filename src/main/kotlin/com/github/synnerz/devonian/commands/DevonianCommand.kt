@@ -84,11 +84,11 @@ object DevonianCommand {
     fun initialize() {
         catacombsFloors.forEachIndexed { idx, cmd ->
             BaseCommand("f${idx + 1}") {
-                ChatUtils.command("/joindungeon $cmd")
+                ChatUtils.command("joindungeon $cmd")
                 1
             }.register()
             BaseCommand("m${idx + 1}") {
-                ChatUtils.command("/joindungeon master_$cmd")
+                ChatUtils.command("joindungeon master_$cmd")
                 1
             }.register()
         }
