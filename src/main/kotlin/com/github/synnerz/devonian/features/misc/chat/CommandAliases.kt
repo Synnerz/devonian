@@ -77,7 +77,7 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
     data class CommandAlias(var alias: String, var command: String) {
         fun onCommand(msg: String, event: CancellableEvent) {
             if (!shouldTrigger()) return
-            if (msg == alias) {
+            if (msg.equals(alias, ignoreCase = true)) {
                 event.cancel()
                 ChatUtils.say("/$command")
                 return
@@ -85,7 +85,7 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
 
             val cmd = msg.split(" ").getOrNull(0) ?: return
             val args = msg.split("$cmd ").getOrNull(1) ?: return
-            if (cmd != alias) return
+            if (cmd.lowercase() != alias.lowercase()) return
             event.cancel()
             ChatUtils.say("/$command $args")
         }
