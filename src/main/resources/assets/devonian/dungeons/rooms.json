@@ -1380,7 +1380,7 @@
     "shape": "2x2"
   },
   {
-    "name": "Overgrown",
+    "name": "Over\u200Bgrown",
     "type": "normal",
     "secrets": 3,
     "cores": [
