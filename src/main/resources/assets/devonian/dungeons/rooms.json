@@ -2010,7 +2010,7 @@
     "doors": "1000"
   },
   {
-    "name": "Stair Case",
+    "name": "Stair\u200Bcase",
     "type": "normal",
     "secrets": 3,
     "cores": [
