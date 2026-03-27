@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.api.events.UseItemEvent
+import com.github.synnerz.devonian.api.events.UseItemOnEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
@@ -13,6 +14,7 @@ import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvents
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.item.Items
 
 object EtherwarpSound : Feature(
@@ -67,14 +69,11 @@ object EtherwarpSound : Feature(
         }
 
         on<UseItemEvent> { event ->
-            val player = minecraft.player ?: return@on
-            val itemStack = player.getItemInHand(event.hand)
-            val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
-            if (sbId !in itemIds) return@on
-            val requireSneak = itemStack.item == Items.DIAMOND_SHOVEL || itemStack.item == Items.DIAMOND_SWORD
-            if (requireSneak && !player.isSteppingCarefully) return@on
+            onRightClick(event.hand)
+        }
 
-            lastClick = EventBus.serverTicks(true)
+        on<UseItemOnEvent> { event ->
+            onRightClick(event.hand)
         }
 
         on<SoundPlayEvent> { event ->
@@ -100,5 +99,16 @@ object EtherwarpSound : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         lastClick = -1
+    }
+
+    private fun onRightClick(hand: InteractionHand) {
+        val player = minecraft.player ?: return
+        val itemStack = player.getItemInHand(hand)
+        val sbId = ItemUtils.skyblockId(itemStack) ?: return
+        if (sbId !in itemIds) return
+        val requireSneak = itemStack.item == Items.DIAMOND_SHOVEL || itemStack.item == Items.DIAMOND_SWORD
+        if (requireSneak && !player.isSteppingCarefully) return
+
+        lastClick = EventBus.serverTicks(true)
     }
 }
