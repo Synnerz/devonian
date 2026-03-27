@@ -11,14 +11,23 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.ResolvableProfile
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 object ItemUtils {
     fun skyblockId(itemStack: ItemStack): String? {
         val nbt = extraAttributes(itemStack) ?: return null
         val itemId = nbt.getString("id")
         if (itemId.isEmpty) return null
+        val sbId = itemId.get()
+        if (sbId != "ENCHANTED_BOOK") return sbId
+        val enchantments = nbt.getCompound("enchantments")
+        if (enchantments.isEmpty) return sbId
+        val compound = enchantments.get()
+        val enchants = enchantments.get().keySet()
+        val name = enchants.firstOrNull() ?: return sbId
+        val level = compound.getInt(name).getOrNull() ?: return sbId
 
-        return itemId.get()
+        return "ENCHANTMENT_${name.uppercase()}_$level"
     }
 
     fun extraAttributes(itemStack: ItemStack): CompoundTag? {
