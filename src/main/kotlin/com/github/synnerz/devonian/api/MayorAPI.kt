@@ -20,12 +20,12 @@ object MayorAPI {
     data class MinisterData(
         val key: String, // category
         val name: String,
-        val perk: MinisterPerkData
+        val perk: MinisterPerkData?
     )
     data class MayorData(
         val key: String, // category
         val name: String,
-        val perks: List<MayorPerkData>,
+        val perks: List<MayorPerkData>?,
         val minister: MinisterData,
         val election: Any, // doesn't matter currently
     )
@@ -50,17 +50,17 @@ object MayorAPI {
             mayorData = mayor
             // TODO: maybe make this an event update thing so the apis themselves can hook onto it
             if (hasEzPz()) Dungeons.isPaul.value = true
-            println("Devonian\$MayorAPI(name=${mayor.name}, perks=${mayor.perks.joinToString { "${it.name}, " }}, minister=${mayor.minister.name}, ministerPerk=${mayor.minister.perk.name})")
+            println("Devonian\$MayorAPI(name=${mayor.name}, perks=${mayor.perks?.joinToString { "${it.name}, " }}, minister=${mayor.minister.name}, ministerPerk=${mayor.minister.perk?.name})")
         }
     }
 
     fun hasEzPz(): Boolean {
         if (mayorData == null) return false
-        return mayorData!!.perks.any { it.name.lowercase() == "ezpz" } || mayorData!!.minister.perk.name.lowercase() == "ezpz"
+        return mayorData!!.perks?.any { it.name.lowercase() == "ezpz" } ?: false || mayorData!!.minister.perk?.name?.lowercase() == "ezpz"
     }
 
     fun hasRitual(): Boolean {
         if (mayorData == null) return false
-        return mayorData!!.perks.any { it.name.lowercase() == "mythological ritual" } || mayorData!!.minister.perk.name.lowercase() == "mythological ritual"
+        return mayorData!!.perks?.any { it.name.lowercase() == "mythological ritual" } ?: false || mayorData!!.minister.perk?.name?.lowercase() == "mythological ritual"
     }
 }
