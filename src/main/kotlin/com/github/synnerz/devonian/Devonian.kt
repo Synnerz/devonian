@@ -420,9 +420,9 @@ object Devonian : ClientModInitializer {
         CommandAliases.initialize()
         CancelMessages.initialize()
         TitleMessages.initialize()
+        RefillGFSCommands.initialize()
         ConfigGui.initialize()
         HudManager.initialize()
-        RefillGFSCommands.initialize()
         LogSearch.initialize()
         WorldUtils.initialize()
         Config.onAfterLoad {
