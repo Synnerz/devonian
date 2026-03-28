@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api
 
+import com.github.synnerz.devonian.utils.PersistentJson
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import com.google.common.collect.ImmutableMultimap
 import com.mojang.authlib.GameProfile
@@ -14,11 +15,28 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 object ItemUtils {
+    data class PetData(
+        val type: String,
+        val active: Boolean,
+        val exp: Double,
+        val tier: String,
+        val hideInfo: Boolean,
+        val candyUsed: Int,
+        val hideRightClick: Boolean,
+        val noMove: Boolean,
+        val petSoulbound: Boolean,
+    )
+
     fun skyblockId(itemStack: ItemStack): String? {
         val nbt = extraAttributes(itemStack) ?: return null
         val itemId = nbt.getString("id")
         if (itemId.isEmpty) return null
         val sbId = itemId.get()
+        if (sbId == "PET") {
+            val inf = nbt.getString("petInfo").getOrNull() ?: return sbId
+            val petInfo = PersistentJson.gson.fromJson(inf, PetData::class.java)
+            return "${petInfo.type.replace(" ", "_").uppercase()};${petInfo.tier}"
+        }
         if (sbId != "ENCHANTED_BOOK") return sbId
         val enchantments = nbt.getCompound("enchantments")
         if (enchantments.isEmpty) return sbId
