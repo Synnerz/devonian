@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.utils.PersistentJsonClass
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 object SkyblockPrices {
@@ -29,7 +28,7 @@ object SkyblockPrices {
     private fun update() {
         if (System.currentTimeMillis() - (loader.data?.lastSave ?: 0) <= (1000 * 60) * 20) return
 
-        WebRequests.ioScope.launch {
+        WebRequests.withName("SkyblockPrices") {
             val bzRequest = WebRequests.get("https://api.hypixel.net/skyblock/bazaar")
             val ahRequest = WebRequests.get("https://lowestbin.docilelm.workers.dev/")
             val str = "{ bazaarData: $bzRequest, auctionData: $ahRequest, lastSave: ${System.currentTimeMillis()} }"

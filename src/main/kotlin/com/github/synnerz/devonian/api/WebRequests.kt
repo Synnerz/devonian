@@ -1,9 +1,11 @@
 package com.github.synnerz.devonian.api
 
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.future.await
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -17,14 +19,14 @@ object WebRequests {
         .connectTimeout(Duration.ofSeconds(20))
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
-    val ioScope = CoroutineScope(Dispatchers.IO)
+    val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO + CoroutineName("Devonian"))
 
     suspend fun get(
         url: String
-    ): String = withContext(Dispatchers.IO) {
+    ): String  {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
-            .headers("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36")
+            .headers("User-Agent", "Mozilla/5.0 (Devonian)")
             .GET()
             .build()
 
@@ -34,17 +36,17 @@ object WebRequests {
             throw Exception("WebRequests #GET Error ${response.statusCode()}: ${response.body()}")
         }
 
-        response.body()
+        return response.body()
     }
 
     suspend fun post(
         url: String,
         body: String,
         contentType: String = "application/json"
-    ): String = withContext(Dispatchers.IO) {
+    ): String {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
-            .headers("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36")
+            .headers("User-Agent", "Mozilla/5.0 (Devonian)")
             .headers("Content-Type", contentType)
             .POST(BodyPublishers.ofString(body))
             .build()
@@ -55,6 +57,18 @@ object WebRequests {
             throw Exception("WebRequests #POST Error ${response.statusCode()}: ${response.body()}")
         }
 
-        response.body()
+        return response.body()
+    }
+
+    /**
+     * - Launches a new context with the specified name
+     */
+    fun withName(name: String, block: suspend CoroutineScope.() -> Unit) = ioScope.launch(CoroutineName(name)) {
+        try {
+            block()
+        } catch (e: Exception) {
+            println("Devonian\$WebRequest Error - $name")
+            e.printStackTrace()
+        }
     }
 }

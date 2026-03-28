@@ -11,7 +11,6 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.PersistentJson
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
-import kotlinx.coroutines.launch
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
@@ -122,15 +121,15 @@ object PartyFinderOverview : Feature(
                 it.members.forEach { m -> members.add(m.name) }
             }
             if (members.isNotEmpty()) {
-                WebRequests.ioScope.launch {
+                WebRequests.withName("PartyFinderOverview") {
                     val filtered = members.filter {
                         val cachedData = cachedMembers[it]
                         cachedData == null ||
                         System.currentTimeMillis() - cachedData.timeTaken >= (1000 * 60 * 60) * 24
                     }
-                    if (filtered.isEmpty()) return@launch
+                    if (filtered.isEmpty()) return@withName
                     val result = WebRequests.get("$DUNGEONS_API${filtered.joinToString(",")}")
-                    val response: MultiDungeonApiResult = PersistentJson.gson.fromJson(result, MultiDungeonApiResult::class.java) ?: return@launch
+                    val response: MultiDungeonApiResult = PersistentJson.gson.fromJson(result, MultiDungeonApiResult::class.java) ?: return@withName
                     response.result?.entries?.forEach { (k, v) ->
                         v.timeTaken = System.currentTimeMillis()
                         cachedMembers[k] = v

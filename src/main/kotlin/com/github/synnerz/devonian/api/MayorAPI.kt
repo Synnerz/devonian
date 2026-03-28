@@ -2,7 +2,6 @@ package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.utils.PersistentJson
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 object MayorAPI {
@@ -41,9 +40,9 @@ object MayorAPI {
     }
 
     fun update() {
-        WebRequests.ioScope.launch {
+        WebRequests.withName("MayorAPI") {
             val response = WebRequests.get("https://api.hypixel.net/v2/resources/skyblock/election")
-            if (response.isEmpty()) return@launch
+            if (response.isEmpty()) return@withName
 
             val data = PersistentJson.gson.fromJson(response, MayorResponse::class.java)
             val mayor = data.mayor

@@ -7,7 +7,6 @@ import com.github.synnerz.devonian.api.WebRequests
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.utils.Toggleable
 import com.google.gson.JsonParser
-import kotlinx.coroutines.launch
 import net.fabricmc.loader.api.SemanticVersion
 import net.fabricmc.loader.api.Version
 import net.minecraft.SharedConstants
@@ -125,13 +124,13 @@ object CheckForUpdates : Feature(
         checked = true
 
         if (Devonian.IS_LOCAL_BUILD) return
-        WebRequests.ioScope.launch {
+        WebRequests.withName("CheckUpdate") {
             try {
-                if (SETTING_GITHUB_ACTIONS.get() && checkGithub()) return@launch
+                if (SETTING_GITHUB_ACTIONS.get() && checkGithub()) return@withName
             } catch (_: Exception) {
             }
             try {
-                if (SETTING_MODRINTH.get() && checkModrinth()) return@launch
+                if (SETTING_MODRINTH.get() && checkModrinth()) return@withName
             } catch (_: Exception) {
             }
         }
