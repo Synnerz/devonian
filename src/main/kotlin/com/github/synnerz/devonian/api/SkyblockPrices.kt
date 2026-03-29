@@ -9,6 +9,15 @@ object SkyblockPrices {
         val auctionData: Map<String, Float>,
         val lastSave: Long
     )
+    data class CustomPriceData(
+        val price: Float,
+        val auction: Boolean = false,
+        val bazaarData: BazaarData.Products = BazaarData.Products.EMPTY,
+    ) {
+        companion object {
+            val EMPTY = CustomPriceData(-1f)
+        }
+    }
 
     private val loader = object : PersistentJsonClass<PriceData>(
         "devonian/prices.json",
@@ -53,5 +62,17 @@ object SkyblockPrices {
 
         val auctionData = data.auctionData[name] ?: return 0f
         return auctionData
+    }
+
+    fun priceData(name: String): CustomPriceData {
+        val data = loader.data ?: return CustomPriceData.EMPTY
+        if (data.bazaarData.products.containsKey(name)) {
+            val bzdata = data.bazaarData.products[name]
+            val price = bzdata?.quick_status?.buyPrice ?: 0f
+            return CustomPriceData(price, bazaarData = bzdata ?: BazaarData.Products.EMPTY)
+        }
+
+        val price = data.auctionData[name] ?: -1f
+        return CustomPriceData(price, true, BazaarData.Products.EMPTY)
     }
 }

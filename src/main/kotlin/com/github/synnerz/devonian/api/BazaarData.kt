@@ -15,7 +15,14 @@ data class BazaarData(
         val buyVolume: Int,
         val buyMovingWeek: Long,
         val buyOrders: Int,
-    )
+    ) {
+        companion object {
+            val EMPTY = QuickStatus(
+                "_", 0f, 0, 0L,
+                0, 0f, 0, 0L, 0
+            )
+        }
+    }
 
     data class SellSummary(
         val amount: Int,
@@ -34,5 +41,13 @@ data class BazaarData(
         val sell_summary: List<SellSummary>,
         val buy_summary: List<BuySummary>,
         val quick_status: QuickStatus
-    )
+    ) {
+        companion object {
+            val EMPTY = Products("_", listOf(), listOf(), QuickStatus.EMPTY)
+        }
+    }
+
+    companion object {
+        val EMPTY = BazaarData(true, -1L, emptyMap())
+    }
 }
