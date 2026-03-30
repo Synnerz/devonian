@@ -11,7 +11,7 @@ import com.google.gson.reflect.TypeToken
 
 object PartyCommands : Feature(
     "partyCommands",
-    "party commands !f<1-7>, !m<1-7>, !t<1-5>, !warp, !fps, !tps, !ping, !location, !allinv, !pt, !inv, !kick",
+    "party commands !e, !f<1-7>, !m<1-7>, !t<1-5>, !w, !warp, !fps, !tps, !ping, !location, !allinv, !pt, !inv, !kick",
     subcategory = "Chat"
 ) {
     private val SETTING_USE_WHITELIST = addSwitch(
@@ -74,7 +74,7 @@ object PartyCommands : Feature(
 
             Scheduler.scheduleTask {
                 when (val first = messages.first()) {
-                    "!warp" -> if (Party.isLeader) ChatUtils.command("p warp")
+                    "!w", "!warp" -> if (Party.isLeader) ChatUtils.command("p warp")
                     "!allinv" -> if (canTrigger(name)) ChatUtils.command("p settings allinvite")
                     "!pt" -> if (canTrigger(name)) ChatUtils.command("p transfer $name")
                     "!inv" -> if (canTrigger(name) && second != null && second.length in 1..16) ChatUtils.command("p $second")
@@ -90,6 +90,7 @@ object PartyCommands : Feature(
                     "!ping" -> ChatUtils.command("pc Ping: ${"%.2f".format(Ping.getLastPing())}, Avg: ${"%.2f".format(Ping.getMedianPing())}")
                     "!tps" -> ChatUtils.command("pc Tps: ${TpsDisplay.lastCur}, Avg: ${"%.2f".format(TpsDisplay.lastAvg)}")
                     "!location" -> ChatUtils.command("pc Location: ${Location.area} - ${Location.subarea}")
+                    "!e" -> if (Party.isLeader) ChatUtils.command("joindungeon catacombs_entrance")
                     else -> {
                         val str = first.getOrNull(1) ?: return@scheduleTask
                         val num = first.getOrNull(2)?.digitToIntOrNull() ?: return@scheduleTask
