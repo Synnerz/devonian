@@ -638,6 +638,27 @@
       "maxLevel": 5
     },
     {
+      "loreName": "Turbo-Sunflower",
+      "nbtName": "turbo_sunflower",
+      "abbreviation": "T-Sun",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Rose",
+      "nbtName": "turbo_rose",
+      "abbreviation": "T-Rose",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Turbo-Moonflower",
+      "nbtName": "turbo_moonflower",
+      "abbreviation": "T-Moon",
+      "goodLevel": 0,
+      "maxLevel": 5
+    },
+    {
       "loreName": "Vampirism",
       "nbtName": "vampirism",
       "abbreviation": "Vamp",
@@ -944,6 +965,12 @@
       "loreName": "Missile",
       "nbtName": "ultimate_missile",
       "abbreviation": "Miss",
+      "maxLevel": 5
+    },
+    {
+      "loreName": "Crop Fever",
+      "nbtName": "ultimate_crop_fever",
+      "abbreviation": "Crop",
       "maxLevel": 5
     }
   ],

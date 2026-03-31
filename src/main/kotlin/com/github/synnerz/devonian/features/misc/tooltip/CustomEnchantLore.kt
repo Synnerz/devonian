@@ -39,7 +39,7 @@ object CustomEnchantLore : Feature(
     )
 
     private val enchantNameRegex = "^([\\w ]+) ([IVX]+)$".toRegex()
-    private val looseEnchantRegex = "^(?:[A-Za-z]+ )+[IVX]+(?:,|$)".toRegex()
+    private val looseEnchantRegex = "^(?:[A-Za-z]+ )+[IVX]+(?: [\\d,]+)?(?:,|$)".toRegex()
     private data class EnchantBundle(val enchant: Enchantment, val level: Int) {
         fun str() = "${enchant.loreName} ${StringUtils.formatRoman(level)}"
     }
