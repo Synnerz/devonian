@@ -167,3 +167,8 @@ object OwnNameTag : Feature(
     "Shows your own name tag on third person",
     Categories.VANILLA_TWEAKS,
 )
+object AutoCopyScreenshot : Feature(
+    "autoCopyScreenshot",
+    "Copies taken screenshots into your clipboard (does not work in MacOS)",
+    Categories.VANILLA_TWEAKS,
+)
