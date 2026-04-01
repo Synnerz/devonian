@@ -44,7 +44,7 @@ object EquipmentDisplay : Feature(
     private val borderSlotColor = Color(50, 50, 50, 150)
     private val equipmentSlots = setOf(10, 19, 28, 37)
     private var inGui = false
-    private val equipment = mutableListOf<EquipmentItem>()
+    private val equipment = MutableList<EquipmentItem>(4) { EquipmentItem.EMPTY }
     private val alignment get() = when (SETTING_ALIGNMENT.get()) {
         1 -> 19
         2 -> (27 * 2) - 2
@@ -65,22 +65,28 @@ object EquipmentDisplay : Feature(
                     set(DataComponents.LORE, ItemLore(lore.map { Component.literal(it) }))
                 }
         }
+
+        companion object {
+            val EMPTY = EquipmentItem()
+        }
     }
 
     override fun initialize() {
         Config.set(KEY_NAME, JsonArray())
         Config.onAfterLoad {
-            Config.get<List<JsonObject>>(KEY_NAME)?.forEach {
+            Config.get<List<JsonObject>>(KEY_NAME)?.forEachIndexed { idx, it ->
+                if (idx > 3) return@forEachIndexed
                 val obj = it.asJsonObject
                 val texture = obj.get("texture").asString
                 val lore = obj.get("lore").asJsonArray.map { it.asString }
-                equipment.add(EquipmentItem(texture, -1, lore))
+                equipment.add(idx, EquipmentItem(texture, -1, lore))
             }
         }
         Config.onPreSave {
             val array = JsonArray()
 
-            equipment.forEach {
+            equipment.forEachIndexed { idx, it ->
+                if (idx > 3) return@forEachIndexed
                 val obj = JsonObject()
                 val arr2 = JsonArray()
                 it.lore?.forEach { l -> arr2.add(l) }
@@ -106,16 +112,22 @@ object EquipmentDisplay : Feature(
             val itemStack = event.itemStack
             if (itemStack.isEmpty || itemStack.item != Items.PLAYER_HEAD) {
                 Scheduler.scheduleTask {
-                    equipment.removeIf { it.slot == slot }
-                    equipment.add(EquipmentItem(null, slot, null))
+                    val idx = equipmentSlots.reversed().indexOf(slot)
+                    if (idx == -1) return@scheduleTask
+
+                    equipment.removeAt(idx)
+                    equipment.add(idx, EquipmentItem(null, slot, null))
                 }
                 return@on
             }
 
             val texture = ItemUtils.texture(itemStack) ?: return@on
             Scheduler.scheduleTask {
-                equipment.removeIf { it.slot == slot }
-                equipment.add(EquipmentItem(
+                val idx = equipmentSlots.reversed().indexOf(slot)
+                if (idx == -1) return@scheduleTask
+
+                equipment.removeAt(idx)
+                equipment.add(idx, EquipmentItem(
                     texture,
                     slot,
                     buildList {
@@ -135,10 +147,11 @@ object EquipmentDisplay : Feature(
             val jdx = idx - 36
             val equipment = equipment.getOrNull(jdx) ?: return@on
             val alig = alignment
+            val x = slot.x + alig
 
-            event.ctx.fill(slot.x + alig, slot.y, slot.x + alig + 16, slot.y + 16, backgroundSlotColor.rgb)
-            Render2D.drawWireRect(event.ctx, slot.x + alig, slot.y, 16, 16, borderSlotColor)
-            event.ctx.renderFakeItem(equipment.itemStack, slot.x + alig, slot.y)
+            event.ctx.fill(x, slot.y, x + 16, slot.y + 16, backgroundSlotColor.rgb)
+            Render2D.drawWireRect(event.ctx, x, slot.y, 16, 16, borderSlotColor)
+            event.ctx.renderFakeItem(equipment.itemStack, x, slot.y)
         }
 
         on<GuiClickEvent> { event ->
@@ -146,9 +159,12 @@ object EquipmentDisplay : Feature(
             val screenAcc = event.screen as? AbstractContainerScreenAccessor ?: return@on
 
             equipment.forEachIndexed { idx, data ->
+                // people might want this to still trigger even if empty?
+                // if (data.lore == null && data.texture == null) return@forEachIndexed
+
                 val slot = (event.screen as? AbstractContainerScreen<*> ?: return@forEachIndexed)
                     .menu
-                    .slots.find { it.containerSlot == 39 - idx } ?: return@on
+                    .slots.find { it.containerSlot == 36 + idx } ?: return@on
                 val x = screenAcc.leftPos + slot.x + alignment.toDouble()
                 val y = screenAcc.topPos + slot.y.toDouble()
                 if (event.mx !in x..x + 16 || event.my !in y..y + 16) return@forEachIndexed
@@ -164,9 +180,11 @@ object EquipmentDisplay : Feature(
             val screenAcc = event.screen as? AbstractContainerScreenAccessor ?: return@on
 
             equipment.forEachIndexed { idx, data ->
+                // the slot is empty
+                if (data.lore == null && data.texture == null) return@forEachIndexed
                 val slot = screen
                     .menu
-                    .slots.find { it.containerSlot == 39 - idx } ?: return@on
+                    .slots.find { it.containerSlot == 36 + idx } ?: return@on
                 val x = screenAcc.leftPos + slot.x + alignment.toDouble()
                 val y = screenAcc.topPos + slot.y.toDouble()
                 val mx = minecraft.mouseHandler.getScaledXPos(minecraft.window)
