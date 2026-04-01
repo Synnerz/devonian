@@ -390,6 +390,7 @@ object Devonian : ClientModInitializer {
             TriviaSplits,
             ExperimentationTable,
             AutoCopyScreenshot,
+            EquipmentDisplay,
 
             // Debug
             CopyItem,
