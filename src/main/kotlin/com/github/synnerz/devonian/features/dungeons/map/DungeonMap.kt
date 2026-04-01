@@ -852,6 +852,11 @@ object DungeonMap : HudFeature(
                 it.draw(ctx)
             }
         }
+        if (Dungeons.inBoss.value) {
+            if (SETTING_ROTATE.get()) ctx.scissorStack.pop()
+            ctx.pose().popMatrix()
+            return
+        }
 
         val holdingLeap = minecraft.player!!.mainHandItem.let {
             listOf("SPIRIT_LEAP", "INFINITE_SPIRIT_LEAP").contains(ItemUtils.skyblockId(it))
