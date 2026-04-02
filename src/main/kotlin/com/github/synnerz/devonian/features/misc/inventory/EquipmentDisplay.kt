@@ -77,8 +77,12 @@ object EquipmentDisplay : Feature(
             Config.get<List<JsonObject>>(KEY_NAME)?.forEachIndexed { idx, it ->
                 if (idx > 3) return@forEachIndexed
                 val obj = it.asJsonObject
-                val texture = obj.get("texture").asString
-                val lore = obj.get("lore").asJsonArray.map { it.asString }
+                val textureObj = obj.get("texture") ?: return@forEachIndexed
+                if (textureObj.isJsonNull) return@forEachIndexed
+                val texture = textureObj.asString
+                val loreObj = obj.get("lore") ?: return@forEachIndexed
+                if (loreObj.isJsonNull) return@forEachIndexed
+                val lore = loreObj.asJsonArray.map { it.asString }
                 equipment.add(idx, EquipmentItem(texture, -1, lore))
             }
         }
