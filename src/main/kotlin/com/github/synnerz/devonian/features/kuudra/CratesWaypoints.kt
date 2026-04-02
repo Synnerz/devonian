@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.kuudra
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EntityJoinEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
@@ -75,5 +76,10 @@ object CratesWaypoints : Feature(
                 it.isDeadOrDying || it.isRemoved
             }
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        canRender = false
+        zombies.clear()
     }
 }

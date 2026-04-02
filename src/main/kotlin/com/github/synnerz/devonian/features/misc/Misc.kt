@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.chat.Component
@@ -172,3 +173,10 @@ object AutoCopyScreenshot : Feature(
     "Copies taken screenshots into your clipboard (does not work in MacOS)",
     Categories.VANILLA_TWEAKS,
 )
+object FixCrimsonIsleFog : Feature(
+    "fixCrimsonIsleFog",
+    "Fixes the \"fog\" of crimson isles by removing night vision client side",
+    Categories.VANILLA_TWEAKS,
+) {
+    fun shouldFix(): Boolean = isEnabled() && Location.area == "crimson isle"
+}

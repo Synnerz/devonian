@@ -393,6 +393,7 @@ object Devonian : ClientModInitializer {
             AutoCopyScreenshot,
             EquipmentDisplay,
             CratesWaypoints,
+            FixCrimsonIsleFog,
 
             // Debug
             CopyItem,
