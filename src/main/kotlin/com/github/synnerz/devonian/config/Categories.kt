@@ -11,6 +11,7 @@ enum class Categories(
     PARTY_FINDER("PartyFinder", listOf("General", "Highlight", "Tooltip")),
     F7("F7", listOf("General", "Solvers", "Terminals", "HUD", "Highlight")),
     M7("M7", listOf("General", "Highlight", "HUD")),
+    KUUDRA("Kuudra"),
     GARDEN("Garden"),
     SLAYERS("Slayers"),
     END("End"),
