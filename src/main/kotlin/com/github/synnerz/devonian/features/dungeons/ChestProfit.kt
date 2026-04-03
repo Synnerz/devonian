@@ -22,6 +22,7 @@ import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.item.Items
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 
 object ChestProfit : TextHudFeature(
@@ -64,28 +65,15 @@ object ChestProfit : TextHudFeature(
         "Bedrock",
     )
     private val essenceRegex = "^(Wither|Undead) Essence x(\\d+)$".toRegex()
-    private val enchantedBookRegex = "^([\\w ]+) ([IVXLCDM]+)$".toRegex()
-    private val ultimateEnchants = setOf(
-        "Wisdom",
-        "Swarm",
-        "Soul Eater",
-        "Rend",
-        "One For All",
-        "No Pain No Gain",
-        "Legion",
-        "Last Stand",
-        "Combo",
-        "Bank"
-    )
     private val blockSound = SoundEvents.NOTE_BLOCK_BASS.value()
-    val currentChestData = mapOf(
-        "Wood" to ChestData("&fWood Chest&r"),
-        "Gold" to ChestData("&6Gold Chest&r"),
-        "Diamond" to ChestData("&bDiamond Chest&r"),
-        "Emerald" to ChestData("&2Emerald Chest&r"),
-        "Obsidian" to ChestData("&5Obsidian Chest&r"),
-        "Bedrock" to ChestData("&8Bedrock Chest&r"),
-    )
+    val currentChestData = ConcurrentHashMap<String, ChestData>().apply {
+        put("Wood", ChestData("&fWood Chest&r"))
+        put("Gold", ChestData("&6Gold Chest&r"))
+        put("Diamond", ChestData("&bDiamond Chest&r"))
+        put("Emerald", ChestData("&2Emerald Chest&r"))
+        put("Obsidian", ChestData("&5Obsidian Chest&r"))
+        put("Bedrock", ChestData("&8Bedrock Chest&r"))
+    }
     var inChest = false
     var currentChest: String? = null
     var openedChest = false
@@ -131,9 +119,11 @@ object ChestProfit : TextHudFeature(
         }
 
         on<ServerContainerCloseEvent> {
-            if (inChest && Location.area == "dungeon hub") Scheduler.scheduleTask {
-                clearLines()
+            if (inChest && Location.area == "dungeon hub") {
                 reset()
+                Scheduler.scheduleTask {
+                    clearLines()
+                }
             }
             inChest = false
         }
@@ -187,23 +177,11 @@ object ChestProfit : TextHudFeature(
             val isEnchantedBook = customNameStr == "Enchanted Book"
             val itemName =
                 if (isEnchantedBook)
-                    ItemUtils.lore(itemStack, true)?.firstOrNull() ?: return@on
+                    ItemUtils.lore(itemStack, true)?.getOrNull(2) ?: return@on
                 else
                     customName.colorCodes()
             var sbId = ItemUtils.skyblockId(itemStack)
             var amount = 1
-            if (isEnchantedBook) {
-                val match = enchantedBookRegex.matchEntire(itemName.clearCodes())?.groupValues?.drop(1) ?: return@on
-                val enchantName = match[0]
-                val enchantLevel = StringUtils.parseRoman(match[1])
-                val additionalName = if (ultimateEnchants.contains(enchantName)) "ULTIMATE_" else ""
-
-                sbId = "ENCHANTMENT_"
-
-                if (additionalName.isNotEmpty()) sbId += additionalName
-                sbId += enchantName.uppercase().replace(" ", "_")
-                sbId += "_${enchantLevel}"
-            }
             if (sbId == null && itemName.contains(" Essence ")) {
                 val match = essenceRegex.matchEntire(itemName.clearCodes())?.groupValues?.drop(1) ?: return@on
                 sbId = "ESSENCE_${match[0].uppercase()}"
