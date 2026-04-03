@@ -31,15 +31,15 @@ object SkyblockPrices {
 
     fun initialize() {
         loader.load()
-        Scheduler.schedulePool.scheduleWithFixedDelay(::update, 1L, 21L, TimeUnit.MINUTES)
+        Scheduler.schedulePool.scheduleWithFixedDelay(::update, 1L, 5L, TimeUnit.MINUTES)
     }
 
     private fun update() {
-        if (System.currentTimeMillis() - (loader.data?.lastSave ?: 0) <= (1000 * 60) * 20) return
+        if (System.currentTimeMillis() - (loader.data?.lastSave ?: 0) <= (1000 * 60) * 5) return
 
         WebRequests.withName("SkyblockPrices") {
             val bzRequest = WebRequests.get("https://api.hypixel.net/skyblock/bazaar")
-            val ahRequest = WebRequests.get("https://lowestbin.docilelm.workers.dev/")
+            val ahRequest = WebRequests.get("https://api.docilelm.top/v2/lowestbin")
             val str = "{ bazaarData: $bzRequest, auctionData: $ahRequest, lastSave: ${System.currentTimeMillis()} }"
 
             loader.onLoad(str.byteInputStream())

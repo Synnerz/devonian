@@ -25,7 +25,7 @@ object PartyFinderOverview : Feature(
     searchTags = setOf("pf"),
     subcategory = "Tooltip",
 ) {
-    private const val DUNGEONS_API = "https://dungeons.docilelm.workers.dev/?names="
+    private const val DUNGEONS_API = "https://api.docilelm.top/v2/dungeons/"
     private val SETTING_PB_MODE = addSelection(
         "pbMode",
         0,
