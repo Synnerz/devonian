@@ -72,6 +72,10 @@ object WitherShieldTimer : TextHudFeature(
                     }
                 }
             }
+            if (SETTING_COMPACT_MODE.get()) {
+                setLine(str)
+                return@on
+            }
 
             setLine("&6Shield: $str")
         }
