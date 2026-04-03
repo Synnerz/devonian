@@ -148,7 +148,7 @@ object TicTacToeSolver : Feature(
         }
 
         on<RenderWorldEvent> {
-            if (currentBestMove == -1 || !inTTT) return@on
+            if (!inTTT) return@on
 
             if (SETTING_PREDICT_NEXT.get() && predictedMove != -1) {
                 val currentRoom = DungeonScanner.currentRoom ?: return@on
@@ -167,6 +167,7 @@ object TicTacToeSolver : Feature(
                     Color(255, 165, 0, 80),
                 )
             }
+            if (currentBestMove == -1) return@on
 
             val currentRoom = DungeonScanner.currentRoom ?: return@on
             val bestMove = boardPos.getOrNull(currentBestMove) ?: return@on
