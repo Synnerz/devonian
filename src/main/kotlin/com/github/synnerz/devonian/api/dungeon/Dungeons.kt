@@ -25,7 +25,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 object Dungeons {
-    private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([IVXLCDM]+)?\\)$".toRegex()
+    private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([0IVXLCDM]+)?\\)$".toRegex()
     private val dungeonFloorRegex = "^ * ⏣ The Catacombs \\((\\w+)\\)$".toRegex()
     private val bossMessageRegex = "^\\[BOSS] (.+?): (.+?)$".toRegex()
     private val disconnectRegex = "^ ☠ (\\w+) disconnected and became a ghost\\.$".toRegex()
