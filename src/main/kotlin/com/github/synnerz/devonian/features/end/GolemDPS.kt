@@ -14,7 +14,7 @@ object GolemDPS : Feature(
     Categories.END,
     "the end",
 ) {
-    private val golemSpawnRegex = "^BEWARE - An End Stone Protector has risen!$".toRegex()
+    private val golemSpawnRegex = "^BEWARE - An Endstone Protector has risen!$".toRegex()
     private val golemKilledRegex = "^ *END STONE PROTECTOR DOWN!$".toRegex()
     private val yourDamageRegex = "^ *Your Damage: ([\\d,]+)(?: \\(NEW RECORD!\\))? \\(Position #\\d+\\)\$".toRegex()
     var spawnAt = -1L
