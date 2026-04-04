@@ -110,10 +110,10 @@ object ChestProfit : TextHudFeature(
 
             if (!inChest) return@on
             val data = currentChestData[name] ?: return@on
-            data.itemData.clear()
             data.chestPrice = 0
 
             Scheduler.scheduleTask {
+                data.itemData.clear()
                 updateDisplay()
             }
         }
@@ -191,12 +191,14 @@ object ChestProfit : TextHudFeature(
             if (sbId == null) return@on
             val currentData = currentChestData[currentChest!!] ?: return@on
 
-            currentData.itemData.add(ItemData(
-                itemName,
-                sbId,
-                amount,
-                itemName.contains(" Essence ")
-            ))
+            Scheduler.scheduleTask {
+                currentData.itemData.add(ItemData(
+                    itemName,
+                    sbId,
+                    amount,
+                    itemName.contains(" Essence ")
+                ))
+            }
         }
 
         on<ServerContainerSetContentEvent> {
