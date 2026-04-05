@@ -43,6 +43,7 @@ import com.github.synnerz.devonian.features.misc.inventory.*
 import com.github.synnerz.devonian.features.misc.tooltip.*
 import com.github.synnerz.devonian.features.slayers.BossSlainTime
 import com.github.synnerz.devonian.features.slayers.BossSpawnTime
+import com.github.synnerz.devonian.features.slayers.SlayerDisplay
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.utils.render.ChromaText
@@ -394,6 +395,7 @@ object Devonian : ClientModInitializer {
             EquipmentDisplay,
             CratesWaypoints,
             FixCrimsonIsleFog,
+            SlayerDisplay,
 
             // Debug
             CopyItem,
