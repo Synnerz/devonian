@@ -25,8 +25,9 @@ object SpringBootsProgress : TextHudFeature(
                 return@on
             }
             if (event.sound != "minecraft:block.note_block.pling") return@on
-            if (!minecraft.player!!.isShiftKeyDown) return@on
-            val itemStack = minecraft.player!!.getItemBySlot(EquipmentSlot.FEET)
+            val player = minecraft.player ?: return@on
+            if (!player.isShiftKeyDown) return@on
+            val itemStack = player.getItemBySlot(EquipmentSlot.FEET)
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             if (sbId != "SPRING_BOOTS") return@on
             if (event.pitch !in validPitches) return@on
@@ -35,7 +36,8 @@ object SpringBootsProgress : TextHudFeature(
         }
 
         on<ClientThreadServerTickEvent> {
-            val itemStack = minecraft.player!!.getItemBySlot(EquipmentSlot.FEET)
+            val player = minecraft.player ?: return@on
+            val itemStack = player.getItemBySlot(EquipmentSlot.FEET)
             val sbId = ItemUtils.skyblockId(itemStack)
             if (sbId != "SPRING_BOOTS") {
                 clearLines()
