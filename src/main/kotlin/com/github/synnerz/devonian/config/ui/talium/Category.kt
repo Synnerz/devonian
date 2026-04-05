@@ -25,10 +25,10 @@ class Category(
     init {
         UIRect(
             0.0, 0.0,
-            100.0, 8.0,
+            100.0, 6.0,
             parent = leftPanel
         ).apply {
-            yConstraint = UIFlexWrapConstraint(7.0)
+            yConstraint = UIFlexWrapConstraint(5.0)
             onMouseRelease {
                 if (ConfigGui.selectedCategory === this@Category) return@onMouseRelease
                 if (ConfigGui.selectedCategory == null)

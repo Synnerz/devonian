@@ -26,7 +26,7 @@ abstract class SharedCategory(displayName: String) {
 
     @Suppress("unchecked_cast")
     protected fun createComp(data: ConfigData<*>, parent: UIElement): UIPair {
-        return createBase(if (data.parent == null) 0.0 else 3.0, parent).also { (container, content) ->
+        return createBase(if (data.parent == null) 0.0 else 1.5, parent).also { (container, content) ->
             content.addChild(createTitle(data.displayName))
             content.addChild(createDescription(data.description))
             content.addChild(
@@ -50,7 +50,7 @@ abstract class SharedCategory(displayName: String) {
             UIText(
                 0.0, 0.0,
                 offset, 100.0,
-                "—",
+                "|",
                 centered = true,
                 parent = container,
             ).apply {
@@ -60,16 +60,18 @@ abstract class SharedCategory(displayName: String) {
                 }
             }
         }
+        val outlineEffect = OutlineEffect(0.5, ColorPalette.OUTLINE_COLOR)
 
         return UIPair(
             container,
             UIRect(offset, 0.0, 100.0 - offset, 100.0, parent = container).apply {
-                addEffects(
-                    OutlineEffect(
-                        1.0,
-                        if (offset == 0.0) ColorPalette.OUTLINE_COLOR else ColorPalette.OUTLINE2_COLOR
-                    )
-                )
+                addEffects(outlineEffect)
+                onMouseEnter {
+                    outlineEffect.color = ColorPalette.OUTLINE2_COLOR
+                }
+                onMouseLeave {
+                    outlineEffect.color = ColorPalette.OUTLINE_COLOR
+                }
             }
         )
     }
