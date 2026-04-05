@@ -226,7 +226,7 @@ object BoxStarMob : Feature(
                     data.color.let {
                         Color(it.red, it.green, it.blue, (SETTING_FILL_ALPHA.get() * 255.0).toInt())
                     },
-                    phase = false,
+                    phase = SETTING_PHASE,
                     centered = true,
                 )
                 false
