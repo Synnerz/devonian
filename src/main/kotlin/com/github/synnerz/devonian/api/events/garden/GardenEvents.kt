@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.api.garden
+package com.github.synnerz.devonian.api.events.garden
 
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.ChatEvent

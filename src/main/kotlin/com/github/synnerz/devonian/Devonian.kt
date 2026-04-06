@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.dungeon.CroesusListener
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
-import com.github.synnerz.devonian.api.garden.GardenEvents
+import com.github.synnerz.devonian.api.events.garden.GardenEvents
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
