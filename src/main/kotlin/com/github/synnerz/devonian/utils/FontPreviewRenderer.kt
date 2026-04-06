@@ -8,7 +8,7 @@ import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import com.github.synnerz.devonian.hud.texthud.TextRenderer
 import com.github.synnerz.devonian.utils.render.impl.TextRendererImpl
 import kotlinx.atomicfu.atomic
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import java.awt.Font
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
@@ -29,7 +29,7 @@ object FontPreviewRenderer : BufferedImageRenderer<FontPreviewRenderer.FontPrevi
 
     private var currentRenderData = atomic<Map<String, FontLocation>?>(null)
 
-    fun draw(ctx: GuiGraphics, font: Font, x: Float, y: Float) {
+    fun draw(ctx: GuiGraphicsExtractor, font: Font, x: Float, y: Float) {
         val data = currentRenderData.value?.get(font.name) ?: return
         uploadImage()
         draw(ctx, x, y, data.w, data.h, data.u0, data.v0, data.u1, data.v1)

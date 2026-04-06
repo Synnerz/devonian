@@ -53,7 +53,7 @@ object EnchantAbbreviation : Feature(
                     .pushMatrix()
                     .translate(it.x + 14f, it.y + 10f)
                     .scale(0.8f)
-                event.ctx.drawCenteredString(
+                event.ctx.centeredText(
                     f, "${data.second}",
                     0, 0, -1,
                 )
@@ -63,7 +63,7 @@ object EnchantAbbreviation : Feature(
                     .pushMatrix()
                     .translate(it.x + 0f, it.y + 0f)
                     .scale(0.6f)
-                event.ctx.drawString(
+                event.ctx.text(
                     f,
                     if (data.first is UltimateEnchant) data.first.getFormatted(1, data.first.abbreviation)
                     else Component.literal(data.first.abbreviation),

@@ -256,7 +256,7 @@ object ExperimentationTable : Feature(
 
         event.cancel()
         event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, if (jdx == 0) Color.GREEN.rgb else if (jdx == 1) Color.ORANGE.rgb else Color.RED.rgb)
-        event.ctx.drawString(
+        event.ctx.text(
             minecraft.font,
             "${data.count}",
             slot.x + 4, slot.y + 4, -1

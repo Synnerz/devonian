@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.talium.components.*
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
@@ -163,8 +163,8 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
         }
     }
 
-    override fun render(guiGraphics: GuiGraphics, i: Int, j: Int, f: Float) {
-        super.render(guiGraphics, i, j, f)
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
+        super.extractRenderState(graphics, mouseX, mouseY, a)
         background.draw()
     }
 
@@ -174,7 +174,7 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
     }
 
     override fun charTyped(characterEvent: CharacterEvent): Boolean {
-        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), characterEvent.modifiers)
+        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), -1)
         return super.charTyped(characterEvent)
     }
 

@@ -5,13 +5,13 @@ import com.github.synnerz.devonian.api.events.*;
 import com.github.synnerz.devonian.features.misc.DisableGlassPaneHighlight;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -43,18 +43,18 @@ public abstract class AbstractContainerScreenMixin {
         at = @At("HEAD"),
         cancellable = true
     )
-    private void devonian$onSlotClicked(Slot slot, int i, int j, ClickType clickType, CallbackInfo ci) {
+    private void devonian$onSlotClicked(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
         CancellableEvent event = null;
 
         AbstractContainerScreen<?> that = (AbstractContainerScreen<?>) (Object) this;
 
-        switch (clickType) {
+        switch (containerInput) {
             case PICKUP:
                 if (slot == null) event = new DropItemEvent(null, true, menu.getCarried(), true);
-                else event = new PickupItemInventoryEvent(slot, that, j == 1, false);
+                else event = new PickupItemInventoryEvent(slot, that, buttonNum == 1, false);
                 break;
             case THROW:
-                event = new DropItemEvent(slot, j != 0, slot == null ? ItemStack.EMPTY : slot.getItem(), true);
+                event = new DropItemEvent(slot, buttonNum != 0, slot == null ? ItemStack.EMPTY : slot.getItem(), true);
                 break;
             case PICKUP_ALL:
                 if (slot != null) event = new PickupItemInventoryEvent(slot, that, false, true);
@@ -67,14 +67,14 @@ public abstract class AbstractContainerScreenMixin {
                 Player player = Devonian.INSTANCE.getMinecraft().player;
                 if (player == null) break;
                 Inventory inv = player.getInventory();
-                Optional<Slot> other = menu.slots.stream().filter(v -> v.container == inv && v.getContainerSlot() == j).findAny();
+                Optional<Slot> other = menu.slots.stream().filter(v -> v.container == inv && v.getContainerSlot() == buttonNum).findAny();
                 if (other.isPresent()) event = new SwapItemEvent(slot, other.get(), that);
                 break;
             }
             case QUICK_CRAFT:
                 // leftover item, into the cursor slot
                 if (slot == null) break;
-                event = new QuickCraftMoveEvent(slot, (j & 4) > 0, that);
+                event = new QuickCraftMoveEvent(slot, (buttonNum & 4) > 0, that);
                 break;
         }
 
@@ -82,31 +82,31 @@ public abstract class AbstractContainerScreenMixin {
     }
 
     @WrapOperation(
-        method = "renderSlots",
+        method = "extractSlots",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;II)V"
+            target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;extractSlot(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/inventory/Slot;II)V"
         )
     )
-    private void devonian$drawSlots(AbstractContainerScreen instance, GuiGraphics guiGraphics, Slot slot, int i, int j, Operation<Void> original) {
-        if (new RenderSlotEvent(slot, guiGraphics, instance).post()) return;
-        original.call(instance, guiGraphics, slot, i, j);
-        new PostRenderSlotEvent(slot, guiGraphics, instance).post();
+    private void devonian$drawSlots(AbstractContainerScreen instance, GuiGraphicsExtractor carry, Slot newCount, int icon, int seed, Operation<Void> original) {
+        if (new RenderSlotEvent(newCount, carry, instance).post()) return;
+        original.call(instance, carry, newCount, icon, seed);
+        new PostRenderSlotEvent(newCount, carry, instance).post();
     }
 
     @Inject(
-        method = "renderContents",
+        method = "extractContents",
         at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;popMatrix()Lorg/joml/Matrix3x2fStack;", remap = false)
     )
-    private void devonian$postRenderSlots(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
-        new PostRenderSlotsEvent(guiGraphics, i, j, (AbstractContainerScreen<?>) (Object) this).post();
+    private void devonian$postRenderSlots(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+        new PostRenderSlotsEvent(graphics, mouseX, mouseY, (AbstractContainerScreen<?>) (Object) this).post();
     }
 
-    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void devonian$renderContainer(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
+    @Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
+    private void devonian$renderContainer(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
         if (!(Devonian.INSTANCE.getMinecraft().screen instanceof ContainerScreen)) return;
 
-        if (new ContainerRenderEvent((ContainerScreen) Devonian.INSTANCE.getMinecraft().screen, i, j, f, guiGraphics).post())
+        if (new ContainerRenderEvent((ContainerScreen) Devonian.INSTANCE.getMinecraft().screen, mouseX, mouseY, a, graphics).post())
             ci.cancel();
     }
 
@@ -132,11 +132,14 @@ public abstract class AbstractContainerScreenMixin {
     );
 
     @Inject(
-        method = "renderSlotHighlightBack",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"),
+        method = "extractSlotHighlightBack",
+        at = @At(
+                value = "INVOKE",
+                target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"
+        ),
         cancellable = true
     )
-    private void devonian$test1(GuiGraphics guiGraphics, CallbackInfo ci) {
+    private void devonian$onSlotHighlightBack(GuiGraphicsExtractor graphics, CallbackInfo ci) {
         if (!DisableGlassPaneHighlight.INSTANCE.isEnabled()) return;
         assert hoveredSlot != null;
         ItemStack item = hoveredSlot.getItem();
@@ -146,11 +149,14 @@ public abstract class AbstractContainerScreenMixin {
     }
 
     @Inject(
-        method = "renderSlotHighlightFront",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"),
+        method = "extractSlotHighlightFront",
+        at = @At(
+                value = "INVOKE",
+                target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"
+        ),
         cancellable = true
     )
-    private void devonian$test2(GuiGraphics guiGraphics, CallbackInfo ci) {
+    private void devonian$onSlotHighlightFront(GuiGraphicsExtractor graphics, CallbackInfo ci) {
         if (!DisableGlassPaneHighlight.INSTANCE.isEnabled()) return;
         assert hoveredSlot != null;
         ItemStack item = hoveredSlot.getItem();

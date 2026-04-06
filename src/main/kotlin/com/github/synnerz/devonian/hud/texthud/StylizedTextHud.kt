@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.hud.texthud
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.features.HudManagerRenderer
 import com.github.synnerz.devonian.utils.BoundingBox
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import kotlin.math.max
 
 open class StylizedTextHud(
@@ -125,7 +125,7 @@ open class StylizedTextHud(
         }
     }
 
-    override fun draw(ctx: GuiGraphics) {
+    override fun draw(ctx: GuiGraphicsExtractor) {
         update()
         if (lines.isNotEmpty()) {
             if (imageDirty) {
@@ -136,7 +136,7 @@ open class StylizedTextHud(
         }
     }
 
-    protected open fun renderText(ctx: GuiGraphics) {
+    protected open fun renderText(ctx: GuiGraphicsExtractor) {
         renderer.renderText(ctx)
     }
 

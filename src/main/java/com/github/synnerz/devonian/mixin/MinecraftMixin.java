@@ -40,7 +40,7 @@ public class MinecraftMixin {
 
     @Inject(
         method = "startUseItem",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;interactAt(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/EntityHitResult;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"),
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;interact(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/EntityHitResult;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"),
         cancellable = true
     )
     private void devonian$entityInteract(CallbackInfo ci, @Local Entity entity) {
@@ -51,10 +51,10 @@ public class MinecraftMixin {
     }
 
     @Inject(
-            method = "run Tick",
+            method = "runTick",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/DeltaTracker$Timer;advanceTime(JZ)I"
+                    target = "Lnet/minecraft/client/DeltaTracker$Timer;advanceGameTime(J)I"
             )
     )
     private void devonian$onRenderTick(boolean tick, CallbackInfo ci) {

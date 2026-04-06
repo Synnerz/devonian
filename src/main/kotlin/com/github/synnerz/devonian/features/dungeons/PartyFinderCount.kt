@@ -33,7 +33,7 @@ object PartyFinderCount : Feature(
                 if (slot.container == minecraft.player?.inventory) return@forEach
                 val data = parties.find { it.idx == slot.containerSlot } ?: return@forEach
 
-                event.ctx.drawCenteredString(
+                event.ctx.centeredText(
                     minecraft.font,
                     "${data.members.size}",
                     slot.x + 14, slot.y + 8, -1

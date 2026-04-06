@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.features.misc.CustomContainerColor;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -29,21 +29,21 @@ public abstract class ContainerScreenMixin extends AbstractContainerScreen<@NotN
     }
 
     @Inject(
-            method = "renderBg",
+            method = "extractBackground",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIFFIIII)V",
+                    target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIFFIIII)V",
                     ordinal = 0
             ),
             locals = LocalCapture.CAPTURE_FAILSOFT,
             cancellable = true)
-    private void devonian$renderBg(GuiGraphics guiGraphics, float f, int i, int j, CallbackInfo ci, int k, int l) {
+    private void devonian$renderBg(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci, int xo, int yo) {
         if (!CustomContainerColor.INSTANCE.isEnabled()) return;
 
         int color = CustomContainerColor.INSTANCE.getSETTING_CONTAINER_COLOR().get();
 
         ci.cancel();
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND, k, l, 0.0F, 0.0F, imageWidth, containerRows * 18 + 17, 256, 256, color);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND, k, l + containerRows * 18 + 17, 0.0F, 126.0F, imageWidth, 96, 256, 256, color);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND, xo, yo, 0.0F, 0.0F, imageWidth, containerRows * 18 + 17, 256, 256, color);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND, xo, yo + containerRows * 18 + 17, 0.0F, 126.0F, imageWidth, 96, 256, 256, color);
     }
 }

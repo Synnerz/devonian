@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,8 +21,8 @@ public class EntityRenderDispatcherMixin {
             method = "submit",
             at = @At("HEAD")
     )
-    private void devonian$preRenderEntity(EntityRenderState entityRenderState, CameraRenderState cameraRenderState, double d, double e, double f, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
-        new PreRenderEntityEvent(entityRenderState, cameraRenderState, poseStack, submitNodeCollector).post();
+    private <S extends EntityRenderState> void devonian$preRenderEntity(S renderState, CameraRenderState camera, double x, double y, double z, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
+        new PreRenderEntityEvent(renderState, camera, poseStack, submitNodeCollector).post();
     }
 
     @Inject(

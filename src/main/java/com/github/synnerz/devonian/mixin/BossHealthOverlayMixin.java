@@ -18,7 +18,7 @@ import java.util.UUID;
 @Mixin(BossHealthOverlay.class)
 public class BossHealthOverlayMixin {
     @WrapOperation(
-        method = "render",
+        method = "extractRenderState",
         at = @At(value = "INVOKE", target = "Ljava/util/Map;values()Ljava/util/Collection;")
     )
     private Collection<LerpingBossEvent> devonian$bossBarHealth(Map<UUID, LerpingBossEvent> instance, Operation<Collection<LerpingBossEvent>> original) {

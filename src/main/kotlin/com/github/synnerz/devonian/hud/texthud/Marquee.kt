@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.hud.texthud
 
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import kotlin.math.ceil
 import kotlin.math.max
@@ -15,7 +15,7 @@ class Marquee(name: String, data: DataProvider) : StylizedTextHud(name, data) {
     var freezeTime = 1500.0
     var alternate = false
 
-    override fun draw(ctx: GuiGraphics) {
+    override fun draw(ctx: GuiGraphicsExtractor) {
         val t = System.nanoTime() * 1.0e-6
 
         actualX = x
@@ -39,7 +39,7 @@ class Marquee(name: String, data: DataProvider) : StylizedTextHud(name, data) {
         x = actualX
     }
 
-    override fun renderText(ctx: GuiGraphics) {
+    override fun renderText(ctx: GuiGraphicsExtractor) {
         val h = getHeight()
         ctx.scissorStack.push(
             ScreenRectangle(

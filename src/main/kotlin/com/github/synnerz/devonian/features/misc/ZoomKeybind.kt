@@ -9,7 +9,7 @@ import com.github.synnerz.devonian.api.events.MouseScrollEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.math.MathUtils
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import org.lwjgl.glfw.GLFW
 import kotlin.math.pow
@@ -28,7 +28,7 @@ object ZoomKeybind : Feature(
         "Zoom Steps"
     )
 
-    val keybind = KeyBindingHelper.registerKeyBinding(
+    val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.zoomkey",
             GLFW.GLFW_KEY_UNKNOWN,

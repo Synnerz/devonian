@@ -11,7 +11,7 @@ object WorldAge : TextHudFeature(
     override fun initialize() {
         on<TickEvent> {
             val w = minecraft.level ?: return@on
-            setLine("&bDay&f: &6${w.dayTime / 24000}")
+            setLine("&bDay&f: &6${w.gameTime / 24000}")
         }
 
         on<RenderOverlayEvent> { event ->

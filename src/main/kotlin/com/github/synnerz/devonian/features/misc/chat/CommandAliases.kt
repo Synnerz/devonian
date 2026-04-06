@@ -14,7 +14,7 @@ import com.github.synnerz.talium.components.UITextInput
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
@@ -231,12 +231,12 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
         lastTrigger = System.currentTimeMillis()
     }
 
-    override fun render(guiGraphics: GuiGraphics, i: Int, j: Int, f: Float) {
-        super.render(guiGraphics, i, j, f)
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
+        super.extractRenderState(graphics, mouseX, mouseY, a)
         background.draw()
     }
 
-    override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
     }
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
@@ -245,7 +245,7 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
     }
 
     override fun charTyped(characterEvent: CharacterEvent): Boolean {
-        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), characterEvent.modifiers)
+        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), -1)
         return super.charTyped(characterEvent)
     }
 

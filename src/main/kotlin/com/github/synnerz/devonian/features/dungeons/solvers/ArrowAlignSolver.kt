@@ -8,12 +8,12 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.Font
-import net.minecraft.client.renderer.LightTexture
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.decoration.ItemFrame
 import net.minecraft.world.item.Items
+import net.minecraft.world.level.LightLayer
 import org.joml.Quaternionf
 import kotlin.math.floor
 import kotlin.math.max
@@ -220,7 +220,7 @@ object ArrowAlignSolver : Feature(
                         consumer,
                         layer,
                         0,
-                        LightTexture.FULL_BLOCK
+                        LightLayer.BLOCK.ordinal // TODO: double check
                     )
 
                     consumer.endBatch()

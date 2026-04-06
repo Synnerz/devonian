@@ -10,7 +10,7 @@ import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.Render2D.height
 import com.github.synnerz.devonian.utils.render.Render2D.width
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 
@@ -76,7 +76,7 @@ abstract class TextHudFeature(
     override fun getHeight() = hud.getHeight()
     override fun getBounds(): BoundingBox = hud.getBounds()
 
-    override fun drawImpl(ctx: GuiGraphics) {
+    override fun drawImpl(ctx: GuiGraphicsExtractor) {
         if (isEditing) hud.resetLines()
         isEditing = false
         hud.draw(ctx)
@@ -86,7 +86,7 @@ abstract class TextHudFeature(
         hud.setLines(getEditText())
     }
 
-    override fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
+    override fun sampleDraw(ctx: GuiGraphicsExtractor, mx: Int, my: Int, selected: Boolean) {
         if (!isEditing) hud.storeLines()
         isEditing = true
         setEditDisplay()

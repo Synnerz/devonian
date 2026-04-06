@@ -150,7 +150,7 @@ object Deployables : TextHudFeature(
             val offset = Vector3f(0f, 2f * entScale * scale, 0f)
             val state = InventoryScreen.extractRenderState(ent)
 
-            event.ctx.submitEntityRenderState(
+            event.ctx.entity(
                 state,
                 renderScale,
                 offset,

@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.events.GuiOpenEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LevelLoadingScreenAccessor
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.LevelLoadingScreen
 import net.minecraft.client.gui.screens.Overlay
 
@@ -35,7 +35,7 @@ object DisableWorldLoadingScreen : Feature(
     }
 
     object PausingOverlay : Overlay() {
-        override fun render(guiGraphics: GuiGraphics, i: Int, j: Int, f: Float) {}
+        override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {}
 
         override fun tick() {
             val screen = levelLoadingScreen ?: return

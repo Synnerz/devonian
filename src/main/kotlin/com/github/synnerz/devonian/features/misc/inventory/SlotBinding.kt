@@ -11,11 +11,11 @@ import com.github.synnerz.devonian.utils.render.Render2D
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import com.mojang.blaze3d.platform.InputConstants
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
-import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -63,7 +63,7 @@ object SlotBinding : Feature(
     )
 
     private const val KEY_NAME = "slotsBound1"
-    private val keybind = KeyBindingHelper.registerKeyBinding(
+    private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.slotBinding",
             GLFW.GLFW_KEY_UNKNOWN,
@@ -203,8 +203,8 @@ object SlotBinding : Feature(
                 if (event.idx < 9 && other >= 9) {
                     val inv = player.inventory
                     val dst = menu.slots.find { it.container === inv && it.containerSlot == other }!!
-                    minecraft.gameMode?.handleInventoryMouseClick(id, dst.index, event.idx, ClickType.SWAP, player)
-                } else minecraft.gameMode?.handleInventoryMouseClick(id, event.slot!!.index, other, ClickType.SWAP, player)
+                    minecraft.gameMode?.handleContainerInput(id, dst.index, event.idx, ContainerInput.SWAP, player)
+                } else minecraft.gameMode?.handleContainerInput(id, event.slot!!.index, other, ContainerInput.SWAP, player)
                 event.cancel()
                 return@on
             }

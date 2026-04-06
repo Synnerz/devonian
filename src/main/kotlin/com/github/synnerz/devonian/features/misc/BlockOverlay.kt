@@ -82,7 +82,7 @@ object BlockOverlay : Feature(
                         -entity.bbWidth * 0.5, 0.0, -entity.bbWidth * 0.5,
                         entity.bbWidth * 0.5, entity.bbHeight.toDouble(), entity.bbWidth * 0.5,
                     )
-                    offset = entity.getPosition(event.renderContext.tickCounter().getGameTimeDeltaPartialTick(false))
+                    offset = entity.getPosition(event.renderContext.deltaTracker().getGameTimeDeltaPartialTick(false))
                 }
 
                 HitResult.Type.BLOCK -> {
@@ -90,11 +90,12 @@ object BlockOverlay : Feature(
                     val blockPos = (event.hitResult as? BlockHitResult)?.blockPos ?: return@on
                     val camera = minecraft.gameRenderer.mainCamera
                     // accurate bounding box
+                    val camEntity = camera.entity() ?: return@on
                     val shape = world.getBlockState(blockPos)
                         .getShape(
                             EmptyBlockGetter.INSTANCE,
                             blockPos,
-                            CollisionContext.of(camera.entity())
+                            CollisionContext.of(camEntity)
                         )
                     harharImLosingMyFuckingSanity = shape
                     offset = Vec3(blockPos)

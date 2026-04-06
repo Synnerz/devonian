@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.utils.render
 
 import com.github.synnerz.devonian.utils.render.impl.Render3DState
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.renderer.state.CameraRenderState
+import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.world.phys.shapes.VoxelShape
 import java.awt.Color
 
@@ -48,6 +48,7 @@ object Render3DImmediate : IRender3D {
         phase: Boolean,
         translate: Boolean,
     ) {
+        if (!::poseStack.isInitialized) return
         if (color.alpha == 0) return
 
         if (translate) {

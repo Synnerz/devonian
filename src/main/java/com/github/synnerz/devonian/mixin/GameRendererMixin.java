@@ -11,11 +11,12 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.fog.FogRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,16 +35,16 @@ public class GameRendererMixin {
     private FogRenderer fogRenderer;
 
     @Inject(method = "bobHurt", at = @At("HEAD"), cancellable = true)
-    private void devonian$onHurtCam(PoseStack poseStack, float f, CallbackInfo ci) {
+    private void devonian$onHurtCam(CameraRenderState cameraState, PoseStack poseStack, CallbackInfo ci) {
         if (!NoHurtCamera.INSTANCE.isEnabled()) return;
         ci.cancel();
     }
 
     @WrapOperation(
-        method = "render",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;renderWithTooltipAndSubtitles(Lnet/minecraft/client/gui/GuiGraphics;IIF)V")
+        method = "extractGui",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;extractRenderStateWithTooltipAndSubtitles(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V")
     )
-    private void devonian$guiScaleEventPost(Screen instance, GuiGraphics guiGraphics, int i, int j, float f, Operation<Void> original) {
+    private void devonian$guiScaleEventPost(Screen instance, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, Operation<Void> original) {
         Minecraft mc = Devonian.INSTANCE.getMinecraft();
 
         GuiScaleEvent evn = new GuiScaleEvent(instance);
@@ -66,15 +67,15 @@ public class GameRendererMixin {
 
             w.setGuiScale(guiScale);
 
-            i = (int) mc.mouseHandler.getScaledXPos(w);
-            j = (int) mc.mouseHandler.getScaledYPos(w);
+            mouseX = (int) mc.mouseHandler.getScaledXPos(w);
+            mouseY = (int) mc.mouseHandler.getScaledYPos(w);
             mh.devonian$setGuiScaledWidthOverride(origW);
             mh.devonian$setGuiScaledHeightOverride(origH);
 
             instance.resize(w.getGuiScaledWidth(), w.getGuiScaledHeight());
         }
 
-        original.call(instance, guiGraphics, i, j, f);
+        original.call(instance, graphics, mouseX, mouseY, a);
 
         if (scale == -1) return;
 
@@ -87,12 +88,13 @@ public class GameRendererMixin {
         // instance.resize(mc, w.getGuiScaledWidth(), w.getGuiScaledHeight());
     }
 
-    @ModifyReturnValue(method = "getFov", at = @At(value = "RETURN", ordinal = 1))
-    private float devonian$onGetFov(float original) {
-        if (ZoomKeybind.INSTANCE.isEnabled()) {
-            return original * ZoomKeybind.cachedFactor;
-        }
-
-        return original;
-    }
+    // FIXME
+//    @ModifyReturnValue(method = "getFov", at = @At(value = "RETURN", ordinal = 1))
+//    private float devonian$onGetFov(float original) {
+//        if (ZoomKeybind.INSTANCE.isEnabled()) {
+//            return original * ZoomKeybind.cachedFactor;
+//        }
+//
+//        return original;
+//    }
 }

@@ -12,7 +12,7 @@ object RenderSlotIndex : Feature(
 ) {
     override fun initialize() {
         on<RenderSlotEvent> { event ->
-            event.ctx.drawString(
+            event.ctx.text(
                 minecraft.font,
                 event.slot.containerSlot.toString(),
                 event.slot.x, event.slot.y,

@@ -3,11 +3,11 @@ package com.github.synnerz.devonian.api.events
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.mojang.blaze3d.vertex.PoseStack
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldExtractionContext
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
@@ -21,7 +21,7 @@ import net.minecraft.client.particle.Particle
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState
 import net.minecraft.client.renderer.entity.state.EntityRenderState
-import net.minecraft.client.renderer.state.CameraRenderState
+import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
@@ -117,7 +117,7 @@ class TickEvent(
 ) : Event
 
 class RenderWorldEvent(
-    val ctx: WorldRenderContext
+    val ctx: LevelRenderContext
 ) : Event
 
 class PreRenderEntityEvent(
@@ -217,7 +217,7 @@ class GuiKeyUpEvent(
 ) : CancellableEvent()
 
 class BeforeBlockOutlineEvent(
-    val renderContext: WorldExtractionContext,
+    val renderContext: LevelExtractionContext,
     val hitResult: HitResult?
 ) : CancellableEvent()
 
@@ -327,7 +327,7 @@ class EntityDeathEvent(
 ) : Event
 
 class RenderOverlayEvent(
-    val ctx: GuiGraphics,
+    val ctx: GuiGraphicsExtractor,
     val tickCounter: DeltaTracker
 ) : Event
 
@@ -344,7 +344,7 @@ class RenderTickEvent : Event
 
 @Ordered class RenderSlotEvent(
     val slot: Slot,
-    val ctx: GuiGraphics,
+    val ctx: GuiGraphicsExtractor,
     val screen: AbstractContainerScreen<*>,
 ) : CancellableEvent() {
     fun isInventory(): Boolean = slot.container == Devonian.minecraft.player?.inventory
@@ -352,7 +352,7 @@ class RenderTickEvent : Event
 
 @Ordered class PostRenderSlotEvent(
     val slot: Slot,
-    val ctx: GuiGraphics,
+    val ctx: GuiGraphicsExtractor,
     val screen: AbstractContainerScreen<*>,
 ) : CancellableEvent() {
     fun isInventory(): Boolean = slot.container == Devonian.minecraft.player?.inventory
@@ -362,14 +362,14 @@ class RenderTickEvent : Event
     val item: ItemStack,
     val x: Int,
     val y: Int,
-    val ctx: GuiGraphics,
+    val ctx: GuiGraphicsExtractor,
 ) : CancellableEvent()
 
 @Ordered class PostRenderHotbarSlotEvent(
     val item: ItemStack,
     val x: Int,
     val y: Int,
-    val ctx: GuiGraphics,
+    val ctx: GuiGraphicsExtractor,
 ) : Event
 
 @Threaded class SoundPlayEvent(
@@ -486,7 +486,7 @@ class QuickCraftMoveEvent(
 ) : CancellableEvent()
 
 @Ordered class PostRenderSlotsEvent(
-    val ctx: GuiGraphics,
+    val ctx: GuiGraphicsExtractor,
     val mouseX: Int,
     val mouseY: Int,
     val container: AbstractContainerScreen<*>,
@@ -541,7 +541,7 @@ class RenderGuiEvent(
     val x: Int,
     val y: Int,
     val pticks: Float,
-    val ctx: GuiGraphics
+    val ctx: GuiGraphicsExtractor
 ) : CancellableEvent()
 
 class PostRenderGuiEvent(
@@ -549,7 +549,7 @@ class PostRenderGuiEvent(
     val x: Int,
     val y: Int,
     val pticks: Float,
-    val ctx: GuiGraphics
+    val ctx: GuiGraphicsExtractor
 ) : Event
 
 @Ordered class GuiScaleEvent(
@@ -567,7 +567,7 @@ class ContainerRenderEvent(
     val x: Int,
     val y: Int,
     val pticks: Float,
-    val ctx: GuiGraphics
+    val ctx: GuiGraphicsExtractor
 ) : CancellableEvent()
 
 @Ordered class TooltipRenderEvent(
@@ -620,7 +620,7 @@ class ClientContainerCloseEvent(
 ) : CancellableEvent()
 
 class SelectedItemRenderEvent(
-    val ctx: GuiGraphics,
+    val ctx: GuiGraphicsExtractor,
     val mutableComponent: MutableComponent,
 ) : CancellableEvent()
 

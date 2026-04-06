@@ -13,7 +13,7 @@ import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.resources.Identifier
@@ -49,7 +49,7 @@ object SlotLocking : Feature(
 
     private const val KEY_NAME = "slotsLocked"
     private val lockedSlots = Array(40) { false }
-    private val keybind = KeyBindingHelper.registerKeyBinding(
+    private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.slotLocking",
             GLFW.GLFW_KEY_UNKNOWN,
@@ -142,7 +142,7 @@ object SlotLocking : Feature(
                 if (slot.container !== inv) return@forEach
                 if (lockedSlots.getOrNull(slot.containerSlot) != true) return@forEach
 
-                event.ctx.guiRenderState.submitGuiElement(
+                event.ctx.guiRenderState.addGuiElement(
                     TexturedQuadRenderState(
                         BufferedImageRenderer.pipeline,
                         lock,

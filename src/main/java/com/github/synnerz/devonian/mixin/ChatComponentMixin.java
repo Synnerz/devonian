@@ -8,9 +8,9 @@ import com.github.synnerz.devonian.features.misc.RemoveChatLimit;
 import com.github.synnerz.devonian.features.misc.chat.CompactChat;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.client.GuiMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,11 +46,7 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
         return RemoveChatLimit.INSTANCE.getSETTING_MAX_MESSAGES().get().intValue();
     }
 
-    @ModifyVariable(
-            method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V",
-            at = @At("HEAD"),
-            argsOnly = true
-    )
+    @ModifyVariable(method = "addMessage", at = @At("HEAD"), argsOnly = true)
     private Component devonian$addMessage(Component text) {
         return CompactChat.INSTANCE.compactText(text);
     }

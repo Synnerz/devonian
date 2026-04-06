@@ -7,11 +7,11 @@ import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.gui.Font
-import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.ShapeRenderer
 import net.minecraft.client.renderer.rendertype.RenderType
-import net.minecraft.client.renderer.state.CameraRenderState
+import net.minecraft.client.renderer.state.level.CameraRenderState
+import net.minecraft.world.level.LightLayer
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Vector3d
 import java.awt.Color
@@ -197,7 +197,7 @@ object Render3DVertex {
             mode,
             ((minecraft.options.getBackgroundOpacity(0.25f) * backgroundBox.alpha).toInt() shl 24) or
             (backgroundBox.rgb and 0x00FFFFFF),
-            LightTexture.FULL_BLOCK,
+            LightLayer.BLOCK.ordinal,
         )
 
         bufferSource.endBatch()

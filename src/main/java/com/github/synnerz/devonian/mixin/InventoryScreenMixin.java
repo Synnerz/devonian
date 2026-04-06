@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.features.misc.HideCraftingText;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
@@ -26,21 +26,21 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<@NotNull In
     }
 
     @WrapOperation(
-        method = "renderBg",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIFFIIII)V")
+        method = "extractBackground",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIFFIIII)V")
     )
-    private void devonian$renderBg(GuiGraphics instance, RenderPipeline renderPipeline, Identifier identifier, int i, int j, float f, float g, int k, int l, int m, int n, Operation<Void> original) {
+    private void devonian$renderBg(GuiGraphicsExtractor instance, RenderPipeline renderPipeline, Identifier texture, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight, Operation<Void> original) {
         if (!CustomContainerColor.INSTANCE.isEnabled()) {
-            original.call(instance, renderPipeline, identifier, i, j, f, g, k, l, m, n);
+            original.call(instance, renderPipeline, texture, x, y, u, v, width, height, textureWidth, textureHeight);
             return;
         }
 
         int color = CustomContainerColor.INSTANCE.getSETTING_CONTAINER_COLOR().get();
         instance.blit(
             renderPipeline,
-            identifier,
-            i,
-            j,
+            texture,
+            x,
+            y,
             0.0f,
             0.0f,
             imageWidth,
@@ -52,11 +52,11 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<@NotNull In
     }
 
     @Inject(
-        method = "renderLabels",
+        method = "extractLabels",
         at = @At("HEAD"),
         cancellable = true
     )
-    private void devonian$hideCraftingText(GuiGraphics guiGraphics, int i, int j, CallbackInfo ci) {
+    private void devonian$hideCraftingText(GuiGraphicsExtractor graphics, int xm, int ym, CallbackInfo ci) {
         if (!HideCraftingText.INSTANCE.isEnabled()) return;
         ci.cancel();
     }

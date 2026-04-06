@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
-import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 
@@ -16,11 +16,11 @@ object ScreenUtils {
     fun click(slot: Int, shift: Boolean = false, button: String = "LEFT") {
         val minecraft = Devonian.minecraft
         val screen = minecraft.screen ?: return
-        val windowId = (screen as AbstractContainerScreen<*>).menu?.containerId ?: return
+        val windowId = (screen as AbstractContainerScreen<*>).menu.containerId
         val clickMode = when {
-            button == "MIDDLE" -> ClickType.CLONE
-            shift -> ClickType.QUICK_MOVE
-            else -> ClickType.PICKUP
+            button == "MIDDLE" -> ContainerInput.CLONE
+            shift -> ContainerInput.QUICK_MOVE
+            else -> ContainerInput.PICKUP
         }
         val clickButton = when (button) {
             "LEFT" -> 0
@@ -30,7 +30,7 @@ object ScreenUtils {
         }
 
         minecraft.player?.let {
-            minecraft.gameMode?.handleInventoryMouseClick(
+            minecraft.gameMode?.handleContainerInput(
                 windowId,
                 slot, clickButton, clickMode, it
             )

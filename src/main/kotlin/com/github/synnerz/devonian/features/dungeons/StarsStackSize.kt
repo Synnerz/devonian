@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.api.events.PostRenderSlotEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.FixedIdentityMap
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.world.item.ItemStack
 import kotlin.jvm.optionals.getOrNull
 
@@ -23,7 +23,7 @@ object StarsStackSize : Feature(
     }
     private val cache = FixedIdentityMap<ItemStack, Entry>(128)
 
-    private fun draw(stack: ItemStack, x: Int, y: Int, ctx: GuiGraphics) {
+    private fun draw(stack: ItemStack, x: Int, y: Int, ctx: GuiGraphicsExtractor) {
         if (stack.isEmpty) return
 
         val entry = cache.getOrPut(stack) {
@@ -37,7 +37,7 @@ object StarsStackSize : Feature(
         }
         if (entry === Entry.EMPTY) return
 
-        ctx.drawString(
+        ctx.text(
             minecraft.font,
             entry.str,
             x + 17 - entry.width,

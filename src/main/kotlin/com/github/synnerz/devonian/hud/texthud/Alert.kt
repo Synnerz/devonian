@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.BoundingBox
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.sounds.SoundEvents
 import kotlin.math.min
 
@@ -61,7 +61,7 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
         needRescale = false
     }
 
-    override fun renderText(ctx: GuiGraphics) {
+    override fun renderText(ctx: GuiGraphicsExtractor) {
         if (needRescale) return
         super.renderText(ctx)
     }

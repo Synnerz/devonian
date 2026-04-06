@@ -8,9 +8,9 @@ import com.github.synnerz.devonian.utils.FixedIdentityMap
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 import com.github.synnerz.devonian.utils.render.states.QuadRenderState
-import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.render.state.GuiTextRenderState
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.renderer.state.gui.GuiTextRenderState
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.contents.PlainTextContents
@@ -34,7 +34,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
         )
     }
 
-    override fun renderText(ctx: GuiGraphics) {
+    override fun renderText(ctx: GuiGraphicsExtractor) {
         val font = Devonian.minecraft.font
         val bounds = parent.getBounds()
         ctx.pose()
@@ -43,7 +43,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
             .scale(parent.scale)
         val mat = Matrix3x2f(ctx.pose())
 
-        if (parent.backdrop == Backdrop.Full) ctx.guiRenderState.submitGuiElement(
+        if (parent.backdrop == Backdrop.Full) ctx.guiRenderState.addGuiElement(
             QuadRenderState(
                 RenderPipelines.GUI,
                 mat,
@@ -65,7 +65,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
             } / parent.scale * parent.renderScale.toFloat() +
                 if (parent.shadow == Shadow.Outline) 1f else 0f
 
-            if (parent.backdrop == Backdrop.Line) ctx.guiRenderState.submitGuiElement(
+            if (parent.backdrop == Backdrop.Line) ctx.guiRenderState.addGuiElement(
                 QuadRenderState(
                     RenderPipelines.GUI,
                     mat,
@@ -79,7 +79,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
 
             if (parent.shadow == Shadow.Outline) {
                 val black = cloneBlack(data.comp)
-                ctx.guiRenderState.submitText(
+                ctx.guiRenderState.addText(
                     GuiTextRenderState(
                         font,
                         black.visualOrderText,
@@ -96,7 +96,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         that.`devonian$setYf`(y + 2)
                     }
                 )
-                ctx.guiRenderState.submitText(
+                ctx.guiRenderState.addText(
                     GuiTextRenderState(
                         font,
                         black.visualOrderText,
@@ -113,7 +113,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         that.`devonian$setYf`(y + 2)
                     }
                 )
-                ctx.guiRenderState.submitText(
+                ctx.guiRenderState.addText(
                     GuiTextRenderState(
                         font,
                         black.visualOrderText,
@@ -130,7 +130,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         that.`devonian$setYf`(y + 2 - 1)
                     }
                 )
-                ctx.guiRenderState.submitText(
+                ctx.guiRenderState.addText(
                     GuiTextRenderState(
                         font,
                         black.visualOrderText,
@@ -149,7 +149,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                 )
             }
 
-            ctx.guiRenderState.submitText(
+            ctx.guiRenderState.addText(
                 GuiTextRenderState(
                     font,
                     data.comp.visualOrderText,

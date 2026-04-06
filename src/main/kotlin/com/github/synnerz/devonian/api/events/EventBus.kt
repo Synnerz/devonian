@@ -7,11 +7,11 @@ import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import com.github.synnerz.devonian.utils.render.impl.Render3DState
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
@@ -48,18 +48,18 @@ object EventBus {
             post(EntityLeaveEvent(entity))
         }
         ClientTickEvents.START_CLIENT_TICK.register { post(TickEvent(it, clientTicks++)) }
-        WorldRenderEvents.START_MAIN.register {
-            Render3DState.camera = it.worldState().cameraRenderState
-            Render3DImmediate.camera = it.worldState().cameraRenderState
+        LevelRenderEvents.START_MAIN.register {
+            Render3DState.camera = it.levelState().cameraRenderState
+            Render3DImmediate.camera = it.levelState().cameraRenderState
 
-            (it.worldRenderer() as? LevelRendererAccessor)?.let { Render3DState.bufferSource = it.renderBuffers.bufferSource() }
+            (it.levelRenderer() as? LevelRendererAccessor)?.let { Render3DState.bufferSource = it.renderBuffers.bufferSource() }
         }
-        WorldRenderEvents.END_MAIN.register {
+        LevelRenderEvents.END_MAIN.register {
             post(RenderWorldEvent(it))
         }
         ClientLifecycleEvents.CLIENT_STARTED.register { post(GameLoadEvent(it)) }
         ClientLifecycleEvents.CLIENT_STOPPING.register { post(GameUnloadEvent(it)) }
-        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register { mc, world ->
+        ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register { mc, world ->
             WorldChangeEvent(mc, world).post()
             totalTicks = 0
             entityTypes.clear()
@@ -103,9 +103,9 @@ object EventBus {
                 !event.isCancelled()
             }
         }
-        WorldRenderEvents.AFTER_BLOCK_OUTLINE_EXTRACTION.register { worldContext, hitResult ->
+        LevelRenderEvents.AFTER_BLOCK_OUTLINE_EXTRACTION.register { worldContext, hitResult ->
             val cancel = BeforeBlockOutlineEvent(worldContext, hitResult).post()
-            if (cancel) worldContext.worldState().blockOutlineRenderState = null
+            if (cancel) worldContext.levelState().blockOutlineRenderState = null
             !cancel
         }
         ClientReceiveMessageEvents.ALLOW_GAME.register { comp, overlay ->

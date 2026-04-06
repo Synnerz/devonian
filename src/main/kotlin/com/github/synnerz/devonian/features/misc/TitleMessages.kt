@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableListMultimap
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
@@ -354,12 +354,12 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
             createCriteria(if (components.isEmpty()) 1 else 1 + (components.size % 7), data.criteria, data.message)
     }
 
-    override fun render(guiGraphics: GuiGraphics, i: Int, j: Int, f: Float) {
-        super.render(guiGraphics, i, j, f)
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
+        super.extractRenderState(graphics, mouseX, mouseY, a)
         background.draw()
     }
 
-    override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
     }
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
@@ -368,7 +368,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
     }
 
     override fun charTyped(characterEvent: CharacterEvent): Boolean {
-        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), characterEvent.modifiers)
+        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), -1)
         return super.charTyped(characterEvent)
     }
 

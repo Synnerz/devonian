@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.hud.texthud
 
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 
 class TextHudFamily(name: String, data: DataProvider) : StylizedTextHud(name, data) {
     val children = mutableListOf<StylizedTextHud>()
@@ -26,7 +26,7 @@ class TextHudFamily(name: String, data: DataProvider) : StylizedTextHud(name, da
         children.forEach { it.resetLines() }
     }
 
-    override fun draw(ctx: GuiGraphics) {
+    override fun draw(ctx: GuiGraphicsExtractor) {
         val bounds = getBounds()
         var x = 0.0
 
@@ -42,7 +42,7 @@ class TextHudFamily(name: String, data: DataProvider) : StylizedTextHud(name, da
         throw IllegalStateException()
     }
 
-    override fun renderText(ctx: GuiGraphics) {
+    override fun renderText(ctx: GuiGraphicsExtractor) {
         throw IllegalStateException()
     }
 }

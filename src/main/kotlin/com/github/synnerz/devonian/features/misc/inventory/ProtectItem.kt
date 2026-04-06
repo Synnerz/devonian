@@ -13,7 +13,7 @@ import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccesso
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.world.item.ItemStack
 import org.lwjgl.glfw.GLFW
@@ -33,14 +33,14 @@ object ProtectItem : Feature(
         "ProtectItem ID Fallback"
     )
     private var lockedList = mutableSetOf<String>()
-    private val keybind = KeyBindingHelper.registerKeyBinding(
+    private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.protectItem",
             GLFW.GLFW_KEY_UNKNOWN,
             Devonian.keybindCategory
         )
     )
-    private val peekKeybind = KeyBindingHelper.registerKeyBinding(
+    private val peekKeybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.protectItem.peek",
             GLFW.GLFW_KEY_UNKNOWN,

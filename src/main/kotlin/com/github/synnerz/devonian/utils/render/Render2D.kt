@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import net.minecraft.ChatFormatting
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.RenderPipelines
 import org.joml.Matrix3x2f
 import java.awt.Color
@@ -22,13 +22,13 @@ object Render2D {
     val scaledHeight get() = window.guiScaledHeight
 
     @JvmOverloads
-    fun drawString(ctx: GuiGraphics, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
+    fun drawString(ctx: GuiGraphicsExtractor, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
         val matrices = ctx.pose()
         matrices.pushMatrix()
         matrices.translate(x.toFloat(), y.toFloat())
         if (scale != 1f) matrices.scale(scale, scale)
 
-        ctx.drawString(
+        ctx.text(
             textRenderer,
             str.replace(formattingRegex, "${ChatFormatting.PREFIX_CODE}"),
             0,
@@ -41,7 +41,7 @@ object Render2D {
     }
 
     @JvmOverloads
-    fun drawStringNW(ctx: GuiGraphics, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
+    fun drawStringNW(ctx: GuiGraphicsExtractor, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
         var yy = y
         str.split("\n").forEach {
             drawString(ctx, it, x, yy, scale, shadow)
@@ -50,11 +50,11 @@ object Render2D {
     }
 
     @JvmOverloads
-    fun drawRect(ctx: GuiGraphics, x: Int, y: Int, width: Int, height: Int, color: Color = Color.WHITE) {
+    fun drawRect(ctx: GuiGraphicsExtractor, x: Int, y: Int, width: Int, height: Int, color: Color = Color.WHITE) {
         ctx.fill(RenderPipelines.GUI, x, y, x + width, y + height, color.rgb)
     }
 
-    fun drawWireRect(ctx: GuiGraphics, x: Int, y: Int, w: Int, h: Int, c: Color, lw: Int = 1) {
+    fun drawWireRect(ctx: GuiGraphicsExtractor, x: Int, y: Int, w: Int, h: Int, c: Color, lw: Int = 1) {
         val rgb = c.rgb
         ctx.fill(x, y, x + w, y + lw, rgb)
         ctx.fill(x, y + lw, x + lw, y + h, rgb)
@@ -62,16 +62,16 @@ object Render2D {
         ctx.fill(x + lw, y + h - lw, x + w - lw, y + h, rgb)
     }
 
-    fun drawCircle(ctx: GuiGraphics, cx: Int, cy: Int, radius: Int, color: Color = Color.WHITE) {
+    fun drawCircle(ctx: GuiGraphicsExtractor, cx: Int, cy: Int, radius: Int, color: Color = Color.WHITE) {
         var x = 0
         var y = radius
         var d = 3 - 2 * radius
 
         while (x <= y) {
-            ctx.hLine(cx - x, cx + x, cy + y, color.rgb)
-            ctx.hLine(cx - x, cx + x, cy - y, color.rgb)
-            ctx.hLine(cx - y, cx + y, cy + x, color.rgb)
-            ctx.hLine(cx - y, cx + y, cy - x, color.rgb)
+            ctx.horizontalLine(cx - x, cx + x, cy + y, color.rgb)
+            ctx.horizontalLine(cx - x, cx + x, cy - y, color.rgb)
+            ctx.horizontalLine(cx - y, cx + y, cy + x, color.rgb)
+            ctx.horizontalLine(cx - y, cx + y, cy - x, color.rgb)
 
             if (d < 0) {
                 d += 4 * x + 6
@@ -84,7 +84,7 @@ object Render2D {
     }
 
     fun drawLine(
-        ctx: GuiGraphics,
+        ctx: GuiGraphicsExtractor,
         x1: Float, y1: Float,
         x2: Float, y2: Float,
         c: Color,
@@ -96,7 +96,7 @@ object Render2D {
         val f = lw / hypot(dx, dy)
         dx *= f
         dy *= f
-        ctx.guiRenderState.submitGuiElement(
+        ctx.guiRenderState.addGuiElement(
             QuadRenderState(
                 RenderPipelines.GUI,
                 mat,

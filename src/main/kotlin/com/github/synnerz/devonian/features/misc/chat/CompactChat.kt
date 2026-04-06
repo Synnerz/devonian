@@ -6,7 +6,8 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import net.minecraft.ChatFormatting
-import net.minecraft.client.GuiMessage
+import net.minecraft.client.multiplayer.chat.GuiMessage
+import net.minecraft.client.multiplayer.chat.GuiMessageSource
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
 import net.minecraft.network.chat.MutableComponent
@@ -85,6 +86,7 @@ object CompactChat : Feature(
                             line.content.copy()
                                 .also { it.siblings.removeIf { it.contents is CompactChatComponent } },
                             line.signature,
+                            GuiMessageSource.SYSTEM_SERVER,
                             line.tag
                         )
                     )

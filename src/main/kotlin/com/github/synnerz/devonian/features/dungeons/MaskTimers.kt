@@ -133,7 +133,7 @@ abstract class ImmunityTimer(val formattedName: String, itemName: String, config
             if (style != 0) return@on
 
             val bounds = getBounds()
-            event.ctx.guiRenderState.submitGuiElement(
+            event.ctx.guiRenderState.addGuiElement(
                 TexturedQuadRenderState(
                     BufferedImageRenderer.pipeline,
                     TextureSetup(

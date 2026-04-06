@@ -5,12 +5,8 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.HudManagerGrid
-import com.github.synnerz.devonian.features.HudManagerHider
-import com.github.synnerz.devonian.features.HudManagerInstructions
-import com.github.synnerz.devonian.features.HudManagerName
-import com.github.synnerz.devonian.features.HudManagerRenderer
 import com.github.synnerz.devonian.utils.render.Render2D
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.input.MouseButtonEvent
@@ -136,22 +132,21 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         return false
     }
 
-    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
         for (hud in huds) {
             if (hud.isEnabled()) continue
             if (hud.isInternal) continue
-            if (hud.isVisibleEdit()) hud.sampleDraw(context, mouseX, mouseY, hud == selectedHud)
+            if (hud.isVisibleEdit()) hud.sampleDraw(graphics, mouseX, mouseY, hud == selectedHud)
         }
 
         val window = minecraft?.window ?: return
-        context.fill(0, 0, window.guiScaledWidth, window.guiScaledHeight, 0x80000000.toInt())
-        super.render(context, mouseX, mouseY, deltaTicks)
-
+        graphics.fill(0, 0, window.guiScaledWidth, window.guiScaledHeight, 0x80000000.toInt())
+        super.extractRenderState(graphics, mouseX, mouseY, a)
         if (HudManagerGrid.isEnabled()) {
             var x = gridSize
             while (x < window.guiScaledWidth) {
                 Render2D.drawLine(
-                    context,
+                    graphics,
                     x.toFloat(), 0f,
                     x.toFloat(), window.guiScaledHeight.toFloat(),
                     Color(152, 191, 216, 50),
@@ -163,7 +158,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
             var y = gridSize
             while (y < window.guiScaledHeight) {
                 Render2D.drawLine(
-                    context,
+                    graphics,
                     0f, y.toFloat(),
                     window.guiScaledWidth.toFloat(), y.toFloat(),
                     Color(152, 191, 216, 50),
@@ -174,20 +169,20 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         }
 
         Render2D.drawString(
-            context,
+            graphics,
             "Hud Manager",
             10, 10
         )
 
         Render2D.drawLine(
-            context,
+            graphics,
             window.guiScaledWidth * 0.5f, window.guiScaledHeight * 0.5f - 5f,
             window.guiScaledWidth * 0.5f, window.guiScaledHeight * 0.5f + 5f,
             Color.GREEN,
             1f / window.guiScale,
         )
         Render2D.drawLine(
-            context,
+            graphics,
             window.guiScaledWidth * 0.5f - 5f, window.guiScaledHeight * 0.5f,
             window.guiScaledWidth * 0.5f + 5f, window.guiScaledHeight * 0.5f,
             Color.GREEN,
@@ -196,7 +191,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
 
         for (hud in huds) {
             if (!hud.isEnabled() && !hud.isInternal) continue
-            if (hud.isVisibleEdit()) hud.sampleDraw(context, mouseX, mouseY, hud == selectedHud)
+            if (hud.isVisibleEdit()) hud.sampleDraw(graphics, mouseX, mouseY, hud == selectedHud)
         }
     }
 

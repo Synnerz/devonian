@@ -6,7 +6,7 @@ import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat.Mode
 import kotlinx.atomicfu.atomic
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.Identifier
@@ -72,28 +72,28 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         lastFuture?.cancel(true)
     }
 
-    fun draw(ctx: GuiGraphics, x: Float, y: Float, scale: Float = 1f) {
+    fun draw(ctx: GuiGraphicsExtractor, x: Float, y: Float, scale: Float = 1f) {
         uploadImage()
         draw(ctx, x, y, uploader.w * scale, uploader.h * scale)
     }
 
-    fun drawStretched(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float) {
+    fun drawStretched(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float) {
         uploadImage()
         draw(ctx, x, y, w, h)
     }
 
-    protected fun draw(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float) {
+    protected fun draw(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float) {
         draw(ctx, x, y, w, h, 0f, 0f, 1f, 1f)
     }
 
-    protected fun draw(ctx: GuiGraphics, x: Float, y: Float, w: Float, h: Float, u0: Float, v0: Float, u1: Float, v1: Float) {
+    protected fun draw(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float, u0: Float, v0: Float, u1: Float, v1: Float) {
         if (Devonian.minecraft.options.hideGui) return
         if (!uploader.hasImg) return
         if (!valid) return
 
         val textureView = uploader.textureView
         val sampler = uploader.sampler
-        ctx.guiRenderState.submitGuiElement(
+        ctx.guiRenderState.addGuiElement(
             TexturedQuadRenderState(
                 pipeline,
                 TextureSetup(

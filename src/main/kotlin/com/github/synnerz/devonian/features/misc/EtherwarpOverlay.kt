@@ -192,13 +192,14 @@ object EtherwarpOverlay : Feature(
             }
 
             val camera = event.ctx.gameRenderer().mainCamera
+            val camEntity = camera.entity() ?: return@on
 
             val outlineShape =
                 if (SETTING_ALWAYS_FULL.get()) Shapes.block()
                 else  world.getBlockState(hitResult).getShape(
                     EmptyBlockGetter.INSTANCE,
                     hitResult,
-                    CollisionContext.of(camera.entity())
+                    CollisionContext.of(camEntity)
                 )
 
             Render3DImmediate.renderWireframeShape(

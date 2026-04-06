@@ -11,16 +11,17 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
-    @WrapOperation(
-        method = "method_62214",
-        at = @At(value = "NEW", target = "()Lcom/mojang/blaze3d/vertex/PoseStack;")
-    )
-    private PoseStack devonian$render3D(Operation<PoseStack> original) {
-        PoseStack ps = original.call();
-
-        Render3DState.INSTANCE.setPoseStack(ps);
-        Render3DImmediate.INSTANCE.setPoseStack(ps);
-
-        return ps;
-    }
+    // FIXME
+//    @WrapOperation(
+//        method = "method_62214",
+//        at = @At(value = "NEW", target = "()Lcom/mojang/blaze3d/vertex/PoseStack;")
+//    )
+//    private PoseStack devonian$render3D(Operation<PoseStack> original) {
+//        PoseStack ps = original.call();
+//
+//        Render3DState.INSTANCE.setPoseStack(ps);
+//        Render3DImmediate.INSTANCE.setPoseStack(ps);
+//
+//        return ps;
+//    }
 }

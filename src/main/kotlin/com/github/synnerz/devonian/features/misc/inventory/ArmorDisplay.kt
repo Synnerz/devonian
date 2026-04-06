@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.render.Render2D
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.core.Holder
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.ItemStack
@@ -66,36 +66,36 @@ object ArmorDisplay : HudFeature(
         return BoundingBox(x, y, 18.0 * scale, 72.0 * scale)
     }
 
-    override fun drawImpl(ctx: GuiGraphics) {
+    override fun drawImpl(ctx: GuiGraphicsExtractor) {
         ctx.pose().pushMatrix()
         ctx.pose().translate(x.toFloat(), y.toFloat())
         ctx.pose().scale(scale)
 
         drawBorder(0, 0, ctx)
-        ctx.renderFakeItem(helmet ?: barrierItem, 0, 0)
+        ctx.fakeItem(helmet ?: barrierItem, 0, 0)
         drawBorder(0, 18, ctx)
-        ctx.renderFakeItem(chestplate ?: barrierItem, 0, 18)
+        ctx.fakeItem(chestplate ?: barrierItem, 0, 18)
         drawBorder(0, 18 * 2, ctx)
-        ctx.renderFakeItem(leggings ?: barrierItem, 0, 18 * 2)
+        ctx.fakeItem(leggings ?: barrierItem, 0, 18 * 2)
         drawBorder(0, 18 * 3, ctx)
-        ctx.renderFakeItem(boots ?: barrierItem, 0, 18 * 3)
+        ctx.fakeItem(boots ?: barrierItem, 0, 18 * 3)
 
         ctx.pose().popMatrix()
     }
 
-    override fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
+    override fun sampleDraw(ctx: GuiGraphicsExtractor, mx: Int, my: Int, selected: Boolean) {
         ctx.pose().pushMatrix()
         ctx.pose().translate(x.toFloat(), y.toFloat())
         ctx.pose().scale(scale)
 
         drawBorder(0, 0, ctx)
-        ctx.renderFakeItem(barrierItem, 0, 0)
+        ctx.fakeItem(barrierItem, 0, 0)
         drawBorder(0, 18, ctx)
-        ctx.renderFakeItem(barrierItem, 0, 18)
+        ctx.fakeItem(barrierItem, 0, 18)
         drawBorder(0, 18 * 2, ctx)
-        ctx.renderFakeItem(barrierItem, 0, 18 * 2)
+        ctx.fakeItem(barrierItem, 0, 18 * 2)
         drawBorder(0, 18 * 3, ctx)
-        ctx.renderFakeItem(barrierItem, 0, 18 * 3)
+        ctx.fakeItem(barrierItem, 0, 18 * 3)
 
         ctx.pose().popMatrix()
 
@@ -108,7 +108,7 @@ object ArmorDisplay : HudFeature(
         }
     }
 
-    private fun drawBorder(dx: Int, dy: Int, ctx: GuiGraphics) {
+    private fun drawBorder(dx: Int, dy: Int, ctx: GuiGraphicsExtractor) {
         if (SETTING_DRAW_BACKGROUND.get())
             ctx.fill(dx, dy, dx + 16, dy + 16, backgroundSlotColor.rgb)
         if (SETTING_DRAW_BORDER.get())

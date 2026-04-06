@@ -18,7 +18,7 @@ import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.ImmutableListMultimap
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
@@ -241,12 +241,12 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         }
     }
 
-    override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-        super.render(guiGraphics, mouseX, mouseY, deltaTicks)
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
+        super.extractRenderState(graphics, mouseX, mouseY, a)
         background.draw()
     }
 
-    override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
     }
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
@@ -261,7 +261,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
     }
 
     override fun charTyped(characterEvent: CharacterEvent): Boolean {
-        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), characterEvent.modifiers)
+        background.handleCharType(characterEvent.codepoint, characterEvent.codepointAsString(), -1)
         return super.charTyped(characterEvent)
     }
 

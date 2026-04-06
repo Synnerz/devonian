@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.utils.FixedIdentityMap
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.google.gson.JsonParser
 import net.minecraft.ChatFormatting
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.network.chat.TextColor
 import net.minecraft.resources.Identifier
@@ -76,7 +76,7 @@ object ItemRarityBackground : Feature(
 
     private val cache = FixedIdentityMap<ItemStack, Int>(128)
 
-    private fun render(x: Int, y: Int, item: ItemStack, ctx: GuiGraphics) {
+    private fun render(x: Int, y: Int, item: ItemStack, ctx: GuiGraphicsExtractor) {
         if (item.isEmpty) return
 
         val rgb = cache.getOrPut(item) {
@@ -107,7 +107,7 @@ object ItemRarityBackground : Feature(
                 ctx.fill(x, y, x + 16, y + 16, color)
             }
             2 -> {
-                ctx.guiRenderState.submitGuiElement(
+                ctx.guiRenderState.addGuiElement(
                     TexturedQuadRenderState(
                         BufferedImageRenderer.pipeline,
                         TextureSetup(

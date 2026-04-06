@@ -21,9 +21,9 @@ import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
 import com.mojang.blaze3d.textures.GpuSampler
 import com.mojang.blaze3d.textures.GpuTextureView
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.ChatComponent
-import net.minecraft.client.gui.components.PlayerFaceRenderer.*
+import net.minecraft.client.gui.components.PlayerFaceExtractor.*
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.RenderPipelines
@@ -783,7 +783,7 @@ object DungeonMap : HudFeature(
         }
     }
 
-    override fun drawImpl(ctx: GuiGraphics) {
+    override fun drawImpl(ctx: GuiGraphicsExtractor) {
         var floor = Dungeons.floor
         if (floor == FloorType.None) floor = FloorType.M7
 
@@ -805,7 +805,7 @@ object DungeonMap : HudFeature(
 
         val bgColor = SETTING_MAP_BACKGROUND_COLOR.getColor()
         if (bgColor.alpha > 0) {
-            ctx.guiRenderState.submitGuiElement(
+            ctx.guiRenderState.addGuiElement(
                 QuadRenderState(
                     RenderPipelines.GUI,
                     Matrix3x2f(ctx.pose()),
@@ -949,7 +949,7 @@ object DungeonMap : HudFeature(
                 hud.draw(ctx)
             }
 
-            ctx.guiRenderState.submitGuiElement(
+            ctx.guiRenderState.addGuiElement(
                 TexturedQuadRenderState(
                     BufferedImageRenderer.pipeline,
                     TextureSetup(
@@ -970,7 +970,7 @@ object DungeonMap : HudFeature(
                 )
             )
             if (isHead) {
-                ctx.guiRenderState.submitGuiElement(
+                ctx.guiRenderState.addGuiElement(
                     TexturedQuadRenderState(
                         BufferedImageRenderer.pipeline,
                         TextureSetup(
@@ -1009,7 +1009,7 @@ object DungeonMap : HudFeature(
                     v1 = MARKER_POINTER_OUTLINE_V1
                 }
 
-                ctx.guiRenderState.submitGuiElement(
+                ctx.guiRenderState.addGuiElement(
                     TexturedQuadRenderState(
                         BufferedImageRenderer.pipeline,
                         TextureSetup(
@@ -1043,9 +1043,9 @@ object DungeonMap : HudFeature(
         }
     }
 
-    override fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
+    override fun sampleDraw(ctx: GuiGraphicsExtractor, mx: Int, my: Int, selected: Boolean) {
         val pos = getBounds()
-        ctx.drawCenteredString(minecraft.font, "Dungeon Map :)", (pos.x + pos.w / 2.0).toInt(), (pos.y + pos.h / 2.0).toInt(), -1)
+        ctx.centeredText(minecraft.font, "Dungeon Map :)", (pos.x + pos.w / 2.0).toInt(), (pos.y + pos.h / 2.0).toInt(), -1)
 
         super.sampleDraw(ctx, mx, my, selected)
     }

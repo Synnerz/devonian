@@ -100,11 +100,12 @@ object SecretsClickedBox : Feature(
             }
 
             val camera = minecraft.gameRenderer.mainCamera
+            val camEntity = camera.entity() ?: return
             val blockShape = minecraft.level?.getBlockState(blockPos)
                 ?.getShape(
                     EmptyBlockGetter.INSTANCE,
                     blockPos,
-                    CollisionContext.of(camera.entity())
+                    CollisionContext.of(camEntity)
                 ) ?: return
 
             Render3DImmediate.renderWireframeShape(

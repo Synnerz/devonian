@@ -402,7 +402,7 @@ object PetDisplay : TextHudFeature(
                 .translate(bounds.x.toFloat(), bounds.y.toFloat())
                 .scale(1.25f * scale)
 
-            event.ctx.renderFakeItem(item, 0, 0)
+            event.ctx.fakeItem(item, 0, 0)
 
             event.ctx.pose().popMatrix()
         }.setEnabled(

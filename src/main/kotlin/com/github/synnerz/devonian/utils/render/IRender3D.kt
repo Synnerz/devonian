@@ -147,7 +147,7 @@ interface IRender3D {
         translate: Boolean = true,
         c1: Color = c0,
     ) {
-        val cam = Devonian.minecraft.gameRenderer.levelRenderState.cameraRenderState
+        val cam = Devonian.minecraft.gameRenderer.gameRenderState.levelRenderState.cameraRenderState
         val look = cam.orientation.transform(Vector3f(0f, 0f, -1f))
         val pos = Vec3(x, y, z)
         val camPos = cam.pos

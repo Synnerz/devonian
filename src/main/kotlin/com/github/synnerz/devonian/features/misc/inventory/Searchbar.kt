@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.talium.components.UITextInput
 import kotlinx.atomicfu.atomic
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -68,11 +68,11 @@ object Searchbar : HudFeature(
         return BoundingBox(x, y, w, h)
     }
 
-    override fun drawImpl(ctx: GuiGraphics) {
+    override fun drawImpl(ctx: GuiGraphicsExtractor) {
         input.draw()
     }
 
-    override fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
+    override fun sampleDraw(ctx: GuiGraphicsExtractor, mx: Int, my: Int, selected: Boolean) {
         val pos = getBounds()
 
         ctx.fill(
@@ -115,7 +115,7 @@ object Searchbar : HudFeature(
             if (screen !is AbstractContainerScreen<*>) return@on
             if (!input.focused) return@on
 
-            input.handleCharType(event.codepoint, event.str, event.event.modifiers)
+            input.handleCharType(event.codepoint, event.str, -1)
             event.cancel()
         }
 

@@ -14,7 +14,7 @@ import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.Render2D.height
 import com.github.synnerz.devonian.utils.render.Render2D.width
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import kotlin.math.*
@@ -133,15 +133,15 @@ abstract class HudFeature(
         y = coerceY(y + dy)
     }
 
-    abstract fun drawImpl(ctx: GuiGraphics)
+    abstract fun drawImpl(ctx: GuiGraphicsExtractor)
 
-    open fun draw(ctx: GuiGraphics) {
+    open fun draw(ctx: GuiGraphicsExtractor) {
         if (HudManager.isEditing) return
 
         drawImpl(ctx)
     }
 
-    open fun sampleDraw(ctx: GuiGraphics, mx: Int, my: Int, selected: Boolean) {
+    open fun sampleDraw(ctx: GuiGraphicsExtractor, mx: Int, my: Int, selected: Boolean) {
         val bounds = getBounds()
 
         if (!isInternal && !isEnabled()) {
@@ -171,7 +171,7 @@ abstract class HudFeature(
             )
         }
 
-        ctx.renderOutline(
+        ctx.outline(
             bounds.x.toInt(),
             bounds.y.toInt(),
             ceil(bounds.w).toInt(),

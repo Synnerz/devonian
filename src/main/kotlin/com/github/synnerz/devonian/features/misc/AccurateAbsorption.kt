@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.mixin.accessor.GuiAccessor
 import com.github.synnerz.devonian.mixin.accessor.HeartTypeAccessor
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.Gui.HeartType
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.world.entity.player.Player
 import kotlin.math.ceil
 import kotlin.math.max
@@ -32,7 +32,7 @@ object AccurateAbsorption : Feature(
 
     fun renderHearts(
         gui: Gui,
-        guiGraphics: GuiGraphics, player: Player,
+        guiGraphics: GuiGraphicsExtractor, player: Player,
         left: Int, top: Int,
         rowGap: Int, regen: Int,
         maxHearts: Float, hearts: Int, displayHearts: Int, absorption: Int,

@@ -22,7 +22,7 @@ public class EnderDragonRendererMixin {
     private final RenderStateDataKey<@NotNull Integer> idKey = RenderStateDataKey.create(() -> "devonian$recolorDragonsId");
 
     @WrapOperation(
-        method = "submit(Lnet/minecraft/client/renderer/entity/state/EnderDragonRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
+        method = "submit(Lnet/minecraft/client/renderer/entity/state/EnderDragonRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/OverlayTexture;pack(FZ)I")
     )
     private int devonian$recolorDragons(float f, boolean bl, Operation<Integer> original, @Local(argsOnly = true) EnderDragonRenderState state) {

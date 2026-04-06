@@ -6,10 +6,11 @@ import com.github.synnerz.devonian.features.misc.chat.CompactChatComponent
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.mixin.accessor.ChatComponentAccessor
 import net.fabricmc.fabric.impl.command.client.ClientCommandInternals
-import net.minecraft.client.GuiMessage
-import net.minecraft.client.GuiMessageTag
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.components.ChatComponent
+import net.minecraft.client.multiplayer.chat.GuiMessage
+import net.minecraft.client.multiplayer.chat.GuiMessageSource
+import net.minecraft.client.multiplayer.chat.GuiMessageTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import java.util.*
@@ -34,14 +35,17 @@ object ChatUtils {
     }
 
     fun sendMessageWithId(message: Component, id: Int) {
-        chatGui.addMessage(message)
+        if (Devonian.minecraft.isSingleplayer)
+            chatGui.addClientSystemMessage(message)
+        else
+            chatGui.addServerSystemMessage(message)
 
         chatLineIds[chatComponentAccessor.messages[0]] = id
     }
 
     fun sendMessage(message: Component) {
         Minecraft.getInstance().execute {
-            Minecraft.getInstance().player?.displayClientMessage(message, false)
+            Minecraft.getInstance().player?.sendSystemMessage(message)
         }
     }
 
@@ -54,7 +58,7 @@ object ChatUtils {
 
     fun sendActionbar(message: Component) {
         Minecraft.getInstance().execute {
-            Minecraft.getInstance().player?.displayClientMessage(message, true)
+            Minecraft.getInstance().player?.sendOverlayMessage(message)
         }
     }
 
@@ -93,7 +97,7 @@ object ChatUtils {
             messageList.remove()
             chatLineIds.remove(msg)
 
-            val line = GuiMessage(msg.addedTime, replaceWith.text, null, indicator)
+            val line = GuiMessage(msg.addedTime, replaceWith.text, null, GuiMessageSource.SYSTEM_SERVER, indicator)
             chatLineIds[line] = replaceWith.id
             messageList.add(line)
         }

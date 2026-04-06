@@ -144,7 +144,7 @@ object CenturyCakeTimer : TextHudFeature(
             draw(event.ctx)
 
             val bounds = getBounds()
-            event.ctx.guiRenderState.submitGuiElement(
+            event.ctx.guiRenderState.addGuiElement(
                 TexturedQuadRenderState(
                     BufferedImageRenderer.pipeline,
                     TextureSetup(

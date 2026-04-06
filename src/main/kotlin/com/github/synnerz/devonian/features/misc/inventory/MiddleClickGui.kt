@@ -12,7 +12,7 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import org.lwjgl.glfw.GLFW
 
@@ -25,7 +25,7 @@ object MiddleClickGui : Feature(
 ) {
     private const val KEY_NAME = "mcgBlacklist"
     private var blacklisted = mutableListOf<String>()
-    private val keybind = KeyBindingHelper.registerKeyBinding(
+    private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.mcgBlacklist",
             GLFW.GLFW_KEY_UNKNOWN,

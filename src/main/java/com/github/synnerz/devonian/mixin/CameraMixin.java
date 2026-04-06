@@ -40,7 +40,7 @@ public class CameraMixin {
     }
 
     @WrapOperation(
-        method = "setup",
+        method = "alignWithEntity",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getViewXRot(F)F")
     )
     private float devonian$fixRidingCameraX(Entity instance, float f, Operation<Float> original) {
@@ -49,7 +49,7 @@ public class CameraMixin {
     }
 
     @WrapOperation(
-        method = "setup",
+        method = "alignWithEntity",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getViewYRot(F)F")
     )
     private float devonian$fixRidingCameraY(Entity instance, float f, Operation<Float> original) {

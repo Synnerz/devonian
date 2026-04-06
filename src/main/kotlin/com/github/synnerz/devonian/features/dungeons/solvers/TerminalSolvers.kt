@@ -17,7 +17,7 @@ import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SET
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.color
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.minecraft
 import com.github.synnerz.devonian.utils.BasicState
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
@@ -246,13 +246,13 @@ interface ITerminalSolver {
     fun cancelClick(slot: Slot, lc: Boolean): Boolean = cancelClick(slot)
     fun cancelClick(slot: Slot): Boolean = false
 
-    fun renderSlotBackground(ctx: GuiGraphics, slot: Slot) {
+    fun renderSlotBackground(ctx: GuiGraphicsExtractor, slot: Slot) {
         if (!SETTING_BACKGROUND_SLOT.get()) return
         if (SETTING_BACKGROUND_TERMINAL_COLOR.getColor().alpha == 0) return
         ctx.fill(slot.x - 2, slot.y - 2, slot.x + 18, slot.y + 18, SETTING_BACKGROUND_TERMINAL_COLOR.get())
     }
 
-    fun renderSlot(ctx: GuiGraphics, slot: Slot, idx: Int) {
+    fun renderSlot(ctx: GuiGraphicsExtractor, slot: Slot, idx: Int) {
         ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color(idx))
     }
 }
@@ -298,7 +298,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             renderSlotBackground(event.ctx, slot)
             renderSlot(event.ctx, slot, count - minCount)
             if (SETTING_RENDER_NUMBERS.get()) {
-                event.ctx.drawCenteredString(
+                event.ctx.centeredText(
                     minecraft.font,
                     "$count",
                     slot.x + 8, slot.y + 4, -1
@@ -597,7 +597,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
                 if (!SETTING_RUBIX_FORCE_POSITIVE.get() && clicks >= 3) clicks -= 5
                 val str = strings.getOrNull(clicks + 2) ?: return@forEach
 
-                event.ctx.drawCenteredString(minecraft.font, str, slot.x + 8, slot.y + 4, -1)
+                event.ctx.centeredText(minecraft.font, str, slot.x + 8, slot.y + 4, -1)
             }
         }
 

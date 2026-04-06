@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.hud.texthud
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageFactory
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.utils.math.MathUtils
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.GraphicsEnvironment
@@ -93,7 +93,7 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
         )
     }
 
-    override fun renderText(ctx: GuiGraphics) {
+    override fun renderText(ctx: GuiGraphicsExtractor) {
         val pos = parent.getBounds()
         renderer.draw(ctx, pos.x.toFloat(), pos.y.toFloat(), parent.renderScale.toFloat())
     }

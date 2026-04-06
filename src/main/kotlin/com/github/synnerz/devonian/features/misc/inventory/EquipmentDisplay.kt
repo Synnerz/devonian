@@ -155,7 +155,7 @@ object EquipmentDisplay : Feature(
 
             event.ctx.fill(x, slot.y, x + 16, slot.y + 16, backgroundSlotColor.rgb)
             Render2D.drawWireRect(event.ctx, x, slot.y, 16, 16, borderSlotColor)
-            event.ctx.renderFakeItem(equipment.itemStack, x, slot.y)
+            event.ctx.fakeItem(equipment.itemStack, x, slot.y)
         }
 
         on<GuiClickEvent> { event ->

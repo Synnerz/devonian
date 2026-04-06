@@ -41,7 +41,7 @@ object ParticlePacket : ISerializer<ClientboundLevelParticlesPacket> {
                 type.set("scale", particle.scale)
                 type.set("color", Serializer.serializeVector3f(particle.color))
             }
-            is ItemParticleOption -> type.set("item", Serializer.serializeItem(particle.item))
+            is ItemParticleOption -> type.set("item", Serializer.serializeItem(particle.item.create()))
             is PowerParticleOption -> type.set("power", particle.power)
             is ScalableParticleOptionsBase -> type.set("scale", particle.scale)
             is SculkChargeParticleOptions -> type.set("roll", particle.roll)

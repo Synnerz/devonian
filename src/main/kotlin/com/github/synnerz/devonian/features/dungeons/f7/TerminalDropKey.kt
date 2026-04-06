@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.KeyMappingAccessor
 import com.github.synnerz.devonian.utils.BasicState
 import com.mojang.blaze3d.platform.InputConstants
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import org.lwjgl.glfw.GLFW
 
@@ -26,7 +26,7 @@ object TerminalDropKey : Feature(
         return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
     }
 
-    private val keybind = KeyBindingHelper.registerKeyBinding(
+    private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.termdropkey",
             GLFW.GLFW_KEY_UNKNOWN,
