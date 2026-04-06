@@ -165,6 +165,8 @@ object EtherwarpOverlay : Feature(
                 lookVec.z * dist,
                 false,
             )
+            val inBlacklist = hitResult?.let { BlockTypes.Blacklist.contains(world.getBlockState(it).block) } ?: false
+            val isFenceLike = hitResult?.let { BlockTypes.FenceLike.contains(world.getBlockState(it).block) } ?: false
 
             if (hitResult == null) {
                 failReason = "&4Can't TP: Too far!"
@@ -177,18 +179,27 @@ object EtherwarpOverlay : Feature(
                     lookVec.y * maxDist,
                     lookVec.z * maxDist,
                     false,
-                )
-                if (hitResult == null) return@on
+                ) ?: return@on
             } else {
-                val bpFoot = hitResult.above(1)
-                val bpHead = hitResult.above(2)
+                val bpFoot = if (isFenceLike) hitResult.above(2) else hitResult.above(1)
+                val bpHead = if (isFenceLike) hitResult.above(3) else hitResult.above(2)
 
                 val bsFoot = world.getBlockState(bpFoot)
                 val bsHead = world.getBlockState(bpHead)
-                if (
+                if (isFenceLike) {
+                    if (
+                        !((BlockTypes.AirLike.contains(bsFoot.block) || BlockTypes.Blacklist.contains(bsFoot.block)) &&
+                        BlockTypes.AirLike.contains(bsHead.block))
+                    ) failReason = "&4Can't TP: No air above!"
+                }
+                else if (
                     !BlockTypes.AirLike.contains(bsFoot.block) ||
                     !BlockTypes.AirLike.contains(bsHead.block)
                 ) failReason = "&4Can't TP: No air above!"
+                // TODO: if the user aligns themselves in an angle where they can see the next block
+                //  they CAN actually teleport, fix this since currently it just fails currently
+                else if (inBlacklist)
+                    failReason = "&4Can't TP: Blacklisted Block"
             }
 
             val camera = event.ctx.gameRenderer().mainCamera
