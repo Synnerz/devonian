@@ -63,7 +63,7 @@
     "accessor.ClientTextTooltipAccessor",
     "accessor.GlDeviceAccessor",
     "accessor.GuiAccessor",
-    "accessor.GuiGraphicsAccessor",
+    "accessor.GuiGraphicsExtractorAccessor",
     "accessor.HeartTypeAccessor",
     "accessor.KeyMappingAccessor",
     "accessor.LerpingBossEventAccessor",

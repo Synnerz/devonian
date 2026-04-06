@@ -3,9 +3,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.time.Instant
 
 plugins {
-	id 'fabric-loom' version "${loom_version}"
-	id 'maven-publish'
-	id "org.jetbrains.kotlin.jvm" version "2.1.21"
+	id "net.fabricmc.fabric-loom" version "${loom_version}"
+	id "maven-publish"
+	id "org.jetbrains.kotlin.jvm" version "2.3.20"
 }
 
 version = project.mod_version
@@ -30,16 +30,15 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	include modImplementation("com.github.Synnerz:talium:0241cf854c")
-	modImplementation "net.hypixel:mod-api:1.0.1"
+	include implementation("com.github.Synnerz:talium:a805e80a74")
+	implementation "net.hypixel:mod-api:1.0.1"
 
-	modApi("com.terraformersmc:modmenu:17.0.0-beta.2")
+	api("com.terraformersmc:modmenu:18.0.0-alpha.8")
 }
 
 processResources {
@@ -73,20 +72,20 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 tasks.withType(KotlinCompile).configureEach {
 	kotlinOptions {
-		jvmTarget = 21
+		jvmTarget = 25
 	}
 }
 
 java {
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
