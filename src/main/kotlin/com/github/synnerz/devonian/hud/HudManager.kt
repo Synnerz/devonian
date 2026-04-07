@@ -5,11 +5,8 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.HudManagerGrid
-import com.github.synnerz.devonian.features.HudManagerHider
-import com.github.synnerz.devonian.features.HudManagerInstructions
-import com.github.synnerz.devonian.features.HudManagerName
-import com.github.synnerz.devonian.features.HudManagerRenderer
 import com.github.synnerz.devonian.utils.render.Render2D
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.KeyEvent
@@ -20,6 +17,7 @@ import java.awt.Color
 import kotlin.math.min
 
 object HudManager : Screen(Component.literal("Devonian.HudManager")) {
+    private val selectedList = mutableListOf<HudPosition>()
     var selectedHud: HudFeature? = null
         private set
     val huds = mutableListOf<HudFeature>()
@@ -35,6 +33,14 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     var cumDragY = 0.0
     var startDragX = 0.0
     var startDragY = 0.0
+
+    data class HudPosition(
+        val hud: HudFeature,
+        var cumDragX: Double = 0.0,
+        var cumDragY: Double = 0.0,
+        var startDragX: Double = 0.0,
+        var startDragY: Double = 0.0,
+    )
 
     fun initialize() {
         DevonianCommand.command.subcommand("huds") { _, args ->
@@ -62,6 +68,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     }
 
     override fun removed() {
+        selectedList.clear()
         selectedHud = null
         isEditing = false
         mouseDown = false
@@ -83,7 +90,23 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     override fun mouseClicked(mouseButtonEvent: MouseButtonEvent, bl: Boolean): Boolean {
         mouseDown = true
         // updateSelected()
-        selectedHud?.onMouseClick(mouseButtonEvent.x, mouseButtonEvent.y, mouseButtonEvent.button())
+        if (
+            InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_CONTROL) &&
+            mouseButtonEvent.buttonInfo().button() == 0
+        ) {
+            val visibleHuds = huds.filter { it.isVisibleEdit() && it.inBounds(lastMouseX, lastMouseY) }
+            selectedList.removeIf { visibleHuds.contains(it.hud) }
+            selectedList.addAll(visibleHuds.map { HudPosition(
+                it,
+                0.0,
+                0.0,
+                it.x,
+                it.y,
+            ).also { it.hud.onMouseClick(mouseButtonEvent.x, mouseButtonEvent.y, mouseButtonEvent.button()) } })
+        } else {
+            selectedList.clear()
+            selectedHud?.onMouseClick(mouseButtonEvent.x, mouseButtonEvent.y, mouseButtonEvent.button())
+        }
         cumDragX = 0.0
         cumDragY = 0.0
         startDragX = selectedHud?.x ?: 0.0
@@ -108,7 +131,14 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         // updateSelected()
         cumDragX += d
         cumDragY += e
-        selectedHud?.onMouseDrag(d, e)
+        if (selectedList.isNotEmpty())
+            selectedList.forEach {
+                it.cumDragX += d
+                it.cumDragY += e
+                it.hud.onMouseDrag(d, e)
+            }
+        else
+            selectedHud?.onMouseDrag(d, e)
 
         return false
     }
@@ -120,7 +150,12 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         verticalAmount: Double
     ): Boolean {
         // updateSelected()
-        selectedHud?.onMouseScroll(verticalAmount)
+        if (selectedList.isNotEmpty())
+            selectedList.forEach {
+                it.hud.onMouseScroll(verticalAmount)
+            }
+        else
+            selectedHud?.onMouseScroll(verticalAmount)
 
         return false
     }
@@ -128,7 +163,11 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
         if (keyEvent.key == GLFW.GLFW_KEY_ESCAPE) return super.keyPressed(keyEvent)
 
-        if (selectedHud != null) {
+        if (selectedList.isNotEmpty())
+            selectedList.forEach {
+                it.hud.onKeyPress(keyEvent.key)
+            }
+        else if (selectedHud != null) {
             selectedHud?.onKeyPress(keyEvent.key)
             // updateSelected()
         }
