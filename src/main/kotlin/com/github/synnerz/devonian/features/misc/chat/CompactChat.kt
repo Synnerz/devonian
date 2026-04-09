@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.misc.chat
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
@@ -59,39 +60,43 @@ object CompactChat : Feature(
         var refresh = false
         var first: GuiMessage? = null
 
-        while (iter.hasNext()) {
-            val line = iter.next()
-            if (first == null) first = line
+        try {
+            while (iter.hasNext()) {
+                val line = iter.next()
+                if (first == null) first = line
+                if (line === cachedData.lastCheck) break
 
-            if (line === cachedData.lastCheck) break
+                val msg = textContentCache.getOrPut(line) {
+                    val contentCopy = line.content.copy()
+                    contentCopy.siblings.removeIf { it.contents is CompactChatComponent }
 
-            val msg = textContentCache.getOrPut(line) {
-                val contentCopy = line.content.copy()
-                contentCopy.siblings.removeIf { it.contents is CompactChatComponent }
+                    return@getOrPut contentCopy.string.clearCodes()
+                } ?: continue
 
-                return@getOrPut contentCopy.string.clearCodes()
-            } ?: continue
-
-            if (msg == textStr) {
-                val count = recentMessages.merge(msg, 1, Int::plus) ?: 1
-                if (count == 1 || nonLineBreakMessage.containsMatchIn(msg)) {
-                    iter.remove()
-                } else {
-                    // Immutable java.lang.UnsupportedOperationException
-                    // line.content.siblings.removeIf { it.contents is CompactChatComponent }
-                    iter.set(
-                        GuiMessage(
-                            line.addedTime,
-                            line.content.copy()
-                                .also { it.siblings.removeIf { it.contents is CompactChatComponent } },
-                            line.signature,
-                            line.tag
+                if (msg == textStr) {
+                    val count = recentMessages.merge(msg, 1, Int::plus) ?: 1
+                    if (count == 1 || nonLineBreakMessage.containsMatchIn(msg)) {
+                        iter.remove()
+                    } else {
+                        // Immutable java.lang.UnsupportedOperationException
+                        // line.content.siblings.removeIf { it.contents is CompactChatComponent }
+                        iter.set(
+                            GuiMessage(
+                                line.addedTime,
+                                line.content.copy()
+                                    .also { it.siblings.removeIf { it.contents is CompactChatComponent } },
+                                line.signature,
+                                line.tag
+                            )
                         )
-                    )
+                    }
+                    refresh = true
+                    break
                 }
-                refresh = true
-                break
             }
+        } catch (e: ConcurrentModificationException) {
+            println("Devonian\$CompactChat")
+            e.printStackTrace()
         }
         if (refresh) ChatUtils.refreshChat()
         else recentMessages[textStr] = 1
@@ -101,15 +106,19 @@ object CompactChat : Feature(
         return text.copy().append(CompactChatComponent.of(text, cachedData.count).withStyle(STYLE))
     }
 
-    fun clearHistory() {
-        chatHistory.clear()
-        textContentCache.clear()
-    }
-
     override fun initialize() {
         on<ClientThreadServerTickEvent> {
             recentMessages.clear()
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        clearHistory()
+    }
+
+    fun clearHistory() {
+        chatHistory.clear()
+        textContentCache.clear()
     }
 }
 
