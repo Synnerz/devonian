@@ -117,6 +117,7 @@ object SpotifyDisplay : TextHudFeature(
     private var song = ""
     private var artist = ""
     private var open = false
+    private var cmdReg = false
 
     private val logger = DebugLogger("SpotifyLogger")
 
@@ -127,6 +128,18 @@ object SpotifyDisplay : TextHudFeature(
             DevonianCommand.command.subcommand("dumpspotify") { _, _ ->
                 logger.stopAndPrint()
                 return@subcommand 1
+            }
+            cmdReg = true
+        }
+        SETTING_LOGGER.onChange {
+            if (it && !cmdReg) {
+                logger.startLogger()
+
+                DevonianCommand.command.subcommand("dumpspotify") { _, _ ->
+                    logger.stopAndPrint()
+                    return@subcommand 1
+                }
+                cmdReg = true
             }
         }
 
