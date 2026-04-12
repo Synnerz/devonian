@@ -22,7 +22,7 @@ object CurrentRoomName : TextHudFeature(
     override fun initialize() {
         on<TickEvent> {
             val currentRoom = DungeonScanner.currentRoom ?: return@on
-            setLine("&bRoom&f: &a${currentRoom.name ?: "Unknown"}")
+            setLine("&bRoom&f: &a${currentRoom.name?.replace("\u200B", "") ?: "Unknown"}")
         }
 
         on<RenderOverlayEvent> {
