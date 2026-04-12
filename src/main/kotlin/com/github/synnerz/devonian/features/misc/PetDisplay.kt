@@ -69,7 +69,7 @@ object PetDisplay : TextHudFeature(
     // 1: color code, 2: pet name, 3: skin
     private val formattedEquippedPetRegex = "^§r§aYou summoned your §r((?:§.)*)([\\w\\s]+)(?:§r((?:§.)* ✦))?§r§a!$".toRegex()
     // 1: level, 2: cosmetic level, 3: color code, 4: pet name, 5: skin
-    private val autoPetRuleRegex = "^§cAutopet §eequipped your §7\\[Lvl (\\d+)](?: §8\\[§\\w(\\d+)§?8?§\\w[✦⚔]§8])? ((?:§.)*)([\\w\\s]+)((?:§.)* (?:§.)*✦)?§e! §a§lVIEW RULE$".toRegex()
+    private val autoPetRuleRegex = "^§cAutopet §eequipped your §7\\[Lvl (\\d+)](?: §8\\[§\\w([\\dkmb.,]+)§?8?§\\w[✦⚔]§8])? ((?:§.)*)([\\w\\s]+)((?:§.)* (?:§.)*✦)?§e! §a§lVIEW RULE$".toRegex()
     // 1: pet name, 2: skin
     private val despawnedPetRegex = "^You despawned your ([\\w\\s]+)( ✦)?!$".toRegex()
     // 1: color code, 2: pet name, 3: skin
