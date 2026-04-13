@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
@@ -198,9 +199,18 @@ object DungeonMapScanner {
                 MapColors.ROOM_TRAP.color -> RoomTypes.TRAP
                 else -> RoomTypes.UNKNOWN
             }
-            if (!room.explored) {
-                room.explored = roomCol != MapColors.ROOM_UNOPENED.color
-                if (room.explored) Dungeons.totalRoomSecrets.value += room.totalSecrets
+            if (!room.explored || room.clientExplored) {
+                val nstate = roomCol != MapColors.ROOM_UNOPENED.color
+                if (room.clientExplored) {
+                    val canUpdate = EventBus.serverTicks() >= room.lastClient
+                    if (canUpdate)
+                        room.explored = nstate
+
+                    room.clientExplored = !canUpdate
+                } else {
+                    room.explored = nstate
+                    if (nstate) Dungeons.totalRoomSecrets.value += room.totalSecrets
+                }
             }
 
             if (room.checkmark != CheckmarkTypes.GREEN) {

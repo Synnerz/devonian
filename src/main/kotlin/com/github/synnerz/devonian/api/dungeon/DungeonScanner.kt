@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
@@ -178,9 +179,11 @@ object DungeonScanner {
                 DungeonEvent.RoomLeave(currentRoom, lastIdx!!).post()
 
             currentRoom = rooms[jdx]
-            if (currentRoom?.explored == false) {
+            if (currentRoom?.clientExplored == false) {
                 Dungeons.totalRoomSecrets.value += currentRoom!!.totalSecrets
+                currentRoom?.clientExplored = true
                 currentRoom?.explored = true
+                currentRoom?.lastClient = EventBus.serverTicks(true) + 10
                 updateMap = true
             }
             if (currentRoom?.checkmark == CheckmarkTypes.UNEXPLORED) {
