@@ -203,8 +203,10 @@ object DungeonMapScanner {
                 val nstate = roomCol != MapColors.ROOM_UNOPENED.color
                 if (room.clientExplored) {
                     val canUpdate = EventBus.serverTicks() >= room.lastClient
-                    if (canUpdate)
+                    if (canUpdate) {
                         room.explored = nstate
+                        if (nstate) Dungeons.totalRoomSecrets.value += room.totalSecrets
+                    }
 
                     room.clientExplored = !canUpdate
                 } else {
