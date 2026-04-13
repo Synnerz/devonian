@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.item.ItemStack
 import java.util.Optional
+import java.util.WeakHashMap
 import kotlin.jvm.optionals.getOrNull
 
 object EstimatedValue : TextHudFeature(
@@ -43,11 +44,12 @@ object EstimatedValue : TextHudFeature(
         "FOURTH_MASTER_STAR",
         "FIFTH_MASTER_STAR"
     )
-    // TODO: add caching
-//    private val itemData = hashMapOf<String, ItemStatData>()
+    // TODO: probably limit this cache
+    private val itemCache = WeakHashMap<ItemStack, ItemStatData>()
     private var lastItem: ItemStack? = null
 
     data class ItemStatData(
+        val name: String, // formatted custom name component
         val unlockedGemstones: List<String> = listOf(), // gems
         val enchantments: List<String> = listOf(), // enchantments
         val ability_scrolls: List<String> = listOf(), // ability_scroll
@@ -55,7 +57,7 @@ object EstimatedValue : TextHudFeature(
         val runes: Map<String, Int> = mapOf(), // runes
         val skyblockId: String, // id
         var hpbs: Int = 0, // hot_potato_count
-        var dye_item: String? = null, // dye_item
+        var dyeItem: String? = null, // dye_item
         var artOfPeace: Boolean = false, // artOfPeaceApplied
         var soulbound: Boolean = false, // donated_museum
         var stars: Int = 0, // upgrade_level | dungeon_item_level
@@ -63,24 +65,147 @@ object EstimatedValue : TextHudFeature(
         var artOfWar: Boolean = false, // art_of_war_count
         var skin: String? = null, // skin
         var ultimateEnchant: String? = null,
-    )
+        var isDungeonItem: Boolean = false,
+    ) {
+        fun fuming(): Int = if (hpbs > 10) hpbs - 10 else 0
+
+        fun hpb(): Int = hpbs - fuming()
+
+        fun masterStars(): Int = if (!isDungeonItem || stars <= 5) 0 else stars - 5
+
+        fun basePrice(): SkyblockPrices.CustomPriceData = SkyblockPrices.priceData(skyblockId)
+
+        fun enchantmentPrice(): Double = enchantments.sumOf { SkyblockPrices.buyPrice(it).toDouble() }
+
+        fun hpbPrice(): Double = SkyblockPrices.buyPrice("HOT_POTATO_BOOK").toDouble() * hpb()
+
+        fun fumingPrice(): Double = SkyblockPrices.buyPrice("FUMING_POTATO_BOOK").toDouble() * fuming()
+
+        fun ultimatePrice(): Double {
+            if (ultimateEnchant == null) return 0.0
+            var ultPrice = SkyblockPrices.buyPrice(ultimateEnchant!!).toDouble()
+            if (ultPrice == 0.0)
+                ultPrice = SkyblockPrices.buyPrice(
+                    ultimateEnchant!!.replace("_\\d+$".toRegex(), "_1")
+                ).toDouble() * 16
+
+            return ultPrice
+        }
+
+        fun artOfWarPrice(): Double = SkyblockPrices.buyPrice("THE_ART_OF_WAR").toDouble()
+
+        fun artOfPeacePrice(): Double = SkyblockPrices.buyPrice("THE_ART_OF_PEACE").toDouble()
+
+        fun recombPrice(): Double = SkyblockPrices.buyPrice("RECOMBOBULATOR_3000").toDouble()
+
+        fun starPrice(): Double {
+            val starCount = masterStars()
+            if (starCount == 0) return 0.0
+
+            return masterStarIds.subList(0, starCount).sumOf { SkyblockPrices.buyPrice(it).toDouble() }
+        }
+
+        fun abilityScrollsPrice(): Double = ability_scrolls.sumOf { SkyblockPrices.buyPrice(it).toDouble() }
+
+        fun totalPrice(): Double {
+            val basePriceData = basePrice()
+            if (!basePriceData.auction)
+                return -1.0
+            var price = basePriceData.price.toDouble()
+            if (price == 0.0)
+                return -1.0
+
+            if (enchantments.isNotEmpty())
+                price += enchantmentPrice()
+            if (hpbs > 0)
+                price += hpbPrice()
+            if (fuming() > 0)
+                price += fumingPrice()
+            if (ultimateEnchant != null)
+                price += ultimatePrice()
+            if (artOfWar)
+                price += artOfWarPrice()
+            if (artOfPeace)
+                price += artOfPeacePrice()
+            if (recomb)
+                price += recombPrice()
+            if (stars > 5 && isDungeonItem)
+                price += starPrice()
+            if (ability_scrolls.isNotEmpty())
+                price += abilityScrollsPrice()
+
+            if (price == basePriceData.price.toDouble())
+                return -1.0
+            return price
+        }
+
+        fun format(): List<String> {
+            return buildList {
+                val total = totalPrice()
+                if (total == -1.0) return emptyList()
+
+                add(name)
+                if (ultimateEnchant != null)
+                    add("&dUltimate Enchant&f: &a${shortNum(ultimatePrice())}")
+                if (enchantments.isNotEmpty())
+                    add("&9Enchantments &7(${enchantments.size})&f: &a${shortNum(enchantmentPrice())}")
+                if (artOfPeace)
+                    add("&6The Art of Peace&f: &a${shortNum(artOfPeacePrice())}")
+                if (artOfWar)
+                    add("&6The Art of War&f: &a${shortNum(artOfWarPrice())}")
+                if (hpbs > 0)
+                    add("&5Hot Potato Book &7(${hpb()})&f: &a${shortNum(hpbPrice())}")
+                if (hpbs > 10)
+                    add("&5Fuming Potato Book &7(${fuming()})&f: &a${shortNum(fumingPrice())}")
+                if (stars > 5 && isDungeonItem)
+                    add("&c${masterStars.subList(0, masterStars()).joinToString(" ")}&f: &a${shortNum(starPrice())}")
+                if (ability_scrolls.isNotEmpty()) {
+                    ability_scrolls.forEach {
+                        val name = when (it) {
+                            "SHADOW_WARP_SCROLL" -> "&5Shadow Warp"
+                            "IMPLOSION_SCROLL" -> "&5Implosion"
+                            "WITHER_SHIELD_SCROLL" -> "&5Wither Shield"
+                            else -> return@forEach
+                        }
+                        add("&7- $name&f: &a${shortNum(SkyblockPrices.buyPrice(it).toDouble())}")
+                    }
+                }
+                if (recomb)
+                    add("&6Recombobulator 3000&f: &a${shortNum(recombPrice())}")
+                add("&6Base Item&f: &a${shortNum(basePrice().price.toDouble())}")
+                add("&bTotal&f: &a${shortNum(total)}")
+            }
+        }
+    }
 
     override fun initialize() {
         // TODO: finish this impl
         //  add gemstone slots
         //  fix cumulative enchants not working
-        //  wither blades scrolls
-        //  fix equipments with master stars not being detected because they're "not" dungeon items
-        //  optimize
-        //  optimize
-        //  optimize
+        //  add dyes
+        //  add skins
         on<TooltipRenderEvent> { event ->
             val itemStack = event.item ?: return@on
             val extraAttributes = ItemUtils.extraAttributes(itemStack) ?: return@on
             val sbId = extraAttributes.getString("id").safeGet() ?: return@on
-            // return for now, maybe change this later ? items like tact don't have uuid
-            val uuid = extraAttributes.getString("uuid").safeGet() ?: return@on
             lastItem = itemStack
+            val cacheData = itemCache[itemStack]
+            if (cacheData != null) {
+                val total = cacheData.totalPrice()
+                if (total == -1.0) return@on
+
+                if (SETTING_SHOW_LORE.get()) {
+                    event.lore.add(ClientTooltipComponent.create(FormattedCharSequence.composite(
+                        FormattedCharSequence.forward("Price Est", Style.EMPTY.withColor(ChatFormatting.AQUA)),
+                        FormattedCharSequence.forward(": ", Style.EMPTY.withColor(ChatFormatting.WHITE)),
+                        FormattedCharSequence.forward(shortNum(total), Style.EMPTY.withColor(ChatFormatting.GREEN)),
+                    )))
+                }
+
+                clearLines()
+                addLines(cacheData.format())
+                return@on
+            }
             val enchantments = extraAttributes.getCompound("enchantments").safeGet()
             var ultimateEnchant: String? = null
             val enchantIds: List<String>? = if (enchantments == null) null else buildList {
@@ -94,83 +219,55 @@ object EstimatedValue : TextHudFeature(
                 }
             }
             val artOfWar = extraAttributes.getInt("art_of_war_count").safeGet()
+            val artOfPeace = extraAttributes.getInt("artOfPeaceApplied").safeGet()
             val hpbs = extraAttributes.getInt("hot_potato_count").safeGet()
             val stars = extraAttributes.getInt("upgrade_level").safeGet()
                 ?: extraAttributes.getInt("dungeon_item_level").safeGet()
             val recomb = extraAttributes.getInt("rarity_upgrades").safeGet()
-            val dungeonItem = extraAttributes.getInt("dungeon_item").safeGet()
+            val abilityScrolls = extraAttributes.getList("ability_scroll").safeGet()
+            val data = ItemStatData(
+                itemStack.customName?.colorCodes() ?: itemStack.itemName.string,
+                enchantments = enchantIds ?: emptyList(),
+                skyblockId = sbId,
+                hpbs = hpbs ?: 0,
+                artOfPeace = artOfPeace != null,
+                stars = stars ?: 0,
+                recomb = recomb != null,
+                artOfWar = artOfWar != null,
+                ultimateEnchant = ultimateEnchant,
+                // lore is more accurate than nbt ):
+                isDungeonItem = (ItemUtils.lore(itemStack) ?: emptyList()).any { it.contains(" DUNGEON ") },
+                ability_scrolls = abilityScrolls?.map { it.asString().safeGet() ?: "" } ?: emptyList(),
+            )
+
+            itemCache[itemStack] = data
+            if (data.totalPrice() == -1.0) return@on
+
+            if (SETTING_SHOW_LORE.get())
+                event.lore.add(ClientTooltipComponent.create(FormattedCharSequence.composite(
+                    FormattedCharSequence.forward("Price Est", Style.EMPTY.withColor(ChatFormatting.AQUA)),
+                    FormattedCharSequence.forward(": ", Style.EMPTY.withColor(ChatFormatting.WHITE)),
+                    FormattedCharSequence.forward(shortNum(data.totalPrice()), Style.EMPTY.withColor(ChatFormatting.GREEN)),
+                )))
 
             clearLines()
-            addLines(buildList {
-                var totalPrice = 0.0
-                val enchPrice = enchantIds?.sumOf { SkyblockPrices.buyPrice(it).toDouble() } ?: 0.0
-                totalPrice += enchPrice
-
-                add(itemStack.customName?.colorCodes() ?: itemStack.itemName.string)
-
-                if (ultimateEnchant != null) {
-                    var ultPrice = SkyblockPrices.buyPrice(ultimateEnchant!!).toDouble()
-                    if (ultPrice == 0.0)
-                        ultPrice = SkyblockPrices.buyPrice(
-                            ultimateEnchant!!.replace("_\\d+$".toRegex(), "_1")
-                        ).toDouble() * 16
-                    totalPrice += ultPrice
-                    add("&dUltimate Enchant&f: &a${shortNum(ultPrice)}")
-                }
-                if (!enchantIds.isNullOrEmpty())
-                    add("&9Enchantments &7(${enchantIds.size})&f: &a${shortNum(enchPrice)}")
-                if (artOfWar != null) {
-                    val aow = SkyblockPrices.buyPrice("THE_ART_OF_WAR").toDouble()
-                    totalPrice += aow
-                    add("&6The Art of War&f: &a${shortNum(aow)}")
-                }
-                if (hpbs != null) {
-                    val hasFumings = hpbs > 10
-                    val fumings = if (hasFumings) hpbs - 10 else 0
-                    val hotPotatos = hpbs - fumings
-                    val hprice = SkyblockPrices.buyPrice("HOT_POTATO_BOOK").toDouble() * hotPotatos
-                    val fprice = if (hasFumings) SkyblockPrices.buyPrice("FUMING_POTATO_BOOK").toDouble() * fumings else 0.0
-                    totalPrice += hprice
-                    totalPrice += fprice
-
-                    add("&5Hot Potato Book &7(${hotPotatos})&f: &a${shortNum(hprice)}")
-                    if (fumings != 0)
-                        add("&5Fuming Potato Book &7($fumings)&f: &a${shortNum(fprice)}")
-                }
-                if (stars != null && dungeonItem != null && stars > 5) {
-                    val starCount = stars - 5
-                    val totalPrice = masterStarIds.subList(0, starCount).sumOf { SkyblockPrices.buyPrice(it).toDouble() }
-                    val str = masterStars.subList(0, starCount)
-                    add("&c${str.joinToString(" ")}&f: &a${shortNum(totalPrice)}")
-                }
-                if (recomb != null) {
-                    val recombPrice = SkyblockPrices.buyPrice("RECOMBOBULATOR_3000").toDouble()
-                    totalPrice += recombPrice
-                    add("&6Recombobulator 3000&f: &a${shortNum(recombPrice)}")
-                }
-                val basePrice = SkyblockPrices.buyPrice(sbId).toDouble()
-                totalPrice += basePrice
-                add("&6Base Item&f: &a${shortNum(basePrice)}")
-                add("&bTotal&f: &a${shortNum(totalPrice)}")
-                if (SETTING_SHOW_LORE.get())
-                    event.lore.add(ClientTooltipComponent.create(FormattedCharSequence.composite(
-                        FormattedCharSequence.forward("Price Est", Style.EMPTY.withColor(ChatFormatting.AQUA)),
-                        FormattedCharSequence.forward(": ", Style.EMPTY.withColor(ChatFormatting.WHITE)),
-                        FormattedCharSequence.forward(shortNum(totalPrice), Style.EMPTY.withColor(ChatFormatting.GREEN)),
-                    )))
-            })
+            addLines(data.format())
         }
 
         on<RenderOverlayEvent> {
-            if (SETTING_ONLY_LORE.get()) return@on
+            if (SETTING_ONLY_LORE.get() || lastItem == null) return@on
             val cursorItem = minecraft.screen?.let { ScreenUtils.cursorStack(it) } ?: return@on
-            if (cursorItem != lastItem) return@on
+            if (cursorItem != lastItem) {
+                lastItem = null
+                clearLines()
+                return@on
+            }
             draw(it.ctx)
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-//        itemData.clear()
+        itemCache.clear()
     }
 
     override fun getEditText(): List<String> = listOf(
