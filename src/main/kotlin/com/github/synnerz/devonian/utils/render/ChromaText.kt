@@ -85,11 +85,11 @@ object ChromaText {
     }
 
     fun initialize() {
-        ResourceLoader.registerBuiltinPack(
-            Identifier.fromNamespaceAndPath("devonian", "chroma_text_shader"),
-            Devonian.container,
-            PackActivationType.DEFAULT_ENABLED,
-        )
+//        ResourceLoader.registerBuiltinPack(
+//            Identifier.fromNamespaceAndPath("devonian", "chroma_text_shader"),
+//            Devonian.container,
+//            PackActivationType.DEFAULT_ENABLED,
+//        )
 
         EventBus.on<PostClientInitEvent> {
             ubo = RenderSystem.getDevice().createBuffer(

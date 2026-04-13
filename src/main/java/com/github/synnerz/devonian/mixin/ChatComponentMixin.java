@@ -46,7 +46,7 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
         return RemoveChatLimit.INSTANCE.getSETTING_MAX_MESSAGES().get().intValue();
     }
 
-    @ModifyVariable(method = "addMessage", at = @At("HEAD"), argsOnly = true)
+    @ModifyVariable(method = "addMessage", at = @At("HEAD"), argsOnly = true, name = "contents")
     private Component devonian$addMessage(Component text) {
         return CompactChat.INSTANCE.compactText(text);
     }
