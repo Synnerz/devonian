@@ -19,12 +19,21 @@ object CroesusHighlightUnopened : Feature(
         "Hides the croesus chests that have been opened.",
         "Croesus Hide Opened",
     )
+    private val SETTING_HIGHLIGHT_USED_KISMET = addSwitch(
+        "highlightUsedKismet",
+        true,
+        "Highlights the chests of which you've already used a kismet on as orange",
+        "Highlight Used Kismet"
+    )
     private val whitelist = mutableListOf<Int>()
     private val blacklist = mutableListOf<Int>()
+    private val kismetList = mutableListOf<Int>()
 
     override fun initialize() {
         on<CroesusListener.CroesusChestSet> { event ->
             val data = event.data
+            if (!data.canKismet && SETTING_HIGHLIGHT_USED_KISMET.get())
+                kismetList.add(data.slot)
             if (data.hasNoChest || data.hasOpened) {
                 blacklist.add(data.slot)
                 return@on
@@ -37,11 +46,13 @@ object CroesusHighlightUnopened : Feature(
         on<CroesusListener.CroesusPageSwitch> {
             whitelist.clear()
             blacklist.clear()
+            kismetList.clear()
         }
 
         on<CroesusListener.ClosedCroesus> {
             whitelist.clear()
             blacklist.clear()
+            kismetList.clear()
         }
 
         on<RenderSlotEvent> { event ->
@@ -53,14 +64,19 @@ object CroesusHighlightUnopened : Feature(
                 event.cancel()
                 return@on
             }
-            if (!whitelist.contains(slot.containerSlot)) return@on
+            val color = when {
+                whitelist.contains(slot.containerSlot) -> Color.GREEN.rgb
+                kismetList.contains(slot.containerSlot) -> Color.ORANGE.rgb
+                else -> return@on
+            }
 
-            event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color.GREEN.rgb)
+            event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color)
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        blacklist.clear()
         whitelist.clear()
+        blacklist.clear()
+        kismetList.clear()
     }
 }
