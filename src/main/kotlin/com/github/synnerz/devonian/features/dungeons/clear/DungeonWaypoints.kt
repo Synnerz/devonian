@@ -18,7 +18,7 @@ import kotlin.math.abs
 
 object DungeonWaypoints : Feature(
     "dungeonWaypoints",
-    "Highlights chest/items/bat spots where they would spawn at.",
+    "Highlights chest/items/bat/levers spots where they would spawn at.",
     Categories.DUNGEON_WAYPOINTS,
     "catacombs",
     searchTags = setOf("secrets"),
@@ -31,74 +31,86 @@ object DungeonWaypoints : Feature(
         "displayText",
         false,
         "Whether to display a text at the location of the waypoint.",
-        "Dungeon Waypoints Text",
+        "Text",
     )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
         2.0,
         0.0, 10.0,
         "",
-        "Dungeon Waypoints Line Width",
+        "Line Width",
     )
     private val SETTING_CHEST_OUTLINE = addColorPicker(
         "chestOutline",
         Color(0, 255, 0, 255).rgb,
         "The color of the highlight outline for chest waypoints.",
-        "Dungeon Waypoints Chest Outline",
+        "Chest Outline",
     )
     private val SETTING_CHEST_FILLED = addColorPicker(
         "chestFilled",
         Color(0, 255, 0, 80).rgb,
         "The color of the highlight filled for chest waypoints.",
-        "Dungeon Waypoints Chest Filled",
+        "Chest Filled",
     )
     private val SETTING_ITEM_OUTLINE = addColorPicker(
         "itemOutline",
         Color(0, 0, 255, 255).rgb,
         "The color of the highlight outline for item waypoints.",
-        "Dungeon Waypoints Item Outline",
+        "Item Outline",
     )
     private val SETTING_ITEM_FILLED = addColorPicker(
         "itemFilled",
         Color(0, 0, 255, 80).rgb,
         "The color of the highlight filled for item waypoints.",
-        "Dungeon Waypoints Item Filled",
+        "Item Filled",
     )
     private val SETTING_ESSENCE_OUTLINE = addColorPicker(
         "essenceOutline",
         Color(255, 0, 255, 255).rgb,
         "The color of the highlight outline for essence waypoints.",
-        "Dungeon Waypoints Essence Outline",
+        "Essence Outline",
     )
     private val SETTING_ESSENCE_FILLED = addColorPicker(
         "essenceFilled",
         Color(255, 0, 255, 80).rgb,
         "The color of the highlight filled for essence waypoints.",
-        "Dungeon Waypoints Essence Filled",
+        "Essence Filled",
     )
     private val SETTING_BAT_OUTLINE = addColorPicker(
         "batOutline",
         Color(0, 255, 150, 255).rgb,
         "The color of the highlight outline for bat waypoints.",
-        "Dungeon Waypoints Bat Outline",
+        "Bat Outline",
     )
     private val SETTING_BAT_FILLED = addColorPicker(
         "batFilled",
         Color(0, 255, 150, 80).rgb,
         "The color of the highlight filled for bat waypoints.",
-        "Dungeon Waypoints Bat Filled",
+        "Bat Filled",
     )
     private val SETTING_REDSTONE_OUTLINE = addColorPicker(
         "redstoneOutline",
         Color(255, 0, 0, 255).rgb,
         "The color of the highlight outline for redstone key waypoints.",
-        "Dungeon Waypoints Redstone Outline",
+        "Redstone Outline",
     )
     private val SETTING_REDSTONE_FILLED = addColorPicker(
         "redstoneFilled",
         Color(255, 0, 0, 80).rgb,
         "The color of the highlight filled for redstone key waypoints.",
-        "Dungeon Waypoints Redstone Filled",
+        "Redstone Filled",
+    )
+    private val SETTING_LEVER_OUTLINE = addColorPicker(
+        "leverOutline",
+        Color(0, 150, 255, 255).rgb,
+        "The color of the highlight outline for lever waypoints",
+        "Lever Outline"
+    )
+    private val SETTING_LEVER_FILLED = addColorPicker(
+        "leverFilled",
+        Color(0, 150, 255, 80).rgb,
+        "The color of the highlight filled for lever waypoints",
+        "Lever Filled"
     )
     val waypointsData = Gson().fromJson(
         this::class.java.getResourceAsStream("/assets/devonian/dungeons/DungeonWaypoints.json")
@@ -127,6 +139,7 @@ object DungeonWaypoints : Feature(
         ESSENCE("essence"),
         BAT("bat"),
         REDSTONE("redstone"),
+        LEVER("lever"),
         UNKNOWN("unknown");
 
         companion object {
@@ -139,7 +152,7 @@ object DungeonWaypoints : Feature(
     data class WaypointsDataJSON(val name: String, val waypoints: Map<String, List<List<Int>>>, val roomID: Int)
     data class WaypointsData(val waypoints: Map<WaypointType, List<IntTriple>>, val roomID: Int) {
         constructor(old: WaypointsDataJSON) : this(
-            EnumMap<WaypointType, List<IntTriple>>(
+            EnumMap(
                 old.waypoints.entries.associate { (k, v) ->
                     WaypointType.from(k) to v.map { IntTriple(it[0], it[1], it[2]) }
                 }
@@ -208,6 +221,7 @@ object DungeonWaypoints : Feature(
             val key = when {
                 event.isSkull && event.isRedstone -> WaypointType.REDSTONE
                 event.isSkull -> WaypointType.ESSENCE
+                event.isLever -> WaypointType.LEVER
                 else -> WaypointType.CHEST
             }
 
@@ -260,6 +274,7 @@ object DungeonWaypoints : Feature(
                     WaypointType.ESSENCE -> SETTING_ESSENCE_OUTLINE.getColor()
                     WaypointType.BAT -> SETTING_BAT_OUTLINE.getColor()
                     WaypointType.REDSTONE -> SETTING_REDSTONE_OUTLINE.getColor()
+                    WaypointType.LEVER -> SETTING_LEVER_OUTLINE.getColor()
                     WaypointType.UNKNOWN -> SETTING_REDSTONE_OUTLINE.getColor()
                 }
                 val filledColor = when (data.key) {
@@ -268,6 +283,7 @@ object DungeonWaypoints : Feature(
                     WaypointType.ESSENCE -> SETTING_ESSENCE_FILLED.getColor()
                     WaypointType.BAT -> SETTING_BAT_FILLED.getColor()
                     WaypointType.REDSTONE -> SETTING_REDSTONE_FILLED.getColor()
+                    WaypointType.LEVER -> SETTING_LEVER_FILLED.getColor()
                     WaypointType.UNKNOWN -> Color.YELLOW
                 }
                 data.value.forEach { pos ->
