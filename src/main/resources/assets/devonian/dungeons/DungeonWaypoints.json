@@ -3587,5 +3587,18 @@
       ]
     },
     "roomID": 116
+  },
+  {
+    "name": "Rare Carpets",
+    "waypoints": {
+      "chest": [
+        [15, 85, 15]
+      ],
+      "item": [],
+      "essence": [],
+      "bat": [],
+      "redstone": []
+    },
+    "roomID": 144
   }
 ]
