@@ -3600,5 +3600,25 @@
       "redstone": []
     },
     "roomID": 144
+  },
+  {
+    "name": "Rare Overgrown",
+    "waypoints": {
+      "chest": [
+        [5, 69, 7]
+      ],
+      "item": [
+        [19, 83, 28]
+      ],
+      "essence": [],
+      "bat": [
+        [7, 75, 9]
+      ],
+      "redstone": [],
+      "lever": [
+        [15, 85, 2]
+      ]
+    },
+    "roomID": 49
   }
 ]
