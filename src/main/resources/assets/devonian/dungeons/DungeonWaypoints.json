@@ -3571,5 +3571,21 @@
       "redstone": []
     },
     "roomID": 145
+  },
+  {
+    "name": "Pillars",
+    "waypoints": {
+      "chest": [
+        [24, 69, 19]
+      ],
+      "item": [],
+      "essence": [],
+      "bat": [],
+      "redstone": [],
+      "lever": [
+        [24, 88, 3]
+      ]
+    },
+    "roomID": 116
   }
 ]
