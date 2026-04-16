@@ -179,7 +179,7 @@ object DungeonScanner {
                 DungeonEvent.RoomLeave(currentRoom, lastIdx!!).post()
 
             currentRoom = rooms[jdx]
-            if (currentRoom?.clientExplored == false) {
+            if (currentRoom?.clientExplored == false && currentRoom?.explored == false) {
                 Dungeons.totalRoomSecrets.value += currentRoom!!.totalSecrets
                 currentRoom?.clientExplored = true
                 currentRoom?.explored = true
