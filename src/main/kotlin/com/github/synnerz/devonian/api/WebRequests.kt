@@ -11,16 +11,11 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
 import java.net.http.HttpResponse.BodyHandlers
-import java.security.SecureRandom
 import java.time.Duration
-import javax.net.ssl.SSLContext
 
 object WebRequests {
     private val httpClient = HttpClient
         .newBuilder()
-        .sslContext(SSLContext.getInstance("TLSv1.2").apply {
-            init(null, null, SecureRandom())
-        })
         .connectTimeout(Duration.ofSeconds(20))
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
@@ -28,7 +23,7 @@ object WebRequests {
 
     suspend fun get(
         url: String
-    ): String {
+    ): String  {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .headers("User-Agent", "Mozilla/5.0 (Devonian)")
