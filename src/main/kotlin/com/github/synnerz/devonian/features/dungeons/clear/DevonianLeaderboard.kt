@@ -73,21 +73,25 @@ object DevonianLeaderboard : Feature(
                 val soloF7Res = PersistentJson.gson.fromJson(soloF7, soloDataType)?.sortedBy { it.time } ?: return@withName
                 val soloM7Res = PersistentJson.gson.fromJson(soloM7, soloDataType)?.sortedBy { it.time } ?: return@withName
 
+                f7Records.clear()
                 f7res.forEach { data ->
                     data.players.forEach { fetchUsername(it) }
                     f7Records.add(data)
                 }
 
+                m7Records.clear()
                 m7res.forEach { data ->
                     data.players.forEach { fetchUsername(it) }
                     m7Records.add(data)
                 }
 
+                soloF7ClearRecords.clear()
                 soloF7Res.forEach { data ->
                     fetchUsername(data.player)
                     soloF7ClearRecords.add(data)
                 }
 
+                soloM7ClearRecords.clear()
                 soloM7Res.forEach { data ->
                     fetchUsername(data.player)
                     soloM7ClearRecords.add(data)
