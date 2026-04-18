@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 object DevonianLeaderboard : Feature(
-    "devonianLeaderboardTEST2",
+    "devonianLeaderboard",
     "Enables some features to show our leaderboard for record holders",
     Categories.GLOBAL,
     subcategory = "Mod"
