@@ -397,6 +397,7 @@ object Devonian : ClientModInitializer {
             FixCrimsonIsleFog,
             SlayerDisplay,
             EstimatedValue,
+            DevonianLeaderboard,
 
             // Debug
             CopyItem,
