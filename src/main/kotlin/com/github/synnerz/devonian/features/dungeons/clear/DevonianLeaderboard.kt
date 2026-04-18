@@ -110,6 +110,12 @@ object DevonianLeaderboard : Feature(
                 maxDist = 24.0,
                 phase = player.y in 112.0..150.0
             )
+            Render3DImmediate.renderString(
+                "&7Right click to switch categories".replaceCodes(),
+                -27.5, 119.5, -28.5,
+                maxDist = 24.0,
+                phase = player.y in 112.0..150.0
+            )
 
             val list = when (currentCategory) {
                 LeaderboardCategory.F7 -> f7Records
@@ -135,6 +141,7 @@ object DevonianLeaderboard : Feature(
         on<MouseReleaseEvent> { event ->
             if (event.button != 1) return@on
             val player = minecraft.player ?: return@on
+            if (player.y !in 119.0..126.0) return@on
             val dist = abs(player.x - -27.5) + abs(player.z - -28.5)
             if (dist > 5) return@on
 
@@ -153,6 +160,7 @@ object DevonianLeaderboard : Feature(
             val ( x, z ) = room.fromComp(25, 8) ?: return@on
 
             val player = minecraft.player ?: return@on
+            if (player.y !in 69.0..76.0) return@on
             val dist = abs(player.x - x) + abs(player.z - z)
             if (dist > 5) return@on
 
@@ -172,6 +180,12 @@ object DevonianLeaderboard : Feature(
             Render3DImmediate.renderString(
                 "${ChatUtils.prefix} ${currentSoloCategory.formatted} &eLeaderboard".replaceCodes(),
                 x + 0.5, 75.0, z + 0.5,
+                maxDist = 24.0,
+                phase = true,
+            )
+            Render3DImmediate.renderString(
+                "&7Right click to switch categories".replaceCodes(),
+                x + 0.5, 69.5, z + 0.5,
                 maxDist = 24.0,
                 phase = true,
             )
