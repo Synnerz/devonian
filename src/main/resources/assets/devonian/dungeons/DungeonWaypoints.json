@@ -3637,5 +3637,19 @@
       "lever": []
     },
     "roomID": 125
+  },
+  {
+    "name": "Three Floors",
+    "waypoints": {
+      "chest": [
+        [12, 89, 13]
+      ],
+      "item": [],
+      "essence": [],
+      "bat": [],
+      "redstone": [],
+      "lever": []
+    },
+    "roomID": 128
   }
 ]
