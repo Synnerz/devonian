@@ -65,8 +65,8 @@ object CroesusHighlightUnopened : Feature(
                 return@on
             }
             val color = when {
-                whitelist.contains(slot.containerSlot) -> Color.GREEN.rgb
                 kismetList.contains(slot.containerSlot) -> Color.ORANGE.rgb
+                whitelist.contains(slot.containerSlot) -> Color.GREEN.rgb
                 else -> return@on
             }
 
