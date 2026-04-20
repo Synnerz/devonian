@@ -398,6 +398,7 @@ object Devonian : ClientModInitializer {
             SlayerDisplay,
             EstimatedValue,
             DevonianLeaderboard,
+            CroesusChestCounter,
 
             // Debug
             CopyItem,
