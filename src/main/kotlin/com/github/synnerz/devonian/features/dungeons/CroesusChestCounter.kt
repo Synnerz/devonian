@@ -36,7 +36,7 @@ object CroesusChestCounter : TextHudFeature(
     private val chestCountRegex = "^ Unclaimed chests: (\\d+)$".toRegex()
     private val teamScoreRegex = "^ *Team Score: (\\d+) \\((.{1,2})\\)(?: \\(NEW RECORD!\\))?$".toRegex()
     private val squadWipeRegex = "^Warning! The instance will close in 10s\\.$".toRegex()
-    private const val MAX_CHESTS = 5
+    private const val MAX_CHESTS = 60
     private var chests = 0
         set(value) {
             field = value.coerceIn(0..MAX_CHESTS)
