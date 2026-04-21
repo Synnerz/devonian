@@ -399,6 +399,7 @@ object Devonian : ClientModInitializer {
             EstimatedValue,
             DevonianLeaderboard,
             CroesusChestCounter,
+            PartyDuplicateAlert,
 
             // Debug
             CopyItem,
