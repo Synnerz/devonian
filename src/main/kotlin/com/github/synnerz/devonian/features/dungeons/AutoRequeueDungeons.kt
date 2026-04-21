@@ -25,7 +25,6 @@ object AutoRequeueDungeons : Feature(
 
     private fun requeue() {
         if (!Party.isLeader && Party.inParty) return
-        if (lastQueue > 0) println("Devonian\$AutoRequeueDungeons(requeue, $lastQueue)")
         if (lastQueue > 0 && lastQueue != Party.members.size) {
             lastQueue = 0
             return
@@ -42,7 +41,6 @@ object AutoRequeueDungeons : Feature(
             startedRun = true
             HypixelModApi.requestPartyInfo()
             lastQueue = Party.members.size
-            println("Devonian\$AutoRequeueDungeons(started, $lastQueue)")
         }
 
         on<ChatChannelEvent.PartyChatEvent> { event ->
