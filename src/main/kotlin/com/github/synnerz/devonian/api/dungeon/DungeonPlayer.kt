@@ -120,5 +120,14 @@ enum class DungeonClass(
             "Tank" -> Tank
             else -> Unknown
         }
+
+        fun from(singleLetter: Char): DungeonClass = when (singleLetter.lowercase()) {
+            "a" -> Archer
+            "b" -> Berserk
+            "m" -> Mage
+            "h" -> Healer
+            "t" -> Tank
+            else -> Unknown
+        }
     }
 }
