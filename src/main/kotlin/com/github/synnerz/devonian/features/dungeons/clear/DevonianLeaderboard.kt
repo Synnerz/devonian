@@ -14,6 +14,7 @@ import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import com.google.gson.reflect.TypeToken
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -23,10 +24,10 @@ object DevonianLeaderboard : Feature(
     Categories.GLOBAL,
     subcategory = "Mod"
 ) {
-    private val f7Records = mutableListOf<NormalLeaderboardData>()
-    private val m7Records = mutableListOf<NormalLeaderboardData>()
-    private val soloF7ClearRecords = mutableListOf<SoloClearLeaderboardData>()
-    private val soloM7ClearRecords = mutableListOf<SoloClearLeaderboardData>()
+    private val f7Records = CopyOnWriteArrayList<NormalLeaderboardData>()
+    private val m7Records = CopyOnWriteArrayList<NormalLeaderboardData>()
+    private val soloF7ClearRecords = CopyOnWriteArrayList<SoloClearLeaderboardData>()
+    private val soloM7ClearRecords = CopyOnWriteArrayList<SoloClearLeaderboardData>()
     private val cachedNames = hashMapOf<String, String>()
     private var currentCategory = LeaderboardCategory.F7
     private var currentSoloCategory = LeaderboardCategory.SOLO_F7
