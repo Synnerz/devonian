@@ -66,6 +66,7 @@ object EstimatedValue : TextHudFeature(
         var skin: String? = null, // skin
         var ultimateEnchant: String? = null,
         var isDungeonItem: Boolean = false,
+        var enrichment: String? = null,
     ) {
         fun fuming(): Int = if (hpbs > 10) hpbs - 10 else 0
 
@@ -106,6 +107,12 @@ object EstimatedValue : TextHudFeature(
         }
 
         fun abilityScrollsPrice(): Double = ability_scrolls.sumOf { SkyblockPrices.buyPrice(it).toDouble() }
+
+        fun enrichmentPrice(): Double =
+            if (enrichment == null)
+                0.0
+            else
+                SkyblockPrices.buyPrice("TALISMAN_ENRICHMENT_${enrichment}").toDouble()
 
         fun totalPrice(): Double {
             val basePriceData = basePrice()
@@ -170,6 +177,8 @@ object EstimatedValue : TextHudFeature(
                         add("&7- $name&f: &a${shortNum(SkyblockPrices.buyPrice(it).toDouble())}")
                     }
                 }
+                if (enrichment != null)
+                    add("&9Enrichment&f: &a${shortNum(enrichmentPrice())}")
                 if (recomb)
                     add("&6Recombobulator 3000&f: &a${shortNum(recombPrice())}")
                 add("&6Base Item&f: &a${shortNum(basePrice().price.toDouble())}")
@@ -225,6 +234,7 @@ object EstimatedValue : TextHudFeature(
                 ?: extraAttributes.getInt("dungeon_item_level").safeGet()
             val recomb = extraAttributes.getInt("rarity_upgrades").safeGet()
             val abilityScrolls = extraAttributes.getList("ability_scroll").safeGet()
+            val enrichment = extraAttributes.getString("talisman_enrichment").safeGet()?.uppercase()
             val data = ItemStatData(
                 itemStack.customName?.colorCodes() ?: itemStack.itemName.string,
                 enchantments = enchantIds ?: emptyList(),
@@ -238,6 +248,7 @@ object EstimatedValue : TextHudFeature(
                 // lore is more accurate than nbt ):
                 isDungeonItem = (ItemUtils.lore(itemStack) ?: emptyList()).any { it.contains(" DUNGEON ") },
                 ability_scrolls = abilityScrolls?.map { it.asString().safeGet() ?: "" } ?: emptyList(),
+                enrichment = enrichment,
             )
 
             itemCache[itemStack] = data
