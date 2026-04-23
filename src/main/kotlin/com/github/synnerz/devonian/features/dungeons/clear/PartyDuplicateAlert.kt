@@ -61,6 +61,8 @@ object PartyDuplicateAlert : Feature(
             if (roleIns == DungeonClass.Unknown) return@on
 
             Scheduler.scheduleTask {
+                val world = minecraft.level ?: return@scheduleTask
+                if (!world.players().any { it.name.string == name }) return@scheduleTask
                 teamMembers[name] = roleIns
             }
         }
