@@ -400,6 +400,7 @@ object Devonian : ClientModInitializer {
             DevonianLeaderboard,
             CroesusChestCounter,
             PartyDuplicateAlert,
+            PartyNotFullAlert,
 
             // Debug
             CopyItem,
