@@ -4,12 +4,15 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Party
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.api.events.ScoreboardEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
+import net.minecraft.world.entity.EntityType
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -27,10 +30,16 @@ object PartyNotFullAlert : Feature(
         "Play Sound"
     )
     private val scoreboardPlayerRegex = "^\\[([ABMHT])] (\\w{1,16}) \\[Lv\\d+]$".toRegex()
-    private val startingAtRegex = "^Starting in 4 seconds\\.$".toRegex()
+    private val startingAtRegex = "^Starting in 2 seconds\\.$".toRegex() // very small window ):
+    private val playerEntities = mutableListOf<String>()
     private val teamMembers = mutableListOf<Pair<String, DungeonClass>>()
 
     override fun initialize() {
+        on<NameChangeEvent> { event ->
+            if (Dungeons.timeElapsed.value != 0 || event.type != EntityType.PLAYER) return@on
+            playerEntities.add(event.name)
+        }
+
         on<ChatEvent> { event ->
             if (event.matches(startingAtRegex) == null) return@on
             if (!Party.inParty || Party.members.size == size()) return@on
@@ -46,8 +55,7 @@ object PartyNotFullAlert : Feature(
             if (roleIns == DungeonClass.Unknown) return@on
 
             Scheduler.scheduleTask {
-                val world = minecraft.level ?: return@scheduleTask
-                if (!world.players().any { it.name.string == name }) return@scheduleTask
+                if (!playerEntities.contains(name)) return@scheduleTask
                 teamMembers.removeIf { it.first == name }
                 teamMembers.add(name to roleIns)
             }
@@ -56,6 +64,7 @@ object PartyNotFullAlert : Feature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         teamMembers.clear()
+        playerEntities.clear()
     }
 
     // hopefully this only happens because of the current player
