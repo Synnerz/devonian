@@ -27,7 +27,7 @@ import kotlin.math.roundToInt
 
 object LootLogger : Feature(
     "lootLogger",
-    "Logs the loot you purchase from dungeon chests",
+    "Logs the loot you purchase from dungeon chests (/dv lootlogger <mode> <floor> <date>)",
     Categories.DUNGEONS,
     subcategory = "QOL"
 ) {
@@ -111,13 +111,40 @@ object LootLogger : Feature(
                 return@subcommand 0
             }
             if (mode == "COMPACTED") {
-                ChatUtils.sendMessage("&bLootLogger $floor stats" +
-                        " &b| &eProfit &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit() })}" +
-                        " &b| &eSpent &6${StringUtils.shortenNumber(list.sumOf { it.price })}",
+                ChatUtils.sendMessage("&bLootLogger &a$floor&b stats" +
+                        " &b| &eSpent &6${StringUtils.shortenNumber(list.sumOf { it.price })}" +
+                        " &b| &eProfit &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit(true) })} &7(${StringUtils.shortenNumber(list.sumOf { it.totalProfit() })})",
                 true)
                 return@subcommand 1
             }
-            // TODO: finish detailed mode
+            if (mode != "DETAILED") {
+                ChatUtils.sendMessage("&cLootLogger not a valid mode was set", true)
+                return@subcommand 0
+            }
+            val chestCount = mutableMapOf<String, Int>()
+            val itemCount = mutableMapOf<String, Int>()
+            list.forEach {
+                val count = chestCount.getOrPut(it.name) { 0 }
+                chestCount[it.name] = count + 1
+                it.items.forEach { item ->
+                    val name =
+                        if (item.essence) item.name.replace(" §r§8x(\\d+)".toRegex(), "")
+                        else item.name
+                    val saveCount = itemCount.getOrPut(name) { 0 }
+                    itemCount[name] = saveCount + item.amount
+                }
+            }
+            ChatUtils.sendMessage("&bLootLogger &a$floor&b stats", true)
+            itemCount.entries.sortedBy { it.value }.forEach { (name, amount) ->
+                ChatUtils.sendMessage("&8- ${name}&f: &6${StringUtils.addCommas(amount)}")
+            }
+            ChatUtils.sendMessage("&bChests Opened&f:")
+            chestCount.entries.sortedBy { it.value }.forEach { (name, amount) ->
+                ChatUtils.sendMessage("&8- ${chestNames[name]}&f: &6${StringUtils.addCommas(amount)}")
+            }
+            ChatUtils.sendMessage("&eTotal Spent&f: &6${StringUtils.shortenNumber(list.sumOf { it.price })}")
+            ChatUtils.sendMessage("&eProfit&f: &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit(true) })}")
+            ChatUtils.sendMessage("&eTotal Profit&f: &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit() })} &8(including essence)")
             1
         }
             .word("mode")
