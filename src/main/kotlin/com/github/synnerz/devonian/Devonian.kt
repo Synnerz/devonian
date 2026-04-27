@@ -401,6 +401,7 @@ object Devonian : ClientModInitializer {
             CroesusChestCounter,
             PartyDuplicateAlert,
             PartyNotFullAlert,
+            LootLogger,
 
             // Debug
             CopyItem,
