@@ -127,6 +127,7 @@ object RunsLogger : Feature(
                 val time = StringUtils.parseTimer(current.time)
                 if (lastFastest == 0L || lastFastest > time)
                     lastFastest = time.toLong()
+                println("RunsLogger adding($runsTime, ${current.time})")
                 runsTime += time
 
                 if (idx == list.lastIndex) break
@@ -135,6 +136,7 @@ object RunsLogger : Feature(
                 realTime += next.snapshotAt - current.snapshotAt
             }
 
+            println("RunsLogger listSize(${list.size}) average(${runsTime / (list.size - 1)})")
             ChatUtils.sendMessage("&bRunsLogger time for" +
                     " &a$floor" +
                     " &b| &dFastest ${StringUtils.formatSeconds(lastFastest)}" +
