@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 
 object RunsLogger : Feature(
     "runsLogger",
-    "Logs your completed dungeon runs (note: it will not work if you do not have ShowExtraStats enabled).",
+    "Logs your completed dungeon runs (note: it will not work if you do not have ShowExtraStats enabled). /dv runslogger <mode> <floor> <date>",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "QOL",
@@ -122,12 +122,11 @@ object RunsLogger : Feature(
             var realTime = 0L
             var runsTime = 0L
 
-            for (idx in 0 until list.lastIndex) {
+            for (idx in 0..list.lastIndex) {
                 val current = list.getOrNull(idx) ?: continue
                 val time = StringUtils.parseTimer(current.time)
                 if (lastFastest == 0L || lastFastest > time)
                     lastFastest = time.toLong()
-                println("RunsLogger adding($runsTime, ${current.time})")
                 runsTime += time
 
                 if (idx == list.lastIndex) break
@@ -136,7 +135,6 @@ object RunsLogger : Feature(
                 realTime += next.snapshotAt - current.snapshotAt
             }
 
-            println("RunsLogger listSize(${list.size}) average(${runsTime / (list.size - 1)})")
             ChatUtils.sendMessage("&bRunsLogger time for" +
                     " &a$floor" +
                     " &b| &dFastest ${StringUtils.formatSeconds(lastFastest)}" +
