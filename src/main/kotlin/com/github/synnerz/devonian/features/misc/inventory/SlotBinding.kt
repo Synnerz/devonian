@@ -145,7 +145,7 @@ object SlotBinding : Feature(
             selectedProfile = Config.get<String>(KEY_NAME) ?: "default"
 
             var defaultProfile = bindingProfiles.data!!.find { it.name == "default" }
-            if (defaultProfile != null && defaultProfile.slots.isNotEmpty()) return@onAfterLoad
+            if (defaultProfile != null && defaultProfile.slots.sumOf { it.size } == 0) return@onAfterLoad
 
             val add = defaultProfile == null
             if (add) defaultProfile = SlotBindingProfile("default")
