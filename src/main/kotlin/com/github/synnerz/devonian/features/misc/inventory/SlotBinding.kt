@@ -145,17 +145,19 @@ object SlotBinding : Feature(
             selectedProfile = Config.get<String>(KEY_NAME) ?: "default"
 
             var defaultProfile = bindingProfiles.data!!.find { it.name == "default" }
-            if (defaultProfile != null && defaultProfile.slots.sumOf { it.size } == 0) return@onAfterLoad
+            if (defaultProfile != null && defaultProfile.slots.sumOf { it.size } != 0) return@onAfterLoad
 
             val add = defaultProfile == null
-            if (add) defaultProfile = SlotBindingProfile("default")
+            if (add)
+                defaultProfile = SlotBindingProfile("default")
 
             Config.get<List<JsonPrimitive>>(LEGACY_KEY_NAME)?.map { it.asInt }?.forEach {
                 val src = it shr 6
                 val dst = it and 63
                 defaultProfile.slots[src].add(dst)
             }
-            bindingProfiles.data!!.add(defaultProfile)
+            if (add)
+                bindingProfiles.data!!.add(defaultProfile)
         }
 
         Config.onPreSave {
