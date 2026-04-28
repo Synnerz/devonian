@@ -1,15 +1,19 @@
 package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.PersistentJsonClass
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
+import com.google.gson.reflect.TypeToken
 import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
@@ -22,7 +26,7 @@ import java.awt.Color
 
 object SlotBinding : Feature(
     "slotBinding",
-    "Bind a slot to another slot (with keybind in controls) so you can shift + left click on it to swap each others' items around.",
+    "Bind a slot to another slot (with keybind in controls) so you can shift + left click on it to swap each others' items around. /dv slotbinding <mode> <name?> <useCurrentArea?>",
     subcategory = "Inventory",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
@@ -34,6 +38,12 @@ object SlotBinding : Feature(
         true,
         "Prevent items in bound slots from being moved normally.",
         "Protect Bound Slots",
+    )
+    private val SETTING_DYNAMIC_CHANGE = addSwitch(
+        "dynamicChange",
+        true,
+        "Changes the selected profile depending on the area (if disabled, it will not change)",
+        "Dynamic Change"
     )
     private val SETTING_BOUND_LINES = addSwitch(
         "boundLines",
@@ -62,7 +72,16 @@ object SlotBinding : Feature(
         "Bound Slot Color",
     )
 
-    private const val KEY_NAME = "slotsBound1"
+    private val bindingProfiles = object : PersistentJsonClass<MutableList<SlotBindingProfile>>(
+        "devonian/slotbindingprofiles.json",
+        object : TypeToken<MutableList<SlotBindingProfile>>() {}
+    ) {
+        override fun onLoadDefault() {
+            data = mutableListOf(SlotBindingProfile("default"))
+        }
+    }
+    private const val LEGACY_KEY_NAME = "slotsBound1"
+    private const val KEY_NAME = "default"
     private val keybind = KeyBindingHelper.registerKeyBinding(
         KeyMapping(
             "key.devonian.slotBinding",
@@ -70,14 +89,7 @@ object SlotBinding : Feature(
             Devonian.keybindCategory
         )
     )
-    private var once = false
-
-    private val boundSlots = Array(40) { mutableListOf<Int>() }
-    private var currentHeldSlot: Slot? = null
-    private val slotLocCache = arrayListOf<Pair<Int, Int>?>()
-
     private val TOGGLE_SOUND = SoundEvents.EXPERIENCE_ORB_PICKUP
-
     // https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9
     private val slotColors = arrayOf(
         Color(228,26,28),
@@ -90,34 +102,150 @@ object SlotBinding : Feature(
         Color(247,129,191),
         Color(153,153,153),
     )
+    private var selectedProfile = "default"
+    private val currentProfile
+        get() = bindingProfiles.data!!.find { it.name.equals(selectedProfile, ignoreCase = true) }
+    private val slotLocCache = arrayListOf<Pair<Int, Int>?>()
+    private var currentHeldSlot: Slot? = null
+    private var once = false
 
-    private fun colorFor(idx: Int, other: Int): Color {
-        if (SETTING_SAME_COLOR.get()) return SETTING_FIXED_COLOR.getColor()
-        return slotColors.getOrElse(idx) { slotColors[other] }
+    data class SlotBindingProfile(
+        val name: String,
+        val slots: Array<MutableList<Int>> = Array(40) { mutableListOf<Int>() },
+        val area: String? = null, // if null -> global
+        var toggle: Boolean = true, // TODO: impl me ?
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as SlotBindingProfile
+
+            if (name != other.name) return false
+            if (!slots.contentEquals(other.slots)) return false
+            if (area != other.area) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = name.hashCode()
+            result = 31 * result + slots.contentHashCode()
+            result = 31 * result + (area?.hashCode() ?: 0)
+            return result
+        }
     }
 
     override fun initialize() {
-        Config.set(KEY_NAME, JsonArray())
+        bindingProfiles.load()
+        Config.set(LEGACY_KEY_NAME, JsonArray())
+        Config.set(KEY_NAME, "default")
 
         Config.onAfterLoad {
-            Config.get<List<JsonPrimitive>>(KEY_NAME)?.map { it.asInt }?.forEach {
+            selectedProfile = Config.get<String>(KEY_NAME) ?: "default"
+
+            var defaultProfile = bindingProfiles.data!!.find { it.name == "default" }
+            if (defaultProfile != null && defaultProfile.slots.isNotEmpty()) return@onAfterLoad
+
+            val add = defaultProfile == null
+            if (add) defaultProfile = SlotBindingProfile("default")
+
+            Config.get<List<JsonPrimitive>>(LEGACY_KEY_NAME)?.map { it.asInt }?.forEach {
                 val src = it shr 6
                 val dst = it and 63
-                boundSlots[src].add(dst)
+                defaultProfile.slots[src].add(dst)
             }
+            bindingProfiles.data!!.add(defaultProfile)
         }
 
         Config.onPreSave {
-            val array = JsonArray()
+            Config.set(KEY_NAME, selectedProfile)
+        }
 
-            boundSlots.forEachIndexed { src, arr ->
-                arr.forEach { dst ->
-                    val packed = (src shl 6) or dst
-                    array.add(packed)
-                }
+        DevonianCommand.command.subcommand("slotbinding") { _, args ->
+            val modeArg = args.getOrNull(0) as? String?
+            val arg1 = args.getOrNull(1) as? String?
+            val arg2 = args.getOrNull(2) as? Boolean?
+
+            if (modeArg.isNullOrEmpty()) {
+                ChatUtils.sendMessage("&cSlotBinding did not set a valid mode", true)
+                return@subcommand 0
             }
 
-            Config.set(KEY_NAME, array)
+            when (modeArg.lowercase()) {
+                "create" -> {
+                    if (arg1.isNullOrEmpty()) {
+                        ChatUtils.sendMessage("&cSlotBinding no profile name specified", true)
+                        return@subcommand 0
+                    }
+                    if (arg2 == null) {
+                        ChatUtils.sendMessage("&cSlotBinding no area specified &7(true = use current area, false = use global)", true)
+                        return@subcommand 0
+                    }
+                    if (bindingProfiles.data!!.any { it.name.equals(arg1, ignoreCase = true) }) {
+                        ChatUtils.sendMessage("&cSlotBinding profile with name &b\"$arg1\"&c already exists", true)
+                        return@subcommand 0
+                    }
+
+                    val area = if (arg2) Location.area else null
+                    bindingProfiles.data!!.add(SlotBindingProfile(arg1, area = area))
+                    selectedProfile = arg1
+                    ChatUtils.sendMessage("&aSlotBinding successfully created profile &b\"$arg1\"&a with area &b\"${area ?: "Global"}\" &7(this profile has been selected)", true)
+                }
+                "delete" -> {
+                    if (arg1.isNullOrEmpty()) {
+                        ChatUtils.sendMessage("&cSlotBinding no profile name specified", true)
+                        return@subcommand 0
+                    }
+
+                    val removed = bindingProfiles.data!!.removeIf { it.name.equals(arg1, ignoreCase = true) }
+                    if (!removed) {
+                        ChatUtils.sendMessage("&cSlotBinding no profile with name &b\"$arg1\"&c was found", true)
+                        return@subcommand 0
+                    }
+
+                    // TODO: maybe re-select depending on current area ?
+                    if (arg1.equals(selectedProfile, true))
+                        selectedProfile = "default"
+                    ChatUtils.sendMessage("&aSlotBinding successfully deleted profile with name &b\"$arg1\"", true)
+                }
+                "profiles" -> {
+                    ChatUtils.sendMessage("&aSlotBinding profiles &b${bindingProfiles.data!!.joinToString(",") { it.name }}", true)
+                }
+                "setprofile" -> {
+                    if (arg1.isNullOrEmpty()) {
+                        ChatUtils.sendMessage("&cSlotBinding no profile name specified", true)
+                        return@subcommand 0
+                    }
+
+                    val exists = bindingProfiles.data!!.find { it.name.equals(arg1, ignoreCase = true) }
+                    if (exists == null) {
+                        ChatUtils.sendMessage("&cSlotBinding could not find profile with name &b\"$arg1\"", true)
+                        return@subcommand 0
+                    }
+
+                    selectedProfile = exists.name
+                    ChatUtils.sendMessage("&aSlotBinding set profile with name &b\"$selectedProfile\"", true)
+                }
+            }
+            1
+        }
+            .word("mode")
+            .suggest("mode", *listOf(
+                "CREATE",
+                "DELETE",
+                "PROFILES",
+                "SETPROFILE",
+            ).toTypedArray())
+            .word("name")
+            .suggest("name", *bindingProfiles.data!!.map { it.name }.toTypedArray())
+            .bool("useCurrentArea")
+
+        on<AreaEvent> { event ->
+            if (!SETTING_DYNAMIC_CHANGE.get()) return@on
+            selectedProfile = bindingProfiles.data!!.find {
+                it.area.equals(event.area, ignoreCase = true)
+            }?.name ?: "default"
         }
 
         on<GuiKeyDownEvent> { event ->
@@ -127,6 +255,7 @@ object SlotBinding : Feature(
 
             val screen = event.screen as? AbstractContainerScreenAccessor ?: return@on
             val slot = screen.hoveredSlot ?: return@on
+            val boundSlots = currentProfile?.slots ?: return@on
 
             if (slot.container !== minecraft.player?.inventory) return@on
             if (slot.containerSlot !in boundSlots.indices) return@on
@@ -148,6 +277,7 @@ object SlotBinding : Feature(
 
             val screen = event.screen as? AbstractContainerScreenAccessor ?: return@on
             val slot = screen.hoveredSlot ?: return@on
+            val boundSlots = currentProfile?.slots ?: return@on
 
             if (slot.container !== minecraft.player?.inventory) return@on
             val idx = slot.containerSlot
@@ -181,6 +311,7 @@ object SlotBinding : Feature(
 
         on<PreventItem.SlotEvent> { event ->
             if (SETTING_PROTECT.get() && event.losesItem) {
+                val boundSlots = currentProfile?.slots ?: return@on
                 val slots = boundSlots.getOrNull(event.idx)
                 if (!slots.isNullOrEmpty()) {
                     event.cancel("SlotBinding")
@@ -189,11 +320,12 @@ object SlotBinding : Feature(
             }
 
             (event.underlying as? QuickMoveItemEvent)?.also {
+                val boundSlots = currentProfile?.slots ?: return@on
                 val slots = boundSlots.getOrNull(event.idx) ?: return@on
                 val other = slots.getOrNull(0) ?: return@on
 
                 val player = minecraft.player ?: return@also
-                val menu = player.containerMenu ?: return@also
+                val menu = player.containerMenu
                 val id = menu.containerId
 
                 setToFront(event.idx, other)
@@ -211,11 +343,13 @@ object SlotBinding : Feature(
 
             if (SETTING_PROTECT.get()) {
                 if (event.swapped != null) {
+                    val boundSlots = currentProfile?.slots ?: return@on
                     val slots = boundSlots.getOrNull(event.idx) ?: return@on
                     if (slots.isNotEmpty() && !slots.contains(event.swapped.containerSlot)) event.cancel("SlotBinding")
                     return@on
                 }
 
+                val boundSlots = currentProfile?.slots ?: return@on
                 val slots = boundSlots.getOrNull(event.idx) ?: return@on
                 if (slots.isEmpty()) return@on
 
@@ -228,6 +362,7 @@ object SlotBinding : Feature(
             if (slot.container !== minecraft.player?.inventory) return@on
 
             val idx = slot.containerSlot
+            val boundSlots = currentProfile?.slots ?: return@on
             val bound = boundSlots.getOrNull(idx) ?: return@on
 
             val hovered = (event.screen as AbstractContainerScreenAccessor).hoveredSlot
@@ -267,6 +402,7 @@ object SlotBinding : Feature(
             val curr = currentHeldSlot ?: return@on
             val cont = event.container as AbstractContainerScreenAccessor
             val inv = minecraft.player?.inventory
+            val boundSlots = currentProfile?.slots ?: return@on
 
             event.container.menu.slots.forEach { slot ->
                 if (curr === slot) return@forEach
@@ -300,7 +436,13 @@ object SlotBinding : Feature(
         }.prio = 2
     }
 
+    private fun colorFor(idx: Int, other: Int): Color {
+        if (SETTING_SAME_COLOR.get()) return SETTING_FIXED_COLOR.getColor()
+        return slotColors.getOrElse(idx) { slotColors[other] }
+    }
+
     fun setToFront(idx1: Int, idx2: Int) {
+        val boundSlots = currentProfile?.slots ?: return
         val i1 = boundSlots[idx1].indexOf(idx2)
         val i2 = boundSlots[idx2].indexOf(idx1)
         if (i1 > 0) boundSlots[idx1][0] = boundSlots[idx1][i1].also { boundSlots[idx1][i1] = boundSlots[idx1][0] }
@@ -310,6 +452,6 @@ object SlotBinding : Feature(
     fun compatIsRendering(slot: Slot): Boolean {
         if (!isEnabled()) return false
         if (slot.container != minecraft.player?.inventory) return false
-        return boundSlots.getOrNull(slot.containerSlot)?.isNotEmpty() ?: false
+        return currentProfile?.slots?.getOrNull(slot.containerSlot)?.isNotEmpty() ?: false
     }
 }
