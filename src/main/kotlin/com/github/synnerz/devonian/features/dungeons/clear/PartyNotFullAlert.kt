@@ -2,16 +2,12 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Party
-import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.events.ChatEvent
-import com.github.synnerz.devonian.api.events.ScoreboardEvent
+import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 object PartyNotFullAlert : Feature(
     "partyNotFullAlert",
@@ -26,39 +22,31 @@ object PartyNotFullAlert : Feature(
         "Plays a sound whenever the alert is shown",
         "Play Sound"
     )
-    private val scoreboardPlayerRegex = "^\\[([ABMHT])] (\\w{1,16}) \\[Lv\\d+]$".toRegex()
-    // this will be slightly inaccurate, but it should work out most of the time
-    private val startingAtRegex = "^Starting in 3 seconds\\.$".toRegex()
-    private val teamMembers = mutableListOf<Pair<String, DungeonClass>>()
+    private val playerListRegex = "^ *Party \\((\\d+)\\)$".toRegex()
+    private val playerReadyRegex = "^\\w{1,16} is now ready!$".toRegex()
+    private var sent = false
+    private var members = -1
 
     override fun initialize() {
-        on<ChatEvent> { event ->
-            if (event.matches(startingAtRegex) == null) return@on
-            if (!Party.inParty || Party.members.size == size()) return@on
-
-            Alert.show("&cParty is not full (${size()}/${Party.members.size})", 2000, SETTING_PLAY_SOUND.get())
-            ChatUtils.sendMessage("&cParty is not full (${size()}/${Party.members.size})", true)
+        on<TabUpdateEvent> { event ->
+            val ( count ) = event.matches(playerListRegex) ?: return@on
+            members = count.toIntOrNull() ?: 1
+            sent = false
         }
 
-        on<ScoreboardEvent> { event ->
-            val match = event.matches(scoreboardPlayerRegex) ?: return@on
-            val ( role, name ) = match
-            val roleIns = DungeonClass.from(role.toCharArray().first())
-            if (roleIns == DungeonClass.Unknown) return@on
+        on<ChatEvent> { event ->
+            if (sent) return@on
+            if (event.matches(playerReadyRegex) == null) return@on
+            if (!Party.inParty || Party.members.size == members) return@on
 
-            Scheduler.scheduleTask {
-                val world = minecraft.level ?: return@scheduleTask
-                if (!world.players().any { it.name.string == name }) return@scheduleTask
-                teamMembers.removeIf { it.first == name }
-                teamMembers.add(name to roleIns)
-            }
+            Alert.show("&cParty is not full (${members}/${Party.members.size})", 2000, SETTING_PLAY_SOUND.get())
+            ChatUtils.sendMessage("&cParty is not full (${members}/${Party.members.size})", true)
+            sent = true
         }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        teamMembers.clear()
+        members = -1
+        sent = false
     }
-
-    // hopefully this only happens because of the current player
-    private fun size(): Int = if (teamMembers.isEmpty()) 1 else teamMembers.size
 }
