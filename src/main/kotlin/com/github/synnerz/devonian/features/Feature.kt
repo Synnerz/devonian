@@ -191,6 +191,33 @@ open class Feature @JvmOverloads constructor(
     }
 
     @JvmOverloads
+    fun addTimeSlider(
+        configName: String,
+        value: Double,
+        min: Double, max: Double,
+        description: String? = null,
+        displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
+        subcategory: String = this.subcategory,
+        isHidden: Boolean = this.isHidden,
+    ): ConfigData.TimeSlider<Double> {
+        return ConfigData.TimeSlider(
+            "${this.configName}$$configName",
+            value,
+            configSwitch,
+            min, max,
+            description,
+            displayName,
+            subcategory,
+            searchTags,
+            isHidden,
+        ).also {
+            Config.registerCategory(it, category, subcategory)
+            configSwitch.subconfigs.add(it)
+        }
+    }
+
+    @JvmOverloads
     fun addButton(
         onClick: () -> Unit,
         buttonTitle: String = "Click!",

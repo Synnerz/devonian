@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.config.ui.talium
 
 import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.config.ConfigType
+import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.effects.OutlineEffect
 import com.github.synnerz.talium.events.UIClickEvent
@@ -38,6 +39,7 @@ abstract class SharedCategory(displayName: String) {
                     ConfigType.TEXTINPUT -> createTextInput(data as ConfigData.TextInput)
                     ConfigType.SELECTION -> createSelection(data as ConfigData.Selection)
                     ConfigType.COLORPICKER -> createColorPicker(data as ConfigData.ColorPicker, container)
+                    ConfigType.TIMESLIDER -> createTimeSlider(data as ConfigData.TimeSlider<Double>, container)
                 }
             )
         }
@@ -135,6 +137,33 @@ abstract class SharedCategory(displayName: String) {
         parent: UIElement? = null
     ): UISlider =
         object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
+            override fun setCurrentX(x: Double) {
+                if (!canTrigger()) return
+                super.setCurrentX(x)
+                configData.set(this.value)
+            }
+
+            override fun setCurrentValue(value: Double) {
+                if (!canTrigger()) return
+                super.setCurrentValue(value)
+                configData.set(this.value)
+            }
+        }.apply {
+            setColor(ColorPalette.TERTIARY_COLOR)
+            configData.onChange {
+                value = configData.get()
+            }
+        }
+
+    protected fun createTimeSlider(
+        configData: ConfigData.TimeSlider<Double>,
+        parent: UIElement? = null
+    ): UISlider =
+        object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
+            override fun getDisplayValue(): String {
+                return StringUtils.formatSeconds(value.toLong())
+            }
+
             override fun setCurrentX(x: Double) {
                 if (!canTrigger()) return
                 super.setCurrentX(x)
