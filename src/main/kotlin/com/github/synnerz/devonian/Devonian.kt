@@ -3,6 +3,7 @@ package com.github.synnerz.devonian
 import com.github.synnerz.devonian.api.*
 import com.github.synnerz.devonian.api.dungeon.CroesusListener
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.DungeonsApi
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.garden.GardenEvents
@@ -457,6 +458,7 @@ object Devonian : ClientModInitializer {
         Party.initialize()
         CroesusListener.initialize()
         MayorAPI.initialize()
+        DungeonsApi.initialize()
         Stages.initialize()
         ChatUtils.initialize()
 
