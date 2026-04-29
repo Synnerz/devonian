@@ -1,21 +1,19 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.WebRequests
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
+import com.github.synnerz.devonian.api.dungeon.DungeonsApi
 import com.github.synnerz.devonian.api.dungeon.PartyFinderListener
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.PersistentJson
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.component.ItemLore
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
 object PartyFinderOverview : Feature(
@@ -25,7 +23,6 @@ object PartyFinderOverview : Feature(
     searchTags = setOf("pf"),
     subcategory = "Tooltip",
 ) {
-    private const val DUNGEONS_API = "https://api.docilelm.top/v2/dungeons/"
     private val SETTING_PB_MODE = addSelection(
         "pbMode",
         0,
@@ -60,26 +57,7 @@ object PartyFinderOverview : Feature(
     )
     private val nameRegex = "^§r §r(§\\w)\\w{1,16}§r§f".toRegex()
     private val members = CopyOnWriteArrayList<String>()
-    private val cachedMembers = ConcurrentHashMap<String, DungeonsApiResult>()
     private val parties = CopyOnWriteArrayList<PartyFinderListener.PartyFinderData>()
-
-    data class UserDungeonsData(
-        val cataXP: Double,
-        val level: Double,
-        val secrets: Int,
-        val averageSecrets: Double,
-        val personal_best_normal: Map<String, Map<String, String>>?, // { s: { "floor_1": "1:15" }, s_plus: { "floor_1": "1:15" } }
-        val personal_best_master: Map<String, Map<String, String>>?,
-    )
-
-    data class DungeonsApiResult(
-        var timeTaken: Long,
-        val success: Boolean,
-        val status: String,
-        val data: UserDungeonsData?
-    )
-
-    data class MultiDungeonApiResult(val result: Map<String /* player's name */, DungeonsApiResult>?)
 
     override fun initialize() {
         DevonianCommand.command.subcommand("pfo") { _, args ->
@@ -120,22 +98,9 @@ object PartyFinderOverview : Feature(
 
                 it.members.forEach { m -> members.add(m.name) }
             }
-            if (members.isNotEmpty()) {
-                WebRequests.withName("PartyFinderOverview") {
-                    val filtered = members.filter {
-                        val cachedData = cachedMembers[it]
-                        cachedData == null ||
-                        System.currentTimeMillis() - cachedData.timeTaken >= (1000 * 60 * 60) * 24
-                    }
-                    if (filtered.isEmpty()) return@withName
-                    val result = WebRequests.get("$DUNGEONS_API${filtered.joinToString(",")}")
-                    val response: MultiDungeonApiResult = PersistentJson.gson.fromJson(result, MultiDungeonApiResult::class.java) ?: return@withName
-                    response.result?.entries?.forEach { (k, v) ->
-                        v.timeTaken = System.currentTimeMillis()
-                        cachedMembers[k] = v
-                    }
-                }
-            }
+
+            if (members.isEmpty()) return@on
+            DungeonsApi.requestPlayers(members)
         }
 
         on<ClientThreadServerTickEvent> {
@@ -172,7 +137,7 @@ object PartyFinderOverview : Feature(
                         newLore.add(l.copy())
                         return@forEach
                     }
-                    val cache = cachedMembers[match[0]]
+                    val cache = DungeonsApi.player(match[0])
                     if (cache == null) {
                         newLore.add(l.copy())
                         return@forEach
