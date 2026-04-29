@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
@@ -340,7 +341,7 @@ class RenderTickEvent : Event
 
 @Threaded class ServerTickEvent(val ticks: Int) : Event
 
-@Threaded class ScoreboardEvent(override val message: String) : CriteriaEvent
+@Threaded class ScoreboardEvent(override val message: String, val packet: ClientboundSetPlayerTeamPacket) : CriteriaEvent
 
 @Ordered class RenderSlotEvent(
     val slot: Slot,

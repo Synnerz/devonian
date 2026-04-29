@@ -182,7 +182,7 @@ object EventBus {
                     val teamSuffix = team.playerSuffix.string
                     if (teamPrefix.isEmpty()) return@on
                     if (!packet.name.matches(teamRegex)) return@on
-                    ScoreboardEvent("${teamPrefix}${teamSuffix.trim()}".clearCodes()).post()
+                    ScoreboardEvent("${teamPrefix}${teamSuffix.trim()}".clearCodes(), packet).post()
                     return@on
                 }
 
