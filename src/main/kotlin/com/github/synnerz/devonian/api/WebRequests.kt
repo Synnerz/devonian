@@ -23,7 +23,7 @@ object WebRequests {
 
     suspend fun get(
         url: String
-    ): String  {
+    ): String {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .headers("User-Agent", "Mozilla/5.0 (Devonian)")
