@@ -128,10 +128,10 @@ object DevonianLeaderboard : Feature(
                 val format = forColor(idx)
                 val emblem = emblem(idx)
                 val legit = if (it.hypixelLegit) "" else "* "
-                val name = if (it.displayNames) it.players.joinToString(" ") { cachedNames[it] ?: "NULL" } else it.teamName
+                val name = if (it.displayNames) it.players.joinToString("&f, ") { "$format${cachedNames[it] ?: "NULL"}" } else it.teamName
 
                 Render3DImmediate.renderString(
-                    "$legit$format$emblem $format$name &e${StringUtils.formatSeconds(it.time.toLong())}".replaceCodes(),
+                    "$legit$format$emblem $name &e${StringUtils.formatSeconds(it.time.toLong())}".replaceCodes(),
                     -27.5, 124.5 - (if (idx == 0) 0.0 else idx * 0.5), -28.5,
                     maxDist = 100.0,
                     phase = player.y in 112.0..150.0
