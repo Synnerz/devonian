@@ -403,6 +403,7 @@ object Devonian : ClientModInitializer {
             PartyDuplicateAlert,
             PartyNotFullAlert,
             LootLogger,
+            AutoKick,
 
             // Debug
             CopyItem,
