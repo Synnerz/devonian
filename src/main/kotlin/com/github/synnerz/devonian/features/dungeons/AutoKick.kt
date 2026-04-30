@@ -168,8 +168,6 @@ object AutoKick : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        isMMFloor = false
-        currentFloor = -1
         lastRequest = ""
     }
 
