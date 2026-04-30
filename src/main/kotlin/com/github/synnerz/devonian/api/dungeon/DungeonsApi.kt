@@ -12,6 +12,7 @@ object DungeonsApi {
     private val playerQueue = CopyOnWriteArrayList<String>()
     private val playerData = ConcurrentHashMap<String, DungeonsApiResult>()
     private val requestListeners = CopyOnWriteArrayList<(String, DungeonsApiResult) -> Unit>()
+    private val customCooldowns = ConcurrentHashMap<String, Int>()
 
     data class UserDungeonsData(
         val cataXP: Double,
@@ -51,7 +52,7 @@ object DungeonsApi {
                     .filter {
                         val _cache = playerData[it]
                         _cache == null ||
-                        System.currentTimeMillis() - _cache.timeTaken >= 1000 * 60 * 10
+                        System.currentTimeMillis() - _cache.timeTaken >= 1000 * 60 * (customCooldowns[it] ?: 10)
                     }
                 if (names.isEmpty()) return@withName
 
@@ -91,12 +92,16 @@ object DungeonsApi {
         }
     }
 
-    fun player(name: String): DungeonsApiResult? = playerData[name]
+    fun player(name: String, cooldown: Int = 10): DungeonsApiResult? {
+        customCooldowns[name] = cooldown
+        return playerData[name]
+    }
 
-    fun playerOrRequest(name: String): DungeonsApiResult? {
+    fun playerOrRequest(name: String, cooldown: Int = 10): DungeonsApiResult? {
         val _cache = playerData[name]
         if (_cache == null)
             playerQueue.add(name)
+        customCooldowns[name] = cooldown
 
         return _cache
     }
