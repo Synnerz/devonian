@@ -241,7 +241,12 @@ abstract class ChatChannelEvent(message: String, text: Component, val name: Stri
         ChatChannelEvent(message, text, name, userMessage)
 
     class PartyChatEvent(message: String, text: Component, name: String, userMessage: String) :
-        ChatChannelEvent(message, text, name, userMessage)
+        ChatChannelEvent(message, text, name, userMessage) {
+        fun matchesUserMessage(criteria: Regex): List<String>? {
+            val matches = criteria.matchEntire(userMessage) ?: return null
+            return matches.groupValues.drop(1)
+        }
+    }
 
     class CoopChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
