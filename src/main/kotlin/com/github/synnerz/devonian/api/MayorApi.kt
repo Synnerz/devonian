@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.utils.PersistentJson
 import java.util.concurrent.TimeUnit
 
-object MayorAPI {
+object MayorApi {
     var mayorData: MayorData? = null
 
     data class MayorPerkData(
