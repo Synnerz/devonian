@@ -14,7 +14,6 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.item.ItemStack
-import java.util.Optional
 import java.util.WeakHashMap
 import kotlin.jvm.optionals.getOrNull
 
@@ -196,7 +195,7 @@ object EstimatedValue : TextHudFeature(
         on<TooltipRenderEvent> { event ->
             val itemStack = event.item ?: return@on
             val extraAttributes = ItemUtils.extraAttributes(itemStack) ?: return@on
-            val sbId = extraAttributes.getString("id").safeGet() ?: return@on
+            val sbId = extraAttributes.getString("id").getOrNull() ?: return@on
             lastItem = itemStack
             val cacheData = itemCache[itemStack]
             if (cacheData != null) {
@@ -215,7 +214,7 @@ object EstimatedValue : TextHudFeature(
                 addLines(cacheData.format())
                 return@on
             }
-            val enchantments = extraAttributes.getCompound("enchantments").safeGet()
+            val enchantments = extraAttributes.getCompound("enchantments").getOrNull()
             var ultimateEnchant: String? = null
             val enchantIds: List<String>? = if (enchantments == null) null else buildList {
                 enchantments.forEach { name, tag ->
@@ -227,14 +226,14 @@ object EstimatedValue : TextHudFeature(
                     add("ENCHANTMENT_${name.uppercase()}_${level}")
                 }
             }
-            val artOfWar = extraAttributes.getInt("art_of_war_count").safeGet()
-            val artOfPeace = extraAttributes.getInt("artOfPeaceApplied").safeGet()
-            val hpbs = extraAttributes.getInt("hot_potato_count").safeGet()
-            val stars = extraAttributes.getInt("upgrade_level").safeGet()
-                ?: extraAttributes.getInt("dungeon_item_level").safeGet()
-            val recomb = extraAttributes.getInt("rarity_upgrades").safeGet()
-            val abilityScrolls = extraAttributes.getList("ability_scroll").safeGet()
-            val enrichment = extraAttributes.getString("talisman_enrichment").safeGet()?.uppercase()
+            val artOfWar = extraAttributes.getInt("art_of_war_count").getOrNull()
+            val artOfPeace = extraAttributes.getInt("artOfPeaceApplied").getOrNull()
+            val hpbs = extraAttributes.getInt("hot_potato_count").getOrNull()
+            val stars = extraAttributes.getInt("upgrade_level").getOrNull()
+                ?: extraAttributes.getInt("dungeon_item_level").getOrNull()
+            val recomb = extraAttributes.getInt("rarity_upgrades").getOrNull()
+            val abilityScrolls = extraAttributes.getList("ability_scroll").getOrNull()
+            val enrichment = extraAttributes.getString("talisman_enrichment").getOrNull()?.uppercase()
             val data = ItemStatData(
                 itemStack.customName?.colorCodes() ?: itemStack.itemName.string,
                 enchantments = enchantIds ?: emptyList(),
@@ -247,7 +246,7 @@ object EstimatedValue : TextHudFeature(
                 ultimateEnchant = ultimateEnchant,
                 // lore is more accurate than nbt ):
                 isDungeonItem = (ItemUtils.lore(itemStack) ?: emptyList()).any { it.contains(" DUNGEON ") },
-                ability_scrolls = abilityScrolls?.map { it.asString().safeGet() ?: "" } ?: emptyList(),
+                ability_scrolls = abilityScrolls?.map { it.asString().getOrNull() ?: "" } ?: emptyList(),
                 enrichment = enrichment,
             )
 
@@ -292,8 +291,6 @@ object EstimatedValue : TextHudFeature(
         "&6Base Item&f: &a100,000",
         "&bTotal&f: &a100,000"
     )
-
-    private fun <T> Optional<T>.safeGet(): T? = if (this.isEmpty) null else this.get()
 
     private fun shortNum(num: Double): String {
         if (num < 0f) return "0"
