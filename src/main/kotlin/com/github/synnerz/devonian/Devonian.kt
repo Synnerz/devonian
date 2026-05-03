@@ -405,6 +405,7 @@ object Devonian : ClientModInitializer {
             LootLogger,
             AutoKick,
             TeamSecretsStats,
+            PartyFinderStats,
 
             // Debug
             CopyItem,
