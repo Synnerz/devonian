@@ -17,8 +17,12 @@ object DungeonsApi {
     data class UserDungeonsData(
         val cataXP: Double,
         val level: Double,
+        val roles: Map<String, Map<String, Double>>,
         val secrets: Int,
         val averageSecrets: Double,
+        val spirit: Map<String, String?>,
+        val goldenDragon: List<Map<String, String?>>, // only has heldItem
+        val enderDragon: List<Map<String, String?>>,
         val magical_power: Int,
         val personal_best_normal: Map<String, Map<String, String>>?, // { s: { "floor_1": "1:15" }, s_plus: { "floor_1": "1:15" } }
         val personal_best_master: Map<String, Map<String, String>>?,
@@ -33,9 +37,17 @@ object DungeonsApi {
 
         fun level(): Double = data?.level ?: 0.0
 
+        fun roles(): Map<String, Map<String, Double>> = data?.roles ?: emptyMap()
+
         fun secrets(): Int = data?.secrets ?: 0
 
         fun averageSecrets(): Double = data?.averageSecrets ?: 0.0
+
+        fun spirit(): Map<String, String?> = data?.spirit ?: emptyMap()
+
+        fun goldenDragon(): List<Map<String, String?>> = data?.goldenDragon ?: emptyList()
+
+        fun enderDragon(): List<Map<String, String?>> = data?.enderDragon ?: emptyList()
 
         fun normalPBs(): Map<String, Map<String, String>> = data?.personal_best_normal ?: emptyMap()
 
