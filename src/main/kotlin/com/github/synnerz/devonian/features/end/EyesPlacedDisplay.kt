@@ -13,6 +13,12 @@ object EyesPlacedDisplay : TextHudFeature(
     Categories.END,
     "the end",
 ) {
+    private val SETTING_SHOW_ANYWHERE = addSwitch(
+        "showAnywhere",
+        false,
+        "Displays the eyes placed not only inside of dragon's nest",
+        "Show Anywhere"
+    )
     private val eyesPlacedRegex = "^ Eyes placed: (\\d+)/(\\d+)".toRegex()
     private val dragonSpawnedRegex = "^ Dragon spawned!$".toRegex()
     private val eggRespawningRegex = "^ Egg respawning!$".toRegex()
@@ -42,7 +48,10 @@ object EyesPlacedDisplay : TextHudFeature(
         on<RenderOverlayEvent> { event ->
             setLine(displayStr ?: "&dEyes Placed&f: &e0&f/&d8")
             draw(event.ctx)
-        }.setEnabled(Location.stateInSubarea("dragon's nest"))
+        }.setEnabled(
+            Location.stateInSubarea("dragon's nest")
+                .zip(SETTING_SHOW_ANYWHERE.state, Boolean::or)
+        )
     }
 
     override fun getEditText(): List<String> = listOf("&dEyes Placed&f: &d8&f/&d8")
