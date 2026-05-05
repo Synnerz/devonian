@@ -53,7 +53,7 @@ object PartyFinderStats : Feature(
         ChatUtils.sendMessage("&7-  &cCata&f: &6${data.level()}")
         data.roles().entries.forEach { (roleName, values) ->
             val level = values["level"] ?: 0.0
-            ChatUtils.sendMessage(" &8- ${roleFormat[roleName]}&f: &6${level}")
+            ChatUtils.sendMessage("  ${roleFormat[roleName]}&f: &6${level}")
         }
         ChatUtils.sendMessage(ChatUtils.literal("&7-  &aNormal &dPersonal Best &7(hover)").setStyle(
             Style.EMPTY.withHoverEvent(HoverEvent.ShowText(ChatUtils.literal(buildString {
