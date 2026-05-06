@@ -8,5 +8,5 @@ accessible method net/minecraft/client/gui/screens/inventory/InventoryScreen ext
 accessible class com/mojang/blaze3d/opengl/GlDevice
 accessible class com/mojang/blaze3d/opengl/GlCommandEncoder
 accessible class net/minecraft/client/gui/Hud$HeartType
-accessible method net/minecraft/client/renderer/StagedVertexBuffer$Draw <init> (Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;Lcom/mojang/blaze3d/vertex/VertexSorting;)V
+accessible method net/minecraft/client/renderer/StagedVertexBuffer$Draw <init> (Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/PrimitiveTopology;Lcom/mojang/blaze3d/vertex/VertexSorting;)V
 accessible field net/minecraft/client/renderer/StagedVertexBuffer lastBuildingDraw Lnet/minecraft/client/renderer/StagedVertexBuffer$Draw;
