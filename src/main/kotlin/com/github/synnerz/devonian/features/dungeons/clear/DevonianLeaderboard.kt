@@ -36,7 +36,7 @@ object DevonianLeaderboard : Feature(
 
     data class NormalLeaderboardData(
         val teamName: String,
-        val time: Int, // time in seconds
+        val time: Double, // time in seconds
         val players: List<String>, // list of uuid for each player
         val hypixelLegit: Boolean, // is it hypixel legit?
         val displayNames: Boolean, // whether to display the names instead of the team name
@@ -44,7 +44,7 @@ object DevonianLeaderboard : Feature(
     )
     data class SoloClearLeaderboardData(
         val player: String, // the player's uuid
-        val time: Int, // time in seconds
+        val time: Double, // time in seconds
         val hypixelLegit: Boolean,
         val uploadedAt: String = "0/0/0",
     )
