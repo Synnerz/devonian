@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import java.util.concurrent.ConcurrentHashMap
 
 object RecolorDragons : Feature(
@@ -29,7 +29,7 @@ object RecolorDragons : Feature(
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
             val packet = event.packet as? ClientboundAddEntityPacket ?: return@on
-            if (packet.type != EntityType.ENDER_DRAGON) return@on
+            if (packet.type != EntityTypes.ENDER_DRAGON) return@on
 
             val type = M7Dragon.entries.minBy {
                 (it.path[0].x - packet.x) * (it.path[0].x - packet.x) +

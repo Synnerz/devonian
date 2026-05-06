@@ -105,7 +105,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         ConfigData.Button(
             {
                 Scheduler.scheduleTask {
-                    Devonian.minecraft.setScreen(this)
+                    Devonian.minecraft.setScreenAndShow(this)
                 }
             },
             "Run",
@@ -140,13 +140,13 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
 
         DevonianCommand.command.subcommand("ksho") { _, args ->
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             1
         }
         DevonianCommand.command.subcommand("keyshortcuts") { _, args ->
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             1
         }

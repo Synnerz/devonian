@@ -2,9 +2,9 @@ package com.github.synnerz.devonian.api.bufimgrenderer
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
+import com.mojang.blaze3d.PrimitiveTopology
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.VertexFormat.Mode
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.render.TextureSetup
@@ -87,7 +87,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
     }
 
     protected fun draw(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float, u0: Float, v0: Float, u1: Float, v1: Float) {
-        if (Devonian.minecraft.options.hideGui) return
+        if (Devonian.minecraft.gui.hud.isHidden) return
         if (!uploader.hasImg) return
         if (!valid) return
 
@@ -124,7 +124,8 @@ abstract class BufferedImageRenderer<T>(val name: String) {
 
         val pipeline = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation("devonian/buffered_image_textured_triangle_strip")
-            .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, Mode.QUADS)
+            .withVertexBinding(0, DefaultVertexFormat.POSITION_TEX_COLOR)
+            .withPrimitiveTopology(PrimitiveTopology.QUADS)
             .build()
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,7 +34,7 @@ public class EntityRenderDispatcherMixin {
         PreExtractRenderEntityEvent event = new PreExtractRenderEntityEvent(entity, f);
         if (event.post()) {
             EntityRenderState noop = new EntityRenderState();
-            noop.entityType = EntityType.AREA_EFFECT_CLOUD;
+            noop.entityType = EntityTypes.AREA_EFFECT_CLOUD;
             cir.setReturnValue(noop);
         }
     }

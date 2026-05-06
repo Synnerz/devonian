@@ -579,7 +579,7 @@ class ContainerRenderEvent(
     val item: ItemStack?
     val shift = GLFW.glfwGetKey(Devonian.minecraft.window.handle(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS
     init {
-        val screen = Devonian.minecraft.screen
+        val screen = Devonian.minecraft.gui.screen()
         slot = screen?.let { ScreenUtils.cursorSlot(it) }
         item = slot?.item
     }

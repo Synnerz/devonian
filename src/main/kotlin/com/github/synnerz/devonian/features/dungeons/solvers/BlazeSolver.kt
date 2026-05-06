@@ -10,7 +10,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.level.block.Blocks
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
@@ -188,7 +188,7 @@ object BlazeSolver : Feature(
         }
 
         on<NameChangeEvent> { event ->
-            if (event.type !== EntityType.ARMOR_STAND) return@on
+            if (event.type !== EntityTypes.ARMOR_STAND) return@on
 
             val name = event.name
             val entityId = event.entityId

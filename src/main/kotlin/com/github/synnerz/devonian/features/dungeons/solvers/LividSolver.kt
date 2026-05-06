@@ -49,15 +49,15 @@ object LividSolver : Feature(
     )
 
     private val mapBlocks = mapOf(
-        Blocks.WHITE_WOOL to "Vendetta",
-        Blocks.MAGENTA_WOOL to "Crossed",
-        Blocks.YELLOW_WOOL to "Arcade",
-        Blocks.LIME_WOOL to "Smile",
-        Blocks.GRAY_WOOL to "Doctor",
-        Blocks.PURPLE_WOOL to "Purple",
-        Blocks.GREEN_WOOL to "Frog",
-        Blocks.BLUE_WOOL to "Scream",
-        Blocks.RED_WOOL to "Hockey"
+        Blocks.WOOL.white to "Vendetta",
+        Blocks.WOOL.magenta to "Crossed",
+        Blocks.WOOL.yellow to "Arcade",
+        Blocks.WOOL.lime to "Smile",
+        Blocks.WOOL.gray to "Doctor",
+        Blocks.WOOL.purple to "Purple",
+        Blocks.WOOL.green to "Frog",
+        Blocks.WOOL.blue to "Scream",
+        Blocks.WOOL.red to "Hockey"
     )
     private val lividNameRegex = "^\\w+ Livid$".toRegex()
     var started = false

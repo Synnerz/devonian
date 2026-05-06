@@ -75,11 +75,11 @@ object WaterBoardSolver : Feature(
     private val SEA_LANTERN_MIDDLE = 15 to 27 // 77y
     private val PURPLE_WOOL = 15 to 19 // 57y
     private val woolOrder = listOf(
-        Blocks.PURPLE_WOOL, // 10
-        Blocks.ORANGE_WOOL, // 1
-        Blocks.BLUE_WOOL, // 11
-        Blocks.LIME_WOOL, // 5
-        Blocks.RED_WOOL // 14
+        Blocks.WOOL.purple, // 10
+        Blocks.WOOL.orange, // 1
+        Blocks.WOOL.blue, // 11
+        Blocks.WOOL.lime, // 5
+        Blocks.WOOL.red // 14
     )
     private val FIRST_COLOR = Color(0, 255, 0, 255)
     private val SECOND_COLOR = Color(255, 165, 0, 255)

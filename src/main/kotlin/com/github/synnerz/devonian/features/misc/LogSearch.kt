@@ -82,7 +82,7 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
                         } ?: true
                     }
                 }
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             return@subcommand 1
         }.greedyString("criteria")

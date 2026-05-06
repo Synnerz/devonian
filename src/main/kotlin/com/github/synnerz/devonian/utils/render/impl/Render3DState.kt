@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.utils.render.impl
 
+import com.github.synnerz.devonian.mixin.accessor.StagedVertexBufferAccessor
+import com.github.synnerz.devonian.mixin.accessor.StagedVertexBufferDrawAccessor
 import com.github.synnerz.devonian.utils.render.IRender3D
 import com.github.synnerz.devonian.utils.render.Render3DTypes
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.Font
-import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.StagedVertexBuffer
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.world.phys.shapes.VoxelShape
@@ -20,7 +22,7 @@ import java.awt.Color
 object Render3DState {
     lateinit var camera: CameraRenderState
     lateinit var poseStack: PoseStack
-    lateinit var bufferSource: MultiBufferSource.BufferSource
+    lateinit var bufferSource: StagedVertexBuffer
 
     private enum class Types(private val arr: Array<RenderType>) {
         LINES(
@@ -76,7 +78,7 @@ object Render3DState {
 
         Render3DVertex.renderFilledShape(
             poseStack,
-            bufferSource.getBuffer(type),
+            bufferSource.getVertexBuilder(createDraw(type) ?: return),
             shape,
             ox, oy, oz,
             color,
@@ -98,7 +100,7 @@ object Render3DState {
 
         Render3DVertex.renderWireframeShape(
             poseStack,
-            bufferSource.getBuffer(type),
+            bufferSource.getVertexBuilder(createDraw(type) ?: return),
             shape,
             ox, oy, oz,
             color,
@@ -146,7 +148,7 @@ object Render3DState {
 
         Render3DVertex.renderFilledBox(
             poseStack,
-            bufferSource.getBuffer(type),
+            bufferSource.getVertexBuilder(createDraw(type) ?: return),
             x, y, z,
             w, h, wz,
             color,
@@ -180,7 +182,7 @@ object Render3DState {
 
         Render3DVertex.renderWireframeBox(
             poseStack,
-            bufferSource.getBuffer(type),
+            bufferSource.getVertexBuilder(createDraw(type) ?: return),
             x, y, z,
             w, h, wz,
             color,
@@ -260,7 +262,7 @@ object Render3DState {
 
         Render3DVertex.renderLines(
             poseStack,
-            bufferSource.getBuffer(type),
+            bufferSource.getVertexBuilder(createDraw(type) ?: return),
             supplier,
         )
     }
@@ -276,8 +278,24 @@ object Render3DState {
 
         Render3DVertex.renderLineStrip(
             poseStack,
-            bufferSource.getBuffer(type),
+            bufferSource.getVertexBuilder(createDraw(type) ?: return),
             supplier,
         )
+    }
+
+    internal fun createDraw(type: RenderType): StagedVertexBuffer.Draw? {
+        // FIXME
+        return null
+        val accs = (bufferSource as StagedVertexBufferAccessor)
+        val lastBuild = accs.lastBuildingDraw
+        if (accs.currentVertexBuffer != null || lastBuild != null) return null
+//        if (lastBuild != null && !lastBuild.isEmpty) {
+//            val lastDraw = lastBuild as StagedVertexBufferDrawAccessor
+//            if (
+//                lastDraw.mode == type.mode() &&
+//                lastDraw.format == type.format()
+//            ) return null
+//        }
+        return bufferSource.appendDraw(type.format(), type.primitiveTopology())
     }
 }

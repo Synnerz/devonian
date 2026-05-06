@@ -104,31 +104,31 @@ public abstract class AbstractContainerScreenMixin {
 
     @Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
     private void devonian$renderContainer(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
-        if (!(Devonian.INSTANCE.getMinecraft().screen instanceof ContainerScreen)) return;
+        if (!(Devonian.INSTANCE.getMinecraft().gui.screen() instanceof ContainerScreen)) return;
 
-        if (new ContainerRenderEvent((ContainerScreen) Devonian.INSTANCE.getMinecraft().screen, mouseX, mouseY, a, graphics).post())
+        if (new ContainerRenderEvent((ContainerScreen) Devonian.INSTANCE.getMinecraft().gui.screen(), mouseX, mouseY, a, graphics).post())
             ci.cancel();
     }
 
     @Unique
     private final Set<Item> panes = Set.of(
         Items.GLASS_PANE,
-        Items.WHITE_STAINED_GLASS_PANE,
-        Items.ORANGE_STAINED_GLASS_PANE,
-        Items.MAGENTA_STAINED_GLASS_PANE,
-        Items.LIGHT_BLUE_STAINED_GLASS_PANE,
-        Items.YELLOW_STAINED_GLASS_PANE,
-        Items.LIME_STAINED_GLASS_PANE,
-        Items.PINK_STAINED_GLASS_PANE,
-        Items.GRAY_STAINED_GLASS_PANE,
-        Items.LIGHT_GRAY_STAINED_GLASS_PANE,
-        Items.CYAN_STAINED_GLASS_PANE,
-        Items.PURPLE_STAINED_GLASS_PANE,
-        Items.BLUE_STAINED_GLASS_PANE,
-        Items.BROWN_STAINED_GLASS_PANE,
-        Items.GREEN_STAINED_GLASS_PANE,
-        Items.RED_STAINED_GLASS_PANE,
-        Items.BLACK_STAINED_GLASS_PANE
+        Items.STAINED_GLASS_PANE.white(),
+        Items.STAINED_GLASS_PANE.orange(),
+        Items.STAINED_GLASS_PANE.magenta(),
+        Items.STAINED_GLASS_PANE.lightBlue(),
+        Items.STAINED_GLASS_PANE.yellow(),
+        Items.STAINED_GLASS_PANE.lime(),
+        Items.STAINED_GLASS_PANE.pink(),
+        Items.STAINED_GLASS_PANE.gray(),
+        Items.STAINED_GLASS_PANE.lightGray(),
+        Items.STAINED_GLASS_PANE.cyan(),
+        Items.STAINED_GLASS_PANE.purple(),
+        Items.STAINED_GLASS_PANE.blue(),
+        Items.STAINED_GLASS_PANE.brown(),
+        Items.STAINED_GLASS_PANE.green(),
+        Items.STAINED_GLASS_PANE.red(),
+        Items.STAINED_GLASS_PANE.black()
     );
 
     @Inject(

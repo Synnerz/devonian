@@ -34,7 +34,7 @@ object DevonianCommand {
         .greedyString("name")
         .suggest("name", *BImgTextHudRenderer.Fonts.keys.toTypedArray())
     private val clearChat = command.subcommand("clearchat") { _, args ->
-        Devonian.minecraft.gui.chat.clearMessages(false)
+        Devonian.minecraft.gui.hud.chat.clearMessages(false)
         1
     }
     private val colorCodes = command.subcommand("colorcodes") { _, args ->

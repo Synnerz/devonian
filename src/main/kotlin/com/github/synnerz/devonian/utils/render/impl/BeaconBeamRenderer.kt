@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.utils.render.impl
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
-import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.StagedVertexBuffer
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.util.Mth
@@ -17,7 +17,7 @@ object BeaconBeamRenderer {
      */
     fun renderBeamInner(
         matrices: PoseStack,
-        bufferSource: MultiBufferSource,
+        bufferSource: StagedVertexBuffer,
         opaqueLayer: RenderType,
         translucentLayer: RenderType,
         partialTicks: Float,
@@ -38,7 +38,7 @@ object BeaconBeamRenderer {
 
         renderBeamLayer(
             matrices,
-            bufferSource.getBuffer(if (color.alpha == 255) opaqueLayer else translucentLayer),
+            bufferSource.getVertexBuilder(Render3DState.createDraw(if (color.alpha == 255) opaqueLayer else translucentLayer) ?: return),
             color.rgb,
             0f,
             innerRadius,
@@ -58,7 +58,7 @@ object BeaconBeamRenderer {
 
     fun renderBeamOuter(
         matrices: PoseStack,
-        bufferSource: MultiBufferSource,
+        bufferSource: StagedVertexBuffer,
         opaqueLayer: RenderType,
         translucentLayer: RenderType,
         partialTicks: Float,
@@ -76,7 +76,7 @@ object BeaconBeamRenderer {
 
         renderBeamLayer(
             matrices,
-            bufferSource.getBuffer(translucentLayer),
+            bufferSource.getVertexBuilder(Render3DState.createDraw(translucentLayer) ?: return),
             ((color.alpha / 4) shl 24) or (color.rgb and 0x00FFFFFF),
             -outerRadius,
             -outerRadius,

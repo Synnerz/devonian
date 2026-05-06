@@ -150,7 +150,7 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
 
             val blockState = WorldUtils.getBlockState(x, height, z) ?: return@removeIf false
             val block = blockState.block ?: return@removeIf false
-            if (block != Blocks.BLUE_TERRACOTTA) return@removeIf true
+            if (block != Blocks.DYED_TERRACOTTA.blue) return@removeIf true
 
             rotation = idx * 90
             corner = pos

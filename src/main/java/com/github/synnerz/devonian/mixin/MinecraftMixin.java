@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
@@ -15,7 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,16 +26,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
     @Shadow
-    @Nullable
-    public Screen screen;
+    @Final
+    public Gui gui;
 
     @Inject(
-            method = "setScreen",
+            method = "setScreenAndShow",
             at = @At("HEAD"),
             cancellable = true
     )
     private void devonian$setScreen(Screen screen, CallbackInfo ci) {
-        if (screen == null && this.screen != null && new GuiCloseEvent(this.screen).post()) ci.cancel();
+        if (screen == null && this.gui.screen() != null && new GuiCloseEvent(this.gui.screen()).post()) ci.cancel();
         if (screen != null && new GuiOpenEvent(screen).post()) ci.cancel();
     }
 

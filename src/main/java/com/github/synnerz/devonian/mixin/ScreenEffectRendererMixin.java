@@ -7,8 +7,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ScreenEffectRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,27 +20,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ScreenEffectRenderer.class)
 public class ScreenEffectRendererMixin {
     @Inject(
-            method = "renderFire",
+            method = "submitFire",
             at = @At("HEAD"),
             cancellable = true
     )
-    private static void devonian$renderFireOverlay(PoseStack poseStack, MultiBufferSource multiBufferSource, TextureAtlasSprite textureAtlasSprite, CallbackInfo ci) {
+    private static void devonian$renderFireOverlay(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, TextureAtlasSprite sprite, CallbackInfo ci) {
         if (!RemoveFireOverlay.INSTANCE.isEnabled()) return;
         ci.cancel();
     }
 
     @Inject(
-        method = "renderWater",
+        method = "submitWater",
         at = @At("HEAD"),
         cancellable = true
     )
-    private static void devonian$disableWaterOverlay(Minecraft minecraft, PoseStack poseStack, MultiBufferSource multiBufferSource, CallbackInfo ci) {
+    private static void devonian$disableWaterOverlay(Minecraft minecraft, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
         if (!DisableWaterOverlay.INSTANCE.isEnabled()) return;
         ci.cancel();
     }
 
     @WrapOperation(
-        method = "renderScreenEffect",
+        method = "submit",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;getViewBlockingState(Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/level/block/state/BlockState;")
     )
     private BlockState devonian$disableSuffocatingOverlay(Player player, Operation<BlockState> original) {

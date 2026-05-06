@@ -15,7 +15,7 @@ object ScreenUtils {
     @JvmOverloads
     fun click(slot: Int, shift: Boolean = false, button: String = "LEFT") {
         val minecraft = Devonian.minecraft
-        val screen = minecraft.screen ?: return
+        val screen = minecraft.gui.screen() ?: return
         val windowId = (screen as AbstractContainerScreen<*>).menu.containerId
         val clickMode = when {
             button == "MIDDLE" -> ContainerInput.CLONE

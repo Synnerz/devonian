@@ -334,9 +334,9 @@ object CustomDungeonWaypoints : Feature(
             if (InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_SHIFT)) {
                 textPos = Triple(comps.first, bp.y, comps.second)
                 Scheduler.scheduleTask {
-                    minecraft.openChatScreen(ChatComponent.ChatMethod.COMMAND)
+                    minecraft.gui.openChatScreen(ChatComponent.ChatMethod.COMMAND)
                     Scheduler.scheduleTask {
-                        (minecraft.screen as ScreenAccessor?)?.insertText("/dv cdw settext ", true)
+                        (minecraft.gui.screen() as ScreenAccessor?)?.insertText("/dv cdw settext ", true)
                     }
                 }
             }

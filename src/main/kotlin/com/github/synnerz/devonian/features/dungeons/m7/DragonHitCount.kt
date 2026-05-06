@@ -15,7 +15,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import java.util.*
 import kotlin.math.abs
@@ -46,7 +46,7 @@ object DragonHitCount : Feature(
         on<PacketReceivedEvent> { event ->
             when (val packet = event.packet) {
                 is ClientboundAddEntityPacket -> {
-                    if (packet.type != EntityType.ENDER_DRAGON) return@on
+                    if (packet.type != EntityTypes.ENDER_DRAGON) return@on
                     val type = M7Dragon.entries.minBy {
                         abs(it.path[0].x - packet.x) +
                         abs(it.path[0].y - packet.y) +

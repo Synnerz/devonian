@@ -144,7 +144,7 @@ object PartyFinderOverview : Feature(
             // slightly less efficient workaround to avoid re-set of lore data,
             // although it is still more efficient than doing it inside render tooltip
             parties.forEach { p ->
-                val screen = (minecraft.screen as? AbstractContainerScreen<*>) ?: return@on
+                val screen = (minecraft.gui.screen() as? AbstractContainerScreen<*>) ?: return@on
                 val slot = p.idx
                 val itemStack = screen.menu.items.getOrNull(slot) ?: return@forEach
                 val lore = itemStack.get(DataComponents.LORE) ?: return@forEach

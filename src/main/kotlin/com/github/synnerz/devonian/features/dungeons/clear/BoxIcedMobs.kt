@@ -10,7 +10,7 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.math.MathUtils
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.entity.item.ItemEntity
@@ -196,7 +196,7 @@ object BoxIcedMobs : Feature(
 
         on<PacketReceivedEvent> { event ->
             val packet = event.packet as? ClientboundAddEntityPacket ?: return@on
-            if (packet.type != EntityType.ITEM) return@on
+            if (packet.type != EntityTypes.ITEM) return@on
             itemCandidates.offer(ItemCandidate(5, packet.id))
         }
 

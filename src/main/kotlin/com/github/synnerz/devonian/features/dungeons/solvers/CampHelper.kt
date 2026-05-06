@@ -19,7 +19,7 @@ import net.minecraft.network.chat.TextColor
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.item.Items
@@ -106,7 +106,7 @@ object CampHelper : Feature(
 
         on<EntityEquipmentEvent> { event ->
             if (bloodComp == null) return@on
-            if (event.type != EntityType.ARMOR_STAND) return@on
+            if (event.type != EntityTypes.ARMOR_STAND) return@on
 
             if (event.slots.size != 1) return@on
             val entry = event.slots.getOrNull(0) ?: return@on

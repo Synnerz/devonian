@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.events.EntityDataEvent
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import java.util.*
@@ -19,7 +19,7 @@ object HideCheapCoins : Feature(
 
     override fun initialize() {
         on<EntityDataEvent> { event ->
-            if (event.type != EntityType.ITEM) return@on
+            if (event.type != EntityTypes.ITEM) return@on
 
             event.data.forEach {
                 if (it.id != 8) return@forEach

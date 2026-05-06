@@ -27,7 +27,7 @@ public class FogRendererMixin {
             method = "computeFogColor",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/GameRenderer;getNightVisionScale(Lnet/minecraft/world/entity/LivingEntity;F)F"
+                    target = "Lnet/minecraft/client/renderer/GameRenderer;nightVisionScale(Lnet/minecraft/world/entity/LivingEntity;F)F"
             )
     )
     private float devonian$onComputeFogColor(LivingEntity livingEntity, float f, Operation<Float> original) {

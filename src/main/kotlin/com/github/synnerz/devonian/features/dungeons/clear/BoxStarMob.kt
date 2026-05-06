@@ -9,7 +9,7 @@ import com.github.synnerz.devonian.utils.math.MathUtils
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.LivingEntity
 import java.awt.Color
 import java.util.*
@@ -159,11 +159,11 @@ object BoxStarMob : Feature(
             when (val packet = event.packet) {
                 is ClientboundAddEntityPacket -> {
                     when (packet.type) {
-                        EntityType.ARMOR_STAND -> {
+                        EntityTypes.ARMOR_STAND -> {
                             lastStand = packet.id
                         }
 
-                        EntityType.PLAYER -> {
+                        EntityTypes.PLAYER -> {
                             val uuid = packet.uuid ?: return@on
                             val data = playerMobMap[uuid] ?: return@on
                             starredIdQ.add(Pair(packet.id, data))

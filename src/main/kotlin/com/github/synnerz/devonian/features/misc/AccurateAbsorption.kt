@@ -3,11 +3,11 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.events.ActionbarEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.mixin.accessor.GuiAccessor
 import com.github.synnerz.devonian.mixin.accessor.HeartTypeAccessor
+import com.github.synnerz.devonian.mixin.accessor.HudAccessor
 import net.minecraft.client.gui.Gui
-import net.minecraft.client.gui.Gui.HeartType
 import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.Hud
 import net.minecraft.world.entity.player.Player
 import kotlin.math.ceil
 import kotlin.math.max
@@ -31,14 +31,14 @@ object AccurateAbsorption : Feature(
     private var actualAbsorption = 0
 
     fun renderHearts(
-        gui: Gui,
+        gui: Hud,
         guiGraphics: GuiGraphicsExtractor, player: Player,
         left: Int, top: Int,
         rowGap: Int, regen: Int,
         maxHearts: Float, hearts: Int, displayHearts: Int, absorption: Int,
         blinking: Boolean
     ) {
-        val gui = gui as? GuiAccessor ?: return
+        val gui = gui as? HudAccessor ?: return
         val hardcore = player.level().levelData.isHardcore
         val heart = HeartTypeAccessor.invokeForPlayer(player)
 
@@ -58,7 +58,7 @@ object AccurateAbsorption : Feature(
             if (slot < maxHearts && slot == regen) y -= 2
 
             gui.invokeRenderHeart(
-                guiGraphics, HeartType.CONTAINER,
+                guiGraphics, Hud.HeartType.CONTAINER,
                 x, y,
                 hardcore, blinking, false
             )
@@ -69,7 +69,7 @@ object AccurateAbsorption : Feature(
             if (absorption > 0 && heartHp != 2) {
                 val absorbHp = min(2 - heartHp, absorption)
                 gui.invokeRenderHeart(
-                    guiGraphics, HeartType.ABSORBING,
+                    guiGraphics, Hud.HeartType.ABSORBING,
                     x, y,
                     hardcore, false, absorbHp == 1 && heartHp == 0
                 )

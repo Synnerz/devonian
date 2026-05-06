@@ -28,7 +28,7 @@ public class ItemInHandRendererMixin {
     private ItemStack mainHandItem;
 
     @WrapOperation(
-        method = "renderHandsWithItems",
+        method = "submitHandsWithItems",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getAttackAnim(F)F")
     )
     private float devonian$itemAnimationsSwing(LocalPlayer instance, float v, Operation<Float> original) {
@@ -46,10 +46,10 @@ public class ItemInHandRendererMixin {
     }
 
     @Inject(
-        method = "renderHandsWithItems",
+        method = "submitHandsWithItems",
         at = @At(
                 value = "INVOKE",
-                target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;renderArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V",
+                target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;submitArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V",
                 ordinal = 0
         )
     )
@@ -69,7 +69,7 @@ public class ItemInHandRendererMixin {
     }
 
     @WrapWithCondition(
-        method = "renderHandsWithItems",
+        method = "submitHandsWithItems",
         at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lorg/joml/Quaternionfc;)V")
     )
     private boolean devonian$itemAnimationsSway(PoseStack instance, Quaternionfc quaternionfc) {

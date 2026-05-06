@@ -124,7 +124,7 @@ public abstract class MouseHandlerMixin implements MouseHandlerAccessor {
 
         Window w = minecraft.getWindow();
         if (l != w.handle()) return;
-        if (minecraft.screen != null || minecraft.level == null) return;
+        if (minecraft.gui.screen() != null || minecraft.level == null) return;
 
         double x = getScaledXPos(w);
         double y = getScaledYPos(w);

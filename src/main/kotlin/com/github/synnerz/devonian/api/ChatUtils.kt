@@ -20,8 +20,8 @@ object ChatUtils {
     const val prefix = "&8&l[&3&lDevonian&8&l]&r"
     val chatLineIds = mutableMapOf<GuiMessage, Int>()
     val lineCache = IdentityHashMap<GuiMessage.Line, GuiMessage>()
-    val chatComponentAccessor get() = Minecraft.getInstance().gui.chat as ChatComponentAccessor
-    val chatGui get() = Minecraft.getInstance().gui.chat
+    val chatComponentAccessor get() = Minecraft.getInstance().gui.hud.chat as ChatComponentAccessor
+    val chatGui get() = Minecraft.getInstance().gui.hud.chat
 
     data class TextComponent(var text: Component, var id: Int = 0)
 
@@ -35,7 +35,7 @@ object ChatUtils {
     }
 
     fun sendMessageWithId(message: Component, id: Int) {
-        if (Devonian.minecraft.isSingleplayer)
+        if (!Devonian.minecraft.isMultiplayerServer)
             chatGui.addClientSystemMessage(message)
         else
             chatGui.addServerSystemMessage(message)
@@ -85,7 +85,7 @@ object ChatUtils {
     fun editLines(cb: (GuiMessage) -> Boolean, replaceWith: TextComponent) {
         var editedLine = false
         val indicator =
-            if (Minecraft.getInstance().isSingleplayer) GuiMessageTag.systemSinglePlayer()
+            if (!Minecraft.getInstance().isMultiplayerServer) GuiMessageTag.systemSinglePlayer()
             else GuiMessageTag.system()
         val messageList = chatComponentAccessor.messages?.listIterator() ?: return
 

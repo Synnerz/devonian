@@ -27,7 +27,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         if (!keyEvent.isConfirmation()) return;
         if (!SignEnterKey.INSTANCE.shouldEnter(List.of(text.getMessages(false)))) return;
 
-        minecraft.setScreen(null);
+        minecraft.setScreenAndShow(null);
         cir.setReturnValue(true);
         cir.cancel();
     }

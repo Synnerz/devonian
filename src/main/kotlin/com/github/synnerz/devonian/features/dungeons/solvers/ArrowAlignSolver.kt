@@ -182,52 +182,52 @@ object ArrowAlignSolver : Feature(
             }
         }
 
-        on<RenderWorldEvent> {
-            if (!atDev) return@on
-
-            val textRenderer = minecraft.font
-            val consumer = minecraft.renderBuffers().bufferSource()
-            val layer = Font.DisplayMode.NORMAL
-            val camPos = Render3DImmediate.camera.pos
-
-            val scale = 0.03f
-            val quat = Quaternionf(0.0, -0.7071067811865476, 0.0, 0.7071067811865476)
-
-            for (y in 120 .. 124) {
-                for (z in 75 .. 79) {
-                    val id = getFrameId(y, z)
-                    val n = getClicks(id)
-                    if (n == 0) continue
-                    val s = n.toString()
-                    val offset = -textRenderer.width(s) * 0.5f
-
-                    val dx = -1.9 - camPos.x
-                    val dy = y + 0.5 - camPos.y
-                    val dz = z + 0.5 - camPos.z
-
-                    Render3DImmediate.poseStack.pushPose()
-                    Render3DImmediate.poseStack.translate(dx, dy, dz)
-                    Render3DImmediate.poseStack.last().rotate(quat)
-                    Render3DImmediate.poseStack.scale(-scale, -scale, -scale)
-
-                    textRenderer.drawInBatch(
-                        s,
-                        offset,
-                        0f,
-                        0xFFFFFFFF.toInt(),
-                        true,
-                        Render3DImmediate.poseStack.last().pose(),
-                        consumer,
-                        layer,
-                        0,
-                        LightLayer.BLOCK.ordinal // TODO: double check
-                    )
-
-                    consumer.endBatch()
-                    Render3DImmediate.poseStack.popPose()
-                }
-            }
-        }
+//        on<RenderWorldEvent> {
+//            if (!atDev) return@on
+//
+//            val textRenderer = minecraft.font
+//            val consumer = minecraft.renderBuffers().bufferSource()
+//            val layer = Font.DisplayMode.NORMAL
+//            val camPos = Render3DImmediate.camera.pos
+//
+//            val scale = 0.03f
+//            val quat = Quaternionf(0.0, -0.7071067811865476, 0.0, 0.7071067811865476)
+//
+//            for (y in 120 .. 124) {
+//                for (z in 75 .. 79) {
+//                    val id = getFrameId(y, z)
+//                    val n = getClicks(id)
+//                    if (n == 0) continue
+//                    val s = n.toString()
+//                    val offset = -textRenderer.width(s) * 0.5f
+//
+//                    val dx = -1.9 - camPos.x
+//                    val dy = y + 0.5 - camPos.y
+//                    val dz = z + 0.5 - camPos.z
+//
+//                    Render3DImmediate.poseStack.pushPose()
+//                    Render3DImmediate.poseStack.translate(dx, dy, dz)
+//                    Render3DImmediate.poseStack.last().rotate(quat)
+//                    Render3DImmediate.poseStack.scale(-scale, -scale, -scale)
+//
+//                    textRenderer.drawInBatch(
+//                        s,
+//                        offset,
+//                        0f,
+//                        0xFFFFFFFF.toInt(),
+//                        true,
+//                        Render3DImmediate.poseStack.last().pose(),
+//                        consumer,
+//                        layer,
+//                        0,
+//                        LightLayer.BLOCK.ordinal // TODO: double check
+//                    )
+//
+//                    consumer.endBatch()
+//                    Render3DImmediate.poseStack.popPose()
+//                }
+//            }
+//        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {

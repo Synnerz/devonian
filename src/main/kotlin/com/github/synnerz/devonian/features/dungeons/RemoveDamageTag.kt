@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 
 object RemoveDamageTag : Feature(
     "removeDamageTag",
@@ -18,7 +18,7 @@ object RemoveDamageTag : Feature(
 
     override fun initialize() {
         on<NameChangeEvent> { event ->
-            if (event.type !== EntityType.ARMOR_STAND) return@on
+            if (event.type != EntityTypes.ARMOR_STAND) return@on
 
             val world = minecraft.level ?: return@on
 

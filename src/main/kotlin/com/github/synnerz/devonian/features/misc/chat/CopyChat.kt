@@ -22,7 +22,7 @@ object CopyChat : Feature(
             val screen = event.screen
             if (screen !is ChatScreen) return@on
 
-            val msg = (minecraft.gui.chat as? ChatComponentAccessor2)?.`devonian$getLastHoveredMessage`() ?: return@on
+            val msg = (minecraft.gui.hud.chat as? ChatComponentAccessor2)?.`devonian$getLastHoveredMessage`() ?: return@on
             val text = msg.content
             val str = text.string.clearCodes()
 

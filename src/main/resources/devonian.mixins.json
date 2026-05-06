@@ -31,6 +31,7 @@
     "GuiGraphicsMixin",
     "GuiMixin",
     "GuiTextRenderStateMixin",
+    "HudMixin",
     "InventoryScreenMixin",
     "ItemInHandRendererMixin",
     "KeyboardHandlerMixin",
@@ -61,10 +62,11 @@
     "accessor.CameraAccessor",
     "accessor.ChatComponentAccessor",
     "accessor.ClientTextTooltipAccessor",
+    "accessor.GameRendererAccessor",
     "accessor.GlDeviceAccessor",
-    "accessor.GuiAccessor",
     "accessor.GuiGraphicsExtractorAccessor",
     "accessor.HeartTypeAccessor",
+    "accessor.HudAccessor",
     "accessor.KeyMappingAccessor",
     "accessor.LerpingBossEventAccessor",
     "accessor.LevelLoadingScreenAccessor",
@@ -72,7 +74,9 @@
     "accessor.LocalPlayerAccessor",
     "accessor.ParticleAccessor",
     "accessor.RenderPipeline$BuilderAccessor",
-    "accessor.ScreenAccessor"
+    "accessor.ScreenAccessor",
+    "accessor.StagedVertexBufferAccessor",
+    "accessor.StagedVertexBufferDrawAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

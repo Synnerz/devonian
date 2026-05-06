@@ -167,8 +167,8 @@ object ChestProfit : TextHudFeature(
             if (slot !in 9..17) return@on
             val itemStack = event.itemStack
             if (
-                itemStack.item == Items.BLACK_STAINED_GLASS_PANE ||
-                itemStack.item == Items.GRAY_STAINED_GLASS_PANE ||
+                itemStack.item == Items.STAINED_GLASS_PANE.black ||
+                itemStack.item == Items.STAINED_GLASS_PANE.gray ||
                 itemStack.isEmpty
             ) return@on
 

@@ -29,7 +29,7 @@ object PeekChatKeybind : Feature(
 
             // val d = event.delta * (if (minecraft.hasShiftDown()) 1.0 else 7.0)
             val d = event.delta
-            minecraft.gui.chat.scrollChat(d.toInt())
+            minecraft.gui.hud.chat.scrollChat(d.toInt())
 
             event.cancel()
         }
@@ -37,13 +37,13 @@ object PeekChatKeybind : Feature(
         on<KeyReleaseEvent> { event ->
             if (!keybind.matches(event.underlying)) return@on
 
-            minecraft.gui.chat.resetChatScroll()
+            minecraft.gui.hud.chat.resetChatScroll()
         }
 
         on<MouseReleaseEvent> { event ->
             if (!keybind.matchesMouse(event.mcEvent)) return@on
 
-            minecraft.gui.chat.resetChatScroll()
+            minecraft.gui.hud.chat.resetChatScroll()
         }
     }
 }

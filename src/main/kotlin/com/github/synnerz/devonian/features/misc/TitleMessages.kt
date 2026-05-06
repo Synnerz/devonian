@@ -193,7 +193,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         ConfigData.Button(
             {
                 Scheduler.scheduleTask {
-                    Devonian.minecraft.setScreen(this)
+                    Devonian.minecraft.setScreenAndShow(this)
                 }
             },
             "Run",
@@ -219,13 +219,13 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
 
         DevonianCommand.command.subcommand("titlemsg") { _, args ->
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             1
         }
         DevonianCommand.command.subcommand("titlemessages") { _, args ->
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             1
         }

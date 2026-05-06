@@ -12,7 +12,7 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.component.DataComponents
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.item.Items
@@ -137,7 +137,7 @@ object KeyPickup : Feature(
             if (SETTING_KEY_PICKUP_TITLE.get()) Alert.show(title, SETTING_KEY_PICKUP_TIME.get().toInt() * 1000, playSound = false)
         }
         on<EntityEquipmentEvent> { event ->
-            if (event.type != EntityType.ARMOR_STAND) return@on
+            if (event.type != EntityTypes.ARMOR_STAND) return@on
             if (event.slots.size != 1) return@on
             val entry = event.slots.firstOrNull() ?: return@on
             if (entry.first !== EquipmentSlot.HEAD) return@on

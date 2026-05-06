@@ -52,9 +52,9 @@ object DungeonMap : HudFeature(
     private val SETTING_FUNNY = addButton(
         {
             Scheduler.scheduleTask {
-                minecraft.openChatScreen(ChatComponent.ChatMethod.COMMAND)
+                minecraft.gui.openChatScreen(ChatComponent.ChatMethod.COMMAND)
                 Scheduler.scheduleTask(2) {
-                    (minecraft.screen as ScreenAccessor?)?.insertText("/dv font Mojangles", true)
+                    (minecraft.gui.screen() as ScreenAccessor?)?.insertText("/dv font Mojangles", true)
                 }
             }
         },

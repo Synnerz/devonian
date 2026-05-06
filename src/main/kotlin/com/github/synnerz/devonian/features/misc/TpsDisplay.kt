@@ -103,7 +103,7 @@ object TpsDisplay : TextHudFeature("tpsDisplay") {
         }
 
         on<RenderOverlayEvent> { event ->
-            if (minecraft.isSingleplayer) return@on
+            if (!minecraft.isMultiplayerServer) return@on
             draw(event.ctx)
         }
     }

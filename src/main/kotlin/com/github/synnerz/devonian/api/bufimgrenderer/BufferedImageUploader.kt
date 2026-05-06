@@ -3,10 +3,10 @@ package com.github.synnerz.devonian.api.bufimgrenderer
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PostClientInitEvent
+import com.mojang.blaze3d.GpuFormat
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.FilterMode
 import com.mojang.blaze3d.textures.GpuTexture
-import com.mojang.blaze3d.textures.TextureFormat
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.TextureManager
 import net.minecraft.resources.Identifier
@@ -28,7 +28,7 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
         texture = device.createTexture(
             name,
             GpuTexture.USAGE_COPY_DST or GpuTexture.USAGE_TEXTURE_BINDING,
-            TextureFormat.RGBA8,
+            GpuFormat.RGBA8_UNORM,
             w, h,
             1, 1,
         )

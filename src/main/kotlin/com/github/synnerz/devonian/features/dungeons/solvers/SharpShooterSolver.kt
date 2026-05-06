@@ -87,7 +87,7 @@ object SharpShooterSolver : Feature(
             val block = blockState.block
             val blockPos = event.blockPos
 
-            if (oldBlockState.block == Blocks.EMERALD_BLOCK && block == Blocks.BLUE_TERRACOTTA) {
+            if (oldBlockState.block == Blocks.EMERALD_BLOCK && block == Blocks.DYED_TERRACOTTA.blue) {
                 onBlueTerracotta(blockPos)
                 return@on
             }

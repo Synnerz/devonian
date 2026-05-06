@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.EquipmentSlot
 import java.util.*
 
@@ -22,7 +22,7 @@ object HideSoulweaverSkulls : Feature(
 
     override fun initialize() {
         on<EntityEquipmentEvent> { event ->
-            if (event.type != EntityType.ARMOR_STAND) return@on
+            if (event.type != EntityTypes.ARMOR_STAND) return@on
 
             event.slots.forEach { (slot, item) ->
                 if (slot != EquipmentSlot.HEAD) return@forEach

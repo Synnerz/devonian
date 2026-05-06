@@ -111,7 +111,7 @@ object Searchbar : HudFeature(
         }
 
         on<GuiCharTypeEvent> { event ->
-            val screen = minecraft.screen ?: return@on
+            val screen = minecraft.gui.screen() ?: return@on
             if (screen !is AbstractContainerScreen<*>) return@on
             if (!input.focused) return@on
 
@@ -130,7 +130,7 @@ object Searchbar : HudFeature(
 
         on<TickEvent> { event ->
             if (event.tick % 5 != 1) return@on
-            val screen = minecraft.screen ?: return@on
+            val screen = minecraft.gui.screen() ?: return@on
             if (screen !is AbstractContainerScreen<*>) return@on
 
             onKeyType()
@@ -146,7 +146,7 @@ object Searchbar : HudFeature(
 
     private fun onKeyType() {
         // TODO: add multi-search support
-        val screen = minecraft.screen ?: return
+        val screen = minecraft.gui.screen() ?: return
         val container = screen as? AbstractContainerScreen<*> ?: return
         val items = container.menu.items
         val text = input.text

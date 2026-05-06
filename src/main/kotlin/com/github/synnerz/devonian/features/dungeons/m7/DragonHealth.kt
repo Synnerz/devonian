@@ -10,7 +10,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
@@ -35,7 +35,7 @@ object DragonHealth : Feature(
 
     override fun initialize() {
         on<EntityDataEvent> { event ->
-            if (event.type != EntityType.ENDER_DRAGON) return@on
+            if (event.type != EntityTypes.ENDER_DRAGON) return@on
 
             val hp = event.data.find { it.id == 9 }?.value as? Float ?: return@on
             val hpI = hp.roundToInt()

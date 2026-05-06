@@ -46,7 +46,7 @@ object MelodyMessage : Feature(
             val slot = event.slot
             val idx = melodySlots.indexOf(slot)
             if (idx == -1) return@on
-            if (event.itemStack.item != Items.LIME_TERRACOTTA) return@on
+            if (event.itemStack.item != Items.DYED_TERRACOTTA.lime) return@on
 
             Scheduler.scheduleTask {
                 ChatUtils.command("pc melody ${(idx + 1) * 25}%")

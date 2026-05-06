@@ -182,7 +182,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         ConfigData.Button(
             {
                 Scheduler.scheduleTask {
-                    Devonian.minecraft.setScreen(this)
+                    Devonian.minecraft.setScreenAndShow(this)
                 }
             },
             "Run",
@@ -206,13 +206,13 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
 
         DevonianCommand.command.subcommand("cmsg") { _, args ->
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             1
         }
         DevonianCommand.command.subcommand("cancelmsg") { _, args ->
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             1
         }

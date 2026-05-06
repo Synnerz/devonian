@@ -99,7 +99,7 @@ object SecretsClickedBox : Feature(
                 return
             }
 
-            val camera = minecraft.gameRenderer.mainCamera
+            val camera = minecraft.gameRenderer.mainCamera()
             val camEntity = camera.entity() ?: return
             val blockShape = minecraft.level?.getBlockState(blockPos)
                 ?.getShape(

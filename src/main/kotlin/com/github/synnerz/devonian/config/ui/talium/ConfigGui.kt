@@ -40,7 +40,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         onMouseRelease {
             if (it.button != 0) return@onMouseRelease
             Scheduler.scheduleTask(1) {
-                Devonian.minecraft.setScreen(HudManager)
+                Devonian.minecraft.setScreenAndShow(HudManager)
             }
         }
     }
@@ -64,13 +64,13 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
 
         DevonianCommand.onRun {
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             return@onRun 1
         }
         DevonianCommand.command.subcommand("configui") { _, args ->
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             return@subcommand 1
         }

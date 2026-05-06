@@ -181,7 +181,7 @@ object ScrollableTooltip : Feature(
     }
 
     fun onRender(x: Int, y: Int, xoffset: Int, yoffset: Int) {
-        val screen = minecraft.screen ?: return
+        val screen = minecraft.gui.screen() ?: return
         val eq = ScreenUtils.cursorSlot(screen) ?: return
         if (lastEq === eq) return
 

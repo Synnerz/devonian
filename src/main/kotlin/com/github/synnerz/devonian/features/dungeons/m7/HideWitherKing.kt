@@ -12,7 +12,7 @@ import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 
 object HideWitherKing : Feature(
     "hideWitherKing",
@@ -28,7 +28,7 @@ object HideWitherKing : Feature(
         on<PacketReceivedEvent> { event ->
             when (val packet = event.packet) {
                 is ClientboundAddEntityPacket -> {
-                    if (packet.type != EntityType.ARMOR_STAND) return@on
+                    if (packet.type != EntityTypes.ARMOR_STAND) return@on
                     if (packet.y !in 9.0 .. 25.0 || packet.z > 45.0) return@on
                     Scheduler.scheduleAfterPacket {
                         minecraft.level?.removeEntity(packet.id, Entity.RemovalReason.DISCARDED)

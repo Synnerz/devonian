@@ -11,7 +11,7 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.core.particles.DustParticleOptions
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.item.Items
@@ -170,7 +170,7 @@ object Deployables : TextHudFeature(
         }
 
         on<EntityEquipmentEvent> { event ->
-            if (event.type != EntityType.ARMOR_STAND) return@on
+            if (event.type != EntityTypes.ARMOR_STAND) return@on
 
             if (!checked.add(event.entityId)) return@on
 

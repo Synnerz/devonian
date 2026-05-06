@@ -7,13 +7,13 @@ import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.gui.Font
-import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.ShapeRenderer
+import net.minecraft.client.gui.font.TextRenderable
+import net.minecraft.client.renderer.StagedVertexBuffer
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.level.CameraRenderState
-import net.minecraft.world.level.LightLayer
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Vector3d
+import org.joml.Vector3f
 import java.awt.Color
 import kotlin.math.sqrt
 
@@ -62,14 +62,18 @@ object Render3DVertex {
         color: Color,
         lineWidth: Double,
     ) {
-        ShapeRenderer.renderShape(
-            stack,
-            consumer,
-            shape,
-            ox, oy, oz,
-            color.rgb,
-            lineWidth.toFloat(),
-        )
+        shape.forAllEdges { h, j, k, l, m, n ->
+            val vector3f = Vector3f((l - h).toFloat(), (m - j).toFloat(), (n - k).toFloat()).normalize()
+
+            consumer.addVertex(stack.last(), (h + ox).toFloat(), (j + oy).toFloat(), (k + oz).toFloat())
+                .setColor(color.rgb)
+                .setNormal(stack.last(), vector3f)
+                .setLineWidth(lineWidth.toFloat())
+            consumer.addVertex(stack.last(), (l + ox).toFloat(), (m + oy).toFloat(), (n + oz).toFloat())
+                .setColor(color.rgb)
+                .setNormal(stack.last(), vector3f)
+                .setLineWidth(lineWidth.toFloat())
+        }
     }
 
     fun renderFilledBox(
@@ -160,7 +164,7 @@ object Render3DVertex {
     fun renderString(
         camera: CameraRenderState,
         stack: PoseStack,
-        bufferSource: MultiBufferSource.BufferSource,
+        bufferSource: StagedVertexBuffer,
         mode: Font.DisplayMode,
         str: String,
         x: Double,
@@ -186,21 +190,28 @@ object Render3DVertex {
             .rotate(camera.orientation)
             .scale(scale * 0.025f, -scale * 0.025f, scale * 0.025f)
 
-        textRenderer.drawInBatch(
+        val pose = stack.last().pose()
+        val prep = textRenderer.prepareText(
             str,
             offset,
             0f,
             color.rgb,
             true,
-            stack.last().pose(),
-            bufferSource,
-            mode,
             ((minecraft.options.getBackgroundOpacity(0.25f) * backgroundBox.alpha).toInt() shl 24) or
-            (backgroundBox.rgb and 0x00FFFFFF),
-            LightLayer.BLOCK.ordinal,
+                    (backgroundBox.rgb and 0x00FFFFFF),
         )
+        prep.visit(object : Font.GlyphVisitor {
+            override fun acceptRenderable(renderable: TextRenderable) {
+                renderable.render(
+                    pose,
+                    DummyTextRender.findBuffer(renderable.renderType(mode)),
+                    15728880,
+                    false
+                )
+            }
+        })
 
-        bufferSource.endBatch()
+        bufferSource.endFrame()
 
         stack.popPose()
     }
@@ -209,7 +220,7 @@ object Render3DVertex {
 
     fun renderBeamInner(
         stack: PoseStack,
-        bufferSource: MultiBufferSource.BufferSource,
+        bufferSource: StagedVertexBuffer,
         opaqueLayer: RenderType,
         translucentLayer: RenderType,
         color: Color,
@@ -229,7 +240,7 @@ object Render3DVertex {
 
     fun renderBeamOuter(
         stack: PoseStack,
-        bufferSource: MultiBufferSource.BufferSource,
+        bufferSource: StagedVertexBuffer,
         opaqueLayer: RenderType,
         translucentLayer: RenderType,
         color: Color,

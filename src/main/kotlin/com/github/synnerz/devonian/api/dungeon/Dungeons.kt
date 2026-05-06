@@ -17,7 +17,7 @@ import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.world.entity.ambient.Bat
 import net.minecraft.world.entity.monster.zombie.Zombie
 import net.minecraft.world.item.alchemy.Potions
-import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.entity.BlockEntityTypes
 import net.minecraft.world.level.block.entity.SkullBlockEntity
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
@@ -420,7 +420,7 @@ object Dungeons {
 
             if (registryName.path == "player_head" && blockState.hasBlockEntity()) {
                 val entityBlock = minecraft.level?.getBlockEntity(pos) ?: return@on
-                if (entityBlock.type != BlockEntityType.SKULL) return@on
+                if (entityBlock.type != BlockEntityTypes.SKULL) return@on
                 val skullBlock = entityBlock as SkullBlockEntity
                 val owner = skullBlock.ownerProfile ?: return@on
                 val id = owner.partialProfile().id ?: return@on

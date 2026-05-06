@@ -88,7 +88,7 @@ object BlockOverlay : Feature(
                 HitResult.Type.BLOCK -> {
                     val world = minecraft.level ?: return@on
                     val blockPos = (event.hitResult as? BlockHitResult)?.blockPos ?: return@on
-                    val camera = minecraft.gameRenderer.mainCamera
+                    val camera = minecraft.gameRenderer.mainCamera()
                     // accurate bounding box
                     val camEntity = camera.entity() ?: return@on
                     val shape = world.getBlockState(blockPos)

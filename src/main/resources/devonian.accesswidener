@@ -1,6 +1,5 @@
 accessWidener v2 official
 
-accessible class net/minecraft/client/gui/Gui$HeartType
 accessible class com/mojang/blaze3d/opengl/GlDevice$ShaderCompilationKey
 accessible method com/mojang/blaze3d/opengl/GlDevice$ShaderCompilationKey <init> (Lnet/minecraft/resources/Identifier;Lcom/mojang/blaze3d/shaders/ShaderType;Lnet/minecraft/client/renderer/ShaderDefines;)V
 accessible class net/minecraft/client/gui/Font$PreparedTextBuilder
@@ -8,3 +7,6 @@ accessible method net/minecraft/network/chat/Style <init> (Lnet/minecraft/networ
 accessible method net/minecraft/client/gui/screens/inventory/InventoryScreen extractRenderState (Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 accessible class com/mojang/blaze3d/opengl/GlDevice
 accessible class com/mojang/blaze3d/opengl/GlCommandEncoder
+accessible class net/minecraft/client/gui/Hud$HeartType
+accessible method net/minecraft/client/renderer/StagedVertexBuffer$Draw <init> (Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;Lcom/mojang/blaze3d/vertex/VertexSorting;)V
+accessible field net/minecraft/client/renderer/StagedVertexBuffer lastBuildingDraw Lnet/minecraft/client/renderer/StagedVertexBuffer$Draw;

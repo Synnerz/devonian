@@ -35,7 +35,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     fun initialize() {
         DevonianCommand.command.subcommand("huds") { _, args ->
             Scheduler.scheduleTask(1) {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             return@subcommand 1
         }

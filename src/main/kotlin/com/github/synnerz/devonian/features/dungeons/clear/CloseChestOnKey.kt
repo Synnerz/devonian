@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
 
@@ -41,7 +42,7 @@ object CloseChestOnKey : Feature(
 
                 event.cancel()
                 minecraft.connection?.send(ServerboundContainerClosePacket(containerId))
-                minecraft.setScreen(null)
+                minecraft.setScreenAndShow(null as Screen)
                 return@on
             }
         }

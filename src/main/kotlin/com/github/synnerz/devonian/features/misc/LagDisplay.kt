@@ -33,7 +33,7 @@ object LagDisplay : TextHudFeature(
         }
 
         on<RenderOverlayEvent> { event ->
-            if (minecraft.isSingleplayer) return@on
+            if (!minecraft.isMultiplayerServer) return@on
             val t = System.currentTimeMillis()
             val dt = t - lastPacket
             if (dt < SETTING_THRESH.get()) return@on

@@ -51,7 +51,7 @@ class DungeonDoor(val comp: WorldComponentPosition) {
                 -> DoorTypes.ENTRANCE
 
             Blocks.COAL_BLOCK -> DoorTypes.WITHER
-            Blocks.RED_TERRACOTTA -> DoorTypes.BLOOD
+            Blocks.DYED_TERRACOTTA.red -> DoorTypes.BLOOD
             else -> DoorTypes.NORMAL
         }
         if (opened && holyShitFairyDoorPleaseStopFlashingSobs && !rooms.all { it.explored }) type = DoorTypes.WITHER

@@ -191,7 +191,7 @@ object EtherwarpOverlay : Feature(
                 ) failReason = "&4Can't TP: No air above!"
             }
 
-            val camera = event.ctx.gameRenderer().mainCamera
+            val camera = event.ctx.gameRenderer().mainCamera()
             val camEntity = camera.entity() ?: return@on
 
             val outlineShape =

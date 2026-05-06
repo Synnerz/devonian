@@ -52,7 +52,7 @@ object EventBus {
             Render3DState.camera = it.levelState().cameraRenderState
             Render3DImmediate.camera = it.levelState().cameraRenderState
 
-            (it.levelRenderer() as? LevelRendererAccessor)?.let { Render3DState.bufferSource = it.renderBuffers.bufferSource() }
+            (it.levelRenderer() as? LevelRendererAccessor)?.let { Render3DState.bufferSource = it.renderBuffers.stagedVertexBuffer() }
         }
         LevelRenderEvents.END_MAIN.register {
             post(RenderWorldEvent(it))

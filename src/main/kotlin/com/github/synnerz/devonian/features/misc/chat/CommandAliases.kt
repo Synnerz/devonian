@@ -102,7 +102,7 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
         ConfigData.Button(
             {
                 Scheduler.scheduleTask {
-                    Devonian.minecraft.setScreen(this)
+                    Devonian.minecraft.setScreenAndShow(this)
                 }
             },
             "Run",
@@ -126,13 +126,13 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
 
         DevonianCommand.command.subcommand("cmdali") { _, args ->
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             1
         }
         DevonianCommand.command.subcommand("commandalias") { _, args ->
             Scheduler.scheduleTask {
-                Devonian.minecraft.setScreen(this)
+                Devonian.minecraft.setScreenAndShow(this)
             }
             1
         }

@@ -199,7 +199,8 @@ object Devonian : ClientModInitializer {
             KeyPickup,
             CreeperBeamsSolver,
             SimonSaysSolver,
-            ArrowAlignSolver,
+            // FIXME
+//            ArrowAlignSolver,
             CurrentRoomName,
             CurrentRoomCleared,
             TeleportMazeSolver,
@@ -229,7 +230,8 @@ object Devonian : ClientModInitializer {
             CenteredCrosshair,
             DisableEnderPearlCooldown,
             HudManagerRenderer,
-            DisableWorldLoadingScreen,
+            // FIXME
+//            DisableWorldLoadingScreen,
             HighlightDroppedItems,
             DisableHungerBar,
             FixRedVignette,

@@ -21,7 +21,7 @@ public class KeyboardHandlerMixin {
         original.call(l, i, keyEvent);
 
         if (l != minecraft.getWindow().handle()) return;
-        if (minecraft.screen != null || minecraft.level == null) return;
+        if (minecraft.gui.screen() != null || minecraft.level == null) return;
 
         switch (i) {
             case GLFW.GLFW_RELEASE:

@@ -51,48 +51,48 @@ object ExperimentationTable : Feature(
     private val chronomatronRegex = "^Chronomatron \\([\\w ]+\\)$".toRegex()
     // TODO: this is only used for debugging, remove once feature is fully done
     private val chronomatronItems = listOf(
-        Items.RED_STAINED_GLASS,
-        Items.BLUE_STAINED_GLASS,
-        Items.LIME_STAINED_GLASS,
-        Items.YELLOW_STAINED_GLASS,
-        Items.LIGHT_BLUE_STAINED_GLASS,
-        Items.PINK_STAINED_GLASS,
-        Items.GREEN_STAINED_GLASS,
-        Items.CYAN_STAINED_GLASS,
-        Items.ORANGE_STAINED_GLASS,
-        Items.PURPLE_STAINED_GLASS,
+        Items.STAINED_GLASS_PANE.red,
+        Items.STAINED_GLASS_PANE.blue,
+        Items.STAINED_GLASS_PANE.lime,
+        Items.STAINED_GLASS_PANE.yellow,
+        Items.STAINED_GLASS_PANE.lightBlue,
+        Items.STAINED_GLASS_PANE.pink,
+        Items.STAINED_GLASS_PANE.green,
+        Items.STAINED_GLASS_PANE.cyan,
+        Items.STAINED_GLASS_PANE.orange,
+        Items.STAINED_GLASS_PANE.purple,
     )
     private val chronomatronHighlightItems = listOf(
-        Items.RED_TERRACOTTA,
-        Items.BLUE_TERRACOTTA,
-        Items.LIME_TERRACOTTA,
-        Items.YELLOW_TERRACOTTA,
-        Items.LIGHT_BLUE_TERRACOTTA,
-        Items.PINK_TERRACOTTA,
-        Items.GREEN_TERRACOTTA,
-        Items.CYAN_TERRACOTTA,
-        Items.ORANGE_TERRACOTTA,
-        Items.PURPLE_TERRACOTTA,
+        Items.DYED_TERRACOTTA.red,
+        Items.DYED_TERRACOTTA.blue,
+        Items.DYED_TERRACOTTA.lime,
+        Items.DYED_TERRACOTTA.yellow,
+        Items.DYED_TERRACOTTA.lightBlue,
+        Items.DYED_TERRACOTTA.pink,
+        Items.DYED_TERRACOTTA.green,
+        Items.DYED_TERRACOTTA.cyan,
+        Items.DYED_TERRACOTTA.orange,
+        Items.DYED_TERRACOTTA.purple,
     )
     private val ultrasequenceRegex = "^Ultrasequencer \\([\\w ]+\\)$".toRegex()
     private val ultrasequenceNumRegex = "^\\d+$".toRegex()
     private val ultrasequencePanes = listOf(
-        Items.WHITE_STAINED_GLASS_PANE,
-        Items.ORANGE_STAINED_GLASS_PANE,
-        Items.MAGENTA_STAINED_GLASS_PANE,
-        Items.LIGHT_BLUE_STAINED_GLASS_PANE,
-        Items.YELLOW_STAINED_GLASS_PANE,
-        Items.LIME_STAINED_GLASS_PANE,
-        Items.PINK_STAINED_GLASS_PANE,
-        Items.GRAY_STAINED_GLASS_PANE,
-        Items.LIGHT_GRAY_STAINED_GLASS_PANE,
-        Items.CYAN_STAINED_GLASS_PANE,
-        Items.PURPLE_STAINED_GLASS_PANE,
-        Items.BLUE_STAINED_GLASS_PANE,
-        Items.BROWN_STAINED_GLASS_PANE,
-        Items.GREEN_STAINED_GLASS_PANE,
-        Items.RED_STAINED_GLASS_PANE,
-        Items.BLACK_STAINED_GLASS_PANE,
+        Items.STAINED_GLASS_PANE.white,
+        Items.STAINED_GLASS_PANE.orange,
+        Items.STAINED_GLASS_PANE.magenta,
+        Items.STAINED_GLASS_PANE.lightBlue,
+        Items.STAINED_GLASS_PANE.yellow,
+        Items.STAINED_GLASS_PANE.lime,
+        Items.STAINED_GLASS_PANE.pink,
+        Items.STAINED_GLASS_PANE.gray,
+        Items.STAINED_GLASS_PANE.lightGray,
+        Items.STAINED_GLASS_PANE.cyan,
+        Items.STAINED_GLASS_PANE.purple,
+        Items.STAINED_GLASS_PANE.blue,
+        Items.STAINED_GLASS_PANE.brown,
+        Items.STAINED_GLASS_PANE.green,
+        Items.STAINED_GLASS_PANE.red,
+        Items.STAINED_GLASS_PANE.black,
     )
     private var inChrono = false
     private var inUltra = false
@@ -128,7 +128,7 @@ object ExperimentationTable : Feature(
 
         on<TickEvent> {
             if (!inUltra) return@on
-            val screen = minecraft.screen ?: return@on
+            val screen = minecraft.gui.screen() ?: return@on
             val items = (screen as AbstractContainerScreen<*>).menu.items
             val slot49 = items.getOrNull(49) ?: return@on
 
@@ -164,7 +164,7 @@ object ExperimentationTable : Feature(
                 val cache = superpairSlots.getOrNull(event.slot) ?: return@on
                 event.cancel()
                 Scheduler.scheduleTask {
-                    (minecraft.screen as? AbstractContainerScreen<*>)?.menu?.setItem(
+                    (minecraft.gui.screen() as? AbstractContainerScreen<*>)?.menu?.setItem(
                         event.slot,
                         event.stateId,
                         cache

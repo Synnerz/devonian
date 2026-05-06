@@ -269,13 +269,13 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun onTick() {
-            val screen = minecraft.screen ?: return
+            val screen = minecraft.gui.screen() ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
 
             minCount = 14
             slots = Array(items.size) { idx ->
                 val stack = items[idx]
-                val count = if (stack.item == Items.RED_STAINED_GLASS_PANE) stack.count
+                val count = if (stack.item == Items.STAINED_GLASS_PANE.red) stack.count
                 else 0
                 if (count > 0) minCount = min(minCount, count)
                 return@Array count
@@ -333,7 +333,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun onTick() {
-            val screen = minecraft.screen ?: return
+            val screen = minecraft.gui.screen() ?: return
             val toFind = title.matchEntire(screen.title.string)?.groupValues?.drop(1)?.getOrNull(0) ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
 
@@ -469,7 +469,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun onTick() {
-            val screen = minecraft.screen ?: return
+            val screen = minecraft.gui.screen() ?: return
             val toFind = title.matchEntire(screen.title.string)?.groupValues?.drop(1)?.getOrNull(0) ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
 
@@ -511,11 +511,11 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         private val rubixIndices = listOf(12, 13, 14, 21, 22, 23, 30, 31, 32)
         // left click = ++, right click = --
         private val rubixOrder = listOf(
-            Items.ORANGE_STAINED_GLASS_PANE,
-            Items.YELLOW_STAINED_GLASS_PANE,
-            Items.GREEN_STAINED_GLASS_PANE,
-            Items.BLUE_STAINED_GLASS_PANE,
-            Items.RED_STAINED_GLASS_PANE,
+            Items.STAINED_GLASS_PANE.orange,
+            Items.STAINED_GLASS_PANE.yellow,
+            Items.STAINED_GLASS_PANE.green,
+            Items.STAINED_GLASS_PANE.blue,
+            Items.STAINED_GLASS_PANE.red,
         )
         private val strings = arrayOf(
             Component.literal("§e-2"),
@@ -538,7 +538,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun onTick() {
-            val screen = minecraft.screen ?: return
+            val screen = minecraft.gui.screen() ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
             val slotsIn = mutableListOf<TerminalSolvers.InterimRubixSlot>()
 
@@ -619,14 +619,14 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun onTick() {
-            val screen = minecraft.screen ?: return
+            val screen = minecraft.gui.screen() ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
             val time = System.currentTimeMillis()
 
             slots = Array(items.size) { idx ->
                 val cd = slots.getOrNull(idx)?.clickCd ?: 0L
                 TerminalSolvers.RedGreenSlot(
-                    cd <= time && items[idx].item == Items.RED_STAINED_GLASS_PANE,
+                    cd <= time && items[idx].item == Items.STAINED_GLASS_PANE.red,
                     cd,
                 )
             }

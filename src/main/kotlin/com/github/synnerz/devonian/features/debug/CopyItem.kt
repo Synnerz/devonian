@@ -28,8 +28,8 @@ object CopyItem : Feature(
             val isCtrlDown = glfwGetKey(minecraft.window.handle(), GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS
             if (!isCtrlDown) return@on
 
-            val screen = minecraft.screen as? AbstractContainerScreen<*> ?: return@on
-            val screenAcc = minecraft.screen as? AbstractContainerScreenAccessor ?: return@on
+            val screen = minecraft.gui.screen() as? AbstractContainerScreen<*> ?: return@on
+            val screenAcc = minecraft.gui.screen() as? AbstractContainerScreenAccessor ?: return@on
             event.cancel()
 
             val slot = screenAcc.hoveredSlot
