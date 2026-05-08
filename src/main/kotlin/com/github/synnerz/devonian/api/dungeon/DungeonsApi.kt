@@ -81,7 +81,7 @@ object DungeonsApi {
                     }
                     v.timeTaken = System.currentTimeMillis()
                     playerData[k] = v
-                    requestListeners.forEach { it(k, v) }
+                    requestListeners.forEach { it(k.lowercase(), v) }
                 }
             }
         }, 5L, 5L, TimeUnit.SECONDS)
@@ -92,8 +92,8 @@ object DungeonsApi {
     }
 
     fun requestPlayer(name: String) {
-        if (playerQueue.contains(name)) return
-        playerQueue.add(name)
+        if (playerQueue.contains(name.lowercase())) return
+        playerQueue.add(name.lowercase())
     }
 
     fun requestPlayers(names: List<String>) {
@@ -105,15 +105,15 @@ object DungeonsApi {
     }
 
     fun player(name: String, cooldown: Int = 10): DungeonsApiResult? {
-        customCooldowns[name] = cooldown
-        return playerData[name]
+        customCooldowns[name.lowercase()] = cooldown
+        return playerData[name.lowercase()]
     }
 
     fun playerOrRequest(name: String, cooldown: Int = 10): DungeonsApiResult? {
-        val _cache = playerData[name]
+        val _cache = playerData[name.lowercase()]
         if (_cache == null)
-            playerQueue.add(name)
-        customCooldowns[name] = cooldown
+            playerQueue.add(name.lowercase())
+        customCooldowns[name.lowercase()] = cooldown
 
         return _cache
     }
