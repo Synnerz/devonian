@@ -229,7 +229,7 @@ abstract class SharedCategory(displayName: String) {
         }
     }.apply {
         setColor(ColorPalette.TERTIARY_COLOR)
-        onKeyType {
+        onCharType {
             configData.set(text)
         }
         configData.onChange {
