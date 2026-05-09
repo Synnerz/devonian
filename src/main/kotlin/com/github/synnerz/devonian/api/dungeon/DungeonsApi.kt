@@ -98,9 +98,9 @@ object DungeonsApi {
 
     fun requestPlayers(names: List<String>) {
         names.forEach {
-            if (playerQueue.contains(it)) return@forEach
+            if (playerQueue.contains(it.lowercase())) return@forEach
 
-            playerQueue.add(it)
+            playerQueue.add(it.lowercase())
         }
     }
 
@@ -117,4 +117,8 @@ object DungeonsApi {
 
         return _cache
     }
+
+    fun playerData() = playerData
+
+    fun playerQueue() = playerQueue
 }
