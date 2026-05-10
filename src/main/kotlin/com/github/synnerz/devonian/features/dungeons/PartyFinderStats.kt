@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.HoverEvent
 import net.minecraft.network.chat.Style
+import java.util.concurrent.CopyOnWriteArrayList
 
 object PartyFinderStats : Feature(
     "partyFinderStats",
@@ -25,14 +26,14 @@ object PartyFinderStats : Feature(
         "healer" to "&a❤ Healer",
         "tank" to "&7❈ Tank",
     )
-    private var lastUsername = ""
+    private val requestedUsernames = CopyOnWriteArrayList<String>()
 
     override fun initialize() {
         DungeonsApi.on { name, data ->
-            if (lastUsername.isEmpty() || name != lastUsername) return@on
+            if (requestedUsernames.isEmpty() || !requestedUsernames.contains(name)) return@on
 
             onData(data, name)
-            lastUsername = ""
+            requestedUsernames.remove(name)
         }
 
         on<ChatEvent> { event ->
@@ -40,11 +41,14 @@ object PartyFinderStats : Feature(
             if (username == Dungeons.selfPlayer.name) return@on
             val cache = DungeonsApi.player(username)
             if (cache == null) {
-                lastUsername = username
+                if (!requestedUsernames.contains(username.lowercase())) {
+                    requestedUsernames.add(username.lowercase())
+                    DungeonsApi.requestPlayer(username)
+                }
                 return@on
             }
 
-            onData(cache, username)
+            onData(cache, username.lowercase())
         }
     }
 
@@ -61,7 +65,7 @@ object PartyFinderStats : Feature(
                     append(if (pbMode == "s_plus") "\n&6S+\n" else "&eS\n")
                     values.forEach { (floor, time) ->
                         if (floor.endsWith("_best") || floor.endsWith("_ms")) return@forEach
-                        append("&a${floor.replace("_", " ")}&f: &6$time\n")
+                        append("&a${floor.replace("floor_", "F")}&f: &6$time\n")
                     }
                 }
             }.trim())))
@@ -72,7 +76,7 @@ object PartyFinderStats : Feature(
                     append(if (pbMode == "s_plus") "\n&6S+\n" else "&eS\n")
                     values.forEach { (floor, time) ->
                         if (floor.endsWith("_best") || floor.endsWith("_ms")) return@forEach
-                        append("&c${floor.replace("_", " ")}&f: &6$time\n")
+                        append("&c${floor.replace("floor_", "M")}&f: &6$time\n")
                     }
                 }
             }.trim())))
