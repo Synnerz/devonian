@@ -50,7 +50,7 @@ object QuiverDisplay : TextHudFeature(
     override fun initialize() {
         on<ServerContainerSetSlotEvent> { event ->
             if (event.containerId != 0) return@on
-            val arrowSlot = if (Dungeons.timeElapsed.value > 0) 9 else 44
+            val arrowSlot = if (Dungeons.timeElapsed.value > 0 && !Dungeons.inBoss.value) 9 else 44
             if (event.slot != arrowSlot) return@on
 
             setArrows(event.itemStack)
@@ -58,7 +58,7 @@ object QuiverDisplay : TextHudFeature(
 
         on<ServerContainerSetContentEvent> { event ->
             if (event.containerId != 0) return@on
-            setArrows(event.items.getOrNull(if (Dungeons.timeElapsed.value > 0) 9 else 44) ?: return@on)
+            setArrows(event.items.getOrNull(if (Dungeons.timeElapsed.value > 0 && !Dungeons.inBoss.value) 9 else 44) ?: return@on)
         }
 
         on<RenderOverlayEvent> { event ->
