@@ -49,7 +49,12 @@ object DungeonMapScanner {
             }
         }
         val id = lastMapId ?: return
-        Devonian.minecraft.level?.overrideMapData(id, null as MapItemSavedData)
+        try {
+            Devonian.minecraft.level?.overrideMapData(id, null as MapItemSavedData)
+        } catch (e: Exception) {
+            println("Devonian\$DungeonMapScanner error")
+            e.printStackTrace()
+        }
         lastMapId = null
         swapCd = System.currentTimeMillis() + 6000L
     }
