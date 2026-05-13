@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.api.events.ChatEvent
+import com.github.synnerz.devonian.api.events.Event
 import com.github.synnerz.devonian.api.events.EventBus
 import net.hypixel.modapi.packet.impl.clientbound.ClientboundPartyInfoPacket.PartyRole
 import java.util.*
@@ -27,8 +28,17 @@ object Party {
     var inParty = false
     var members: Map<UUID, PartyRole> = mapOf()
     var isLeader = false
+    var partyHash = -1
     private var lastRequest = -1L
     private var queue = false
+    private var initialRequest = false
+
+    class PartyJoin(
+        val members: Map<UUID, PartyRole>,
+        val isLeader: Boolean,
+        val partyHash: Int,
+    ) : Event
+    class PartyLeave() : Event
 
     fun initialize() {
         Scheduler.schedulePool.scheduleWithFixedDelay(::update, 5L, 5L, TimeUnit.SECONDS)
@@ -41,6 +51,7 @@ object Party {
             }
 
             lastRequest = System.currentTimeMillis()
+            initialRequest = false
             HypixelModApi.requestPartyInfo()
         }
 
@@ -49,15 +60,21 @@ object Party {
                 inParty = false
                 members = mapOf()
                 isLeader = false
+                partyHash = -1
+                if (!initialRequest)
+                    PartyLeave().post()
                 return@on
             }
 
             inParty = true
             members = event.members
             isLeader = event.isLeader
+            partyHash = members.keys.sumOf { it.hashCode() }
+            PartyJoin(members, isLeader, partyHash).post()
         }
 
         EventBus.on<HypixelModApi.HelloPacket> { event ->
+            initialRequest = true
             HypixelModApi.requestPartyInfo()
         }
     }
