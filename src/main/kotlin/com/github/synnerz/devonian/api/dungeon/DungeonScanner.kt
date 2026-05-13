@@ -211,6 +211,7 @@ object DungeonScanner {
             val total = match.groupValues.getOrNull(2)?.toInt() ?: return@on
 
             if (total != room.totalSecrets) println("mismatching secret counts in ${room.name}")
+            DungeonEvent.SecretPreUpdateEvent(found, total, room).post()
             room.secretsCompleted = found
             DungeonEvent.SecretUpdateEvent(found, total, room).post()
         }.setEnabled(Location.stateInArea("catacombs"))
