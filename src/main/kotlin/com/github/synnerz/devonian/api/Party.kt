@@ -33,12 +33,12 @@ object Party {
     private var queue = false
     private var initialRequest = false
 
-    class PartyJoin(
+    class PartyJoinEvent(
         val members: Map<UUID, PartyRole>,
         val isLeader: Boolean,
         val partyHash: Int,
     ) : Event
-    class PartyLeave() : Event
+    class PartyLeaveEvent : Event
 
     fun initialize() {
         Scheduler.schedulePool.scheduleWithFixedDelay(::update, 5L, 5L, TimeUnit.SECONDS)
@@ -62,7 +62,7 @@ object Party {
                 isLeader = false
                 partyHash = -1
                 if (!initialRequest)
-                    PartyLeave().post()
+                    PartyLeaveEvent().post()
                 return@on
             }
 
@@ -70,7 +70,7 @@ object Party {
             members = event.members
             isLeader = event.isLeader
             partyHash = members.keys.sumOf { it.hashCode() }
-            PartyJoin(members, isLeader, partyHash).post()
+            PartyJoinEvent(members, isLeader, partyHash).post()
         }
 
         EventBus.on<HypixelModApi.HelloPacket> { event ->
