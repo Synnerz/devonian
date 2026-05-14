@@ -71,4 +71,14 @@ object WebRequests {
             e.printStackTrace()
         }
     }
+
+    fun withName(name: String, block: suspend CoroutineScope.() -> Unit, catch: () -> Unit) = ioScope.launch(CoroutineName(name)) {
+        try {
+            block()
+        } catch (e: Exception) {
+            println("Devonian\$WebRequest Error - $name")
+            e.printStackTrace()
+            catch()
+        }
+    }
 }
