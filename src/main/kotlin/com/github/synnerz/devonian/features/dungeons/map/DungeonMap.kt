@@ -710,7 +710,7 @@ object DungeonMap : HudFeature(
     private val SETTING_RENDER_SECRET_COUNT = addSwitch(
         "renderSecretCount",
         true,
-        "(we dont actually track or sync secrets right now)",
+        "Enable §bWebsocket§r to have synced secrets between players using devonian",
         "Render Secret Count",
         subcategory = "Behavior",
     )
