@@ -407,6 +407,7 @@ object Devonian : ClientModInitializer {
             TeamSecretsStats,
             PartyFinderStats,
             BestiaryHighlight,
+            WebsocketClient,
 
             // Debug
             CopyItem,
