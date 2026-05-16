@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.utils.render
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.features.misc.inventory.InventoryScale
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import net.minecraft.ChatFormatting
@@ -16,10 +17,17 @@ object Render2D {
     val textRenderer = Devonian.minecraft.font
     val window get() = Devonian.minecraft.window
     val mouse = Devonian.minecraft.mouseHandler
+    val scale get() =
+        if (InventoryScale.isEnabled() && Devonian.minecraft.screen != null)
+            InventoryScale.getScale()
+        else
+            Devonian.minecraft.window.guiScale
     val screenWidth get() = window.width
     val screenHeight get() = window.height
     val scaledWidth get() = window.guiScaledWidth
     val scaledHeight get() = window.guiScaledHeight
+    val customScaleWidth get() = screenWidth / scale
+    val customScaleHeight get() = screenHeight / scale
 
     @JvmOverloads
     fun drawString(ctx: GuiGraphics, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
@@ -130,7 +138,7 @@ object Render2D {
     }
 
     object Mouse {
-        val x get() = mouse.xpos() * scaledWidth / max(1, screenWidth)
-        val y get() = mouse.ypos() * scaledHeight / max(1, screenHeight)
+        val x get() = mouse.xpos() * customScaleWidth / max(1, screenWidth)
+        val y get() = mouse.ypos() * customScaleHeight / max(1, screenHeight)
     }
 }
