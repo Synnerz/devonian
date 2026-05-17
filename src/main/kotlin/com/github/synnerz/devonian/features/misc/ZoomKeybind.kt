@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.events.GuiClickEvent
+import com.github.synnerz.devonian.api.events.GuiKeyUpEvent
 import com.github.synnerz.devonian.api.events.KeyPressEvent
 import com.github.synnerz.devonian.api.events.KeyReleaseEvent
 import com.github.synnerz.devonian.api.events.MousePressEvent
@@ -85,6 +87,18 @@ object ZoomKeybind : Feature(
 
         on<MouseReleaseEvent> { event ->
             if (!keybind.matchesMouse(event.mcEvent)) return@on
+
+            update(MAX_STEPS)
+        }
+
+        on<GuiKeyUpEvent> { event ->
+            if (!keybind.matches(event.event)) return@on
+
+            update(MAX_STEPS)
+        }
+
+        on<GuiClickEvent> { event ->
+            if (event.state || !keybind.matchesMouse(event.event)) return@on
 
             update(MAX_STEPS)
         }
