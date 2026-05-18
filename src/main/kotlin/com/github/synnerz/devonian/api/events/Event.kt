@@ -646,3 +646,7 @@ class ClientBlockUpdateEvent(
     val blockState: BlockState,
     val blockPos: BlockPos,
 ) : Event
+
+class WorldDestroyEvent(
+    val minecraft: Minecraft,
+) : Event
