@@ -408,6 +408,7 @@ object Devonian : ClientModInitializer {
             PartyFinderStats,
             BestiaryHighlight,
             WebsocketClient,
+            VisitorProfitDisplay,
 
             // Debug
             CopyItem,
