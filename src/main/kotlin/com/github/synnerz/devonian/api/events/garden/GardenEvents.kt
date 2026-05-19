@@ -12,6 +12,7 @@ import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
 import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
 import com.github.synnerz.devonian.utils.StringUtils
+import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import net.minecraft.world.item.ItemStack
 import kotlin.math.roundToInt
 
@@ -33,6 +34,8 @@ object GardenEvents {
         "ENCHANTED_NETHER_WART" to "ENCHANTED_NETHER_STALK",
         "ENCHANTED_RED_MUSHROOM_BLOCK" to "ENCHANTED_HUGE_MUSHROOM_2",
         "ENCHANTED_BROWN_MUSHROOM_BLOCK" to "ENCHANTED_HUGE_MUSHROOM_1",
+        "ENCHANTED_MELON" to "ENCHANTED_MELON_BLOCK",
+        "ENCHANTED_COCOA_BEANS" to "ENCHANTED_COCOA",
         "SPACE_HELMET" to "DCTR_SPACE_HELM",
         "QUICKDRAW_CHIP" to "QUICKDRAW_GARDEN_CHIP",
         "HYPERCHARGE_CHIP" to "HYPERCHARGE_GARDEN_CHIP",
@@ -40,8 +43,9 @@ object GardenEvents {
     private var lastGui: String? = null
     private var visitorData: VisitorData? = null
 
+    data class VisitorComponent(val string: String, val format: String)
     data class VisitorData(
-        val name: String,
+        val name: VisitorComponent,
         val timesVisited: Int = 0,
         val offersAccepted: Int = 0,
     )
@@ -52,22 +56,27 @@ object GardenEvents {
         fun price(): Int = SkyblockPrices.buyPrice(sbId).roundToInt()
     }
     data class VisitorItemData(
-        val name: String,
+        val name: VisitorComponent,
         val rareItems: MutableList<VisitorRareItem> = mutableListOf(),
         val farmingXP: Int,
         val gardenXP: Int,
         val copper: Int,
-        val cropRequired: String,
+        val cropRequired: VisitorComponent,
         val amountRequired: Int,
     ) {
         fun profit(): Int {
-            val requiredPrice = SkyblockPrices.buyPrice(cropRequired).roundToInt() * amountRequired
-            val totalPrice = ((
-                SkyblockPrices.buyPrice("ENCHANTMENT_GREEN_THUMB_1") / 1500
-            ).roundToInt() * copper) + rareItems.sumOf { it.price() }
+            val totalPrice = copperPrice() + rareItemsPrice()
 
-            return totalPrice - requiredPrice
+            return totalPrice - requiredPrice()
         }
+
+        fun rareItemsPrice(): Int = rareItems.sumOf { it.price() }
+
+        fun requiredPrice(): Int
+            = SkyblockPrices.buyPrice(cropRequired.string).roundToInt() * amountRequired
+
+        fun copperPrice(): Int
+            = (SkyblockPrices.buyPrice("ENCHANTMENT_GREEN_THUMB_1") / 1500).roundToInt() * copper
     }
 
     class PestKill(val name: String) : Event
@@ -98,7 +107,7 @@ object GardenEvents {
         }.setEnabled(Location.stateInArea("garden"))
 
         EventBus.on<ServerContainerOpenEvent> { event ->
-            if (visitorData != null && lastGui != visitorData!!.name) {
+            if (visitorData != null && lastGui != visitorData!!.name.string) {
                 val _data = visitorData
                 Scheduler.scheduleTask { VisitorClose(_data!!).post() }
                 visitorData = null
@@ -154,7 +163,11 @@ object GardenEvents {
         // not valid visitor, it should always have at least 1 visit
         if (visits <= 0 || accepts < 0) return
 
-        visitorData = VisitorData(name, visits, accepts)
+        visitorData = VisitorData(
+            VisitorComponent(name, itemStack.customName!!.colorCodes()),
+            visits,
+            accepts
+        )
         Scheduler.scheduleTask {
             VisitorOpen(visitorData!!).post()
         }
@@ -168,6 +181,7 @@ object GardenEvents {
         val formattedLore = ItemUtils.lore(itemStack, true) ?: return
         val rareItems = mutableListOf<VisitorRareItem>()
         var requiredItem = ""
+        var requiredItemFormatted = ""
         var requiredAmount = 0
         var copper = 0
         var farmingXP = 0
@@ -181,6 +195,7 @@ object GardenEvents {
                 val itemId = requiredItemMatch[1].uppercase().trim().replace(" ", "_")
                 val amount = requiredItemMatch[2].trim().replace("([,.]+)".toRegex(), "").toIntOrNull() ?: 1
                 requiredItem = if (itemId in normalToInternals) normalToInternals[itemId]!! else itemId
+                requiredItemFormatted = formattedLore[idx].replace("(§\\wx[\\d,.]+)".toRegex(), "").trim()
                 requiredAmount = amount
                 continue
             }
@@ -226,7 +241,7 @@ object GardenEvents {
                 farmingXP,
                 gardenXP,
                 copper,
-                requiredItem,
+                VisitorComponent(requiredItem, requiredItemFormatted),
                 requiredAmount
             )).post()
         }
