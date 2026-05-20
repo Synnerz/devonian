@@ -178,11 +178,7 @@ object DungeonWaypoints : Feature(
             val v = it.value
 
             v.forEach { pos ->
-                val roomPos = room.fromComp(pos.x, pos.z)// ?: return false
-                if (roomPos == null) {
-                    println("Devonian\$DungeonWaypoints could not find positions for component [${pos.x}, ${pos.z}] in room $id")
-                    return false
-                }
+                val roomPos = room.fromComp(pos.x, pos.z) ?: return false
 
                 currentWaypoints
                     .getOrPut(k) { mutableListOf() }
