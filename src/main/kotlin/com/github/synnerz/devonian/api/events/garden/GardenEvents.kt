@@ -165,13 +165,14 @@ object GardenEvents {
         // not valid visitor, it should always have at least 1 visit
         if (visits <= 0 || accepts < 0) return
 
-        visitorData = VisitorData(
+        val _visitorData = VisitorData(
             VisitorComponent(name, itemStack.customName!!.colorCodes()),
             visits,
             accepts
         )
+        visitorData = _visitorData
         Scheduler.scheduleTask {
-            VisitorOpen(visitorData!!).post()
+            VisitorOpen(_visitorData).post()
         }
     }
 
