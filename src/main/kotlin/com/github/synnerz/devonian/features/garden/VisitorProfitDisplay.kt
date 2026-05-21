@@ -34,7 +34,10 @@ object VisitorProfitDisplay : TextHudFeature(
                 }
                 add("&cCopper&f: &a${StringUtils.addCommasTruncate(data.copper)} &7(${StringUtils.shortenNumber(data.copperPrice())})")
                 add("&cRequires&f:")
-                add(" &9${data.cropRequired.format} &ax${StringUtils.addCommasTruncate(data.amountRequired)} &7(${StringUtils.shortenNumber(data.requiredPrice())})")
+                data.requiredCrops.forEach {
+                    val ( crop, amount ) = it
+                    add(" ${crop.format} &ax${StringUtils.addCommasTruncate(amount)} &7(${StringUtils.shortenNumber(it.price())})")
+                }
                 add("&bRare Items&f:")
                 data.rareItems.forEach { add(" ${it.lore} &7(${StringUtils.shortenNumber(it.price())})") }
                 add("&eProfit&f: $format${StringUtils.addCommasTruncate(profit)} &7(${StringUtils.shortenNumber(profit)})")
