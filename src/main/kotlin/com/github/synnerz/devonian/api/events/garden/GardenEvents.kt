@@ -46,6 +46,10 @@ object GardenEvents {
     private var visitorData: VisitorData? = null
 
     data class VisitorComponent(val string: String, val format: String)
+    data class VisitorCrop(val component: VisitorComponent, val amount: Int) {
+        fun price(): Int
+            = SkyblockPrices.buyPrice(component.string).roundToInt() * amount
+    }
     data class VisitorData(
         val name: VisitorComponent,
         val timesVisited: Int = 0,
@@ -63,8 +67,7 @@ object GardenEvents {
         val farmingXP: Int,
         val gardenXP: Int,
         val copper: Int,
-        val cropRequired: VisitorComponent,
-        val amountRequired: Int,
+        val requiredCrops: MutableList<VisitorCrop> = mutableListOf(),
     ) {
         fun profit(): Int {
             val totalPrice = copperPrice() + rareItemsPrice()
@@ -74,8 +77,7 @@ object GardenEvents {
 
         fun rareItemsPrice(): Int = rareItems.sumOf { it.price() }
 
-        fun requiredPrice(): Int
-            = SkyblockPrices.buyPrice(cropRequired.string).roundToInt() * amountRequired
+        fun requiredPrice(): Int = requiredCrops.sumOf { it.price() }
 
         fun copperPrice(): Int
             = (SkyblockPrices.buyPrice("ENCHANTMENT_GREEN_THUMB_1") / 1500).roundToInt() * copper
@@ -183,9 +185,7 @@ object GardenEvents {
         val lore = ItemUtils.lore(itemStack) ?: return
         val formattedLore = ItemUtils.lore(itemStack, true) ?: return
         val rareItems = mutableListOf<VisitorRareItem>()
-        var requiredItem = ""
-        var requiredItemFormatted = ""
-        var requiredAmount = 0
+        val required = mutableListOf<VisitorCrop>()
         var copper = 0
         var farmingXP = 0
         var gardenXP = 0
@@ -197,9 +197,11 @@ object GardenEvents {
             if (requiredItemMatch != null) {
                 val itemId = requiredItemMatch[1].uppercase().trim().replace(" ", "_")
                 val amount = requiredItemMatch[2].trim().replace("([,.]+)".toRegex(), "").toIntOrNull() ?: 1
-                requiredItem = if (itemId in normalToInternals) normalToInternals[itemId]!! else itemId
-                requiredItemFormatted = formattedLore[idx].replace("(§\\wx[\\d,.]+)".toRegex(), "").trim()
-                requiredAmount = amount
+                val comp = VisitorComponent(
+                    if (itemId in normalToInternals) normalToInternals[itemId]!! else itemId,
+                    formattedLore[idx].replace("(§\\wx[\\d,.]+)".toRegex(), "").trim(),
+                )
+                required.add(VisitorCrop(comp, amount))
                 continue
             }
 
@@ -244,8 +246,7 @@ object GardenEvents {
                 farmingXP,
                 gardenXP,
                 copper,
-                VisitorComponent(requiredItem, requiredItemFormatted),
-                requiredAmount
+                required,
             )).post()
         }
     }
