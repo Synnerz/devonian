@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.garden
 
-import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.PostRenderGuiEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.events.garden.GardenEvents
 import com.github.synnerz.devonian.config.Categories
@@ -48,7 +48,7 @@ object VisitorProfitDisplay : TextHudFeature(
             clearLines()
         }
 
-        on<RenderOverlayEvent> {
+        on<PostRenderGuiEvent> {
             draw(it.ctx)
         }
     }
