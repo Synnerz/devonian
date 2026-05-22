@@ -28,7 +28,7 @@ object GardenEvents {
     private val powderRegex = "^ \\+([\\d,]+) (?:Gemstone|Mithril) Powder$".toRegex()
     private val rareItemRegex = "^ ◆?([\\w' ]+)$".toRegex()
     // will not match if it's single or not enchanted form
-    private val requiredItemRegex = "^ ((?:Compacted|Enchanted) [\\w ]+) x([\\d,.]+)$".toRegex()
+    private val requiredItemRegex = "^ ([\\w ]+) x([\\d,.]+)$".toRegex()
     private val normalToInternals = mapOf(
         "MUTANT_NETHER_WART" to "MUTANT_NETHER_STALK",
         "ENCHANTED_NETHER_WART" to "ENCHANTED_NETHER_STALK",
@@ -194,7 +194,7 @@ object GardenEvents {
         for (idx in 0..lore.lastIndex) {
             val line = lore[idx]
             val requiredItemMatch = requiredItemRegex.matchEntire(line)?.groupValues
-            if (requiredItemMatch != null) {
+            if (requiredItemMatch != null && farmingXP == 0) {
                 val itemId = requiredItemMatch[1].uppercase().trim().replace(" ", "_")
                 val amount = requiredItemMatch[2].trim().replace("([,.]+)".toRegex(), "").toIntOrNull() ?: 1
                 val comp = VisitorComponent(
