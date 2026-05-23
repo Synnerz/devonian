@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.api.events.EntityJoinEvent
 import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
@@ -123,6 +124,15 @@ object BestiaryHighlight : Feature(
             if (!matches(data)) return@on
 
             entities.add(event.entityId - 1)
+        }
+
+        on<EntityJoinEvent> { event ->
+            val entity = event.entity as? LivingEntity ?: return@on
+            val name = entity.name.string
+            val data = MobData(name, entity.maxHealth.toDouble(), id = entity.id)
+            if (!matches(data)) return@on
+
+            entities.add(entity.id)
         }
 
         on<TickEvent> {
