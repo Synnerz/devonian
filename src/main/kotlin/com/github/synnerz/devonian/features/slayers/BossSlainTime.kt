@@ -17,6 +17,7 @@ object BossSlainTime : Feature(
     private val questCompletedRegex = "^Boss slain!$".toRegex()
     private val questCompletedChatRegex = "^  SLAYER QUEST COMPLETE!$".toRegex()
     private val questCompletedNoAutoStart = "^  NICE! SLAYER BOSS SLAIN!$".toRegex()
+    private val questFailedRegex = "^  SLAYER QUEST FAILED!$".toRegex()
     private var serverTicks = 0
     private var spawnedAtTicks = 0
     private var spawnedAtTime = 0L
@@ -42,6 +43,11 @@ object BossSlainTime : Feature(
         }
 
         on<ChatEvent> { event ->
+            event.matches(questFailedRegex)?.let {
+                reset()
+                return@on
+            }
+
             if (event.matches(questCompletedChatRegex) != null || event.matches(questCompletedNoAutoStart) != null) {
                 if (spawnedAtTicks == 0 || spawnedAtTime == 0L) return@on
 
