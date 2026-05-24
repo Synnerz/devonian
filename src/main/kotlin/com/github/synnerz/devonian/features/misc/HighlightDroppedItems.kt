@@ -3,6 +3,8 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.events.PostExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.StringUtils.colorCodes
+import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.client.renderer.entity.state.ItemEntityRenderState
 import net.minecraft.world.entity.item.ItemEntity
@@ -39,9 +41,15 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
         "",
         "Item Box Fill Alpha",
     )
+    private val SETTING_DISPLAY_NAME = addSwitch(
+        "displayName",
+        false,
+        "Displays the item's name and stack size",
+        "Display Name"
+    )
 
     private val items = WeakHashMap<ItemStack, Int>()
-    private val deferredItems = mutableListOf<Pair<Triple<Double, Double, Double>, Int>>()
+    private val deferredItems = mutableListOf<Triple<Triple<Double, Double, Double>, Int, String>>()
 
     override fun initialize() {
         on<PostExtractRenderEntityEvent> { event ->
@@ -53,19 +61,21 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
             }
             if (SETTING_BOX.get()) {
                 deferredItems.add(
-                    Pair(
+                    Triple(
                         Triple(
                             state.x,
                             state.y + sin(state.ageInTicks * 0.1 + state.bobOffset) * 0.1 + 0.1625,
                             state.z
-                        ), color
+                        ),
+                        color,
+                        "&ax${item.count} &f${item.customName?.colorCodes() ?: item.itemName.string}".replaceCodes(),
                     )
                 )
             } else if (state.outlineColor == 0) state.outlineColor = color
         }
 
         on<RenderWorldEvent> {
-            deferredItems.forEach { (pos, col) ->
+            deferredItems.forEach { (pos, col, name) ->
                 val (x, y, z) = pos
                 Render3DImmediate.renderWireframeBox(
                     x, y, z,
@@ -80,6 +90,13 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
                     0.3, 0.3,
                     Color(col or ((SETTING_FILL_ALPHA.get() * 255.0).toInt() shl 24), true),
                     centered = true,
+                )
+
+                if (SETTING_DISPLAY_NAME.get()) return@forEach
+                Render3DImmediate.renderString(
+                    name,
+                    x, y + 0.8, z,
+                    phase = true,
                 )
             }
             deferredItems.clear()
