@@ -41,6 +41,8 @@ object GardenEvents {
         "DEDICATION_IV" to "ENCHANTMENT_DEDICATION_4",
         "QUICKDRAW_CHIP" to "QUICKDRAW_GARDEN_CHIP",
         "HYPERCHARGE_CHIP" to "HYPERCHARGE_GARDEN_CHIP",
+        "DEDICATION_4" to "ENCHANTMENT_DEDICATION_4",
+        "DEDICATION_IV" to "ENCHANTMENT_DEDICATION_4",
     )
     private var lastGui: String? = null
     private var visitorData: VisitorData? = null
