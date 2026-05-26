@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.state.ItemEntityRenderState
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
 import java.awt.Color
+import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.sin
 
@@ -49,7 +50,7 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
     )
 
     private val items = WeakHashMap<ItemStack, Int>()
-    private val deferredItems = mutableListOf<Triple<Triple<Double, Double, Double>, Int, String>>()
+    private val deferredItems = mutableListOf<Triple<Triple<Double, Double, Double>, Int, WeakReference<ItemStack>>>()
 
     override fun initialize() {
         on<PostExtractRenderEntityEvent> { event ->
@@ -68,14 +69,14 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
                             state.z
                         ),
                         color,
-                        "&ax${item.count} &f${item.customName?.colorCodes() ?: item.itemName.string}".replaceCodes(),
+                        WeakReference(item),
                     )
                 )
             } else if (state.outlineColor == 0) state.outlineColor = color
         }
 
         on<RenderWorldEvent> {
-            deferredItems.forEach { (pos, col, name) ->
+            deferredItems.forEach { (pos, col, ref) ->
                 val (x, y, z) = pos
                 Render3DImmediate.renderWireframeBox(
                     x, y, z,
@@ -93,8 +94,10 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
                 )
 
                 if (SETTING_DISPLAY_NAME.get()) return@forEach
+                val item = ref.get() ?: return@forEach
+                val name = item.customName ?: return@forEach
                 Render3DImmediate.renderString(
-                    name,
+                    "&ax${item.count} &f${name.colorCodes()}".replaceCodes(),
                     x, y + 0.8, z,
                     phase = true,
                 )
