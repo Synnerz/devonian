@@ -66,6 +66,10 @@ object EstimatedValue : TextHudFeature(
         var ultimateEnchant: String? = null,
         var isDungeonItem: Boolean = false,
         var enrichment: String? = null,
+        var drillEngine: String? = null,
+        var drillFuelTank: String? = null,
+        var drillModule: String? = null,
+        var drillCoating: Boolean = false,
     ) {
         fun fuming(): Int = if (hpbs > 10) hpbs - 10 else 0
 
@@ -113,6 +117,16 @@ object EstimatedValue : TextHudFeature(
             else
                 SkyblockPrices.buyPrice("TALISMAN_ENRICHMENT_${enrichment}").toDouble()
 
+        fun drillEnginePrice(): Double = drillEngine?.let { SkyblockPrices.buyPrice(it).toDouble() } ?: 0.0
+
+        fun drillFuelTankPrice(): Double = drillFuelTank?.let { SkyblockPrices.buyPrice(it).toDouble() } ?: 0.0
+
+        fun drillModulePrice(): Double = drillModule?.let { SkyblockPrices.buyPrice(it).toDouble() } ?: 0.0
+
+        fun drillCoatingPrice(): Double =
+            if (drillCoating) SkyblockPrices.buyPrice("DIVAN_POWDER_COATING").toDouble()
+            else 0.0
+
         fun totalPrice(): Double {
             val basePriceData = basePrice()
             if (!basePriceData.auction)
@@ -139,6 +153,14 @@ object EstimatedValue : TextHudFeature(
                 price += starPrice()
             if (ability_scrolls.isNotEmpty())
                 price += abilityScrollsPrice()
+            if (drillEngine != null)
+                price += drillEnginePrice()
+            if (drillFuelTank != null)
+                price += drillFuelTankPrice()
+            if (drillModule != null)
+                price += drillModulePrice()
+            if (drillCoating)
+                price += drillCoatingPrice()
 
             if (price == basePriceData.price.toDouble())
                 return -1.0
@@ -176,6 +198,14 @@ object EstimatedValue : TextHudFeature(
                         add("&7- $name&f: &a${shortNum(SkyblockPrices.buyPrice(it).toDouble())}")
                     }
                 }
+                if (drillEngine != null)
+                    add("&5Drill Engine&f: &a${shortNum(drillEnginePrice())}")
+                if (drillFuelTank != null)
+                    add("&5Drill FuelTank&f: &a${shortNum(drillFuelTankPrice())}")
+                if (drillModule != null)
+                    add("&5Drill Module&f: &a${shortNum(drillModulePrice())}")
+                if (drillCoating)
+                    add("&6Drill Coating&f: &a${shortNum(drillCoatingPrice())}")
                 if (enrichment != null)
                     add("&9Enrichment&f: &a${shortNum(enrichmentPrice())}")
                 if (recomb)
@@ -248,6 +278,10 @@ object EstimatedValue : TextHudFeature(
                 isDungeonItem = (ItemUtils.lore(itemStack) ?: emptyList()).any { it.contains(" DUNGEON ") },
                 ability_scrolls = abilityScrolls?.map { it.asString().getOrNull() ?: "" } ?: emptyList(),
                 enrichment = enrichment,
+                drillEngine = extraAttributes.getString("drill_part_engine").getOrNull()?.uppercase(),
+                drillFuelTank = extraAttributes.getString("drill_part_fuel_tank").getOrNull()?.uppercase(),
+                drillModule = extraAttributes.getString("drill_part_upgrade_module").getOrNull()?.uppercase(),
+                drillCoating = extraAttributes.getInt("divan_powder_coating").isPresent,
             )
 
             itemCache[itemStack] = data
