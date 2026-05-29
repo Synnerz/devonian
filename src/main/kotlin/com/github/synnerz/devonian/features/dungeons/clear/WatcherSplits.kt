@@ -6,7 +6,6 @@ import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
-import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
@@ -57,7 +56,7 @@ object WatcherSplits : TextHudFeature(
             dialogTicks = EventBus.serverTicks()
         }
 
-        on<TickEvent> {
+        on<ClientThreadServerTickEvent> {
             if (Stages.WatcherClear.hasFinished() && !sent) {
                 ChatUtils.sendMessage(
                     Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]).joinToString(" &f| "),
