@@ -2,7 +2,11 @@ package com.github.synnerz.devonian.commands
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.BImgTextHudRenderer
+import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import net.minecraft.network.chat.Component
 
 object DevonianCommand {
@@ -64,6 +68,11 @@ object DevonianCommand {
                 "\n§r&r §f- §fResets the colors back to default"))
         1
     }
+    private val tabListMessages = mutableListOf<Component>()
+    private val dumptab = command.subcommand("dumptab") { _, args ->
+        tabListMessages.forEach { println("DumpTab(\"${it.string}\", \"${it.colorCodes()}\")") }
+        1
+    }
     private val catacombsFloors = listOf(
         "catacombs_floor_one",
         "catacombs_floor_two",
@@ -82,6 +91,14 @@ object DevonianCommand {
     )
 
     fun initialize() {
+        EventBus.on<TabUpdateEvent> { event ->
+            tabListMessages.add(event.comp)
+        }
+
+        EventBus.on<WorldChangeEvent> {
+            tabListMessages.clear()
+        }
+
         catacombsFloors.forEachIndexed { idx, cmd ->
             BaseCommand("f${idx + 1}") {
                 ChatUtils.command("joindungeon $cmd")
