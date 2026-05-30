@@ -409,6 +409,7 @@ object Devonian : ClientModInitializer {
             BestiaryHighlight,
             WebsocketClient,
             VisitorProfitDisplay,
+            LotusPityDisplay,
 
             // Debug
             CopyItem,
