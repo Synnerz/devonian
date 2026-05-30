@@ -92,6 +92,8 @@ object DevonianCommand {
 
     fun initialize() {
         EventBus.on<TabUpdateEvent> { event ->
+            if (tabListMessages.size >= 100)
+                tabListMessages.removeFirst()
             tabListMessages.add(event.comp)
         }
 
