@@ -20,7 +20,7 @@ import net.minecraft.world.item.Items
 // TODO: add it to fishing category whenever unlazy
 object LotusPityDisplay : TextHudFeature(
     "lotusPityDisplay",
-    "Displays your pity trophy fish for lotus atoll",
+    "Displays your pity trophy frog for lotus atoll (requires you to open /pity -> atoll section at least once, as well as having the tab widget fully visible)",
     Categories.MISC,
     "lotus atoll",
     subcategory = "General",
