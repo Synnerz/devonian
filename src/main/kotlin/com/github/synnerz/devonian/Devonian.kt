@@ -102,18 +102,6 @@ object Devonian : ClientModInitializer {
         )
     }
 
-    // TODO: delete me
-    val SETTING_KEEP_189 = ConfigData.Switch(
-        "keep189",
-        false,
-        null,
-        "§4Warning: use at your own risk. Forcibly reenables 1.8.9 features (sc. crouch/swim) past the set expiration date (previously the 22nd).",
-        "Reenable 1.8.9 Features",
-        "Mod",
-    ).also {
-        Config.registerCategory(it, Categories.GLOBAL, "Mod")
-    }
-
     val features = mutableListOf<Feature>()
     private val featureInstances by lazy {
         mutableListOf(
@@ -226,7 +214,6 @@ object Devonian : ClientModInitializer {
             HudManagerHider,
             BoxMimicChest,
             NoAbilityCdSound,
-            DisableSwim,
             CenteredCrosshair,
             DisableEnderPearlCooldown,
             HudManagerRenderer,
