@@ -300,7 +300,7 @@ object EstimatedValue : TextHudFeature(
 
         on<RenderOverlayEvent> {
             if (SETTING_ONLY_LORE.get() || lastItem == null) return@on
-            val cursorItem = minecraft.screen?.let { ScreenUtils.cursorStack(it) } ?: return@on
+            val cursorItem = minecraft.gui.screen()?.let { ScreenUtils.cursorStack(it) } ?: return@on
             if (cursorItem != lastItem) {
                 lastItem = null
                 clearLines()

@@ -254,8 +254,8 @@ object LootLogger : Feature(
         // what could go wrong
         if (slot !in 9..18) return
         if (
-            itemStack.item == Items.BLACK_STAINED_GLASS_PANE ||
-            itemStack.item == Items.GRAY_STAINED_GLASS_PANE ||
+            itemStack.item == Items.STAINED_GLASS_PANE.black ||
+            itemStack.item == Items.STAINED_GLASS_PANE.gray ||
             itemStack.isEmpty
         ) return
         val customName = itemStack.customName ?: return

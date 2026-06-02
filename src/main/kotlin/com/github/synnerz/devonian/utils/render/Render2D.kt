@@ -18,7 +18,7 @@ object Render2D {
     val window get() = Devonian.minecraft.window
     val mouse = Devonian.minecraft.mouseHandler
     val scale get() =
-        if (InventoryScale.isEnabled() && Devonian.minecraft.screen != null)
+        if (InventoryScale.isEnabled() && Devonian.minecraft.gui.screen() != null)
             InventoryScale.getScale()
         else
             Devonian.minecraft.window.guiScale
