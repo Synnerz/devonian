@@ -18,6 +18,7 @@ import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -34,13 +35,13 @@ object DragonHitCount : Feature(
 
     private var currType: M7Dragon? = null
     private var currId = 0
-    private var hits = mutableListOf(0)
+    private var hits = CopyOnWriteArrayList(mutableListOf(0))
 
     override fun initialize() {
         on<M7Events.DragonSpawned2> { event ->
             currType = event.dragon
             currId = 0
-            hits = mutableListOf(0)
+            hits = CopyOnWriteArrayList(mutableListOf(0))
         }
 
         on<PacketReceivedEvent> { event ->
@@ -114,12 +115,12 @@ object DragonHitCount : Feature(
 
         currType = null
         currId = 0
-        hits = mutableListOf(0)
+        hits = CopyOnWriteArrayList(mutableListOf(0))
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         currType = null
         currId = 0
-        hits = mutableListOf(0)
+        hits = CopyOnWriteArrayList(mutableListOf(0))
     }
 }

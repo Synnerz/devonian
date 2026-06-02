@@ -58,8 +58,26 @@ object ScoreDisplay : TextHudFeature(
         "Force Paul",
         searchTags = setOf("score"),
     ).also {
+        // FIXME: whenever set back to false it won't re-set it to true
+        //  if paul is actually in office
         it.onChange { v ->
             Dungeons.isPaul.value = v
+        }
+    }
+    private val SETTING_FORCE_NO_PAUL = addSwitch(
+        "noPaul",
+        false,
+        "Affects all score-related calculations.",
+        "Force No Paul",
+        searchTags = setOf("score"),
+    ).also {
+        Dungeons.isPaul.listen { v ->
+            if (v && it.value)
+                Dungeons.isPaul.value = false
+        }
+        it.onChange { v ->
+            if (!v) return@onChange
+            Dungeons.isPaul.value = false
         }
     }
 

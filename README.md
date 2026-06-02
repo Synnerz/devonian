@@ -2,6 +2,8 @@
 Devonian is a minecraft mod focused on enhancing your gameplay experience while playing Hypixel Skyblock.
 Adding various QOL features for a better experience while gaming.
 
+# NOTE: devonian **DOES NOT** have a website where you can download the mod other than: this repository (https://github.com/Synnerz/devonian) and the modrinth (https://modrinth.com/mod/devonian)
+
 # Features
 <details>
     <summary>

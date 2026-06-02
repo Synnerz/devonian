@@ -3,9 +3,10 @@ package com.github.synnerz.devonian
 import com.github.synnerz.devonian.api.*
 import com.github.synnerz.devonian.api.dungeon.CroesusListener
 import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.dungeon.DungeonsApi
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
-import com.github.synnerz.devonian.api.garden.GardenEvents
+import com.github.synnerz.devonian.api.events.garden.GardenEvents
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
@@ -99,18 +100,6 @@ object Devonian : ClientModInitializer {
                 "keybinds"
             )
         )
-    }
-
-    // TODO: delete me
-    val SETTING_KEEP_189 = ConfigData.Switch(
-        "keep189",
-        false,
-        null,
-        "§4Warning: use at your own risk. Forcibly reenables 1.8.9 features (sc. crouch/swim) past the set expiration date (previously the 22nd).",
-        "Reenable 1.8.9 Features",
-        "Mod",
-    ).also {
-        Config.registerCategory(it, Categories.GLOBAL, "Mod")
     }
 
     val features = mutableListOf<Feature>()
@@ -226,7 +215,6 @@ object Devonian : ClientModInitializer {
             HudManagerHider,
             BoxMimicChest,
             NoAbilityCdSound,
-            DisableSwim,
             CenteredCrosshair,
             DisableEnderPearlCooldown,
             HudManagerRenderer,
@@ -398,6 +386,19 @@ object Devonian : ClientModInitializer {
             CratesWaypoints,
             FixCrimsonIsleFog,
             SlayerDisplay,
+            EstimatedValue,
+            DevonianLeaderboard,
+            CroesusChestCounter,
+            PartyDuplicateAlert,
+            PartyNotFullAlert,
+            LootLogger,
+            AutoKick,
+            TeamSecretsStats,
+            PartyFinderStats,
+            BestiaryHighlight,
+            WebsocketClient,
+            VisitorProfitDisplay,
+            LotusPityDisplay,
 
             // Debug
             CopyItem,
@@ -452,7 +453,8 @@ object Devonian : ClientModInitializer {
         HypixelModApi.initialize()
         Party.initialize()
         CroesusListener.initialize()
-        MayorAPI.initialize()
+        MayorApi.initialize()
+        DungeonsApi.initialize()
         Stages.initialize()
         ChatUtils.initialize()
 

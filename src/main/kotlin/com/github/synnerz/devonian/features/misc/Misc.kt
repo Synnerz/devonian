@@ -49,7 +49,6 @@ object DisableChatAutoScroll : Feature(
     Categories.VANILLA_TWEAKS,
     subcategory = "Chat"
 )
-object DisableSwim : Feature("disableSwim", category = Categories.VANILLA_TWEAKS, cheeto = true)
 object CenteredCrosshair : Feature("centeredCrosshair", category = Categories.VANILLA_TWEAKS)
 object DisableEnderPearlCooldown : Feature("disableEnderPearlCooldown", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
 object DisableHungerBar : Feature("disableHungerBar", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")

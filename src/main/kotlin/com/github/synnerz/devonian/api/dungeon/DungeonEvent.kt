@@ -22,6 +22,11 @@ abstract class DungeonEvent {
         val total: Int,
         val room: DungeonRoom,
     ) : Event
+    class SecretPreUpdateEvent(
+        val current: Int,
+        val total: Int,
+        val room: DungeonRoom,
+    ) : Event
     class RoomUpdateEvent(
         val room: DungeonRoom,
         val previousCheck: CheckmarkTypes,

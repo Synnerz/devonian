@@ -29,4 +29,5 @@ object InventoryScale : Feature(
         }.prio = 1
     }
 
+    fun getScale() = SETTING_SCALE.get().roundToInt()
 }

@@ -140,7 +140,10 @@
           35
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [27, 93, 32]
+      ]
     },
     "roomID": 2
   },
@@ -190,7 +193,10 @@
           11
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [63, 70, 29]
+      ]
     },
     "roomID": 6
   },
@@ -318,7 +324,10 @@
       ],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [29, 61, 15]
+      ]
     },
     "roomID": 11
   },
@@ -346,7 +355,10 @@
           21
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [22, 66, 20]
+      ]
     },
     "roomID": 13
   },
@@ -471,7 +483,10 @@
       ],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [4, 62, 15]
+      ]
     },
     "roomID": 21
   },
@@ -576,7 +591,10 @@
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [13, 73, 25]
+      ]
     },
     "roomID": 24
   },
@@ -599,7 +617,10 @@
       ],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [6, 85, 2]
+      ]
     },
     "roomID": 25
   },
@@ -734,13 +755,12 @@
       "item": [],
       "essence": [],
       "bat": [
-        [
-          25,
-          75,
-          22
-        ]
+        [25, 73, 25]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [24, 75, 21]
+      ]
     },
     "roomID": 30
   },
@@ -842,7 +862,10 @@
           57
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [60, 90, 33]
+      ]
     },
     "roomID": 34
   },
@@ -886,7 +909,10 @@
           33
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [8, 84, 42]
+      ]
     },
     "roomID": 36
   },
@@ -908,7 +934,8 @@
           67,
           82,
           15
-        ]
+        ],
+        [69, 60, 10]
       ],
       "item": [
         [
@@ -925,7 +952,10 @@
           26
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [53, 70, 15]
+      ]
     },
     "roomID": 37
   },
@@ -981,7 +1011,10 @@
         ]
       ],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [35, 55, 29]
+      ]
     },
     "roomID": 40
   },
@@ -998,12 +1031,16 @@
           28,
           82,
           15
-        ]
+        ],
+        [28, 81, 25]
       ],
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [10, 70, 3]
+      ]
     },
     "roomID": 41
   },
@@ -1037,7 +1074,10 @@
         ]
       ],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [54, 69, 5]
+      ]
     },
     "roomID": 42
   },
@@ -1093,7 +1133,10 @@
           9
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [28, 83, 3]
+      ]
     },
     "roomID": 44
   },
@@ -1176,7 +1219,10 @@
           11
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [39, 71, 45]
+      ]
     },
     "roomID": 46
   },
@@ -1238,7 +1284,10 @@
           2
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [54, 59, 28]
+      ]
     },
     "roomID": 50
   },
@@ -1276,7 +1325,10 @@
         ]
       ],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [26, 84, 9]
+      ]
     },
     "roomID": 53
   },
@@ -1454,7 +1506,10 @@
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [92, 76, 20]
+      ]
     },
     "roomID": 61
   },
@@ -1499,7 +1554,10 @@
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [19, 79, 26]
+      ]
     },
     "roomID": 63
   },
@@ -1608,7 +1666,10 @@
       ],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [21, 83, 15]
+      ]
     },
     "roomID": 67
   },
@@ -1732,7 +1793,12 @@
       ],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [52, 79, 9],
+        [14, 80, 3],
+        [34, 79, 59]
+      ]
     },
     "roomID": 73
   },
@@ -1881,7 +1947,10 @@
           14
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [63, 69, 26]
+      ]
     },
     "roomID": 77
   },
@@ -1999,7 +2068,10 @@
         ]
       ],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [24, 88, 26]
+      ]
     },
     "roomID": 81
   },
@@ -2116,7 +2188,10 @@
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [20, 69, 23]
+      ]
     },
     "roomID": 87
   },
@@ -2153,7 +2228,11 @@
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [42, 81, 57],
+        [58, 70, 36]
+      ]
     },
     "roomID": 88
   },
@@ -2182,7 +2261,10 @@
         ]
       ],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [27, 81, 15]
+      ]
     },
     "roomID": 89
   },
@@ -2210,7 +2292,10 @@
           23
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [3, 70, 9]
+      ]
     },
     "roomID": 90
   },
@@ -2379,7 +2464,10 @@
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [15, 70, 23]
+      ]
     },
     "roomID": 97
   },
@@ -2450,7 +2538,10 @@
         ]
       ],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [7, 84, 5]
+      ]
     },
     "roomID": 99
   },
@@ -2566,7 +2657,11 @@
       ],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [5, 76, 2],
+        [8, 91, 32]
+      ]
     },
     "roomID": 103
   },
@@ -2610,7 +2705,11 @@
           8
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [9, 98, 24],
+        [12, 131, 7]
+      ]
     },
     "roomID": 104
   },
@@ -2659,7 +2758,10 @@
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [25, 84, 28]
+      ]
     },
     "roomID": 107
   },
@@ -2743,7 +2845,10 @@
         ]
       ],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [31, 82, 28]
+      ]
     },
     "roomID": 110
   },
@@ -2851,6 +2956,9 @@
           70,
           26
         ]
+      ],
+      "lever": [
+        [5, 70, 27]
       ]
     },
     "roomID": 114
@@ -2890,7 +2998,10 @@
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [17, 80, 1]
+      ]
     },
     "roomID": 117
   },
@@ -3001,7 +3112,10 @@
           57
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [55, 71, 37]
+      ]
     },
     "roomID": 121
   },
@@ -3039,7 +3153,11 @@
           15
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [43, 59, 15],
+        [45, 59, 15]
+      ]
     },
     "roomID": 122
   },
@@ -3201,7 +3319,10 @@
           19
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [52, 94, 15]
+      ]
     },
     "roomID": 131
   },
@@ -3246,7 +3367,10 @@
           45
         ]
       ],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [15, 82, 19]
+      ]
     },
     "roomID": 133
   },
@@ -3376,7 +3500,10 @@
       "item": [],
       "essence": [],
       "bat": [],
-      "redstone": []
+      "redstone": [],
+      "lever": [
+        [15, 75, 29]
+      ]
     },
     "roomID": 140
   },
@@ -3421,6 +3548,9 @@
           71,
           4
         ]
+      ],
+      "lever": [
+        [15, 68, 15]
       ]
     },
     "roomID": 143
@@ -3441,5 +3571,85 @@
       "redstone": []
     },
     "roomID": 145
+  },
+  {
+    "name": "Pillars",
+    "waypoints": {
+      "chest": [
+        [24, 69, 19]
+      ],
+      "item": [],
+      "essence": [],
+      "bat": [],
+      "redstone": [],
+      "lever": [
+        [24, 88, 3]
+      ]
+    },
+    "roomID": 116
+  },
+  {
+    "name": "Rare Carpets",
+    "waypoints": {
+      "chest": [
+        [15, 85, 15]
+      ],
+      "item": [],
+      "essence": [],
+      "bat": [],
+      "redstone": []
+    },
+    "roomID": 144
+  },
+  {
+    "name": "Rare Overgrown",
+    "waypoints": {
+      "chest": [
+        [5, 69, 7]
+      ],
+      "item": [
+        [19, 83, 28]
+      ],
+      "essence": [],
+      "bat": [
+        [7, 75, 9]
+      ],
+      "redstone": [],
+      "lever": [
+        [15, 85, 2]
+      ]
+    },
+    "roomID": 49
+  },
+  {
+    "name": "Lava Pit",
+    "waypoints": {
+      "chest": [
+        [23, 92, 3],
+        [15, 63, 13]
+      ],
+      "item": [
+        [2, 88, 14]
+      ],
+      "essence": [],
+      "bat": [],
+      "redstone": [],
+      "lever": []
+    },
+    "roomID": 125
+  },
+  {
+    "name": "Three Floors",
+    "waypoints": {
+      "chest": [
+        [12, 89, 13]
+      ],
+      "item": [],
+      "essence": [],
+      "bat": [],
+      "redstone": [],
+      "lever": []
+    },
+    "roomID": 128
   }
 ]

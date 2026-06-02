@@ -47,8 +47,11 @@ object SlotLocking : Feature(
         "Locked Slot Outline Color",
     )
 
+    // TODO: make profile based as well
     private const val KEY_NAME = "slotsLocked"
+    private const val KEY_NAME_RIFT = "slotsLockedRift"
     private val lockedSlots = Array(40) { false }
+    private val lockedSlotsRift = Array(40) { false }
     private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.slotLocking",
@@ -67,6 +70,9 @@ object SlotLocking : Feature(
             Config.get<List<JsonPrimitive>>(KEY_NAME)?.map { it.asBoolean }?.forEachIndexed { i, v ->
                 lockedSlots[i] = v
             }
+            Config.get<List<JsonPrimitive>>(KEY_NAME_RIFT)?.map { it.asBoolean }?.forEachIndexed { idx, bool ->
+                lockedSlotsRift[idx] = bool
+            }
         }
 
         Config.onPreSave {
@@ -75,10 +81,11 @@ object SlotLocking : Feature(
             lockedSlots.forEach { array.add(it) }
 
             Config.set(KEY_NAME, array)
+            Config.set(KEY_NAME_RIFT, JsonArray().also { lockedSlotsRift.forEach { v -> it.add(v) } })
         }
 
         on<PreventItem.SlotEvent> { event ->
-            val locked = lockedSlots.getOrNull(event.idx) ?: return@on
+            val locked = lockSlots().getOrNull(event.idx) ?: return@on
             if (locked) event.cancel("SlotLocking")
         }
 
@@ -93,8 +100,8 @@ object SlotLocking : Feature(
 
             val idx = slot.containerSlot
 
-            val containsSlot = lockedSlots.getOrNull(idx) ?: return@on
-            lockedSlots[idx] = !containsSlot
+            val containsSlot = lockSlots().getOrNull(idx) ?: return@on
+            lockSlots()[idx] = !containsSlot
             minecraft.level?.playPlayerSound(
                 TOGGLE_SOUND,
                 SoundSource.MASTER,
@@ -117,7 +124,7 @@ object SlotLocking : Feature(
 
             val idx = slot.containerSlot
 
-            val locked = lockedSlots.getOrNull(idx) ?: return@on
+            val locked = lockSlots().getOrNull(idx) ?: return@on
             if (!locked) return@on
 
             if (SlotBinding.compatIsRendering(slot)) {
@@ -140,7 +147,7 @@ object SlotLocking : Feature(
 
             event.container.menu.slots.forEach { slot ->
                 if (slot.container !== inv) return@forEach
-                if (lockedSlots.getOrNull(slot.containerSlot) != true) return@forEach
+                if (lockSlots().getOrNull(slot.containerSlot) != true) return@forEach
 
                 event.ctx.guiRenderState.addGuiElement(
                     TexturedQuadRenderState(
@@ -161,6 +168,10 @@ object SlotLocking : Feature(
             setEnabled(SETTING_STYLE.state.map { it == 0 })
         }
     }
+
+    fun lockSlots(): Array<Boolean> =
+        if (Location.area == "the rift") lockedSlotsRift
+        else lockedSlots
 
     // from sba
     private val mcidLock = Identifier.fromNamespaceAndPath("devonian", "lock")

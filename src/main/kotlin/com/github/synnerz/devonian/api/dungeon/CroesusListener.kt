@@ -79,6 +79,7 @@ object CroesusListener {
         val hasNoChest: Boolean = false,
         val canOpen: Boolean = false,
         val slot: Int,
+        val canKismet: Boolean = true,
         // page would go here, but it does not exist in the same tick
     )
 
@@ -171,21 +172,28 @@ object CroesusListener {
         val itemStack = event.itemStack
         if (itemStack.item != Items.PLAYER_HEAD) return
         val lore = ItemUtils.lore(itemStack) ?: return
+        val formattedLore = ItemUtils.lore(itemStack, true) ?: return
 
         var hasOpened = false
         var hasNoChest = false
         var canOpen = false
+        var canKismet = true
 
-        for (line in lore) {
+        for (idx in 0..lore.lastIndex) {
+            val line = lore[idx]
+
             if (line.contains("Opened Chest: "))
                 hasOpened = true
             else if (line.contains("No more chests to open!"))
                 hasNoChest = true
             else if (line == "No chests opened yet!")
                 canOpen = true
+            else if (line.contains("Kismet Feather")) {
+                canKismet = !formattedLore[idx].contains("§8§mKismet Feather")
+            }
         }
 
-        Scheduler.scheduleTask { CroesusChestSet(CroesusChest(hasOpened, hasNoChest, canOpen, slot)).post() }
+        Scheduler.scheduleTask { CroesusChestSet(CroesusChest(hasOpened, hasNoChest, canOpen, slot, canKismet)).post() }
     }
 
     fun onCroesusChest(event: ServerContainerSetSlotEvent) {

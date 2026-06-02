@@ -2,13 +2,15 @@ package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.ServerContainerSetContentEvent
+import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
-import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
+import com.github.synnerz.devonian.utils.StringUtils.colorCodes
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
 object QuiverDisplay : TextHudFeature(
@@ -35,72 +37,28 @@ object QuiverDisplay : TextHudFeature(
         "sends a low arrow alert when the number of arrows drops below this amount",
         "Low Arrow Alert",
     )
-
     // TODO: add quiver refill cost (but no one uses so)
-
     private val quiverSizes = listOf(
         5 * 9 * 64,
         4 * 9 * 64,
         3 * 9 * 64
     )
-    // TODO: dont remove formatting on lore :pray:
-    private val arrowColors = mapOf(
-        "Flint Arrow" to "§f",
-        "Reinforced Iron Arrow" to "§f",
-        "Gold-tipped Arrow" to "§f",
-        "Redstone-tipped Arrow" to "§a",
-        "Emerald-tipped Arrow" to "§a",
-        "Bouncy Arrow" to "§9",
-        "Icy Arrow" to "§9",
-        "Armorshred Arrow" to "§9",
-        "Explosive Arrow" to "§9",
-        "Glue Arrow" to "§9",
-        "Nansorb Arrow" to "§9",
-        "Magma Arrow" to "§5",
-    )
-
-    private val arrowRegex = "Active Arrow: ([A-Za-z ]+) \\((\\d+)\\)".toRegex()
+    private val arrowRegex = "^Arrows Remaining: ([\\d,]+)$".toRegex()
 
     private var sentAlert = false
 
     override fun initialize() {
-        on<PacketReceivedEvent> { event ->
-            val item = when (val packet = event.packet) {
-                is ClientboundContainerSetContentPacket -> {
-                    if (packet.containerId != 0) return@on
-                    packet.items.getOrNull(44)
-                }
-                is ClientboundContainerSetSlotPacket -> {
-                    if (packet.containerId != 0) return@on
-                    if (packet.slot != 44) return@on
-                    packet.item
-                }
-                else -> null
-            } ?: return@on
+        on<ServerContainerSetSlotEvent> { event ->
+            if (event.containerId != 0) return@on
+            val arrowSlot = if (Dungeons.timeElapsed.value > 0 && !Dungeons.inBoss.value) 9 else 44
+            if (event.slot != arrowSlot) return@on
 
-            val mcItem = item.item
-            if (mcItem !== Items.FEATHER && mcItem !== Items.ARROW) return@on
+            setArrows(event.itemStack)
+        }
 
-            val lore = ItemUtils.lore(item) ?: return@on
-
-            lore.forEach {
-                val match = arrowRegex.find(it) ?: return@forEach
-                val name = match.groupValues.getOrNull(1) ?: return@on
-                val amount = match.groupValues.getOrNull(2)?.toIntOrNull() ?: return@on
-                if (amount <= SETTING_ALERT_BELOW.get()) {
-                    if (!sentAlert) Alert.show("&cLow on Arrows", 1000)
-                    sentAlert = true
-                } else sentAlert = false
-
-                val amountFormat =
-                    if (SETTING_COLOR_AMOUNT.get()) StringUtils.colorForNumber(
-                        amount,
-                        quiverSizes.getOrElse(SETTING_QUIVER_SIZE.get()) { 2880 }
-                    ) else "&a"
-                val text = "${arrowColors[name] ?: ""}$name &fx$amountFormat$amount"
-
-                Scheduler.scheduleTask { setLine(text) }
-            }
+        on<ServerContainerSetContentEvent> { event ->
+            if (event.containerId != 0) return@on
+            setArrows(event.items.getOrNull(if (Dungeons.timeElapsed.value > 0 && !Dungeons.inBoss.value) 9 else 44) ?: return@on)
         }
 
         on<RenderOverlayEvent> { event ->
@@ -109,4 +67,30 @@ object QuiverDisplay : TextHudFeature(
     }
 
     override fun getEditText(): List<String> = listOf("&5Flint Arrow &fx&26969")
+
+    private fun setArrows(itemStack: ItemStack) {
+        if (itemStack.item != Items.ARROW && itemStack.item != Items.FEATHER) return
+        val name = itemStack.customName?.colorCodes() ?: return
+        val lore = ItemUtils.lore(itemStack) ?: return
+
+        for (line in lore) {
+            val match = arrowRegex.matchEntire(line)?.groupValues ?: continue
+            val amount = match[1].replace(",", "").toIntOrNull() ?: continue
+            if (amount <= SETTING_ALERT_BELOW.get()) {
+                if (!sentAlert) Alert.show("&cLow on Arrows", 1000)
+                sentAlert = true
+            } else sentAlert = false
+
+            val amountFormat =
+                if (SETTING_COLOR_AMOUNT.get()) StringUtils.colorForNumber(
+                    amount,
+                    quiverSizes.getOrElse(SETTING_QUIVER_SIZE.get()) { 2880 }
+                ) else "&a"
+
+            Scheduler.scheduleTask {
+                setLine("$name &fx$amountFormat$amount")
+            }
+            break
+        }
+    }
 }

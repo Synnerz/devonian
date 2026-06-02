@@ -29,6 +29,9 @@ public class MinecraftMixin {
     @Final
     public Gui gui;
 
+    @Shadow
+    private static Minecraft instance;
+
     @Inject(
             method = "setScreenAndShow",
             at = @At("HEAD"),
@@ -89,5 +92,10 @@ public class MinecraftMixin {
         if (!new ClientBlockInteractEvent(item, pos).post()) return original.call(instance, localPlayer, interactionHand, blockHitResult);
 
         return InteractionResult.PASS;
+    }
+
+    @Inject(method = "disconnectFromWorld", at = @At("HEAD"))
+    private void devonian$onClientDestroy(CallbackInfo ci) {
+        new WorldDestroyEvent(instance).post();
     }
 }

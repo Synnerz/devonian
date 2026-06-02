@@ -16,6 +16,7 @@ import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
@@ -31,6 +32,13 @@ object ChestProfit : TextHudFeature(
     Categories.DUNGEONS,
     subcategory = "HUD",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(
+            Location.stateInArea("catacombs")
+                .zip(Location.stateInArea("dungeon hub"), Boolean::or)
+        )
+    }
+
     private val SETTING_USE_ESSENCE_PROFIT = addSwitch(
         "useEssenceProfit",
         true,

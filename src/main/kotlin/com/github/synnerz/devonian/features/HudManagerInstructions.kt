@@ -10,6 +10,7 @@ object HudManagerInstructions : TextHudFeature("hudManagerInstructions", isInter
         "Alternatively, use the &lArrow Keys&r.",
         "&lScroll&r to resize an element.",
         "Alternatively, use the &l-&r/&l+ Keys.",
+        "&lHold (CONTROL)CTRL while clicking to multi drag huds",
         "For Text Elements ONLY:",
         "&l1&r to change the anchor.",
         "&l2&r to change the alignment.",

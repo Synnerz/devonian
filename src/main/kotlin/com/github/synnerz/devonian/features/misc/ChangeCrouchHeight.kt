@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -27,13 +26,6 @@ object ChangeCrouchHeight : Feature(
         "",
         "Use 1.8.9 Crouch Height",
     )
-    private val SETTING_CHANGE_ACTUAL_HEIGHT = addSwitch(
-        "nonVisual",
-        false,
-        "NON VISUAL. Will ban if you spam jump under slabs etc.",
-        "Change Actual Crouch Height",
-        cheeto = true,
-    )
 
     fun getEyeHeight(): Float {
         val player = minecraft.player ?: return 0f
@@ -45,8 +37,6 @@ object ChangeCrouchHeight : Feature(
         if (SETTING_USE_189_HEIGHT.get() && !Location.stateInLatestArea.value && pose == Pose.CROUCHING) return 1.54f
         return player.getDimensions(pose).eyeHeight
     }
-
-    fun changeNonVisual() = SETTING_CHANGE_ACTUAL_HEIGHT.get() && !Location.stateInLatestArea.value && Devonian.SETTING_KEEP_189.get()
 
     private var wasCrouching = false
 

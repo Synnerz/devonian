@@ -149,6 +149,29 @@ open class ConfigData<T>(
         isHidden,
     )
 
+    class TimeSlider<T : Number>(
+        configName: String,
+        value: T,
+        parent: FeatureSwitch?,
+        val min: Double,
+        val max: Double,
+        description: String? = null,
+        displayName: String? = null,
+        subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
+        isHidden: Boolean = false,
+    ) : ConfigData<T>(
+        configName,
+        ConfigType.TIMESLIDER,
+        value,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        searchTags,
+        isHidden
+    )
+
     class Button(
         val onClick: () -> Unit,
         val btnTitle: String = "Click!",
