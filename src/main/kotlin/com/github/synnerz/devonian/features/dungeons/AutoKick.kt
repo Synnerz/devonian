@@ -61,6 +61,8 @@ object AutoKick : Feature(
     private val partyFinderJoinRegex = "^Party Finder > (\\w{1,16}) joined the dungeon group! \\((?:Healer|Tank|Mage|Berserk|Archer) Level \\d+\\)$".toRegex()
     private val partyFinderFloorRegex = "^Floor: Floor ([IV]+)$".toRegex()
     private val partyFinderFloorTypeRegex = "^Dungeon: (Master Mode )?The Catacombs$".toRegex()
+    private val partyFinderCreateRegex = "^Party Finder > Your party has been queued in the dungeon finder!$".toRegex()
+    private val partyFinderQueueingRegex = "^Queueing your party\\.\\.\\.$".toRegex()
     private val partyBuilderFloorRegex = "^Currently Selected: Floor ([IV]+)$".toRegex()
     private val partyBuilderFloorTypeRegex = "^Currently Selected: (Master Mode )?The Catacombs$".toRegex()
     private val partyBuilderNoteRegex = "^Current Note:$".toRegex()
@@ -82,41 +84,7 @@ object AutoKick : Feature(
     private var lastRequest = ""
 
     override fun initialize() {
-        DungeonsApi.on { username, data ->
-            if (!Party.inParty || !Party.isLeader) return@on
-            if (!SETTING_IGNORE_FLOOR.get() && (currentFloor + if (isMMFloor) 7 else 0) == SETTING_FLOOR.get()) return@on
-            if (lastRequest.isEmpty()) return@on
-            if (username != lastRequest) return@on
-            lastRequest = ""
-            val pbMode = when (SETTING_PB_MODE.get()) {
-                0 -> "s"
-                1 -> "s_plus"
-                else -> return@on
-            }
-            val pb =
-                if (isMMFloor)
-                    data.masterPBs()[pbMode]?.get("floor_${currentFloor}_ms")
-                else
-                    data.normalPBs()[pbMode]?.get("floor_${currentFloor}_ms")
-            val seconds = pb?.toIntOrNull()?.let { it / 1000 }
-            if (seconds == null) {
-                ChatUtils.sendMessage("&cAutoKick could not find the pb &7(pb is likely none)", true)
-                return@on
-            }
-            val mp = data.magicalPower()
-            val allow =
-                mp >= SETTING_MINIMUM_MP.get() &&
-                seconds <= SETTING_MINIMUM_PB.get()
-            if (allow) return@on
-
-            ChatUtils.sendMessage("&bAutoKick $username does not meet the requirements | ${StringUtils.formatSeconds(seconds.toLong())} | $mp", true)
-            Scheduler.scheduleTask {
-                ChatUtils.command("pc Kick $username does not meet requirements | PB ${StringUtils.formatSeconds(seconds.toLong())} | MP $mp")
-                Scheduler.scheduleTask(10) {
-                    ChatUtils.command("p kick $username")
-                }
-            }
-        }
+        DungeonsApi.on { username, data -> onResponse(username, data) }
 
         on<ServerContainerOpenEvent> { event ->
             inPF = event.titleStr == "Party Finder"
@@ -159,11 +127,20 @@ object AutoKick : Feature(
         }
 
         on<ChatEvent> { event ->
+            event.matches(partyFinderCreateRegex)?.let {
+                Party.inParty = true
+                return@on
+            }
+            event.matches(partyFinderQueueingRegex)?.let {
+                Party.isLeader = true
+                return@on
+            }
+
             val match = event.matches(partyFinderJoinRegex) ?: return@on
             val username = match.firstOrNull() ?: return@on
 
-            lastRequest = username
-            DungeonsApi.requestPlayer(username)
+            lastRequest = username.lowercase()
+            DungeonsApi.playerOrRequest(username)?.let { onResponse(lastRequest, it) }
         }
     }
 
@@ -203,6 +180,44 @@ object AutoKick : Feature(
             }
             currentFloor = StringUtils.parseRoman(match)
             break
+        }
+    }
+
+    private fun onResponse(username: String, data: DungeonsApi.DungeonsApiResult) {
+        if (!Party.inParty || !Party.isLeader) return
+        if (!SETTING_IGNORE_FLOOR.get() && (currentFloor + if (isMMFloor) 7 else 0) == SETTING_FLOOR.get()) return
+        if (lastRequest.isEmpty()) return
+        if (username != lastRequest) return
+
+        lastRequest = ""
+
+        val pbMode = when (SETTING_PB_MODE.get()) {
+            0 -> "s"
+            1 -> "s_plus"
+            else -> return
+        }
+        val pb =
+            if (isMMFloor)
+                data.masterPBs()[pbMode]?.get("floor_${currentFloor}_ms")
+            else
+                data.normalPBs()[pbMode]?.get("floor_${currentFloor}_ms")
+        val seconds = pb?.toIntOrNull()?.let { it / 1000 }
+        if (seconds == null) {
+            ChatUtils.sendMessage("&cAutoKick could not find the pb &7(pb is likely none)", true)
+            return
+        }
+        val mp = data.magicalPower()
+        val allow =
+            mp >= SETTING_MINIMUM_MP.get() &&
+            seconds <= SETTING_MINIMUM_PB.get()
+        if (allow) return
+
+        ChatUtils.sendMessage("&bAutoKick $username does not meet the requirements | ${StringUtils.formatSeconds(seconds.toLong())} | $mp", true)
+        Scheduler.scheduleTask {
+            ChatUtils.command("pc Kick $username does not meet requirements | PB ${StringUtils.formatSeconds(seconds.toLong())} | MP $mp")
+            Scheduler.scheduleTask(10) {
+                ChatUtils.command("p kick $username")
+            }
         }
     }
 }
