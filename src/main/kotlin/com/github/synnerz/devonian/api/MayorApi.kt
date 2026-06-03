@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.utils.PersistentJson
 import java.util.concurrent.TimeUnit
 
-object MayorAPI {
+object MayorApi {
     var mayorData: MayorData? = null
 
     data class MayorPerkData(
@@ -62,4 +62,10 @@ object MayorAPI {
         if (mayorData == null) return false
         return mayorData!!.perks?.any { it.name.lowercase() == "mythological ritual" } ?: false || mayorData!!.minister?.perk?.name?.lowercase() == "mythological ritual"
     }
+
+    fun isDerpy(): Boolean =
+        if (mayorData == null)
+            false
+        else
+            mayorData!!.name.lowercase() == "derpy" && mayorData!!.key == "derp"
 }

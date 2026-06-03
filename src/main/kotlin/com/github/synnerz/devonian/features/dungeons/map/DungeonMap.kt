@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.map
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.bufimgrenderer.BufferedImageRenderer
@@ -16,6 +17,7 @@ import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.mixin.accessor.ScreenAccessor
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.BoundingBox
+import com.github.synnerz.devonian.utils.PersistentJson
 import com.github.synnerz.devonian.utils.math.MathUtils
 import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
@@ -30,6 +32,7 @@ import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.Identifier
 import org.joml.Matrix3x2f
 import java.awt.Color
+import java.util.Base64
 import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.cos
@@ -42,6 +45,10 @@ object DungeonMap : HudFeature(
     "catacombs",
     subcategory = "Toggle",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Dungeons.inBoss.map(Boolean::not).zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
+    }
+
     private val SETTING_MC_TEXT = addSwitch(
         "mcText",
         true,
@@ -210,6 +217,138 @@ object DungeonMap : HudFeature(
         "Set",
         "default",
         displayName = "Default Style",
+        subcategory = "Presets"
+    )
+    private val SETTING_IMPORT_STYLE = addButton(
+        {
+            val encode = minecraft.keyboardHandler.clipboard
+            if (encode.isEmpty()) {
+                ChatUtils.sendMessage("&cDungeonMap invalid import", true)
+                return@addButton
+            }
+
+            val decoded = Base64.getDecoder().decode(encode)
+            val json = PersistentJson.gson.fromJson(decoded.toString(Charsets.UTF_8), DungeonMapPreset::class.java)
+
+            SETTING_DOOR_SIZE.set(json.doorSize)
+            SETTING_MARKER_SCALE.set(json.markerScale)
+            SETTING_HEAD_SCALE.set(json.headScale)
+            SETTING_NAME_SCALE.set(json.nameScale)
+            SETTING_TEXT_SIZE.set(json.textSize)
+            SETTING_MAP_BORDER.set(json.mapBorderSize)
+            SETTING_MAP_PADDING.set(json.mapPadding)
+            SETTING_ROOM_SIZE.set(json.roomSize)
+            SETTING_ICON_SIZE.set(json.iconSize)
+            SETTING_HIDDEN_ROOM_DARKEN.set(json.hiddenRoomFactor)
+            SETTING_TEXT_ALIGNMENT.set(json.textAlignment)
+            SETTING_ICON_ALIGNMENT.set(json.iconAlignment)
+            SETTING_TEXT_SHADOW.set(json.textShadow)
+            SETTING_ICON_STYLE.set(json.iconStyle)
+            SETTING_RENDER_NAMES_ONLY_LEAP.set(json.renderNamesOnlyLeap)
+            SETTING_USE_PLAYER_HEADS.set(json.usePlayerHeads)
+            SETTING_USE_MARKER_SELF.set(json.useMarkerSelf)
+            SETTING_RENDER_ROOM_NAMES.set(json.renderRoomNames)
+            SETTING_RENDER_PUZZLE_ICON.set(json.renderPuzzleIcon)
+            SETTING_RENDER_PUZZLE_NAME.set(json.renderPuzzleName)
+            SETTING_NORMAL_DOOR_DYNAMIC.set(json.normalDoorDynamic)
+            SETTING_RENDER_FAIRY_CHECK.set(json.renderFairyCheck)
+            SETTING_RENDER_ROOM_NAMES_NOT_EFB.set(json.renderRoomNamesNotEFB)
+            SETTING_DONT_RENDER_YELLOW_NAME.set(json.dontRenderYellowName)
+            SETTING_RENDER_NAMES.set(json.renderNames)
+            SETTING_MC_TEXT.set(json.mcFont)
+            SETTING_USE_CLASS_NAME.set(json.useRoleName)
+            SETTING_COLOR_NAME_BY_CLASS.set(json.colorNameByRole)
+            SETTING_COLOR_MARKER_BY_CLASS.set(json.colorMarkerByRole)
+            SETTING_RENDER_CHECKMARK.set(json.renderCheckmark)
+            SETTING_RENDER_SECRET_COUNT.set(json.renderSecretCount)
+            SETTING_COLOR_ROOM_TEXT.set(json.colorRoomText)
+            SETTING_ROTATE.set(json.rotate)
+            SETTING_DONT_RENDER_CHECK_IF_NAME.set(json.dontRenderCheckIfName)
+            SETTING_DONT_RENDER_SECRET_1.set(json.dontRenderSecret1)
+            SETTING_CHECK_IF_GREEN.set(json.checkIfGreen)
+            SETTING_RENDER_CHECK_IF_0.set(json.renderCheckIf0)
+
+            SETTING_MAP_BACKGROUND_COLOR.set(json.mapBackground)
+            SETTING_ROOM_ENTRANCE_COLOR.set(json.entranceRoomColor)
+            SETTING_ROOM_NORMAL_COLOR.set(json.normalRoomColor)
+            SETTING_ROOM_MINIBOSS_COLOR.set(json.miniBossRoomColor)
+            SETTING_NORMAL_DOOR_COLOR.set(json.normalDoorColor)
+            SETTING_ROOM_PUZZLE_COLOR.set(json.puzzleRoomColor)
+            SETTING_ROOM_YELLOW_COLOR.set(json.yellowRoomColor)
+            SETTING_ROOM_FAIRY_COLOR.set(json.fairyRoomColor)
+            SETTING_ROOM_BLOOD_COLOR.set(json.bloodRoomColor)
+            SETTING_ROOM_TRAP_COLOR.set(json.trapRoomColor)
+            SETTING_ROOM_UNKNOWN_COLOR.set(json.unknownRoomColor)
+            SETTING_DOOR_WITHER_COLOR.set(json.witherDoorColor)
+
+            ChatUtils.sendMessage("&aSuccessfully imported &6DungeonMap&a preset", true)
+        },
+        "Import",
+        "Imports the style in your clipboard",
+        displayName = "Import Style",
+        subcategory = "Presets"
+    )
+    private val SETTING_EXPORT_STYLE = addButton(
+        {
+            val json = PersistentJson.gson.toJson(DungeonMapPreset(
+                SETTING_DOOR_SIZE.get(),
+                SETTING_MARKER_SCALE.get(),
+                SETTING_HEAD_SCALE.get(),
+                SETTING_NAME_SCALE.get(),
+                SETTING_TEXT_SIZE.get(),
+                SETTING_MAP_BORDER.get(),
+                SETTING_MAP_PADDING.get(),
+                SETTING_ROOM_SIZE.get(),
+                SETTING_ICON_SIZE.get(),
+                SETTING_HIDDEN_ROOM_DARKEN.get(),
+                SETTING_TEXT_ALIGNMENT.get(),
+                SETTING_ICON_ALIGNMENT.get(),
+                SETTING_TEXT_SHADOW.get(),
+                SETTING_ICON_STYLE.get(),
+                SETTING_RENDER_NAMES_ONLY_LEAP.get(),
+                SETTING_USE_PLAYER_HEADS.get(),
+                SETTING_USE_MARKER_SELF.get(),
+                SETTING_RENDER_ROOM_NAMES.get(),
+                SETTING_RENDER_PUZZLE_ICON.get(),
+                SETTING_RENDER_PUZZLE_NAME.get(),
+                SETTING_NORMAL_DOOR_DYNAMIC.get(),
+                SETTING_RENDER_FAIRY_CHECK.get(),
+                SETTING_RENDER_ROOM_NAMES_NOT_EFB.get(),
+                SETTING_DONT_RENDER_YELLOW_NAME.get(),
+                SETTING_RENDER_NAMES.get(),
+                SETTING_MC_TEXT.get(),
+                SETTING_USE_CLASS_NAME.get(),
+                SETTING_COLOR_NAME_BY_CLASS.get(),
+                SETTING_COLOR_MARKER_BY_CLASS.get(),
+                SETTING_RENDER_CHECKMARK.get(),
+                SETTING_RENDER_SECRET_COUNT.get(),
+                SETTING_COLOR_ROOM_TEXT.get(),
+                SETTING_ROTATE.get(),
+                SETTING_DONT_RENDER_CHECK_IF_NAME.get(),
+                SETTING_DONT_RENDER_SECRET_1.get(),
+                SETTING_CHECK_IF_GREEN.get(),
+                SETTING_RENDER_CHECK_IF_0.get(),
+                SETTING_MAP_BACKGROUND_COLOR.get(),
+                SETTING_ROOM_ENTRANCE_COLOR.get(),
+                SETTING_ROOM_NORMAL_COLOR.get(),
+                SETTING_ROOM_MINIBOSS_COLOR.get(),
+                SETTING_NORMAL_DOOR_COLOR.get(),
+                SETTING_ROOM_PUZZLE_COLOR.get(),
+                SETTING_ROOM_YELLOW_COLOR.get(),
+                SETTING_ROOM_FAIRY_COLOR.get(),
+                SETTING_ROOM_BLOOD_COLOR.get(),
+                SETTING_ROOM_TRAP_COLOR.get(),
+                SETTING_ROOM_UNKNOWN_COLOR.get(),
+                SETTING_DOOR_WITHER_COLOR.get(),
+            ))
+            val encoded = Base64.getEncoder().encodeToString(json.toByteArray(Charsets.UTF_8))
+
+            minecraft.keyboardHandler.clipboard = encoded
+            ChatUtils.sendMessage("&aSuccessfully exported &6DungeonMap&a preset to clipboard", true)
+        },
+        "Export",
+        "Exports the style to your clipboard",
+        displayName = "Export Style",
         subcategory = "Presets"
     )
     private val SETTING_USE_PLAYER_HEADS = addSwitch(
@@ -571,7 +710,7 @@ object DungeonMap : HudFeature(
     private val SETTING_RENDER_SECRET_COUNT = addSwitch(
         "renderSecretCount",
         true,
-        "(we dont actually track or sync secrets right now)",
+        "Enable §bWebsocket§r to have synced secrets between players using devonian",
         "Render Secret Count",
         subcategory = "Behavior",
     )
@@ -675,9 +814,58 @@ object DungeonMap : HudFeature(
         subcategory = "Behavior"
     )
 
-    override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Dungeons.inBoss.map(Boolean::not).zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
-    }
+    data class DungeonMapPreset(
+        val doorSize: Double,
+        val markerScale: Double,
+        val headScale: Double,
+        val nameScale: Double,
+        val textSize: Double,
+        val mapBorderSize: Double,
+        val mapPadding: Double,
+        val roomSize: Double,
+        val iconSize: Double,
+        val hiddenRoomFactor: Double,
+        val textAlignment: Int,
+        val iconAlignment: Int,
+        val textShadow: Int,
+        val iconStyle: Int,
+        val renderNamesOnlyLeap: Boolean,
+        val usePlayerHeads: Boolean,
+        val useMarkerSelf: Boolean,
+        val renderRoomNames: Boolean,
+        val renderPuzzleIcon: Boolean,
+        val renderPuzzleName: Boolean,
+        val normalDoorDynamic: Boolean,
+        val renderFairyCheck: Boolean,
+        val renderRoomNamesNotEFB: Boolean,
+        val dontRenderYellowName: Boolean,
+        val renderNames: Boolean,
+        val mcFont: Boolean,
+        val useRoleName: Boolean,
+        val colorNameByRole: Boolean,
+        val colorMarkerByRole: Boolean,
+        val renderCheckmark: Boolean,
+        val renderSecretCount: Boolean,
+        val colorRoomText: Boolean,
+        val rotate: Boolean,
+        val dontRenderCheckIfName: Boolean,
+        val dontRenderSecret1: Boolean,
+        val checkIfGreen: Boolean,
+        val renderCheckIf0: Boolean,
+        // colors
+        val mapBackground: Int,
+        val entranceRoomColor: Int,
+        val normalRoomColor: Int,
+        val miniBossRoomColor: Int,
+        val normalDoorColor: Int,
+        val puzzleRoomColor: Int,
+        val yellowRoomColor: Int,
+        val fairyRoomColor: Int,
+        val bloodRoomColor: Int,
+        val trapRoomColor: Int,
+        val unknownRoomColor: Int,
+        val witherDoorColor: Int,
+    )
 
     private val mapRenderer = DungeonMapBaseRenderer()
 

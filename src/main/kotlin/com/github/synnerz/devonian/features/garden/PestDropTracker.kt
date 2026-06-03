@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.garden
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
-import com.github.synnerz.devonian.api.garden.GardenEvents
+import com.github.synnerz.devonian.api.events.garden.GardenEvents
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature

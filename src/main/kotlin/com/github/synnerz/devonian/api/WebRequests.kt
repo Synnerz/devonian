@@ -23,7 +23,7 @@ object WebRequests {
 
     suspend fun get(
         url: String
-    ): String  {
+    ): String {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .headers("User-Agent", "Mozilla/5.0 (Devonian)")
@@ -69,6 +69,16 @@ object WebRequests {
         } catch (e: Exception) {
             println("Devonian\$WebRequest Error - $name")
             e.printStackTrace()
+        }
+    }
+
+    fun withName(name: String, block: suspend CoroutineScope.() -> Unit, catch: () -> Unit) = ioScope.launch(CoroutineName(name)) {
+        try {
+            block()
+        } catch (e: Exception) {
+            println("Devonian\$WebRequest Error - $name")
+            e.printStackTrace()
+            catch()
         }
     }
 }

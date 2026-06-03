@@ -262,23 +262,48 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         override val changesWindow: Boolean = true
 
         private var slots = emptyArray<Int>()
+        private var initSlots: Array<Int>? = null
         private var minCount = 14
 
         override fun reset() {
             slots = emptyArray()
+            initSlots = null
         }
 
         override fun onTick() {
             val screen = minecraft.screen ?: return
             val items = (screen as AbstractContainerScreen<*>).menu.items
+            if (initSlots == null && items.size > 45 && !(items.getOrNull(items.size - 45)?.isEmpty ?: true)) {
+                initSlots = Array(items.size) { idx ->
+                    val stack = items[idx]
+                    val count =
+                        if (stack.item == Items.RED_STAINED_GLASS_PANE)
+                            stack.count
+                        else
+                            0
+                    return@Array count
+                }
+            }
 
             minCount = 14
             slots = Array(items.size) { idx ->
+                val _cached = initSlots?.getOrNull(idx)
                 val stack = items[idx]
-                val count = if (stack.item == Items.RED_STAINED_GLASS_PANE) stack.count
-                else 0
-                if (count > 0) minCount = min(minCount, count)
-                return@Array count
+                val count =
+                    if (stack.item == Items.RED_STAINED_GLASS_PANE)
+                        stack.count
+                    else
+                        0
+                val fixedCount =
+                    if (
+                        _cached != null &&
+                        (stack.item == Items.AIR || count != 0 && count != _cached)
+                    )
+                        _cached
+                    else
+                        count
+                if (fixedCount > 0) minCount = min(minCount, fixedCount)
+                return@Array fixedCount
             }
         }
 

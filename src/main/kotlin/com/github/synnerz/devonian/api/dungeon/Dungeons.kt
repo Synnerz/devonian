@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.api.dungeon
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
+import com.github.synnerz.devonian.api.MayorApi
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.commands.DevonianCommand
@@ -25,7 +26,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 object Dungeons {
-    private val playerInfoRegex = "^\\[\\d+] (\\w+)(?:.+?)? \\((\\w+) ?([0IVXLCDM]+)?\\)$".toRegex()
+    private val playerInfoRegex = "^\\[\\d+] (?:\\[YOUTUBE] )?(\\w+)(?:.+?)? \\((\\w+) ?([0IVXLCDM]+)?\\)$".toRegex()
     private val dungeonFloorRegex = "^ * ⏣ The Catacombs \\((\\w+)\\)$".toRegex()
     private val bossMessageRegex = "^\\[BOSS] (.+?): (.+?)$".toRegex()
     private val disconnectRegex = "^ ☠ (\\w+) disconnected and became a ghost\\.$".toRegex()
@@ -381,7 +382,7 @@ object Dungeons {
         EventBus.on<EntityDeathEvent> { event ->
             val entity = event.entity
             if (entity is Bat) {
-                if (entity.maxHealth != 100f) return@on
+                if (entity.maxHealth != if (MayorApi.isDerpy()) 200f else 100f) return@on
                 DungeonEvent.SecretBat(entity.x, entity.y, entity.z).post()
                 return@on
             }

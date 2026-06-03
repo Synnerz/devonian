@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.features.misc.inventory.ProtectItem.minecraft
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
+import com.github.synnerz.devonian.utils.render.Render2D
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
@@ -42,11 +42,10 @@ object ScreenUtils {
     fun cursorSlot(screen: Screen): Slot? {
         if (!(screen is InventoryScreen || screen is ContainerScreen)) return null
         val accessor = screen as AbstractContainerScreenAccessor
-        val window = minecraft.window ?: return null
 
         return accessor.getSlotAtPos(
-            minecraft.mouseHandler.getScaledXPos(window),
-            minecraft.mouseHandler.getScaledYPos(window)
+            Render2D.Mouse.x,
+            Render2D.Mouse.y,
         )
     }
 }

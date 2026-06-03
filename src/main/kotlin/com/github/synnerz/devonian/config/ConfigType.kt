@@ -8,5 +8,6 @@ enum class ConfigType {
     SLIDER,
     DECIMALSLIDER,
     TEXTINPUT,
-    SELECTION;
+    SELECTION,
+    TIMESLIDER,
 }

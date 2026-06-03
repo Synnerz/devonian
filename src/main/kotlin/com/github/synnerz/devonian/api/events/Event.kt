@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
@@ -240,7 +241,12 @@ abstract class ChatChannelEvent(message: String, text: Component, val name: Stri
         ChatChannelEvent(message, text, name, userMessage)
 
     class PartyChatEvent(message: String, text: Component, name: String, userMessage: String) :
-        ChatChannelEvent(message, text, name, userMessage)
+        ChatChannelEvent(message, text, name, userMessage) {
+        fun matchesUserMessage(criteria: Regex): List<String>? {
+            val matches = criteria.matchEntire(userMessage) ?: return null
+            return matches.groupValues.drop(1)
+        }
+    }
 
     class CoopChatEvent(message: String, text: Component, name: String, userMessage: String) :
         ChatChannelEvent(message, text, name, userMessage)
@@ -340,7 +346,7 @@ class RenderTickEvent : Event
 
 @Threaded class ServerTickEvent(val ticks: Int) : Event
 
-@Threaded class ScoreboardEvent(override val message: String) : CriteriaEvent
+@Threaded class ScoreboardEvent(override val message: String, val packet: ClientboundSetPlayerTeamPacket) : CriteriaEvent
 
 @Ordered class RenderSlotEvent(
     val slot: Slot,
@@ -639,4 +645,8 @@ class ClientBlockUpdateEvent(
     val oldBlockState: BlockState,
     val blockState: BlockState,
     val blockPos: BlockPos,
+) : Event
+
+class WorldDestroyEvent(
+    val minecraft: Minecraft,
 ) : Event

@@ -78,7 +78,6 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "AvatarMixin",
     "BlockEntityRenderDispatcherMixin",
     "ChatComponentInnerMixin",
     "EnderDragonRendererMixin",
@@ -86,7 +85,6 @@
     "GLFWMixin",
     "ItemCooldownsMixin",
     "ItemStackMixin",
-    "PlayerMixin",
     "StringDecomposerMixin",
     "accessor.AbstractArrowAccessor",
     "accessor.ClientboundEntityEventPacketAccessor",

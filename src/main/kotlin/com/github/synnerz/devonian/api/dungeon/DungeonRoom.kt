@@ -12,6 +12,8 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
     private val possibleCorners = mutableListOf<Triple<Int, WorldComponentPosition, WorldPosition>>()
     var cores = listOf<Int>()
     var explored = false
+    var clientExplored = false
+    var lastClient = -1
     var name: String? = null
     var roomID: Int? = null
     var corner = WorldPosition.EMPTY

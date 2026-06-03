@@ -2,6 +2,8 @@ package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Location
+import com.github.synnerz.devonian.api.Party
+import com.github.synnerz.devonian.features.WebsocketClient
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
@@ -56,6 +58,7 @@ object DungeonScanner {
     private var wasInEntrance = false
 
     private val secretRegex = "\\b(\\d+)/(\\d+) Secrets".toRegex()
+    private val roomSecretsRegex = "^RoomSecrets\\[(\\d+)/(\\d+), (\\d+)]$".toRegex()
 
     private fun findAvailablePos(): MutableList<WorldComponentPosition> {
         val pos = mutableListOf<WorldComponentPosition>()
@@ -178,9 +181,11 @@ object DungeonScanner {
                 DungeonEvent.RoomLeave(currentRoom, lastIdx!!).post()
 
             currentRoom = rooms[jdx]
-            if (currentRoom?.explored == false) {
+            if (currentRoom?.clientExplored == false && currentRoom?.explored == false) {
                 Dungeons.totalRoomSecrets.value += currentRoom!!.totalSecrets
+                currentRoom?.clientExplored = true
                 currentRoom?.explored = true
+                currentRoom?.lastClient = EventBus.serverTicks(true) + 10
                 updateMap = true
             }
             if (currentRoom?.checkmark == CheckmarkTypes.UNEXPLORED) {
@@ -208,9 +213,30 @@ object DungeonScanner {
             val total = match.groupValues.getOrNull(2)?.toInt() ?: return@on
 
             if (total != room.totalSecrets) println("mismatching secret counts in ${room.name}")
+            DungeonEvent.SecretPreUpdateEvent(found, total, room).post()
             room.secretsCompleted = found
             DungeonEvent.SecretUpdateEvent(found, total, room).post()
         }.setEnabled(Location.stateInArea("catacombs"))
+
+        EventBus.on<WebsocketClient.MessageEvent> { event ->
+            val match = event.matches(roomSecretsRegex) ?: return@on
+            if (Dungeons.timeElapsed.value <= 0) return@on
+            val current = match.getOrNull(0)?.toIntOrNull() ?: return@on
+            val total = match.getOrNull(1)?.toIntOrNull() ?: return@on
+            val roomId = match.getOrNull(2)?.toIntOrNull() ?: return@on
+            if (roomId == -1) return@on
+            val room = rooms.find { it?.roomID == roomId } ?: return@on
+            if (!room.explored) return@on
+            if (total != room.totalSecrets || current !in 0..room.totalSecrets) return@on
+
+            room.secretsCompleted = current
+        }.setEnabled(WebsocketClient.configSwitch.state.zip(Location.stateInArea("catacombs"), Boolean::and))
+
+        EventBus.on<DungeonEvent.SecretPreUpdateEvent> { event ->
+            if (!Party.inParty) return@on
+            if (event.current > event.room.totalSecrets || event.current == event.room.secretsCompleted) return@on
+            WebsocketClient.send("RoomSecrets[${event.current}/${event.total}, ${event.room.roomID ?: -1}]")
+        }.setEnabled(WebsocketClient.configSwitch.state.zip(Location.stateInArea("catacombs"), Boolean::and))
     }
 
     fun init() {

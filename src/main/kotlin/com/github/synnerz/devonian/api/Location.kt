@@ -63,6 +63,19 @@ object Location {
             }
         }
 
+        EventBus.on<WorldDestroyEvent> {
+            if (area !== null) {
+                AreaEvent(null).post()
+                area = null
+                stateArea.value = null
+            }
+            if (subarea !== null) {
+                SubAreaEvent(null).post()
+                subarea = null
+                stateSubarea.value = null
+            }
+        }
+
         DevonianCommand.command.subcommand("area") { _, args ->
             val str = (args.firstOrNull() ?: return@subcommand 0) as String
             changeArea(str)

@@ -12,12 +12,13 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.PersistentJsonClass
+import com.github.synnerz.devonian.utils.StringUtils
 import com.google.gson.reflect.TypeToken
 import java.time.LocalDateTime
 
 object RunsLogger : Feature(
     "runsLogger",
-    "Logs your completed dungeon runs (note: it will not work if you do not have ShowExtraStats enabled).",
+    "Logs your completed dungeon runs (note: it will not work if you do not have ShowExtraStats enabled). /dv runslogger <mode> <floor> <date>",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "QOL",
@@ -60,8 +61,13 @@ object RunsLogger : Feature(
         dungeonsData.load()
 
         DevonianCommand.command.subcommand("runslogger") { _, args ->
-            val floor = args.getOrNull(0) as? String?
-            val date = args.getOrNull(1) as? String?
+            val mode = args.getOrNull(0) as? String?
+            val floor = args.getOrNull(1) as? String?
+            val date = args.getOrNull(2) as? String?
+            if (mode.isNullOrEmpty()) {
+                ChatUtils.sendMessage("&cRunsLogger not a valid mode was set", true)
+                return@subcommand 0
+            }
             if (floor.isNullOrEmpty()) {
                 ChatUtils.sendMessage("&cRunsLogger no valid floor set", true)
                 return@subcommand 0
@@ -77,30 +83,72 @@ object RunsLogger : Feature(
                 return@subcommand 0
             }
 
-            var sRuns = 0
-            var sPlusRuns = 0
-            var otherRuns = 0
-            var relevantSecrets = 0
-            var totalSecrets = 0
+            if (mode == "STATS") {
+                var sRuns = 0
+                var sPlusRuns = 0
+                var otherRuns = 0
+                var relevantSecrets = 0
+                var totalSecrets = 0
 
-            list.forEach { v ->
-                when (v.rank) {
-                    "S" -> sRuns++
-                    "S+" -> sPlusRuns++
-                    else -> otherRuns++
+                list.forEach { v ->
+                    when (v.rank) {
+                        "S" -> sRuns++
+                        "S+" -> sPlusRuns++
+                        else -> otherRuns++
+                    }
+                    if (v.rank == "S" || v.rank == "S+")
+                        relevantSecrets += v.secrets
+                    totalSecrets += v.secrets
                 }
-                if (v.rank == "S" || v.rank == "S+")
-                    relevantSecrets += v.secrets
-                totalSecrets += v.secrets
+
+                val spr = totalSecrets.toDouble() / (sRuns + sPlusRuns + otherRuns).toDouble()
+                val sprRelevant = relevantSecrets.toDouble() / (sRuns + sPlusRuns).toDouble()
+
+                ChatUtils.sendMessage("&bRunsLogger stats for" +
+                        " &a$floor" +
+                        " &b| &eS $sRuns" +
+                        " &b| &6S+ $sPlusRuns" +
+                        " &b| &5Other $otherRuns" +
+                        " &b| &bSPR &a${"%.2f".format(spr)} &7(${"%.2f".format(sprRelevant)})",
+                    true)
+                return@subcommand 1
+            }
+            if (mode != "TIME") {
+                ChatUtils.sendMessage("&cRunsLogger not a valid mode was set", true)
+                return@subcommand 0
             }
 
-            val spr = totalSecrets.toDouble() / (sRuns + sPlusRuns + otherRuns).toDouble()
-            val sprRelevant = relevantSecrets.toDouble() / (sRuns + sPlusRuns).toDouble()
+            var lastFastest = 0L
+            var realTime = 0L
+            var runsTime = 0L
 
-            ChatUtils.sendMessage("&bRunsLogger stats for &a$floor &b| &eS $sRuns &b| &6S+ $sPlusRuns &b| &5Other $otherRuns &b| &bSPR &a${"%.2f".format(spr)} &7(${"%.2f".format(sprRelevant)})", true)
+            for (idx in 0..list.lastIndex) {
+                val current = list.getOrNull(idx) ?: continue
+                val time = StringUtils.parseTimer(current.time)
+                if (lastFastest == 0L || lastFastest > time)
+                    lastFastest = time.toLong()
+                runsTime += time
+
+                if (idx == list.lastIndex) break
+                val next = list.getOrNull(idx + 1) ?: continue
+
+                realTime += next.snapshotAt - current.snapshotAt
+            }
+
+            ChatUtils.sendMessage("&bRunsLogger time for" +
+                    " &a$floor" +
+                    " &b| &dFastest ${StringUtils.formatSeconds(lastFastest)}" +
+                    " &b| &6Avg ${StringUtils.formatSeconds(runsTime / list.size - 1)}" +
+                    " &b| &eTime ${StringUtils.formatSeconds(runsTime)} &7(${StringUtils.formatSeconds(realTime / 1000)})",
+            true)
             1
         }
+            .word("mode")
             .word("floor")
+            .suggest("mode", *listOf(
+                "STATS",
+                "TIME",
+            ).toTypedArray())
             .suggest("floor", *listOf(
                 "E", "F1", "F2", "F3", "F4", "F5", "F6", "F7",
                 "M1", "M2", "M3", "M4", "M5", "M6", "M7"
