@@ -150,7 +150,8 @@ object GardenEvents {
     }
 
     private fun findVisitorData(itemStack: ItemStack) {
-        val name = itemStack.customName?.string ?: return
+        val customName = itemStack.customName ?: return
+        val name = customName.string
         if (!name.equals(lastGui, ignoreCase = true)) return
 
         val lore = ItemUtils.lore(itemStack) ?: return
@@ -170,7 +171,7 @@ object GardenEvents {
         if (visits <= 0 || accepts < 0) return
 
         val _visitorData = VisitorData(
-            VisitorComponent(name, itemStack.customName!!.colorCodes()),
+            VisitorComponent(name, customName.colorCodes()),
             visits,
             accepts
         )
