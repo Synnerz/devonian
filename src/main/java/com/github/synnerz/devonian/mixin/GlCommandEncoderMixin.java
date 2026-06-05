@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.opengl.GlCommandEncoder;
 import com.mojang.blaze3d.opengl.GlConst;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.CompareOp;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,13 +18,16 @@ public class GlCommandEncoderMixin {
     @Nullable
     private RenderPipeline lastPipeline;
 
-    // FIXME
-//    @WrapOperation(
-//        method = "applyPipelineState",
-//        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/opengl/GlConst;toGl(Lcom/mojang/blaze3d/platform/DepthTestFunction;)I", remap = false)
-//    )
-//    private int getDepthFunc(DepthTestFunction depthTestFunction, Operation<Integer> original) {
-//        if (!Render3DPipelines.getALWAYS_PASS_RENDER_PIPELINES().contains(lastPipeline)) return original.call(depthTestFunction);
-//        return GlConst.GL_ALWAYS;
-//    }
+    @WrapOperation(
+            method = "applyPipelineState",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lcom/mojang/blaze3d/opengl/GlConst;toGl(Lcom/mojang/blaze3d/platform/CompareOp;)I",
+                    remap = false
+            )
+    )
+    private int getDepthFunc(CompareOp compareOp, Operation<Integer> original) {
+        if (!Render3DPipelines.getALWAYS_PASS_RENDER_PIPELINES().contains(lastPipeline)) return original.call(compareOp);
+        return GlConst.GL_ALWAYS;
+    }
 }
