@@ -49,13 +49,7 @@ object EventBus {
         }
         ClientTickEvents.START_CLIENT_TICK.register { post(TickEvent(it, clientTicks++)) }
         LevelRenderEvents.START_MAIN.register {
-            Render3DState.camera = it.levelState().cameraRenderState
-            Render3DImmediate.camera = it.levelState().cameraRenderState
-
             (it.levelRenderer() as? LevelRendererAccessor)?.let { Render3DState.bufferSource = it.renderBuffers.bufferSource() }
-        }
-        LevelRenderEvents.END_MAIN.register {
-            post(RenderWorldEvent(it))
         }
         ClientLifecycleEvents.CLIENT_STARTED.register { post(GameLoadEvent(it)) }
         ClientLifecycleEvents.CLIENT_STOPPING.register { post(GameUnloadEvent(it)) }

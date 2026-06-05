@@ -202,7 +202,7 @@ object EtherwarpOverlay : Feature(
                     failReason = "&4Can't TP: Blacklisted Block"
             }
 
-            val camera = event.ctx.gameRenderer().mainCamera
+            val camera = minecraft.gameRenderer.mainCamera
             val camEntity = camera.entity() ?: return@on
 
             val outlineShape =
