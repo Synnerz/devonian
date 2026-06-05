@@ -39,20 +39,19 @@ public class ClientPacketListenerMixin {
         return stack;
     }
 
-    // FIXME
     // for deletors
-//    @WrapOperation(
-//        method = "method_64896",
-//        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getEntity(I)Lnet/minecraft/world/entity/Entity;")
-//    )
-//    private Entity devonian$itemPickupEventBackup(ClientLevel instance, int i, Operation<Entity> original) {
-//        Entity e = original.call(instance, i);
-//        if (e instanceof ItemEntity) {
-//            LocalPlayer p = Devonian.INSTANCE.getMinecraft().player;
-//            if (p != null && p.distanceToSqr(e) < 25.0) new ItemPickupEvent((ItemEntity) e, i).post();
-//        }
-//        return e;
-//    }
+    @WrapOperation(
+        method = "lambda$handleRemoveEntities$0",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getEntity(I)Lnet/minecraft/world/entity/Entity;")
+    )
+    private Entity devonian$itemPickupEventBackup(ClientLevel instance, int i, Operation<Entity> original) {
+        Entity e = original.call(instance, i);
+        if (e instanceof ItemEntity) {
+            LocalPlayer p = Devonian.INSTANCE.getMinecraft().player;
+            if (p != null && p.distanceToSqr(e) < 25.0) new ItemPickupEvent((ItemEntity) e, i).post();
+        }
+        return e;
+    }
 
     @ModifyVariable(
         method = "sendChat",
