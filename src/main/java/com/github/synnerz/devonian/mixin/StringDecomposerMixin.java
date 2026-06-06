@@ -24,7 +24,7 @@ public class StringDecomposerMixin {
         method = "iterateFormatted(Ljava/lang/String;ILnet/minecraft/network/chat/Style;Lnet/minecraft/network/chat/Style;Lnet/minecraft/util/FormattedCharSink;)Z",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/ChatFormatting;getByCode(C)Lnet/minecraft/ChatFormatting;")
     )
-    private static ChatFormatting devonian$chromaText(char c, Operation<ChatFormatting> original, @Local(ordinal = 2) LocalRef<Style> style3) {
+    private static ChatFormatting devonian$chromaText(char c, Operation<ChatFormatting> original, @Local(name = "style") LocalRef<Style> style3) {
         ChatFormatting o = original.call(c);
 
         if (Character.toLowerCase(c) == 'z' && ChromaText.INSTANCE.getSETTING_FORMAT().get()) {
