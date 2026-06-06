@@ -3,6 +3,7 @@
 #moj_import <minecraft:fog.glsl>
 #moj_import <minecraft:dynamictransforms.glsl>
 #moj_import <minecraft:projection.glsl>
+#moj_import <minecraft:sample_lightmap.glsl>
 
 in vec3 Position;
 in vec4 Color;
@@ -26,7 +27,7 @@ void main() {
     sphericalVertexDistance = fog_spherical_distance(Position);
     cylindricalVertexDistance = fog_cylindrical_distance(Position);
         #ifdef DEVONIAN_CHROMA_TEXT
-    vertexColor = texelFetch(Sampler2, UV2 / 16, 0);
+    vertexColor = sample_lightmap(Sampler2, UV2);
         #else
     vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
         #endif
