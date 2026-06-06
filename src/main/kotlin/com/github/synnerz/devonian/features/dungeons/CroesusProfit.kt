@@ -281,7 +281,7 @@ object CroesusProfit : TextHudFeature(
 
     private fun updateDisplay() {
         clearLines()
-        for (data in chestsData.entries.toList().sortedByDescending { it.value.totalProfit() }) {
+        for (data in chestsData.toMap().entries.sortedByDescending { it.value.totalProfit() }) {
             val v = data.value
             if (v.bought) continue
             val items = v.items
