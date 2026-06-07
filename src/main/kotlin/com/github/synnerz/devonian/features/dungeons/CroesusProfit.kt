@@ -290,7 +290,7 @@ object CroesusProfit : TextHudFeature(
 
             if (SETTING_COMPACT_MODE.get()) {
                 val chestName =
-                    if (v.requiresKey) "${v.chestName} &7(&9*&7)&f:"
+                    if (v.requiresKey) "${v.chestName} &7(&9*&7)"
                     else v.chestName
                 addLine("${chestName}&f: ${if (profit < 0) "&c" else "&a"}${StringUtils.addCommas(profit)}")
                 continue
