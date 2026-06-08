@@ -287,19 +287,14 @@ object CroesusProfit : TextHudFeature(
             val items = v.items
             if (items.isEmpty()) continue
             val profit = v.totalProfit()
+            val dkeyFormat = if (v.requiresKey) "&9*" else ""
 
             if (SETTING_COMPACT_MODE.get()) {
-                val chestName =
-                    if (v.requiresKey) "${v.chestName} &7(&9*&7)"
-                    else v.chestName
-                addLine("${chestName}&f: ${if (profit < 0) "&c" else "&a"}${StringUtils.addCommas(profit)}")
+                addLine("${v.chestName}&f: $dkeyFormat${if (profit < 0) "&c" else "&a"}${StringUtils.addCommas(profit)}")
                 continue
             }
-            addLine(v.chestName)
+            addLine("${v.chestName}&f: ${if (profit < 0) "&c" else "&a"}${StringUtils.addCommas(profit)} &7($dkeyFormat&7${StringUtils.addCommasTruncate(v.chestPrice)}&7)")
             addLines(items.map { "  ${it.name}  " })
-            if (v.requiresKey)
-                addLine("&9+ Dungeon Chest Key ")
-            addLine("&bProfit&f: ${if (profit < 0) "&c" else "&a"}${StringUtils.addCommas(profit)}")
         }
     }
 }
