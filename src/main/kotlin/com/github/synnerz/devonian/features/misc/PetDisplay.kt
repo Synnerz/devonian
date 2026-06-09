@@ -80,7 +80,7 @@ object PetDisplay : TextHudFeature(
     private val formattedTabPetRegex = "^§r §r§7\\[Lvl (\\d+)](?: §r§8\\[§r§6(\\d+)§r§4✦§r§8])? §r((?:§.)*)([\\w\\s]+)(?:§r((?:§.)* ✦))?$".toRegex()
 
     // https://regex101.com/r/f9xwqQ/3
-    private val petsMenuRegex = "^(\\(\\d+/\\d+\\) )?Pets$".toRegex()
+    private val petsMenuRegex = "^(?:\\((\\d+)/(\\d+)\\) )?Pets$".toRegex()
     // 1: level, 2: cosmetic level, 3: pet name, 4: skin
     private val petsMenuNameRegex = "^(?:⭐ )?\\[Lvl (\\d+)](?: \\[(\\d+)✦])? ([\\w\\s]+)( ✦)?$".toRegex()
     // 1: level, 2: cosmetic level, 3: color code, 4: pet name, 5: skin
