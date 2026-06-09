@@ -184,6 +184,7 @@ object GardenEvents {
 
     private fun findVisitorItems(itemStack: ItemStack) {
         if (visitorData == null) return
+        val cachedData = visitorData ?: return
         val name = itemStack.customName?.string ?: return
         if (!name.equals("accept offer", ignoreCase = true)) return
         val lore = ItemUtils.lore(itemStack) ?: return
@@ -245,7 +246,7 @@ object GardenEvents {
 
         Scheduler.scheduleTask {
             VisitorItems(VisitorItemData(
-                visitorData!!.name,
+                cachedData.name,
                 rareItems,
                 farmingXP,
                 gardenXP,
