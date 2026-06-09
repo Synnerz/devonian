@@ -29,6 +29,7 @@ object LotusPityDisplay : TextHudFeature(
     private val trophyFrogsRegex = "^ ([●○]+) ([\\w ]+) $".toRegex()
     private val pityProgressRegex = "^Progress to (GOLD|DIAMOND): (\\d+)/(\\d+)$".toRegex()
     private val trophyCaughtRegex = "^♔ TROPHY FROG! You caught an? ([\\w ]+) (BRONZE|SILVER|GOLD|DIAMOND)!$".toRegex()
+    private val trophyCaughtMultiRegex = "^♔ TROPHY FROG! You caught ([\\w ]+) (BRONZE|SILVER|GOLD|DIAMOND) x(\\d+)!$".toRegex()
     private val pityCount = mutableListOf<PityFrog>()
     private val trophyFrogs = mutableMapOf<String, Pair<Int, String>>()
     private var inPityGui = false
@@ -86,6 +87,23 @@ object LotusPityDisplay : TextHudFeature(
         }
 
         on<ChatEvent> { event ->
+            event.matches(trophyCaughtMultiRegex)?.let { (name, type, num) ->
+                val amount = num.toIntOrNull() ?: 1
+
+                lastCatch = name
+
+                val pity = pityCount.find { it.name == name } ?: return@on
+                when (type) {
+                    "GOLD" -> pity.gold.amount = 0
+                    "DIAMOND" -> pity.diamond.amount = 0
+                    else -> {
+                        pity.gold.amount += amount
+                        pity.diamond.amount += amount
+                    }
+                }
+                return@on
+            }
+
             val ( name, type ) = event.matches(trophyCaughtRegex) ?: return@on
 
             lastCatch = name
