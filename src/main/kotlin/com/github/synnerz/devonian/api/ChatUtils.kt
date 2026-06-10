@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.misc.chat.CompactChatComponent
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.mixin.accessor.ChatComponentAccessor
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.impl.command.client.ClientCommandInternals
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.components.ChatComponent
@@ -127,7 +128,11 @@ object ChatUtils {
     @JvmOverloads
     fun command(command: String, clientSide: Boolean = false) {
         if (!clientSide) return Minecraft.getInstance().connection!!.sendCommand(command)
-        ClientCommandInternals.executeCommand(command)
+        ClientCommandInternals.executeCommand(
+            command,
+            Devonian.minecraft.connection!!.suggestionsProvider as FabricClientCommandSource,
+            null
+        )
     }
 
     fun say(message: String) {
