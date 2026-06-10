@@ -98,6 +98,18 @@ object BlazeSolver : Feature(
         "Color for the \"efficient\" block filled to stand at",
         "\"Efficient\" Blaze Block Filled Color",
     )
+    private val SETTING_ETHERWARP_COLOR_OUTLINE = addColorPicker(
+        "etherwarpColorOutline",
+        Color(255, 255, 0, 255).rgb,
+        "Color for the etherwarp spot for \"efficient\" block",
+        "Etherwarp Color Outline"
+    )
+    private val SETTING_ETHERWARP_COLOR_FILLED = addColorPicker(
+        "etherwarpColorFilled",
+        Color(255, 255, 0, 80).rgb,
+        "Color for the etherwarp spot for \"efficient\" block",
+        "Etherwarp Color Filled"
+    )
 
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)
@@ -105,13 +117,13 @@ object BlazeSolver : Feature(
 
     private val blazeHpRegex = "^\\[Lv15] ♨ Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
     private val entityList = ConcurrentHashMap<Int, Int>() // <entityId>: <MaxHP>
+    private val etherSpots = mutableListOf<Triple<Int, Int, Int>>()
     var hasPlatform = false
     var inBlaze = false
     val blazes = CopyOnWriteArrayList<BlazeEntity>()
     var lastBlazes = 0
     var startedAt = 0
     var efficientPos: Triple<Int, Int, Int>? = null
-    var etherToPos: Triple<Int, Int, Int>? = null
     var hasSent = false
 
     data class BlazeEntity(val entity: Entity, val maxHP: Int)
@@ -125,9 +137,9 @@ object BlazeSolver : Feature(
             inBlaze = true
             hasPlatform = blockState.block == Blocks.COBBLESTONE
 
-            val etherComp = room.fromComp(20, 11)
-            if (etherComp != null && hasPlatform)
-                etherToPos = Triple(etherComp.first, 85, etherComp.second)
+            room.fromComp(20, 11)?.let { etherSpots.add(Triple(it.first, if (hasPlatform) 85 else 35, it.second)) }
+            if (hasPlatform)
+                room.fromComp(20, 11)?.let { etherSpots.add(Triple(it.first, 68, it.second)) }
 
             val rcomp = room.fromComp(20, 11) ?: return@on
 
@@ -146,7 +158,7 @@ object BlazeSolver : Feature(
             startedAt = 0
             lastBlazes = 0
             efficientPos = null
-            etherToPos = null
+            etherSpots.clear()
         }
 
         on<TickEvent> {
@@ -172,7 +184,7 @@ object BlazeSolver : Feature(
                 startedAt = 0
                 lastBlazes = 0
                 efficientPos = null
-                etherToPos = null
+                etherSpots.clear()
                 if (!hasSent) {
                     hasSent = true
                     if (SETTING_SEND_MSG.get()) ChatUtils.command("pc Blaze done")
@@ -200,18 +212,20 @@ object BlazeSolver : Feature(
 
         on<RenderWorldEvent> {
             if (efficientPos != null) {
-                if (etherToPos != null && hasPlatform) {
-                    Render3DImmediate.renderWireframeBox(
-                        etherToPos!!.first.toDouble(), etherToPos!!.second.toDouble(), etherToPos!!.third.toDouble(),
-                        1.0, 1.0,
-                        color = SETTING_EFFICIENT_BLOCK_COLOR_OUTLINE.getColor()
-                    )
+                if (etherSpots.isNotEmpty()) {
+                    etherSpots.forEach { (x, y, z) ->
+                        Render3DImmediate.renderWireframeBox(
+                            x.toDouble(), y.toDouble(), z.toDouble(),
+                            1.0, 1.0,
+                            color = SETTING_ETHERWARP_COLOR_OUTLINE.getColor()
+                        )
 
-                    Render3DImmediate.renderFilledBox(
-                        etherToPos!!.first.toDouble(), etherToPos!!.second.toDouble(), etherToPos!!.third.toDouble(),
-                        1.0, 1.0,
-                        color = SETTING_EFFICIENT_BLOCK_COLOR_FILLED.getColor()
-                    )
+                        Render3DImmediate.renderFilledBox(
+                            x.toDouble(), y.toDouble(), z.toDouble(),
+                            1.0, 1.0,
+                            color = SETTING_ETHERWARP_COLOR_FILLED.getColor()
+                        )
+                    }
                 }
 
                 Render3DImmediate.renderWireframeBox(
@@ -285,7 +299,7 @@ object BlazeSolver : Feature(
         startedAt = 0
         lastBlazes = 0
         efficientPos = null
-        etherToPos = null
+        etherSpots.clear()
         blazes.clear()
         entityList.clear()
         hasSent = false
