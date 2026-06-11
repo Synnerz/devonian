@@ -56,6 +56,7 @@ object WebsocketClient : Feature(
     private val playerName
         get() = minecraft.player?.name?.string ?: ""
     private var retry = 0
+    private var oldPartyState = false
     var socket: WebSocket? = null
 
     class MessageEvent(
@@ -87,8 +88,14 @@ object WebsocketClient : Feature(
             connect()
         }
 
-        on<Party.PartyJoinEvent> { onParty() }
-        on<Party.PartyLeaveEvent> { onParty(false) }
+        on<Party.PartyJoinEvent> {
+            oldPartyState = true
+            onParty()
+        }
+        on<Party.PartyLeaveEvent> {
+            oldPartyState = false
+            onParty(false)
+        }
 
         Scheduler.schedulePool.scheduleWithFixedDelay({
             if (retry <= 0) return@scheduleWithFixedDelay
@@ -158,6 +165,7 @@ object WebsocketClient : Feature(
             send("PartyLeave")
             return
         }
+        if (oldPartyState) send("PartyLeave")
         send("Party[${Party.partyHash}]")
     }
 
