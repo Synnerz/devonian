@@ -6,10 +6,23 @@ import java.awt.Color
 
 class UILineEffect(
     var color: Color = Color.WHITE,
-    var width: Double = 1.0
+    var width: Double = 1.0,
+    val left: Boolean = false,
 ) : UIEffect() {
     override fun preDraw(x2: Double, y2: Double) {
         if (component == null) return
+
+        if (left) {
+            Renderer.submitLine(
+                (component!!.x - x2 + width).toFloat(),
+                (component!!.y - y2).toFloat(),
+                (component!!.x - x2 + width).toFloat(),
+                (component!!.bounds.y2 - y2).toFloat(),
+                width.toFloat(),
+                color
+            )
+            return
+        }
 
         Renderer.submitLine(
             (component!!.x - x2).toFloat(),
