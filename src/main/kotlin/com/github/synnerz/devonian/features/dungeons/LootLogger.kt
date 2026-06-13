@@ -76,14 +76,14 @@ object LootLogger : Feature(
     data class ChestData(
         val name: String,
         val items: MutableList<ChestItem> = mutableListOf(),
-        var price: Int = 0,
+        var chestPrice: Int = 0,
         var requiresKey: Boolean = false,
         @Transient
         var purchased: Boolean = false,
         var hasRerolled: Boolean = false,
     ) {
         fun totalProfit(ignoreEssence: Boolean = false): Int =
-            items.sumOf { it.price(ignoreEssence) } - price
+            items.sumOf { it.price(ignoreEssence) } - chestPrice
     }
 
     override fun initialize() {
@@ -112,9 +112,10 @@ object LootLogger : Feature(
             }
             if (mode == "COMPACTED") {
                 ChatUtils.sendMessage("&bLootLogger &a$floor&b stats" +
-                        " &b| &eSpent &6${StringUtils.shortenNumber(list.sumOf { it.price })}" +
+                        " &b| &eSpent &6${StringUtils.shortenNumber(list.sumOf { it.chestPrice })}" +
                         " &b| &eProfit &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit(true) })} &7(${StringUtils.shortenNumber(list.sumOf { it.totalProfit() })})",
                 true)
+                ChatUtils.sendMessage("&8NOTE: the profit section subtracts the chest price so it _should_ be pure profit")
                 return@subcommand 1
             }
             if (mode != "DETAILED") {
@@ -142,9 +143,10 @@ object LootLogger : Feature(
             chestCount.entries.sortedBy { it.value }.forEach { (name, amount) ->
                 ChatUtils.sendMessage("&8- ${chestNames[name]}&f: &6${StringUtils.addCommas(amount)}")
             }
-            ChatUtils.sendMessage("&eTotal Spent&f: &6${StringUtils.shortenNumber(list.sumOf { it.price })}")
+            ChatUtils.sendMessage("&eTotal Spent&f: &6${StringUtils.shortenNumber(list.sumOf { it.chestPrice })}")
             ChatUtils.sendMessage("&eProfit&f: &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit(true) })}")
             ChatUtils.sendMessage("&eTotal Profit&f: &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit() })} &8(including essence)")
+            ChatUtils.sendMessage("&8NOTE: the profit section subtracts the chest price so it _should_ be pure profit")
             1
         }
             .word("mode")
@@ -239,7 +241,7 @@ object LootLogger : Feature(
             }
 
             chestData.requiresKey = requiresKey
-            chestData.price = price
+            chestData.chestPrice = price
             return
         }
 
