@@ -397,6 +397,7 @@ object Devonian : ClientModInitializer {
             WebsocketClient,
             VisitorProfitDisplay,
             LotusPityDisplay,
+            FixBowPull,
 
             // Debug
             CopyItem,
