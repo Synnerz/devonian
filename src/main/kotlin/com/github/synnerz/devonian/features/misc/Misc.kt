@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -178,4 +179,14 @@ object FixCrimsonIsleFog : Feature(
     Categories.VANILLA_TWEAKS,
 ) {
     fun shouldFix(): Boolean = isEnabled() && Location.area == "crimson isle"
+}
+object FixBowPull : Feature(
+    "fixBowPull",
+    "Fixes the bow pull whenever switching from normal arrow bow to a short bow",
+    Categories.VANILLA_TWEAKS
+) {
+    fun shouldFix(): Boolean
+        = isEnabled() && minecraft.player?.let {
+            ItemUtils.skyblockId(it.mainHandItem) == "TERMINATOR"
+        } ?: false
 }
