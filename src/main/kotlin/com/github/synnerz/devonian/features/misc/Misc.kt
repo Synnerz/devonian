@@ -3,9 +3,13 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
+import com.github.synnerz.devonian.api.events.PrePacketSentEvent
+import com.github.synnerz.devonian.api.events.RenderTickEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 
@@ -185,8 +189,26 @@ object FixBowPull : Feature(
     "Fixes the bow pull whenever switching from normal arrow bow to a short bow",
     Categories.VANILLA_TWEAKS
 ) {
-    fun shouldFix(): Boolean
-        = isEnabled() && minecraft.player?.let {
-            ItemUtils.skyblockId(it.mainHandItem) == "TERMINATOR"
-        } ?: false
+    private var sbId: String? = null
+
+    override fun initialize() {
+        on<PrePacketSentEvent> { event ->
+            val packet = event.packet
+            if (packet !is ServerboundSetCarriedItemPacket) return@on
+            val player = minecraft.player ?: return@on
+
+            sbId = ItemUtils.skyblockId(player.inventory.getItem(packet.slot))
+        }
+
+        on<RenderTickEvent> {
+            val player = minecraft.player ?: return@on
+            if (sbId != "TERMINATOR") return@on
+
+            player.stopUsingItem()
+        }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        sbId = null
+    }
 }
