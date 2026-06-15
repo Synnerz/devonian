@@ -189,6 +189,14 @@ object FixBowPull : Feature(
     "Fixes the bow pull whenever switching from normal arrow bow to a short bow",
     Categories.VANILLA_TWEAKS
 ) {
+    private val shortbowIds = setOf(
+        "ARTISANAL_SHORTBOW",
+        "MACHINE_GUN_BOW",
+        "SCORPION_BOW",
+        "ITEM_SPIRIT_BOW",
+        "MOSQUITO_BOW",
+        "TERMINATOR",
+    )
     private var sbId: String? = null
 
     override fun initialize() {
@@ -202,7 +210,7 @@ object FixBowPull : Feature(
 
         on<RenderTickEvent> {
             val player = minecraft.player ?: return@on
-            if (sbId != "TERMINATOR") return@on
+            if (!shortbowIds.contains(sbId)) return@on
 
             player.stopUsingItem()
         }
