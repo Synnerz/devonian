@@ -5,12 +5,12 @@ import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ClientContainerCloseEvent
+import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
 import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
-import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.DataObject
 import com.github.synnerz.devonian.config.json.JsonDataObject
@@ -361,7 +361,7 @@ object PetDisplay : TextHudFeature(
             petMenuPage = -1
         }
 
-        on<TickEvent> {
+        on<ClientThreadServerTickEvent> {
             val p = currentPet ?: return@on
 
             setLine(
