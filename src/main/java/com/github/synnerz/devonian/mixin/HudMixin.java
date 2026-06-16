@@ -132,17 +132,15 @@ public class HudMixin {
             method = "extractCrosshair",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIIIIII)V",
+                    target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V",
                     ordinal = 0
             )
     )
     private void devonian$centeredCrosshair(
-            GuiGraphicsExtractor instance, RenderPipeline renderPipeline,
-            Identifier location, int spriteWidth, int spriteHeight, int textureX,
-            int textureY, int x, int y, int width, int height, Operation<Void> original
+            GuiGraphicsExtractor instance, RenderPipeline renderPipeline, Identifier location, int x, int y, int width, int height, Operation<Void> original
     ) {
         if (!CenteredCrosshair.INSTANCE.isEnabled()) {
-            original.call(instance, renderPipeline, location, spriteWidth, spriteHeight, textureX, textureY, x, y, width, height);
+            original.call(instance, renderPipeline, location, x, y, width, height);
             return;
         }
         GuiGraphicsExtractorAccessor accessor = (GuiGraphicsExtractorAccessor) instance;
