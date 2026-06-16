@@ -16,12 +16,13 @@ abstract class SharedCategory(displayName: String) {
     protected val colorComponents = mutableListOf<UIColorPicker>()
     protected val switchComponents = mutableListOf<UISwitch>()
 
-    protected val categoryTitle = UIText(0.0, 0.0, 100.0, 100.0, displayName, true).apply {
+    protected val categoryTitle = UIText(4.0, 35.0, 100.0, 100.0, displayName, false).apply {
         setColor(ColorPalette.TEXT_COLOR)
         onResize { _, w ->
             textScale = 2f / w.scaleFactor
         }
     }
+    protected val selectedCategoryOutline = UILineEffect(ColorPalette.OUTLINE2_COLOR, 1.5, true)
 
     protected data class UIPair(val container: UIElement, val content: UIElement)
 
@@ -304,11 +305,15 @@ abstract class SharedCategory(displayName: String) {
     }
 
     open fun hide() {
+        if (categoryTitle.parent != null)
+            categoryTitle.parent!!.removeEffect(selectedCategoryOutline)
         categoryTitle.setColor(ColorPalette.TEXT_COLOR)
         switchComponents.forEach { it.initial = true }
     }
 
     open fun unhide() {
+        if (categoryTitle.parent != null)
+            categoryTitle.parent!!.addEffect(selectedCategoryOutline)
         categoryTitle.setColor(ColorPalette.LIGHT_TEXT_COLOR)
     }
 }

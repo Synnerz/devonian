@@ -16,27 +16,35 @@ import net.minecraft.network.chat.Component
 
 object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
-    private val main = UIRect(20.0, 15.0, 60.0, 60.0, parent = background).apply {
+    private val main = UIRect(17.5, 17.5, 65.0, 65.0, parent = background).apply {
         setColor(ColorPalette.PRIMARY_COLOR)
     }
     private val leftPanel = UIRect(0.0, 0.0, 20.0, 100.0, parent = main).apply {
         setColor(ColorPalette.SECONDARY_COLOR)
+        addChild(
+            UIText(12.0, 4.0, 100.0, 10.0, "Devonian - v${Devonian.DEVONIAN_VERSION}", false).apply {
+                setColor(ColorPalette.TITLE_COLOR)
+                onResize { _, w ->
+                    textScale = 2f / w.scaleFactor
+                }
+            }
+        )
     }
-    private val leftPanelScroll = UIScrollable(0.0, 12.0, 100.0, 78.0, parent = leftPanel)
+    private val leftPanelScroll = UIScrollable(0.0, 12.0, 100.0, 79.0, parent = leftPanel)
     private val rightPanel = UIRect(21.0, 1.0, 78.5, 98.0, parent = main).apply {
         setColor(ColorPalette.SECONDARY_COLOR)
     }
-    private val configTitle = UIText(0.0, 0.0, 100.0, 10.0, "Devonian", true, leftPanel).apply {
-        setColor(ColorPalette.TITLE_COLOR)
-    }
-    private val editHudsButton = UIRect(1.0, 92.0, 98.0, 8.0, parent = leftPanel).apply {
+    private val editHudsBtn = UIRect(1.5, 92.0, 97.0, 7.0, parent = leftPanel).apply {
         setColor(ColorPalette.TERTIARY_COLOR)
-        addChild(UIText(0.0, 0.0, 100.0, 100.0, "Edit Huds", true).apply {
-            setColor(ColorPalette.TEXT_COLOR)
-            onResize {  _, w ->
-                textScale = 2.5f / w.scaleFactor
+        addChild(
+            UIText(0.0, 0.0, 100.0, 100.0, "Edit Huds", true).apply {
+                setColor(ColorPalette.TEXT_COLOR)
+                onResize {  _, w ->
+                    textScale = 2.5f / w.scaleFactor
+                }
             }
-        })
+        )
+
         onMouseRelease {
             if (it.button != 0) return@onMouseRelease
             Scheduler.scheduleTask(1) {
