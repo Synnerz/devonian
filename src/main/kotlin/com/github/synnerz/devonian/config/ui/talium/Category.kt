@@ -24,8 +24,8 @@ class Category(
 
     init {
         UIRect(
-            0.0, 0.0,
-            100.0, 6.0,
+            8.0, 0.0,
+            92.0, 6.0,
             parent = leftPanel
         ).apply {
             yConstraint = UIFlexWrapConstraint(5.0)
