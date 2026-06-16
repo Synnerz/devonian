@@ -20,7 +20,7 @@ public class LevelRendererMixin {
     private LevelRenderState levelRenderState;
 
     @WrapOperation(
-            method = "lambda$addAlwaysOnTopPass$0",
+            method = "submitFeatures",
             at = @At(value = "NEW", target = "()Lcom/mojang/blaze3d/vertex/PoseStack;")
     )
     private PoseStack devonian$render3D(Operation<PoseStack> original) {
