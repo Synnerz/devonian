@@ -17,9 +17,7 @@ object BeaconBeamRenderer {
      */
     fun renderBeamInner(
         matrices: PoseStack,
-        bufferSource: StagedVertexBuffer,
-        opaqueLayer: RenderType,
-        translucentLayer: RenderType,
+        vertices: VertexConsumer,
         partialTicks: Float,
         worldTime: Long,
         color: Color,
@@ -38,7 +36,7 @@ object BeaconBeamRenderer {
 
         renderBeamLayer(
             matrices,
-            bufferSource.getVertexBuilder(Render3DState.createDraw(if (color.alpha == 255) opaqueLayer else translucentLayer) ?: return),
+            vertices,
             color.rgb,
             0f,
             innerRadius,
@@ -58,9 +56,7 @@ object BeaconBeamRenderer {
 
     fun renderBeamOuter(
         matrices: PoseStack,
-        bufferSource: StagedVertexBuffer,
-        opaqueLayer: RenderType,
-        translucentLayer: RenderType,
+        vertices: VertexConsumer,
         partialTicks: Float,
         worldTime: Long,
         color: Color,
@@ -76,7 +72,7 @@ object BeaconBeamRenderer {
 
         renderBeamLayer(
             matrices,
-            bufferSource.getVertexBuilder(Render3DState.createDraw(translucentLayer) ?: return),
+            vertices,
             ((color.alpha / 4) shl 24) or (color.rgb and 0x00FFFFFF),
             -outerRadius,
             -outerRadius,

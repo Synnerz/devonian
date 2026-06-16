@@ -1,7 +1,5 @@
 package com.github.synnerz.devonian.utils.render.impl
 
-import com.github.synnerz.devonian.mixin.accessor.StagedVertexBufferAccessor
-import com.github.synnerz.devonian.mixin.accessor.StagedVertexBufferDrawAccessor
 import com.github.synnerz.devonian.utils.render.IRender3D
 import com.github.synnerz.devonian.utils.render.Render3DTypes
 import com.mojang.blaze3d.vertex.PoseStack
@@ -60,7 +58,7 @@ object Render3DState {
 
         fun get(opaque: Boolean, phase: Boolean) = arr[
             (if (opaque) 2 else 0) +
-            (if (phase) 1 else 0)
+                    (if (phase) 1 else 0)
         ]
     }
 
@@ -78,7 +76,7 @@ object Render3DState {
 
         Render3DVertex.renderFilledShape(
             poseStack,
-            bufferSource.getVertexBuilder(createDraw(type) ?: return),
+            type,
             shape,
             ox, oy, oz,
             color,
@@ -100,7 +98,7 @@ object Render3DState {
 
         Render3DVertex.renderWireframeShape(
             poseStack,
-            bufferSource.getVertexBuilder(createDraw(type) ?: return),
+            type,
             shape,
             ox, oy, oz,
             color,
@@ -148,7 +146,7 @@ object Render3DState {
 
         Render3DVertex.renderFilledBox(
             poseStack,
-            bufferSource.getVertexBuilder(createDraw(type) ?: return),
+            type,
             x, y, z,
             w, h, wz,
             color,
@@ -182,7 +180,7 @@ object Render3DState {
 
         Render3DVertex.renderWireframeBox(
             poseStack,
-            bufferSource.getVertexBuilder(createDraw(type) ?: return),
+            type,
             x, y, z,
             w, h, wz,
             color,
@@ -226,7 +224,6 @@ object Render3DState {
 
         Render3DVertex.renderBeamInner(
             poseStack,
-            bufferSource,
             Types.BEACON.get(true, phase),
             Types.BEACON.get(false, phase),
             color,
@@ -243,7 +240,6 @@ object Render3DState {
 
         Render3DVertex.renderBeamOuter(
             poseStack,
-            bufferSource,
             Types.BEACON.get(true, phase),
             Types.BEACON.get(false, phase),
             color,
@@ -262,7 +258,7 @@ object Render3DState {
 
         Render3DVertex.renderLines(
             poseStack,
-            bufferSource.getVertexBuilder(createDraw(type) ?: return),
+            type,
             supplier,
         )
     }
@@ -278,24 +274,8 @@ object Render3DState {
 
         Render3DVertex.renderLineStrip(
             poseStack,
-            bufferSource.getVertexBuilder(createDraw(type) ?: return),
+            type,
             supplier,
         )
-    }
-
-    internal fun createDraw(type: RenderType): StagedVertexBuffer.Draw? {
-        // FIXME
-        return null
-        val accs = (bufferSource as StagedVertexBufferAccessor)
-        val lastBuild = accs.lastBuildingDraw
-        if (accs.currentVertexBuffer != null || lastBuild != null) return null
-//        if (lastBuild != null && !lastBuild.isEmpty) {
-//            val lastDraw = lastBuild as StagedVertexBufferDrawAccessor
-//            if (
-//                lastDraw.mode == type.mode() &&
-//                lastDraw.format == type.format()
-//            ) return null
-//        }
-        return bufferSource.appendDraw(type.format(), type.primitiveTopology())
     }
 }

@@ -1,12 +1,12 @@
 package com.github.synnerz.devonian.utils.render
 
+import com.mojang.blaze3d.PrimitiveTopology
 import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.ColorTargetState
 import com.mojang.blaze3d.pipeline.DepthStencilState
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.platform.CompareOp
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.client.renderer.RenderPipelines
 import java.util.*
 
@@ -43,13 +43,15 @@ object Render3DPipelines {
     val TRIANGLE_STRIP_OPAQUE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/triangle_strip_opaque")
         .withCull(false)
-        .withPrimitiveTopology(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP)
+        .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+        .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_STRIP)
         .build().also { RenderPipelines.register(it) }
 
     val TRIANGLE_STRIP_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/triangle_strip_opaque_esp")
         .withCull(false)
-        .withPrimitiveTopology(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP)
+        .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+        .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_STRIP)
         .withDepthStencilState(DepthStencilState(CompareOp.NOT_EQUAL, false))
         .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
@@ -57,14 +59,16 @@ object Render3DPipelines {
     val TRIANGLE_STRIP_TRANSLUCENT = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/triangle_strip_translucent")
         .withCull(true)
-        .withPrimitiveTopology(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP)
+        .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+        .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_STRIP)
         .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
         .build().also { RenderPipelines.register(it) }
 
     val TRIANGLE_STRIP_TRANSLUCENT_ESP = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/triangle_strip_translucent_esp")
         .withCull(false)
-        .withPrimitiveTopology(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP)
+        .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+        .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_STRIP)
         .withDepthStencilState(DepthStencilState(CompareOp.NOT_EQUAL, false))
         .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
         .build().also { RenderPipelines.register(it) }
@@ -72,13 +76,15 @@ object Render3DPipelines {
     val QUADS_OPAQUE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/quads_opaque")
         .withCull(false)
-        .withPrimitiveTopology(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
+        .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+        .withPrimitiveTopology(PrimitiveTopology.QUADS)
         .build().also { RenderPipelines.register(it) }
 
     val QUADS_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/quads_opaque_esp")
         .withCull(false)
-        .withPrimitiveTopology(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
+        .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+        .withPrimitiveTopology(PrimitiveTopology.QUADS)
         .withDepthStencilState(DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, true))
         .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
@@ -86,14 +92,16 @@ object Render3DPipelines {
     val QUADS_TRANSLUCENT = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/quads_translucent")
         .withCull(true)
-        .withPrimitiveTopology(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
+        .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+        .withPrimitiveTopology(PrimitiveTopology.QUADS)
         .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
         .build().also { RenderPipelines.register(it) }
 
     val QUADS_TRANSLUCENT_ESP = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
         .withLocation("devonian/quads_translucent_esp")
         .withCull(false)
-        .withPrimitiveTopology(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
+        .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+        .withPrimitiveTopology(PrimitiveTopology.QUADS)
         .withDepthStencilState(DepthStencilState(CompareOp.NOT_EQUAL, false))
         .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
         .build().also { RenderPipelines.register(it) }

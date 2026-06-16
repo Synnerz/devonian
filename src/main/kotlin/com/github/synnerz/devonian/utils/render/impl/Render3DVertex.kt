@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.utils.render.impl
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.mixin.accessor.LevelRendererAccessor
 import com.github.synnerz.devonian.utils.math.ShapeUtils
 import com.github.synnerz.devonian.utils.render.IRender3D.LinesBuilder
 import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
 import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.font.TextRenderable
 import net.minecraft.client.renderer.StagedVertexBuffer
@@ -25,10 +25,11 @@ import kotlin.math.sqrt
 object Render3DVertex {
     private val minecraft = Devonian.minecraft
     private val textRenderer = minecraft.font
+    val submitNodeStorage get() = (minecraft.levelRenderer as LevelRendererAccessor).submitNodeStorage
 
     fun renderFilledShape(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        renderType: RenderType,
         shape: VoxelShape,
         ox: Double,
         oy: Double,
@@ -38,23 +39,25 @@ object Render3DVertex {
         val mat = stack.last()
 
         val faces = ShapeUtils.getFaces(shape)
-        for (i in faces.indices step 3) {
-            val x = faces[i + 0] + ox
-            val y = faces[i + 1] + oy
-            val z = faces[i + 2] + oz
+        submitNodeStorage.submitCustomGeometry(stack, renderType) { _, consumer ->
+            for (i in faces.indices step 3) {
+                val x = faces[i + 0] + ox
+                val y = faces[i + 1] + oy
+                val z = faces[i + 2] + oz
 
-            val dir = Vector3d(x, y, z)
-            dir.mul(-0.01 / dir.length())
+                val dir = Vector3d(x, y, z)
+                dir.mul(-0.01 / dir.length())
 
-            consumer
-                .addVertex(mat, (x + dir.x).toFloat(), (y + dir.y).toFloat(), (z + dir.z).toFloat())
-                .setColor(color.rgb)
+                consumer
+                    .addVertex(mat, (x + dir.x).toFloat(), (y + dir.y).toFloat(), (z + dir.z).toFloat())
+                    .setColor(color.rgb)
+            }
         }
     }
 
     fun renderWireframeShape(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        renderType: RenderType,
         shape: VoxelShape,
         ox: Double,
         oy: Double,
@@ -62,23 +65,25 @@ object Render3DVertex {
         color: Color,
         lineWidth: Double,
     ) {
-        shape.forAllEdges { h, j, k, l, m, n ->
-            val vector3f = Vector3f((l - h).toFloat(), (m - j).toFloat(), (n - k).toFloat()).normalize()
+        submitNodeStorage.submitCustomGeometry(stack, renderType) { pose, consumer ->
+            shape.forAllEdges { h, j, k, l, m, n ->
+                val vector3f = Vector3f((l - h).toFloat(), (m - j).toFloat(), (n - k).toFloat()).normalize()
 
-            consumer.addVertex(stack.last(), (h + ox).toFloat(), (j + oy).toFloat(), (k + oz).toFloat())
-                .setColor(color.rgb)
-                .setNormal(stack.last(), vector3f)
-                .setLineWidth(lineWidth.toFloat())
-            consumer.addVertex(stack.last(), (l + ox).toFloat(), (m + oy).toFloat(), (n + oz).toFloat())
-                .setColor(color.rgb)
-                .setNormal(stack.last(), vector3f)
-                .setLineWidth(lineWidth.toFloat())
+                consumer.addVertex(pose, (h + ox).toFloat(), (j + oy).toFloat(), (k + oz).toFloat())
+                    .setColor(color.rgb)
+                    .setNormal(pose, vector3f)
+                    .setLineWidth(lineWidth.toFloat())
+                consumer.addVertex(pose, (l + ox).toFloat(), (m + oy).toFloat(), (n + oz).toFloat())
+                    .setColor(color.rgb)
+                    .setNormal(pose, vector3f)
+                    .setLineWidth(lineWidth.toFloat())
+            }
         }
     }
 
     fun renderFilledBox(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        renderType: RenderType,
         x: Double,
         y: Double,
         z: Double,
@@ -94,41 +99,42 @@ object Render3DVertex {
         val y2 = (y + h).toFloat()
         val z2 = (z + wz).toFloat()
         val c = color.rgb
-        val m = stack.last()
 
-        consumer.addVertex(m, x1, y1, z1).setColor(c)
-        consumer.addVertex(m, x1, y2, z1).setColor(c)
-        consumer.addVertex(m, x2, y1, z1).setColor(c)
-        consumer.addVertex(m, x2, y2, z1).setColor(c)
+        submitNodeStorage.submitCustomGeometry(stack, renderType) { m, consumer ->
+            consumer.addVertex(m, x1, y1, z1).setColor(c)
+            consumer.addVertex(m, x1, y2, z1).setColor(c)
+            consumer.addVertex(m, x2, y1, z1).setColor(c)
+            consumer.addVertex(m, x2, y2, z1).setColor(c)
 
-        consumer.addVertex(m, x2, y1, z2).setColor(c)
-        consumer.addVertex(m, x2, y2, z2).setColor(c)
+            consumer.addVertex(m, x2, y1, z2).setColor(c)
+            consumer.addVertex(m, x2, y2, z2).setColor(c)
 
-        consumer.addVertex(m, x1, y1, z2).setColor(c)
-        consumer.addVertex(m, x1, y2, z2).setColor(c)
+            consumer.addVertex(m, x1, y1, z2).setColor(c)
+            consumer.addVertex(m, x1, y2, z2).setColor(c)
 
-        consumer.addVertex(m, x1, y1, z1).setColor(c)
-        consumer.addVertex(m, x1, y2, z1).setColor(c)
+            consumer.addVertex(m, x1, y1, z1).setColor(c)
+            consumer.addVertex(m, x1, y2, z1).setColor(c)
 
-        consumer.addVertex(m, x1, y2, z1).setColor(c)
+            consumer.addVertex(m, x1, y2, z1).setColor(c)
 
-        consumer.addVertex(m, x1, y2, z2).setColor(c)
-        consumer.addVertex(m, x2, y2, z1).setColor(c)
-        consumer.addVertex(m, x2, y2, z2).setColor(c)
+            consumer.addVertex(m, x1, y2, z2).setColor(c)
+            consumer.addVertex(m, x2, y2, z1).setColor(c)
+            consumer.addVertex(m, x2, y2, z2).setColor(c)
 
-        consumer.addVertex(m, x2, y2, z2).setColor(c)
-        consumer.addVertex(m, x1, y1, z2).setColor(c)
+            consumer.addVertex(m, x2, y2, z2).setColor(c)
+            consumer.addVertex(m, x1, y1, z2).setColor(c)
 
-        consumer.addVertex(m, x1, y1, z2).setColor(c)
-        consumer.addVertex(m, x1, y1, z1).setColor(c)
-        consumer.addVertex(m, x2, y1, z2).setColor(c)
-        consumer.addVertex(m, x2, y1, z1).setColor(c)
+            consumer.addVertex(m, x1, y1, z2).setColor(c)
+            consumer.addVertex(m, x1, y1, z1).setColor(c)
+            consumer.addVertex(m, x2, y1, z2).setColor(c)
+            consumer.addVertex(m, x2, y1, z1).setColor(c)
+        }
 
     }
 
     fun renderWireframeBox(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        renderType: RenderType,
         x: Double,
         y: Double,
         z: Double,
@@ -145,7 +151,7 @@ object Render3DVertex {
         val y2 = y + h
         val z2 = z + wz
 
-        renderLines(stack, consumer) {
+        renderLines(stack, renderType) {
             submit(x1, y1, z1, x2, y1, z1, color, color, lineWidth, lineWidth)
             submit(x1, y2, z1, x2, y2, z1, color, color, lineWidth, lineWidth)
             submit(x1, y1, z1, x1, y2, z1, color, color, lineWidth, lineWidth)
@@ -220,86 +226,86 @@ object Render3DVertex {
 
     fun renderBeamInner(
         stack: PoseStack,
-        bufferSource: StagedVertexBuffer,
         opaqueLayer: RenderType,
         translucentLayer: RenderType,
         color: Color,
         h: Double,
     ) {
-        BeaconBeamRenderer.renderBeamInner(
-            stack,
-            bufferSource,
-            opaqueLayer,
-            translucentLayer,
-            minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
-            minecraft.level?.gameTime ?: 0L,
-            color,
-            h,
-        )
+        submitNodeStorage.submitCustomGeometry(stack, if (color.alpha == 255) opaqueLayer else translucentLayer) { _, consumer ->
+            BeaconBeamRenderer.renderBeamInner(
+                stack,
+                consumer,
+                minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
+                minecraft.level?.gameTime ?: 0L,
+                color,
+                h,
+            )
+        }
     }
 
     fun renderBeamOuter(
         stack: PoseStack,
-        bufferSource: StagedVertexBuffer,
         opaqueLayer: RenderType,
         translucentLayer: RenderType,
         color: Color,
         h: Double,
     ) {
-        BeaconBeamRenderer.renderBeamOuter(
-            stack,
-            bufferSource,
-            opaqueLayer,
-            translucentLayer,
-            minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
-            minecraft.level?.gameTime ?: 0L,
-            color,
-            h,
-        )
+        submitNodeStorage.submitCustomGeometry(stack, translucentLayer) { _, consumer ->
+            BeaconBeamRenderer.renderBeamOuter(
+                stack,
+                consumer,
+                minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
+                minecraft.level?.gameTime ?: 0L,
+                color,
+                h,
+            )
+        }
     }
 
     fun renderLines(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        renderType: RenderType,
         supplier: LinesBuilder.() -> Unit,
     ) {
         val mat = stack.last()
 
-        supplier.invoke(
-            object : LinesBuilder {
-                override fun submit(
-                    x0: Double, y0: Double, z0: Double,
-                    x1: Double, y1: Double, z1: Double,
-                    c0: Color, c1: Color,
-                    lineWidth0: Double, lineWidth1: Double,
-                ) {
-                    var dx = (x1 - x0).toFloat()
-                    var dy = (y1 - y0).toFloat()
-                    var dz = (z1 - z0).toFloat()
-                    val f = 1f / sqrt(dx * dx + dy * dy + dz * dz)
-                    dx *= f
-                    dy *= f
-                    dz *= f
+        submitNodeStorage.submitCustomGeometry(stack, renderType) { _, consumer ->
+            supplier.invoke(
+                object : LinesBuilder {
+                    override fun submit(
+                        x0: Double, y0: Double, z0: Double,
+                        x1: Double, y1: Double, z1: Double,
+                        c0: Color, c1: Color,
+                        lineWidth0: Double, lineWidth1: Double,
+                    ) {
+                        var dx = (x1 - x0).toFloat()
+                        var dy = (y1 - y0).toFloat()
+                        var dz = (z1 - z0).toFloat()
+                        val f = 1f / sqrt(dx * dx + dy * dy + dz * dz)
+                        dx *= f
+                        dy *= f
+                        dz *= f
 
-                    consumer
-                        .addVertex(mat, x0.toFloat(), y0.toFloat(), z0.toFloat())
-                        .setColor(c0.rgb)
-                        .setNormal(mat, dx, dy, dz)
-                        .setLineWidth(lineWidth0.toFloat())
+                        consumer
+                            .addVertex(mat, x0.toFloat(), y0.toFloat(), z0.toFloat())
+                            .setColor(c0.rgb)
+                            .setNormal(mat, dx, dy, dz)
+                            .setLineWidth(lineWidth0.toFloat())
 
-                    consumer
-                        .addVertex(mat, x1.toFloat(), y1.toFloat(), z1.toFloat())
-                        .setColor(c1.rgb)
-                        .setNormal(mat, dx, dy, dz)
-                        .setLineWidth(lineWidth1.toFloat())
+                        consumer
+                            .addVertex(mat, x1.toFloat(), y1.toFloat(), z1.toFloat())
+                            .setColor(c1.rgb)
+                            .setNormal(mat, dx, dy, dz)
+                            .setLineWidth(lineWidth1.toFloat())
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     fun renderLineStrip(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        renderType: RenderType,
         supplier: VertexBuilder.() -> Unit,
     ) {
         var first = true
@@ -309,7 +315,7 @@ object Render3DVertex {
         var pc = Color(0, true)
         var pw = 1.0
 
-        renderLines(stack, consumer) {
+        renderLines(stack, renderType) {
             supplier.invoke(
                 object : VertexBuilder {
                     override fun submit(x: Double, y: Double, z: Double, c: Color, lineWidth: Double) {
