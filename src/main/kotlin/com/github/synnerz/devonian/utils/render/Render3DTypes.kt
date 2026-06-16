@@ -20,14 +20,12 @@ object Render3DTypes {
     val LINES_TRANSLUCENT = RenderType.create(
         "devonian/lines_translucent",
         RenderSetup.builder(Render3DPipelines.LINES_TRANSLUCENT)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 
     val LINES_TRANSLUCENT_ESP = RenderType.create(
         "devonian/lines_translucent_esp",
         RenderSetup.builder(Render3DPipelines.LINES_TRANSLUCENT_ESP)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 
