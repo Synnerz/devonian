@@ -8,9 +8,12 @@ import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.font.TextRenderable
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.StagedVertexBuffer
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.level.CameraRenderState
+import net.minecraft.network.chat.Style
+import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Vector3d
 import org.joml.Vector3f
@@ -170,7 +173,6 @@ object Render3DVertex {
     fun renderString(
         camera: CameraRenderState,
         stack: PoseStack,
-        bufferSource: StagedVertexBuffer,
         mode: Font.DisplayMode,
         str: String,
         x: Double,
@@ -196,28 +198,20 @@ object Render3DVertex {
             .rotate(camera.orientation)
             .scale(scale * 0.025f, -scale * 0.025f, scale * 0.025f)
 
-        val pose = stack.last().pose()
-        val prep = textRenderer.prepareText(
-            str,
+        val deltaPartialTick = minecraft.deltaTracker.getGameTimeDeltaPartialTick(true)
+        submitNodeStorage.submitText(
+            stack,
             offset,
             0f,
-            color.rgb,
+            FormattedCharSequence.forward(str, Style.EMPTY),
             true,
+            mode,
+            minecraft.entityRenderDispatcher.getPackedLightCoords(minecraft.player!!, deltaPartialTick),
+            color.rgb,
             ((minecraft.options.getBackgroundOpacity(0.25f) * backgroundBox.alpha).toInt() shl 24) or
                     (backgroundBox.rgb and 0x00FFFFFF),
+            0
         )
-        prep.visit(object : Font.GlyphVisitor {
-            override fun acceptRenderable(renderable: TextRenderable) {
-                renderable.render(
-                    pose,
-                    DummyTextRender.findBuffer(renderable.renderType(mode)),
-                    15728880,
-                    false
-                )
-            }
-        })
-
-        bufferSource.endFrame()
 
         stack.popPose()
     }

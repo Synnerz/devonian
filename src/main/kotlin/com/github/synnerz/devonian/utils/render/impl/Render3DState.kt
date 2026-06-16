@@ -204,7 +204,6 @@ object Render3DState {
         Render3DVertex.renderString(
             camera,
             poseStack,
-            bufferSource,
             if (phase) Font.DisplayMode.SEE_THROUGH else Font.DisplayMode.NORMAL,
             str,
             x, y, z,
