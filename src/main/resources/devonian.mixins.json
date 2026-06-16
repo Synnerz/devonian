@@ -57,6 +57,7 @@
     "ScreenMixin",
     "ScreenshotMixin",
     "SoundEngineMixin",
+    "VulkanRenderPipelineMixin",
     "YggdrasilMinecraftSessionServiceMixin",
     "accessor.AbstractContainerScreenAccessor",
     "accessor.CameraAccessor",
