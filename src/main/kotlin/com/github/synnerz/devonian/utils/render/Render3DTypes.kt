@@ -44,14 +44,12 @@ object Render3DTypes {
     val TRIANGLE_STRIP_TRANSLUCENT = RenderType.create(
         "devonian/triangle_strip_translucent",
         RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP_TRANSLUCENT)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 
     val TRIANGLE_STRIP_TRANSLUCENT_ESP = RenderType.create(
         "devonian/triangle_strip_translucent_esp",
         RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP_TRANSLUCENT_ESP)
-            .sortOnUpload()
             .createRenderSetup(),
     )
 
