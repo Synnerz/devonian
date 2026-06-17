@@ -116,6 +116,60 @@ object StringUtils {
         return str
     }
 
+    fun fromLegacy(string: String): Component {
+        val component = Component.literal("")
+        var oldStr = ""
+        var hadSS = false
+        var style = Style.EMPTY
+
+        for (char in string) {
+            if (char == '§') {
+                hadSS = true
+                if (oldStr.isNotEmpty()) {
+                    component.append(Component.literal(oldStr).withStyle(style))
+                    oldStr = ""
+                }
+                continue
+            }
+            if (hadSS && (char.isLetter() || char.isDigit())) {
+                hadSS = false
+
+                style = when (char) {
+                    'l' -> style.withBold(true)
+                    'o' -> style.withItalic(true)
+                    'n' -> style.withUnderlined(true)
+                    'm' -> style.withStrikethrough(true)
+                    'k' -> style.withObfuscated(true)
+                    '0' -> Style.EMPTY.withColor(TextColor.BLACK)
+                    '1' -> Style.EMPTY.withColor(TextColor.DARK_BLUE)
+                    '2' -> Style.EMPTY.withColor(TextColor.DARK_GREEN)
+                    '3' -> Style.EMPTY.withColor(TextColor.DARK_AQUA)
+                    '4' -> Style.EMPTY.withColor(TextColor.DARK_RED)
+                    '5' -> Style.EMPTY.withColor(TextColor.DARK_PURPLE)
+                    '6' -> Style.EMPTY.withColor(TextColor.GOLD)
+                    '7' -> Style.EMPTY.withColor(TextColor.GRAY)
+                    '8' -> Style.EMPTY.withColor(TextColor.DARK_GRAY)
+                    '9' -> Style.EMPTY.withColor(TextColor.BLUE)
+                    'a' -> Style.EMPTY.withColor(TextColor.GREEN)
+                    'b' -> Style.EMPTY.withColor(TextColor.AQUA)
+                    'c' -> Style.EMPTY.withColor(TextColor.RED)
+                    'd' -> Style.EMPTY.withColor(TextColor.LIGHT_PURPLE)
+                    'e' -> Style.EMPTY.withColor(TextColor.YELLOW)
+                    'f' -> Style.EMPTY.withColor(TextColor.WHITE)
+                    'r' -> Style.EMPTY
+                    else -> Style.EMPTY
+                }
+                continue
+            }
+
+            oldStr += char
+        }
+        if (oldStr.isNotEmpty())
+            component.append(Component.literal(oldStr).withStyle(style))
+
+        return component
+    }
+
     fun Component.colorCodes(): String {
         var str = parseFormat(this)
 
