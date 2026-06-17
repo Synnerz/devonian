@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.utils.render.impl
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.mixin.accessor.LevelRendererAccessor
+import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.math.ShapeUtils
 import com.github.synnerz.devonian.utils.render.IRender3D.LinesBuilder
 import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
@@ -203,7 +204,7 @@ object Render3DVertex {
             stack,
             offset,
             0f,
-            FormattedCharSequence.forward(str, Style.EMPTY),
+            StringUtils.fromLegacy(str).visualOrderText,
             true,
             mode,
             minecraft.entityRenderDispatcher.getPackedLightCoords(minecraft.player!!, deltaPartialTick),
