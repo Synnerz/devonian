@@ -218,8 +218,7 @@ object Devonian : ClientModInitializer {
             CenteredCrosshair,
             DisableEnderPearlCooldown,
             HudManagerRenderer,
-            // FIXME
-//            DisableWorldLoadingScreen,
+            DisableWorldLoadingScreen,
             HighlightDroppedItems,
             DisableHungerBar,
             FixRedVignette,
