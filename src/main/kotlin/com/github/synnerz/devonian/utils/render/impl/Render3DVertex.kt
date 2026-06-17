@@ -8,13 +8,8 @@ import com.github.synnerz.devonian.utils.render.IRender3D.LinesBuilder
 import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.font.TextRenderable
-import net.minecraft.client.player.LocalPlayer
-import net.minecraft.client.renderer.StagedVertexBuffer
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.level.CameraRenderState
-import net.minecraft.network.chat.Style
-import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Vector3d
 import org.joml.Vector3f
@@ -262,9 +257,7 @@ object Render3DVertex {
         renderType: RenderType,
         supplier: LinesBuilder.() -> Unit,
     ) {
-        val mat = stack.last()
-
-        submitNodeStorage.submitCustomGeometry(stack, renderType) { _, consumer ->
+        submitNodeStorage.submitCustomGeometry(stack, renderType) { pose, consumer ->
             supplier.invoke(
                 object : LinesBuilder {
                     override fun submit(
@@ -282,15 +275,15 @@ object Render3DVertex {
                         dz *= f
 
                         consumer
-                            .addVertex(mat, x0.toFloat(), y0.toFloat(), z0.toFloat())
+                            .addVertex(pose, x0.toFloat(), y0.toFloat(), z0.toFloat())
                             .setColor(c0.rgb)
-                            .setNormal(mat, dx, dy, dz)
+                            .setNormal(pose, dx, dy, dz)
                             .setLineWidth(lineWidth0.toFloat())
 
                         consumer
-                            .addVertex(mat, x1.toFloat(), y1.toFloat(), z1.toFloat())
+                            .addVertex(pose, x1.toFloat(), y1.toFloat(), z1.toFloat())
                             .setColor(c1.rgb)
-                            .setNormal(mat, dx, dy, dz)
+                            .setNormal(pose, dx, dy, dz)
                             .setLineWidth(lineWidth1.toFloat())
                     }
                 }
