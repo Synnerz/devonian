@@ -188,8 +188,7 @@ object Devonian : ClientModInitializer {
             KeyPickup,
             CreeperBeamsSolver,
             SimonSaysSolver,
-            // FIXME
-//            ArrowAlignSolver,
+            ArrowAlignSolver,
             CurrentRoomName,
             CurrentRoomCleared,
             TeleportMazeSolver,
