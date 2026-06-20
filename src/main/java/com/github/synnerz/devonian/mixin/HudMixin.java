@@ -9,12 +9,12 @@ import com.github.synnerz.devonian.mixin.accessor.GuiGraphicsExtractorAccessor;
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -25,11 +25,14 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.numbers.NumberFormat;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.PlayerScoreEntry;
+import net.minecraft.world.scores.Scoreboard;
 import org.joml.Matrix3x2f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,6 +41,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Arrays;
@@ -279,15 +283,14 @@ public class HudMixin {
     @Unique
     private boolean removeHypixel = false;
 
-    // FIXME
-//    @Inject(
-//        method = "method_55439",
-//        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/PlayerScoreEntry;formatValue(Lnet/minecraft/network/chat/numbers/NumberFormat;)Lnet/minecraft/network/chat/MutableComponent;")
-//    )
-//    private void devonian$removeHypixelScoreboard(Scoreboard scoreboard, NumberFormat numberFormat, PlayerScoreEntry playerScoreEntry, CallbackInfoReturnable cir, @Local(ordinal = 1) Component component2) {
-//        if (!RemoveHypixelScoreboard.INSTANCE.isEnabled()) return;
-//        if (component2.getString().startsWith("§ewww.hypixel")) removeHypixel = true;
-//    }
+    @Inject(
+        method = "lambda$displayScoreboardSidebar$1",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/scores/PlayerScoreEntry;formatValue(Lnet/minecraft/network/chat/numbers/NumberFormat;)Lnet/minecraft/network/chat/MutableComponent;")
+    )
+    private void devonian$removeHypixelScoreboard(Scoreboard scoreboard, NumberFormat objectiveScoreFormat, PlayerScoreEntry score, CallbackInfoReturnable cir, @Local(name = "name") Component name) {
+        if (!RemoveHypixelScoreboard.INSTANCE.isEnabled()) return;
+        if (name.getString().startsWith("§ewww.hypixel")) removeHypixel = true;
+    }
 
     @WrapOperation(
             method = "displayScoreboardSidebar",
