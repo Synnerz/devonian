@@ -82,6 +82,7 @@ object WebsocketClient : Feature(
     override fun initialize() {
         on<GameUnloadEvent> {
             socket?.abort()
+            socket = null
         }
 
         on<HypixelModApi.HelloPacket> {

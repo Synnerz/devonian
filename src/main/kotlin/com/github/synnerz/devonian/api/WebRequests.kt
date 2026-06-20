@@ -1,9 +1,12 @@
 package com.github.synnerz.devonian.api
 
+import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.GameUnloadEvent
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
 import java.net.URI
@@ -20,6 +23,12 @@ object WebRequests {
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
     val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO + CoroutineName("Devonian"))
+
+    init {
+        EventBus.on<GameUnloadEvent> {
+            ioScope.cancel()
+        }
+    }
 
     suspend fun get(
         url: String

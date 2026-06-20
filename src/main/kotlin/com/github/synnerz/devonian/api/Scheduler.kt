@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.EventBus
+import com.github.synnerz.devonian.api.events.GameUnloadEvent
 import kotlinx.atomicfu.atomic
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -19,7 +20,9 @@ object Scheduler {
     private val beforePacketTasks = ConcurrentLinkedQueue<() -> Unit>()
     private val afterPacketTasks = ConcurrentLinkedQueue<() -> Unit>()
 
-    val schedulePool: ScheduledExecutorService = Executors.newScheduledThreadPool(0)
+    val schedulePool: ScheduledExecutorService = Executors.newScheduledThreadPool(0) { r ->
+        Thread(r, "Devonian-Scheduler")
+    }
 
     data class Task(var delay: Int, val cb: () -> Unit, val id: Int)
 
@@ -37,6 +40,9 @@ object Scheduler {
                 val task = tasksServer.poll() ?: return@on
                 task.cb()
             }
+        }
+        EventBus.on<GameUnloadEvent> {
+            schedulePool.shutdown()
         }
     }
 
