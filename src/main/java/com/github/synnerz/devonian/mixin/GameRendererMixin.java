@@ -16,14 +16,4 @@ public class GameRendererMixin {
         if (!NoHurtCamera.INSTANCE.isEnabled()) return;
         ci.cancel();
     }
-
-    // FIXME
-//    @ModifyReturnValue(method = "getFov", at = @At(value = "RETURN", ordinal = 1))
-//    private float devonian$onGetFov(float original) {
-//        if (ZoomKeybind.INSTANCE.isEnabled()) {
-//            return original * ZoomKeybind.cachedFactor;
-//        }
-//
-//        return original;
-//    }
 }
