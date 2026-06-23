@@ -27,7 +27,7 @@
 	"accessWidener": "devonian.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.18.4",
-		"minecraft": "~26.2-",
+		"minecraft": "~26.3-",
 		"java": ">=25",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*",
