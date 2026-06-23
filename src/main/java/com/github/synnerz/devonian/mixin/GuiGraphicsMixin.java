@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositione
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix3x2fStack;
 import org.joml.Vector2ic;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -79,12 +80,8 @@ public abstract class GuiGraphicsMixin {
         }
     }
 
-    @Inject(
-            method = "tooltip",
-            at = @At("HEAD"),
-            cancellable = true
-    )
-    private void devonian$renderTooltip(Font font, List<ClientTooltipComponent> list, int i, int j, ClientTooltipPositioner clientTooltipPositioner, Identifier resourceLocation, CallbackInfo ci) {
-        if (new TooltipRenderEvent(list instanceof ArrayList<?> ? list : new ArrayList<>(list), i, j).post()) ci.cancel();
+    @Inject(method = "setTooltipForNextFrameInternal", at = @At("HEAD"), cancellable = true)
+    private void devonian$renderTooltip(Font font, List<ClientTooltipComponent> lines, int xo, int yo, ClientTooltipPositioner positioner, @Nullable Identifier style, boolean replaceExisting, CallbackInfo ci) {
+        if (new TooltipRenderEvent(lines instanceof ArrayList<?> ? lines : new ArrayList<>(lines), xo, yo).post()) ci.cancel();
     }
 }
