@@ -7,7 +7,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -31,16 +30,6 @@ public class MinecraftMixin {
 
     @Shadow
     private static Minecraft instance;
-
-    @Inject(
-            method = "setScreenAndShow",
-            at = @At("HEAD"),
-            cancellable = true
-    )
-    private void devonian$setScreen(Screen screen, CallbackInfo ci) {
-        if (screen == null && this.gui.screen() != null && new GuiCloseEvent(this.gui.screen()).post()) ci.cancel();
-        if (screen != null && new GuiOpenEvent(screen).post()) ci.cancel();
-    }
 
     @Inject(
         method = "startUseItem",
