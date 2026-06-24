@@ -93,7 +93,7 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
                     centered = true,
                 )
 
-                if (SETTING_DISPLAY_NAME.get()) return@forEach
+                if (!SETTING_DISPLAY_NAME.get()) return@forEach
                 val item = ref.get() ?: return@forEach
                 val name = item.customName ?: return@forEach
                 Render3DImmediate.renderString(
