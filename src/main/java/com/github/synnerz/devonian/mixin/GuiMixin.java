@@ -12,16 +12,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
-public class GuiMixin {
+public abstract class GuiMixin {
     @Shadow
     @Final
     private Minecraft minecraft;
+
+    @Shadow
+    public abstract @Nullable Screen screen();
 
     @WrapOperation(
             method = "extractRenderState",
@@ -72,5 +78,11 @@ public class GuiMixin {
         mh.devonian$setGuiScaledHeightOverride(w.getGuiScaledHeight());
         w.setGuiScale(oldScale);
         // instance.resize(mc, w.getGuiScaledWidth(), w.getGuiScaledHeight());
+    }
+
+    @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
+    private void devonian$onSetScreen(Screen screen, CallbackInfo ci) {
+        if (screen == null && screen() != null && new GuiCloseEvent(screen()).post()) ci.cancel();
+        if (screen != null && new GuiOpenEvent(screen).post()) ci.cancel();
     }
 }
