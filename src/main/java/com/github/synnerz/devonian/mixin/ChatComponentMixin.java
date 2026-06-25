@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.features.misc.DisableChatAutoScroll;
 import com.github.synnerz.devonian.features.misc.PeekChatKeybind;
 import com.github.synnerz.devonian.features.misc.RemoveChatLimit;
 import com.github.synnerz.devonian.features.misc.chat.CompactChat;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.Minecraft;
@@ -28,20 +29,11 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     @Final
     private List<GuiMessage.Line> trimmedMessages;
 
-    @ModifyConstant(
-        method = "addMessageToDisplayQueue",
-        constant = @Constant(intValue = 100)
+    @ModifyExpressionValue(
+        method = { "addMessageToQueue", "addMessageToDisplayQueue" },
+        at = @At(value = "CONSTANT", args = "intValue=100")
     )
-    private int devonian$removeChatLimitaddMessageToDisplayQueue(int constant) {
-        if (!RemoveChatLimit.INSTANCE.isEnabled()) return constant;
-        return RemoveChatLimit.INSTANCE.getSETTING_MAX_MESSAGES().get().intValue();
-    }
-
-    @ModifyConstant(
-        method = "addMessageToQueue",
-        constant = @Constant(intValue = 100)
-    )
-    private int devonian$removeChatLimitaddMessageToQueue(int constant) {
+    private int devonian$removeChatLimit(int constant) {
         if (!RemoveChatLimit.INSTANCE.isEnabled()) return constant;
         return RemoveChatLimit.INSTANCE.getSETTING_MAX_MESSAGES().get().intValue();
     }
