@@ -130,6 +130,21 @@ object RefillGFSCommands {
             1
         }
 
+        DevonianCommand.command.subcommand("decoys") { _, args ->
+            val inv = inventory ?: return@subcommand 0
+            var stacks = 0
+            var amount = 0
+            inv.forEach {
+                if (ItemUtils.skyblockId(it) != "DUNGEON_DECOY") return@forEach
+                stacks++
+                amount += it.count
+            }
+            if (amount == 0) stacks = 1
+            val remaining = stacks * 64 - amount
+            if (remaining > 0) ChatUtils.command("gfs decoy $remaining")
+            1
+        }
+
         DevonianCommand.command.subcommand("twilight") { _, args ->
             val inv = inventory ?: return@subcommand 0
             var stacks = 0
