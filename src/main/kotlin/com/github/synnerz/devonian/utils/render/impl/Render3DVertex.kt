@@ -240,9 +240,9 @@ object Render3DVertex {
         color: Color,
         h: Double,
     ) {
-        submitNodeStorage.submitCustomGeometry(stack, translucentLayer) { _, consumer ->
+        submitNodeStorage.submitCustomGeometry(stack, translucentLayer) { pose, consumer ->
             BeaconBeamRenderer.renderBeamOuter(
-                stack,
+                pose,
                 consumer,
                 minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
                 minecraft.level?.gameTime ?: 0L,

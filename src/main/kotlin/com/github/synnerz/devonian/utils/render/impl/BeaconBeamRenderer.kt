@@ -35,7 +35,7 @@ object BeaconBeamRenderer {
         matrices.mulPose(Axis.YP.rotationDegrees(time * 2.25f - 45.0f))
 
         renderBeamLayer(
-            matrices,
+            matrices.last(),
             vertices,
             color.rgb,
             0f,
@@ -55,7 +55,7 @@ object BeaconBeamRenderer {
     }
 
     fun renderBeamOuter(
-        matrices: PoseStack,
+        matrices: PoseStack.Pose,
         vertices: VertexConsumer,
         partialTicks: Float,
         worldTime: Long,
@@ -89,7 +89,7 @@ object BeaconBeamRenderer {
     }
 
     fun renderBeamLayer(
-        matrices: PoseStack,
+        matrices: PoseStack.Pose,
         vertices: VertexConsumer,
         color: Int,
         x1: Float,
@@ -104,11 +104,10 @@ object BeaconBeamRenderer {
         v2: Float,
         h: Float,
     ) {
-        val entry = matrices.last()
-        renderBeamFace(entry, vertices, color, x1, z1, x2, z2, v1, v2, h)
-        renderBeamFace(entry, vertices, color, x4, z4, x3, z3, v1, v2, h)
-        renderBeamFace(entry, vertices, color, x2, z2, x4, z4, v1, v2, h)
-        renderBeamFace(entry, vertices, color, x3, z3, x1, z1, v1, v2, h)
+        renderBeamFace(matrices, vertices, color, x1, z1, x2, z2, v1, v2, h)
+        renderBeamFace(matrices, vertices, color, x4, z4, x3, z3, v1, v2, h)
+        renderBeamFace(matrices, vertices, color, x2, z2, x4, z4, v1, v2, h)
+        renderBeamFace(matrices, vertices, color, x3, z3, x1, z1, v1, v2, h)
     }
 
     fun renderBeamFace(
