@@ -84,7 +84,7 @@ object CroesusProfit : TextHudFeature(
         var slotIdx: Int = -1,
         var bought: Boolean = false,
     ) {
-        fun totalProfit(): Int = if (bought) Int.MIN_VALUE else  items.sumOf { it.price() } - chestPrice
+        fun totalProfit(): Int = if (bought) Int.MIN_VALUE else  items.toList().sumOf { it.price() } - chestPrice
     }
 
     override fun initialize() {
