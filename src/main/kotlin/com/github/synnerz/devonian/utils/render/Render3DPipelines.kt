@@ -111,13 +111,10 @@ object Render3DPipelines {
 
     val BEACON_BEAM_TRANSLUCENT = RenderPipeline.builder(RenderPipelines.BEACON_BEAM_SNIPPET)
         .withLocation("devonian/beacon_beam_translucent")
-        .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
-        .withDepthStencilState(DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
         .build().also { RenderPipelines.register(it) }
 
     val BEACON_BEAM_TRANSLUCENT_ESP = RenderPipeline.builder(RenderPipelines.BEACON_BEAM_SNIPPET)
         .withLocation("devonian/beacon_beam_translucent_esp")
-        .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
         .withDepthStencilState(DepthStencilState(CompareOp.NOT_EQUAL, false))
         .build().also { RenderPipelines.register(it) }
 
