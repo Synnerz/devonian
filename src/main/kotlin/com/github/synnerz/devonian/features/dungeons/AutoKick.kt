@@ -207,14 +207,14 @@ object AutoKick : Feature(
             return
         }
         val mp = data.magicalPower()
-        val allow =
-            mp >= SETTING_MINIMUM_MP.get() &&
-            seconds <= SETTING_MINIMUM_PB.get()
-        if (allow) return
+        val validMP = mp >= SETTING_MINIMUM_MP.get()
+        val validPB = seconds <= SETTING_MINIMUM_PB.get()
+        if (validMP && validPB) return
 
         ChatUtils.sendMessage("&bAutoKick $username does not meet the requirements | ${StringUtils.formatSeconds(seconds.toLong())} | $mp", true)
         Scheduler.scheduleTask {
-            ChatUtils.command("pc Kick $username does not meet requirements | PB ${StringUtils.formatSeconds(seconds.toLong())} | MP $mp")
+            val requirement = if (validMP) "PB ${StringUtils.formatSeconds(seconds.toLong())}" else "MP $mp"
+            ChatUtils.command("pc Kick $username does not meet requirements | ${requirement}")
             Scheduler.scheduleTask(10) {
                 ChatUtils.command("p kick $username")
             }
