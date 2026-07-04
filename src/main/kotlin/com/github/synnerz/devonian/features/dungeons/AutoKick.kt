@@ -214,7 +214,7 @@ object AutoKick : Feature(
         ChatUtils.sendMessage("&bAutoKick $username does not meet the requirements | ${StringUtils.formatSeconds(seconds.toLong())} | $mp", true)
         Scheduler.scheduleTask {
             val requirement = if (validMP) "PB ${StringUtils.formatSeconds(seconds.toLong())}" else "MP $mp"
-            ChatUtils.command("pc Kick $username does not meet requirements | ${requirement}")
+            ChatUtils.command("pc Kick $username does not meet requirements | $requirement")
             Scheduler.scheduleTask(10) {
                 ChatUtils.command("p kick $username")
             }
