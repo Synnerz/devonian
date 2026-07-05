@@ -171,7 +171,6 @@ object Devonian : ClientModInitializer {
             ScoreDisplay,
             EtherwarpOverlayFailReason,
             DisableChatAutoScroll,
-            DisableBlindness,
             DisableAttachedArrows,
             DisableVignette,
             DisableWaterOverlay,
