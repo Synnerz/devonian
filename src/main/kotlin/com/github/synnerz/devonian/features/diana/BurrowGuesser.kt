@@ -72,7 +72,7 @@ object BurrowGuesser : Feature(
     private val splinePoly = atomic<Array<(t: Double) -> Double>?>(null)
     private val particlePath = atomic(doubleArrayOf())
 
-    data class PositionTime(val t: Int, val x: Double, val y: Double, val z: Double)
+    data class PositionTime(val t: Int, val x: Double, val y: Double, val z: Double, var blacklisted: Boolean = false)
 
     fun resetGuess() {
         splinePoly.value = null
@@ -315,7 +315,7 @@ object BurrowGuesser : Feature(
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             if (!isSpade(sbId)) return@on
 
-            val player = minecraft.player as LocalPlayerAccessor? ?: return@on
+            val player = minecraft.player as? LocalPlayerAccessor? ?: return@on
 
             spadeUsePositions.add(
                 PositionTime(
@@ -350,11 +350,22 @@ object BurrowGuesser : Feature(
             if (!isSpade(sbId)) return@on
 
             BurrowManager.digBurrow(pos)
+            val bp = guessPos.value ?: return@on
+            val ( _, bpx, bpy, bpz ) = bp
+            val rx = bpx.roundToInt()
+            val rz = bpz.roundToInt()
+
+            if (
+                pos.x in rx - 1..rx + 1 &&
+                pos.y == bpy.roundToInt() &&
+                pos.z in rz - 1..rz + 1
+            )
+                guessPos.value = null
         }
 
         on<TickEvent> {
             val player = minecraft.player ?: return@on
-            val itemStack = player.mainHandItem ?: return@on
+            val itemStack = player.mainHandItem
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             if (!isSpade(sbId)) return@on
 
@@ -368,6 +379,17 @@ object BurrowGuesser : Feature(
 
         on<RenderWorldEvent> {
             BurrowManager.burrows.forEach {
+                guessPos.value?.let { bp ->
+                    val ( _, bpx, bpy, bpz ) = bp
+                    if (bp.blacklisted) return@let
+                    val rx = bpx.roundToInt()
+                    val rz = bpz.roundToInt()
+                    bp.blacklisted =
+                        it.x.roundToInt() in rx - 1..rx + 1 &&
+                                it.y.roundToInt() == bpy.roundToInt() &&
+                                it.z.roundToInt() in rz - 1..rz + 1
+                }
+
                 if (it.type.empirical) return@forEach
 
                 Render3DImmediate.renderWaypoint(
@@ -392,7 +414,7 @@ object BurrowGuesser : Feature(
                 phase = true,
                 title = BurrowManager.BurrowType.GUESS.displayName,
                 textScale = 2f, textMaxDist = 20.0, textBackgroundBox = Color.BLACK,
-                beacon = SETTING_RENDER_BEAM.get(),
+                beacon = SETTING_RENDER_BEAM.get() && !guess.blacklisted,
                 centered = true,
             )
 
