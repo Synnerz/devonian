@@ -1,5 +1,7 @@
 package com.github.synnerz.devonian.features.diana
 
+import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.events.*
@@ -9,11 +11,14 @@ import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.math.MathUtils
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import kotlinx.atomicfu.atomic
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
+import net.minecraft.client.KeyMapping
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket
+import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import java.util.*
 import kotlin.math.*
@@ -59,6 +64,19 @@ object BurrowGuesser : Feature(
         "Particle Path Color",
     )
 
+    private val keybind = KeyMappingHelper.registerKeyMapping(KeyMapping(
+        "key.devonian.burrowWarp",
+        GLFW.GLFW_KEY_UNKNOWN,
+        Devonian.keybindCategory
+    ))
+    private val warpCommands = listOf(
+        WarpCommand("warp stonks", -36.500, 70.0, -81.500),
+        WarpCommand("warp castle", -250.0, 130.0, 45.0),
+        WarpCommand("warp wizard", 44.500, 119.0, 93.500),
+        WarpCommand("warp crypts", -160.500, 62.0, -106.500),
+        WarpCommand("warp hub", 0.500, 77.0, -0.500),
+        WarpCommand("warp da", 92.500, 75.500, 174.500),
+    )
     private val spadeUsePositions = LinkedList<PositionTime>()
     private val unclaimedParticles = mutableListOf<PositionTime>()
     private val possibleStartingParticles = mutableListOf<PositionTime>()
@@ -73,6 +91,7 @@ object BurrowGuesser : Feature(
     private val particlePath = atomic(doubleArrayOf())
 
     data class PositionTime(val t: Int, val x: Double, val y: Double, val z: Double, var blacklisted: Boolean = false)
+    data class WarpCommand(val command: String, val x: Double, val y: Double, val z: Double, var blacklisted: Boolean = false)
 
     fun resetGuess() {
         splinePoly.value = null
@@ -375,6 +394,24 @@ object BurrowGuesser : Feature(
                 it.ttl -= 5 * 60
                 it.ttl <= 0
             }
+        }
+
+        on<KeyPressEvent> { event ->
+            // "You haven't unlocked this fast travel destination!"
+            if (!keybind.matches(event.underlying)) return@on
+            val player = minecraft.player ?: return@on
+            val pos = guessPos.value ?: return@on
+            val match = warpCommands.toMutableList().also {
+                it.add(WarpCommand("", player.x, player.y, player.z))
+            }.minByOrNull {
+                (pos.x - it.x).pow(2) +
+                (pos.y - it.y).pow(2) +
+                (pos.z - it.z).pow(2)
+            } ?: return@on
+            if (match.command.isEmpty()) return@on
+
+            ChatUtils.sendMessage("&aUsing warp command &6${match.command}", true)
+            ChatUtils.command(match.command)
         }
 
         on<RenderWorldEvent> {
