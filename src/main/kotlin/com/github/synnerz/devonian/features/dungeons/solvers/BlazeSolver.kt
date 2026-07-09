@@ -115,7 +115,7 @@ object BlazeSolver : Feature(
         return super.createRequirements() + listOf(Stages.Clear.isActiveState)
     }
 
-    private val blazeHpRegex = "^\\[Lv15] ♨ Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
+    private val blazeHpRegex = "^\\[Lv15] . Blaze [\\d,]+/([\\d,]+)❤$".toRegex()
     private val entityList = ConcurrentHashMap<Int, Int>() // <entityId>: <MaxHP>
     private val etherSpots = mutableListOf<Triple<Int, Int, Int>>()
     var hasPlatform = false
