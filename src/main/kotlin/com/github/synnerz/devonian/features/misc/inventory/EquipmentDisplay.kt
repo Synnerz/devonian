@@ -39,6 +39,13 @@ object EquipmentDisplay : Feature(
         "The alignment of which the equipment will be placed at (from armor slots)",
         "Alignment"
     )
+    private val SETTING_COMMAND_MODE = addSelection(
+        "commandMode",
+        0,
+        listOf("stats", "equipment", "split"),
+        "The command to be used whenever clicking the display (if \"split\" is selected half will run /stats the other half will run /eq)",
+        "Command Mode"
+    )
     private const val KEY_NAME = "equipment"
     private val backgroundSlotColor = Color(100, 100, 100, 150)
     private val borderSlotColor = Color(50, 50, 50, 150)
@@ -173,7 +180,12 @@ object EquipmentDisplay : Feature(
                 val y = screenAcc.topPos + slot.y.toDouble()
                 if (event.mx !in x..x + 16 || event.my !in y..y + 16) return@forEachIndexed
 
-                ChatUtils.command("stats")
+                if (SETTING_COMMAND_MODE.get() == 2) {
+                    ChatUtils.command(if (idx >= 2) "stats" else "eq")
+                    return@on
+                }
+
+                ChatUtils.command(SETTING_COMMAND_MODE.getCurrent())
                 return@on // "on" so it fully returns
             }
         }
