@@ -44,6 +44,11 @@ object MiddleClickGui : Feature(
         "Chest",
         "Large Chest",
         "Stats Tuning",
+        "Exp Sharing",
+    )
+    private val avoidGuisRegex = listOf(
+        "^Loadout (\\d+)$".toRegex(),
+        "^\\((\\d+)/(\\d+)\\) Abiphone Flip: (\\w+)$".toRegex(),
     )
     private val terminalGuis = listOf(
         "^Click in order!$".toRegex(),
@@ -89,7 +94,8 @@ object MiddleClickGui : Feature(
             if (
                 screenName.contains(" Minion ") ||
                 avoidGuis.any { screenName.startsWith(it) } ||
-                blacklisted.any { screenName.startsWith(it) }
+                blacklisted.any { screenName.startsWith(it) } ||
+                avoidGuisRegex.any { it.matches(screenName) }
             ) return@on
             if (terminalGuis.any { it.matches(screenName) }) return@on
 
