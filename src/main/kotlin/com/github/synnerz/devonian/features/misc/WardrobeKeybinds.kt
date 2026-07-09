@@ -13,7 +13,7 @@ object WardrobeKeybinds : Feature(
     override fun initialize() {
         on<GuiKeyDownEvent> { event ->
             val screen = event.screen
-            if (!screen.title.string.startsWith("Wardrobe (")) return@on
+            if (!screen.title.string.endsWith(") Armor Sets")) return@on
 
             minecraft.options.keyHotbarSlots.forEachIndexed { i, v ->
                 if (!v.matches(event.event)) return@forEachIndexed
@@ -30,7 +30,7 @@ object WardrobeKeybinds : Feature(
             if (!event.state) return@on
 
             val screen = event.screen
-            if (!screen.title.string.startsWith("Wardrobe (")) return@on
+            if (!screen.title.string.endsWith(") Armor Sets")) return@on
 
             minecraft.options.keyHotbarSlots.forEachIndexed { i, v ->
                 if (!v.matchesMouse(event.event)) return@forEachIndexed
