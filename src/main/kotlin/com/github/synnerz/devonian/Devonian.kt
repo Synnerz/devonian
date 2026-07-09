@@ -398,6 +398,7 @@ object Devonian : ClientModInitializer {
             LotusPityDisplay,
             FixBowPull,
             LoadoutKeybinds,
+            EquipmentKeybinds,
 
             // Debug
             CopyItem,
