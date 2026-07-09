@@ -103,7 +103,7 @@ object EquipmentDisplay : Feature(
         }
 
         on<ServerContainerOpenEvent> { event ->
-            inGui = event.titleStr == "Your Equipment and Stats"
+            inGui = event.titleStr == "Your Equipment and Stats" || event.titleStr.endsWith(") Loadouts")
         }
 
         on<ServerContainerCloseEvent> { inGui = false }
