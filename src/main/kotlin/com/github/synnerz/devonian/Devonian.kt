@@ -397,6 +397,7 @@ object Devonian : ClientModInitializer {
             VisitorProfitDisplay,
             LotusPityDisplay,
             FixBowPull,
+            LoadoutKeybinds,
 
             // Debug
             CopyItem,
