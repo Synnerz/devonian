@@ -173,7 +173,7 @@ object EquipmentDisplay : Feature(
                 val y = screenAcc.topPos + slot.y.toDouble()
                 if (event.mx !in x..x + 16 || event.my !in y..y + 16) return@forEachIndexed
 
-                ChatUtils.command("equipment")
+                ChatUtils.command("stats")
                 return@on // "on" so it fully returns
             }
         }
