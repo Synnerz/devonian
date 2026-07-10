@@ -39,8 +39,9 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     }
 
     @ModifyVariable(method = "addMessage", at = @At("HEAD"), argsOnly = true, name = "contents")
-    private Component devonian$addMessage(Component text) {
-        return CompactChat.INSTANCE.compactText(text);
+    private Component devonian$addMessage(Component contents) {
+        if (contents == null) return contents;
+        return CompactChat.INSTANCE.compactText(contents);
     }
 
     @Inject(method = "clearMessages", at = @At("HEAD"))
