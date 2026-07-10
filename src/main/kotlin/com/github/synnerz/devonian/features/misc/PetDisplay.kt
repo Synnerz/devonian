@@ -85,6 +85,8 @@ object PetDisplay : TextHudFeature(
     private val petsMenuNameRegex = "^(?:⭐ )?\\[Lvl (\\d+)](?: \\[(\\d+)✦])? ([\\w\\s]+)( ✦)?$".toRegex()
     // 1: level, 2: cosmetic level, 3: color code, 4: pet name, 5: skin
     private val formattedPetsMenuNameRegex = "^(?:§r§e⭐ )?§r§7\\[Lvl (\\d+)](?: §r§8\\[§r§6(\\d+)§r§4✦§r§8])? §r((?:§.)*)([\\w\\s]+)(?:§r((?:§.)* ✦))?$".toRegex()
+    private val loadoutGuiNameRegex = "^\\((\\d+)/(\\d+)\\) Loadouts$".toRegex()
+    private var inLoadoutMenu = false
 
     private data class Pet(
         val name: String,
@@ -285,6 +287,10 @@ object PetDisplay : TextHudFeature(
         }
 
         on<ServerContainerOpenEvent> { event ->
+            val inln = loadoutGuiNameRegex.matchEntire(event.titleStr)
+            if (inln != null) {
+                inLoadoutMenu = true
+            }
             petMenuPage = -1
             val match = petsMenuRegex.matchEntire(event.titleStr) ?: return@on
 
@@ -313,6 +319,43 @@ object PetDisplay : TextHudFeature(
         }
 
         on<ServerContainerSetSlotEvent> { event ->
+            if (inLoadoutMenu) {
+                val slot = event.slot
+                if (slot != 21) return@on
+                val itemStack = event.itemStack
+                if (itemStack.item != Items.PLAYER_HEAD) return@on
+
+                val itemName = itemStack.get(DataComponents.CUSTOM_NAME) ?: return@on
+                if (!petsMenuNameRegex.matches(itemName.string)) return@on
+                val match = formattedPetsMenuNameRegex.matchEntire(itemName.colorCodes()) ?: return@on
+
+                val levelS = match.groupValues.getOrNull(1) ?: return@on
+                val level = levelS.toIntOrNull() ?: -1
+                val cosmeticLevelS = match.groupValues.getOrNull(2) ?: return@on
+                val cosmeticLevel = if (cosmeticLevelS.isEmpty()) -1 else cosmeticLevelS.toIntOrNull() ?: -1
+                val colorCode = match.groupValues.getOrNull(3) ?: return@on
+                val petName = match.groupValues.getOrNull(4) ?: return@on
+                val skinned = match.groupValues.getOrNull(5) ?: return@on
+
+                val pet = Pet(petName, skinned, colorCode, level, cosmeticLevel)
+                pet.page = petMenuPage
+
+                val profile = itemStack.get(DataComponents.PROFILE)
+                val skin = profile?.let {
+                    val tex = it.partialProfile().properties.get("textures").firstOrNull() ?: return@let null
+                    Skin(it.partialProfile().id, tex.value, tex.signature ?: "")
+                }
+                pet.skin = skin
+
+                Scheduler.scheduleTask {
+                    allPets[pet] = pet
+                    reducedPets.put(PetKeyView(pet), pet)
+                    currentPet = pet
+                }
+
+                inLoadoutMenu = false
+                return@on
+            }
             if (petMenuPage == -1) return@on
 
             if (event.slot == 4 && event.itemStack.item !== Items.BONE) {
