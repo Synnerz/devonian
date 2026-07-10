@@ -84,6 +84,7 @@ object Dungeons {
     val completedPuzzles = BasicState(0)
     val mimicKilled = BasicState(false)
     val princeKilled = BasicState(false)
+    val batScoreKilled = BasicState(false)
     val isPaul = BasicState(false)
     val totalRoomSecrets = BasicState(0)
 
@@ -156,6 +157,8 @@ object Dungeons {
         min(crypts, 5) + (if (mimic) 2 else 0)
     }.zip(princeKilled) { score, prince ->
         score + (if (prince) 1 else 0)
+    }.zip(batScoreKilled) { score, batKill ->
+        score + (if (batKill) 1 else 0)
     }.zip(isPaul) { score, paul ->
         score + (if (paul) 10 else 0).toDouble()
     }
@@ -358,6 +361,11 @@ object Dungeons {
                 return@on
             }
 
+            if (event.message == "A Bat has been slain. +1 Bonus Score") {
+                batScoreKilled.value = true
+                return@on
+            }
+
             event.matches(disconnectRegex)?.let {
                 if (it[0] == Devonian.minecraft.gameProfile.name) wasInDungeons = true
                 else players.remove(it[0])?.let { p ->
@@ -524,6 +532,7 @@ object Dungeons {
         completedPuzzles.value = 0
         mimicKilled.value = false
         princeKilled.value = false
+        batScoreKilled.value = false
         inBoss.value = false
         bloodCleared.value = false
         started.value = false
