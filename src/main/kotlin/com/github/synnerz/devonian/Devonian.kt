@@ -63,12 +63,14 @@ import java.util.*
 object Devonian : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("devonian")
 
-    val minecraft = Minecraft.getInstance()
-    val container = FabricLoader.getInstance().getModContainer("devonian").get()
-    val isDev = setOf(
-        UUID.fromString("21c82573-9d28-4d7b-957f-adf20938cd38"),
-        UUID.fromString("819d8402-51eb-4c0c-bcf2-d070dcb82a93"),
-    ).contains(minecraft.gameProfile.id)
+    val minecraft by lazy { Minecraft.getInstance() }
+    val container by lazy { FabricLoader.getInstance().getModContainer("devonian").get() }
+    val isDev by lazy {
+        setOf(
+            UUID.fromString("21c82573-9d28-4d7b-957f-adf20938cd38"),
+            UUID.fromString("819d8402-51eb-4c0c-bcf2-d070dcb82a93"),
+        ).contains(minecraft.gameProfile.id)
+    }
     val buildProperties = Properties().also {
         it.load(
             this::class.java.getResourceAsStream("/assets/devonian/build.properties")
