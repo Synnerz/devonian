@@ -100,7 +100,7 @@ object ActionbarParser : Feature(
     ) {
         Health(
             null,
-            listOf("❤", "▆", "▅", "▄", "▃", "▂", "▁"),
+            listOf("\uE010"),
             object : TextHudFeature(
                 "customHealthHud",
                 "$desc Allows you to move the health that appears in the actionbar (above your hotbar).",
@@ -118,7 +118,7 @@ object ActionbarParser : Feature(
             "",
         ),
         Defense(
-            "❈ Defense",
+            "\uE008 Defense",
             null,
             object : TextHudFeature(
                 "customDefenseHud",
@@ -161,7 +161,7 @@ object ActionbarParser : Feature(
         },
         Mana(
             null,
-            listOf("✎", "ʬ", " Mana"),
+            listOf("\uE003", "\uE017", " Mana"),
             object : TextHudFeature(
                 "customManaHud",
                 "$desc Allows you to move the mana that appears in the actionbar (above your hotbar).",
