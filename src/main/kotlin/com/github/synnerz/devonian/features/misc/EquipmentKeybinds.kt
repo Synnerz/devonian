@@ -10,6 +10,9 @@ object EquipmentKeybinds : Feature(
     "Whenever inside of equipment gui it will allow you to press the hotbar 1-9 keys to switch through your equipments.",
     subcategory = "General",
 ) {
+    private val previousPage = 45
+    private val nextPage = 53
+
     override fun initialize() {
         on<GuiKeyDownEvent> { event ->
             val screen = event.screen
@@ -23,6 +26,14 @@ object EquipmentKeybinds : Feature(
 
                 return@on
             }
+
+            if (minecraft.options.keyRight.matches(event.event)) {
+                ScreenUtils.click(nextPage)
+                return@on
+            }
+            if (!minecraft.options.keyLeft.matches(event.event)) return@on
+
+            ScreenUtils.click(previousPage)
         }
 
         on<GuiClickEvent> { event ->
