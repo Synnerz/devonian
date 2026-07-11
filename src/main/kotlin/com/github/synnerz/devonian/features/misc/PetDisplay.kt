@@ -1,12 +1,16 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ClientContainerCloseEvent
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
+import com.github.synnerz.devonian.api.events.GuiClickEvent
+import com.github.synnerz.devonian.api.events.RenderGuiEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.RenderSlotEvent
 import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
 import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
@@ -15,19 +19,28 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.DataObject
 import com.github.synnerz.devonian.config.json.JsonDataObject
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
 import com.github.synnerz.devonian.utils.BoundingBox
+import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
+import com.github.synnerz.devonian.utils.render.Render2D
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.ImmutableMultimap
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
+import com.google.gson.internal.NonNullElementWrapperList
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import com.mojang.authlib.properties.PropertyMap
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.ResolvableProfile
+import java.awt.Color
+import java.util.Optional
 import java.util.UUID
 
 object PetDisplay : TextHudFeature(
@@ -59,6 +72,19 @@ object PetDisplay : TextHudFeature(
         "Include the skinned icon (✦) in the hud.",
         "Show Skinned Icon",
     )
+    private val SETTING_INVENTORY_DISPLAY = addSwitch(
+        "inventoryDisplay",
+        false,
+        "Displays inside the inventory similar to equipment display",
+        "Inventory Display"
+    )
+    private val SETTING_INVENTORY_DISPLAY_ALIGNMENT = addSelection(
+        "inventoryDisplayAlignment",
+        0,
+        listOf("Left", "Center"),
+        "The alignment of which the inventory display will be placed at (from armor slots)",
+        "Inventory Alignment"
+    )
 
     private const val CURRENT_KEY_NAME = "petDisplayCurrent2"
     private const val SAVED_KEY_NAME = "petDisplaySaved2"
@@ -86,6 +112,12 @@ object PetDisplay : TextHudFeature(
     // 1: level, 2: cosmetic level, 3: color code, 4: pet name, 5: skin
     private val formattedPetsMenuNameRegex = "^(?:§r§e⭐ )?§r§7\\[Lvl (\\d+)](?: §r§8\\[§r§6(\\d+)§r§4✦§r§8])? §r((?:§.)*)([\\w\\s]+)(?:§r((?:§.)* ✦))?$".toRegex()
     private val loadoutGuiNameRegex = "^\\((\\d+)/(\\d+)\\) Loadouts$".toRegex()
+    private val backgroundSlotColor = Color(100, 100, 100, 150)
+    private val borderSlotColor = Color(50, 50, 50, 150)
+    private val alignment get() = when (SETTING_INVENTORY_DISPLAY_ALIGNMENT.get()) {
+        1 -> 35 to -22
+        else -> -25 to 0
+    }
     private var inLoadoutMenu = false
 
     private data class Pet(
@@ -95,7 +127,12 @@ object PetDisplay : TextHudFeature(
 
         val level: Int = -1,
         val cosmeticLevel: Int = -1,
+        val lore: List<String>? = null,
     ) {
+        val componentLore by lazy {
+            lore?.map { StringUtils.fromLegacy(it) }
+                ?: emptyList()
+        }
         var page = 0
         var skin: Skin? = null
         // var sortOv = hashCode()
@@ -109,6 +146,9 @@ object PetDisplay : TextHudFeature(
             obj.set("page", page)
             if (level != -1) obj.set("level", level)
             if (cosmeticLevel != -1) obj.set("cosmeticLevel", cosmeticLevel)
+            if (lore != null) obj.set("lore", JsonArray().apply {
+                lore.forEach { add(it) }
+            })
             skin?.let {
                 val o = obj.getObject("skin")
                 o.set("id", it.id.toString())
@@ -126,13 +166,15 @@ object PetDisplay : TextHudFeature(
                 val page = obj.get<Int>("page") ?: return null
                 val level = obj.get<Int>("level")
                 val cosmeticLevel = obj.get<Int>("cosmeticLevel")
+                val lore = (obj.getList("lore") as? NonNullElementWrapperList<JsonPrimitive>)
+                    ?.map { it.asString }?.toList()
                 val skin = obj.getObject("skin").let {
                     val id = it.get<String>("id")?.let { UUID.fromString(it) } ?: return@let null
                     val value = it.get<String>("value") ?: return@let null
                     val signature = it.get<String>("signature") ?: return@let null
                     Skin(id, value, signature)
                 }
-                return Pet(name, skinned, colorCode, level ?: -1, cosmeticLevel ?: -1).also {
+                return Pet(name, skinned, colorCode, level ?: -1, cosmeticLevel ?: -1, lore).also {
                     it.page = page
                     it.skin = skin
                 }
@@ -143,6 +185,40 @@ object PetDisplay : TextHudFeature(
             //         it.page = page
             //         it.sortOv = if (start) Int.MIN_VALUE else Int.MAX_VALUE
             //     }
+        }
+
+        override fun hashCode(): Int {
+            var result = level
+            result = 31 * result + cosmeticLevel
+            result = 31 * result + page
+            result = 31 * result + name.hashCode()
+            result = 31 * result + skinned.hashCode()
+            result = 31 * result + colorCode.hashCode()
+            // ignore lore so the equals can be backwards compat
+            // result = 31 * result + (lore?.hashCode() ?: 0)
+            result = 31 * result + (skin?.hashCode() ?: 0)
+            result = 31 * result + componentLore.hashCode()
+            return result
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Pet
+
+            if (level != other.level) return false
+            if (cosmeticLevel != other.cosmeticLevel) return false
+            if (page != other.page) return false
+            if (name != other.name) return false
+            if (skinned != other.skinned) return false
+            if (colorCode != other.colorCode) return false
+            // ignore lore so the equals can be backwards compat
+            // if (lore != other.lore) return false
+            if (skin != other.skin) return false
+            if (componentLore != other.componentLore) return false
+
+            return true
         }
     }
 
@@ -288,9 +364,8 @@ object PetDisplay : TextHudFeature(
 
         on<ServerContainerOpenEvent> { event ->
             val inln = loadoutGuiNameRegex.matchEntire(event.titleStr)
-            if (inln != null) {
+            if (inln != null)
                 inLoadoutMenu = true
-            }
             petMenuPage = -1
             val match = petsMenuRegex.matchEntire(event.titleStr) ?: return@on
 
@@ -337,7 +412,10 @@ object PetDisplay : TextHudFeature(
                 val petName = match.groupValues.getOrNull(4) ?: return@on
                 val skinned = match.groupValues.getOrNull(5) ?: return@on
 
-                val pet = Pet(petName, skinned, colorCode, level, cosmeticLevel)
+                val pet = Pet(petName, skinned, colorCode, level, cosmeticLevel, buildList {
+                    add(itemName.colorCodes())
+                    ItemUtils.lore(itemStack, true)?.let { addAll(it) }
+                })
                 pet.page = petMenuPage
 
                 val profile = itemStack.get(DataComponents.PROFILE)
@@ -378,7 +456,10 @@ object PetDisplay : TextHudFeature(
             val petName = match.groupValues.getOrNull(4) ?: return@on
             val skinned = match.groupValues.getOrNull(5) ?: return@on
 
-            val pet = Pet(petName, skinned, colorCode, level, cosmeticLevel)
+            val pet = Pet(petName, skinned, colorCode, level, cosmeticLevel, buildList {
+                add(itemName.colorCodes())
+                ItemUtils.lore(event.itemStack, true)?.let { addAll(it) }
+            })
             pet.page = petMenuPage
             val isSelected = ItemUtils.lore(event.itemStack)?.contains("Click to despawn!") ?: false
 
@@ -451,6 +532,85 @@ object PetDisplay : TextHudFeature(
         }.setEnabled(
             Location.stateInSkyblock.zip(
                 Location.stateInArea("the rift").map(Boolean::not),
+                Boolean::and
+            )
+        )
+
+        // pet display in inventory
+        on<RenderSlotEvent> { event ->
+            if (event.screen !is InventoryScreen) return@on
+            val slot = event.slot
+            val idx = slot.containerSlot
+            if (idx != 9) return@on
+            val item = fakeItem ?: return@on
+            val alig = alignment
+            val x = slot.x + alig.first
+            val y = slot.y + alig.second
+
+            event.ctx.fill(x, y, x + 16, y + 16, backgroundSlotColor.rgb)
+            Render2D.drawWireRect(event.ctx, x, y, 16, 16, borderSlotColor)
+            event.ctx.fakeItem(item, x, y)
+        }.setEnabled(
+            SETTING_INVENTORY_DISPLAY.state.zip(
+                Location.stateInSkyblock.zip(
+                    Location.stateInArea("the rift").map(Boolean::not),
+                    Boolean::and
+                ),
+                Boolean::and
+            )
+        )
+
+        on<GuiClickEvent> { event ->
+            if (!event.state || fakeItem == null || event.screen !is InventoryScreen) return@on
+            val screenAcc = event.screen as? AbstractContainerScreenAccessor ?: return@on
+            val screen = event.screen
+            val slot = screen.menu.slots.find { it.containerSlot == 9 } ?: return@on
+            val x = screenAcc.leftPos + slot.x + alignment.first.toDouble()
+            val y = screenAcc.topPos + slot.y.toDouble() + alignment.second.toDouble()
+            val mx = minecraft.mouseHandler.getScaledXPos(minecraft.window)
+            val my = minecraft.mouseHandler.getScaledYPos(minecraft.window)
+
+            if (mx !in x..x + 16 || my !in y..y + 16) return@on
+
+            ChatUtils.command("pets")
+        }.setEnabled(
+            SETTING_INVENTORY_DISPLAY.state.zip(
+                Location.stateInSkyblock.zip(
+                    Location.stateInArea("the rift").map(Boolean::not),
+                    Boolean::and
+                ),
+                Boolean::and
+            )
+        )
+
+        on<RenderGuiEvent> { event ->
+            val screen = event.screen as? AbstractContainerScreen<*> ?: return@on
+            if (fakeItem == null || screen !is InventoryScreen) return@on
+            val screenAcc = event.screen as? AbstractContainerScreenAccessor ?: return@on
+
+            val slot = screen.menu.slots.find { it.containerSlot == 9 } ?: return@on
+            val x = screenAcc.leftPos + slot.x + alignment.first.toDouble()
+            val y = screenAcc.topPos + slot.y.toDouble() + alignment.second.toDouble()
+            val mx = minecraft.mouseHandler.getScaledXPos(minecraft.window)
+            val my = minecraft.mouseHandler.getScaledYPos(minecraft.window)
+
+            if (mx !in x..x + 16 || my !in y..y + 16) return@on
+            val lore = currentPet?.componentLore ?: return@on
+            if (lore.isEmpty()) return@on
+
+            event.ctx.setTooltipForNextFrame(
+                minecraft.font,
+                lore,
+                Optional.empty(),
+                mx.toInt(),
+                my.toInt()
+            )
+        }.setEnabled(
+            SETTING_INVENTORY_DISPLAY.state.zip(
+                Location.stateInSkyblock.zip(
+                    Location.stateInArea("the rift").map(Boolean::not),
+                    Boolean::and
+                ),
                 Boolean::and
             )
         )
