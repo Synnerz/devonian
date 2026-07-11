@@ -19,7 +19,11 @@ object CustomSounds {
         }
     }
 
-    fun create(key: String, default: String): CustomSound = CustomSound(key, default, 1f, 1f)
+    fun create(key: String, default: String): CustomSound
+        = CustomSound(key, default, 1f, 1f)
+
+    fun createFake(key: String, default: String): CustomSound
+        = CustomSound(key, default, 1f, 1f, isFake = true)
 
     data class CustomSound(
         val key: String,
@@ -30,35 +34,38 @@ object CustomSounds {
         @JvmField
         var pitch: Float,
         var soundEvent: SoundEvent? = null,
+        val isFake: Boolean = false,
     ) {
         init {
-            Config.set(key, value)
-            Config.set("$key\$Volume", 1f)
-            Config.set("$key\$Pitch", 1f)
-            soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(value))
+            if (!isFake) {
+                Config.set(key, value)
+                Config.set("$key\$Volume", 1f)
+                Config.set("$key\$Pitch", 1f)
 
-            Config.onAfterLoad {
-                Config.get<Float>("$key\$Volume")?.let { setVolume(it) }
-                Config.get<Float>("$key\$Pitch")?.let { setPitch(it) }
-                Config.get<String>(key)?.let { setValue(it) }
+                Config.onAfterLoad {
+                    Config.get<Float>("$key\$Volume")?.let { setVolume(it) }
+                    Config.get<Float>("$key\$Pitch")?.let { setPitch(it) }
+                    Config.get<String>(key)?.let { setValue(it) }
+                }
             }
 
+            soundEvent = soundEvent ?: BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(value))
             sounds.add(this)
         }
 
         fun setVolume(volume: Float) {
             this.volume = volume
-            Config.set("$key\$Volume", volume)
+            if (!isFake) Config.set("$key\$Volume", volume)
         }
 
         fun setPitch(pitch: Float) {
             this.pitch = pitch
-            Config.set("$key\$Pitch", pitch)
+            if (!isFake) Config.set("$key\$Pitch", pitch)
         }
 
         fun setValue(value: String) {
             this.value = value
-            Config.set(key, value)
+            if (!isFake) Config.set(key, value)
             soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(value))
         }
 
