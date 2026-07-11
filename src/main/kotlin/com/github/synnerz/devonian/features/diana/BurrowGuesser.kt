@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Ping
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -18,6 +19,8 @@ import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import java.util.*
@@ -162,6 +165,19 @@ object BurrowGuesser : Feature(
         // val distance = weightT * 1.9
 
         guessPos.value = PositionTime(0, poly[0](weightT), poly[1](weightT) - 1.0, poly[2](weightT))
+        guessPos.value?.let {
+            // world bounds are around -200~+200
+            if (abs(it.x) > 300 || it.y !in 0.0..150.0 || abs(it.z) > 300) {
+                Scheduler.scheduleTask {
+                    minecraft.level?.playLocalSound(
+                        it.x, it.y, it.z,
+                        SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS,
+                        1f, 1f, false
+                    )
+                }
+                guessPos.value = null
+            }
+        }
         particlePath.value = DoubleArray(300) {
             val i = it / 3
             val o = it % 3
