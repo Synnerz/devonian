@@ -20,6 +20,7 @@ import com.github.synnerz.devonian.features.misc.chat.CopyChat
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.MousePositionLogger
 import com.github.synnerz.devonian.features.debug.MousePositionRenderer
+import com.github.synnerz.devonian.features.debug.SoundDebugger
 import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger
 import com.github.synnerz.devonian.features.debug.renderers.DungeonRoomComponentRenderer
@@ -433,6 +434,7 @@ object Devonian : ClientModInitializer {
         CancelMessages.initialize()
         TitleMessages.initialize()
         RefillGFSCommands.initialize()
+        SoundDebugger.initialize()
         ConfigGui.initialize()
         HudManager.initialize()
         LogSearch.initialize()
