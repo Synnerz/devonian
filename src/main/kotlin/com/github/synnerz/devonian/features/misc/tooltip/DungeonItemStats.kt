@@ -45,6 +45,7 @@ object DungeonItemStats : Feature(
                 FormattedCharSequence.forward(floor.toString(), Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)),
                 FormattedCharSequence.forward(")", Style.EMPTY.withColor(ChatFormatting.GRAY)),
             )
+            if (event.lore.isEmpty()) return@on
 
             event.lore.add(1, ClientTooltipComponent.create(formatted))
         }
