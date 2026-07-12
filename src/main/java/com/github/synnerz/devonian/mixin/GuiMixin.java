@@ -4,7 +4,6 @@ import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.MouseHandlerAccessor;
 import com.github.synnerz.devonian.GameRendererScaleAccessor;
 import com.github.synnerz.devonian.api.events.*;
-import com.github.synnerz.devonian.features.misc.inventory.InventoryScale;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.platform.Window;
@@ -69,7 +68,7 @@ public abstract class GuiMixin {
 
             instance.resize(w.getGuiScaledWidth(), w.getGuiScaledHeight());
             scaledGraphics = new GuiGraphicsExtractor(minecraft, scaledGuiRenderState, mouseX, mouseY);
-            ((GameRendererScaleAccessor) minecraft.gameRenderer).devonian$setScaled(true);
+            ((GameRendererScaleAccessor) minecraft.gameRenderer).devonian$setScaled(scale);
         }
 
         original.call(instance, scaledGraphics, mouseX, mouseY, a);

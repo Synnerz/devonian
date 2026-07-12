@@ -2,7 +2,6 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.GameRendererScaleAccessor;
 import com.github.synnerz.devonian.features.misc.NoHurtCamera;
-import com.github.synnerz.devonian.features.misc.inventory.InventoryScale;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.DeltaTracker;
@@ -48,7 +47,7 @@ public class GameRendererMixin implements GameRendererScaleAccessor {
     GuiRenderState devonian$guiRenderState = new GuiRenderState();
 
     @Unique
-    boolean devonian$Scaled = false;
+    int devonian$Scaled = -1;
 
     @Inject(method = "bobHurt", at = @At("HEAD"), cancellable = true)
     private void devonian$onHurtCam(CameraRenderState cameraState, PoseStack poseStack, CallbackInfo ci) {
@@ -82,10 +81,10 @@ public class GameRendererMixin implements GameRendererScaleAccessor {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;endFrame()V"))
     private void devonian$onPostRender(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci) {
-        if (!devonian$Scaled) return;
+        if (devonian$Scaled == -1) return;
 
         var w = minecraft.getWindow();
-        int scale = w.calculateScale(InventoryScale.INSTANCE.getScale(), minecraft.isEnforceUnicode());
+        int scale = w.calculateScale(devonian$Scaled, minecraft.isEnforceUnicode());
 
         w.setGuiScale(scale);
         gameRenderState.windowRenderState.guiScale = w.getGuiScale();
@@ -97,7 +96,7 @@ public class GameRendererMixin implements GameRendererScaleAccessor {
         gameRenderState.windowRenderState.guiScale = w.getGuiScale();
 
         devonian$guiRenderer.endFrame();
-        devonian$Scaled = false;
+        devonian$Scaled = -1;
     }
 
     @Override
@@ -106,12 +105,12 @@ public class GameRendererMixin implements GameRendererScaleAccessor {
     }
 
     @Override
-    public void devonian$setScaled(boolean scale) {
+    public void devonian$setScaled(int scale) {
         devonian$Scaled = scale;
     }
 
     @Override
-    public boolean devonian$getScaled() {
+    public int devonian$getScaled() {
         return devonian$Scaled;
     }
 }
