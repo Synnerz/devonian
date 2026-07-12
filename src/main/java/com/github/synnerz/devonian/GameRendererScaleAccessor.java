@@ -5,6 +5,6 @@ import net.minecraft.client.renderer.state.gui.GuiRenderState;
 public interface GameRendererScaleAccessor {
     GuiRenderState devonian$guiRenderState();
 
-    void devonian$setScaled(boolean scale);
-    boolean devonian$getScaled();
+    void devonian$setScaled(int scale);
+    int devonian$getScaled();
 }
