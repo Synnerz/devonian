@@ -51,7 +51,7 @@ object ArmorHexColor : Feature(
                 }
                 return@getOrPut held.get(DataComponents.DYED_COLOR)?.rgb ?: -1
             }
-            if (color == -1) return@on
+            if (color == -1 || event.lore.isEmpty()) return@on
 
             event.lore.add(
                 1,
