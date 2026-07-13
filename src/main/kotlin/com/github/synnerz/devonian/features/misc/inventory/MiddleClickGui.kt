@@ -14,6 +14,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import org.lwjgl.sdl.SDLKeycode
 
 object MiddleClickGui : Feature(
@@ -46,6 +47,15 @@ object MiddleClickGui : Feature(
         "Large Chest",
         "Stats Tuning",
         "Exp Sharing",
+        "Convert to Dungeon Item",
+        "Upgrade Item",
+        "Enchant Item",
+        "Craft Item",
+        "Brewing Stand",
+        "Beacon",
+        "Pet Sitter",
+        "Offer Pets",
+        "Pet Training",
     )
     private val avoidGuisRegex = listOf(
         "^Loadout (\\d+)$".toRegex(),
@@ -88,6 +98,7 @@ object MiddleClickGui : Feature(
 
             val slot = event.slot
             if (slot.container == minecraft.player?.inventory) return@on
+            if (event.screen !is ContainerScreen) return@on
 
             val stack = slot.item
             if (stack.isEmpty) return@on
@@ -112,6 +123,7 @@ object MiddleClickGui : Feature(
         on<GuiKeyDownEvent> { event ->
             if (!keybind.matches(event.event)) return@on
             if (event.screen == minecraft.player?.inventory) return@on
+            if (event.screen !is ContainerScreen) return@on
             val title = event.screen.title.string
             val containsIn = blacklisted.contains(title)
 
