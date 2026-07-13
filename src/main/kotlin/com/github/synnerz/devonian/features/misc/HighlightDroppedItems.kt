@@ -58,7 +58,7 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
             val item = (event.entity as? ItemEntity)?.item ?: return@on
 
             val color = items.getOrPut(item) {
-                item.customName?.siblings?.getOrNull(0)?.style?.color?.value ?: -1
+                item.customName?.style?.color?.value ?: -1
             }
             if (SETTING_BOX.get()) {
                 deferredItems.add(
