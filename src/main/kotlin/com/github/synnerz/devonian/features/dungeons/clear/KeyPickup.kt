@@ -2,8 +2,11 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
+import com.github.synnerz.devonian.api.dungeon.DungeonRoom
+import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.WorldPosition
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -130,6 +133,7 @@ object KeyPickup : Feature(
     // you never know :)
     private val keys = mutableListOf<Pair<ArmorStand, Boolean>>()
     private val idQ = ConcurrentLinkedQueue<Triple<Boolean, Int, Int>>()
+    private var currentKeyRoom: DungeonRoom? = null
 
     private fun shortNameFor(name: String) =
         // TODO: handle nicks
@@ -182,6 +186,13 @@ object KeyPickup : Feature(
                 (id != bloodKeyId || ItemUtils.skyblockId(item) != null)
             ) return@on
             idQ.add(Triple(id == bloodKeyId, 10, event.entityId))
+
+            val x = event.spawnPos.x
+            val z = event.spawnPos.z
+            val comp = WorldPosition(x.toInt(), z.toInt()).toComponent()
+            val idx = comp.getRoomIdx()
+            if (idx !in 0..35) return@on
+            currentKeyRoom = DungeonScanner.rooms[idx]
         }
 
         on<TickEvent> {
@@ -224,6 +235,13 @@ object KeyPickup : Feature(
                 )
 
                 if (SETTING_KEY_TRACER.get()) {
+                    val room = DungeonScanner.currentRoom
+                    if (
+                        currentKeyRoom == null ||
+                        room == null ||
+                        room.roomID != currentKeyRoom?.roomID
+                    ) return@removeIf false
+
                     val color = when {
                         SETTING_KEY_TRACER_DYNAMIC.get() ->
                             if (isBlood) Color.RED else Color.BLACK
@@ -245,5 +263,6 @@ object KeyPickup : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         keys.clear()
         idQ.clear()
+        currentKeyRoom = null
     }
 }
