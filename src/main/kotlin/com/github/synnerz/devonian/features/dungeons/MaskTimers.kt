@@ -169,7 +169,7 @@ object BonzoMask : ImmunityTimer(
     "bonzoMaskTimer",
 ) {
     override val IMMUNITY_TIME: Long = 3_000L
-    override val triggerRegex: Regex = "^Your( ⚚)? Bonzo's Mask saved your life!$".toRegex()
+    override val triggerRegex: Regex = "^Your( \uE068)? Bonzo's Mask saved your life!$".toRegex()
 
     private const val DEFAULT_COOLDOWN = 180_000L
     private val cooldownItemRegex = "^Cooldown: (\\d+)s$".toRegex()
