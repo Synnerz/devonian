@@ -15,6 +15,8 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
+import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.world.item.ItemStack
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -77,6 +79,7 @@ object ProtectItem : Feature(
             if (once) return@on
             once = true
 
+            if (event.screen !is ContainerScreen && event.screen !is InventoryScreen) return@on
             val screen = event.screen as? AbstractContainerScreenAccessor ?: return@on
             val stack = screen.hoveredSlot?.item ?: return@on
 
