@@ -164,7 +164,7 @@ object EtherwarpOverlay : Feature(
                 lookVec.z * dist,
                 false,
             )
-            val inBlacklist = hitResult?.let { BlockTypes.Blacklist.contains(world.getBlockState(it).block) } ?: false
+//            val inBlacklist = hitResult?.let { BlockTypes.Blacklist.contains(world.getBlockState(it).block) } ?: false
             val isFenceLike = hitResult?.let { BlockTypes.FenceLike.contains(world.getBlockState(it).block) } ?: false
 
             if (hitResult == null) {
@@ -193,12 +193,14 @@ object EtherwarpOverlay : Feature(
                 }
                 else if (
                     !BlockTypes.AirLike.contains(bsFoot.block) ||
-                    !BlockTypes.AirLike.contains(bsHead.block)
+                    !BlockTypes.AirLike.contains(bsHead.block) ||
+                    BlockTypes.AirThrough.contains(bsFoot.block) ||
+                    BlockTypes.AirThrough.contains(bsHead.block)
                 ) failReason = "&4Can't TP: No air above!"
                 // TODO: if the user aligns themselves in an angle where they can see the next block
                 //  they CAN actually teleport, fix this since currently it just fails currently
-                else if (inBlacklist)
-                    failReason = "&4Can't TP: Blacklisted Block"
+//                else if (inBlacklist)
+//                    failReason = "&4Can't TP: Blacklisted Block"
             }
 
             val camera = minecraft.gameRenderer.mainCamera
