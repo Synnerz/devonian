@@ -38,7 +38,7 @@ dependencies {
 	include implementation("com.github.Synnerz:talium:9fda8e0eef")
 	implementation "net.hypixel:mod-api:1.0.1"
 
-//	api("com.terraformersmc:modmenu:18.0.0-alpha.8")
+	api("maven.modrinth:mOgUt4GM:njXb639R")
 }
 
 processResources {
