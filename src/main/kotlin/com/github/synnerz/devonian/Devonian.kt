@@ -402,6 +402,7 @@ object Devonian : ClientModInitializer {
             FixBowPull,
             LoadoutKeybinds,
             EquipmentKeybinds,
+            SpiritBearHighlight,
 
             // Debug
             CopyItem,
