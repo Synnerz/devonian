@@ -33,13 +33,14 @@ object MiddleClickGui : Feature(
         )
     )
     private val avoidGuis = listOf(
-        "Wardrobe",
         "Drill Anvil",
         "Anvil",
         "Storage",
         "The Hex",
         "Composter",
         "Auctions",
+        // if use has 1 page it will start with this so regardless of the regex
+        // this is a good fallback
         "Abiphone",
         "Chest",
         "Large Chest",
@@ -48,7 +49,9 @@ object MiddleClickGui : Feature(
     )
     private val avoidGuisRegex = listOf(
         "^Loadout (\\d+)$".toRegex(),
-        "^\\((\\d+)/(\\d+)\\) Abiphone Flip: (\\w+)$".toRegex(),
+        "^\\((\\d+)/(\\d+)\\) Abiphone([+\\w ]+): (\\w+)$".toRegex(),
+        "^\\((\\d+)/(\\d+)\\) Armor Sets$".toRegex(),
+        "^\\((\\d+)/(\\d+)\\) Equipment Sets$".toRegex(),
     )
     private val terminalGuis = listOf(
         "^Click in order!$".toRegex(),
