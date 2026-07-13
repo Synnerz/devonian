@@ -64,6 +64,31 @@ object KeyPickup : Feature(
         "",
         "Key Line Width",
     )
+    private val SETTING_KEY_TRACER = addSwitch(
+        "keyTracer",
+        false,
+        "Adds a tracer towards the key",
+        "Key Tracer",
+    )
+    private val SETTING_KEY_TRACER_WIDTH = addSlider(
+        "keyTracerWidth",
+        2.0,
+        0.0, 10.0,
+        "",
+        "Key Tracer Width"
+    )
+    private val SETTING_KEY_TRACER_COLOR = addColorPicker(
+        "keyTracerColor",
+        Color(255, 0, 255, 255).rgb,
+        "",
+        "Key Tracer Color"
+    )
+    private val SETTING_KEY_TRACER_DYNAMIC = addSwitch(
+        "keyTracerDynamic",
+        true,
+        "makes the tracer color ignore the set value and use black/red depending on the key type",
+        "Key Tracer Dynamic Color"
+    )
     private val SETTING_KEY_PICKUP_TITLE = addSwitch(
         "pickupTitle",
         true,
@@ -103,8 +128,8 @@ object KeyPickup : Feature(
     private val bloodKeyId = UUID.fromString("73f6d1f9-df41-3d1d-b98c-e1442d915885")
 
     // you never know :)
-    private val keys = mutableListOf<ArmorStand>()
-    private val idQ = ConcurrentLinkedQueue<Pair<Int, Int>>()
+    private val keys = mutableListOf<Pair<ArmorStand, Boolean>>()
+    private val idQ = ConcurrentLinkedQueue<Triple<Boolean, Int, Int>>()
 
     private fun shortNameFor(name: String) =
         // TODO: handle nicks
@@ -133,9 +158,13 @@ object KeyPickup : Feature(
                 else -> null
             } ?: return@on
 
-            if (SETTING_KEY_PICKUP_SOUND.get()) minecraft.player?.playSound(pickupSound, 2f, 1f)
-            if (SETTING_KEY_PICKUP_TITLE.get()) Alert.show(title, SETTING_KEY_PICKUP_TIME.get().toInt() * 1000, playSound = false)
+            if (SETTING_KEY_PICKUP_SOUND.get())
+                minecraft.player?.playSound(pickupSound, 2f, 1f)
+
+            if (SETTING_KEY_PICKUP_TITLE.get())
+                Alert.show(title, SETTING_KEY_PICKUP_TIME.get().toInt() * 1000, playSound = false)
         }
+
         on<EntityEquipmentEvent> { event ->
             if (event.type != EntityType.ARMOR_STAND) return@on
             if (event.slots.size != 1) return@on
@@ -152,7 +181,7 @@ object KeyPickup : Feature(
                 id != witherKeyId &&
                 (id != bloodKeyId || ItemUtils.skyblockId(item) != null)
             ) return@on
-            idQ.add(Pair(10, event.entityId))
+            idQ.add(Triple(id == bloodKeyId, 10, event.entityId))
         }
 
         on<TickEvent> {
@@ -162,15 +191,15 @@ object KeyPickup : Feature(
             while (--len >= 0) {
                 val p = idQ.poll() ?: break
 
-                val ent = w.getEntity(p.second) as? ArmorStand
+                val ent = w.getEntity(p.third) as? ArmorStand
                 if (ent == null) {
-                    if (p.first > 0) idQ.offer(Pair(p.first - 1, p.second))
-                } else keys.add(ent)
+                    if (p.second > 0) idQ.offer(Triple(p.first, p.second - 1, p.third))
+                } else keys.add(ent to p.first)
             }
         }
 
         on<RenderWorldEvent> {
-            keys.removeIf { ent ->
+            keys.removeIf { (ent, isBlood) ->
                 if (ent.isDeadOrDying || ent.isRemoved) return@removeIf true
 
                 val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
@@ -193,6 +222,21 @@ object KeyPickup : Feature(
                     phase = SETTING_KEY_FILL_PHASE.get(),
                     centered = true,
                 )
+
+                if (SETTING_KEY_TRACER.get()) {
+                    val color = when {
+                        SETTING_KEY_TRACER_DYNAMIC.get() ->
+                            if (isBlood) Color.RED else Color.BLACK
+                        else ->
+                            SETTING_KEY_TRACER_COLOR.getColor()
+                    }
+
+                    Render3DImmediate.renderTracer(
+                        pos.x, pos.y + 1.5, pos.z,
+                        color,
+                        lineWidth = SETTING_KEY_TRACER_WIDTH.get()
+                    )
+                }
                 return@removeIf false
             }
         }
