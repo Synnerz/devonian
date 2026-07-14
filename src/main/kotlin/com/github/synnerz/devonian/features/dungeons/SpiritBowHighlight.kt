@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
-import net.minecraft.world.entity.EntityTypes
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -56,7 +56,7 @@ object SpiritBowHighlight : Feature(
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (packet !is ClientboundAddEntityPacket) return@on
-            if (packet.type != EntityTypes.ARMOR_STAND) return@on
+            if (packet.type != EntityType.ARMOR_STAND) return@on
 
             lastStand = packet.id
         }
