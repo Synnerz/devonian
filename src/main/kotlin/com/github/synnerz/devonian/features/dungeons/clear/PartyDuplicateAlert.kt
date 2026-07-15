@@ -34,6 +34,7 @@ object PartyDuplicateAlert : Feature(
     )
     private val scoreboardPlayerRegex = "^\\[([ABMHT])] (\\w{1,16}) \\[Lv\\d+]$".toRegex()
     private val startingAtRegex = "^Starting in 4 seconds\\.$".toRegex()
+    private val postStartedAtRegex = "^\\[NPC] Mort: Here, I found this map when I first entered the dungeon\\.$".toRegex()
     private val roleSwapRegex = "^(\\w{1,16}) selected the (Healer|Tank|Mage|Berserk|Archer) Class!$".toRegex()
     private val teamMembers = mutableMapOf<String, DungeonClass>()
     private var shouldTick = false
@@ -47,6 +48,10 @@ object PartyDuplicateAlert : Feature(
 
                 teamMembers[name] = roleIns
 
+                return@on
+            }
+            event.matches(postStartedAtRegex)?.let {
+                Scheduler.scheduleTask(10) { checkParty() }
                 return@on
             }
 
@@ -69,18 +74,7 @@ object PartyDuplicateAlert : Feature(
 
         on<ClientThreadServerTickEvent> {
             if (Dungeons.timeElapsed.value > 0 || !shouldTick) return@on
-            val _list = mutableMapOf<DungeonClass, MutableList<String>>()
-            teamMembers.forEach { (k, v) ->
-                _list.getOrPut(v) { mutableListOf() }.add(k)
-            }
-            val dupes = _list.filter { it.value.size > 1 }
-            if (dupes.isEmpty()) return@on
-
-            val formatted = dupes.entries.joinToString(" ") { "${it.key.colorCode}${it.key.name} &c${it.value.joinToString(" ")}" }
-            Alert.show("&cDupe $formatted", 2000, SETTING_PLAY_SOUND.get())
-            if (SETTING_SEND_MESSAGE.get())
-                ChatUtils.command("pc dupe ${formatted.clearCodes()}")
-            ChatUtils.sendMessage("&cDupe Class Found $formatted", true)
+            checkParty()
             shouldTick = false
         }
     }
@@ -88,5 +82,20 @@ object PartyDuplicateAlert : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         teamMembers.clear()
         shouldTick = false
+    }
+
+    fun checkParty() {
+        val _list = mutableMapOf<DungeonClass, MutableList<String>>()
+        teamMembers.forEach { (k, v) ->
+            _list.getOrPut(v) { mutableListOf() }.add(k)
+        }
+        val dupes = _list.filter { it.value.size > 1 }
+        if (dupes.isEmpty()) return
+
+        val formatted = dupes.entries.joinToString(" ") { "${it.key.colorCode}${it.key.name} &c${it.value.joinToString(" ")}" }
+        Alert.show("&cDupe $formatted", 2000, SETTING_PLAY_SOUND.get())
+        if (SETTING_SEND_MESSAGE.get())
+            ChatUtils.command("pc dupe ${formatted.clearCodes()}")
+        ChatUtils.sendMessage("&cDupe Class Found $formatted", true)
     }
 }
