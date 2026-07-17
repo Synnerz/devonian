@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.LivingEntity
 import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.CopyOnWriteArrayList
 
 object SpiritBowHighlight : Feature(
     "spiritBowHighlight",
@@ -50,7 +51,7 @@ object SpiritBowHighlight : Feature(
 
     private val entities = ConcurrentLinkedQueue<Int>()
     private val bows = mutableListOf<LivingEntity>()
-    private var lastStand = 0
+    private val previousStands = CopyOnWriteArrayList<Int>()
 
     override fun initialize() {
         on<PacketReceivedEvent> { event ->
@@ -58,14 +59,15 @@ object SpiritBowHighlight : Feature(
             if (packet !is ClientboundAddEntityPacket) return@on
             if (packet.type != EntityTypes.ARMOR_STAND) return@on
 
-            lastStand = packet.id
+            previousStands.add(packet.id)
         }
 
         on<NameChangeEvent> { event ->
-            if (event.entityId != lastStand) return@on
+            if (!previousStands.contains(event.entityId)) return@on
             val name = event.name
             if (name != "Spirit Bow") return@on
 
+            previousStands.remove(event.entityId)
             entities.add(event.entityId - 1)
         }
 
@@ -113,6 +115,6 @@ object SpiritBowHighlight : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         entities.clear()
         bows.clear()
-        lastStand = 0
+        previousStands.clear()
     }
 }
