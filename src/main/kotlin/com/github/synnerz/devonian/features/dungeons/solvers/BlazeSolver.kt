@@ -30,6 +30,12 @@ object BlazeSolver : Feature(
         "Sends \"Blaze done\" in party chat",
         "Blaze Done Message"
     )
+    private val SETTING_RENDER_PARTICLES = addSwitch(
+        "renderParticles",
+        false,
+        "Stops ALL particles from rendering whenever inside of blaze puzzle",
+        "Stop Rendering Particles"
+    )
     private val SETTING_RENDER_TRACER = addSwitch(
         "renderTracer",
         true,
@@ -160,6 +166,12 @@ object BlazeSolver : Feature(
             efficientPos = null
             etherSpots.clear()
         }
+
+        on<ParticleSpawnEvent> { event ->
+            if (!inBlaze) return@on
+
+            event.cancel()
+        }.setEnabled(SETTING_RENDER_PARTICLES.state)
 
         on<TickEvent> {
             if (!inBlaze) return@on
