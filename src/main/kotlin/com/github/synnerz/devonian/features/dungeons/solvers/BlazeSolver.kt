@@ -11,6 +11,7 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.monster.Blaze
 import net.minecraft.world.level.block.Blocks
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
@@ -40,21 +41,26 @@ object BlazeSolver : Feature(
         "renderTracer",
         true,
         "Renders tracer to the blaze",
-        "BlazeSolver Tracer"
+        "Tracer"
     )
     private val SETTING_RENDER_TRACER_WIDTH = addSlider(
         "renderTracerLine",
         2.0,
         1.0, 5.0,
         "",
-        "BlazeSolver Tracer Width"
+        "Tracer Width"
     )
     private val SETTING_RENDER_TRACER_AMOUNT = addSelection(
         "renderTracerAmount",
         0,
         listOf("1", "2", "all"),
         "The amount of tracers which should be displayed",
-        "BlazeSolver Tracer Amount"
+        "Tracer Amount"
+    )
+    private val SETTING_DONT_RENDER_BLAZE = addSwitch(
+        "dontRenderBlaze",
+        false,
+        "Stops blazes from rendering",
     )
     private val SETTING_COLOR_FIRST_OUTLINE = addColorPicker(
         "firstBlazeColorOutline",
@@ -221,6 +227,14 @@ object BlazeSolver : Feature(
 
             entityList[entityId] = maxHp
         }
+
+        on<PreExtractRenderEntityEvent> { event ->
+            if (!inBlaze) return@on
+            val entity = event.entity
+            if (entity !is Blaze) return@on
+
+            event.cancel()
+        }.setEnabled(SETTING_DONT_RENDER_BLAZE.state)
 
         on<RenderWorldEvent> {
             if (efficientPos != null) {
