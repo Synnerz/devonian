@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.dungeon.DungeonsApi
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.garden.GardenEvents
+import com.github.synnerz.devonian.api.events.kuudra.KuudraEvents
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
@@ -37,6 +38,7 @@ import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.features.dungeons.solvers.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.*
+import com.github.synnerz.devonian.features.kuudra.CratePriority
 import com.github.synnerz.devonian.features.kuudra.CratesWaypoints
 import com.github.synnerz.devonian.features.misc.*
 import com.github.synnerz.devonian.features.misc.chat.*
@@ -457,6 +459,7 @@ object Devonian : ClientModInitializer {
         PreventItem.initialize()
         Dungeons.initialize()
         GardenEvents.initialize()
+        KuudraEvents.initialize()
         HypixelModApi.initialize()
         Party.initialize()
         CroesusListener.initialize()
