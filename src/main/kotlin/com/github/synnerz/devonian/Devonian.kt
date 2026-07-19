@@ -407,6 +407,7 @@ object Devonian : ClientModInitializer {
             SpiritBearHighlight,
             SpiritBowHighlight,
             SpiritKillCounter,
+            CratePriority,
 
             // Debug
             CopyItem,
