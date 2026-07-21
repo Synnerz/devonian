@@ -1,7 +1,9 @@
 package com.github.synnerz.devonian.features.kuudra
+
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
+import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.events.kuudra.KuudraEvents
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -23,9 +25,9 @@ object CratePriority : Feature(
         "equals" to Triple(-64, 76, -87),
         "slash" to Triple(-112, 76, -68),
         "shop" to Triple(-85, 78, -128),
-        "shop edge" to Triple( -70, 79, -134),
-        "equals cannon" to Triple( -68, 78, -104),
-        "x cannon" to Triple( -130, 78, -114),
+        "shop edge" to Triple(-70, 79, -134),
+        "equals cannon" to Triple(-68, 78, -104),
+        "x cannon" to Triple(-130, 78, -114),
         "square" to Triple(-140, 78, -90),
     )
     private val cratePriorities = mapOf<String, List<CratePriority>>(
@@ -89,6 +91,10 @@ object CratePriority : Feature(
 
                 spotToGo = name.key
             }
+
+            // reset as a fallback since no more crates are available for this prio
+            if (spotToGo.isEmpty())
+                currentSpot = ""
         }
 
         on<KuudraEvents.CrateSpawn> { event ->
@@ -139,13 +145,13 @@ object CratePriority : Feature(
                 phase = true,
             )
             Render3DImmediate.renderWireframeBox(
-                x + 0.5, y.toDouble(), z + 0.5,
+                x.toDouble(), y.toDouble(), z.toDouble(),
                 1.0, 1.0,
                 color,
                 phase = true
             )
             Render3DImmediate.renderFilledBox(
-                x + 0.5, y.toDouble(), z + 0.5,
+                x.toDouble(), y.toDouble(), z.toDouble(),
                 1.0, 1.0,
                 color2,
                 phase = true
@@ -180,5 +186,10 @@ object CratePriority : Feature(
                 true,
             )
         }
+    }
+
+    override fun onWorldChange(event: WorldChangeEvent) {
+        currentSpot = ""
+        spotToGo = ""
     }
 }
