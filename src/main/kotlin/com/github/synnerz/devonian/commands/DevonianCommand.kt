@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.commands
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.events.ActionbarEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -73,6 +74,11 @@ object DevonianCommand {
         tabListMessages.forEach { println("DumpTab(\"${it.string}\", \"${it.colorCodes()}\")") }
         1
     }
+    private val actionbarMessages = mutableListOf<Component>()
+    private val dumpactionbar = command.subcommand("dumpactionbar") { _, args ->
+        actionbarMessages.forEach { println("DumpActionBar(\"${it.string}\", \"${it.colorCodes()}\")") }
+        1
+    }
     private val catacombsFloors = listOf(
         "catacombs_floor_one",
         "catacombs_floor_two",
@@ -94,11 +100,20 @@ object DevonianCommand {
         EventBus.on<TabUpdateEvent> { event ->
             if (tabListMessages.size >= 100)
                 tabListMessages.removeFirst()
+
             tabListMessages.add(event.comp)
+        }
+
+        EventBus.on<ActionbarEvent> { event ->
+            if (actionbarMessages.size >= 100)
+                actionbarMessages.removeFirst()
+
+            actionbarMessages.add(event.text)
         }
 
         EventBus.on<WorldChangeEvent> {
             tabListMessages.clear()
+            actionbarMessages.clear()
         }
 
         catacombsFloors.forEachIndexed { idx, cmd ->
