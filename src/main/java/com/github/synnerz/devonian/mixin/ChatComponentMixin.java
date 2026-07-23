@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.ChatComponentAccessor2;
 import com.github.synnerz.devonian.api.ChatUtils;
 import com.github.synnerz.devonian.features.misc.DisableChatAutoScroll;
+import com.github.synnerz.devonian.features.misc.DisableChatReset;
 import com.github.synnerz.devonian.features.misc.PeekChatKeybind;
 import com.github.synnerz.devonian.features.misc.RemoveChatLimit;
 import com.github.synnerz.devonian.features.misc.chat.CompactChat;
@@ -47,6 +48,21 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     @Inject(method = "clearMessages", at = @At("HEAD"))
     private void devonian$clearMessages(boolean bl, CallbackInfo ci) {
         CompactChat.INSTANCE.clearHistory();
+    }
+
+    @Inject(
+            method = "clearMessages",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/multiplayer/chat/ChatListener;flushQueue()V",
+                    shift = At.Shift.AFTER
+            ),
+            cancellable = true
+    )
+    private void devonian$clearMessagesPost(boolean history, CallbackInfo ci) {
+        if (!DisableChatReset.INSTANCE.isEnabled()) return;
+
+        ci.cancel();
     }
 
     @WrapOperation(

@@ -54,6 +54,13 @@ object DisableChatAutoScroll : Feature(
     Categories.VANILLA_TWEAKS,
     subcategory = "Chat"
 )
+object DisableChatReset : Feature(
+    "disableChatReset",
+    "Stops the chat from clearing whenever switching servers",
+    Categories.VANILLA_TWEAKS,
+    searchTags = setOf("chat", "chat clear"),
+    subcategory = "Chat"
+)
 object CenteredCrosshair : Feature("centeredCrosshair", category = Categories.VANILLA_TWEAKS)
 object DisableEnderPearlCooldown : Feature("disableEnderPearlCooldown", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
 object DisableHungerBar : Feature("disableHungerBar", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")

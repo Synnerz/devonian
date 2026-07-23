@@ -408,6 +408,7 @@ object Devonian : ClientModInitializer {
             SpiritBowHighlight,
             SpiritKillCounter,
             CratePriority,
+            DisableChatReset,
 
             // Debug
             CopyItem,
