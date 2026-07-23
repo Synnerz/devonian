@@ -59,7 +59,7 @@ object CroesusHighlightUnopened : Feature(
             val slot = event.slot
             if (slot.container == minecraft.player?.inventory) return@on
             val title = event.screen.title.string
-            if (title != "Croesus") return@on
+            if (!CroesusListener.croesusTitleRegex.matches(title)) return@on
             if (SETTING_HIDE_BLACKLISTED.get() && blacklist.contains(slot.containerSlot)) {
                 event.cancel()
                 return@on

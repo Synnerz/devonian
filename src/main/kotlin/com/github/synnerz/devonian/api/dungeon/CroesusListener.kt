@@ -41,6 +41,7 @@ object CroesusListener {
     private val enchantedBookRegex = "^Enchanted Book \\(([\\w ]+) ([IV]+)\\)$".toRegex()
     private val essenceRegex = "^(Wither|Undead) Essence x(\\d+)$".toRegex()
     private val costRegex = "^(\\d[\\d,]+) Coins$".toRegex()
+    val croesusTitleRegex = "^(?:\\(\\d+/\\d+\\) )?Croesus$".toRegex()
     private var inChest = false
     private var currentChest: String? = null
     private var inCroesus = false
@@ -94,7 +95,7 @@ object CroesusListener {
 
     fun initialize() {
         EventBus.on<ServerContainerOpenEvent> { event ->
-            val croesus = event.titleStr == "Croesus"
+            val croesus = croesusTitleRegex.matches(event.titleStr)
             /* possibly reset croesus data? */
             if (!croesus && inCroesus) Scheduler.scheduleTask { ClosedCroesus().post() }
             else if (croesus && !inCroesus) Scheduler.scheduleTask { OpenedCroesus().post() }
