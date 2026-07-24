@@ -40,7 +40,7 @@ abstract class DungeonEvent {
     ) : Event {
         companion object {
             @JvmStatic
-            val SECRET_SKULLS = listOf("e0f3e929-869e-3dca-9504-54c666ee6f23", "fed95410-aba1-39df-9b95-1d4f361eb66e")
+            val SECRET_SKULLS = listOf("2865274b-3097-394e-8149-ec629c72d850", "fed95410-aba1-39df-9b95-1d4f361eb66e")
             @JvmStatic
             val SECRET_BLOCKS = listOf("minecraft:chest", "minecraft:lever", "minecraft:trapped_chest")
 
