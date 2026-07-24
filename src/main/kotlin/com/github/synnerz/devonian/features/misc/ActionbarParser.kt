@@ -143,7 +143,7 @@ object ActionbarParser : Feature(
                 = str.replace("\uE028", "♨")
         },
         Defense(
-            "\uE008 Defense",
+            "\uE008",
             null,
             object : TextHudFeature(
                 "customDefenseHud",
@@ -183,7 +183,7 @@ object ActionbarParser : Feature(
                 else super.shouldShow()
 
             override fun modifyStringHud(str: String): String
-                = str.replace("\uE008", "❈").dropLast(" Defense".length)
+                = str.replace("\uE008", "❈")
         },
         Mana(
             null,
