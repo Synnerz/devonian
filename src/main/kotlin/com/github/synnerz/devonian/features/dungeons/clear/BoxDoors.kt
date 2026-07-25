@@ -153,11 +153,12 @@ object BoxDoors : Feature(
 
                 if (it.opened && !it.holyShitFairyDoorPleaseStopFlashingSobs) return@forEach
 
-                if (!SETTING_RENDER_HIDDEN_DOORS.get() && it.rooms.all { !it.explored }) return@forEach
+                val hasExplored = it.rooms.all { !it.explored }
+                if (!SETTING_RENDER_HIDDEN_DOORS.get() && hasExplored) return@forEach
 
                 val colorWire: Color
                 val colorFill: Color
-                if (hasKey && it.rooms.any { room -> room === DungeonScanner.currentRoom }) {
+                if (hasKey && !hasExplored) {
                     colorWire = SETTING_DOOR_KEY_WIRE_COLOR.getColor()
                     colorFill = SETTING_DOOR_KEY_FILL_COLOR.getColor()
                 } else {
