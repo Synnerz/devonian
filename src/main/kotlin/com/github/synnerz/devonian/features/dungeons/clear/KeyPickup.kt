@@ -2,7 +2,6 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
-import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
@@ -136,7 +135,6 @@ object KeyPickup : Feature(
     private val keys = mutableListOf<Pair<ArmorStand, Boolean>>()
     private val idQ = ConcurrentLinkedQueue<Triple<Boolean, Int, Int>>()
     private var currentKeyRoom: DungeonRoom? = null
-    private var lastEssenceClick: Pair<Int, Int>? = null
 
     private fun shortNameFor(name: String) =
         // TODO: handle nicks
@@ -191,24 +189,23 @@ object KeyPickup : Feature(
 
             val x = event.spawnPos.x.toInt()
             val z = event.spawnPos.z.toInt()
-            val dist =
-                if (lastEssenceClick == null) 5
-                else abs(lastEssenceClick!!.first) - abs(x) + abs(lastEssenceClick!!.second) - abs(z)
-            if (dist <= 3) return@on
-
-            idQ.add(Triple(id == bloodKeyId, 10, event.entityId))
-
             val comp = WorldPosition(x, z).toComponent()
             val idx = comp.getRoomIdx()
             if (idx !in 0..35) return@on
 
             currentKeyRoom = DungeonScanner.rooms[idx]
-        }
+            currentKeyRoom ?: return@on
+            val roomWaypoints = currentKeyRoom!!.roomID?.let {
+                DungeonWaypoints.waypointsData[it]?.waypoints?.get(DungeonWaypoints.WaypointType.ESSENCE)
+            } ?: return@on
+            if (roomWaypoints.any {
+                val ( dx, dz ) = currentKeyRoom!!.fromComp(it.x, it.z) ?: return@any false
+                val dist = abs(dx - x) + abs(dz - z)
 
-        on<DungeonEvent.SecretClicked> { event ->
-            if (!event.isSkull) return@on
+                dist <= 3
+            }) return@on
 
-            lastEssenceClick = event.x.toInt() to event.z.toInt()
+            idQ.add(Triple(id == bloodKeyId, 10, event.entityId))
         }
 
         on<TickEvent> {
@@ -280,6 +277,5 @@ object KeyPickup : Feature(
         keys.clear()
         idQ.clear()
         currentKeyRoom = null
-        lastEssenceClick = null
     }
 }
