@@ -79,11 +79,11 @@ object CustomSounds {
                 setValues(soundName, volume ?: 1f, pitch ?: 1f)
 
                 if (soundEvent == null) {
-                    ChatUtils.sendMessage("&4Cannot find sound: &a$soundName", true)
+                    ChatUtils.sendMessage("&4Cannot find sound: &b$soundName", true)
                     return@subcommand 0
                 }
 
-                ChatUtils.sendMessage("&aSuccessfully set sound to &a$soundName ${volume}v ${pitch}p", true)
+                ChatUtils.sendMessage("&aSuccessfully set sound to &b$soundName ${volume}v ${pitch}p", true)
                 1
             }
                 .float("volume", 0f, 10f)
