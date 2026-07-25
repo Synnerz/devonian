@@ -78,7 +78,7 @@ object CustomHypeSound : Feature(
             event.cancel()
             playSound = true
             Scheduler.scheduleTask {
-                customSound.playWithEvent(event)
+                customSound.playWithEvent(event, false)
                 playSound = false
             }
         }
