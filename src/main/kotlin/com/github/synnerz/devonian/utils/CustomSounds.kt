@@ -1,9 +1,11 @@
 package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.Identifier
@@ -52,6 +54,45 @@ object CustomSounds {
 
             soundEvent = soundEvent ?: BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(value))
             sounds.add(this)
+        }
+
+        @JvmOverloads
+        fun registerCommand(
+            name: String,
+            suggestions: List<String> = listOf(
+                "minecraft:entity.blaze.hurt",
+                "minecraft:entity.experience_orb.pickup",
+                "minecraft:block.vault.break",
+                "minecraft:entity.elder_guardian.hurt_land",
+                "minecraft:item.totem.use",
+                "minecraft:block.sculk_catalyst.hit",
+                "minecraft:block.ender_chest.close",
+                "minecraft:block.note_block.iron_xylophone",
+            )
+        ) {
+            DevonianCommand.command.subcommand(name) { _, args ->
+                val volume = args.firstOrNull() as? Float?
+                val pitch = args.getOrNull(1) as? Float?
+                var soundName = args.getOrNull(2) as? String
+                if (soundName.isNullOrEmpty()) soundName = value
+
+                setValues(soundName, volume ?: 1f, pitch ?: 1f)
+
+                if (soundEvent == null) {
+                    ChatUtils.sendMessage("&4Cannot find sound: &a$soundName", true)
+                    return@subcommand 0
+                }
+
+                ChatUtils.sendMessage("&aSuccessfully set sound to &a$soundName ${volume}v ${pitch}p", true)
+                1
+            }
+                .float("volume", 0f, 10f)
+                .float("pitch", 0f, 10f)
+                .greedyString("sound")
+                .suggest(
+                    "sound",
+                    *suggestions.toTypedArray()
+                )
         }
 
         fun setVolume(volume: Float) {
