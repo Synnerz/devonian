@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
@@ -37,7 +36,7 @@ object CustomHypeSound : Feature(
             if (event.sound != "minecraft:entity.generic.explode" || event.volume != 1f || event.pitch != 1f) return@on
 
             event.cancel()
-            Scheduler.scheduleTask { customSound.playWithEvent(event, false) }
+            customSound.schedulePlayWithEvent(event, false)
         }
 
         on<PacketSentEvent> { event ->
