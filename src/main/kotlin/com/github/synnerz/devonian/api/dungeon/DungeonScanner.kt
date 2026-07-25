@@ -212,7 +212,10 @@ object DungeonScanner {
             val found = match.groupValues.getOrNull(1)?.toInt() ?: return@on
             val total = match.groupValues.getOrNull(2)?.toInt() ?: return@on
 
-            if (total != room.totalSecrets) println("mismatching secret counts in ${room.name}")
+            if (found > room.totalSecrets || total != room.totalSecrets) {
+                println("Devonian\$DungeonScanner SecretsMisMatch[room=\"${room.name}\", total=\"$total\", found=\"$found\", roomTotal=\"${room.totalSecrets}\"]")
+                return@on
+            }
             DungeonEvent.SecretPreUpdateEvent(found, total, room).post()
             room.secretsCompleted = found
             DungeonEvent.SecretUpdateEvent(found, total, room).post()
