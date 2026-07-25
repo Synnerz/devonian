@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.config.Config
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvent
+import net.minecraft.sounds.SoundSource
 
 object CustomSounds {
     val sounds = mutableListOf<CustomSound>()
@@ -103,12 +104,15 @@ object CustomSounds {
         /**
          * * NOTE: call on main thread
          */
-        fun playWithEvent(event: SoundPlayEvent) {
+        @JvmOverloads
+        fun playWithEvent(event: SoundPlayEvent, eventCategory: Boolean = true) {
             soundEvent?.let {
                 quePop {
                     Devonian.minecraft.level?.playLocalSound(
                         event.x, event.y, event.z,
-                        it, event.category,
+                        it,
+                        if (eventCategory) event.category
+                        else SoundSource.MASTER,
                         volume, pitch,
                         false
                     )
