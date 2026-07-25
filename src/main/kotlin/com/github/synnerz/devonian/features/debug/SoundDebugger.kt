@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.debug
 
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ConfigData
@@ -47,7 +46,7 @@ object SoundDebugger {
             customSound.setPitch(SETTING_SOUND_PITCH.get().toFloat())
             println("attempting to play sound \"${SETTING_SOUND_INPUT.get()}\" $customSound ||| ${customSound.soundEvent}")
 
-            Scheduler.scheduleTask { customSound.play() }
+            customSound.schedulePlay()
         },
         "Play",
         null,
