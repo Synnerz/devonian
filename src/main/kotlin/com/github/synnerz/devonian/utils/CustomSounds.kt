@@ -94,10 +94,23 @@ object CustomSounds {
 
         /**
          * * NOTE: call on main thread
+         * * If master is set to false it will default to PLAYER as source
          */
-        fun play() {
+        @JvmOverloads
+        fun play(masterSource: Boolean = true) {
             quePop {
-                soundEvent?.let { Devonian.minecraft.player?.playSound(it, volume, pitch) }
+                soundEvent?.let {
+                    Devonian.minecraft.player?.let { pl ->
+                        Devonian.minecraft.level?.playLocalSound(
+                            pl.x, pl.y, pl.z,
+                            it,
+                            if (masterSource) SoundSource.MASTER
+                            else SoundSource.PLAYERS,
+                            volume, pitch,
+                            false,
+                        )
+                    }
+                }
             }
         }
 
