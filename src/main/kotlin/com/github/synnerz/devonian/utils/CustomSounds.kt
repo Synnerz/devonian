@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.utils
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -173,5 +174,19 @@ object CustomSounds {
                 }
             }
         }
+
+        /**
+         * * Schedules the sound to run on the main thread
+         */
+        @JvmOverloads
+        fun schedulePlay(masterSource: Boolean = true) =
+            Scheduler.scheduleTask { play(masterSource) }
+
+        /**
+         * * Schedules the sound to run on the main thread
+         */
+        @JvmOverloads
+        fun schedulePlayWithEvent(event: SoundPlayEvent, eventCategory: Boolean = true)
+            = Scheduler.scheduleTask { playWithEvent(event, eventCategory) }
     }
 }
