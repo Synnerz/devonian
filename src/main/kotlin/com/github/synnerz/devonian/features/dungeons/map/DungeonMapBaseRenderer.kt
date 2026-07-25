@@ -549,6 +549,8 @@ class DungeonMapBaseRenderer :
                     )
                 }
             }
+        } else if (options.delegateText && delegatedText.value.isNotEmpty()) {
+            delegatedText.value = emptyList()
         }
 
         g.dispose()
