@@ -143,7 +143,7 @@ object CroesusProfit : TextHudFeature(
                         ?.getOrNull(0)
                         ?.replace(",", "")
                         ?.toIntOrNull() ?: 0
-                    if (possibleKey == "Dungeon Chest Key") {
+                    if (possibleKey == "Dungeon Chest Key" || chestPriceLore == "Dungeon Chest Key") {
                         price += SkyblockPrices.buyPrice("DUNGEON_CHEST_KEY").roundToInt()
                         data.requiresKey = true
                     }
