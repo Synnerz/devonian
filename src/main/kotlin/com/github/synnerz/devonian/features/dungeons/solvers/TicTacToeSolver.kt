@@ -102,14 +102,14 @@ object TicTacToeSolver : Feature(
             val room = DungeonScanner.currentRoom ?: return@on
             val start = Triple(8, 70, 15)
             val end = Triple(8, 72, 17)
-            val ( startX, startZ ) = room.fromComp(start.first, start.third) ?: return@on
-            val ( endX, endZ ) = room.fromComp(end.first, end.third) ?: return@on
+            val ( startX, startZ ) = room.fromComp(start.first - 1, start.third - 1) ?: return@on
+            val ( endX, endZ ) = room.fromComp(end.first + 1, end.third + 1) ?: return@on
 
             val itemMaps = minecraft.level?.getEntitiesOfClass(
                 ItemFrame::class.java,
                 AABB(
-                    startX.toDouble() - 1, start.second.toDouble() - 1, startZ.toDouble() - 1,
-                    endX.toDouble() + 1, end.second.toDouble() + 1, endZ.toDouble() + 1
+                    startX.toDouble(), start.second.toDouble() - 1, startZ.toDouble(),
+                    endX.toDouble(), end.second.toDouble() + 1, endZ.toDouble()
                 )
             ) ?: return@on
 
