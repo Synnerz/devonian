@@ -145,9 +145,17 @@ object TicTacToeSolver : Feature(
 
             hasMoved = false
             if (lastStatus == "X") onAIMove(currentBoard)
-            if (currentBoard.filterNotNull().size == 8 && SETTING_SEND_MSG.get() && !hasSent) {
-                hasSent = true
-                ChatUtils.command("pc Tic Tac Toe done")
+            if (currentBoard.filterNotNull().size == 8) {
+                val nstatus = if (lastStatus == "X") "O" else "X"
+                val list = currentBoard.toMutableList()
+                val emptySlot = list.indexOfFirst { it == null }
+                list[emptySlot] = nstatus
+
+                val hasAIWon = isWinner(list, "X")
+                if (!hasAIWon && SETTING_SEND_MSG.get() && !hasSent) {
+                    hasSent = true
+                    ChatUtils.command("pc Tic Tac Toe done")
+                }
             }
             lastStatus = null
         }
