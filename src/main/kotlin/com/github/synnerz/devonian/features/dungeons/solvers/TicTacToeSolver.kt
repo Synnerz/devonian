@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Stages
@@ -15,7 +14,6 @@ import net.minecraft.world.item.MapItem
 import net.minecraft.world.phys.AABB
 import java.awt.Color
 import kotlin.math.floor
-import kotlin.math.roundToInt
 
 object TicTacToeSolver : Feature(
     "ticTacToeSolver",
@@ -43,6 +41,7 @@ object TicTacToeSolver : Feature(
     )
     private val completedPuzzleRegex = "^PUZZLE SOLVED! \\w+ tied Tic Tac Toe! Good job!$".toRegex()
     private val failedPuzzleRegex = "^PUZZLE FAIL! \\w+ lost Tic Tac Toe! Yikes!$".toRegex()
+    private val resetPuzzleRegex = "^You used the Architect's First Draft to reset Tic Tac Toe!$".toRegex()
     private val boardPos = listOf(
         Triple(8, 72, 17), Triple(8, 72, 16), Triple(8, 72, 15),
         Triple(8, 71, 17), Triple(8, 71, 16), Triple(8, 71, 15),
@@ -61,13 +60,6 @@ object TicTacToeSolver : Feature(
     var enteredAt = -1
     var hasSent = false
 
-    data class TicTacToePlayer(
-        val x: Int,
-        val y: Int,
-        val z: Int,
-        val status: String
-    )
-
     override fun initialize() {
         on<DungeonEvent.RoomEnter> {
             val room = it.room
@@ -85,6 +77,11 @@ object TicTacToeSolver : Feature(
         on<ChatEvent> { event ->
             event.matches(failedPuzzleRegex)?.let {
                 reset()
+                return@on
+            }
+            event.matches(resetPuzzleRegex)?.let {
+                currentBoard.fill(null)
+                enteredAt = EventBus.serverTicks()
                 return@on
             }
 
