@@ -12,8 +12,10 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.entity.decoration.ItemFrame
 import net.minecraft.world.item.MapItem
+import net.minecraft.world.phys.AABB
 import java.awt.Color
 import kotlin.math.floor
+import kotlin.math.roundToInt
 
 object TicTacToeSolver : Feature(
     "ticTacToeSolver",
@@ -46,7 +48,6 @@ object TicTacToeSolver : Feature(
         Triple(8, 71, 17), Triple(8, 71, 16), Triple(8, 71, 15),
         Triple(8, 70, 17), Triple(8, 70, 16), Triple(8, 70, 15)
     )
-    var entityPositions = mutableListOf<TicTacToePlayer>()
     var currentBoard = mutableListOf<String?>(
         null, null, null,
         null, null, null,
@@ -96,47 +97,54 @@ object TicTacToeSolver : Feature(
             reset()
         }
 
-        on<EntityJoinEvent> {
-            val entity = it.entity
-
-            Scheduler.scheduleServerTask(4) {
-                if (hasSent) return@scheduleServerTask
-                if (entity !is ItemFrame) return@scheduleServerTask
-                if (!entity.hasFramedMap()) return@scheduleServerTask
-                val mapId = entity.getFramedMapId(entity.item) ?: return@scheduleServerTask
-                val world = minecraft.level ?: return@scheduleServerTask
-                val map = MapItem.getSavedData(mapId, world) ?: return@scheduleServerTask
-                val colors = map.colors
-                val idx = colors.indexOf(114)
-                if (idx == -1) return@scheduleServerTask
-
-                val status = if (idx == 2700) "X" else "O"
-                entityPositions.add(TicTacToePlayer(
-                    floor(entity.x).toInt(),
-                    entity.y.toInt(),
-                    floor(entity.z).toInt(),
-                    status
-                ))
-                currentBestMove = -1
-                lastStatus = status
-                hasMoved = true
-            }
-        }
-
         on<TickEvent> {
-            if (!inTTT || !hasMoved) return@on
+            if (!inTTT) return@on
             val room = DungeonScanner.currentRoom ?: return@on
+            val start = Triple(8, 70, 15)
+            val end = Triple(8, 72, 17)
+            val ( startX, startZ ) = room.fromComp(start.first, start.third) ?: return@on
+            val ( endX, endZ ) = room.fromComp(end.first, end.third) ?: return@on
+
+            val itemMaps = minecraft.level?.getEntitiesOfClass(
+                ItemFrame::class.java,
+                AABB(
+                    startX.toDouble() - 1, start.second.toDouble() - 1, startZ.toDouble() - 1,
+                    endX.toDouble() + 1, end.second.toDouble() + 1, endZ.toDouble() + 1
+                )
+            ) ?: return@on
+
+            val board = mutableListOf<String?>(
+                null, null, null,
+                null, null, null,
+                null, null, null
+            )
+            itemMaps.forEach { entity ->
+                val compPos = room.fromPos(floor(entity.x).toInt(), floor(entity.z).toInt()) ?: return@forEach
+                if (compPos.first !in 6..9) return@forEach
+                val idx = boardPos.indexOf(Triple(compPos.first, entity.y.toInt(), compPos.second))
+
+                if (idx == -1) return@forEach
+                if (!entity.hasFramedMap()) return@forEach
+
+                val mapId = entity.getFramedMapId(entity.item)
+                val level = minecraft.level ?: return@forEach
+                val map = MapItem.getSavedData(mapId, level) ?: return@forEach
+                val colors = map.colors
+                val jdx = colors.indexOf(114)
+                if (jdx == -1) return@forEach
+
+                val status = if (jdx == 2700) "X" else "O"
+                board[idx] = status
+                if (currentBoard[idx] != status) {
+                    currentBestMove = -1
+                    lastStatus = status
+                    hasMoved = true
+                }
+            }
+            if (!hasMoved) return@on
 
             currentBoard.fill(null)
-
-            for (pos in entityPositions) {
-                val compPos = room.fromPos(pos.x, pos.z) ?: continue
-                val trip = Triple(compPos.first, pos.y, compPos.second)
-                val idx = boardPos.indexOf(trip)
-                if (idx == -1) continue
-
-                currentBoard[idx] = pos.status
-            }
+            currentBoard = board
 
             hasMoved = false
             if (lastStatus == "X") onAIMove(currentBoard)
@@ -195,7 +203,6 @@ object TicTacToeSolver : Feature(
 
     private fun reset() {
         currentBoard.fill(null)
-        entityPositions.clear()
         hasMoved = false
         currentBestMove = -1
         predictedMove = -1
