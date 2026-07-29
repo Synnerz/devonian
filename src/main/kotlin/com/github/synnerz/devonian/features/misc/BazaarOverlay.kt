@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.StringUtils
 import java.awt.Color
 
 object BazaarOverlay : Feature(
@@ -79,8 +80,15 @@ object BazaarOverlay : Feature(
 
             for (line in lore) {
                 val match = fillRegex.matchEntire(line)?.groupValues?.drop(1) ?: continue
-                value = match.getOrNull(0)?.replace(".", "")?.replace("k", "")?.toIntOrNull() ?: 0
-                total = match.getOrNull(1)?.replace(".", "")?.replace("k", "")?.toIntOrNull() ?: 1
+                val valueStr = match.getOrNull(0) ?: "0"
+                val totalStr = match.getOrNull(1) ?: "1"
+
+                value =
+                    if (valueStr.contains("k")) StringUtils.parseShortenedNumber(valueStr.uppercase())
+                    else valueStr.toIntOrNull() ?: 0
+                total =
+                    if (totalStr.contains("k")) StringUtils.parseShortenedNumber(totalStr.uppercase())
+                    else totalStr.toIntOrNull() ?: 0
             }
 
             val state = when {
