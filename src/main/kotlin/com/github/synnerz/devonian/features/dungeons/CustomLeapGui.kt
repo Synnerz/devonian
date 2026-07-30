@@ -384,7 +384,7 @@ object CustomLeapGui : Feature(
         val outlineHover = data.role.color
         val outline = outlineHover.let { Color(it.red, it.green, it.blue, 150) }
 
-        UIRect(x, y, w, h, parent = background).apply {
+        val visibleComp = UIRect(x, y, w, h, parent = background).apply {
             val outlineEffect = OutlineEffect(1.5, outline)
             setColor(SETTING_BACKGROUND_COLOR.getColor())
             addEffect(outlineEffect)
@@ -402,20 +402,26 @@ object CustomLeapGui : Feature(
             onMouseEnter { outlineEffect.color = outlineHover }
             onMouseLeave { outlineEffect.color = outline }
         }
-        UIRect(if (idx % 2 == 0) 0.0 else x, if (idx < 2) 0.0 else y, 50.0, 50.0, parent = background).apply {
+        val hitboxComp = UIRect(if (idx % 2 == 0) 0.0 else x, if (idx < 2) 0.0 else y, 50.0, 50.0, parent = background).apply {
             onMouseRelease { event ->
                 if (SETTING_USE_ON_CLICK.get()) return@onMouseRelease
                 if (event.button !in 0..1 || data.player.isDead) return@onMouseRelease
 
                 ScreenUtils.click(data.slot)
-                Scheduler.scheduleTask { background.clearChildren() }
+                Scheduler.scheduleTask {
+                    visibleComp.remove()
+                    remove()
+                }
             }
             onMouseClick { event ->
                 if (!SETTING_USE_ON_CLICK.get()) return@onMouseClick
                 if (event.button !in 0..1 || data.player.isDead) return@onMouseClick
 
                 ScreenUtils.click(data.slot)
-                Scheduler.scheduleTask { background.clearChildren() }
+                Scheduler.scheduleTask {
+                    visibleComp.remove()
+                    remove()
+                }
             }
         }
     }
