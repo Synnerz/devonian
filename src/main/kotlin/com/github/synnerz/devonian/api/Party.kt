@@ -24,6 +24,7 @@ object Party {
         "^Party Finder > (?:\\[[^ ]+] )?(\\w{1,16}) joined the .*$".toRegex(),
         "^Party Members \\((\\d+)\\)$".toRegex(),
         "^(?:\\[[^ ]+] )?(\\w{1,16}) joined the party.$".toRegex(),
+        "^Party Finder > (\\w{1,16}) joined the dungeon group! \\((?:Healer|Tank|Mage|Berserk|Archer) Level \\d+\\)$".toRegex(),
     )
     var inParty = false
     var members: Map<UUID, PartyRole> = mapOf()
