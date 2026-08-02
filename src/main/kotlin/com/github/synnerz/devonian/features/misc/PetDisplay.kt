@@ -369,8 +369,8 @@ object PetDisplay : TextHudFeature(
             petMenuPage = -1
             val match = petsMenuRegex.matchEntire(event.titleStr) ?: return@on
 
-            val page = match.groupValues.getOrNull(1)?.toIntOrNull() ?: return@on
-            val max = match.groupValues.getOrNull(2)?.toIntOrNull() ?: return@on
+            val page = match.groupValues.getOrNull(1)?.toIntOrNull() ?: 1
+            val max = match.groupValues.getOrNull(2)?.toIntOrNull() ?: 1
 
             petMenuPage = page
             // val l = Pet.searchable(page, true)
