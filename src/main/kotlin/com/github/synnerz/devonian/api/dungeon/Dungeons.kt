@@ -336,7 +336,10 @@ object Dungeons {
 
         EventBus.on<ChatChannelEvent.PartyChatEvent> { event ->
             when (event.userMessage) {
+                "Mimic Killed",
                 "Mimic Killed!",
+                "Mimic Dead",
+                "Mimic Dead!",
                 "\$SKYTILS-DUNGEON-SCORE-MIMIC$"
                     -> mimicKilled.value = true
 
