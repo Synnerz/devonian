@@ -100,9 +100,17 @@ object BoxDoors : Feature(
         "Highlight Unknown Doors",
         cheeto = true,
     )
+    private val SETTING_OUTLINE_OPENED_BLOOD = addSwitch(
+        "outlineOpenedBlood",
+        false,
+        "Adds an outline to blood room whenever it's opened",
+        "Outline Opened Blood",
+    )
 
+    private val EMPTY_COLOR = Color(0, 0, 0, 0)
     private var witherKeys = 0
     private var bloodKey = false
+    private var bloodOpened = false
 
     private val witherKeyRegex = "^.+?(\\w+) has obtained Wither Key!$".toRegex()
     private val bloodKeyRegex = "^.+?(\\w+) has obtained Blood Key!$".toRegex()
@@ -114,7 +122,10 @@ object BoxDoors : Feature(
             when (event.message) {
                 "A Wither Key was picked up!" -> witherKeys++
                 "A Blood Key was picked up!" -> bloodKey = true
-                "The BLOOD DOOR has been opened!" -> bloodKey = false
+                "The BLOOD DOOR has been opened!" -> {
+                    bloodKey = false
+                    bloodOpened = true
+                }
                 else -> b = false
             }
             if (b) return@on
@@ -139,6 +150,11 @@ object BoxDoors : Feature(
         on<RenderWorldEvent> {
             DungeonScanner.doors.forEach {
                 if (it == null) return@forEach
+                if (it.wasBlood && SETTING_OUTLINE_OPENED_BLOOD.get() && bloodOpened) {
+                    drawDoor(it.comp, SETTING_DOOR_KEY_WIRE_COLOR.getColor(), EMPTY_COLOR)
+                    return@forEach
+                }
+
                 val hasKey = when (it.type) {
                     DoorTypes.NORMAL,
                     DoorTypes.ENTRANCE
@@ -228,5 +244,6 @@ object BoxDoors : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         witherKeys = 0
         bloodKey = false
+        bloodOpened = false
     }
 }
