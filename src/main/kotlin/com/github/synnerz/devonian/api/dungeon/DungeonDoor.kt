@@ -11,6 +11,7 @@ class DungeonDoor(val comp: WorldComponentPosition) {
     val rooms = mutableSetOf<DungeonRoom>()
     val roomComp1: ComponentPosition
     val roomComp2: ComponentPosition
+    var wasBlood = false
     var holyShitFairyDoorPleaseStopFlashingSobs = false
 
     init {
@@ -54,6 +55,8 @@ class DungeonDoor(val comp: WorldComponentPosition) {
             Blocks.DYED_TERRACOTTA.red -> DoorTypes.BLOOD
             else -> DoorTypes.NORMAL
         }
+        if (!opened && type == DoorTypes.BLOOD && !wasBlood)
+            wasBlood = true
         if (opened && holyShitFairyDoorPleaseStopFlashingSobs && !rooms.all { it.explored }) type = DoorTypes.WITHER
     }
 }
