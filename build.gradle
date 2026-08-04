@@ -34,7 +34,7 @@ dependencies {
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	implementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	include implementation("com.github.Synnerz:talium:a3e75acab4")
+	include implementation("com.github.Synnerz:talium:4b4eb62a98")
 	implementation "net.hypixel:mod-api:1.0.1"
 
 	api("maven.modrinth:mOgUt4GM:3rsoV1bk")
