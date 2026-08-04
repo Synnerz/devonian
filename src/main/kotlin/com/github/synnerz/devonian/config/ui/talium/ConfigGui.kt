@@ -21,7 +21,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
             println("background(${scaledResolution.scaleFactor})")
         }
         onMouseClick { event ->
-            println("onMouseClick(${event.x}, ${event.y}, ${this.scaledResolution?.scaleFactor})")
+            println("onMouseClick(${event.x}-${scaledResolution?.mc?.mouseHandler?.xpos()}, ${event.y}-${scaledResolution?.mc?.mouseHandler?.ypos()}, ${scaledResolution?.scaleFactor})")
         }
     }
     private val main = UIRect(17.5, 17.5, 65.0, 65.0, parent = background).apply {
@@ -111,7 +111,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     }
 
     override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {
-        println("mouseClicked(${event.x()}, ${event.y()}, ${minecraft.window.guiScale})")
+        println("mouseClicked(${event.x()}-${minecraft.mouseHandler.xpos()}, ${event.y()}-${minecraft.mouseHandler.ypos()}, ${minecraft.window.guiScale})")
         return super.mouseClicked(event, doubleClick)
     }
 
