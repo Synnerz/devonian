@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.api.events.Threaded
 abstract class DungeonEvent {
     class MimicKilled : Event
     class PrinceKilled : Event
+    class BatScoreKilled : Event
     class RunStarted : Event
     // class WitherKeyDrop : Event() // maybe?
     // class BloodKeyDrop : Event() // maybe?
