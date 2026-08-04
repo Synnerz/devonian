@@ -343,7 +343,10 @@ object Dungeons {
                 "\$SKYTILS-DUNGEON-SCORE-MIMIC$"
                     -> mimicKilled.value = true
 
-                "Prince Killed!"
+                "Prince Killed",
+                "Prince Killed!",
+                "Prince Dead",
+                "Prince Dead!"
                     -> princeKilled.value = true
 
                 "BatScore Killed!",
