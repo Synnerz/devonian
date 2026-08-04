@@ -345,6 +345,13 @@ object Dungeons {
 
                 "Prince Killed!"
                     -> princeKilled.value = true
+
+                "BatScore Killed!",
+                "Bat Score Killed!",
+                "Bat Score Killed",
+                "Bat Killed!",
+                "Bat Killed"
+                    -> batScoreKilled.value = true
             }
         }.setEnabled(Location.stateInArea("catacombs"))
 
@@ -366,6 +373,7 @@ object Dungeons {
 
             if (event.message == "A Bat has been slain. +1 Bonus Score") {
                 batScoreKilled.value = true
+                DungeonEvent.BatScoreKilled().post()
                 return@on
             }
 
