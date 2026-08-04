@@ -16,14 +16,7 @@ import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.Component
 
 object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
-    private val background = UIRect(0.0, 0.0, 100.0, 100.0).apply {
-        onResize { comp, scaledResolution ->
-            println("background(${scaledResolution.scaleFactor})")
-        }
-        onMouseClick { event ->
-            println("onMouseClick(${event.x}-${scaledResolution?.mc?.mouseHandler?.xpos()}, ${event.y}-${scaledResolution?.mc?.mouseHandler?.ypos()}, ${scaledResolution?.scaleFactor})")
-        }
-    }
+    private val background = UIRect(0.0, 0.0, 100.0, 100.0)
     private val main = UIRect(17.5, 17.5, 65.0, 65.0, parent = background).apply {
         setColor(ColorPalette.PRIMARY_COLOR)
     }
@@ -110,11 +103,6 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         return super.keyPressed(keyEvent)
     }
 
-    override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {
-        println("mouseClicked(${event.x()}-${minecraft.mouseHandler.xpos()}, ${event.y()}-${minecraft.mouseHandler.ypos()}, ${minecraft.window.guiScale})")
-        return super.mouseClicked(event, doubleClick)
-    }
-
     override fun isPauseScreen(): Boolean {
         return false
     }
@@ -128,10 +116,5 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     override fun added() {
         background.unhide()
         opened = true
-    }
-
-    override fun resize(width: Int, height: Int) {
-        super.resize(width, height)
-        println("mcResize(${minecraft.window.guiScale})")
     }
 }
