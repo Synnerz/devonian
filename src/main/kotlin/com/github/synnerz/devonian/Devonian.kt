@@ -410,6 +410,7 @@ object Devonian : ClientModInitializer {
             CratePriority,
             DisableChatReset,
             BatScoreKilled,
+            SpiritLeapMessage,
 
             // Debug
             CopyItem,
