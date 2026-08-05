@@ -19,7 +19,7 @@ object BatScoreKilled : Feature(
     override fun initialize() {
         on<DungeonEvent.BatScoreKilled> {
             if (messageSent) return@on
-            ChatUtils.command("pc BatScore Killed!")
+            ChatUtils.command("pc Bat Killed!")
             messageSent = true
         }
     }
