@@ -17,11 +17,11 @@ import kotlin.math.roundToInt
 object CroesusListener {
     private val specialIds = mapOf(
         // big thank Unclaimed NOOB Six
-        "WITHER_SHARD" to "SHARD_WITHER",
-        "THORN_SHARD" to "SHARD_THORN",
-        "APEX_DRAGON_SHARD" to "SHARD_APEX_DRAGON",
-        "POWER_DRAGON_SHARD" to "SHARD_POWER_DRAGON",
-        "SCARF_SHARD" to "SHARD_SCARF",
+//        "WITHER_SHARD" to "SHARD_WITHER",
+//        "THORN_SHARD" to "SHARD_THORN",
+//        "APEX_DRAGON_SHARD" to "SHARD_APEX_DRAGON",
+//        "POWER_DRAGON_SHARD" to "SHARD_POWER_DRAGON",
+//        "SCARF_SHARD" to "SHARD_SCARF",
         "NECROMANCERS_BROOCH" to "NECROMANCER_BROOCH",
         "WITHER_SHIELD" to "WITHER_SHIELD_SCROLL",
         "IMPLOSION" to "IMPLOSION_SCROLL",
@@ -270,6 +270,8 @@ object CroesusListener {
                 .replace("- ", "")
                 .replace("'", "")
                 .replace(" ", "_")
+
+            if (itemId.endsWith("SHARD")) itemId = "SHARD_${itemId.replace("_SHARD", "")}"
             if (itemId in specialIds) itemId = specialIds[itemId]!!
 
             val price = SkyblockPrices.buyPrice(itemId).roundToInt()
