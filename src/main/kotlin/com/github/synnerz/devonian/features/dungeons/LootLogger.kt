@@ -54,6 +54,7 @@ object LootLogger : Feature(
     private val essenceRegex = "^(Wither|Undead) Essence x(\\d+)$".toRegex()
     private val croesusChestRegex = "^(Master )?Catacombs - Floor ([IV]+)$".toRegex()
     private val chestOpenRegex = "^ *(BEDROCK|OBSIDIAN|EMERALD|DIAMOND|GOLD|WOOD) CHEST REWARDS$".toRegex()
+    private val shardItemRegex = "^([\\w ]+) Shard x\\d+$".toRegex()
     private val localTime = LocalDateTime.now()
     private val currentDate = "${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
     private var currentFloor: String? = null
@@ -260,7 +261,7 @@ object LootLogger : Feature(
         ) return
         val customName = itemStack.customName ?: return
         val isEnchantedBook = customName.string == "Enchanted Book"
-        val itemName =
+        var itemName =
             if (isEnchantedBook)
                 ItemUtils.lore(itemStack, true)?.getOrNull(2) ?: return
             else
@@ -272,8 +273,13 @@ object LootLogger : Feature(
             sbId = "ESSENCE_${match[0].uppercase()}"
             amount = match[1].toInt()
         }
+        if (sbId == null && shardItemRegex.matches(customName.string)) {
+            val ( _, shardName ) = shardItemRegex.matchEntire(customName.string)?.groupValues ?: listOf()
+            sbId = "SHARD_${shardName.uppercase().replace(" ", "_")}"
+            itemName = itemName.replace(" §r§8x\\d+".toRegex(), "")
+        }
         if (sbId == null) {
-            println("Devonian\$LootLogger could not find sbId for $itemName")
+            println("Devonian\$LootLogger could not find sbId for $itemName(${customName.string})")
             return
         }
 
