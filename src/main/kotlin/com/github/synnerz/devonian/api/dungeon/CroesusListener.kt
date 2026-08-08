@@ -81,7 +81,7 @@ object CroesusListener {
         val canOpen: Boolean = false,
         val slot: Int,
         val canKismet: Boolean = true,
-        // page would go here, but it does not exist in the same tick
+        val page: Int = 0,
     )
 
     class OpenedCroesus : Event
