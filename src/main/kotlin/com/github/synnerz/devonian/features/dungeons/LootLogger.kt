@@ -274,7 +274,10 @@ object LootLogger : Feature(
             sbId = "ESSENCE_${match[0].uppercase()}"
             amount = match[1].toInt()
         }
-        if (sbId == null) return
+        if (sbId == null) {
+            println("Devonian\$LootLogger could not find sbId for $itemName")
+            return
+        }
 
         chestData.items.add(ChestItem(
             sbId,
