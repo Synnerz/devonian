@@ -170,7 +170,7 @@ object EstimatedValue : TextHudFeature(
         fun format(): List<String> {
             return buildList {
                 val total = totalPrice()
-                if (total == -1.0) return emptyList()
+                if (total < 0) return emptyList()
 
                 add(name)
                 if (ultimateEnchant != null)
@@ -230,7 +230,7 @@ object EstimatedValue : TextHudFeature(
             val cacheData = itemCache[itemStack]
             if (cacheData != null) {
                 val total = cacheData.totalPrice()
-                if (total == -1.0) return@on
+                if (total < 0) return@on
 
                 if (SETTING_SHOW_LORE.get()) {
                     event.lore.add(ClientTooltipComponent.create(FormattedCharSequence.composite(
@@ -285,7 +285,7 @@ object EstimatedValue : TextHudFeature(
             )
 
             itemCache[itemStack] = data
-            if (data.totalPrice() == -1.0) return@on
+            if (data.totalPrice() < 0) return@on
 
             if (SETTING_SHOW_LORE.get())
                 event.lore.add(ClientTooltipComponent.create(FormattedCharSequence.composite(
