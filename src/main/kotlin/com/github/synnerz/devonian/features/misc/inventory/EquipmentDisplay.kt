@@ -121,7 +121,7 @@ object EquipmentDisplay : Feature(
             val slot = event.slot
             if (slot !in equipmentSlots) return@on
             val itemStack = event.itemStack
-            if (itemStack.isEmpty || itemStack.item != Items.PLAYER_HEAD) {
+            if (itemStack.isEmpty) {
                 Scheduler.scheduleTask {
                     val idx = equipmentSlots.reversed().indexOf(slot)
                     if (idx == -1) return@scheduleTask
