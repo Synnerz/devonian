@@ -60,7 +60,7 @@ object CenturyCakeTimer : TextHudFeature(
         "+1\uE006 Cold Resistance" to ("§blight blue (dull)" to "§b"),
         "+1\uE077 Tracking" to ("§5purple" to "§d"),
         "+5\uE023 Sweep" to ("§agreen" to "§2"),
-        "+1\uE05B Hunter Fortune" to ("§dpink §7and §blight blue" to "§d"),
+        "+1\uE05B Hunting Fortune" to ("§dpink §7and §blight blue" to "§d"),
         "+1\uE025 Treasure Chance" to ("§6orange §7and §blight blue" to "§6"),
     )
     private val eatRegex1 = "^Yum! You gain (.+?) for 48 hours!$".toRegex()
