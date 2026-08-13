@@ -438,7 +438,9 @@ class EntityInteractEvent(
 class UseItemOnEvent(
     val blockHitResult: BlockHitResult,
     val hand: InteractionHand
-) : Event
+) : Event {
+    fun isMainHand(): Boolean = hand == InteractionHand.MAIN_HAND
+}
 
 class UseItemEvent(
     val hand: InteractionHand
