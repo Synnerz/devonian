@@ -254,7 +254,6 @@ object CustomDungeonWaypoints : Feature(
                 if (SETTING_REMOVE_ON_COLLECT.get() && it.clicked) return@forEach
 
                 val pos = it.pos() ?: return@forEach
-                if (it.type == null) return@forEach
                 val color = when (it.type) {
                     WaypointType.CHEST -> Color(0, 255, 0, 255)
                     WaypointType.ITEM -> Color(0, 0, 255, 255)
@@ -304,9 +303,9 @@ object CustomDungeonWaypoints : Feature(
         }
 
         on<UseItemOnEvent> { event ->
-            if (!editMode || currentRoom == null) return@on
+            if (!event.isMainHand() || !editMode || currentRoom == null) return@on
 
-            val bp = event.blockHitResult.blockPos ?: return@on
+            val bp = event.blockHitResult.blockPos
             val room = DungeonScanner.currentRoom ?: return@on
             if (currentRoom!! < BOSS_ID && room.roomID != currentRoom) return@on
             val isBoss = currentRoom!! > BOSS_ID
@@ -525,7 +524,7 @@ object CustomDungeonWaypoints : Feature(
             "import" -> {
                 var encode = args.getOrNull(1) as? String?
                 if (encode.isNullOrEmpty()) encode = minecraft.keyboardHandler.clipboard
-                if (encode.isNullOrEmpty()) {
+                if (encode.isEmpty()) {
                     ChatUtils.sendMessage("&cCDW Invalid import", true)
                     return 0
                 }
