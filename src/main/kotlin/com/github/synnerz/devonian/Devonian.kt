@@ -411,6 +411,7 @@ object Devonian : ClientModInitializer {
             DisableChatReset,
             BatScoreKilled,
             SpiritLeapMessage,
+            CommandWaypoints,
 
             // Debug
             CopyItem,
