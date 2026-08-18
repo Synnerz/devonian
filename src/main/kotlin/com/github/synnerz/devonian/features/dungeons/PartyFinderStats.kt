@@ -18,6 +18,12 @@ object PartyFinderStats : Feature(
     Categories.PARTY_FINDER,
     subcategory = "General",
 ) {
+    private val SETTING_DISPLAY_ROLES = addSwitch(
+        "displayRoles",
+        true,
+        "Whether to display the roles/classes and their levels in chat",
+        "Display Roles",
+    )
     private val partyFinderJoinRegex = "^Party Finder > (\\w{1,16}) joined the dungeon group! \\((?:Healer|Tank|Mage|Berserk|Archer) Level \\d+\\)$".toRegex()
     private val roleFormat = mapOf(
         "archer" to "&6☣ Archer",
@@ -55,10 +61,12 @@ object PartyFinderStats : Feature(
     private fun onData(data: DungeonsApi.DungeonsApiResult, username: String) {
         ChatUtils.sendMessage("&b${username}'s &eStats", true)
         ChatUtils.sendMessage("&7-  &cCata&f: &6${data.level()}")
-        data.roles().entries.forEach { (roleName, values) ->
+
+        if (SETTING_DISPLAY_ROLES.get()) data.roles().entries.forEach { (roleName, values) ->
             val level = values["level"] ?: 0.0
             ChatUtils.sendMessage("  ${roleFormat[roleName]}&f: &6${level}")
         }
+
         ChatUtils.sendMessage(ChatUtils.literal("&7-  &aNormal &dPersonal Best &7(hover)").setStyle(
             Style.EMPTY.withHoverEvent(HoverEvent.ShowText(ChatUtils.literal(buildString {
                 data.normalPBs().forEach { (pbMode, values) ->
