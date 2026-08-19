@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.game.ClientboundCustomChatCompletionsPacket
 import java.awt.Color
 
 object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
@@ -142,6 +143,10 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
             onCommand(msg, event)
             !event.isCancelled()
         }
+    }
+
+    fun getAliases() = buildSet {
+        aliasesList.forEach { add(it.alias) }
     }
 
     private fun onUpdate() {
