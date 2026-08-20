@@ -125,9 +125,9 @@ object CommandWaypoints : Feature(
                 if (InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_SHIFT)) {
                     cmdPos = bp
                     Scheduler.scheduleTask {
-                        minecraft.gui.openChatScreen(ChatComponent.ChatMethod.COMMAND)
+                        minecraft.openChatScreen(ChatComponent.ChatMethod.COMMAND)
                         Scheduler.scheduleTask {
-                            (minecraft.gui.screen() as ScreenAccessor?)?.insertText("/dv cmdw setcmd ", true)
+                            (minecraft.screen as ScreenAccessor?)?.insertText("/dv cmdw setcmd ", true)
                         }
                     }
                     return@on
