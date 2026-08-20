@@ -15,6 +15,7 @@
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
     "ClientTextTooltipMixin",
+    "CommandSuggestionsMixin",
     "ConnectionMixin",
     "ContainerEventHandlerMixin",
     "ContainerScreenMixin",
