@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.render.Render2D.width
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -14,7 +15,7 @@ object ExperimentationTable : Feature(
     "experimentationTable",
     "Solvers for experimentation table. only works on metaphysical currently",
     subcategory = "General",
-    searchTags = setOf("exp", "table"),
+    searchTags = setOf("exp", "table", "enchanting", "enchant"),
 ) {
     // TODO: make colors customizable
     private val SETTING_HIDE_TOOLTIP = addSwitch(
@@ -253,13 +254,24 @@ object ExperimentationTable : Feature(
             return
         }
         val data = ultraSlots.getOrNull(jdx) ?: return
+        val str = "${data.count}"
 
         event.cancel()
-        event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, if (jdx == 0) Color.GREEN.rgb else if (jdx == 1) Color.ORANGE.rgb else Color.RED.rgb)
+        event.ctx.fill(
+            slot.x,
+            slot.y,
+            slot.x + 16,
+            slot.y + 16,
+            when (jdx) {
+                0 -> Color.GREEN.rgb
+                1 -> Color.ORANGE.rgb
+                else -> Color.RED.rgb
+            }
+        )
         event.ctx.text(
             minecraft.font,
-            "${data.count}",
-            slot.x + 4, slot.y + 4, -1
+            str,
+            slot.x + 8 - str.width() / 2, slot.y + 4, -1
         )
     }
 
