@@ -117,7 +117,7 @@ object PartyFinderOverview : Feature(
 
                 lore.lines.toList().forEach { l ->
                     val match = PartyFinderListener.USER_ROLE_REGEX.matchEntire(l.string)?.groupValues?.drop(1)
-                    if (l.string.contains("Click to join!") || l.string.contains("Requires ")) {
+                    if (l.string.startsWith("Click to join!") || l.string.startsWith("Requires ")) {
                         if (SETTING_SHOW_MISSING.get()) {
                             val missingComponent = ChatUtils.literal(buildString {
                                 append("&eMissing: ")
