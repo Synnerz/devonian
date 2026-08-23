@@ -65,6 +65,41 @@ object PartyFinderOverview : Feature(
             if (type.isNullOrEmpty()) {
                 return@subcommand 0
             }
+            if (type == "test") {
+                val message = args.getOrNull(1) as? String? ?: return@subcommand 0
+                ChatUtils.sendMessage(
+                    customComponent(
+                        DungeonsApi.UserDungeonsData(
+                            6642506.866023964,
+                            32.56,
+                            mapOf(
+                                "archer" to mapOf(
+                                    "xp" to 491314.3586887582,
+                                    "level" to 24.01
+                                )
+                            ),
+                            14556,
+                            30.35,
+                            emptyMap(),
+                            emptyList(),
+                            emptyList(),
+                            1026,
+                            emptyMap(),
+                            mapOf(
+                                "s" to mapOf("floor_3" to "6:03"),
+                                "s_plus" to mapOf("floor_3" to "6:03"),
+                            )
+                        ),
+                        PartyFinderListener.PartyFinderMember(minecraft.player!!.name.string, "Archer", 24),
+                        masterMode = true,
+                        floor = 3,
+                        style = message,
+                        matchName = "§r§b${minecraft.player!!.name.string}§r§f",
+                    )
+                )
+                return@subcommand 1
+            }
+
             ChatUtils.sendMessage(Component.literal("§8[§3§lDevonian§8] §bCustom PartyFinderOverview Style Guide" +
                     "\n§bUsing §6Style1§b as an example§f:" +
                     "\n§f\"&8[§c\$RoleColor§r§e\$RoleSingle&8] §a\$NameColor§r§9\$Name§r &8[&e§d\$RoleLevel§r &7| &6§f\$Cata§r&8] &8[&3§7\$SecretsShort§r &7| &b§2\$SecretShortAvg§r&8] &8[&a§3\$PB§r&8]\"" +
@@ -86,7 +121,9 @@ object PartyFinderOverview : Feature(
             1
         }
             .string("type")
-            .suggest("type", *listOf("help").toTypedArray())
+            .greedyString("other")
+            .suggest("type", *listOf("help", "test").toTypedArray())
+            .suggest("other", *listOf("&8[§c\$RoleColor§r§e\$RoleSingle&8] §a\$NameColor§r§9\$Name§r &8[&e§d\$RoleLevel§r &7| &6§f\$Cata§r&8] &8[&3§7\$SecretsShort§r &7| &b§2\$SecretShortAvg§r&8] &8[&a§3\$PB§r&8]").toTypedArray())
 
         on<PartyFinderListener.PartyFinderEvent> { event ->
             members.clear()
@@ -180,39 +217,13 @@ object PartyFinderOverview : Feature(
                             })
                         }
                         3 -> {
-                            val role = DungeonClass.from(match[1])
-                            val roleCode = role.colorCode
-                            val roleSingle = role.singleLetter.uppercase()
-                            val roleShort = role.shortName
-                            val roleName = role.name
-                            val roleLevel = match[2]
-                            val cataLevel = data.level
-                            val secrets = data.secrets
-                            val secretsShort = StringUtils.shortenNumber(data.secrets)
-                            val secretsAvg = "%.2f".format(data.averageSecrets)
-                            val secretsShortAvg = "%.1f".format(data.averageSecrets)
-                            val personalBest = if (personalBest == null) "&cNO PB" else "&a$personalBest"
-                            val nameColor = if (SETTING_COMPACT_NO_NAME.get() && matchName != null) matchName.groupValues[1] else roleCode
-                            val customKeys = mapOf(
-                                "RoleColor" to roleCode,
-                                "RoleSingle" to roleSingle,
-                                "RoleShort" to roleShort,
-                                "Role" to roleName,
-                                "RoleName" to roleName,
-                                "NameColor" to nameColor,
-                                "Name" to match[0],
-                                "RoleLevel" to roleLevel,
-                                "Cata" to "$cataLevel",
-                                "Secrets" to "$secrets",
-                                "SecretsShort" to secretsShort,
-                                "SecretAvg" to secretsAvg,
-                                "SecretShortAvg" to secretsShortAvg,
-                                "PB" to personalBest
+                            customComponent(
+                                data,
+                                p.members.find { it.name == match[0] }!!,
+                                masterMode = p.isMasterMode,
+                                floor = p.floor,
+                                matchName = matchName?.groupValues[1]
                             )
-
-                            ChatUtils.literal(Regex("""\$(\w+)""").replace(SETTING_CUSTOM_STYLE.get()) {
-                                customKeys[it.groupValues[1]] ?: it.value
-                            })
                         }
                         else -> {
                             l.copy()
@@ -233,5 +244,56 @@ object PartyFinderOverview : Feature(
                 itemStack.set(DataComponents.LORE, ItemLore(newLore.toList()))
             }
         }
+    }
+
+    private fun customComponent(
+        data: DungeonsApi.UserDungeonsData,
+        playerData: PartyFinderListener.PartyFinderMember,
+        style: String = SETTING_CUSTOM_STYLE.get(),
+        masterMode: Boolean = false,
+        floor: Int = 1,
+        matchName: String?, // name with color codes
+    ): Component {
+        val personalBestMap = if (masterMode) data.personal_best_master else data.personal_best_normal
+        val ( personalBest, type ) = when (SETTING_PB_MODE.get()) {
+            1 -> personalBestMap?.get("s")?.get("floor_${floor}") to "S"
+            2 -> personalBestMap?.get("s_plus")?.get("floor_${floor}") to "S+"
+            else -> (personalBestMap?.get("s_plus")?.get("floor_${floor}")?.let { it to "S+" })
+                ?: (personalBestMap?.get("s")?.get("floor_${floor}") to "S")
+        }
+
+        val role = DungeonClass.from(playerData.role)
+        val roleCode = role.colorCode
+        val roleSingle = role.singleLetter.uppercase()
+        val roleShort = role.shortName
+        val roleName = role.name
+        val roleLevel = playerData.level
+        val cataLevel = data.level
+        val secrets = data.secrets
+        val secretsShort = StringUtils.shortenNumber(data.secrets)
+        val secretsAvg = "%.2f".format(data.averageSecrets)
+        val secretsShortAvg = "%.1f".format(data.averageSecrets)
+        val pb = if (personalBest == null) "&cNO PB" else "&a$personalBest"
+        val nameColor = if (SETTING_COMPACT_NO_NAME.get() && matchName != null) matchName else roleCode
+        val customKeys = mapOf(
+            "RoleColor" to roleCode,
+            "RoleSingle" to roleSingle,
+            "RoleShort" to roleShort,
+            "Role" to roleName,
+            "RoleName" to roleName,
+            "NameColor" to nameColor,
+            "Name" to playerData.name,
+            "RoleLevel" to "$roleLevel",
+            "Cata" to "$cataLevel",
+            "Secrets" to "$secrets",
+            "SecretsShort" to secretsShort,
+            "SecretAvg" to secretsAvg,
+            "SecretShortAvg" to secretsShortAvg,
+            "PB" to pb
+        )
+
+        return ChatUtils.literal(Regex("""\$(\w+)""").replace(style) {
+            customKeys[it.groupValues[1]] ?: it.value
+        })
     }
 }
