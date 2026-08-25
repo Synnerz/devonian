@@ -93,7 +93,9 @@ object LootLogger : Feature(
         DevonianCommand.command.subcommand("lootlogger") { _, args ->
             val mode = args.getOrNull(0) as? String?
             val floor = args.getOrNull(1) as? String?
-            val date = args.getOrNull(2) as? String?
+            val dates = args.getOrNull(2) as? String?
+            val date = dates?.split(" ")?.getOrNull(0)
+            val date2 = dates?.split(" ")?.getOrNull(1)
             if (mode.isNullOrEmpty()) {
                 ChatUtils.sendMessage("&cLootLogger not a valid mode was set", true)
                 return@subcommand 0
@@ -106,7 +108,36 @@ object LootLogger : Feature(
                 ChatUtils.sendMessage("&cLootLogger You did not set a valid date. here are the current ones&7: &7${lootData.data!!.keys.joinToString(", ")}", true)
                 return@subcommand 0
             }
-            val list = lootData.data!![date]?.get(floor)
+            val list =
+                if (date2.isNullOrEmpty())
+                    lootData.data!![date]?.get(floor)
+                else
+                    // TODO: add the middle dates leading up to date2
+                    buildList {
+                        val fromDate = date.split("/")
+                        val fromMM = fromDate.getOrNull(0)?.toIntOrNull()
+                        val fromDD = fromDate.getOrNull(1)?.toIntOrNull()
+                        val fromYY = fromDate.getOrNull(2)?.toIntOrNull()
+                        if (fromMM == null || fromDD == null || fromYY == null) {
+                            // TODO: change wording
+                            ChatUtils.sendMessage("&cProvided invalid from date to lootlogger", true)
+                            return@subcommand 0
+                        }
+                        val toDate = date2.split("/")
+                        val toMM = toDate.getOrNull(0)?.toIntOrNull() ?: fromMM
+                        val toDD = toDate.getOrNull(1)?.toIntOrNull() ?: (fromDD + 1)
+                        val toYY = toDate.getOrNull(2)?.toIntOrNull() ?: fromYY
+                        for (year in fromYY..toYY) {
+                            for (month in fromMM..toMM) {
+                                for (day in fromDD..toDD) {
+                                    println("checking(${"$month/$day/$year"})")
+                                    lootData.data!!["$month/$day/$year"]?.get(floor)?.forEach {
+                                        add(it)
+                                    }
+                                }
+                            }
+                        }
+                    }
             if (list.isNullOrEmpty()) {
                 ChatUtils.sendMessage("&cLootLogger list for date \"$date\" and floor \"${floor}\" is empty", true)
                 return@subcommand 0
@@ -153,7 +184,7 @@ object LootLogger : Feature(
             .word("mode")
             .suggest("mode", *listOf(
                 "COMPACTED",
-                "DETAILED"
+                "DETAILED",
             ).toTypedArray())
             .word("floor")
             .suggest("floor", *listOf(
@@ -161,9 +192,12 @@ object LootLogger : Feature(
                 "M1", "M2", "M3", "M4", "M5", "M6", "M7"
             ).toTypedArray())
             .greedyString("date")
-            .suggest("date", *listOf(
-                "${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
-            ).toTypedArray())
+            .suggest("date") {
+                lootData.data!!.map { it.key }.toMutableList()
+            }
+//            .suggest("date", *listOf(
+//                "${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
+//            ).toTypedArray())
 
         on<ServerContainerOpenEvent> { event ->
             croesusChestRegex.matchEntire(event.titleStr)?.let {
