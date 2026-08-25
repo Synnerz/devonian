@@ -7,11 +7,13 @@ import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import org.spongepowered.asm.mixin.Mutable
 import java.util.*
 
 class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientCommandSource>, List<Any>) -> Int) {
     private val commandArgs = mutableListOf<Pair<String, ArgumentType<*>>>()
     private val commandSuggestions = mutableMapOf<String, MutableList<String>>()
+    private val commandSuggestionsCb = mutableMapOf<String, () -> MutableList<String>>()
     var isOptional = false
 
     /**
@@ -27,7 +29,12 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
 
         for ((argName, argType) in commandArgs.asReversed()) {
             val argBuilder = argument(argName, argType)
-            val suggestions = commandSuggestions[argName]
+            var suggestions = commandSuggestions[argName]
+            val suggestionsCb = commandSuggestionsCb[argName]
+            if (suggestionsCb != null) {
+                if (suggestions == null) suggestions = mutableListOf()
+                suggestions.addAll(suggestionsCb())
+            }
             if (suggestions != null) {
                 val map = TreeSet(String.CASE_INSENSITIVE_ORDER)
                 map.addAll(suggestions)
@@ -142,6 +149,15 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
      */
     fun suggest(name: String, vararg args: String) = apply {
         commandSuggestions[name] = args.toMutableList()
+    }
+
+    /**
+     * - Sets a suggestion for the specified argument
+     * @param name The name of the argument
+     * @param cb The callback which returns a list of suggestions
+     */
+    fun suggest(name: String, cb: () -> MutableList<String>) = apply {
+        commandSuggestionsCb[name] = cb
     }
 
     private fun getArgument(ctx: CommandContext<FabricClientCommandSource>, name: String, type: ArgumentType<*>): Any {
