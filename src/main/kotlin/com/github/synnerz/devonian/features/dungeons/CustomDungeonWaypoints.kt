@@ -37,6 +37,7 @@ object CustomDungeonWaypoints : Feature(
     Categories.DUNGEON_WAYPOINTS,
     "catacombs",
     subcategory = "Custom",
+    searchTags = setOf("cdw"),
 ) {
     private val SETTING_REMOVE_ON_COLLECT = addSwitch(
         "removeOnCollect",
@@ -80,6 +81,14 @@ object CustomDungeonWaypoints : Feature(
         false,
         "Removes all the waypoints of the current room if its Green Check Marked",
         "CDW Remove On Done"
+    )
+    private val SETTING_IMPORT_BUTTON = addButton(
+        {
+            importWaypoints()
+        },
+        "Import",
+        "Imports the waypoints from clipboard",
+        "Import Waypoints"
     )
     private const val KEY = "currentDungeonProfile"
     private const val BOSS_ID = 1000 // 1000 + floor number for each roomId that is boss
@@ -522,21 +531,7 @@ object CustomDungeonWaypoints : Feature(
             }
 
             "import" -> {
-                var encode = args.getOrNull(1) as? String?
-                if (encode.isNullOrEmpty()) encode = minecraft.keyboardHandler.clipboard
-                if (encode.isEmpty()) {
-                    ChatUtils.sendMessage("&cCDW Invalid import", true)
-                    return 0
-                }
-                val decoded = Base64.getDecoder().decode(encode)
-                val json = PersistentJson.gson.fromJson(decoded.toString(Charsets.UTF_8), WaypointProfile::class.java)
-
-                if (waypointData.data!!.any { it.name == json.name }) {
-                    ChatUtils.sendMessage("&cCDW Cannot import profiles with similar names \"${json.name}\"", true)
-                    return 0
-                }
-                waypointData.data!!.add(json)
-                ChatUtils.sendMessage("&aCDW Successfully added profile &a${json.name}", true)
+                return importWaypoints(args.getOrNull(1) as? String?)
             }
 
             "export" -> {
@@ -575,6 +570,26 @@ object CustomDungeonWaypoints : Feature(
             }
         }
 
+        return 1
+    }
+
+    private fun importWaypoints(import: String? = null): Int {
+        val waypoints = import ?: minecraft.keyboardHandler.clipboard
+        if (waypoints.isEmpty()) {
+            ChatUtils.sendMessage("&cCDW Invalid import", true)
+            return 0
+        }
+
+        val decoded = Base64.getDecoder().decode(waypoints)
+        val json = PersistentJson.gson.fromJson(decoded.toString(Charsets.UTF_8), WaypointProfile::class.java)
+
+        if (waypointData.data!!.any { it.name == json.name }) {
+            ChatUtils.sendMessage("&cCDW Cannot import profiles with similar names \"${json.name}\"", true)
+            return 0
+        }
+
+        waypointData.data!!.add(json)
+        ChatUtils.sendMessage("&aCDW Successfully added profile &a${json.name}", true)
         return 1
     }
 
