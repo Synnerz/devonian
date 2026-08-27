@@ -335,25 +335,27 @@ object Dungeons {
         }
 
         EventBus.on<ChatChannelEvent.PartyChatEvent> { event ->
-            when (event.userMessage) {
-                "Mimic Killed",
-                "Mimic Killed!",
-                "Mimic Dead",
-                "Mimic Dead!",
-                "\$SKYTILS-DUNGEON-SCORE-MIMIC$"
+            when (event.userMessage.lowercase()) {
+                "mimic killed",
+                "mimic killed!",
+                "mimic dead",
+                "mimic dead!",
+                "\$skytils-dungeon-score-mimic$"
                     -> mimicKilled.value = true
 
-                "Prince Killed",
-                "Prince Killed!",
-                "Prince Dead",
-                "Prince Dead!"
+                "prince killed",
+                "prince killed!",
+                "prince dead",
+                "prince dead!"
                     -> princeKilled.value = true
 
-                "BatScore Killed!",
-                "Bat Score Killed!",
-                "Bat Score Killed",
-                "Bat Killed!",
-                "Bat Killed"
+                "batscore killed!",
+                "bat score killed!",
+                "bat score killed",
+                "bat killed!",
+                "bat killed",
+                "bat dead",
+                "bat dead!"
                     -> batScoreKilled.value = true
             }
         }.setEnabled(Location.stateInArea("catacombs"))
