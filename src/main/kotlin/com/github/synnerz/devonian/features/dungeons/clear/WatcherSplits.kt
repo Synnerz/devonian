@@ -44,7 +44,7 @@ object WatcherSplits : TextHudFeature(
 
     override fun initialize() {
         on<NameChangeEvent> { event ->
-            if (!event.name.contains(" The Watcher ")) return@on
+            if (!event.name.contains(" The Watcher")) return@on
             entityId = event.entityId
         }
 
