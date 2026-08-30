@@ -24,11 +24,17 @@ object ItemValue : Feature(
             val item = event.item ?: return@on
             val sbId = ItemUtils.skyblockId(item) ?: name(item) ?: return@on
             var priceData = SkyblockPrices.priceData(sbId)
+            var isShard = false
             if (priceData.price == -1f) {
                 val name = name(item) ?: return@on
                 val possiblePrice = SkyblockPrices.priceData(name)
-                if (possiblePrice.price == -1f) return@on
-                priceData = possiblePrice
+                if (possiblePrice.price == -1f) {
+                    // possibly a shard
+                    val shardPrice = SkyblockPrices.priceData("SHARD_${sbId}")
+                    if (shardPrice.price == -1f) return@on
+                    priceData = shardPrice
+                    isShard = true
+                } else priceData = possiblePrice
             }
             val isShiftDown =
                     InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_SHIFT) ||
@@ -37,7 +43,7 @@ object ItemValue : Feature(
             if (!priceData.auction) {
                 val buyPrice = priceData.bazaarData.quick_status.buyPrice
                 val sellPrice = priceData.bazaarData.quick_status.sellPrice
-                val count = item.count
+                val count = if (isShard) 64 else item.count
                 val buy = if (isShiftDown) buyPrice * count else buyPrice
                 val sell = if (isShiftDown) sellPrice * count else sellPrice
 
