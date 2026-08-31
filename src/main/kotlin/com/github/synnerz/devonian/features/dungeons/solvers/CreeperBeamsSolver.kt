@@ -12,6 +12,7 @@ import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
 import java.awt.Color
+import kotlin.math.sqrt
 
 object CreeperBeamsSolver : Feature(
     "creeperBeamsSolver",
@@ -81,6 +82,8 @@ object CreeperBeamsSolver : Feature(
             val blockState = WorldUtils.getBlockState(roomComp.first, 74, roomComp.second) ?: return@on
             if (blockState.block != Blocks.SEA_LANTERN) return@on
 
+            val currentSol = mutableListOf<BeamsSolutionData>()
+
             for (solution in solutions) {
                 val ( x1, y1, z1, x2, y2, z2 ) = solution
                 val comp1 = room.fromComp(x1, z1) ?: continue
@@ -89,15 +92,7 @@ object CreeperBeamsSolver : Feature(
                 val block2 = WorldUtils.getBlockState(comp2.first, y2, comp2.second)?.block ?: continue
                 if (block1 != Blocks.SEA_LANTERN || block2 != Blocks.SEA_LANTERN) continue
 
-                // In case there is already a solution with one of the current solution's points
-                // we just continue (skip it) because we don't want to have two lines heading
-                // towards the same block
-                if (solutionList.any { data ->
-                    data.containsOneOf(comp1.first, y1, comp1.second) ||
-                    data.containsOneOf(comp2.first, y2, comp2.second)
-                }) continue
-
-                solutionList.add(
+                currentSol.add(
                     BeamsSolutionData(
                         comp1.first,
                         y1,
@@ -107,6 +102,44 @@ object CreeperBeamsSolver : Feature(
                         comp2.second
                     )
                 )
+
+                // In case there is already a solution with one of the current solution's points
+                // we just continue (skip it) because we don't want to have two lines heading
+                // towards the same block
+//                if (solutionList.any { data ->
+//                    data.containsOneOf(comp1.first, y1, comp1.second) ||
+//                    data.containsOneOf(comp2.first, y2, comp2.second)
+//                }) continue
+//
+//                solutionList.add(
+//                    BeamsSolutionData(
+//                        comp1.first,
+//                        y1,
+//                        comp1.second,
+//                        comp2.first,
+//                        y2,
+//                        comp2.second
+//                    )
+//                )
+            }
+
+            currentSol.sortedBy {
+                val dx0 = it.x1 - roomComp.first
+                val dy0 = it.y1 - 74
+                val dz0 = it.z1 - roomComp.second
+                val dx1 = it.x2 - roomComp.first
+                val dy1 = it.y2 - 74
+                val dz1 = it.z2 - roomComp.second
+
+                sqrt((dx0 * dx0 + dy0 * dy0 + dz0 * dz0).toDouble()) +
+                sqrt((dx1 * dx1 + dy1 * dy1 + dz1 * dz1).toDouble())
+            }.forEach {
+                if (solutionList.any { data ->
+                    data.containsOneOf(it.x1, it.y1, it.z1) ||
+                    data.containsOneOf(it.x2, it.y2, it.z2)
+                }) return@forEach
+
+                solutionList.add(it)
             }
         }
 
