@@ -19,7 +19,7 @@ object RemoveLightning : Feature("removeLightning", category = Categories.VANILL
 object HideInventoryEffects : Feature("hideInventoryEffects", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
 object HidePotionEffectOverlay : Feature("hidePotionEffectOverlay", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
 object RemoveFrontView : Feature("removeFrontView", category = Categories.VANILLA_TWEAKS)
-object RemoveChatLimit : Feature("removeChatLimit", category = Categories.VANILLA_TWEAKS, subcategory = "Chat") {
+object RemoveChatLimit : Feature("removeChatLimit", category = Categories.VANILLA_TWEAKS, subcategory = "Chat", displayName = "Change Chat Limit", searchTags = setOf("remove")) {
     val SETTING_MAX_MESSAGES = addSlider(
         "maxMessages",
         1000.0,
