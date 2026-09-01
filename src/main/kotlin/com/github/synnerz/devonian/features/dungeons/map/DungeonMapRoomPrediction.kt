@@ -53,9 +53,13 @@ object DungeonMapRoomPrediction : Feature(
         for (z in 0 until floor.roomsHS) {
             loop@ for (x in 0 until floor.roomsWS) {
                 val compR = ComponentPosition(z * 2, x * 2)
-                val room = rooms[compR.getRoomIdx()]?.room ?: continue@loop
+                val data = rooms[compR.getRoomIdx()]
+                val room = data?.room ?: continue@loop
                 if (room.explored) continue@loop
-                if (room.type == RoomTypes.BLOOD) continue@loop
+                if (room.type == RoomTypes.BLOOD) {
+                    if (room.doors.any { it.rooms.any { it.explored } }) data.predictedTypes = listOf(RoomTypes.BLOOD)
+                    continue@loop
+                }
                 if (room.doors.any { it.type != DoorTypes.NORMAL }) continue@loop
                 if (!room.doors.any { it.rooms.any { it.explored } }) continue@loop
 
