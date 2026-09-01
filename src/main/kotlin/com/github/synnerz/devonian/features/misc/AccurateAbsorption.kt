@@ -26,7 +26,7 @@ object AccurateAbsorption : Feature(
         "Max Absorption Hearts",
     )
 
-    private val healthRegex = "\\b([\\d,.]+)/([\\d,.]+)❤".toRegex()
+    private val healthRegex = "\\b([\\d,.]+)/([\\d,.]+)\uE010".toRegex()
 
     private var actualAbsorption = 0
 
