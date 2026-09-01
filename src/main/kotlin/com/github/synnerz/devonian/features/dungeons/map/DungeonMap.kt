@@ -904,13 +904,16 @@ object DungeonMap : HudFeature(
             dump = false
         }
 
+        val roomData = rooms.map { it?.let { DungeonMapRoomRenderData(it) } }
+        if (Dungeons.started.value) DungeonMapRoomPrediction.analyzeRooms(roomData, doors, floor)
+
         val bounds = getBounds()
         val window = minecraft.window
         mapRenderer.update(
             (bounds.w * window.guiScale + 0.5).toInt(),
             (bounds.h * window.guiScale + 0.5).toInt(),
             DungeonMapRenderData(
-                rooms, doors,
+                roomData, doors,
                 DungeonMapRenderOptions(
                     buildMap {
                         put(DungeonMapColors.Background, SETTING_MAP_BACKGROUND_COLOR.getColor())
