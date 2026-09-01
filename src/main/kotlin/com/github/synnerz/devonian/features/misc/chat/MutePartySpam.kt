@@ -1,5 +1,7 @@
 package com.github.synnerz.devonian.features.misc.chat
 
+import com.github.synnerz.devonian.api.ChatUtils
+import com.github.synnerz.devonian.api.Party
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ChatChannelEvent
 import com.github.synnerz.devonian.api.events.EventBus
@@ -36,12 +38,48 @@ object MutePartySpam : Feature(
         description = "Will open up a new window.",
         displayName = "Edit Mute List",
     )
+    private val SETTING_DETECT_LEAP = addSwitch(
+        "detectLeap",
+        false,
+        "Automatically detects and mutes leap messages. This does not save the messages across restarts.",
+        "Mute Party Leap Messages",
+    )
 
     private var CONFIG_KEY = "mutePartySpam"
 
     private val messages = CopyOnWriteArrayList<String>()
+    private val leapMessages = mutableMapOf<String, String>()
+    private val messageHeatMap = mutableMapOf<String, LinkedHashMap<String, Int>>()
 
     val muteNextNMessages = atomic(0)
+
+    private fun isLeapMsg(name: String, msg: String): Boolean {
+        leapMessages[name]?.let { return msg.startsWith(it) }
+
+        val mentionsName = Party.members.any {
+            val info = minecraft.connection?.getPlayerInfo(it.key) ?: return@any false
+            return@any msg.endsWith(info.profile.name, true)
+        }
+        if (!mentionsName) return false
+
+        val i = msg.lastIndexOf(' ')
+        if (i < 0) return false
+        val msgPrefix = msg.substring(0, i)
+
+        val count = messageHeatMap.getOrPut(name) {
+            object : LinkedHashMap<String, Int>(10, 0.75f, true) {
+                override fun removeEldestEntry(eldest: Map.Entry<String, Int>?): Boolean {
+                    return size >= 10
+                }
+            }
+        }.merge(msgPrefix, 1, Int::plus) ?: 0
+        if (count < 5) return false
+
+        ChatUtils.sendMessage("&8&l[&3&lMutePartySpam&8&l]&r muting leap message: $msgPrefix", false)
+        leapMessages[name] = msgPrefix
+        messageHeatMap.remove(name)
+        return true
+    }
 
     override fun initialize() {
         Config.set(CONFIG_KEY, JsonArray().also { arr ->
@@ -100,7 +138,10 @@ object MutePartySpam : Feature(
         }
 
         on<ChatChannelEvent.PartyChatEvent> { event ->
-            if (messages.any { event.userMessage.startsWith(it) }) muteNextNMessages.incrementAndGet()
+            if (
+                messages.any { event.userMessage.startsWith(it) } ||
+                SETTING_DETECT_LEAP.get() && isLeapMsg(event.name, event.userMessage)
+            ) muteNextNMessages.incrementAndGet()
         }
 
         EventBus.on<SoundPlayEvent> { event ->
