@@ -66,6 +66,7 @@ object OldSymbols : Feature(
             84 to '☘', // foraging fortune + others
             91 to '☘', // hunting fortune
             103 to '⏣', // subarea
+            104 to '⚚', // fragged item
 
             112 to '✈', // airborne
             113 to '☮', // animal
