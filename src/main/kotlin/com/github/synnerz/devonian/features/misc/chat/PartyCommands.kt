@@ -17,7 +17,7 @@ object PartyCommands : Feature(
     private val SETTING_USE_WHITELIST = addSwitch(
         "useWhitelist",
         true,
-        "Whether the feature should use a whitelist for !allinv, !pt, !inv, !kick commands (/dv pcmd <username>)",
+        "Whether the feature should use a whitelist for !allinv, !pt, !ptme, !inv, !kick commands (/dv pcmd <username>)",
         "Party Commands Whitelist"
     )
     private val catacombsFloors = listOf(
@@ -76,7 +76,9 @@ object PartyCommands : Feature(
                 when (val first = messages.first()) {
                     "!w", "!warp" -> if (Party.isLeader) ChatUtils.command("p warp")
                     "!allinv" -> if (canTrigger(name)) ChatUtils.command("p settings allinvite")
-                    "!pt" -> if (canTrigger(name)) ChatUtils.command("p transfer $name")
+                    "!pt",
+                    "!ptme"
+                        -> if (canTrigger(name)) ChatUtils.command("p transfer $name")
                     "!inv" -> if (canTrigger(name) && second != null && second.length in 1..16) ChatUtils.command("p $second")
                     "!kick" -> if (canTrigger(name) && second != null && second.length in 1..16) ChatUtils.command("p kick $second")
                     "!coords" -> {
