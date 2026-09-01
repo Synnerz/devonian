@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.Event
 import com.github.synnerz.devonian.api.events.EventBus
 import net.hypixel.modapi.packet.impl.clientbound.ClientboundPartyInfoPacket.PartyRole
+import java.security.MessageDigest
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -29,7 +30,7 @@ object Party {
     var inParty = false
     var members: Map<UUID, PartyRole> = mapOf()
     var isLeader = false
-    var partyHash = -1
+    var partyHash = ""
     private var lastRequest = -1L
     private var queue = false
     private var initialRequest = false
@@ -37,7 +38,7 @@ object Party {
     class PartyJoinEvent(
         val members: Map<UUID, PartyRole>,
         val isLeader: Boolean,
-        val partyHash: Int,
+        val partyHash: String,
     ) : Event
     class PartyLeaveEvent : Event
 
@@ -61,7 +62,7 @@ object Party {
                 inParty = false
                 members = mapOf()
                 isLeader = false
-                partyHash = -1
+                partyHash = ""
                 if (!initialRequest)
                     PartyLeaveEvent().post()
                 return@on
@@ -70,7 +71,7 @@ object Party {
             inParty = true
             members = event.members
             isLeader = event.isLeader
-            partyHash = members.keys.sumOf { it.hashCode() }
+            partyHash = hashParty()
             PartyJoinEvent(members, isLeader, partyHash).post()
         }
 
@@ -86,5 +87,14 @@ object Party {
         lastRequest = System.currentTimeMillis()
         queue = false
         HypixelModApi.requestPartyInfo()
+    }
+
+    private fun hashParty(): String {
+        val uuids = members.keys.distinct().sorted().joinToString(",")
+
+        return MessageDigest
+            .getInstance("SHA-256")
+            .digest(uuids.toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
     }
 }
