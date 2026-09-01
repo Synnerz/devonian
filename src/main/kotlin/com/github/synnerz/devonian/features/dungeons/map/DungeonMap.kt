@@ -624,17 +624,17 @@ object DungeonMap : HudFeature(
     // hear me out chick, i know it doesn't belong here but it's part of the colors
     private val SETTING_NORMAL_DOOR_DYNAMIC = addSwitch(
         "doorNormalDynamicColor",
-        false,
+        true,
         "If enabled, this will ignore the \"Normal Door Color\" and use the room's color for a more blend-in door way.",
         "Normal Door Dynamic Color",
-        subcategory = "Colors"
+        subcategory = "Colors",
     )
     private val SETTING_NORMAL_DOOR_COLOR = addColorPicker(
         "doorNormalColor",
         Color(107, 58, 17).rgb,
         "",
         "Normal Door Color",
-        subcategory = "Colors"
+        subcategory = "Colors",
     )
     private val SETTING_ROOM_SIZE = addDecimalSlider(
         "roomSize",
