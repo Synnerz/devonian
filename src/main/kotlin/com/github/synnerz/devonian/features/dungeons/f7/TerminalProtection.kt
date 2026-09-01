@@ -35,33 +35,33 @@ object TerminalProtection : Feature(
         "^Correct all the panes!$".toRegex(),
         "^Click the button on time!$".toRegex(),
     )
-    private var terminalStart = -1L
+    private var terminalTicks = 0
     private var inTerminal = false
 
     override fun initialize() {
         on<ServerContainerOpenEvent> { event ->
             if (terminalGuis.any { it.matches(event.titleStr) }) {
-                if (!inTerminal) terminalStart = System.currentTimeMillis()
+                if (!inTerminal) terminalTicks = EventBus.serverTicks()
                 inTerminal = true
             }
         }
 
         on<ServerContainerCloseEvent> {
-            terminalStart = -1L
+            terminalTicks = 0
             inTerminal = false
         }
 
         on<ClientContainerCloseEvent> {
-            terminalStart = -1L
+            terminalTicks = 0
             inTerminal = false
         }
 
         on<GuiClickEvent> { event ->
-            if (terminalStart == -1L || !event.state) return@on
-            if (System.currentTimeMillis() - terminalStart > SETTING_THRESHOLD.get()) return@on
+            if (terminalTicks == 0 || !event.state) return@on
+            if (EventBus.serverTicks() - terminalTicks * 0.05 > SETTING_THRESHOLD.get()) return@on
 
             event.cancel()
-            terminalStart = -1L
+            terminalTicks = 0
             minecraft.level?.playPlayerSound(
                 PREVENTED_SOUND.value(),
                 SoundSource.MASTER,
@@ -71,7 +71,7 @@ object TerminalProtection : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        terminalStart = -1
+        terminalTicks = 0
         inTerminal = false
     }
 }
