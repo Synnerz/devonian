@@ -15,6 +15,13 @@ object CopyChat : Feature(
     Categories.VANILLA_TWEAKS,
     subcategory = "Chat",
 ) {
+    private val SETTING_TRIM = addSwitch(
+        "trimCopiedMessage",
+        true,
+        "Removes spaces from start/end of copied messages.",
+        "Trim Copied Messages",
+    )
+
     override fun initialize() {
         on<GuiClickEvent> { event ->
             if (!event.state || event.mbtn != 1) return@on
@@ -24,7 +31,8 @@ object CopyChat : Feature(
 
             val msg = (minecraft.gui.chat as? ChatComponentAccessor2)?.`devonian$getLastHoveredMessage`() ?: return@on
             val text = msg.content
-            val str = text.string.clearCodes()
+            var str = text.string.clearCodes()
+            if (SETTING_TRIM.get()) str = str.trim()
 
             minecraft.keyboardHandler.clipboard = str
             Scheduler.scheduleTask(2) {
