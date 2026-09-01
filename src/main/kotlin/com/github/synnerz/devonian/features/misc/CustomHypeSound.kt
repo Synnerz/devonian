@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.CustomSounds
+import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket
 
 object CustomHypeSound : Feature(
@@ -14,6 +15,16 @@ object CustomHypeSound : Feature(
     "`/dv hypesound`",
     subcategory = "General",
 ) {
+    private val SETTING_EDIT_BUTTON = addButton(
+        {
+            minecraft.gui.openChatAndAddText(
+                ChatComponent.ChatMethod.COMMAND,
+                "devonian hype ${customSound.volume} ${customSound.pitch} ${customSound.value}"
+            )
+        },
+        displayName = "Edit Custom Hype Sound",
+    )
+
     private val customSound = CustomSounds.create("witherBladeSound", "minecraft:block.note_block.iron_xylophone")
     private val witherBlades = listOf("HYPERION", "VALKYRIE", "SCYLLA", "ASTRAEA")
     private var lastClick = -1
