@@ -40,6 +40,7 @@ object ActionbarParser : Feature(
             var shouldOverride = false
             val override = buildString {
                 pieces.forEach { stat ->
+                    if (stat.isEmpty()) return@forEach
                     var stat = stat
                     cringe.find { stat.endsWith(it) }?.let {
                         stat = stat.dropLast(it.length)
