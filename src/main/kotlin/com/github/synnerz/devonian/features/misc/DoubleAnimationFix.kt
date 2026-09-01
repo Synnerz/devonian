@@ -15,7 +15,11 @@ object DoubleAnimationFix : Feature(
         on<PacketReceivedEvent> { event ->
             val packet = event.packet as? ClientboundSetEntityDataPacket ?: return@on
 
-            if (packet.id != minecraft.player?.id) return@on
+            try {
+                if (packet.id != minecraft.player?.id) return@on
+            } catch (_: IllegalStateException) {
+                return@on
+            }
             packet.packedItems.removeIf {
                 it.id == 6
                 // it.serializer == EntityDataSerializers.POSE
