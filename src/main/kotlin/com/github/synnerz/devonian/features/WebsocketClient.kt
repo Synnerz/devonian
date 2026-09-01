@@ -90,12 +90,12 @@ object WebsocketClient : Feature(
         }
 
         on<Party.PartyJoinEvent> {
-            oldPartyState = true
             onParty()
+            oldPartyState = true
         }
         on<Party.PartyLeaveEvent> {
-            oldPartyState = false
             onParty(false)
+            oldPartyState = false
         }
 
         Scheduler.schedulePool.scheduleWithFixedDelay({
