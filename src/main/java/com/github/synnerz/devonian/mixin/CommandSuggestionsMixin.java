@@ -13,7 +13,7 @@ import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(CommandSuggestions.class)
+@Mixin(value = CommandSuggestions.class, priority = 1001)
 public class CommandSuggestionsMixin {
     @WrapOperation(
             method = "updateCommandInfo",
