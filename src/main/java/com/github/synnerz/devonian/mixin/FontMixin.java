@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.features.misc.FixObfuscatedText;
+import com.github.synnerz.devonian.features.misc.OldSymbols;
 import com.github.synnerz.devonian.utils.ObfuscatedBakedGlyph;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -23,5 +24,21 @@ public class FontMixin {
         // because shadowing locals is too hard
         BakedGlyph orig = instance.getGlyph(i);
         return new ObfuscatedBakedGlyph(obfu, orig.info());
+    }
+
+    @WrapOperation(
+        method = "getGlyph",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GlyphSource;getGlyph(I)Lnet/minecraft/client/gui/font/glyphs/BakedGlyph;")
+    )
+    private BakedGlyph devonian$oldSymbols(GlyphSource instance, int i, Operation<BakedGlyph> original) {
+        if (OldSymbols.INSTANCE.isEnabled()) {
+            int offset = i - 0xE000;
+            if (0 <= offset && offset < OldSymbols.REPLACEMENTS.length) {
+                int c = OldSymbols.REPLACEMENTS[offset];
+                if (c != 0) i = c;
+            }
+        }
+
+        return original.call(instance, i);
     }
 }

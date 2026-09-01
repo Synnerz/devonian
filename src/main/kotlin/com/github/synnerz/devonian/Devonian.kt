@@ -9,9 +9,7 @@ import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.garden.GardenEvents
 import com.github.synnerz.devonian.api.events.kuudra.KuudraEvents
 import com.github.synnerz.devonian.commands.DevonianCommand
-import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
-import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
@@ -416,6 +414,7 @@ object Devonian : ClientModInitializer {
             BookCombineHelper,
             SafariUniqueTracker,
             DodgeList,
+            OldSymbols,
 
             // Debug
             CopyItem,
