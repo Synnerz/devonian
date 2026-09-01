@@ -73,7 +73,7 @@ object Party {
             isLeader = event.isLeader
             partyHash = hashParty()
             PartyJoinEvent(members, isLeader, partyHash).post()
-        }
+        }.prio = 1
 
         EventBus.on<HypixelModApi.HelloPacket> { event ->
             initialRequest = true
