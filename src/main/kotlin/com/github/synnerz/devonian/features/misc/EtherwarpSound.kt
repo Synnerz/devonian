@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.CustomSounds
+import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.item.Items
@@ -13,6 +14,16 @@ object EtherwarpSound : Feature(
     "Changes the sound the etherwarp makes whenever you have etherwarped successfully. Customize it via /devonian etherwarpsound.",
     subcategory = "Tweaks",
 ) {
+    private val SETTING_EDIT_BUTTON = addButton(
+        {
+            minecraft.gui.openChatAndAddText(
+                ChatComponent.ChatMethod.COMMAND,
+                "devonian etherwarpsound ${customSound.volume} ${customSound.pitch} ${customSound.value}"
+            )
+        },
+        displayName = "Edit Etherwarp Sound",
+    )
+
     private val customSound = CustomSounds.create("etherwarpSound", "minecraft:entity.ender_dragon.hurt")
     private val itemIds = setOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
     private var lastClick = -1
