@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.misc.inventory
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.api.events.GuiKeyUpEvent
+import com.github.synnerz.devonian.api.events.GuiOpenEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
@@ -58,7 +59,14 @@ object ScrollableTooltip : Feature(
         "Resets the x, y offset every time you hover over a new item.",
         "Tooltip Reset",
     )
+    val SETTING_START_TOP = addSwitch(
+        "startTop",
+        false,
+        "Prevents the tooltip from automatically shifting up from size.",
+        "Tooltip Start At Top",
+    )
     private val SETTING_RESET_ALL = addButton(::reset, displayName = "Reset")
+
     private var scaleScroll = 1.0
     private var xo = 0.0
     private var yo = 0.0
@@ -129,6 +137,12 @@ object ScrollableTooltip : Feature(
             }
         }
 
+        on<GuiOpenEvent> {
+            holdingCtrl = false
+            holdingAlt = false
+            holdingShift = false
+        }
+
         on<GuiKeyDownEvent> { event ->
             if (event.key == InputConstants.KEY_LCONTROL) {
                 holdingCtrl = true
@@ -180,7 +194,7 @@ object ScrollableTooltip : Feature(
         return yo
     }
 
-    fun onRender(x: Int, y: Int, xoffset: Int, yoffset: Int) {
+    fun onRender(x: Int, y: Int, w: Int, h: Int) {
         val screen = minecraft.gui.screen() ?: return
         val eq = ScreenUtils.cursorSlot(screen) ?: return
         if (lastEq === eq) return
