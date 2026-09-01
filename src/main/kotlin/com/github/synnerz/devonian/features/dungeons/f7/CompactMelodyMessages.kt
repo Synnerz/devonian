@@ -41,7 +41,7 @@ object CompactMelodyMessages : Feature(
             "Melody 75%",
         ),
     )
-    private val melodyFracRegex = "\\b([0-3])/4\\b".toRegex()
+    private val melodyFracRegex = "\\b([0-3])/[34]\\b".toRegex()
     private val melodyPercRegex = "\\b([27]5|[50]?0)%(?=[\\s\\W]|$)".toRegex()
 
     private fun isMelodyMessage(msg: String): Boolean {
