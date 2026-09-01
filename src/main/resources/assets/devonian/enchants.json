@@ -323,6 +323,13 @@
       "maxLevel": 6
     },
     {
+      "loreName": "Pyroclasm",
+      "nbtName": "magmarizer",
+      "abbreviation": "Pyro",
+      "goodLevel": 5,
+      "maxLevel": 6
+    },
+    {
       "loreName": "Magnet",
       "nbtName": "magnet",
       "abbreviation": "Magn",
