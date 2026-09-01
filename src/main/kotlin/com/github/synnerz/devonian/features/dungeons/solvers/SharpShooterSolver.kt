@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ClientBlockUpdateEvent
+import com.github.synnerz.devonian.api.events.ParticleSpawnEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
@@ -47,6 +48,13 @@ object SharpShooterSolver : Feature(
         "Uses the scanner to check if 8 emerald blocks have been displayed, this is not enabled by default as this may be inaccurate so use at your own will",
         "SharpShooter Alert Scanner"
     )
+    private val SETTING_HIDE_PARTICLES = addSwitch(
+        "hideParticles",
+        false,
+        "Hides all particles when doing the sharpshooter device.",
+        "SharpShooter Hide Particles",
+    )
+
     private val deviceCompletedRegex = "^(\\w{1,16}) completed a device! \\(\\d/7\\)$".toRegex()
     private val emeraldPositions = listOf(
         SolverPosition(68, 130, 50),
@@ -115,11 +123,28 @@ object SharpShooterSolver : Feature(
             }
             if (whitelist.size >= 9) whitelist.clear()
         }
+
+        on<ParticleSpawnEvent> { event ->
+            if (!Dungeons.inBoss.value || Dungeons.floor.floorNum != 7) return@on
+            if (!isAtSolver()) return@on
+
+            event.cancel()
+        }.setEnabled(SETTING_HIDE_PARTICLES.state)
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         whitelist.clear()
         sentAlert = false
+    }
+
+    private fun isAtSolver(): Boolean {
+        val player = minecraft.player ?: return false
+        val x1 = player.x.toInt()
+        val y1 = player.y.toInt()
+        val z1 = player.z.toInt()
+        val dist = abs(basePosition.x - x1) + abs(basePosition.y - y1) + abs(basePosition.z - z1)
+
+        return dist < 2
     }
 
     private fun onEmeraldBlock(bp: BlockPos) {
@@ -128,12 +153,7 @@ object SharpShooterSolver : Feature(
         val pos = SolverPosition(bp.x, bp.y, bp.z)
         if (whitelist.contains(pos)) return
 
-        val player = minecraft.player ?: return
-        val x1 = player.x.toInt()
-        val y1 = player.y.toInt()
-        val z1 = player.z.toInt()
-        val dist = abs(basePosition.x - x1) + abs(basePosition.y - y1) + abs(basePosition.z - z1)
-        if (dist > 2) return
+        if (!isAtSolver()) return
 
         whitelist.add(pos)
     }
