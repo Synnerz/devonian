@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.hud.texthud.*
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.render.impl.TextRendererImpl
 import kotlinx.atomicfu.atomic
+import org.joml.Vector4i
 import java.awt.Color
 import java.awt.Font
 import java.awt.image.BufferedImage
@@ -78,37 +79,43 @@ class DungeonMapBaseRenderer :
             g.fillRect(lw, h - lw, w - lw - lw, lw)
         }
 
-        fun colorForRoom(room: DungeonRoom): Color? {
-            var col =
-                if (!room.explored && (!options.renderUnknownRooms || room.name == null))
-                    colors[DungeonMapColors.RoomUnknown]
-                else when (room.type) {
-                    RoomTypes.ENTRANCE -> colors[DungeonMapColors.RoomEntrance]
-                    RoomTypes.NORMAL -> when (room.clear) {
-                        ClearTypes.MOB,
-                        ClearTypes.OTHER
-                            -> colors[DungeonMapColors.RoomNormal]
+        fun baseColorForRoom(type: RoomTypes, clear: ClearTypes? = null): Color? {
+            return when (type) {
+                RoomTypes.ENTRANCE -> colors[DungeonMapColors.RoomEntrance]
+                RoomTypes.NORMAL -> when (clear) {
+                    null,
+                    ClearTypes.MOB,
+                    ClearTypes.OTHER
+                        -> colors[DungeonMapColors.RoomNormal]
 
-                        ClearTypes.MINIBOSS -> colors[DungeonMapColors.RoomMiniboss]
-                    }
-
-                    RoomTypes.FAIRY -> colors[DungeonMapColors.RoomFairy]
-                    RoomTypes.BLOOD -> colors[DungeonMapColors.RoomBlood]
-                    RoomTypes.PUZZLE -> colors[DungeonMapColors.RoomPuzzle]
-                    RoomTypes.TRAP -> colors[DungeonMapColors.RoomTrap]
-                    RoomTypes.YELLOW -> colors[DungeonMapColors.RoomYellow]
-                    RoomTypes.RARE -> colors[DungeonMapColors.RoomRare]
-                    RoomTypes.UNKNOWN -> colors[DungeonMapColors.RoomUnknown]
+                    ClearTypes.MINIBOSS -> colors[DungeonMapColors.RoomMiniboss]
                 }
 
-            if (col != null && options.dungeonStarted && !room.explored) col = Color(
+                RoomTypes.FAIRY -> colors[DungeonMapColors.RoomFairy]
+                RoomTypes.BLOOD -> colors[DungeonMapColors.RoomBlood]
+                RoomTypes.PUZZLE -> colors[DungeonMapColors.RoomPuzzle]
+                RoomTypes.TRAP -> colors[DungeonMapColors.RoomTrap]
+                RoomTypes.YELLOW -> colors[DungeonMapColors.RoomYellow]
+                RoomTypes.RARE -> colors[DungeonMapColors.RoomRare]
+                RoomTypes.UNKNOWN -> colors[DungeonMapColors.RoomUnknown]
+            }
+        }
+        fun darkenRoomColor(col: Color?, explored: Boolean): Color? {
+            if (col != null && options.dungeonStarted && !explored) return Color(
                 (col.red * options.unknownRoomsDarkenFactor + 0.5).toInt(),
                 (col.green * options.unknownRoomsDarkenFactor + 0.5).toInt(),
                 (col.blue * options.unknownRoomsDarkenFactor + 0.5).toInt(),
                 col.alpha
             )
-
             return col
+        }
+        fun colorForRoom(room: DungeonRoom): Color? {
+            val col =
+                if (!room.explored && (!options.renderUnknownRooms || room.name == null))
+                    colors[DungeonMapColors.RoomUnknown]
+                else baseColorForRoom(room.type, room.clear)
+
+            return darkenRoomColor(col, room.explored)
         }
 
         val roomRectOffset = (1.0 - options.roomWidth) * 0.5
@@ -177,7 +184,7 @@ class DungeonMapBaseRenderer :
             )
         }
 
-        fun drawRoom(x: Int, z: Int, w: Int, h: Int) {
+        fun getRoomBounds(x: Int, z: Int, w: Int, h: Int): Vector4i {
             val cx = x + roomRectOffset
             val cz = z + roomRectOffset
             val cw = options.roomWidth + w - 1
@@ -187,7 +194,11 @@ class DungeonMapBaseRenderer :
             val bw = ceil(compToBImgFW * cw).toInt()
             val bh = ceil(compToBImgFH * ch).toInt()
 
-            g.fillRect(bx, bz, bw + 1, bh + 1)
+            return Vector4i(bx, bz, bw + 1, bh + 1)
+        }
+        fun drawRoom(x: Int, z: Int, w: Int, h: Int) {
+            val bounds = getRoomBounds(x, z, w, h)
+            g.fillRect(bounds[0], bounds[1], bounds[2], bounds[3])
         }
 
         fun drawRoomJoined(cx1: Int, cz1: Int, cx2: Int, cz2: Int) {
@@ -267,8 +278,8 @@ class DungeonMapBaseRenderer :
         }
 
         val textToRender = ArrayDeque<TextRenderParam>()
-        rooms.forEach { room ->
-            if (room == null) return@forEach
+        rooms.forEach { data ->
+            val room = data?.room ?: return@forEach
             if (room.doors.isEmpty() && room.name == null) return@forEach
             val color = colorForRoom(room) ?: colors[DungeonMapColors.RoomNormal] ?: Color(0, true)
             var shape = room.shape
@@ -316,7 +327,46 @@ class DungeonMapBaseRenderer :
                     }
                 }
 
-                ShapeTypes.Shape1x1 -> drawRoom(cells[0].cx / 2, cells[0].cz / 2, 1, 1)
+                ShapeTypes.Shape1x1 -> {
+                    val predictions = data.predictedTypes
+                    val bounds = getRoomBounds(cells[0].cx / 2, cells[0].cz / 2, 1, 1)
+                    when (predictions?.size ?: 0) {
+                        1 -> {
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions!![0]), room.explored)
+                            g.fillRect(bounds[0], bounds[1], bounds[2], bounds[3])
+                        }
+                        2 -> {
+                            val w = (bounds[2] * 0.5).toInt()
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions!![0]), room.explored)
+                            g.fillRect(bounds[0], bounds[1], w, bounds[3])
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions[1]), room.explored)
+                            g.fillRect(bounds[0] + w, bounds[1], bounds[2] - w, bounds[3])
+                        }
+                        3 -> {
+                            val w = (bounds[2] * 0.5).toInt()
+                            val h = (bounds[3] * 0.5).toInt()
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions!![0]), room.explored)
+                            g.fillRect(bounds[0], bounds[1], w, h)
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions[1]), room.explored)
+                            g.fillRect(bounds[0], bounds[1] + h, w, bounds[3] - h)
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions[2]), room.explored)
+                            g.fillRect(bounds[0] + w, bounds[1], w, bounds[3])
+                        }
+                        4 -> {
+                            val w = (bounds[2] * 0.5).toInt()
+                            val h = (bounds[3] * 0.5).toInt()
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions!![0]), room.explored)
+                            g.fillRect(bounds[0], bounds[1], w, h)
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions[1]), room.explored)
+                            g.fillRect(bounds[0], bounds[1] + h, w, bounds[3] - h)
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions[2]), room.explored)
+                            g.fillRect(bounds[0] + w, bounds[1], bounds[2] - w, h)
+                            g.paint = darkenRoomColor(baseColorForRoom(predictions[3]), room.explored)
+                            g.fillRect(bounds[0] + w, bounds[1] + h, bounds[2] - w, bounds[3] - h)
+                        }
+                        else -> g.fillRect(bounds[0], bounds[1], bounds[2], bounds[3])
+                    }
+                }
                 ShapeTypes.Shape1x2,
                 ShapeTypes.Shape1x3,
                 ShapeTypes.Shape1x4
