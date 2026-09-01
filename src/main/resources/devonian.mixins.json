@@ -86,6 +86,7 @@
   "mixins": [
     "BlockEntityRenderDispatcherMixin",
     "ChatComponentInnerMixin",
+    "DefaultTooltipPositionerMixin",
     "EnderDragonRendererMixin",
     "EntityMixin",
     "GLFWMixin",
@@ -96,5 +97,8 @@
     "accessor.ClientboundEntityEventPacketAccessor",
     "accessor.ClientboundGameEventPacket$TypeAccessor",
     "accessor.ClientboundMoveEntityPacketAccessor"
-  ]
+  ],
+  "mixinextras": {
+    "minVersion": "0.5.4"
+  }
 }
