@@ -124,7 +124,7 @@ object ActionbarParser : Feature(
             null,
             listOf("\uE028"),
             object : TextHudFeature(
-                "customVitalitythHud",
+                "customVitalityHud",
                 "$desc Allows you to move the vitality that appears in the actionbar (above your hotbar).",
                 Categories.Actionbar,
                 searchTags = customTags,
