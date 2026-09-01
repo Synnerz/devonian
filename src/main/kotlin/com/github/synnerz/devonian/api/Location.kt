@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object Location {
     val areaRegex = "^(?:Area|Dungeon): ([\\w ']+)\$".toRegex()
-    val subAreaRegex = "^ ([⏣ф]) ".toRegex()
+    val subAreaRegex = "^ ([⏣ф\uE067]) ".toRegex()
     var area: String? = null
     var subarea: String? = null
     val stateArea = BasicState<String?>(null)
@@ -20,7 +20,7 @@ object Location {
     fun changeArea(loc: String) {
         val old = area
         val l = loc.lowercase()
-        if (old === l) return
+        if (old == l) return
 
         AreaEvent(l).post()
         area = l
