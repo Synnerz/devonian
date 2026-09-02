@@ -93,7 +93,7 @@ object LootLogger : Feature(
         DevonianCommand.command.subcommand("lootlogger") { _, args ->
             val mode = args.getOrNull(0) as? String?
             val floor = args.getOrNull(1) as? String?
-            val dates = args.getOrNull(2) as? String?
+            val dates = (args.getOrNull(2) as? String?)?.replace("*", "")
             val date = dates?.split(" ")?.getOrNull(0)
             val date2 = dates?.split(" ")?.getOrNull(1)
             if (mode.isNullOrEmpty()) {
@@ -194,7 +194,7 @@ object LootLogger : Feature(
             .greedyString("date")
             .suggest("date") {
                 buildList {
-                    val current = "${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
+                    val current = "*${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
 
                     add(current)
 
