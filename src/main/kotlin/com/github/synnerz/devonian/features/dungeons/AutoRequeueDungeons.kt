@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Party
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
+import com.github.synnerz.devonian.api.events.AreaEvent
 import com.github.synnerz.devonian.api.events.ChatChannelEvent
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -92,6 +93,14 @@ object AutoRequeueDungeons : Feature(
 
             if (needsDowntime.isEmpty()) requeue()
             else ChatUtils.command("pc ${needsDowntime.joinToString(", ")} needs downtime")
+        }
+
+        on<AreaEvent> { event ->
+            if (event.area != "catacombs") return@on
+            if (needsDowntime.isEmpty()) return@on
+
+            ChatUtils.sendMessage("&aDowntime has been reset.", true)
+            needsDowntime.clear()
         }
     }
 
