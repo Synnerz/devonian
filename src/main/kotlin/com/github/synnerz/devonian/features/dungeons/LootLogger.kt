@@ -191,11 +191,19 @@ object LootLogger : Feature(
             ).toTypedArray())
             .greedyString("date")
             .suggest("date") {
-                lootData.data!!.map { it.key }.toMutableList()
+                buildList {
+                    val current = "${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
+
+                    add(current)
+
+                    lootData.data!!.mapNotNull {
+                        if (it.key == current) null
+                        else it.key
+                    }.forEach {
+                        add(it)
+                    }
+                }.toMutableList()
             }
-//            .suggest("date", *listOf(
-//                "${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
-//            ).toTypedArray())
 
         on<ServerContainerOpenEvent> { event ->
             croesusChestRegex.matchEntire(event.titleStr)?.let {
