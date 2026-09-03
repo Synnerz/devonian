@@ -83,8 +83,8 @@ object LootLogger : Feature(
         var purchased: Boolean = false,
         var hasRerolled: Boolean = false,
     ) {
-        fun totalProfit(ignoreEssence: Boolean = false): Int =
-            items.sumOf { it.price(ignoreEssence) } - chestPrice
+        fun totalProfit(ignoreEssence: Boolean = false): Double =
+            items.sumOf { it.price(ignoreEssence) } - chestPrice.toDouble()
     }
 
     override fun initialize() {
@@ -112,28 +112,31 @@ object LootLogger : Feature(
                 if (date2.isNullOrEmpty())
                     lootData.data!![date]?.get(floor)
                 else
-                    // TODO: add the middle dates leading up to date2
                     buildList {
                         val fromDate = date.split("/")
                         val fromMM = fromDate.getOrNull(0)?.toIntOrNull()
                         val fromDD = fromDate.getOrNull(1)?.toIntOrNull()
                         val fromYY = fromDate.getOrNull(2)?.toIntOrNull()
                         if (fromMM == null || fromDD == null || fromYY == null) {
-                            // TODO: change wording
-                            ChatUtils.sendMessage("&cProvided invalid from date to lootlogger", true)
+                            ChatUtils.sendMessage("&cLootLogger You did not provide a valid \"from\" date the correct order should be \"MM/DD/YY\"", true)
                             return@subcommand 0
                         }
                         val toDate = date2.split("/")
                         val toMM = toDate.getOrNull(0)?.toIntOrNull() ?: fromMM
                         val toDD = toDate.getOrNull(1)?.toIntOrNull() ?: (fromDD + 1)
                         val toYY = toDate.getOrNull(2)?.toIntOrNull() ?: fromYY
+
+                        var foundStartDay = false
                         for (year in fromYY..toYY) {
                             for (month in fromMM..toMM) {
-                                for (day in fromDD..toDD) {
-                                    println("checking(${"$month/$day/$year"})")
+                                for (day in 1..31) {
+                                    if (month == fromMM && day == fromDD) foundStartDay = true
+                                    if (!foundStartDay) continue
+
                                     lootData.data!!["$month/$day/$year"]?.get(floor)?.forEach {
                                         add(it)
                                     }
+                                    if (day == toDD && month == toMM) break
                                 }
                             }
                         }
