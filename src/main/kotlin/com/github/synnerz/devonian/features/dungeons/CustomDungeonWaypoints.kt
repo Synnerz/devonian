@@ -26,7 +26,7 @@ import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 import java.util.*
 import kotlin.math.abs
@@ -331,7 +331,7 @@ object CustomDungeonWaypoints : Feature(
                 comps.second,
                 currentWaypointType,
             )
-            if (InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_SHIFT)) {
+            if (InputConstants.isKeyDown(SDLKeycode.SDLK_LSHIFT)) {
                 textPos = Triple(comps.first, bp.y, comps.second)
                 Scheduler.scheduleTask {
                     minecraft.gui.openChatScreen(ChatComponent.ChatMethod.COMMAND)
@@ -340,7 +340,7 @@ object CustomDungeonWaypoints : Feature(
                     }
                 }
             }
-            if (!shouldAdd && InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_CONTROL)) {
+            if (!shouldAdd && InputConstants.isKeyDown(SDLKeycode.SDLK_LCTRL)) {
                 if (currentParent!!.waypoints.removeIf { it.cx == pos.cx && it.cy == pos.cy && it.cz == pos.cz }) {
                     if (!isBoss) profile.onRoomEnter(room)
                     else {

@@ -13,7 +13,7 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 
 object TerminalDropKey : Feature(
     "terminalDropKey",
@@ -29,7 +29,7 @@ object TerminalDropKey : Feature(
     private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.termdropkey",
-            GLFW.GLFW_KEY_UNKNOWN,
+            SDLKeycode.SDLK_UNKNOWN,
             Devonian.keybindCategory
         )
     )

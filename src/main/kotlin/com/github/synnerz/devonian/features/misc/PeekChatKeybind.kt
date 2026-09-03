@@ -8,7 +8,7 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 
 object PeekChatKeybind : Feature(
     "peekChatKeybind",
@@ -18,7 +18,7 @@ object PeekChatKeybind : Feature(
     val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.peekchatkey",
-            GLFW.GLFW_KEY_UNKNOWN,
+            SDLKeycode.SDLK_UNKNOWN,
             Devonian.keybindCategory
         )
     )

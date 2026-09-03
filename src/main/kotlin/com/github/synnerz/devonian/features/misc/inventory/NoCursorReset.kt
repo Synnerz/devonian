@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.misc.inventory
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLMouse
 
 object NoCursorReset : Feature(
     "noCursorReset",
@@ -50,7 +50,7 @@ object NoCursorReset : Feature(
         on<RenderTickEvent> {
             if (!setCursorPos) return@on
             val window = minecraft.window
-            GLFW.glfwSetCursorPos(window.handle(), cursorPosX, cursorPosY)
+            SDLMouse.SDL_WarpMouseInWindow(window.handle(), cursorPosX.toFloat(), cursorPosY.toFloat())
             setCursorPos = false
         }
     }

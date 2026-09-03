@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.mixin.accessor;
 
-import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.renderpearl.api.buffers.GpuBuffer;
 import net.minecraft.client.renderer.StagedVertexBuffer;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

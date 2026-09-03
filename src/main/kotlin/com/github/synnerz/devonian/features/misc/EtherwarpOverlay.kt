@@ -10,6 +10,7 @@ import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.EmptyBlockGetter
 import net.minecraft.world.phys.BlockHitResult
@@ -155,7 +156,7 @@ object EtherwarpOverlay : Feature(
                             if (Location.stateInLatestArea.value) 1.27f else 1.54f
                         else 1.62f
                 pz = playerAccessor.lastZClient
-                lookVec = player.calculateViewVector(playerAccessor.lastPitchClient, playerAccessor.lastYawClient)
+                lookVec = Entity.calculateViewVector(playerAccessor.lastPitchClient, playerAccessor.lastYawClient)
             }
 
             var hitResult = WorldUtils.raycast(

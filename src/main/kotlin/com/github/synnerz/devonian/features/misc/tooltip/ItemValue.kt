@@ -11,7 +11,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.item.ItemStack
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import kotlin.jvm.optionals.getOrNull
 
 object ItemValue : Feature(
@@ -31,8 +31,8 @@ object ItemValue : Feature(
                 priceData = possiblePrice
             }
             val isShiftDown =
-                    InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_SHIFT) ||
-                    InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_RIGHT_SHIFT)
+                    InputConstants.isKeyDown(SDLKeycode.SDLK_LSHIFT) ||
+                    InputConstants.isKeyDown(SDLKeycode.SDLK_RSHIFT)
 
             if (!priceData.auction) {
                 val buyPrice = priceData.bazaarData.quick_status.buyPrice

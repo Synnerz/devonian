@@ -32,7 +32,7 @@ object BeaconBeamRenderer {
         val renderYOffset = height.toFloat() * heightScale * (0.5f / innerRadius) + animationStep
 
         matrices.pushPose()
-        matrices.mulPose(Axis.YP.rotationDegrees(time * 2.25f - 45.0f))
+        matrices.rotate(Axis.YP.rotationDegrees(time * 2.25f - 45.0f))
 
         renderBeamLayer(
             matrices,

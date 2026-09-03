@@ -17,6 +17,7 @@ import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.TextColor
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket
+import net.minecraft.network.protocol.game.VecDelta
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityTypes
@@ -121,11 +122,13 @@ object CampHelper : Feature(
         on<PacketReceivedEvent> { event ->
             val packet = event.packet as? ClientboundMoveEntityPacket ?: return@on
             val id = (event.packet as? ClientboundMoveEntityPacketAccessor)?.entityId ?: return@on
+            val delta = packet.positionDelta
+            if (delta !is VecDelta.Linear) return@on
 
             bloodStands[id]?.update(
-                packet.xa,
-                packet.ya,
-                packet.za,
+                delta.xa,
+                delta.ya,
+                delta.za,
                 if (Stages.WatcherDialog.hasFinished()) 40 else 80,
             )
         }

@@ -16,7 +16,7 @@ import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.world.item.ItemStack
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 
 object ProtectItem : Feature(
@@ -36,14 +36,14 @@ object ProtectItem : Feature(
     private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.protectItem",
-            GLFW.GLFW_KEY_UNKNOWN,
+            SDLKeycode.SDLK_UNKNOWN,
             Devonian.keybindCategory
         )
     )
     private val peekKeybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.protectItem.peek",
-            GLFW.GLFW_KEY_UNKNOWN,
+            SDLKeycode.SDLK_UNKNOWN,
             Devonian.keybindCategory
         )
     )

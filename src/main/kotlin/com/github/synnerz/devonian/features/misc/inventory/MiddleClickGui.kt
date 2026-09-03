@@ -14,7 +14,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 
 object MiddleClickGui : Feature(
     "middleClickGui",
@@ -28,7 +28,7 @@ object MiddleClickGui : Feature(
     private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.mcgBlacklist",
-            GLFW.GLFW_KEY_UNKNOWN,
+            SDLKeycode.SDLK_UNKNOWN,
             Devonian.keybindCategory
         )
     )

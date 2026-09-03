@@ -3,10 +3,10 @@ package com.github.synnerz.devonian.api.bufimgrenderer
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PostClientInitEvent
-import com.mojang.blaze3d.GpuFormat
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.textures.FilterMode
-import com.mojang.blaze3d.textures.GpuTexture
+import com.mojang.renderpearl.api.GpuFormat
+import com.mojang.renderpearl.api.textures.FilterMode
+import com.mojang.renderpearl.api.textures.GpuTexture
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.TextureManager
 import net.minecraft.resources.Identifier

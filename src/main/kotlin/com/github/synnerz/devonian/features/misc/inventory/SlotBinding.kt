@@ -21,7 +21,7 @@ import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.inventory.Slot
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 
 object SlotBinding : Feature(
@@ -85,7 +85,7 @@ object SlotBinding : Feature(
     private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.slotBinding",
-            GLFW.GLFW_KEY_UNKNOWN,
+            SDLKeycode.SDLK_UNKNOWN,
             Devonian.keybindCategory
         )
     )
@@ -388,7 +388,7 @@ object SlotBinding : Feature(
                 if (
                     SETTING_POINTING_LINE_MODE.get() == 0 ||
                     SETTING_POINTING_LINE_MODE.get() == 2 &&
-                    !InputConstants.isKeyDown(minecraft.window!!, GLFW.GLFW_KEY_LEFT_SHIFT)
+                    !InputConstants.isKeyDown(SDLKeycode.SDLK_LSHIFT)
                 ) return@forEachIndexed
 
                 Render2D.drawLine(

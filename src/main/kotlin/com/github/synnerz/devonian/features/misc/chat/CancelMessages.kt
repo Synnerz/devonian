@@ -330,7 +330,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
     }
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
-        background.handleKeyInput(keyEvent.key, keyEvent.scancode)
+        background.handleKeyInput(keyEvent.key, keyEvent.shortcutKey())
         return super.keyPressed(keyEvent)
     }
 

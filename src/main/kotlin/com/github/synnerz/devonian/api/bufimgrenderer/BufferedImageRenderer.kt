@@ -2,9 +2,9 @@ package com.github.synnerz.devonian.api.bufimgrenderer
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
-import com.mojang.blaze3d.PrimitiveTopology
-import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology
+import com.mojang.renderpearl.api.pipeline.RenderPipeline
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.render.TextureSetup

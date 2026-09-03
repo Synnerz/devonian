@@ -15,7 +15,8 @@ import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.Render2D.height
 import com.github.synnerz.devonian.utils.render.Render2D.width
 import net.minecraft.client.gui.GuiGraphicsExtractor
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
+import org.lwjgl.sdl.SDLMouse
 import java.awt.Color
 import kotlin.math.*
 
@@ -112,7 +113,7 @@ abstract class HudFeature(
 
     open fun onMouseClick(mx: Double, my: Double, mbtn: Int) {
         when (mbtn) {
-            GLFW.GLFW_MOUSE_BUTTON_RIGHT -> toggle()
+            SDLMouse.SDL_BUTTON_RIGHT -> toggle()
         }
     }
 
@@ -121,12 +122,12 @@ abstract class HudFeature(
         var dx = 0.0
         var dy = 0.0
         when (keyCode) {
-            GLFW.GLFW_KEY_LEFT -> dx = -INCREMENT
-            GLFW.GLFW_KEY_RIGHT -> dx = INCREMENT
-            GLFW.GLFW_KEY_UP -> dy = -INCREMENT
-            GLFW.GLFW_KEY_DOWN -> dy = INCREMENT
-            GLFW.GLFW_KEY_MINUS -> return onMouseScroll(-1.0)
-            GLFW.GLFW_KEY_EQUAL -> return onMouseScroll(+1.0)
+            SDLKeycode.SDLK_LEFT -> dx = -INCREMENT
+            SDLKeycode.SDLK_RIGHT -> dx = INCREMENT
+            SDLKeycode.SDLK_UP -> dy = -INCREMENT
+            SDLKeycode.SDLK_DOWN -> dy = INCREMENT
+            SDLKeycode.SDLK_KP_MINUS -> return onMouseScroll(-1.0)
+            SDLKeycode.SDLK_EQUALS -> return onMouseScroll(+1.0)
         }
 
         x = coerceX(x + dx)

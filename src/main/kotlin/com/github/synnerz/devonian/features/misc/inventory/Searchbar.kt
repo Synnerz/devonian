@@ -8,7 +8,7 @@ import com.github.synnerz.talium.components.UITextInput
 import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 
 object Searchbar : HudFeature(
@@ -102,7 +102,7 @@ object Searchbar : HudFeature(
 
         on<GuiKeyDownEvent> { event ->
             if (event.screen !is AbstractContainerScreen<*>) return@on
-            if ((event.event.modifiers and 2) != 0 && event.key == GLFW.GLFW_KEY_F)
+            if ((event.event.modifiers and 2) != 0 && event.key == SDLKeycode.SDLK_F)
                 input.focused = true
             if (!input.focused) return@on
 

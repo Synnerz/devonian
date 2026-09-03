@@ -13,7 +13,7 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.math.MathUtils
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import kotlin.math.pow
 import kotlin.math.withSign
 
@@ -33,7 +33,7 @@ object ZoomKeybind : Feature(
     val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.zoomkey",
-            GLFW.GLFW_KEY_UNKNOWN,
+            SDLKeycode.SDLK_UNKNOWN,
             Devonian.keybindCategory
         )
     )

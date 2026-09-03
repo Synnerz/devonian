@@ -6,11 +6,11 @@ import com.github.synnerz.devonian.api.events.PostClientInitEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ConfigData
-import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.buffers.Std140Builder
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
-import com.mojang.blaze3d.systems.RenderPass
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.renderpearl.api.buffers.GpuBuffer
+import com.mojang.renderpearl.api.commands.RenderPass
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType
 import net.minecraft.network.chat.Component

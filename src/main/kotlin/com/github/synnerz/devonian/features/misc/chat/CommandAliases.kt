@@ -240,7 +240,7 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
     }
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
-        background.handleKeyInput(keyEvent.key, keyEvent.scancode)
+        background.handleKeyInput(keyEvent.key, keyEvent.shortcutKey())
         return super.keyPressed(keyEvent)
     }
 

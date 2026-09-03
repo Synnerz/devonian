@@ -26,7 +26,7 @@ class BufferedImageFactory {
 
     fun createNative(w: Int, h: Int): NativeBufferedImage {
         val p = MemoryUtil.nmemCalloc(1L, 4L * w * h)
-        val ni = NativeImage(NativeImage.Format.RGBA, w, h, false, p)
+        val ni = NativeImage(NativeImage.Format.RGBA, w, h, p)
         val buf = MemoryUtil.memByteBuffer(p, 4 * w * h)
         val db = DirectDataBuffer(buf, 4 * w * h)
 

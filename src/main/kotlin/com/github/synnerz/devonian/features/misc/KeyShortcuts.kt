@@ -23,7 +23,8 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.network.chat.Component
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeyboard
+import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 import kotlin.math.abs
 
@@ -250,7 +251,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
     }
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
-        background.handleKeyInput(keyEvent.key, keyEvent.scancode)
+        background.handleKeyInput(keyEvent.key, keyEvent.shortcutKey())
         if (keyEvent.isEscape && components.any {
                 val keybind = it.children.find { c -> c is UIKeyBind } ?: return false
                 val hadFocus = keybind.hasFocus()
@@ -320,8 +321,8 @@ class UIKeyBind(
 
     override fun onKeyType(event: UIKeyType) = apply {
         if (!focused) return@apply
-        if (event.keycode == GLFW.GLFW_KEY_ESCAPE) {
-            bind = GLFW.GLFW_KEY_UNKNOWN
+        if (event.keycode == SDLKeycode.SDLK_ESCAPE) {
+            bind = SDLKeycode.SDLK_UNKNOWN
             keyNameText.text = keyName(bind)
             return@apply
         }
@@ -341,7 +342,7 @@ class UIKeyBind(
         fun keyName(keycode: Int, scanCode: Int = 0): String {
             if (keycode < -1) return "M${abs(-100 % keycode)}"
             if (keycode == -1) return "UNKNOWN"
-            val name = bySpecialKey(keycode) ?: GLFW.glfwGetKeyName(keycode, scanCode)?.uppercase()
+            val name = bySpecialKey(keycode) ?: SDLKeyboard.SDL_GetKeyName(keycode)?.uppercase()
             return "KEY ${name ?: "UNKNOWN"}"
         }
     }
@@ -349,68 +350,68 @@ class UIKeyBind(
 
 private fun bySpecialKey(key: Int): String? =
     when (key) {
-        GLFW.GLFW_KEY_LEFT_SHIFT -> "LEFT_SHIFT"
-        GLFW.GLFW_KEY_LEFT_CONTROL -> "LEFT_CONTROL"
-        GLFW.GLFW_KEY_LEFT_ALT -> "LEFT_ALT"
-        GLFW.GLFW_KEY_LEFT_SUPER -> "LEFT_SUPER"
-        GLFW.GLFW_KEY_RIGHT_SHIFT -> "RIGHT_SHIFT"
-        GLFW.GLFW_KEY_RIGHT_CONTROL -> "RIGHT_CONTROL"
-        GLFW.GLFW_KEY_RIGHT_ALT -> "RIGHT_ALT"
-        GLFW.GLFW_KEY_RIGHT_SUPER -> "RIGHT_SUPER"
-        GLFW.GLFW_KEY_CAPS_LOCK -> "CAPS_LOCK"
-        GLFW.GLFW_KEY_SCROLL_LOCK -> "SCROLL_LOCK"
-        GLFW.GLFW_KEY_F1 -> "F1"
-        GLFW.GLFW_KEY_F2 -> "F2"
-        GLFW.GLFW_KEY_F3 -> "F3"
-        GLFW.GLFW_KEY_F4 -> "F4"
-        GLFW.GLFW_KEY_F5 -> "F5"
-        GLFW.GLFW_KEY_F6 -> "F6"
-        GLFW.GLFW_KEY_F7 -> "F7"
-        GLFW.GLFW_KEY_F8 -> "F8"
-        GLFW.GLFW_KEY_F9 -> "F9"
-        GLFW.GLFW_KEY_F10 -> "F10"
-        GLFW.GLFW_KEY_F11 -> "F11"
-        GLFW.GLFW_KEY_F12 -> "F12"
-        GLFW.GLFW_KEY_F13 -> "F13"
-        GLFW.GLFW_KEY_F14 -> "F14"
-        GLFW.GLFW_KEY_F15 -> "F15"
-        GLFW.GLFW_KEY_F16 -> "F16"
-        GLFW.GLFW_KEY_F17 -> "F17"
-        GLFW.GLFW_KEY_F18 -> "F18"
-        GLFW.GLFW_KEY_F19 -> "F19"
-        GLFW.GLFW_KEY_F20 -> "F20"
-        GLFW.GLFW_KEY_F21 -> "F21"
-        GLFW.GLFW_KEY_F22 -> "F22"
-        GLFW.GLFW_KEY_F23 -> "F23"
-        GLFW.GLFW_KEY_F24 -> "F24"
-        GLFW.GLFW_KEY_F25 -> "F25"
-        GLFW.GLFW_KEY_UP -> "UP"
-        GLFW.GLFW_KEY_DOWN -> "DOWN"
-        GLFW.GLFW_KEY_LEFT -> "LEFT"
-        GLFW.GLFW_KEY_RIGHT -> "RIGHT"
-        GLFW.GLFW_KEY_ESCAPE -> "ESCAPE"
-        GLFW.GLFW_KEY_SPACE -> "SPACE"
-        GLFW.GLFW_KEY_ENTER -> "ENTER"
-        GLFW.GLFW_KEY_TAB  -> "TAB"
-        GLFW.GLFW_KEY_BACKSPACE -> "BACKSPACE"
-        GLFW.GLFW_KEY_INSERT -> "INSERT"
-        GLFW.GLFW_KEY_DELETE -> "DELETE"
-        GLFW.GLFW_KEY_HOME -> "HOME"
-        GLFW.GLFW_KEY_END -> "END"
-        GLFW.GLFW_KEY_PAGE_UP -> "PAGE_UP"
-        GLFW.GLFW_KEY_PAGE_DOWN -> "PAGE_DOWN"
-        GLFW.GLFW_KEY_PRINT_SCREEN -> "PRINT_SCREEN"
-        GLFW.GLFW_KEY_PAUSE -> "PAUSE"
-        GLFW.GLFW_KEY_MENU -> "MENU"
-        GLFW.GLFW_KEY_KP_ENTER -> "KP_ENTER"
-        GLFW.GLFW_KEY_KP_EQUAL -> "KP_EQUAL"
-        GLFW.GLFW_KEY_KP_ADD -> "KP_ADD"
-        GLFW.GLFW_KEY_KP_SUBTRACT -> "KP_SUBTRACT"
-        GLFW.GLFW_KEY_KP_MULTIPLY -> "KP_MULTIPLY"
-        GLFW.GLFW_KEY_KP_DIVIDE -> "KP_DIVIDE"
-        GLFW.GLFW_KEY_KP_DECIMAL -> "KP_DOT" // probably not good for consistency but idc
-        GLFW.GLFW_KEY_UNKNOWN -> "UNKNOWN"
-        GLFW.GLFW_KEY_WORLD_1 -> "WORLD_1"
-        GLFW.GLFW_KEY_WORLD_2 -> "WORLD_2"
+        SDLKeycode.SDLK_LSHIFT -> "LEFT_SHIFT"
+        SDLKeycode.SDLK_LCTRL -> "LEFT_CONTROL"
+        SDLKeycode.SDLK_LALT -> "LEFT_ALT"
+        SDLKeycode.SDLK_LGUI -> "LEFT_SUPER"
+        SDLKeycode.SDLK_RSHIFT -> "RIGHT_SHIFT"
+        SDLKeycode.SDLK_RCTRL -> "RIGHT_CONTROL"
+        SDLKeycode.SDLK_RALT -> "RIGHT_ALT"
+        SDLKeycode.SDLK_RGUI -> "RIGHT_SUPER"
+        SDLKeycode.SDLK_CAPSLOCK -> "CAPS_LOCK"
+        SDLKeycode.SDLK_SCROLLLOCK -> "SCROLL_LOCK"
+        SDLKeycode.SDLK_F1 -> "F1"
+        SDLKeycode.SDLK_F2 -> "F2"
+        SDLKeycode.SDLK_F3 -> "F3"
+        SDLKeycode.SDLK_F4 -> "F4"
+        SDLKeycode.SDLK_F5 -> "F5"
+        SDLKeycode.SDLK_F6 -> "F6"
+        SDLKeycode.SDLK_F7 -> "F7"
+        SDLKeycode.SDLK_F8 -> "F8"
+        SDLKeycode.SDLK_F9 -> "F9"
+        SDLKeycode.SDLK_F10 -> "F10"
+        SDLKeycode.SDLK_F11 -> "F11"
+        SDLKeycode.SDLK_F12 -> "F12"
+        SDLKeycode.SDLK_F13 -> "F13"
+        SDLKeycode.SDLK_F14 -> "F14"
+        SDLKeycode.SDLK_F15 -> "F15"
+        SDLKeycode.SDLK_F16 -> "F16"
+        SDLKeycode.SDLK_F17 -> "F17"
+        SDLKeycode.SDLK_F18 -> "F18"
+        SDLKeycode.SDLK_F19 -> "F19"
+        SDLKeycode.SDLK_F20 -> "F20"
+        SDLKeycode.SDLK_F21 -> "F21"
+        SDLKeycode.SDLK_F22 -> "F22"
+        SDLKeycode.SDLK_F23 -> "F23"
+        SDLKeycode.SDLK_F24 -> "F24"
+//        SDLKeycode.SDLK_F25 -> "F25"
+        SDLKeycode.SDLK_U -> "UP"
+        SDLKeycode.SDLK_DOWN -> "DOWN"
+        SDLKeycode.SDLK_LEFT -> "LEFT"
+        SDLKeycode.SDLK_RIGHT -> "RIGHT"
+        SDLKeycode.SDLK_ESCAPE -> "ESCAPE"
+        SDLKeycode.SDLK_SPACE -> "SPACE"
+        SDLKeycode.SDLK_RETURN -> "ENTER"
+        SDLKeycode.SDLK_TAB  -> "TAB"
+        SDLKeycode.SDLK_BACKSPACE -> "BACKSPACE"
+        SDLKeycode.SDLK_INSERT -> "INSERT"
+        SDLKeycode.SDLK_DELETE -> "DELETE"
+        SDLKeycode.SDLK_HOME -> "HOME"
+        SDLKeycode.SDLK_END -> "END"
+        SDLKeycode.SDLK_PAGEUP -> "PAGE_UP"
+        SDLKeycode.SDLK_PAGEDOWN -> "PAGE_DOWN"
+        SDLKeycode.SDLK_PRINTSCREEN -> "PRINT_SCREEN"
+        SDLKeycode.SDLK_PAUSE -> "PAUSE"
+        SDLKeycode.SDLK_MENU -> "MENU"
+        SDLKeycode.SDLK_KP_ENTER -> "KP_ENTER"
+        SDLKeycode.SDLK_KP_EQUALS -> "KP_EQUAL"
+        SDLKeycode.SDLK_KP_MEMADD -> "KP_ADD"
+        SDLKeycode.SDLK_KP_MINUS -> "KP_SUBTRACT"
+        SDLKeycode.SDLK_KP_MULTIPLY -> "KP_MULTIPLY"
+        SDLKeycode.SDLK_KP_DIVIDE -> "KP_DIVIDE"
+        SDLKeycode.SDLK_KP_DECIMAL -> "KP_DOT" // probably not good for consistency but idc
+        SDLKeycode.SDLK_UNKNOWN -> "UNKNOWN"
+//        GLFW.GLFW_KEY_WORLD_1 -> "WORLD_1"
+//        GLFW.GLFW_KEY_WORLD_2 -> "WORLD_2"
         else -> null
     }

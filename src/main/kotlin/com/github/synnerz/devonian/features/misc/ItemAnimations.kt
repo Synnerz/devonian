@@ -165,9 +165,9 @@ object ItemAnimations : Feature(
     fun applyTransformations(pose: PoseStack) {
         if (!isEnabled()) return
 
-        pose.mulPose(Axis.XP.rotationDegrees(SETTING_PITCH_OFFSET.get().toFloat()))
-        pose.mulPose(Axis.YP.rotationDegrees(SETTING_YAW_OFFSET.get().toFloat()))
-        pose.mulPose(Axis.ZP.rotationDegrees(SETTING_ROLL_OFFSET.get().toFloat()))
+        pose.rotate(Axis.XP.rotationDegrees(SETTING_PITCH_OFFSET.get().toFloat()))
+        pose.rotate(Axis.YP.rotationDegrees(SETTING_YAW_OFFSET.get().toFloat()))
+        pose.rotate(Axis.ZP.rotationDegrees(SETTING_ROLL_OFFSET.get().toFloat()))
 
         val xo = SETTING_X_OFFSET.get()
         val yo = SETTING_Y_OFFSET.get()

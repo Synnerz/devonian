@@ -9,10 +9,11 @@ import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccesso
 import com.github.synnerz.devonian.utils.Serializer
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import com.google.gson.JsonArray
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
-import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.sdl.SDLKeycode
 
 object CopyItem : Feature(
     "copyItem",
@@ -23,9 +24,9 @@ object CopyItem : Feature(
 ) {
     override fun initialize() {
         on<GuiKeyDownEvent> { event ->
-            if (event.key != GLFW_KEY_C) return@on
+            if (event.key != SDLKeycode.SDLK_C) return@on
 
-            val isCtrlDown = glfwGetKey(minecraft.window.handle(), GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS
+            val isCtrlDown = InputConstants.isKeyDown(SDLKeycode.SDLK_LCTRL)
             if (!isCtrlDown) return@on
 
             val screen = minecraft.gui.screen() as? AbstractContainerScreen<*> ?: return@on

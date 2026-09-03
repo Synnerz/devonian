@@ -11,7 +11,7 @@ import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.Render2D.height
 import com.github.synnerz.devonian.utils.render.Render2D.width
 import net.minecraft.client.gui.GuiGraphicsExtractor
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 
 abstract class TextHudFeature(
@@ -110,10 +110,10 @@ abstract class TextHudFeature(
         super.onKeyPress(keyCode)
 
         when (keyCode) {
-            GLFW.GLFW_KEY_1 -> anchor = anchor.cycle()
-            GLFW.GLFW_KEY_2 -> align = align.cycle()
-            GLFW.GLFW_KEY_3 -> shadow = shadow.cycle()
-            GLFW.GLFW_KEY_4 -> backdrop = backdrop.cycle()
+            SDLKeycode.SDLK_1 -> anchor = anchor.cycle()
+            SDLKeycode.SDLK_2 -> align = align.cycle()
+            SDLKeycode.SDLK_3 -> shadow = shadow.cycle()
+            SDLKeycode.SDLK_4 -> backdrop = backdrop.cycle()
         }
     }
 

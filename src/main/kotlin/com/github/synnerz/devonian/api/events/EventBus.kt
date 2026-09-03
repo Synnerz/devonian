@@ -23,7 +23,7 @@ import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.phys.Vec3
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeyboard
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -75,9 +75,9 @@ object EventBus {
 
             ScreenKeyboardEvents.allowKeyPress(screen).register { _, event ->
                 val event = GuiKeyDownEvent(
-                    GLFW.glfwGetKeyName(event.key, event.scancode),
+                    SDLKeyboard.SDL_GetKeyName(event.key),
                     event.key,
-                    event.scancode,
+                    event.shortcutKey(),
                     screen,
                     event,
                 )
@@ -87,9 +87,9 @@ object EventBus {
 
             ScreenKeyboardEvents.allowKeyRelease(screen).register { _, event ->
                 val event = GuiKeyUpEvent(
-                    GLFW.glfwGetKeyName(event.key, event.scancode),
+                    SDLKeyboard.SDL_GetKeyName(event.key),
                     event.key,
-                    event.scancode,
+                    event.shortcutKey(),
                     screen,
                     event,
                 )

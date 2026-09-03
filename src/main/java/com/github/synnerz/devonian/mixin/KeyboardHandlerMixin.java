@@ -7,10 +7,12 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_KEY_DOWN;
+import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_KEY_UP;
 
 @Mixin(KeyboardHandler.class)
 public class KeyboardHandlerMixin {
@@ -24,11 +26,11 @@ public class KeyboardHandlerMixin {
         if (minecraft.gui.screen() != null || minecraft.level == null) return;
 
         switch (i) {
-            case GLFW.GLFW_RELEASE:
+            case SDL_EVENT_KEY_UP:
                 new KeyReleaseEvent(keyEvent).post();
                 break;
 
-            case GLFW.GLFW_PRESS:
+            case SDL_EVENT_KEY_DOWN:
                 new KeyPressEvent(keyEvent).post();
                 break;
         }

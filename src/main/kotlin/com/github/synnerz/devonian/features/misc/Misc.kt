@@ -8,9 +8,10 @@ import com.github.synnerz.devonian.api.events.RenderTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 
 object RemoveFallingBlocks : Feature("removeFallingBlocks", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
@@ -87,7 +88,7 @@ object SignEnterKey : Feature(
 ) {
     fun shouldEnter(comps: List<Component>): Boolean {
         if (!isEnabled()) return false
-        return GLFW.glfwGetKey(Devonian.minecraft.window.handle(), GLFW.GLFW_KEY_LEFT_SHIFT) != GLFW.GLFW_PRESS
+        return InputConstants.isKeyDown(SDLKeycode.SDLK_LSHIFT)
     }
 }
 object RemoveHypixelScoreboard : Feature("removeHypixelScoreboard", "www.hypixel.net", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")

@@ -13,7 +13,7 @@ import com.google.gson.JsonPrimitive
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.world.item.Items
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 
 object PreventPlacingPlayerHeads : Feature(
     "preventPlacingPlayerHeads",
@@ -31,7 +31,7 @@ object PreventPlacingPlayerHeads : Feature(
     private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.pphBlacklist",
-            GLFW.GLFW_KEY_UNKNOWN,
+            SDLKeycode.SDLK_UNKNOWN,
             Devonian.keybindCategory
         )
     )

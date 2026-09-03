@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.Component
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 import kotlin.math.min
 
@@ -91,7 +91,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         mouseDown = true
         // updateSelected()
         if (
-            InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_CONTROL) &&
+            InputConstants.isKeyDown(SDLKeycode.SDLK_LCTRL) &&
             mouseButtonEvent.buttonInfo().button() == 0
         ) {
             val visibleHuds = huds.filter { it.isVisibleEdit() && it.inBounds(lastMouseX, lastMouseY) }
@@ -161,7 +161,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     }
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
-        if (keyEvent.key == GLFW.GLFW_KEY_ESCAPE) return super.keyPressed(keyEvent)
+        if (keyEvent.key == SDLKeycode.SDLK_ESCAPE) return super.keyPressed(keyEvent)
 
         if (selectedList.isNotEmpty())
             selectedList.forEach {

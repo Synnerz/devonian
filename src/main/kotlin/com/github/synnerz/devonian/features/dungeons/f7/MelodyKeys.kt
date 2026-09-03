@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 
 object MelodyKeys : Feature(
     "melodyKeys",
@@ -21,10 +21,10 @@ object MelodyKeys : Feature(
     }
 
     private val keybindList = listOf(
-        GLFW.GLFW_KEY_1,
-        GLFW.GLFW_KEY_2,
-        GLFW.GLFW_KEY_3,
-        GLFW.GLFW_KEY_4,
+        SDLKeycode.SDLK_1,
+        SDLKeycode.SDLK_2,
+        SDLKeycode.SDLK_3,
+        SDLKeycode.SDLK_4,
     )
 
     override fun initialize() {

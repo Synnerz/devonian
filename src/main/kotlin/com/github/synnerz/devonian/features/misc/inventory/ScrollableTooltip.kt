@@ -8,11 +8,12 @@ import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.features.Feature
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import kotlin.math.sign
 
 object ScrollableTooltip : Feature(
@@ -130,30 +131,30 @@ object ScrollableTooltip : Feature(
         }
 
         on<GuiKeyDownEvent> { event ->
-            if (event.key == GLFW.GLFW_KEY_LEFT_CONTROL) {
+            if (event.key == SDLKeycode.SDLK_LCTRL) {
                 holdingCtrl = true
                 return@on
             }
-            if (event.key == GLFW.GLFW_KEY_LEFT_ALT) {
+            if (event.key == SDLKeycode.SDLK_LALT) {
                 holdingAlt = true
                 return@on
             }
 
-            if (event.key != GLFW.GLFW_KEY_LEFT_SHIFT) return@on
+            if (event.key != SDLKeycode.SDLK_LSHIFT) return@on
             holdingShift = true
         }
 
         on<GuiKeyUpEvent> { event ->
-            if (event.key == GLFW.GLFW_KEY_LEFT_CONTROL) {
+            if (event.key == SDLKeycode.SDLK_LCTRL) {
                 holdingCtrl = false
                 return@on
             }
-            if (event.key == GLFW.GLFW_KEY_LEFT_ALT) {
+            if (event.key == SDLKeycode.SDLK_LALT) {
                 holdingAlt = false
                 return@on
             }
 
-            if (event.key != GLFW.GLFW_KEY_LEFT_SHIFT) return@on
+            if (event.key != SDLKeycode.SDLK_LSHIFT) return@on
             holdingShift = false
         }
     }

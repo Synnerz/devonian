@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.api.events
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ScreenUtils
+import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext
 import net.minecraft.client.DeltaTracker
@@ -42,7 +43,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 
 @Target(AnnotationTarget.CLASS)
 annotation class Threaded
@@ -508,7 +509,7 @@ class KeyPressEvent(
     val underlying: KeyEvent,
 ) : Event {
     val key = underlying.key
-    val scancode = underlying.scancode
+    val scancode = underlying.shortcutKey()
 }
 
 class MousePressEvent(
@@ -525,7 +526,7 @@ class KeyReleaseEvent(
     val underlying: KeyEvent,
 ) : Event {
     val key = underlying.key
-    val scancode = underlying.scancode
+    val scancode = underlying.shortcutKey()
 }
 
 class MouseReleaseEvent(
@@ -583,7 +584,7 @@ class ContainerRenderEvent(
 ) : CancellableEvent() {
     val slot: Slot?
     val item: ItemStack?
-    val shift = GLFW.glfwGetKey(Devonian.minecraft.window.handle(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS
+    val shift = InputConstants.isKeyDown(SDLKeycode.SDLK_LSHIFT)
     init {
         val screen = Devonian.minecraft.gui.screen()
         slot = screen?.let { ScreenUtils.cursorSlot(it) }

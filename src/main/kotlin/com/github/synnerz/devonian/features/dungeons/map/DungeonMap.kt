@@ -21,8 +21,8 @@ import com.github.synnerz.devonian.utils.PersistentJson
 import com.github.synnerz.devonian.utils.math.MathUtils
 import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import com.github.synnerz.devonian.utils.render.states.TexturedQuadRenderState
-import com.mojang.blaze3d.textures.GpuSampler
-import com.mojang.blaze3d.textures.GpuTextureView
+import com.mojang.renderpearl.api.textures.GpuSampler
+import com.mojang.renderpearl.api.textures.GpuTextureView
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.client.gui.components.PlayerFaceExtractor.*
