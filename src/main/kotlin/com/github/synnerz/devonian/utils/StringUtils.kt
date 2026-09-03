@@ -286,10 +286,12 @@ object StringUtils {
         return "%.1f year${if (years >= 2.0) "s" else ""}".format(years)
     }
 
-    fun shortenNumber(num: Int): String {
-        if (num < 0) return '-' + shortenNumber(-num)
+    fun shortenNumber(num1: Number): String {
+        var num = num1.toDouble()
+
+        if (num < 0.0) return '-' + shortenNumber(-num)
         if (num < 1000) return num.toString()
-        var num = num / 1000.0
+        num /= 1000.0
         if (num < 10.0) return "%.2fK".format(num)
         if (num < 100.0) return "%.1fK".format(num)
         if (num < 1000.0) return "%.0fK".format(num)
