@@ -77,14 +77,14 @@ object LootLogger : Feature(
     data class ChestData(
         val name: String,
         val items: MutableList<ChestItem> = mutableListOf(),
-        var price: Int = 0,
+        var chestPrice: Int = 0,
         var requiresKey: Boolean = false,
         @Transient
         var purchased: Boolean = false,
         var hasRerolled: Boolean = false,
     ) {
-        fun totalProfit(ignoreEssence: Boolean = false): Int =
-            items.sumOf { it.price(ignoreEssence) } - price
+        fun totalProfit(ignoreEssence: Boolean = false): Double =
+            items.sumOf { it.price(ignoreEssence) } - chestPrice.toDouble()
     }
 
     override fun initialize() {
@@ -112,28 +112,31 @@ object LootLogger : Feature(
                 if (date2.isNullOrEmpty())
                     lootData.data!![date]?.get(floor)
                 else
-                    // TODO: add the middle dates leading up to date2
                     buildList {
                         val fromDate = date.split("/")
                         val fromMM = fromDate.getOrNull(0)?.toIntOrNull()
                         val fromDD = fromDate.getOrNull(1)?.toIntOrNull()
                         val fromYY = fromDate.getOrNull(2)?.toIntOrNull()
                         if (fromMM == null || fromDD == null || fromYY == null) {
-                            // TODO: change wording
-                            ChatUtils.sendMessage("&cProvided invalid from date to lootlogger", true)
+                            ChatUtils.sendMessage("&cLootLogger You did not provide a valid \"from\" date the correct order should be \"MM/DD/YY\"", true)
                             return@subcommand 0
                         }
                         val toDate = date2.split("/")
                         val toMM = toDate.getOrNull(0)?.toIntOrNull() ?: fromMM
                         val toDD = toDate.getOrNull(1)?.toIntOrNull() ?: (fromDD + 1)
                         val toYY = toDate.getOrNull(2)?.toIntOrNull() ?: fromYY
+
+                        var foundStartDay = false
                         for (year in fromYY..toYY) {
                             for (month in fromMM..toMM) {
-                                for (day in fromDD..toDD) {
-                                    println("checking(${"$month/$day/$year"})")
+                                for (day in 1..31) {
+                                    if (month == fromMM && day == fromDD) foundStartDay = true
+                                    if (!foundStartDay) continue
+
                                     lootData.data!!["$month/$day/$year"]?.get(floor)?.forEach {
                                         add(it)
                                     }
+                                    if (day == toDD && month == toMM) break
                                 }
                             }
                         }
@@ -144,9 +147,10 @@ object LootLogger : Feature(
             }
             if (mode == "COMPACTED") {
                 ChatUtils.sendMessage("&bLootLogger &a$floor&b stats" +
-                        " &b| &eSpent &6${StringUtils.shortenNumber(list.sumOf { it.price })}" +
+                        " &b| &eSpent &6${StringUtils.shortenNumber(list.sumOf { it.chestPrice })}" +
                         " &b| &eProfit &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit(true) })} &7(${StringUtils.shortenNumber(list.sumOf { it.totalProfit() })})",
                 true)
+                ChatUtils.sendMessage("&8NOTE: the profit section subtracts the chest price so it _should_ be pure profit")
                 return@subcommand 1
             }
             if (mode != "DETAILED") {
@@ -174,9 +178,10 @@ object LootLogger : Feature(
             chestCount.entries.sortedBy { it.value }.forEach { (name, amount) ->
                 ChatUtils.sendMessage("&8- ${chestNames[name]}&f: &6${StringUtils.addCommas(amount)}")
             }
-            ChatUtils.sendMessage("&eTotal Spent&f: &6${StringUtils.shortenNumber(list.sumOf { it.price })}")
+            ChatUtils.sendMessage("&eTotal Spent&f: &6${StringUtils.shortenNumber(list.sumOf { it.chestPrice })}")
             ChatUtils.sendMessage("&eProfit&f: &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit(true) })}")
             ChatUtils.sendMessage("&eTotal Profit&f: &6${StringUtils.shortenNumber(list.sumOf { it.totalProfit() })} &8(including essence)")
+            ChatUtils.sendMessage("&8NOTE: the profit section subtracts the chest price so it _should_ be pure profit")
             1
         }
             .word("mode")
@@ -282,7 +287,7 @@ object LootLogger : Feature(
             }
 
             chestData.requiresKey = requiresKey
-            chestData.price = price
+            chestData.chestPrice = price
             return
         }
 
@@ -297,8 +302,8 @@ object LootLogger : Feature(
         // what could go wrong
         if (slot !in 9..18) return
         if (
-            itemStack.item == Items.BLACK_STAINED_GLASS_PANE ||
-            itemStack.item == Items.GRAY_STAINED_GLASS_PANE ||
+            itemStack.item == Items.STAINED_GLASS_PANE.black ||
+            itemStack.item == Items.STAINED_GLASS_PANE.gray ||
             itemStack.isEmpty
         ) return
         val customName = itemStack.customName ?: return
