@@ -21,6 +21,12 @@ object AutoRequeueDungeons : Feature(
     Categories.DUNGEONS,
     subcategory = "QOL",
 ) {
+    private val SETTING_NO_SOLO = addSwitch(
+        "noSolo",
+        false,
+        "Stops the auto requeue from working whenever you are NOT in a party",
+        "No Solo Reque"
+    )
     private val catacombsFloors = listOf(
         "catacombs_floor_one",
         "catacombs_floor_two",
@@ -38,7 +44,7 @@ object AutoRequeueDungeons : Feature(
     private var currentParty: String? = null
 
     private fun requeue() {
-        if (!Party.isLeader && Party.inParty) return
+        if (!Party.isLeader && Party.inParty || !Party.inParty && SETTING_NO_SOLO.get()) return
         if (lastQueue > 0 && lastQueue != Party.members.size) {
             lastQueue = 0
             return
