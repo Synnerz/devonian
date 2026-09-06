@@ -88,7 +88,7 @@ object ChromaText {
         ResourceLoader.registerBuiltinPack(
             Identifier.fromNamespaceAndPath("devonian", "chroma_text_shader"),
             Devonian.container,
-            PackActivationType.DEFAULT_ENABLED,
+            PackActivationType.NORMAL,
         )
 
         EventBus.on<PostClientInitEvent> {
