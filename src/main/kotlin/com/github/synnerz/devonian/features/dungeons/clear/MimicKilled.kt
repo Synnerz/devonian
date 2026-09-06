@@ -2,9 +2,11 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 
 object MimicKilled : Feature(
     "mimicKilled",
@@ -14,6 +16,10 @@ object MimicKilled : Feature(
     subcategory = "QOL",
     searchTags = setOf("party"),
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Dungeons.floorState.map { it.floorNum == 6 || it.floorNum == 7 })
+    }
+
     private var messageSent = false
 
     override fun initialize() {
