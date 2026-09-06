@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.misc.inventory
 
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -54,7 +55,14 @@ object InventoryHistoryLog : TextHudFeature(
                     if (i == 8) return@forEachIndexed
                     if (v.isEmpty) return@forEachIndexed
 
-                    val name = v.customName?.colorCodes() ?: v.itemName.string
+                    val customName = v.customName ?: v.itemName
+                    val name =
+                        if (customName.string == "Enchanted Book")
+                            ItemUtils.lore(v, true)
+                                ?.getOrNull(2)
+                                ?: customName.colorCodes()
+                        else
+                            customName.colorCodes()
                     val count = v.count
                     newInv.merge(name.clearName(), count, Int::plus)
                     inventory?.merge(name.clearName(), -count, Int::plus)
