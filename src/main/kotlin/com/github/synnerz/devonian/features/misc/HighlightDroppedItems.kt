@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.events.PostExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.features.Feature
@@ -94,9 +95,17 @@ object HighlightDroppedItems : Feature("highlightDroppedItems") {
 
                 if (!SETTING_DISPLAY_NAME.get()) return@forEach
                 val item = ref.get() ?: return@forEach
-                val name = item.customName ?: return@forEach
+                val customName = item.customName ?: return@forEach
+                val name =
+                    if (customName.string == "Enchanted Book")
+                        ItemUtils.lore(item, true)
+                            ?.getOrNull(2)
+                            ?: customName.colorCodes()
+                    else
+                        customName.colorCodes()
+
                 Render3DImmediate.renderString(
-                    "&ax${item.count} &f${name.colorCodes()}".replaceCodes(),
+                    "&ax${item.count} &f$name".replaceCodes(),
                     x, y + 0.8, z,
                     phase = true,
                 )
