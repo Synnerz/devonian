@@ -412,6 +412,7 @@ object Devonian : ClientModInitializer {
             BatScoreKilled,
             SpiritLeapMessage,
             CommandWaypoints,
+            ProtectValuableItems,
 
             // Debug
             CopyItem,
