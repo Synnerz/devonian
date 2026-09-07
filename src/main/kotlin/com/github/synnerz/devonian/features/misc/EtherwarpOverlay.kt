@@ -1,14 +1,18 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.WorldUtils
+import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
+import com.github.synnerz.devonian.api.events.MousePressEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.mixin.accessor.LocalPlayerAccessor
 import com.github.synnerz.devonian.utils.BlockTypes
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
+import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.Items
@@ -87,10 +91,18 @@ object EtherwarpOverlay : Feature(
         "Uses your camera position/look rather than the servers position/look",
         "Ether Use Smooth Position",
     )
+    private val SETTING_DUNGEON_CORRECTION = addSwitch(
+        "dungeonCorrection",
+        false,
+        "Prevents clicks from going through if you are about to teleport" +
+                "onto the roof of a dungeon room §4Use At Your Own Risk",
+        "Dungeon Correction"
+    )
 
     private val validWeapons = mutableListOf("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT")
     var failReason = ""
     private var dist = 0
+    private var res: BlockPos? = null
 
     override fun initialize() {
         on<TickEvent> {
@@ -120,13 +132,34 @@ object EtherwarpOverlay : Feature(
 
             dist = 57 + tuners
         }
+
+        on<MousePressEvent> { event ->
+            if (event.button != 1 || res == null) return@on
+            val currentRoom = DungeonScanner.currentRoom ?: return@on
+            if (res!!.y != currentRoom.height) return@on
+
+            event.cancel()
+            ChatUtils.sendMessage("&cCancelled Etherwarp to the roof of the room", true)
+        }.setEnabled(SETTING_DUNGEON_CORRECTION.state.zip(Dungeons.started, Boolean::and))
+
         on<RenderWorldEvent> { event ->
             failReason = ""
 
-            if (dist == 0) return@on
+            if (dist == 0) {
+                res = null
+                return@on
+            }
 
-            val player = minecraft.player ?: return@on
-            val world = minecraft.level ?: return@on
+            val player = minecraft.player
+            if (player == null) {
+                res = null
+                return@on
+            }
+            val world = minecraft.level
+            if (world == null) {
+                res = null
+                return@on
+            }
 
             if (!SETTING_ETHER_USING_CANCEL_INTERACT.get()) {
                 val target = minecraft.hitResult
@@ -179,7 +212,11 @@ object EtherwarpOverlay : Feature(
                     lookVec.y * maxDist,
                     lookVec.z * maxDist,
                     false,
-                ) ?: return@on
+                )
+                if (hitResult == null) {
+                    res = hitResult
+                    return@on
+                }
             } else {
                 val bpFoot = if (isFenceLike) hitResult.above(2) else hitResult.above(1)
                 val bpHead = if (isFenceLike) hitResult.above(3) else hitResult.above(2)
@@ -205,7 +242,12 @@ object EtherwarpOverlay : Feature(
             }
 
             val camera = minecraft.gameRenderer.mainCamera()
-            val camEntity = camera.entity() ?: return@on
+            val camEntity = camera.entity()
+            if (camEntity == null) {
+                res = hitResult
+                return@on
+            }
+            res = hitResult
 
             val outlineShape =
                 if (SETTING_ALWAYS_FULL.get()) Shapes.block()
