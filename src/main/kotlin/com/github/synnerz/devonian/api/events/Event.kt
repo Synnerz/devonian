@@ -517,7 +517,7 @@ class MousePressEvent(
     val x: Double,
     val y: Double,
     val underlying: MouseButtonInfo,
-) : Event {
+) : CancellableEvent() {
     val button = underlying.button
     val modifiers = underlying.modifiers
     val mcEvent = MouseButtonEvent(x, y, underlying)
