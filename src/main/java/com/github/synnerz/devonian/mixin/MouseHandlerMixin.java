@@ -119,23 +119,22 @@ public abstract class MouseHandlerMixin implements MouseHandlerAccessor {
 
     @WrapMethod(method = "onButton")
     private void devonian$onButton(long l, MouseButtonInfo mouseButtonInfo, int i, Operation<Void> original) {
-        original.call(l, mouseButtonInfo, i);
-
         Window w = minecraft.getWindow();
         if (l != w.handle()) return;
-        if (minecraft.gui.screen() != null || minecraft.level == null) return;
+        if (minecraft.gui.screen() != null || minecraft.level == null) {
+            original.call(l, mouseButtonInfo, i);
+            return;
+        }
 
         double x = getScaledXPos(w);
         double y = getScaledYPos(w);
-        switch (i) {
-            case 0:
-                new MouseReleaseEvent(x, y, mouseButtonInfo).post();
-                break;
-
-            case 1:
-                new MousePressEvent(x, y, mouseButtonInfo).post();
-                break;
-        }
+        boolean cancelled = switch (i) {
+            case 0 -> new MouseReleaseEvent(x, y, mouseButtonInfo).post();
+            case 1 -> new MousePressEvent(x, y, mouseButtonInfo).post();
+            default -> false;
+        };
+        if (cancelled) return;
+        original.call(l, mouseButtonInfo, i);
     }
 
     @Inject(
