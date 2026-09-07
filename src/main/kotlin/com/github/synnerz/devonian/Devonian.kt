@@ -413,6 +413,7 @@ object Devonian : ClientModInitializer {
             SpiritLeapMessage,
             CommandWaypoints,
             ProtectValuableItems,
+            BookCombineHelper,
 
             // Debug
             CopyItem,
