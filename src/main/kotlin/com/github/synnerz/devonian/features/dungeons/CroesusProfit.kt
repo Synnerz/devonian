@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.SkyblockPrices
+import com.github.synnerz.devonian.api.dungeon.CroesusListener
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -165,7 +166,13 @@ object CroesusProfit : TextHudFeature(
                     val cleanName = name.replace(" ", "_").uppercase()
                     var price = SkyblockPrices.buyPrice("ENCHANTMENT_${cleanName}_$tier").roundToInt()
                     if (price == 0)
-                        price = SkyblockPrices.buyPrice("ENCHANTMENT_ULTIMATE_${cleanName}_$tier").roundToInt()
+                        price =
+                            if (CroesusListener.inBlacklist("ENCHANTMENT_ULTIMATE_${cleanName}_$tier"))
+                                -1
+                            else
+                                SkyblockPrices.buyPrice("ENCHANTMENT_ULTIMATE_${cleanName}_$tier").roundToInt()
+                    else if (CroesusListener.inBlacklist("ENCHANTMENT_${cleanName}_$tier"))
+                        price = -1
 
                     data.items.add(ChestItemData(formatLore[jdx], price))
                     continue
@@ -175,7 +182,11 @@ object CroesusProfit : TextHudFeature(
                 if (essenceMatch != null) {
                     val type = essenceMatch[0].uppercase()
                     val amount = essenceMatch[1].toIntOrNull() ?: continue
-                    val price = (SkyblockPrices.buyPrice("ESSENCE_$type") * amount).roundToInt()
+                    val price =
+                        if (CroesusListener.inBlacklist("ESSENCE_$type"))
+                            -1
+                        else
+                            (SkyblockPrices.buyPrice("ESSENCE_$type") * amount).roundToInt()
 
                     data.items.add(ChestItemData(formatLore[jdx], price, true))
                     continue
@@ -190,7 +201,11 @@ object CroesusProfit : TextHudFeature(
                 if (itemId.endsWith("SHARD")) itemId = "SHARD_${itemId.replace("_SHARD", "")}"
                 if (itemId in specialIds) itemId = specialIds[itemId]!!
 
-                val price = SkyblockPrices.buyPrice(itemId).roundToInt()
+                val price =
+                    if (CroesusListener.inBlacklist(itemId))
+                        -1
+                    else
+                        SkyblockPrices.buyPrice(itemId).roundToInt()
 
                 // TODO: probably make this a toggle
                 if (price == 0) {
