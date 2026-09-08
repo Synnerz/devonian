@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api.dungeon
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
@@ -10,7 +11,12 @@ import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
 import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
+import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.utils.PersistentJsonClass
 import com.github.synnerz.devonian.utils.StringUtils
+import com.google.gson.reflect.TypeToken
+import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.Style
 import net.minecraft.world.item.Items
 import kotlin.math.roundToInt
 
@@ -46,6 +52,15 @@ object CroesusListener {
     private var currentChest: String? = null
     private var inCroesus = false
     private var croesusPage: Int = 0
+    private val lastChestItems = mutableSetOf<String>()
+    val blacklistedItems = object : PersistentJsonClass<MutableSet<String>>(
+        "devonian/croesusblacklist.json",
+        object : TypeToken<MutableSet<String>>() {}
+    ) {
+        override fun onLoadDefault() {
+            data = mutableSetOf()
+        }
+    }
 
     data class ChestItem(
         val itemId: String,
@@ -94,6 +109,35 @@ object CroesusListener {
     class ClosedChest : Event
 
     fun initialize() {
+        blacklistedItems.load()
+
+        DevonianCommand.command.subcommand("croesusblacklist", true) { _, args ->
+            if (args.isEmpty()) {
+                ChatUtils.sendMessage("&bLast viewed croesus chest", true)
+                lastChestItems.forEach {
+                    val inList = blacklistedItems.data!!.contains(it)
+                    ChatUtils.sendMessage(ChatUtils.literal(
+                        "&8- ${if (inList) "&c" else "&e"}$it"
+                    ).setStyle(
+                        Style.EMPTY.withClickEvent(ClickEvent.RunCommand("devonian croesusblacklist $it"))
+                    ))
+                }
+                ChatUtils.sendMessage("&7Click an item name to blacklist add/remove it")
+                return@subcommand 1
+            }
+            val itemId = args.firstOrNull() as? String? ?: return@subcommand 0
+            val added = blacklistedItems.data!!.contains(itemId)
+            val msg = if (!added) "&aAdded" else "&cRemove"
+
+            if (!added)
+                blacklistedItems.data!!.add(itemId)
+            else
+                blacklistedItems.data!!.remove(itemId)
+            ChatUtils.sendMessage("&bCroesusBlacklist $msg &6$itemId", true)
+            1
+        }
+            .word("ItemId")
+
         EventBus.on<ServerContainerOpenEvent> { event ->
             val croesus = croesusTitleRegex.matches(event.titleStr)
             /* possibly reset croesus data? */
@@ -144,7 +188,10 @@ object CroesusListener {
 
         EventBus.on<ServerContainerSetSlotEvent> { event ->
             if (inCroesus) onCroesus(event)
-            else if (inChest && currentChest != null) onCroesusChest(event)
+            else if (inChest && currentChest != null) {
+                if (event.slot < 8) lastChestItems.clear()
+                onCroesusChest(event)
+            }
         }.setEnabled(Location.stateInArea("dungeon hub"))
     }
 
@@ -274,7 +321,11 @@ object CroesusListener {
             if (itemId.endsWith("SHARD")) itemId = "SHARD_${itemId.replace("_SHARD", "")}"
             if (itemId in specialIds) itemId = specialIds[itemId]!!
 
-            val price = SkyblockPrices.buyPrice(itemId).roundToInt()
+            val price =
+                if (inBlacklist(itemId))
+                    -1
+                else
+                    SkyblockPrices.buyPrice(itemId).roundToInt()
 
             if (price == 0) {
                 println("Devonian\$CroesusListener[status=Item Not Found, name=\"$itemId\", line=\"$line\"]")
@@ -285,8 +336,12 @@ object CroesusListener {
         }
 
         Scheduler.scheduleTask {
+//            lastChestItems.clear()
+            lastChestItems.addAll(items.map { it.itemId })
             data.items.addAll(items)
             ItemChestSet(data).post()
         }
     }
+
+    fun inBlacklist(itemId: String): Boolean = blacklistedItems.data!!.contains(itemId)
 }
