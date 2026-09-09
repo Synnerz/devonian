@@ -1,11 +1,11 @@
 package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.talium.components.UITextInput
-import kotlinx.atomicfu.atomic
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import org.lwjgl.glfw.GLFW
@@ -44,7 +44,13 @@ object Searchbar : HudFeature(
         }
         onResize { _, _ -> onResize() }
     }
-    private val highlightItems = atomic(intArrayOf())
+    private val highlightItems = mutableListOf<MatchType>()
+
+    enum class MatchType {
+        NAME,
+        LORE,
+        NONE,
+    }
 
     override fun onMouseDrag(dx: Double, dy: Double) {
         super.onMouseDrag(dx, dy)
@@ -93,11 +99,11 @@ object Searchbar : HudFeature(
         }
 
         on<ClientContainerCloseEvent> {
-            highlightItems.value = intArrayOf()
+            highlightItems.clear()
         }
 
         on<ServerContainerCloseEvent> {
-            highlightItems.value = intArrayOf()
+            Scheduler.scheduleTask { highlightItems.clear() }
         }
 
         on<GuiKeyDownEvent> { event ->
@@ -121,9 +127,9 @@ object Searchbar : HudFeature(
 
         on<RenderSlotEvent> { event ->
             val slot = event.slot
-            val data = highlightItems.value.getOrNull(slot.index) ?: return@on
-            if (data == 0) return@on
-            val color = if (data == 1) SETTING_LORE_MATCH_COLOR.get() else SETTING_NAME_MATCH_COLOR.get()
+            val data = highlightItems.getOrNull(slot.index) ?: return@on
+            if (data == MatchType.NONE) return@on
+            val color = if (data == MatchType.LORE) SETTING_LORE_MATCH_COLOR.get() else SETTING_NAME_MATCH_COLOR.get()
 
             event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color)
         }.prio = 30
@@ -152,14 +158,15 @@ object Searchbar : HudFeature(
         val text = input.text
 
         val arr = items.map { item ->
-            if (text.isEmpty()) return@map 0
-            if (item.isEmpty) return@map 0
+            if (text.isEmpty()) return@map MatchType.NONE
+            if (item.isEmpty) return@map MatchType.NONE
 
-            if (item.customName?.string?.contains(text, ignoreCase = true) == true) 2
-                else if (ItemUtils.lore(item)?.any { it.contains(text, ignoreCase = true) } == true) 1
-                else 0
+            if (item.customName?.string?.contains(text, ignoreCase = true) == true) MatchType.NAME
+                else if (ItemUtils.lore(item)?.any { it.contains(text, ignoreCase = true) } == true) MatchType.LORE
+                else MatchType.NONE
         }
 
-        highlightItems.value = arr.toIntArray()
+        highlightItems.clear()
+        highlightItems.addAll(arr)
     }
 }
