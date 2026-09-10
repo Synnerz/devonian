@@ -2,9 +2,11 @@ package com.github.synnerz.devonian.features.misc.inventory
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.utils.BoundingBox
+import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.talium.components.UITextInput
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
@@ -49,6 +51,14 @@ object Searchbar : HudFeature(
     enum class MatchType {
         NAME,
         LORE,
+        NONE,
+    }
+    enum class InputType {
+        FULL,
+        AND,
+        OR,
+        GREATER_THAN,
+        LESSER_THAN,
         NONE,
     }
 
@@ -151,15 +161,82 @@ object Searchbar : HudFeature(
     }
 
     private fun onKeyType() {
-        // TODO: add multi-search support
         val screen = minecraft.gui.screen() ?: return
         val container = screen as? AbstractContainerScreen<*> ?: return
         val items = container.menu.items
         val text = input.text
+        // TODO: improve mutli search
+        val ( matchInput, matchType ) = when {
+            text.contains("||") -> text.split("||") to InputType.OR
+            text.contains("&&") -> text.split("&&") to InputType.AND
+            text.contains(">") -> listOf(text.split(">")[1].replace(",", "")) to InputType.GREATER_THAN
+            text.contains("<") -> listOf(text.split("<")[1].replace(",", "")) to InputType.LESSER_THAN
+            text.isNotEmpty() -> listOf(text) to InputType.FULL
+            else -> listOf<String>() to InputType.NONE
+        }
+        if (matchType == InputType.NONE) {
+            highlightItems.clear()
+            return
+        }
 
         val arr = items.map { item ->
             if (text.isEmpty()) return@map MatchType.NONE
             if (item.isEmpty) return@map MatchType.NONE
+            val itemName = item.customName?.string
+            val itemLore = ItemUtils.lore(item)
+
+            if (matchType != InputType.FULL) {
+                return@map when (matchType) {
+                    InputType.OR -> {
+                        if (matchInput.any { itemName?.contains(it.trim(), ignoreCase = true) == true })
+                            MatchType.NAME
+                        else if (matchInput.any { p -> itemLore?.any { it.trim().contains(p, ignoreCase = true) } == true })
+                            MatchType.LORE
+                        else
+                            MatchType.NONE
+                    }
+                    InputType.AND -> {
+                        if (matchInput.all { itemName?.contains(it.trim(), ignoreCase = true) == true })
+                            MatchType.NAME
+                        else if (matchInput.all { p -> itemLore?.any { it.contains(p.trim(), ignoreCase = true) } == true })
+                            MatchType.LORE
+                        else
+                            MatchType.NONE
+                    }
+                    InputType.GREATER_THAN -> {
+                        val sbId = ItemUtils.skyblockId(item)
+                        val itemPrice = sbId?.let { SkyblockPrices.buyPrice(it) } ?: -1f
+                        val inpt = matchInput.first()
+                        val regex = "\\d+[kbm]+".toRegex()
+                        val parsedInput =
+                            if (inpt.lowercase().matches(regex))
+                                StringUtils.parseShortenedNumber(inpt.uppercase())
+                            else
+                                inpt.toIntOrNull() ?: -1
+
+                        if (itemPrice != -1f && parsedInput != -1 && itemPrice >= parsedInput)
+                            MatchType.NAME
+                        else
+                            MatchType.NONE
+                    }
+                    InputType.LESSER_THAN -> {
+                        val sbId = ItemUtils.skyblockId(item)
+                        val itemPrice = sbId?.let { SkyblockPrices.buyPrice(it) } ?: -1f
+                        val inpt = matchInput.first()
+                        val regex = "\\d+[kbm]+".toRegex()
+                        val parsedInput =
+                            if (inpt.lowercase().matches(regex))
+                                StringUtils.parseShortenedNumber(inpt.uppercase())
+                            else
+                                inpt.toIntOrNull() ?: -1
+
+                        if (itemPrice != -1f && parsedInput != -1 && itemPrice <= parsedInput)
+                            MatchType.NAME
+                        else
+                            MatchType.NONE
+                    }
+                }
+            }
 
             if (item.customName?.string?.contains(text, ignoreCase = true) == true) MatchType.NAME
                 else if (ItemUtils.lore(item)?.any { it.contains(text, ignoreCase = true) } == true) MatchType.LORE
