@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -14,10 +15,17 @@ object SafariUniqueTracker : TextHudFeature(
     subcategory = "General",
     area = "safari",
 ) {
+    private val SETTING_SEND_BIOME_DONE_MSG = addSwitch(
+        "biomeDoneMsg",
+        true,
+        "Sends a message in party chat whenever a biome is fully done",
+        "Biome Done Message"
+    )
     private val captureRegex = "^CAPTURE! You caught a ([\\w ]+) and gained a? ?(?:\\d+x )?([\\w ]+) Shard!$".toRegex()
     private val teamCaptureRegex = "^LOOT SHARE! You received a?n? ?(?:\\d+x )?([\\w ]+) Shard from (\\w{1,16}) (?:catching|finding) (?:an?|the) ([\\w ]+)!$".toRegex()
     private val teamCount = mutableMapOf<String, PlayerData>()
     private var captures = PlayerData(BiomeType.NONE)
+    private var messageSent = false
 
     enum class BiomeType(val biomeName: String, val biomeFormat: String, val mobTypes: Set<String>) {
         CAVERN(
@@ -123,14 +131,22 @@ object SafariUniqueTracker : TextHudFeature(
             if (captures.biome == BiomeType.NONE) return@on
             val biome = captures.biome
             val missing = biome.mobTypes - captures.captures
+            if (SETTING_SEND_BIOME_DONE_MSG.get() && !messageSent && missing.isEmpty()) {
+                ChatUtils.command("pc ${biome.biomeName} done")
+                messageSent = true
+            }
 
             setLines(buildList {
-                add("&e[${biome.biomeFormat}&e] &c${captures.captures.size}&f/&6${biome.mobTypes.size}")
-                missing.forEach { add("&7- &c$it") }
-                add("")
+                add("&e[${biome.biomeFormat}&e] &${if (missing.isEmpty()) "&a" else "&c"}${captures.captures.size}&f/&a${biome.mobTypes.size}")
+
+                if (missing.isNotEmpty()) {
+                    missing.forEach { add("&7- &c$it") }
+                    add("")
+                }
+
                 teamCount.forEach { (playerName, data) ->
                     val missing = data.biome.mobTypes - data.captures
-                    add("&a$playerName &e[${data.biome.biomeFormat}&e]&f: &c${data.captures.size}&f/&6${data.biome.mobTypes.size}")
+                    add("&b$playerName &e[${data.biome.biomeFormat}&e]&f: &${if (missing.isEmpty()) "&a" else "&c"}${data.captures.size}&f/&a${data.biome.mobTypes.size}")
                     if (missing.size > 3) return@forEach
 
                     missing.forEach { ms -> add("&7- &c$ms") }
@@ -148,12 +164,13 @@ object SafariUniqueTracker : TextHudFeature(
         "&7- &cCavernfish",
         "&7- &cFlitter",
         "",
-        "&a${minecraft.player?.name?.string ?: ""} &e[&2Forest&e]&f: &c2&f/&69",
+        "&b${minecraft.player?.name?.string ?: ""} &e[&2Forest&e]&f: &c2&f/&69",
     )
 
     override fun onWorldChange(event: WorldChangeEvent) {
         teamCount.clear()
         captures = PlayerData(BiomeType.NONE)
+        messageSent = false
         clearLines()
     }
 }
