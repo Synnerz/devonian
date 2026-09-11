@@ -67,8 +67,8 @@ object SafariUniqueTracker : TextHudFeature(
             )
         ),
         ICY(
-            "forest",
-            "&2Icy",
+            "icy",
+            "&9Icy",
             setOf(
                 "Strongarm",
                 "Tepid",
@@ -120,16 +120,16 @@ object SafariUniqueTracker : TextHudFeature(
         on<ClientThreadServerTickEvent> {
             if (captures.biome == BiomeType.NONE) return@on
             val biome = captures.biome
-            val missing = captures.captures - biome.mobTypes
+            val missing = biome.mobTypes - captures.captures
 
             setLines(buildList {
                 add("&e[${biome.biomeFormat}&e]")
                 missing.forEach { add("&7- &c$it") }
-                add("&c${missing.size}&f/&6${biome.mobTypes.size}")
+                add("&c${captures.captures.size}&f/&6${biome.mobTypes.size}")
                 add("")
                 teamCount.forEach { (playerName, data) ->
-                    val missing = data.captures - data.biome.mobTypes
-                    add("&a$playerName &e[${data.biome.biomeFormat}&e]&f: &c${missing.size}&f/&6${data.biome.mobTypes.size}")
+                    val missing = data.biome.mobTypes - data.captures
+                    add("&a$playerName &e[${data.biome.biomeFormat}&e]&f: &c${data.captures.size}&f/&6${data.biome.mobTypes.size}")
                     if (missing.size > 3) return@forEach
 
                     missing.forEach { ms -> add("&7- &c$ms") }
