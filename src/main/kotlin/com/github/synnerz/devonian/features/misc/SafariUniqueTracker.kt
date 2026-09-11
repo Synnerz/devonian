@@ -15,7 +15,7 @@ object SafariUniqueTracker : TextHudFeature(
     area = "safari",
 ) {
     private val captureRegex = "^CAPTURE! You caught a ([\\w ]+) and gained a? ?(?:\\d+x )?([\\w ]+) Shard!$".toRegex()
-    private val teamCaptureRegex = "^LOOT SHARE! You received a? ?(?:\\d+x )?([\\w ]+) Shard from (\\w{1,16}) catching a ([\\w ]+)!$".toRegex()
+    private val teamCaptureRegex = "^LOOT SHARE! You received a?n? ?(?:\\d+x )?([\\w ]+) Shard from (\\w{1,16}) (?:catching|finding) (?:an?|the) ([\\w ]+)!$".toRegex()
     private val teamCount = mutableMapOf<String, PlayerData>()
     private var captures = PlayerData(BiomeType.NONE)
 
