@@ -123,9 +123,8 @@ object SafariUniqueTracker : TextHudFeature(
             val missing = biome.mobTypes - captures.captures
 
             setLines(buildList {
-                add("&e[${biome.biomeFormat}&e]")
+                add("&e[${biome.biomeFormat}&e] &c${captures.captures.size}&f/&6${biome.mobTypes.size}")
                 missing.forEach { add("&7- &c$it") }
-                add("&c${captures.captures.size}&f/&6${biome.mobTypes.size}")
                 add("")
                 teamCount.forEach { (playerName, data) ->
                     val missing = data.biome.mobTypes - data.captures
@@ -143,10 +142,9 @@ object SafariUniqueTracker : TextHudFeature(
     }
 
     override fun getEditText(): List<String> = listOf(
-        "&e[&6Cavern&e]",
+        "&e[&6Cavern&e] &c2&f/&69",
         "&7- &cCavernfish",
         "&7- &cFlitter",
-        "&c2&f/&69",
         "",
         "&a${minecraft.player?.name?.string ?: ""} &e[&2Forest&e]&f: &c2&f/&69",
     )
