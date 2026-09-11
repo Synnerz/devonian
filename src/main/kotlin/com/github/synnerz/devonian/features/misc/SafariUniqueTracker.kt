@@ -137,7 +137,7 @@ object SafariUniqueTracker : TextHudFeature(
             }
 
             setLines(buildList {
-                add("&e[${biome.biomeFormat}&e] &${if (missing.isEmpty()) "&a" else "&c"}${captures.captures.size}&f/&a${biome.mobTypes.size}")
+                add("&e[${biome.biomeFormat}&e] ${if (missing.isEmpty()) "&a" else "&c"}${captures.captures.size}&f/&a${biome.mobTypes.size}")
 
                 if (missing.isNotEmpty()) {
                     missing.forEach { add("&7- &c$it") }
@@ -146,7 +146,7 @@ object SafariUniqueTracker : TextHudFeature(
 
                 teamCount.forEach { (playerName, data) ->
                     val missing = data.biome.mobTypes - data.captures
-                    add("&b$playerName &e[${data.biome.biomeFormat}&e]&f: &${if (missing.isEmpty()) "&a" else "&c"}${data.captures.size}&f/&a${data.biome.mobTypes.size}")
+                    add("&b$playerName &e[${data.biome.biomeFormat}&e]&f: ${if (missing.isEmpty()) "&a" else "&c"}${data.captures.size}&f/&a${data.biome.mobTypes.size}")
                     if (missing.size > 3) return@forEach
 
                     missing.forEach { ms -> add("&7- &c$ms") }
