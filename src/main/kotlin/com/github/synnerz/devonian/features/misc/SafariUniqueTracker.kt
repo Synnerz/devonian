@@ -21,9 +21,16 @@ object SafariUniqueTracker : TextHudFeature(
         "Sends a message in party chat whenever a biome is fully done",
         "Biome Done Message"
     )
+    private val SETTING_SEND_EACH_BIOME_MSG = addSwitch(
+        "biomePerDoneMsg",
+        false,
+        "Sends a message in party chat for each other biome that is fully done",
+        "Per Biome Done Message"
+    )
     private val captureRegex = "^CAPTURE! You caught a ([\\w ]+) and gained a? ?(?:\\d+x )?([\\w ]+) Shard!$".toRegex()
     private val teamCaptureRegex = "^LOOT SHARE! You received a?n? ?(?:\\d+x )?([\\w ]+) Shard from (\\w{1,16}) (?:catching|finding) (?:an?|the) ([\\w ]+)!$".toRegex()
     private val teamCount = mutableMapOf<String, PlayerData>()
+    private val biomesDone = mutableSetOf<BiomeType>()
     private var captures = PlayerData(BiomeType.NONE)
     private var messageSent = false
 
@@ -134,6 +141,8 @@ object SafariUniqueTracker : TextHudFeature(
             if (SETTING_SEND_BIOME_DONE_MSG.get() && !messageSent && missing.isEmpty()) {
                 ChatUtils.command("pc ${biome.biomeName} done")
                 messageSent = true
+                if (SETTING_SEND_EACH_BIOME_MSG.get())
+                    biomesDone.add(biome)
             }
 
             setLines(buildList {
@@ -146,6 +155,10 @@ object SafariUniqueTracker : TextHudFeature(
 
                 teamCount.forEach { (playerName, data) ->
                     val missing = data.biome.mobTypes - data.captures
+                    if (missing.isEmpty() && SETTING_SEND_EACH_BIOME_MSG.get() && !biomesDone.contains(data.biome)) {
+                        biomesDone.add(data.biome)
+                        ChatUtils.command("pc ${data.biome.biomeName} done")
+                    }
                     add("&b$playerName &e[${data.biome.biomeFormat}&e]&f: ${if (missing.isEmpty()) "&a" else "&c"}${data.captures.size}&f/&a${data.biome.mobTypes.size}")
                     if (missing.size > 3) return@forEach
 
@@ -171,6 +184,7 @@ object SafariUniqueTracker : TextHudFeature(
         teamCount.clear()
         captures = PlayerData(BiomeType.NONE)
         messageSent = false
+        biomesDone.clear()
         clearLines()
     }
 }
