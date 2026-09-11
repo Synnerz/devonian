@@ -154,5 +154,6 @@ object SafariUniqueTracker : TextHudFeature(
     override fun onWorldChange(event: WorldChangeEvent) {
         teamCount.clear()
         captures = PlayerData(BiomeType.NONE)
+        clearLines()
     }
 }
