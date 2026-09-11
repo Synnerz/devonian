@@ -106,6 +106,7 @@ object SafariUniqueTracker : TextHudFeature(
                 val mobType = it.getOrNull(0) ?: return@on
                 val playerName = it.getOrNull(1) ?: return@on
                 val biome = BiomeType.fromMobType(mobType) ?: return@on
+                if (teamCount.any { it.value.captures.contains(mobType) }) return@on
 
                 teamCount.getOrPut(playerName) { PlayerData(biome) }.add(mobType)
             }
@@ -113,6 +114,7 @@ object SafariUniqueTracker : TextHudFeature(
             val biome = BiomeType.fromMobType(mobType) ?: return@on
             if (captures.biome == BiomeType.NONE)
                 captures.biome = biome
+            if (teamCount.any { it.value.captures.contains(mobType) }) return@on
 
             captures.add(mobType)
         }
