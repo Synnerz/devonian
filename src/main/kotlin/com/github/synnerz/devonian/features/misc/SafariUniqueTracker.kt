@@ -127,6 +127,13 @@ object SafariUniqueTracker : TextHudFeature(
             }
             val ( mobType, shardType ) = event.matches(captureRegex) ?: return@on
             val biome = BiomeType.fromMobType(mobType) ?: return@on
+            if (biome != captures.biome) {
+                if (teamCount.any { it.value.captures.contains(mobType) }) return@on
+                println("SafariTracker wrong biome?")
+                // attempt to give it away to the rightful owner
+                teamCount.entries.find { it.value.biome == biome }?.value?.add(mobType)
+                return@on
+            }
             if (captures.biome == BiomeType.NONE)
                 captures.biome = biome
             if (teamCount.any { it.value.captures.contains(mobType) }) return@on
