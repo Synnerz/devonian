@@ -27,7 +27,7 @@ object SafariUniqueTracker : TextHudFeature(
         "Sends a message in party chat for each other biome that is fully done",
         "Per Biome Done Message"
     )
-    private val captureRegex = "^CAPTURE! You (?:caught|found) (?:a|the) ([\\w ]+),? and (?:as a reward|gained)? a? ?(?:it gave you a )?(?:\\d+x )?([\\w ]+) Shard!$".toRegex()
+    private val captureRegex = "^CAPTURE! You (?:caught|found) (?:an?|the) ([\\w ]+),? and (?:as a reward|gained)? a?n? ?(?:it gave you a )?(?:\\d+x )?([\\w ]+) Shard!$".toRegex()
     private val teamCaptureRegex = "^LOOT SHARE! You received a?n? ?(?:\\d+x )?([\\w ]+) Shard from (\\w{1,16}) (?:catching|finding) (?:an?|the) ([\\w ]+)!$".toRegex()
     private val teamCount = mutableMapOf<String, PlayerData>()
     private val biomesDone = mutableSetOf<BiomeType>()
