@@ -17,7 +17,7 @@ object HideHypeHearts : Feature(
             if (packet.particle.type != ParticleTypes.HEART) return@on
             if (packet.count != 3) return@on
             if (!packet.alwaysShow()) return@on
-            if (!packet.isOverrideLimiter) return@on
+            if (!packet.overrideLimiter) return@on
 
             event.cancel()
         }

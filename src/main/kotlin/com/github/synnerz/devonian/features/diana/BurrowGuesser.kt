@@ -267,7 +267,7 @@ object BurrowGuesser : Feature(
                 packet !is ClientboundLevelParticlesPacket ||
                 packet.particle.type != ParticleTypes.DRIPPING_LAVA ||
                 packet.count != 2 ||
-                packet.maxSpeed != -0.5f ||
+                packet.xMaxSpeed != -0.5f ||
                 !packet.alwaysShow() ||
                 packet.xDist != 0f ||
                 packet.yDist != 0f ||

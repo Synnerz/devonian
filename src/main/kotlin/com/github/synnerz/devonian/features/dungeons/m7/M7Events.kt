@@ -21,9 +21,9 @@ object M7Events {
             if (packet.xDist != 2f) return@on
             if (packet.yDist != 3f) return@on
             if (packet.zDist != 2f) return@on
-            if (packet.maxSpeed != 0f) return@on
+            if (packet.xMaxSpeed != 0f) return@on
             if (!packet.alwaysShow()) return@on
-            if (!packet.isOverrideLimiter) return@on
+            if (!packet.overrideLimiter) return@on
 
             val x = packet.x.toInt()
             val y = packet.y.toInt()

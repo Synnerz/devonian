@@ -93,9 +93,9 @@ object CustomMageBeam : Feature(
                 packet.xDist != 0f ||
                 packet.yDist != 0f ||
                 packet.zDist != 0f ||
-                !packet.isOverrideLimiter ||
+                !packet.overrideLimiter ||
                 !packet.alwaysShow() ||
-                packet.maxSpeed != 0f
+                packet.xMaxSpeed != 0f
             ) return@on
 
             beamParticles.getOrPut(currId) { ArrayDeque() }.add(packet)

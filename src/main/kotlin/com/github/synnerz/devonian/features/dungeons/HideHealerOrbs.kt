@@ -109,7 +109,7 @@ object HideHealerOrbs : Feature(
             if (packet.particle.type != ParticleTypes.DUST) return@on
 
             if (packet.count != 0) return@on
-            if (!packet.isOverrideLimiter) return@on
+            if (!packet.overrideLimiter) return@on
             if (!packet.alwaysShow()) return@on
 
             var l = addQueue.size

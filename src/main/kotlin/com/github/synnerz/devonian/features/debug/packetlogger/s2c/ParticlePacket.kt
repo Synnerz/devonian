@@ -71,8 +71,10 @@ object ParticlePacket : ISerializer<ClientboundLevelParticlesPacket> {
         obj.set("xDist", packet.xDist)
         obj.set("yDist", packet.yDist)
         obj.set("zDist", packet.zDist)
-        obj.set("maxSpeed", packet.maxSpeed)
-        obj.set("bypassLimit", packet.isOverrideLimiter)
+        obj.set("xMaxSpeed", packet.xMaxSpeed)
+        obj.set("yMaxSpeed", packet.yMaxSpeed)
+        obj.set("zMaxSpeed", packet.zMaxSpeed)
+        obj.set("bypassLimit", packet.overrideLimiter)
         obj.set("alwaysShow", packet.alwaysShow())
     }
 }

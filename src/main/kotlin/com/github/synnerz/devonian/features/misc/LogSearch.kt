@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.talium.components.*
+import com.mojang.blaze3d.Blaze3D
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
@@ -144,7 +145,7 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
                     ).also { txt ->
                         if (path == null) return@also
                         txt.onMouseClick {
-                            Util.getPlatform().openFile(path)
+                            Blaze3D.openPath(path.toPath())
                         }
                     }
                 )

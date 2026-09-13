@@ -216,12 +216,12 @@ object Deployables : TextHudFeature(
             if (SETTING_PARTICLES.getCurrent() == "Default") return@on
 
             if (!packet.alwaysShow()) return@on
-            if (!packet.isOverrideLimiter) return@on
+            if (!packet.overrideLimiter) return@on
 
             when (packet.particle.type) {
                 ParticleTypes.HAPPY_VILLAGER ->
                     if (
-                        packet.maxSpeed == 0f &&
+                        packet.xMaxSpeed == 0f &&
                         when (packet.count) {
                             1 ->
                                 packet.xDist == 0f &&
@@ -245,7 +245,7 @@ object Deployables : TextHudFeature(
 
                 ParticleTypes.DUST -> {
                     if (packet.count != 0) return@on
-                    if (packet.maxSpeed != 1f) return@on
+                    if (packet.xMaxSpeed != 1f) return@on
 
                     val options = packet.particle as? DustParticleOptions ?: return@on
                     if (options.scale != 1f) return@on
@@ -258,7 +258,7 @@ object Deployables : TextHudFeature(
 
                 ParticleTypes.FLAME -> if (
                     packet.count == 11 &&
-                    packet.maxSpeed == 0.35f &&
+                    packet.xMaxSpeed == 0.35f &&
                     packet.xDist == 1f &&
                     packet.yDist == 1f &&
                     packet.zDist == 1f
