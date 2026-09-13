@@ -110,7 +110,8 @@ object SafariUniqueTracker : TextHudFeature(
         val captures: MutableSet<String> = mutableSetOf(),
         var isMax: Boolean = false,
     ) {
-        fun add(mobType: String) {
+        fun add(mobType: String, overwrite: Boolean = false) {
+            if (!overwrite && teamCount.any { it.value.captures.contains(mobType) }) return
             captures.add(mobType)
         }
     }
@@ -121,14 +122,12 @@ object SafariUniqueTracker : TextHudFeature(
                 val mobType = it.getOrNull(0) ?: return@on
                 val playerName = it.getOrNull(1) ?: return@on
                 val biome = BiomeType.fromMobType(mobType) ?: return@on
-                if (teamCount.any { it.value.captures.contains(mobType) }) return@on
 
                 teamCount.getOrPut(playerName) { PlayerData(biome) }.add(mobType)
             }
             val ( mobType, shardType ) = event.matches(captureRegex) ?: return@on
             val biome = BiomeType.fromMobType(mobType) ?: return@on
-            if (biome != captures.biome) {
-                if (teamCount.any { it.value.captures.contains(mobType) }) return@on
+            if (biome != BiomeType.NONE && biome != captures.biome) {
                 println("SafariTracker wrong biome?")
                 // attempt to give it away to the rightful owner
                 teamCount.entries.find { it.value.biome == biome }?.value?.add(mobType)
@@ -136,7 +135,6 @@ object SafariUniqueTracker : TextHudFeature(
             }
             if (captures.biome == BiomeType.NONE)
                 captures.biome = biome
-            if (teamCount.any { it.value.captures.contains(mobType) }) return@on
 
             captures.add(mobType)
         }
