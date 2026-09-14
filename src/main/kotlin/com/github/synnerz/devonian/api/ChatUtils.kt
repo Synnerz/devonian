@@ -68,9 +68,12 @@ object ChatUtils {
     fun removeLines(cb: (GuiMessage) -> Boolean) {
         var removedLine = false
         val messageList = chatComponentAccessor.messages?.listIterator() ?: return
+        var jdx = 0
 
         while (messageList.hasNext()) {
             val msg = messageList.next()
+            if (jdx >= 500) break
+            jdx++
             if (!cb(msg)) continue
 
             messageList.remove()
@@ -89,9 +92,12 @@ object ChatUtils {
             if (!Minecraft.getInstance().isMultiplayerServer) GuiMessageTag.systemSinglePlayer()
             else GuiMessageTag.system()
         val messageList = chatComponentAccessor.messages?.listIterator() ?: return
+        var jdx = 0
 
         while (messageList.hasNext()) {
             val msg = messageList.next()
+            if (jdx >= 500) break
+            jdx++
             if (!cb(msg)) continue
 
             editedLine = true

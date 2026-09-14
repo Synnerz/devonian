@@ -60,13 +60,16 @@ object CompactChat : Feature(
         val iter = ChatUtils.chatComponentAccessor.messages.listIterator()
         var refresh = false
         var first: GuiMessage? = null
+        var jdx = 0
 
         try {
             while (iter.hasNext()) {
                 val line = iter.next()
                 if (first == null) first = line
                 if (line === cachedData.lastCheck) break
+                if (jdx >= 500) break
 
+                jdx++
                 val msg = textContentCache.getOrPut(line) {
                     val contentCopy = line.content.copy()
                     contentCopy.siblings.removeIf { it.contents is CompactChatComponent }
