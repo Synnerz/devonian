@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api.dungeon
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WebRequests
 import com.github.synnerz.devonian.utils.PersistentJson
@@ -75,8 +76,9 @@ object DungeonsApi {
 
                 response.result?.entries?.forEach { (k, v) ->
                     if (!v.success) {
-                        playerQueue.add(k)
+//                        playerQueue.add(k)
                         println("DungeonsApi unsuccessful request $k - ${v.status}")
+                        Scheduler.scheduleTask { ChatUtils.sendMessage("&cDungeonsApi failed to fetch data for user &b$k &7(${v.status})", true) }
                         return@forEach
                     }
                     v.timeTaken = System.currentTimeMillis()
