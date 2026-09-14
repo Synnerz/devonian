@@ -1,8 +1,8 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.utils.render.ChromaText;
-import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.renderpearl.api.commands.RenderPass;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
