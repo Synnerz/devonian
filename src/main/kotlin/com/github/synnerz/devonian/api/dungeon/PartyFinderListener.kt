@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.api.dungeon
 
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.*
-import com.github.synnerz.devonian.features.dungeons.PartyFinderHighlight.minecraft
 import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.world.item.Items
 import java.util.*
@@ -13,7 +13,7 @@ object PartyFinderListener {
     private val TYPE_REGEX = "^Dungeon: (Master Mode )?(The Catacombs)$".toRegex()
     private val FLOOR_REGEX = "^Floor: Floor ([IV]+)$".toRegex()
     private val TAB_ROLE_REGEX = "^ (Healer|Tank|Mage|Berserk|Archer) (\\d+)(?:: [\\d.,]+%)?$".toRegex()
-    val USER_ROLE_REGEX = "^ (\\w{1,16}): (Healer|Tank|Mage|Berserk|Archer) \\((\\d+)\\)$".toRegex()
+    val USER_ROLE_REGEX = "^ (\\w{1,16}): (Healer|Tank|Mage|Berserk|Archer) \\((\\d+)\\).*".toRegex()
     private val LOW_CATA_REGEX = "^Requires Catacombs Level \\d+!$".toRegex()
     private val LOW_ROLE_REGEX = "^Requires a Class at Level \\d+!$".toRegex()
     private val CANNOT_JOIN_REGEX = "^Complete previous floor first!$".toRegex()
@@ -79,7 +79,7 @@ object PartyFinderListener {
         EventBus.on<GuiClickEvent> { event ->
             if (!inPF) return@on
             val slot = ScreenUtils.cursorSlot(event.screen) ?: return@on
-            if (slot.containerSlot != 46 || slot.container == minecraft.player?.inventory) return@on
+            if (slot.containerSlot != 46 || slot.container == Devonian.minecraft.player?.inventory) return@on
 
             parties.clear()
             PartyFinderEvent(parties).post()
