@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
@@ -63,7 +64,9 @@ object RunsLogger : Feature(
         DevonianCommand.command.subcommand("runslogger") { _, args ->
             val mode = args.getOrNull(0) as? String?
             val floor = args.getOrNull(1) as? String?
-            val date = args.getOrNull(2) as? String?
+            val dates = (args.getOrNull(2) as? String?)?.replace("*", "")
+            val date = dates?.split(" ")?.getOrNull(0)
+            val date2 = dates?.split(" ")?.getOrNull(1)
             if (mode.isNullOrEmpty()) {
                 ChatUtils.sendMessage("&cRunsLogger not a valid mode was set", true)
                 return@subcommand 0
@@ -77,10 +80,82 @@ object RunsLogger : Feature(
                 return@subcommand 0
             }
 
-            val list = dungeonsData.data!![date]?.get(floor)
+            val list =
+                if (date2.isNullOrEmpty())
+                    dungeonsData.data!![date]?.get(floor)
+                else {
+                    buildList {
+                        val fromDate = date.split("/")
+                        val fromMM = fromDate.getOrNull(0)?.toIntOrNull()
+                        val fromDD = fromDate.getOrNull(1)?.toIntOrNull()
+                        val fromYY = fromDate.getOrNull(2)?.toIntOrNull()
+                        if (fromMM == null || fromDD == null || fromYY == null) {
+                            ChatUtils.sendMessage("&cRunsLogger You did not provide a valid \"from\" date the correct order should be \"MM/DD/YY\"", true)
+                            return@subcommand 0
+                        }
+                        val toDate = date2.split("/")
+                        val toMM = toDate.getOrNull(0)?.toIntOrNull() ?: fromMM
+                        val toDD = toDate.getOrNull(1)?.toIntOrNull() ?: (fromDD + 1)
+                        val toYY = toDate.getOrNull(2)?.toIntOrNull() ?: fromYY
+
+                        var foundStartDay = false
+                        for (year in fromYY..toYY) {
+                            for (month in fromMM..toMM) {
+                                for (day in 1..31) {
+                                    if (month == fromMM && day == fromDD) foundStartDay = true
+                                    if (!foundStartDay) continue
+
+                                    dungeonsData.data!!["$month/$day/$year"]?.get(floor)?.forEach {
+                                        add(it)
+                                    }
+                                    if (day == toDD && month == toMM) break
+                                }
+                            }
+                        }
+                    }
+                }
             if (list.isNullOrEmpty()) {
                 ChatUtils.sendMessage("&cRunsLogger list for date \"$date\" and floor \"$floor\" is empty", true)
                 return@subcommand 0
+            }
+
+            if (mode == "PLAYERS") {
+                val players = mutableMapOf<String, Int>()
+
+                for (idx in 0..list.lastIndex) {
+                    val run = list.getOrNull(idx) ?: continue
+
+                    run.currentParty.forEach { (name, role) ->
+                        if (!players.containsKey(name)) players[name] = 0
+
+                        players[name] = players[name]!! + 1
+                    }
+                }
+
+                // TODO: maybe add a list of classes they've played
+                ChatUtils.sendMessage("&bRunsLogger player stats for &a$floor", true)
+                players.entries
+                    // TODO: add filter % base maybe
+//                    .filter { it.value > 10 }
+                    .sortedByDescending { it.value }.forEach { (name, count) ->
+                    ChatUtils.sendMessage("&7- &6$name&f: &e$count")
+                }
+                return@subcommand 1
+            }
+
+            if (mode == "FASTEST") {
+                val run = list.filter { it.rank == "S+" }.minByOrNull { StringUtils.parseTimer(it.time) } ?: return@subcommand 0
+                val roles = run.currentParty.map { it.key to DungeonClass.from(it.value.lowercase()[0]) }
+
+                ChatUtils.sendMessage("&bRunsLogger fastest &6S+&b for" +
+                        " &a$floor" +
+                        " &dTime&f: &6${run.time}" +
+                        roles.joinToString { " &e[${it.second.colorCode}${it.second.singleLetter.uppercase()}&e] ${it.second.colorCode}${it.first}&r" } +
+                        " &eSecrets&f: &6${run.secrets}" +
+                        if (run.deaths > 0) " &4Deaths&f: &c${run.deaths}"
+                        else "",
+                    true)
+                return@subcommand 1
             }
 
             if (mode == "STATS") {
@@ -146,17 +221,30 @@ object RunsLogger : Feature(
             .word("mode")
             .word("floor")
             .suggest("mode", *listOf(
-                "STATS",
+                "*STATS",
                 "TIME",
+                "PLAYERS",
+                "FASTEST",
             ).toTypedArray())
             .suggest("floor", *listOf(
                 "E", "F1", "F2", "F3", "F4", "F5", "F6", "F7",
                 "M1", "M2", "M3", "M4", "M5", "M6", "M7"
             ).toTypedArray())
             .greedyString("date")
-            .suggest("date", *listOf(
-                "${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
-            ).toTypedArray())
+            .suggest("date") {
+                buildList {
+                    val current = "*${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
+
+                    add(current)
+
+                    dungeonsData.data!!.mapNotNull {
+                        if (it.key == current) null
+                        else it.key
+                    }.forEach {
+                        add(it)
+                    }
+                }.toMutableList()
+            }
 
         on<TabUpdateEvent> { event ->
             val match = event.matches(milestoneRegex) ?: return@on
