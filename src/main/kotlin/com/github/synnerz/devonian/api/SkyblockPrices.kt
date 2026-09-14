@@ -35,7 +35,7 @@ object SkyblockPrices {
     }
 
     private fun update() {
-        if (System.currentTimeMillis() - (loader.data?.lastSave ?: 0) <= (1000 * 60) * 5) return
+        if (System.currentTimeMillis() - (loader.data?.lastSave ?: 0) <= (1000 * 60) * 3) return
 
         WebRequests.withName("SkyblockPrices") {
             val bzRequest = WebRequests.get("https://api.hypixel.net/skyblock/bazaar")
