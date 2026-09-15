@@ -29,6 +29,7 @@ object SafariUniqueTracker : TextHudFeature(
     )
     private val captureRegex = "^CAPTURE! You (?:caught|found) (?:an?|the) ([\\w ]+),? and (?:as a reward|gained)? a?n? ?(?:it gave you a )?(?:\\d+x )?([\\w ]+) Shard!$".toRegex()
     private val teamCaptureRegex = "^LOOT SHARE! You received a?n? ?(?:\\d+x )?([\\w ]+) Shard from (\\w{1,16}) (?:catching|finding) (?:an?|the) ([\\w ]+)!$".toRegex()
+    private val sparklingRegex = "^SPARKLING! (\\w{1,16}) caught a SPARKLING (\\w+)!$".toRegex()
     private val teamCount = mutableMapOf<String, PlayerData>()
     private val delegatedMobTypes = mutableMapOf<BiomeType, MutableSet<String>>()
     private val biomesDone = mutableSetOf<BiomeType>()
@@ -119,6 +120,41 @@ object SafariUniqueTracker : TextHudFeature(
 
     override fun initialize() {
         on<ChatEvent> { event ->
+            event.matches(sparklingRegex)?.let {
+                val playerName = it.getOrNull(0) ?: return@on
+                val mobType = it.getOrNull(1) ?: return@on
+                val biome = BiomeType.fromMobType(mobType) ?: return@on
+                val username = minecraft.player?.name?.string ?: return@on
+
+                if (username.equals(playerName, ignoreCase = true)) {
+                    if (captures.biome != BiomeType.NONE && biome != captures.biome) {
+                        val memberBiome = teamCount.entries.find { it.value.biome == biome }?.value
+                        if (memberBiome == null) {
+                            delegatedMobTypes.getOrPut(biome) { mutableSetOf() }.add(mobType)
+                            return@on
+                        }
+
+                        memberBiome.add(mobType)
+                        return@on
+                    }
+                    if (captures.biome == BiomeType.NONE)
+                        captures.biome = biome
+
+                    captures.add(mobType)
+                    return@on
+                }
+
+                teamCount.getOrPut(playerName) { PlayerData(biome) }.apply {
+                    add(mobType)
+
+                    val delegates = delegatedMobTypes[biome] ?: return@apply
+                    delegates.forEach {
+                        add(it)
+                        delegates.remove(it)
+                    }
+                }
+            }
+
             event.matches(teamCaptureRegex)?.let {
                 val mobType = it.getOrNull(0) ?: return@on
                 val playerName = it.getOrNull(1) ?: return@on
