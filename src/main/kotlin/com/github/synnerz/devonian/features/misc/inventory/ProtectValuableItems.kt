@@ -27,7 +27,7 @@ object ProtectValuableItems : Feature(
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             val price = SkyblockPrices.buyPrice(sbId)
             if (price < SETTING_THRESHOLD.get() * 1000f) return@on
-            if (InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_SHIFT)) return@on
+            if (InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_RIGHT_SHIFT)) return@on
 
             event.cancel("ValuableItems")
         }
