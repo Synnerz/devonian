@@ -168,11 +168,11 @@ object CroesusProfit : TextHudFeature(
                     if (price == 0)
                         price =
                             if (CroesusListener.inBlacklist("ENCHANTMENT_ULTIMATE_${cleanName}_$tier"))
-                                -1
+                                -2
                             else
                                 SkyblockPrices.buyPrice("ENCHANTMENT_ULTIMATE_${cleanName}_$tier").roundToInt()
                     else if (CroesusListener.inBlacklist("ENCHANTMENT_${cleanName}_$tier"))
-                        price = -1
+                        price = -2
 
                     data.items.add(ChestItemData(formatLore[jdx], price))
                     continue
@@ -184,7 +184,7 @@ object CroesusProfit : TextHudFeature(
                     val amount = essenceMatch[1].toIntOrNull() ?: continue
                     val price =
                         if (CroesusListener.inBlacklist("ESSENCE_$type"))
-                            -1
+                            -2
                         else
                             (SkyblockPrices.buyPrice("ESSENCE_$type") * amount).roundToInt()
 
@@ -203,7 +203,7 @@ object CroesusProfit : TextHudFeature(
 
                 val price =
                     if (CroesusListener.inBlacklist(itemId))
-                        -1
+                        -2
                     else
                         SkyblockPrices.buyPrice(itemId).roundToInt()
 
@@ -251,6 +251,7 @@ object CroesusProfit : TextHudFeature(
 
                 val str = StringUtils.shortenNumber(profit)
                 val color = when {
+                    data.items.any { it.price == -2 } -> "§4"
                     profit <= 0 -> "§c"
                     profit <= 500_000 -> "§e"
                     profit <= 10_000_000 -> "§a"
