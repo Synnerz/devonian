@@ -14,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 object DodgeList : Feature(
     "dodgeList",
-    "Displays the reason a user was added to the dodge list if they join through party finder (do /dv dodge help)",
+    "list where you can add/remove players with a reason as to why they were added to the \"dodge\" zone." +
+            " whenever a user joins through party finder it will search for a dodge reason (do /dv dodge help)",
     Categories.DUNGEONS,
     subcategory = "QOL",
     searchTags = setOf("shitter")
