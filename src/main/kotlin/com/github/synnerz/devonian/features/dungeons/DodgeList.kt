@@ -58,30 +58,30 @@ object DodgeList : Feature(
                     val username = args.getOrNull(1) as? String?
                     val reason = args.getOrNull(2) as? String? ?: "Not Provided"
                     if (username.isNullOrEmpty()) {
-                        ChatUtils.sendMessage("&cDodgeList &e$username&c is not a valid username", true)
+                        ChatUtils.sendMessage("&cDodgeList &e\"$username\"&c is not a valid username", true)
                         return@subcommand 0
                     }
 
                     requestUUID(username) { uuid ->
                         if (dodgePlayers.data!!.containsKey(uuid)) {
-                            ChatUtils.sendMessage("&c&DodgeList user with name &e$username&c is already in the list", true)
+                            ChatUtils.sendMessage("&c&DodgeList user with name &e\"$username\"&c is already in the list", true)
                             return@requestUUID
                         }
 
                         dodgePlayers.data!![uuid] = DodgeData(reason)
-                        ChatUtils.sendMessage("&bDodgeList added user &a$username&b with reason &a$reason", true)
+                        ChatUtils.sendMessage("&bDodgeList added user &a\"$username\"&b with reason &a\"$reason\"", true)
                     }
                 }
                 "remove" -> {
                     val username = args.getOrNull(1) as? String?
                     if (username.isNullOrEmpty()) {
-                        ChatUtils.sendMessage("&cDodgeList &e$username&c is not a valid username", true)
+                        ChatUtils.sendMessage("&cDodgeList &e\"$username\"&c is not a valid username", true)
                         return@subcommand 0
                     }
 
                     requestUUID(username) { uuid ->
                         dodgePlayers.data!!.remove(uuid) ?: return@requestUUID
-                        ChatUtils.sendMessage("&cDodgeList removed user &e$username", true)
+                        ChatUtils.sendMessage("&cDodgeList removed user &e\"$username\"", true)
                     }
                 }
                 "clear" -> {
@@ -91,18 +91,18 @@ object DodgeList : Feature(
                 "check" -> {
                     val username = args.getOrNull(1) as? String?
                     if (username.isNullOrEmpty()) {
-                        ChatUtils.sendMessage("&cDodgeList &e$username&c is not a valid username", true)
+                        ChatUtils.sendMessage("&cDodgeList &e\"$username\"&c is not a valid username", true)
                         return@subcommand 0
                     }
 
                     requestUUID(username) { uuid ->
                         val data = dodgePlayers.data!![uuid]
                         if (data == null) {
-                            ChatUtils.sendMessage("&cDodgeList could not find user &e$username&c in list", true)
+                            ChatUtils.sendMessage("&cDodgeList could not find user &e\"$username\"&c in list", true)
                             return@requestUUID
                         }
 
-                        ChatUtils.sendMessage("&bDodgeList user &e$username&b is in the list with reason &e${data.reason}", true)
+                        ChatUtils.sendMessage("&bDodgeList user &e\"$username\"&b is in the list with reason &e\"${data.reason}\"", true)
                     }
                 }
                 "import" -> {
@@ -182,7 +182,7 @@ object DodgeList : Feature(
             return
         }
 
-        WebRequests.withName("DodgeList") {
+        WebRequests.withName("DodgeList", {
             val response = WebRequests.get("https://playerdb.co/api/player/minecraft/$username")
             if (response.isEmpty()) return@withName
             val data = PersistentJson.gson.fromJson(response, PlayerDBData::class.java)
@@ -201,7 +201,10 @@ object DodgeList : Feature(
                 ChatUtils.deleteMessage(loading)
                 successCb(playerUUID)
             }
-        }
+        }, {
+            ChatUtils.deleteMessage(loading)
+            ChatUtils.sendMessage("&cDodgeList failed to fetch data for user &e\"$username\"", true)
+        })
     }
 
     private fun loadImport(link: String, successCb: (Map<String, String>) -> Unit) {
