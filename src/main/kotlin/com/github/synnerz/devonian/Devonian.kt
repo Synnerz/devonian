@@ -415,6 +415,7 @@ object Devonian : ClientModInitializer {
             ProtectValuableItems,
             BookCombineHelper,
             SafariUniqueTracker,
+            DodgeList,
 
             // Debug
             CopyItem,
