@@ -221,7 +221,7 @@ object RunsLogger : Feature(
             .word("mode")
             .word("floor")
             .suggest("mode", *listOf(
-                "*STATS",
+                "STATS",
                 "TIME",
                 "PLAYERS",
                 "FASTEST",
