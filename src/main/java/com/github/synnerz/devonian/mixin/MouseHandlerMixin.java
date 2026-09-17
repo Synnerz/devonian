@@ -14,7 +14,6 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.input.MouseButtonInfo;
-import org.lwjgl.glfw.GLFW;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -68,23 +67,23 @@ public abstract class MouseHandlerMixin implements MouseHandlerAccessor {
         return NoCursorReset.INSTANCE.shouldReset();
     }
 
-    @WrapOperation(
-        method = "releaseMouse",
-        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V")
-    )
-    private void devonian$releaseMouseSetPosFix(Window window, int i, double d, double e, Operation<Void> original) {
-        if (!NoCursorReset.INSTANCE.isEnabled()) {
-            original.call(window, i, d, e);
-            return;
-        }
-        GLFW.glfwSetInputMode(window.handle(), 208897, i);
-        // GLFW.glfwSetCursorPos(window.handle(), xpos, ypos);
-        NoCursorReset.ignoreFirstBatch = 3;
-        NoCursorReset.setCursorPos = true;
-        NoCursorReset.cursorPosX = xpos;
-        NoCursorReset.cursorPosY = ypos;
-        // ignoreFirstMove = true;
-    }
+//    @WrapOperation(
+//        method = "releaseMouse",
+//        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V")
+//    )
+//    private void devonian$releaseMouseSetPosFix(Window window, int i, double d, double e, Operation<Void> original) {
+//        if (!NoCursorReset.INSTANCE.isEnabled()) {
+//            original.call(window, i, d, e);
+//            return;
+//        }
+//        GLFW.glfwSetInputMode(window.handle(), 208897, i);
+//        // GLFW.glfwSetCursorPos(window.handle(), xpos, ypos);
+//        NoCursorReset.ignoreFirstBatch = 3;
+//        NoCursorReset.setCursorPos = true;
+//        NoCursorReset.cursorPosX = xpos;
+//        NoCursorReset.cursorPosY = ypos;
+//        // ignoreFirstMove = true;
+//    }
 
     @Redirect(
         method = "onMove",
@@ -129,11 +128,11 @@ public abstract class MouseHandlerMixin implements MouseHandlerAccessor {
         double x = getScaledXPos(w);
         double y = getScaledYPos(w);
         switch (i) {
-            case GLFW.GLFW_RELEASE:
+            case 0:
                 new MouseReleaseEvent(x, y, mouseButtonInfo).post();
                 break;
 
-            case GLFW.GLFW_PRESS:
+            case 1:
                 new MousePressEvent(x, y, mouseButtonInfo).post();
                 break;
         }
@@ -143,8 +142,8 @@ public abstract class MouseHandlerMixin implements MouseHandlerAccessor {
         method = "onMove",
         at = @At("TAIL")
     )
-    private void devonian$mouseLoggerMove(long l, double d, double e, CallbackInfo ci) {
-        MousePositionLogger.INSTANCE.onMove(l, d, e, ignoreFirstMove, xpos, ypos);
+    private void devonian$mouseLoggerMove(long handle, double xpos, double ypos, double xrel, double yrel, CallbackInfo ci) {
+        MousePositionLogger.INSTANCE.onMove(handle, xpos, ypos, ignoreFirstMove, xrel, yrel);
     }
 
     @Inject(

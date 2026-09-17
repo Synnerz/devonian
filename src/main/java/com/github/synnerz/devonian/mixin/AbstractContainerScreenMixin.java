@@ -39,7 +39,7 @@ public abstract class AbstractContainerScreenMixin {
     protected Slot hoveredSlot;
 
     @Inject(
-        method = "slotClicked",
+        method = "slotClicked*",
         at = @At("HEAD"),
         cancellable = true
     )
@@ -135,7 +135,7 @@ public abstract class AbstractContainerScreenMixin {
         method = "extractSlotHighlightBack",
         at = @At(
                 value = "INVOKE",
-                target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"
+                target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"
         ),
         cancellable = true
     )
@@ -152,7 +152,7 @@ public abstract class AbstractContainerScreenMixin {
         method = "extractSlotHighlightFront",
         at = @At(
                 value = "INVOKE",
-                target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"
+                target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"
         ),
         cancellable = true
     )

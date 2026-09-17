@@ -584,7 +584,7 @@ class ContainerRenderEvent(
 ) : CancellableEvent() {
     val slot: Slot?
     val item: ItemStack?
-    val shift = InputConstants.isKeyDown(SDLKeycode.SDLK_LSHIFT)
+    val shift get() = InputConstants.isKeyDown(SDLKeycode.SDLK_LSHIFT)
     init {
         val screen = Devonian.minecraft.gui.screen()
         slot = screen?.let { ScreenUtils.cursorSlot(it) }

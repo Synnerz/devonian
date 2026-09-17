@@ -16,7 +16,7 @@ public class GlobalSettingsUniformMixin {
         method = "update",
         at = @At("TAIL")
     )
-    private void devonian$chromaText(int width, int height, double glintAlpha, long gameTime, DeltaTracker deltaTracker, int menuBlurRadius, Vec3 cameraPos, boolean useRgss, CallbackInfo ci) {
-        ChromaText.INSTANCE.updateBuffer(EventBus.INSTANCE.getClientTicks() + deltaTracker.getGameTimeDeltaPartialTick(true));
+    private void devonian$chromaText(int width, int height, double glintAlpha, long gameTime, float worldPartialTicks, int menuBlurRadius, Vec3 cameraPos, boolean useRgss, CallbackInfo ci) {
+        ChromaText.INSTANCE.updateBuffer(EventBus.INSTANCE.getClientTicks() + worldPartialTicks);
     }
 }

@@ -13,15 +13,16 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(VulkanRenderPipeline.class)
 public abstract class VulkanRenderPipelineMixin {
-    @WrapOperation(
-            method = "compile",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lcom/mojang/blaze3d/pipeline/DepthStencilState;depthTest()Lcom/mojang/blaze3d/platform/CompareOp;"
-            )
-    )
-    private static CompareOp devonian$onVulkanDepth(DepthStencilState instance, Operation<CompareOp> original, @Local(argsOnly = true, name = "pipeline") RenderPipeline pipeline) {
-        if (!Render3DPipelines.getALWAYS_PASS_RENDER_PIPELINES().contains(pipeline)) return original.call(instance);
-        return CompareOp.ALWAYS_PASS;
-    }
+    // FIXME
+//    @WrapOperation(
+//            method = "compile",
+//            at = @At(
+//                    value = "INVOKE",
+//                    target = "Lcom/mojang/renderpearl/api/pipeline/DepthStencilState;depthTest()Lcom/mojang/renderpearl/api/pipeline/CompareOp;"
+//            )
+//    )
+//    private static CompareOp devonian$onVulkanDepth(DepthStencilState instance, Operation<CompareOp> original, @Local(argsOnly = true, name = "pipeline") RenderPipeline pipeline) {
+//        if (!Render3DPipelines.getALWAYS_PASS_RENDER_PIPELINES().contains(pipeline)) return original.call(instance);
+//        return CompareOp.ALWAYS_PASS;
+//    }
 }

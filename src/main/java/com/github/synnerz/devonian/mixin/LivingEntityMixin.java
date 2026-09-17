@@ -5,10 +5,12 @@ import com.github.synnerz.devonian.features.misc.ItemAnimations;
 import com.github.synnerz.devonian.features.misc.RemoveGlowEffect;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,21 +38,22 @@ public abstract class LivingEntityMixin extends Entity {
         new EntityDeathEvent(this, (ClientLevel) world).post();
     }
 
-    @Inject(
-        method = "updateSwingTime",
-        at = @At("HEAD")
-    )
-    private void devonian$itemAnimations1(CallbackInfo ci) {
-        LivingEntity that = (LivingEntity) (Object) this;
-        if (!(that instanceof LocalPlayer)) return;
-        ItemAnimations.INSTANCE.onUpdateSwingTime();
-    }
+    // FIXME: mixin into LivingEntity$SwingState.onTick
+//    @Inject(
+//        method = "updateSwingTime",
+//        at = @At("HEAD")
+//    )
+//    private void devonian$itemAnimations1(CallbackInfo ci) {
+//        LivingEntity that = (LivingEntity) (Object) this;
+//        if (!(that instanceof LocalPlayer)) return;
+//        ItemAnimations.INSTANCE.onUpdateSwingTime();
+//    }
 
     @Inject(
-        method = "swing(Lnet/minecraft/world/InteractionHand;Z)V",
+        method = "swing",
         at = @At("HEAD")
     )
-    private void devonian$itemAnimations2(CallbackInfo ci) {
+    private void devonian$itemAnimations2(InteractionHand hand, SwingAnimation animation, boolean sendToSwingingEntity, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity that = (LivingEntity) (Object) this;
         if (!(that instanceof LocalPlayer)) return;
         ItemAnimations.INSTANCE.onSwing();

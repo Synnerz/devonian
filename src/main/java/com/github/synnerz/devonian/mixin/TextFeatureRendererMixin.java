@@ -5,15 +5,15 @@ import com.github.synnerz.devonian.features.misc.NametagShadow;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.feature.NameTagFeatureRenderer;
+import net.minecraft.client.renderer.feature.TextFeatureRenderer;
 import net.minecraft.util.FormattedCharSequence;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(NameTagFeatureRenderer.class)
-public class NameTagFeatureRendererMixin {
+@Mixin(TextFeatureRenderer.class)
+public class TextFeatureRendererMixin {
     @WrapOperation(
-            method = "prepareText",
+            method = "renderText",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/Font;prepareText(Lnet/minecraft/util/FormattedCharSequence;FFIZZI)Lnet/minecraft/client/gui/Font$PreparedText;"

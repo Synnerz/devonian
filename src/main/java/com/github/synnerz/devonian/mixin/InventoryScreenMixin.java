@@ -25,39 +25,39 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<@NotNull In
         super(recipeBookMenu, recipeBookComponent, inventory, component);
     }
 
-    @WrapOperation(
-        method = "extractBackground",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIFFIIII)V")
-    )
-    private void devonian$renderBg(GuiGraphicsExtractor instance, RenderPipeline renderPipeline, Identifier texture, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight, Operation<Void> original) {
-        if (!CustomContainerColor.INSTANCE.isEnabled()) {
-            original.call(instance, renderPipeline, texture, x, y, u, v, width, height, textureWidth, textureHeight);
-            return;
-        }
-
-        int color = CustomContainerColor.INSTANCE.getSETTING_CONTAINER_COLOR().get();
-        instance.blit(
-            renderPipeline,
-            texture,
-            x,
-            y,
-            0.0f,
-            0.0f,
-            imageWidth,
-            imageHeight,
-            256,
-            256,
-            color
-        );
-    }
-
-    @Inject(
-        method = "extractLabels",
-        at = @At("HEAD"),
-        cancellable = true
-    )
-    private void devonian$hideCraftingText(GuiGraphicsExtractor graphics, int xm, int ym, CallbackInfo ci) {
-        if (!HideCraftingText.INSTANCE.isEnabled()) return;
-        ci.cancel();
-    }
+//    @WrapOperation(
+//        method = "extractBackground",
+//        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blit(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIFFIIII)V")
+//    )
+//    private void devonian$renderBg(GuiGraphicsExtractor instance, RenderPipeline renderPipeline, Identifier texture, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight, Operation<Void> original) {
+//        if (!CustomContainerColor.INSTANCE.isEnabled()) {
+//            original.call(instance, renderPipeline, texture, x, y, u, v, width, height, textureWidth, textureHeight);
+//            return;
+//        }
+//
+//        int color = CustomContainerColor.INSTANCE.getSETTING_CONTAINER_COLOR().get();
+//        instance.blit(
+//            renderPipeline,
+//            texture,
+//            x,
+//            y,
+//            0.0f,
+//            0.0f,
+//            imageWidth,
+//            imageHeight,
+//            256,
+//            256,
+//            color
+//        );
+//    }
+//
+//    @Inject(
+//        method = "extractLabels",
+//        at = @At("HEAD"),
+//        cancellable = true
+//    )
+//    private void devonian$hideCraftingText(GuiGraphicsExtractor graphics, int xm, int ym, CallbackInfo ci) {
+//        if (!HideCraftingText.INSTANCE.isEnabled()) return;
+//        ci.cancel();
+//    }
 }

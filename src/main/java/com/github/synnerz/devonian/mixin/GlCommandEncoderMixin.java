@@ -14,20 +14,21 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(GlCommandEncoder.class)
 public class GlCommandEncoderMixin {
-    @Shadow
-    @Nullable
-    private RenderPipeline lastPipeline;
+//    @Shadow
+//    @Nullable
+//    private RenderPipeline lastPipeline;
 
-    @WrapOperation(
-            method = "applyPipelineState",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lcom/mojang/blaze3d/opengl/GlConst;toGl(Lcom/mojang/blaze3d/platform/CompareOp;)I",
-                    remap = false
-            )
-    )
-    private int getDepthFunc(CompareOp compareOp, Operation<Integer> original) {
-        if (!Render3DPipelines.getALWAYS_PASS_RENDER_PIPELINES().contains(lastPipeline)) return original.call(compareOp);
-        return GlConst.GL_ALWAYS;
-    }
+    // FIXME
+//    @WrapOperation(
+//            method = "applyPipelineState",
+//            at = @At(
+//                    value = "INVOKE",
+//                    target = "Lcom/mojang/blaze3d/opengl/GlConst;toGl(Lcom/mojang/blaze3d/platform/CompareOp;)I",
+//                    remap = false
+//            )
+//    )
+//    private int getDepthFunc(CompareOp compareOp, Operation<Integer> original) {
+//        if (!Render3DPipelines.getALWAYS_PASS_RENDER_PIPELINES().contains(lastPipeline)) return original.call(compareOp);
+//        return GlConst.GL_ALWAYS;
+//    }
 }

@@ -13,15 +13,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = LocalPlayer.class, priority = 1002)
 public class LocalPlayerMixin {
-    @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
-    private void devonian$dropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
-        LocalPlayer player = (LocalPlayer) (Object) this;
-
-        int index = InventoryMenu.USE_ROW_SLOT_START + player.getInventory().getSelectedSlot();
-        Slot slot = player.inventoryMenu.getSlot(index);
-
-        ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-
-        if (new DropItemEvent(slot, entireStack, stack).post()) cir.setReturnValue(false);
-    }
+    // FIXME: mixin into Minecraft #gameMode.dropItem
+//    @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
+//    private void devonian$dropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
+//        LocalPlayer player = (LocalPlayer) (Object) this;
+//
+//        int index = InventoryMenu.USE_ROW_SLOT_START + player.getInventory().getSelectedSlot();
+//        Slot slot = player.inventoryMenu.getSlot(index);
+//
+//        ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+//
+//        if (new DropItemEvent(slot, entireStack, stack).post()) cir.setReturnValue(false);
+//    }
 }

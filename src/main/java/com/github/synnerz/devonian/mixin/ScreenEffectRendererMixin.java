@@ -6,12 +6,11 @@ import com.github.synnerz.devonian.features.misc.RemoveFireOverlay;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ScreenEffectRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.PlayerRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,17 +33,17 @@ public class ScreenEffectRendererMixin {
         at = @At("HEAD"),
         cancellable = true
     )
-    private static void devonian$disableWaterOverlay(Minecraft minecraft, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
+    private static void devonian$disableWaterOverlay(PlayerRenderState.WaterOverlay waterOverlay, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CallbackInfo ci) {
         if (!DisableWaterOverlay.INSTANCE.isEnabled()) return;
         ci.cancel();
     }
 
     @WrapOperation(
         method = "submit",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;getViewBlockingState(Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/level/block/state/BlockState;")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ScreenEffectRenderer;submitBlockSprite(Lnet/minecraft/resources/Identifier;FFFFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V")
     )
-    private BlockState devonian$disableSuffocatingOverlay(Player player, Operation<BlockState> original) {
-        if (!DisableSuffocatingOverlay.INSTANCE.isEnabled()) return original.call(player);
-        return null;
+    private void devonian$disableSuffocatingOverlay(Identifier atlasLocation, float u0, float v0, float u1, float v1, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int color, Operation<Void> original) {
+        if (DisableSuffocatingOverlay.INSTANCE.isEnabled()) return;
+        original.call(atlasLocation, u0, v0, u1, v1, poseStack, submitNodeCollector, color);
     }
 }
