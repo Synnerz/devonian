@@ -13,7 +13,6 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
-import org.lwjgl.sdl.SDLKeycode
 
 object CopyItem : Feature(
     "copyItem",
@@ -24,9 +23,9 @@ object CopyItem : Feature(
 ) {
     override fun initialize() {
         on<GuiKeyDownEvent> { event ->
-            if (event.key != SDLKeycode.SDLK_C) return@on
+            if (event.key != InputConstants.KEY_C) return@on
 
-            val isCtrlDown = InputConstants.isKeyDown(SDLKeycode.SDLK_LCTRL)
+            val isCtrlDown = InputConstants.isKeyDown(InputConstants.KEY_LCONTROL)
             if (!isCtrlDown) return@on
 
             val screen = minecraft.gui.screen() as? AbstractContainerScreen<*> ?: return@on
