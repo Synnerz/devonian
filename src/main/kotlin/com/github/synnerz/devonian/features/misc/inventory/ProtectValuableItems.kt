@@ -4,7 +4,6 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.features.Feature
 import com.mojang.blaze3d.platform.InputConstants
-import org.lwjgl.glfw.GLFW
 
 object ProtectValuableItems : Feature(
     "protectValuableItems",
@@ -27,7 +26,7 @@ object ProtectValuableItems : Feature(
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             val price = SkyblockPrices.buyPrice(sbId)
             if (price < SETTING_THRESHOLD.get() * 1000f) return@on
-            if (InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_RIGHT_SHIFT)) return@on
+            if (InputConstants.isKeyDown(InputConstants.KEY_RSHIFT)) return@on
 
             event.cancel("ValuableItems")
         }
