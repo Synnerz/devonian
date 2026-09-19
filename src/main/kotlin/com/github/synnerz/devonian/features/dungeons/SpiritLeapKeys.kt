@@ -13,8 +13,8 @@ import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.world.item.Items
-import org.lwjgl.sdl.SDLKeycode
 
 object SpiritLeapKeys : Feature(
     "spiritLeapKeys",
@@ -28,10 +28,10 @@ object SpiritLeapKeys : Feature(
     }
 
     private val keybinds = listOf(
-        SDLKeycode.SDLK_1,
-        SDLKeycode.SDLK_2,
-        SDLKeycode.SDLK_3,
-        SDLKeycode.SDLK_4,
+        InputConstants.KEY_1,
+        InputConstants.KEY_2,
+        InputConstants.KEY_3,
+        InputConstants.KEY_4,
     )
     private val playersData = mutableListOf<CustomLeapGui.LeapPlayer>()
     val leapComparator: Comparator<CustomLeapGui.LeapPlayer> get() {
