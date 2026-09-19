@@ -10,8 +10,8 @@ import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.Render2D.height
 import com.github.synnerz.devonian.utils.render.Render2D.width
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphicsExtractor
-import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 
 abstract class TextHudFeature(
@@ -110,10 +110,10 @@ abstract class TextHudFeature(
         super.onKeyPress(keyCode)
 
         when (keyCode) {
-            SDLKeycode.SDLK_1 -> anchor = anchor.cycle()
-            SDLKeycode.SDLK_2 -> align = align.cycle()
-            SDLKeycode.SDLK_3 -> shadow = shadow.cycle()
-            SDLKeycode.SDLK_4 -> backdrop = backdrop.cycle()
+            InputConstants.KEY_1 -> anchor = anchor.cycle()
+            InputConstants.KEY_2 -> align = align.cycle()
+            InputConstants.KEY_3 -> shadow = shadow.cycle()
+            InputConstants.KEY_4 -> backdrop = backdrop.cycle()
         }
     }
 
