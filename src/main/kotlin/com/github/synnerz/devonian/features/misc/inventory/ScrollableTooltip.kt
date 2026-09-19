@@ -13,7 +13,6 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import org.lwjgl.sdl.SDLKeycode
 import kotlin.math.sign
 
 object ScrollableTooltip : Feature(
@@ -131,30 +130,30 @@ object ScrollableTooltip : Feature(
         }
 
         on<GuiKeyDownEvent> { event ->
-            if (event.key == SDLKeycode.SDLK_LCTRL) {
+            if (event.key == InputConstants.KEY_LCONTROL) {
                 holdingCtrl = true
                 return@on
             }
-            if (event.key == SDLKeycode.SDLK_LALT) {
+            if (event.key == InputConstants.KEY_LALT) {
                 holdingAlt = true
                 return@on
             }
 
-            if (event.key != SDLKeycode.SDLK_LSHIFT) return@on
+            if (event.key != InputConstants.KEY_LSHIFT) return@on
             holdingShift = true
         }
 
         on<GuiKeyUpEvent> { event ->
-            if (event.key == SDLKeycode.SDLK_LCTRL) {
+            if (event.key == InputConstants.KEY_LCONTROL) {
                 holdingCtrl = false
                 return@on
             }
-            if (event.key == SDLKeycode.SDLK_LALT) {
+            if (event.key == InputConstants.KEY_LALT) {
                 holdingAlt = false
                 return@on
             }
 
-            if (event.key != SDLKeycode.SDLK_LSHIFT) return@on
+            if (event.key != InputConstants.KEY_LSHIFT) return@on
             holdingShift = false
         }
     }
