@@ -1,6 +1,5 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.PrePacketSentEvent
@@ -11,7 +10,6 @@ import com.github.synnerz.devonian.features.Feature
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket
-import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 
 object RemoveFallingBlocks : Feature("removeFallingBlocks", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
@@ -88,7 +86,7 @@ object SignEnterKey : Feature(
 ) {
     fun shouldEnter(comps: List<Component>): Boolean {
         if (!isEnabled()) return false
-        return InputConstants.isKeyDown(SDLKeycode.SDLK_LSHIFT)
+        return InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
     }
 }
 object RemoveHypixelScoreboard : Feature("removeHypixelScoreboard", "www.hypixel.net", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
