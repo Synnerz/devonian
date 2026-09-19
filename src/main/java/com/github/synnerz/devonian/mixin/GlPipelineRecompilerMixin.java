@@ -6,9 +6,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.renderpearl.api.pipeline.ShaderType;
 import com.mojang.renderpearl.backend.opengl.GlPipelineRecompiler;
 import com.mojang.renderpearl.backend.opengl.GlShaderModule;
-import net.minecraft.client.renderer.RenderPipelines;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
+
+import java.util.Objects;
 
 @Mixin(GlPipelineRecompiler.class)
 public class GlPipelineRecompilerMixin {
@@ -21,8 +22,7 @@ public class GlPipelineRecompilerMixin {
     ) {
         if (!Fullbright.INSTANCE.isEnabled()) return original.call(instance, name, type, source);
 
-        System.out.println("loading shader " + name);
-        if (type != ShaderType.FRAGMENT /*|| !identifier.equals(RenderPipelines.LIGHTMAP.getShaders().get(ShaderType.FRAGMENT))*/)
+        if (type != ShaderType.FRAGMENT || !Objects.equals(name, "minecraft:core/lightmap"))
             return original.call(instance, name, type, source);
 
         return original.call(instance, name, type, """
