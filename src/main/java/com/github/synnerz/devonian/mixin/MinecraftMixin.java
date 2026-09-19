@@ -14,6 +14,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Final;
@@ -97,5 +99,22 @@ public class MinecraftMixin {
     @Inject(method = "disconnectFromWorld", at = @At("HEAD"))
     private void devonian$onClientDestroy(CallbackInfo ci) {
         new WorldDestroyEvent(instance).post();
+    }
+
+    @WrapOperation(
+            method = "handleKeybinds",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;dropItem(Lnet/minecraft/client/player/LocalPlayer;Z)V"
+            )
+    )
+    private void devonian$dropSelectedItem(MultiPlayerGameMode instance, LocalPlayer player, boolean all, Operation<Void> original) {
+        int index = InventoryMenu.USE_ROW_SLOT_START + player.getInventory().getSelectedSlot();
+        Slot slot = player.inventoryMenu.getSlot(index);
+        ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+
+        if (new DropItemEvent(slot, all, stack).post()) return;
+
+        original.call(instance, player, all);
     }
 }
