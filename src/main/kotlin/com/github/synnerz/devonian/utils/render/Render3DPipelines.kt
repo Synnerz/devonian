@@ -23,8 +23,8 @@ object Render3DPipelines {
     val LINES_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
         .withLocation("devonian/lines_opaque_esp")
         .withCull(false)
-        .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
-        .withDepthStencilState(DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, true))
+        .withColorTargetState(ColorTargetState.DEFAULT)
+        .withDepthStencilState(Optional.empty())
         .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
 
