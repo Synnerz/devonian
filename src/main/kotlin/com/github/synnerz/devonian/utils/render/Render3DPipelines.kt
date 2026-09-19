@@ -17,6 +17,7 @@ object Render3DPipelines {
     val LINES_OPAQUE = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
         .withLocation("devonian/lines_opaque")
         .withCull(false)
+        .withColorTargetState(ColorTargetState.DEFAULT)
         .build().also { RenderPipelines.register(it) }
 
     val LINES_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
@@ -109,11 +110,13 @@ object Render3DPipelines {
     val BEACON_BEAM_OPAQUE = RenderPipeline.builder(RenderPipelines.BEACON_BEAM_SNIPPET)
         .withLocation("devonian/beacon_beam_opaque")
         .withDepthStencilState(DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, true))
+        .withColorTargetState(ColorTargetState.DEFAULT)
         .build().also { RenderPipelines.register(it) }
 
     val BEACON_BEAM_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.BEACON_BEAM_SNIPPET)
         .withLocation("devonian/beacon_beam_opaque_esp")
         .withDepthStencilState(DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, true))
+        .withColorTargetState(ColorTargetState.DEFAULT)
         .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
 
