@@ -61,7 +61,7 @@ class Category(
                 UIRect(subCatMargins + (subCatWidth + subCatGap) * jdx, 2.5, subCatWidth, 95.0).apply {
                     addChild(text)
                     onMouseRelease { event ->
-                        if (event.button != 0) return@onMouseRelease
+                        if (event.button != 1) return@onMouseRelease
                         subcategoriesRect[currentSubcategory]?.second?.setColor(ColorPalette.LIGHT_TEXT_COLOR)
                         subcategoriesRect[currentSubcategory]?.second?.removeEffects(UILineEffect::class.java)
                         subcategoriesRect[currentSubcategory]?.first?.hide()

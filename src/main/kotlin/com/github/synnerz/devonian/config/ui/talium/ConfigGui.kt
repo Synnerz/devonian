@@ -46,7 +46,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         )
 
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             Scheduler.scheduleTask(1) {
                 Devonian.minecraft.setScreenAndShow(HudManager)
             }
