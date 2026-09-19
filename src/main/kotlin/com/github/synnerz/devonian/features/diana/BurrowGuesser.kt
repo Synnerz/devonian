@@ -21,7 +21,7 @@ import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 import java.util.*
 import kotlin.math.*
@@ -69,7 +69,7 @@ object BurrowGuesser : Feature(
 
     private val keybind = KeyMappingHelper.registerKeyMapping(KeyMapping(
         "key.devonian.burrowWarp",
-        GLFW.GLFW_KEY_UNKNOWN,
+        SDLKeycode.SDLK_UNKNOWN,
         Devonian.keybindCategory
     ))
     private val warpCommands = listOf(
