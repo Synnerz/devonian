@@ -17,7 +17,6 @@ import com.google.gson.reflect.TypeToken
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.core.BlockPos
-import org.lwjgl.glfw.GLFW
 import java.awt.Color
 
 object CommandWaypoints : Feature(
@@ -122,7 +121,7 @@ object CommandWaypoints : Feature(
             }
 
             if (cached != null) {
-                if (InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_SHIFT)) {
+                if (InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)) {
                     cmdPos = bp
                     Scheduler.scheduleTask {
                         minecraft.gui.openChatScreen(ChatComponent.ChatMethod.COMMAND)
