@@ -4,13 +4,13 @@ import com.github.synnerz.devonian.GameRendererScaleAccessor;
 import com.github.synnerz.devonian.features.misc.NoHurtCamera;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.render.pip.*;
+import net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.GameRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
@@ -60,7 +60,7 @@ public class GameRendererMixin implements GameRendererScaleAccessor {
      */
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void devonian$onRenderInit(Minecraft minecraft, ItemInHandRenderer itemInHandRenderer, ModelManager modelManager, CallbackInfo ci, @Local(name = "atlasManager") AtlasManager atlasManager) {
+    private void devonian$onRenderInit(Minecraft minecraft, FirstPersonHandsAndItemsRenderer firstPersonHandsAndItemsRenderer, ModelManager modelManager, ItemModelResolver itemModelResolver, CallbackInfo ci, @Local(name = "atlasManager") AtlasManager atlasManager) {
         devonian$guiRenderer = new GuiRenderer(
                 devonian$guiRenderState,
                 featureRenderDispatcher,
@@ -80,7 +80,7 @@ public class GameRendererMixin implements GameRendererScaleAccessor {
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;endFrame()V"))
-    private void devonian$onPostRender(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci) {
+    private void devonian$onPostRender(CallbackInfo ci) {
         if (devonian$Scaled == -1) return;
 
         var w = minecraft.getWindow();
