@@ -12,7 +12,6 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.Component
-import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 import kotlin.math.min
 
@@ -91,8 +90,8 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         mouseDown = true
         // updateSelected()
         if (
-            InputConstants.isKeyDown(SDLKeycode.SDLK_LCTRL) &&
-            mouseButtonEvent.buttonInfo().button() == 0
+            InputConstants.isKeyDown(InputConstants.KEY_LCONTROL) &&
+            mouseButtonEvent.buttonInfo().button() == 1
         ) {
             val visibleHuds = huds.filter { it.isVisibleEdit() && it.inBounds(lastMouseX, lastMouseY) }
             selectedList.removeIf { visibleHuds.contains(it.hud) }
@@ -126,7 +125,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     }
 
     override fun mouseDragged(mouseButtonEvent: MouseButtonEvent, d: Double, e: Double): Boolean {
-        if (mouseButtonEvent.button() != 0) return false
+        if (mouseButtonEvent.button() != 1) return false
 
         // updateSelected()
         cumDragX += d
@@ -161,7 +160,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     }
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
-        if (keyEvent.key == SDLKeycode.SDLK_ESCAPE) return super.keyPressed(keyEvent)
+        if (keyEvent.key == InputConstants.KEY_ESCAPE) return super.keyPressed(keyEvent)
 
         if (selectedList.isNotEmpty())
             selectedList.forEach {
