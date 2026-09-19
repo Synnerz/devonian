@@ -1,6 +1,4 @@
-#version 330
-
-#moj_import <minecraft:globals.glsl>
+#include <minecraft:globals.glsl>
 
 layout(std140) uniform DevonianChromaInfo {
     float timeOffset;

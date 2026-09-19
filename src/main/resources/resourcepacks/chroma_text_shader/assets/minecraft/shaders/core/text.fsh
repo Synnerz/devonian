@@ -1,43 +1,46 @@
 #version 330
+#extension GL_ARB_separate_shader_objects : require
 
 #if !defined(IS_GUI) && !defined(IS_SEE_THROUGH)
-    #moj_import <minecraft:fog.glsl>
+    #include <minecraft:fog.glsl>
 #endif
 
-#moj_import <minecraft:dynamictransforms.glsl>
+#include <minecraft:dynamictransforms.glsl>
 
-// doesn't do anything right now (moj_import) is imported before defines but maybe it will in the future :)
 #ifdef DEVONIAN_CHROMA_TEXT
-    #moj_import <devonian:chroma.glsl>
+    #include <devonian:chroma.glsl>
 #endif
 
 uniform sampler2D Sampler0;
 
 #if !defined(IS_GUI) && !defined(IS_SEE_THROUGH)
-    in float sphericalVertexDistance;
-    in float cylindricalVertexDistance;
+    layout(location = 0) in float sphericalVertexDistance;
+    layout(location = 1) in float cylindricalVertexDistance;
 #endif
 
-in vec4 vertexColor;
-in vec2 texCoord0;
+layout(location = 2) in vec4 vertexColor;
+layout(location = 3) in vec2 texCoord0;
 
 #ifdef DEVONIAN_CHROMA_TEXT
-    in vec4 origColor;
+    layout(location = 4) in vec4 origColor;
 #endif
 
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 void main() {
     #ifdef IS_GRAYSCALE
         vec4 texColor = texture(Sampler0, texCoord0).rrrr;
     #else
         vec4 texColor = texture(Sampler0, texCoord0);
+
         #ifdef DEVONIAN_CHROMA_TEXT
             vec4 trf = dv_transformChroma(origColor);
+
             if (trf != origColor) {
                 texColor = texColor * trf;
             }
         #endif
+
     #endif
 
     #ifdef IS_SEE_THROUGH
@@ -45,7 +48,9 @@ void main() {
     #else
         vec4 color = texColor * vertexColor * ColorModulator;
     #endif
-    if (color.a < 0.1) discard;
+    if (color.a < 0.1) {
+        discard;
+    }
 
     #ifdef IS_SEE_THROUGH
         fragColor = color * ColorModulator;
