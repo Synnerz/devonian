@@ -17,7 +17,7 @@ object CopyChat : Feature(
 ) {
     override fun initialize() {
         on<GuiClickEvent> { event ->
-            if (!event.state || event.mbtn != 1) return@on
+            if (!event.state || event.mbtn != 3) return@on
 
             val screen = event.screen
             if (screen !is ChatScreen) return@on
