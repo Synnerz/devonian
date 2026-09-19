@@ -32,11 +32,14 @@ public class RenderPipelinesMixin {
         var verxShader = rp.getShaders().get(ShaderType.VERTEX);
 
         if (
-            verxShader != null && verxShader.toString().equals("minecraft:core/rendertype_text") ||
-            fragShader != null && fragShader.toString().equals("minecraft:core/rendertype_text")
+            verxShader != null && verxShader.toString().equals("minecraft:core/text") ||
+            fragShader != null && fragShader.toString().equals("minecraft:core/text")
         ) {
             instance
-                .withBindGroupLayout(layout)
+                .withBindGroupLayout(BindGroupLayout
+                        .builder()
+                        .withUniform("DevonianChromaInfo", UniformType.UNIFORM_BUFFER)
+                        .build())
                 .withShaderDefine("DEVONIAN_CHROMA_TEXT");
         }
 
