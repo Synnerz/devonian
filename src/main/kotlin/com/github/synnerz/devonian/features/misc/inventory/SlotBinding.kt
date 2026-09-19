@@ -388,7 +388,7 @@ object SlotBinding : Feature(
                 if (
                     SETTING_POINTING_LINE_MODE.get() == 0 ||
                     SETTING_POINTING_LINE_MODE.get() == 2 &&
-                    !InputConstants.isKeyDown(SDLKeycode.SDLK_LSHIFT)
+                    !InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
                 ) return@forEachIndexed
 
                 Render2D.drawLine(
