@@ -40,7 +40,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "[  ]", true).apply {
             var toggle = false
             onMouseRelease {
-                if (it.button != 0) return@onMouseRelease
+                if (it.button != 1) return@onMouseRelease
                 toggle = !toggle
                 text = if (toggle) "§b[ x ]" else "[  ]"
                 messageSelection.forEach { it.text.select(toggle) }
@@ -62,7 +62,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "Import", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             val encode = minecraft?.keyboardHandler?.clipboard
             if (encode.isNullOrEmpty()) return@onMouseRelease
             val decoded = Base64.getDecoder().decode(encode)
@@ -85,7 +85,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "§a+", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             createCancel(if (components.isEmpty()) 1 else 1 + (components.size % 7), "placeholder")
         }
     }
@@ -93,7 +93,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "Export", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             val json = PersistentJson.gson.toJson(selectedMessages.map { it.message })
             if (json.isEmpty()) return@onMouseRelease
 
@@ -106,7 +106,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "<-", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             currentPage--
         }
         hide()
@@ -115,7 +115,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "->", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             currentPage++
         }
     }
@@ -262,7 +262,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
                 messageSelection.add(MessageSelection(data, this))
                 var toggle = false
                 onMouseRelease {
-                    if (it.button != 0) return@onMouseRelease
+                    if (it.button != 1) return@onMouseRelease
                     toggle = !toggle
                     text = if (toggle) "§b[ x ]" else "[  ]"
                     if (toggle) selectedMessages.add(data) else selectedMessages.remove(data)
@@ -289,7 +289,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
             setColor(Color(35, 35, 35, 255))
             addChild(UIText(0.0, 0.0, 100.0, 100.0, "X", true).apply { setColor(Color.RED) })
             onMouseRelease {
-                if (it.button != 0) return@onMouseRelease
+                if (it.button != 1) return@onMouseRelease
                 messagesList.remove(data)
                 components.remove(parentBg)
                 messageSelection.removeIf { it.data == data }
