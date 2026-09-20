@@ -24,8 +24,6 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.network.chat.Component
-import org.lwjgl.sdl.SDLKeyboard
-import org.lwjgl.sdl.SDLKeycode
 import java.awt.Color
 import kotlin.math.abs
 
@@ -54,7 +52,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "§a+", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             createKeyBind(if (components.isEmpty()) 1 else 1 + (components.size % 7), "/placeholder", -1)
         }
     }
@@ -62,7 +60,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "<-", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             currentPage--
         }
         hide()
@@ -71,7 +69,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "->", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             currentPage++
         }
     }
@@ -209,7 +207,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
             setColor(Color(35, 35, 35, 255))
             addChild(UIText(0.0, 0.0, 100.0, 100.0, "X", true).apply { setColor(Color.RED) })
             onMouseRelease {
-                if (it.button != 0) return@onMouseRelease
+                if (it.button != 1) return@onMouseRelease
                 bindsList.remove(data)
                 components.remove(bindRect)
                 ChatUtils.sendMessage("&cRemoved KeyShortcut &7[${UIKeyBind.keyName(data.bind)} > ${data.command}]", true)
@@ -323,7 +321,7 @@ class UIKeyBind(
     override fun onKeyType(event: UIKeyType) = apply {
         if (!focused) return@apply
         if (event.keycode == InputConstants.KEY_ESCAPE) {
-            bind = SDLKeycode.SDLK_UNKNOWN
+            bind = InputConstants.UNKNOWN.value
             keyNameText.text = keyName(bind)
             return@apply
         }
@@ -343,8 +341,8 @@ class UIKeyBind(
         fun keyName(keycode: Int, scanCode: Int = 0): String {
             if (keycode < -1) return "M${abs(-100 % keycode)}"
             if (keycode == -1) return "UNKNOWN"
-            val name = bySpecialKey(keycode) ?: SDLKeyboard.SDL_GetKeyName(keycode)?.uppercase()
-            return "KEY ${name ?: "UNKNOWN"}"
+            val name = bySpecialKey(keycode) ?: InputConstants.Type.KEYBOARD.getOrCreate(keycode).displayName.string
+            return "KEY ${name.replace("Keypad ", "KP")}"
         }
     }
 }
