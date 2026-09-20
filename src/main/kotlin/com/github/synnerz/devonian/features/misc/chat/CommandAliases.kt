@@ -45,7 +45,7 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "§a+", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             createAlias(if (components.isEmpty()) 1 else 1 + (components.size % 7), "p", "placeholder")
         }
     }
@@ -53,7 +53,7 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "<-", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             currentPage--
         }
         hide()
@@ -62,7 +62,7 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "->", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             currentPage++
         }
     }
@@ -199,7 +199,7 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
             setColor(Color(35, 35, 35, 255))
             addChild(UIText(0.0, 0.0, 100.0, 100.0, "X", true).apply { setColor(Color.RED) })
             onMouseRelease {
-                if (it.button != 0) return@onMouseRelease
+                if (it.button != 1) return@onMouseRelease
                 aliasesList.remove(data)
                 components.remove(parentBg)
                 ChatUtils.sendMessage("&cRemoved CommandAlias &7[${data.alias} > ${data.command}]", true)
