@@ -23,8 +23,8 @@ object Render3DPipelines {
     val LINES_OPAQUE_ESP = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
         .withLocation("devonian/lines_opaque_esp")
         .withCull(false)
-        .withColorTargetState(ColorTargetState.DEFAULT)
-        .withDepthStencilState(Optional.empty())
+        .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
+        .withDepthStencilState(DepthStencilState(CompareOp.ALWAYS_PASS, false))
         .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
 
@@ -38,7 +38,7 @@ object Render3DPipelines {
         .withLocation("devonian/lines_transparent_esp")
         .withCull(false)
         .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
-        .withDepthStencilState(DepthStencilState(CompareOp.NOT_EQUAL, false))
+        .withDepthStencilState(DepthStencilState(CompareOp.ALWAYS_PASS, false))
         .build().also { RenderPipelines.register(it) }
 
     val TRIANGLE_STRIP_OPAQUE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
@@ -53,7 +53,7 @@ object Render3DPipelines {
         .withCull(false)
         .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
         .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_STRIP)
-        .withDepthStencilState(DepthStencilState(CompareOp.NOT_EQUAL, false))
+        .withDepthStencilState(DepthStencilState(CompareOp.ALWAYS_PASS, false))
         .build().also { RenderPipelines.register(it) }
         .withDepthTestAlways()
 
@@ -70,7 +70,7 @@ object Render3DPipelines {
         .withCull(false)
         .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
         .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_STRIP)
-        .withDepthStencilState(DepthStencilState(CompareOp.NOT_EQUAL, false))
+        .withDepthStencilState(DepthStencilState(CompareOp.ALWAYS_PASS, false))
         .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
         .build().also { RenderPipelines.register(it) }
 
@@ -103,7 +103,7 @@ object Render3DPipelines {
         .withCull(false)
         .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
         .withPrimitiveTopology(PrimitiveTopology.QUADS)
-        .withDepthStencilState(DepthStencilState(CompareOp.NOT_EQUAL, false))
+        .withDepthStencilState(DepthStencilState(CompareOp.ALWAYS_PASS, false))
         .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
         .build().also { RenderPipelines.register(it) }
 
@@ -127,7 +127,7 @@ object Render3DPipelines {
 
     val BEACON_BEAM_TRANSLUCENT_ESP = RenderPipeline.builder(RenderPipelines.BEACON_BEAM_SNIPPET)
         .withLocation("devonian/beacon_beam_translucent_esp")
-        .withDepthStencilState(DepthStencilState(CompareOp.NOT_EQUAL, false))
+        .withDepthStencilState(DepthStencilState(CompareOp.ALWAYS_PASS, false))
         .withColorTargetState(ColorTargetState.DEFAULT)
         .build().also { RenderPipelines.register(it) }
 
