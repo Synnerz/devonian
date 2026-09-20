@@ -884,6 +884,8 @@ object DungeonMap : HudFeature(
     )
 
     fun redrawMap(rooms: List<DungeonRoom?>, doors: List<DungeonDoor?>) {
+        if (!isEnabled()) return
+
         var floor = Dungeons.floor
         if (floor == FloorType.None) floor = FloorType.M7
 
