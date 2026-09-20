@@ -43,7 +43,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "[  ]", true).apply {
             var toggle = false
             onMouseRelease {
-                if (it.button != 0) return@onMouseRelease
+                if (it.button != 1) return@onMouseRelease
                 toggle = !toggle
                 text = if (toggle) "§b[ x ]" else "[  ]"
                 specialTitles.forEach { it.text.select(toggle) }
@@ -70,7 +70,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "Import", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             val encode = minecraft?.keyboardHandler?.clipboard
             if (encode.isNullOrEmpty()) return@onMouseRelease
             val decoded = Base64.getDecoder().decode(encode)
@@ -92,7 +92,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "§a+", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             createCriteria(if (components.isEmpty()) 1 else 1 + (components.size % 7), "p", "placeholder")
         }
     }
@@ -100,12 +100,12 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "Export", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             val json = PersistentJson.gson.toJson(buildMap { selectedTitles.forEach { put(it.criteria, it.message) } })
             if (json.isEmpty()) return@onMouseRelease
 
             val encoded = Base64.getEncoder().encodeToString(json.toByteArray(Charsets.UTF_8))
-            (minecraft ?: return@onMouseRelease).keyboardHandler.clipboard = encoded
+            minecraft.keyboardHandler.clipboard = encoded
             ChatUtils.sendMessage("&bExported TitleMessages to clipboard", true)
         }
     }
@@ -113,7 +113,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "<-", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             currentPage--
         }
         hide()
@@ -122,7 +122,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         setColor(Color(50, 50, 50, 255))
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "->", true).apply { textScale = 1.5f })
         onMouseRelease {
-            if (it.button != 0) return@onMouseRelease
+            if (it.button != 1) return@onMouseRelease
             currentPage++
         }
     }
@@ -286,7 +286,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
                 specialTitles.add(SpecialTitle(data, this))
                 var toggle = false
                 onMouseRelease {
-                    if (it.button != 0) return@onMouseRelease
+                    if (it.button != 1) return@onMouseRelease
                     toggle = !toggle
                     text = if (toggle) "§b[ x ]" else "[  ]"
                     if (toggle) selectedTitles.add(data) else selectedTitles.remove(data)
@@ -322,7 +322,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
             setColor(Color(35, 35, 35, 255))
             addChild(UIText(0.0, 0.0, 100.0, 100.0, "X", true).apply { setColor(Color.RED) })
             onMouseRelease {
-                if (it.button != 0) return@onMouseRelease
+                if (it.button != 1) return@onMouseRelease
                 titleCriterias.remove(data)
                 components.remove(parentBg)
                 specialTitles.removeIf { it.titleCriteria == data }
