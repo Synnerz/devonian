@@ -147,6 +147,7 @@ object BlazeSolver : Feature(
     val blazes = CopyOnWriteArrayList<BlazeEntity>()
     var lastBlazes = 0
     var startedAt = 0
+    var enteredRoomAt = 0
     var efficientPos: Triple<Int, Int, Int>? = null
     var hasSent = false
 
@@ -172,6 +173,7 @@ object BlazeSolver : Feature(
                 if (hasPlatform) 103 else 53,
                 rcomp.second
             )
+            enteredRoomAt = EventBus.serverTicks()
         }
 
         on<DungeonEvent.RoomLeave> {
@@ -180,6 +182,7 @@ object BlazeSolver : Feature(
             inBlaze = false
             hasPlatform = false
             startedAt = 0
+            enteredRoomAt = 0
             lastBlazes = 0
             efficientPos = null
             etherSpots.clear()
@@ -206,12 +209,13 @@ object BlazeSolver : Feature(
             if (blazes.isEmpty() && startedAt != 0 && lastBlazes == 1 && PuzzleTimers.isEnabled()) {
                 val time = (EventBus.serverTicks() - startedAt) * 0.05
                 val seconds = "%.2fs".format(time)
-                ChatUtils.sendMessage("&bBlaze took&f: &6$seconds", true)
+                ChatUtils.sendMessage("&bBlaze took&f: &6$seconds &7(${"%.2fs".format((EventBus.serverTicks() - enteredRoomAt) * 0.05)})", true)
                 blazes.clear()
                 entityList.clear()
                 inBlaze = false
                 hasPlatform = false
                 startedAt = 0
+                enteredRoomAt = 0
                 lastBlazes = 0
                 efficientPos = null
                 etherSpots.clear()
@@ -374,6 +378,7 @@ object BlazeSolver : Feature(
         inBlaze = false
         hasPlatform = false
         startedAt = 0
+        enteredRoomAt = 0
         lastBlazes = 0
         efficientPos = null
         etherSpots.clear()
