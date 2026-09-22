@@ -30,7 +30,7 @@ class Category(
         ).apply {
             yConstraint = UIFlexWrapConstraint(5.0)
             onMouseRelease {
-                if (it.button != 0) return@onMouseRelease
+                if (it.button != 1) return@onMouseRelease
                 if (ConfigGui.selectedCategory === this@Category) return@onMouseRelease
                 if (ConfigGui.selectedCategory == null)
                     ConfigGui.searchCategory.hide()
