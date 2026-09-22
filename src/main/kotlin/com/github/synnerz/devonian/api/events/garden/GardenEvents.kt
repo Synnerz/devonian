@@ -44,6 +44,7 @@ object GardenEvents {
         "HYPERCHARGE_CHIP" to "HYPERCHARGE_GARDEN_CHIP",
         "DEDICATION_4" to "ENCHANTMENT_DEDICATION_4",
         "DEDICATION_IV" to "ENCHANTMENT_DEDICATION_4",
+        "JELLY_GARDEN_GREENHOUSE_SKIN" to "JELLY_GREENHOUSE_SKIN",
     )
     private var lastGui: String? = null
     private var visitorData: VisitorData? = null
