@@ -52,7 +52,7 @@ object DungeonMapRoomPrediction : Feature(
 
         for (z in 0 until floor.roomsHS) {
             loop@ for (x in 0 until floor.roomsWS) {
-                val compR = ComponentPosition(z * 2, x * 2)
+                val compR = ComponentPosition(x * 2, z * 2)
                 val data = rooms[compR.getRoomIdx()]
                 val room = data?.room ?: continue@loop
                 if (room.explored) continue@loop
@@ -64,6 +64,8 @@ object DungeonMapRoomPrediction : Feature(
                 if (!room.doors.any { it.rooms.any { it.explored } }) continue@loop
 
                 compR.getNeighbors().forEach { (neighborR, neighborD) ->
+                    if (neighborR.x >= floor.roomsWS * 2) return@forEach
+                    if (neighborR.z >= floor.roomsHS * 2) return@forEach
                     val room2 = rooms[neighborR.getRoomIdx()]?.room ?: continue@loop
                     if (room2.explored) return@forEach
 
@@ -77,15 +79,15 @@ object DungeonMapRoomPrediction : Feature(
         }
 
         for (z in 0 until floor.roomsH) {
-            for (x in floor.roomsWS until floor.roomsW) {
-                val compD = ComponentPosition(z * 2, x * 2 - 1)
+            for (x in floor.roomsWS - 1 until floor.roomsW - 1) {
+                val compD = ComponentPosition(x * 2 + 1, z * 2)
                 if (doors[compD.getDoorIdx()] == null) continue
 
-                val compR1 = ComponentPosition(z * 2, x * 2)
+                val compR1 = ComponentPosition(x * 2, z * 2)
                 val room1 = rooms[compR1.getRoomIdx()]?.room ?: continue
                 if (!room1.explored) continue
 
-                val compR2 = ComponentPosition(z * 2, x * 2 + 2)
+                val compR2 = ComponentPosition(x * 2 + 2, z * 2)
                 val room2 = rooms[compR2.getRoomIdx()]?.room ?: continue
                 if (room2.explored) continue
 
