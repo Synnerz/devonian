@@ -417,6 +417,7 @@ object Devonian : ClientModInitializer {
             DodgeList,
             OldSymbols,
             DungeonMapRoomPrediction,
+            KickedMessage,
 
             // Debug
             CopyItem,
