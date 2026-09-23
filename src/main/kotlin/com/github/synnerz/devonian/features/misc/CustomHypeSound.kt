@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ItemUtils
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.PacketSentEvent
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.mixin.accessor.ScreenAccessor
 import com.github.synnerz.devonian.utils.CustomSounds
 import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket
@@ -17,10 +19,15 @@ object CustomHypeSound : Feature(
 ) {
     private val SETTING_EDIT_BUTTON = addButton(
         {
-            minecraft.gui.openChatAndAddText(
-                ChatComponent.ChatMethod.COMMAND,
-                "devonian hype ${customSound.volume} ${customSound.pitch} ${customSound.value}"
-            )
+            Scheduler.scheduleTask {
+                minecraft.openChatScreen(ChatComponent.ChatMethod.COMMAND)
+                Scheduler.scheduleTask(2) {
+                    (minecraft.screen as ScreenAccessor?)?.insertText(
+                        "devonian hype ${customSound.volume} ${customSound.pitch} ${customSound.value}",
+                        true
+                    )
+                }
+            }
         },
         displayName = "Edit Custom Hype Sound",
     )
