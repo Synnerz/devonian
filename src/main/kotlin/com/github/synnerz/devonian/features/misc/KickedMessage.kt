@@ -4,7 +4,6 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
@@ -43,13 +42,10 @@ object KickedMessage : TextHudFeature(
         }
 
         on<RenderOverlayEvent> {
+            if (triggeredAt == 0L) return@on
+
             draw(it.ctx)
         }
-    }
-
-    override fun onWorldChange(event: WorldChangeEvent) {
-        triggeredAt = 0L
-        clearLines()
     }
 
     override fun getEditText(): List<String> = listOf("&c59s")
