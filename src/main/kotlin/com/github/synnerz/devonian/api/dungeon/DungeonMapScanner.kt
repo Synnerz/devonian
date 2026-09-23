@@ -38,8 +38,8 @@ object DungeonMapScanner {
         roomSize = -1
         roomGap = -1
         roomCount = -1
-        mapOffsetX - 1
-        mapOffsetZ - 1
+        mapOffsetX = 1
+        mapOffsetZ = 1
         mapWidth = -1
         mapHeight = -1
         unscannedDoors.clear()
