@@ -43,5 +43,7 @@ abstract class DataObject {
         else -> null
     } as T?
 
+    abstract fun remove(key: String): Boolean
+
     abstract fun getObject(key: String): DataObject
 }
