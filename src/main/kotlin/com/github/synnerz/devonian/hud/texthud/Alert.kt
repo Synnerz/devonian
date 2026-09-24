@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.BoundingBox
 import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents
 import kotlin.math.min
 
@@ -16,26 +17,46 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
     private var needRescale = false
 
     @JvmOverloads
-    fun show(text: String, durationMs: Int, playSound: Boolean = true) {
-        Scheduler.scheduleTask {
-            val mc = Devonian.minecraft
+    fun show(text: String, durationMs: Int = 1000, playSound: Boolean = true, schedule: Boolean = true) =
+        if (schedule)
+            showWithSoundSchedule(text, durationMs, if (playSound) soundEvent else null)
+        else
+            showWithSound(text, durationMs, if (playSound) soundEvent else null)
 
-            if (durationMs > 0) {
-                val window = mc.window
+    fun showWithSoundSchedule(
+        text: String,
+        durationMs: Int = 1000,
+        sound: SoundEvent? = null,
+        volume: Float = 1f,
+        pitch: Float = 1f,
+    ) = Scheduler.scheduleTask { showWithSound(text, durationMs, sound, volume, pitch) }
 
-                val lines = text.split('\n').map { "&c$it" }
+    @JvmOverloads
+    fun showWithSound(
+        text: String,
+        durationMs: Int = 1000,
+        sound: SoundEvent? = null,
+        volume: Float = 1f,
+        pitch: Float = 1f,
+    ) {
+        val mc = Devonian.minecraft
 
-                x = window.guiScaledWidth * 0.5
-                y = window.guiScaledHeight * 0.5
-                clearLines()
-                setLines(lines)
-                needRescale = true
+        if (durationMs > 0) {
+            val window = mc.window
 
-                clearTime = System.currentTimeMillis() + durationMs
-            }
+            val lines = text.split('\n').map { "&c$it" }
 
-            if (playSound) mc?.player?.playSound(soundEvent, 1f, 1f)
+            x = window.guiScaledWidth * 0.5
+            y = window.guiScaledHeight * 0.5
+            clearLines()
+            setLines(lines)
+            needRescale = true
+
+            clearTime = System.currentTimeMillis() + durationMs
         }
+        if (sound == null) return
+
+        mc.player?.playSound(sound, volume, pitch)
     }
 
     override fun update() {
