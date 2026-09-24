@@ -36,7 +36,7 @@ object KickedMessage : TextHudFeature(
         on<ClientThreadServerTickEvent> {
             if (triggeredAt == 0L) return@on
 
-            val seconds = triggeredAt - System.currentTimeMillis() / 1000
+            val seconds = (triggeredAt - System.currentTimeMillis()) / 1000
             setLine("&c${StringUtils.formatSeconds(seconds)}")
             if (seconds <= 0) triggeredAt = 0L
         }
