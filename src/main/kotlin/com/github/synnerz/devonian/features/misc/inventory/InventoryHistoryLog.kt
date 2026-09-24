@@ -8,6 +8,7 @@ import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.abs
 
 object InventoryHistoryLog : TextHudFeature(
@@ -38,6 +39,7 @@ object InventoryHistoryLog : TextHudFeature(
     }
 
     val receipt = linkedMapOf<ItemizedDifference.Key, ItemizedDifference>()
+    val animatedArmor = mutableMapOf<String, String>()
     var inventory: MutableMap<String, Int>? = null
     var worldSwap = false
 
@@ -54,6 +56,20 @@ object InventoryHistoryLog : TextHudFeature(
                 inv.forEachIndexed { i, v ->
                     if (i == 8) return@forEachIndexed
                     if (v.isEmpty) return@forEachIndexed
+
+                    if (i in 36..38) {
+                        ItemUtils.extraAttributes(v)?.let { extraAttributes ->
+                            val dye = extraAttributes.getString("dye_item").getOrNull() ?: return@let
+                            val sbId = extraAttributes.getString("id").getOrNull() ?: return@let
+                            val uuid = extraAttributes.getString("uuid")
+                            if (animatedArmor[sbId] == dye && uuid.isEmpty) {
+                                animatedArmor[sbId] = dye
+                                return@forEachIndexed
+                            }
+
+                            animatedArmor[sbId] = dye
+                        }
+                    }
 
                     val customName = v.customName ?: v.itemName
                     val name =
@@ -87,6 +103,7 @@ object InventoryHistoryLog : TextHudFeature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
+        animatedArmor.clear()
         worldSwap = true
         Scheduler.scheduleServerTask(20) { worldSwap = false }
     }
