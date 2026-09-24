@@ -43,7 +43,7 @@ object SlotBinding : Feature(
         "dynamicChange",
         true,
         "Changes the selected profile depending on the area (if disabled, it will not change)",
-        "Dynamic Change"
+        "Dynamic Change",
     )
     private val SETTING_BOUND_LINES = addSwitch(
         "boundLines",
@@ -77,11 +77,11 @@ object SlotBinding : Feature(
         object : TypeToken<MutableList<SlotBindingProfile>>() {}
     ) {
         override fun onLoadDefault() {
-            data = mutableListOf(SlotBindingProfile("default"))
+            data = mutableListOf()
         }
     }
     private const val LEGACY_KEY_NAME = "slotsBound1"
-    private const val KEY_NAME = "default"
+    private const val KEY_NAME = "slotsBoundProfile"
     private val keybind = KeyMappingHelper.registerKeyMapping(
         KeyMapping(
             "key.devonian.slotBinding",
@@ -102,39 +102,21 @@ object SlotBinding : Feature(
         Color(247,129,191),
         Color(153,153,153),
     )
+    private var currentProfile: SlotBindingProfile? = null
     private var selectedProfile = "default"
-    private val currentProfile
-        get() = bindingProfiles.data!!.find { it.name.equals(selectedProfile, ignoreCase = true) }
+        set(value) {
+            field = value
+            currentProfile = bindingProfiles.data?.find { it.name.equals(value, ignoreCase = true) }
+        }
     private val slotLocCache = arrayListOf<Pair<Int, Int>?>()
     private var currentHeldSlot: Slot? = null
     private var once = false
 
-    data class SlotBindingProfile(
+    class SlotBindingProfile(
         val name: String,
         val slots: Array<MutableList<Int>> = Array(40) { mutableListOf<Int>() },
         val area: String? = null, // if null -> global
-        var toggle: Boolean = true, // TODO: impl me ?
-    ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as SlotBindingProfile
-
-            if (name != other.name) return false
-            if (!slots.contentEquals(other.slots)) return false
-            if (area != other.area) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = name.hashCode()
-            result = 31 * result + slots.contentHashCode()
-            result = 31 * result + (area?.hashCode() ?: 0)
-            return result
-        }
-    }
+    )
 
     override fun initialize() {
         bindingProfiles.load()
@@ -144,20 +126,18 @@ object SlotBinding : Feature(
         Config.onAfterLoad {
             selectedProfile = Config.get<String>(KEY_NAME) ?: "default"
 
-            var defaultProfile = bindingProfiles.data!!.find { it.name == "default" }
-            if (defaultProfile != null && defaultProfile.slots.sumOf { it.size } != 0) return@onAfterLoad
+            if (bindingProfiles.data!!.isNotEmpty()) return@onAfterLoad
 
-            val add = defaultProfile == null
-            if (add)
-                defaultProfile = SlotBindingProfile("default")
+            val defaultProfile = SlotBindingProfile("default")
 
             Config.get<List<JsonPrimitive>>(LEGACY_KEY_NAME)?.map { it.asInt }?.forEach {
                 val src = it shr 6
                 val dst = it and 63
                 defaultProfile.slots[src].add(dst)
             }
-            if (add)
-                bindingProfiles.data!!.add(defaultProfile)
+            Config.removeConfig(LEGACY_KEY_NAME)
+
+            bindingProfiles.data!!.add(defaultProfile)
         }
 
         Config.onPreSave {
@@ -244,11 +224,10 @@ object SlotBinding : Feature(
             .bool("useCurrentArea")
 
         on<AreaEvent> { event ->
-            if (!SETTING_DYNAMIC_CHANGE.get()) return@on
             selectedProfile = bindingProfiles.data!!.find {
                 it.area.equals(event.area, ignoreCase = true)
             }?.name ?: "default"
-        }
+        }.setEnabled(SETTING_DYNAMIC_CHANGE.state)
 
         on<GuiKeyDownEvent> { event ->
             if (!keybind.matches(event.event)) return@on
@@ -312,8 +291,8 @@ object SlotBinding : Feature(
         }
 
         on<PreventItem.SlotEvent> { event ->
+            val boundSlots = currentProfile?.slots ?: return@on
             if (SETTING_PROTECT.get() && event.losesItem) {
-                val boundSlots = currentProfile?.slots ?: return@on
                 val slots = boundSlots.getOrNull(event.idx)
                 if (!slots.isNullOrEmpty()) {
                     event.cancel("SlotBinding")
@@ -322,7 +301,6 @@ object SlotBinding : Feature(
             }
 
             (event.underlying as? QuickMoveItemEvent)?.also {
-                val boundSlots = currentProfile?.slots ?: return@on
                 val slots = boundSlots.getOrNull(event.idx) ?: return@on
                 val other = slots.getOrNull(0) ?: return@on
 
@@ -345,13 +323,11 @@ object SlotBinding : Feature(
 
             if (SETTING_PROTECT.get()) {
                 if (event.swapped != null) {
-                    val boundSlots = currentProfile?.slots ?: return@on
                     val slots = boundSlots.getOrNull(event.idx) ?: return@on
                     if (slots.isNotEmpty() && !slots.contains(event.swapped.containerSlot)) event.cancel("SlotBinding")
                     return@on
                 }
 
-                val boundSlots = currentProfile?.slots ?: return@on
                 val slots = boundSlots.getOrNull(event.idx) ?: return@on
                 if (slots.isEmpty()) return@on
 
@@ -388,7 +364,7 @@ object SlotBinding : Feature(
                 if (
                     SETTING_POINTING_LINE_MODE.get() == 0 ||
                     SETTING_POINTING_LINE_MODE.get() == 2 &&
-                    !InputConstants.isKeyDown(minecraft.window!!, GLFW.GLFW_KEY_LEFT_SHIFT)
+                    !InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_SHIFT)
                 ) return@forEachIndexed
 
                 Render2D.drawLine(
