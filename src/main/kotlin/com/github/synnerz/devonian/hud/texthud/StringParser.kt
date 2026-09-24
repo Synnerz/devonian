@@ -185,39 +185,45 @@ object StringParser {
             } else throw IllegalStateException("unknown attribute: " + v.t)
         }
 
-        val itt = attStr.iterator
-        var width = 0
         var maxAscent = 0
         var maxDescent = 0
+        val width = s.length.let {
+            if (it == 0) return@let 0
 
-        i = itt.beginIndex
-        val chars = CharArray(itt.endIndex - i)
-        var charsW = 1
-        chars[0] = itt.current()
-        i++
-        var currFont = itt.getAttribute(TextAttribute.FONT) as? Font? ?: f1
+            val itt = attStr.iterator
+            var width = 0
 
-        while (i < itt.endIndex) {
-            val c = itt.next()
-            val f = itt.getAttribute(TextAttribute.FONT) as? Font ?: f1
-
-            if (f != currFont) {
-                val fm = g.getFontMetrics(currFont)
-                width += fm.charsWidth(chars, 0, charsW)
-                maxAscent = max(maxAscent, fm.ascent)
-                maxDescent = max(maxDescent, fm.descent)
-
-                currFont = f
-                charsW = 0
-            }
-
-            chars[charsW++] = c
+            i = itt.beginIndex
+            val chars = CharArray(itt.endIndex - i)
+            var charsW = 1
+            chars[0] = itt.current()
             i++
+            var currFont = itt.getAttribute(TextAttribute.FONT) as? Font? ?: f1
+
+            while (i < itt.endIndex) {
+                val c = itt.next()
+                val f = itt.getAttribute(TextAttribute.FONT) as? Font ?: f1
+
+                if (f != currFont) {
+                    val fm = g.getFontMetrics(currFont)
+                    width += fm.charsWidth(chars, 0, charsW)
+                    maxAscent = max(maxAscent, fm.ascent)
+                    maxDescent = max(maxDescent, fm.descent)
+
+                    currFont = f
+                    charsW = 0
+                }
+
+                chars[charsW++] = c
+                i++
+            }
+            val fm = g.getFontMetrics(currFont)
+            width += fm.charsWidth(chars, 0, charsW)
+            maxAscent = max(maxAscent, fm.ascent)
+            maxDescent = max(maxDescent, fm.descent)
+
+            return@let width
         }
-        val fm = g.getFontMetrics(currFont)
-        width += fm.charsWidth(chars, 0, charsW)
-        maxAscent = max(maxAscent, fm.ascent)
-        maxDescent = max(maxDescent, fm.descent)
 
         return LayoutLineData(
             width.toFloat(),
