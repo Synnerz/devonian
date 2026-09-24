@@ -5,6 +5,8 @@ import java.awt.font.TextAttribute
 import java.text.AttributedCharacterIterator
 import java.text.AttributedString
 import java.util.stream.Collectors
+import kotlin.math.max
+
 
 object StringParser {
     fun isColorCode(c: Char): Boolean {
@@ -183,12 +185,44 @@ object StringParser {
             } else throw IllegalStateException("unknown attribute: " + v.t)
         }
 
-        val fm = g.fontMetrics
+        val itt = attStr.iterator
+        var width = 0
+        var maxAscent = 0
+        var maxDescent = 0
+
+        i = itt.beginIndex
+        val chars = CharArray(itt.endIndex - i)
+        var charsW = 1
+        chars[0] = itt.current()
+        i++
+        var currFont = itt.getAttribute(TextAttribute.FONT) as? Font? ?: f1
+
+        while (i < itt.endIndex) {
+            val c = itt.next()
+            val f = itt.getAttribute(TextAttribute.FONT) as? Font ?: f1
+
+            if (f != currFont) {
+                val fm = g.getFontMetrics(currFont)
+                width += fm.charsWidth(chars, 0, charsW)
+                maxAscent = max(maxAscent, fm.ascent)
+                maxDescent = max(maxDescent, fm.descent)
+
+                currFont = f
+                charsW = 0
+            }
+
+            chars[charsW++] = c
+            i++
+        }
+        val fm = g.getFontMetrics(currFont)
+        width += fm.charsWidth(chars, 0, charsW)
+        maxAscent = max(maxAscent, fm.ascent)
+        maxDescent = max(maxDescent, fm.descent)
 
         return LayoutLineData(
-            fm.stringWidth(s).toFloat(),
-            fm.ascent.toFloat(),
-            fm.descent.toFloat(),
+            width.toFloat(),
+            maxAscent.toFloat(),
+            maxDescent.toFloat(),
             o.isNotEmpty(),
             atts,
             attStr,

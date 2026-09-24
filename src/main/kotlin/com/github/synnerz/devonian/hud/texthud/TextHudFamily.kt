@@ -7,7 +7,8 @@ class TextHudFamily(name: String, data: DataProvider) : StylizedTextHud(name, da
 
     fun createChildProvider() = DerivedProvider(this)
 
-    override fun getWidth(): Double = children.sumOf { it.getWidth() }
+    override fun getWidth(): Double = children.sumOf { it.getWidth() } +
+        if (children.isEmpty()) 0.0 else 2.0 * scale * (children.size - 1)
 
     override fun getLineHeight(): Double = children.maxOf { it.getLineHeight() }
 
