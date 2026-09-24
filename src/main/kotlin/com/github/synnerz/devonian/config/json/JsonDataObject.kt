@@ -20,35 +20,44 @@ class JsonDataObject(val json: JsonObject = JsonObject()) : DataObject() {
     }
 
     override fun getString(key: String): String? = json.get(key)?.let {
-            if ((it as? JsonPrimitive)?.isString == true) it.asString
-            else null
-        }
+        if ((it as? JsonPrimitive)?.isString == true) it.asString
+        else null
+    }
+
     override fun getInt(key: String): Int? = json.get(key)?.let {
-            if ((it as? JsonPrimitive)?.isNumber == true) it.asInt
-            else null
-        }
+        if ((it as? JsonPrimitive)?.isNumber == true) it.asInt
+        else null
+    }
+
     override fun getDouble(key: String): Double? = json.get(key)?.let {
-            if ((it as? JsonPrimitive)?.isNumber == true) it.asDouble
-            else null
-        }
+        if ((it as? JsonPrimitive)?.isNumber == true) it.asDouble
+        else null
+    }
+
     override fun getFloat(key: String): Float? = json.get(key)?.let {
-            if ((it as? JsonPrimitive)?.isNumber == true) it.asFloat
-            else null
-        }
-        override fun getLong(key: String): Long? = json.get(key)?.let {
-            if ((it as? JsonPrimitive)?.isNumber == true) it.asLong
-            else null
-        }
-        override fun getBoolean(key: String): Boolean? = json.get(key)?.let {
-            if ((it as? JsonPrimitive)?.isBoolean == true) it.asBoolean
-            else null
-        }
+        if ((it as? JsonPrimitive)?.isNumber == true) it.asFloat
+        else null
+    }
+
+    override fun getLong(key: String): Long? = json.get(key)?.let {
+        if ((it as? JsonPrimitive)?.isNumber == true) it.asLong
+        else null
+    }
+
+    override fun getBoolean(key: String): Boolean? = json.get(key)?.let {
+        if ((it as? JsonPrimitive)?.isBoolean == true) it.asBoolean
+        else null
+    }
+
     override fun getList(key: String): List<*>? = json.get(key)?.let {
-            (it as? JsonArray)?.asList()
-        }
+        (it as? JsonArray)?.asList()
+    }
+
     override fun getMap(key: String): Map<*, *>? = json.get(key)?.let {
-            (it as? JsonObject)?.asMap()
-        }
+        (it as? JsonObject)?.asMap()
+    }
+
+    override fun remove(key: String): Boolean = json.remove(key) != null
 
     private val cached = mutableMapOf<String, JsonDataObject>()
 
