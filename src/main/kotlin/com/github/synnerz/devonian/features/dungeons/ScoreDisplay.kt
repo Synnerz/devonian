@@ -108,7 +108,7 @@ object ScoreDisplay : TextHudFeature(
             else ""
         if (SETTING_ILLEGALMAP_FORMAT.get()) return listOf(
             "&7Secrets: &b$secrets&7-&e${remainingSecrets}&7-&c$totalSecrets &8| &7Score: $tierColor$score",
-            "$unfound&7C: ${if (crypts >= 5) "&a" else "&c"}$crypts &8| &7M: $m &8| &7P: $p"
+            "$unfound&7C: ${if (crypts >= 5) "&a" else "&c"}$crypts &8|${if (floor.floorNum >= 6) " &7M: $m &8|" else ""} &7P: $p"
         )
         val tier = when {
             score < 100 -> "D"
