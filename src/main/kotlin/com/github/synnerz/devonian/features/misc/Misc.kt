@@ -226,3 +226,8 @@ object FixBowPull : Feature(
         sbId = null
     }
 }
+object DisableHotbarScrolling : Feature(
+    "disableHotbarScrolling",
+    "Prevents scroll wheel from changing the selected hotbar slot.",
+    subcategory = "Tweaks",
+)

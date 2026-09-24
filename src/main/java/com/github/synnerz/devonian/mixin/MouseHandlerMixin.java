@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.MousePressEvent;
 import com.github.synnerz.devonian.api.events.MouseReleaseEvent;
 import com.github.synnerz.devonian.api.events.MouseScrollEvent;
 import com.github.synnerz.devonian.features.debug.MousePositionLogger;
+import com.github.synnerz.devonian.features.misc.DisableHotbarScrolling;
 import com.github.synnerz.devonian.features.misc.inventory.NoCursorReset;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
@@ -14,6 +15,7 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.world.entity.player.Inventory;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -204,5 +206,14 @@ public abstract class MouseHandlerMixin implements MouseHandlerAccessor {
     )
     private void devonian$onScroll(long l, double d, double e, CallbackInfo ci) {
         if (new MouseScrollEvent(e).post()) ci.cancel();
+    }
+
+    @WrapOperation(
+        method = "onScroll",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;setSelectedSlot(I)V")
+    )
+    private void devonian$preventHotbarScrolling(Inventory instance, int selected, Operation<Void> original) {
+        if (DisableHotbarScrolling.INSTANCE.isEnabled()) return;
+        original.call(instance, selected);
     }
 }
