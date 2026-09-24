@@ -418,6 +418,7 @@ object Devonian : ClientModInitializer {
             OldSymbols,
             DungeonMapRoomPrediction,
             KickedMessage,
+            DisableHotbarScrolling,
 
             // Debug
             CopyItem,
