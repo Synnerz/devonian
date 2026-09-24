@@ -390,7 +390,11 @@ object CustomDungeonWaypoints : Feature(
         on<DungeonEvent.SecretPickup> { event -> onSecret(event.x, event.y, event.z, 2) }
 
         on<DungeonEvent.RoomUpdateEvent> { event ->
-            if (event.previousCheck != CheckmarkTypes.WHITE || event.currentCheck != CheckmarkTypes.GREEN) return@on
+            if (
+                event.clientSide ||
+                event.previousCheck != CheckmarkTypes.WHITE ||
+                event.currentCheck != CheckmarkTypes.GREEN
+            ) return@on
             event.room.roomID?.let { clearedRooms.add(it) }
         }
     }

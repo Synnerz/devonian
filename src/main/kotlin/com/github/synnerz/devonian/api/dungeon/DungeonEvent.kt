@@ -32,6 +32,7 @@ abstract class DungeonEvent {
         val room: DungeonRoom,
         val previousCheck: CheckmarkTypes,
         val currentCheck: CheckmarkTypes,
+        val clientSide: Boolean = false,
     ) : Event
     class SecretClicked(
         val x: Double, val y: Double, val z: Double,
