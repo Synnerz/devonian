@@ -20,6 +20,8 @@ object Config : PersistentData by jsonLoader {
     inline fun <reified T> getConfig(name: String): T? = configRoot.get<T>(name)
     fun <T> getConfig(name: String, value: T): T? = configRoot.get(name, value)
 
+    fun removeConfig(name: String) = apply { configRoot.remove(name) }
+
     fun getHud(name: String): NullableHudData {
         val obj = hudRoot.getObject(name)
         return NullableHudData(
