@@ -134,7 +134,7 @@ object EtherwarpOverlay : Feature(
         }
 
         on<MousePressEvent> { event ->
-            if (event.button != 1 || res == null) return@on
+            if (event.button != 3 || res == null) return@on
             val currentRoom = DungeonScanner.currentRoom ?: return@on
             if (res!!.y != currentRoom.height) return@on
 
