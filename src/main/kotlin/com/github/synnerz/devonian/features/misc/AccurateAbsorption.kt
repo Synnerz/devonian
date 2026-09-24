@@ -15,14 +15,22 @@ import kotlin.math.min
 
 object AccurateAbsorption : Feature(
     "accurateAbsorption",
-    "Changes absorption hearts to accurately reflect the amount of absorption you have.",
+    "Changes vanilla health bar to accurately reflect the amount of absorption you have.",
     Categories.VANILLA_TWEAKS,
+    displayName = "Accurate Hearts",
 ) {
+    private val SETTING_MAX_HP = addSlider(
+        "maxHealth",
+        40.0,
+        1.0, 100.0,
+        "1 = half a heart, caps maximum # hearts",
+        "Max Hearts",
+    )
     private val SETTING_MAX_ABSORPTION_HEARTS = addSlider(
         "maxAbsorptionHearts",
         40.0,
         0.0, 100.0,
-        "1 = half a heart, caps maximum # of hearts for things like mastiff wish",
+        "1 = half a heart, caps maximum # of absorption hearts for things like mastiff wish",
         "Max Absorption Hearts",
     )
 
@@ -42,9 +50,9 @@ object AccurateAbsorption : Feature(
         val hardcore = player.level().levelData.isHardcore
         val heart = HeartTypeAccessor.invokeForPlayer(player)
 
-        val maxHearts = maxHearts.toInt()
         val initialHearts = hearts
-        var hearts = hearts
+        var hearts = ceil(hearts / maxHearts * SETTING_MAX_HP.get()).toInt()
+        val maxHearts = SETTING_MAX_HP.get().toInt()
         var absorption = actualAbsorption
         var actualHearts = displayHearts
 
@@ -96,8 +104,8 @@ object AccurateAbsorption : Feature(
             val maxHpN = maxHp.replace(",", "").toDoubleOrNull() ?: return@on
 
             val player = minecraft.player ?: return@on
-            val hearts = ceil(player.health).toInt()
-            val maxHearts = ceil(player.maxHealth).toInt()
+            val hearts = (player.health / player.maxHealth * SETTING_MAX_HP.get()).toInt()
+            val maxHearts = SETTING_MAX_HP.get().toInt()
             val hpPerHeart = maxHpN / maxHearts
             actualAbsorption = min(
                 max(ceil(curHpN / hpPerHeart).toInt() - hearts, 0),
