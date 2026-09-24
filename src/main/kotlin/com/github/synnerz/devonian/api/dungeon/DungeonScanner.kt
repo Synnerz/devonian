@@ -189,6 +189,14 @@ object DungeonScanner {
                 updateMap = true
             }
             if (currentRoom?.checkmark == CheckmarkTypes.UNEXPLORED) {
+                currentRoom?.let {
+                    DungeonEvent.RoomUpdateEvent(
+                        it,
+                        it.checkmark,
+                        CheckmarkTypes.NONE,
+                        true
+                    ).post()
+                }
                 currentRoom?.checkmark = CheckmarkTypes.NONE
                 updateMap = true
             }

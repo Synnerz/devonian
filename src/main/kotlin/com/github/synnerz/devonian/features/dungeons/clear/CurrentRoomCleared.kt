@@ -70,7 +70,11 @@ object CurrentRoomCleared : Feature(
 
         on<DungeonEvent.RoomUpdateEvent> { event ->
             if (!SETTING_SECRETS_DONE.get()) return@on
-            if (event.previousCheck != CheckmarkTypes.WHITE || event.currentCheck != CheckmarkTypes.GREEN) return@on
+            if (
+                event.clientSide ||
+                event.previousCheck != CheckmarkTypes.WHITE ||
+                event.currentCheck != CheckmarkTypes.GREEN
+            ) return@on
             val currentRoom = DungeonScanner.currentRoom ?: return@on
             val room = event.room
             if (room != currentRoom) return@on

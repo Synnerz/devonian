@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.api.dungeon
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
@@ -17,7 +16,6 @@ import net.minecraft.world.level.saveddata.maps.MapDecorationTypes
 import net.minecraft.world.level.saveddata.maps.MapId
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData
 import kotlin.math.PI
-import kotlin.math.max
 
 object DungeonMapScanner {
     private const val COLOR_SIZE = 16384
@@ -38,8 +36,8 @@ object DungeonMapScanner {
         roomSize = -1
         roomGap = -1
         roomCount = -1
-        mapOffsetX = 1
-        mapOffsetZ = 1
+        mapOffsetX = -1
+        mapOffsetZ = -1
         mapWidth = -1
         mapHeight = -1
         unscannedDoors.clear()
