@@ -166,7 +166,7 @@ object DodgeList : Feature(
             // yes i could link it through hypixelmodapi but i am too lazy
             requestUUID(username) { playerUUID ->
                 val reason = dodgePlayers.data!![playerUUID]?.reason ?: return@requestUUID
-                ChatUtils.sendMessage("&cDodgeList found player &e$username&c for &e$reason", true)
+                ChatUtils.sendMessage("&cDodgeList found player &e\"$username\"&c for &e\"$reason\"", true)
             }
         }
     }
