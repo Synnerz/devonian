@@ -221,16 +221,18 @@ object Render3DVertex {
         batchedText.add(
             TextFeatureRenderer.Submit(
                 Matrix4f(stack.last().pose()),
-                offset,
-                0f,
-                StringUtils.fromLegacy(str).visualOrderText,
-                true,
                 mode,
                 minecraft.entityRenderDispatcher.getPackedLightCoords(minecraft.player!!, deltaPartialTick),
-                color.rgb,
-                ((minecraft.options.getBackgroundOpacity(0.25f) * backgroundBox.alpha).toInt() shl 24) or
-                (backgroundBox.rgb and 0x00FFFFFF),
-                0,
+                TextFeatureRenderer.Content.Text(
+                    offset,
+                    0f,
+                    StringUtils.fromLegacy(str).visualOrderText,
+                    true,
+                    color.rgb,
+                    ((minecraft.options.getBackgroundOpacity(0.25f) * backgroundBox.alpha).toInt() shl 24) or
+                    (backgroundBox.rgb and 0x00FFFFFF),
+                    0,
+                )
             )
         )
     }
@@ -248,7 +250,7 @@ object Render3DVertex {
         val time = Math.floorMod(worldTime, 40) + partialTicks
 
         stack.pushPose()
-        stack.mulPose(Axis.YP.rotationDegrees(time * 2.25f - 45.0f))
+        stack.rotate(Axis.YP.rotationDegrees(time * 2.25f - 45.0f))
         addBatchedDraw(batchedType, stack) { pose, consumer ->
             BeaconBeamRenderer.renderBeamInner(
                 pose,
@@ -441,7 +443,7 @@ object Render3DVertex {
                     OptionalDouble.empty(),
                 )
                 .use { renderPass ->
-                    renderPass.setPipeline(type.pipeline)
+                    renderPass.setPipeline(RenderSystem.getCompiledPipeline(type.pipeline))
 
                     RenderSystem.bindDefaultUniforms(renderPass)
                     renderPass.setUniform("DynamicTransforms", type.dynamicTransforms)
@@ -453,10 +455,10 @@ object Render3DVertex {
                     else renderPass.disableScissor()
 
                     renderPass.setVertexBuffer(0, info.vertexBuffer.slice())
-                    renderPass.setIndexBuffer(info.indexBuffer, info.indexType)
+                    renderPass.setIndexBuffer(info.indexBuffer(), info.indexType)
 
                     type.textures.forEach {
-                        renderPass.bindTexture(it.name, it.textureView, it.sampler)
+                        renderPass.setUniform(it.name, it.textureView, it.sampler)
                     }
 
                     renderPass.drawIndexed(
