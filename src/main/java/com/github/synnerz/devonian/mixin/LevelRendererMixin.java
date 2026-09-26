@@ -3,11 +3,13 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.api.events.RenderWorldEvent;
 import com.github.synnerz.devonian.utils.render.Render3DImmediate;
 import com.github.synnerz.devonian.utils.render.impl.Render3DState;
+import com.github.synnerz.devonian.utils.render.impl.Render3DVertex;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,7 +25,7 @@ public class LevelRendererMixin {
             method = "submitFeatures",
             at = @At(value = "NEW", target = "()Lcom/mojang/blaze3d/vertex/PoseStack;")
     )
-    private PoseStack devonian$render3D(Operation<PoseStack> original) {
+    private PoseStack devonian$renderStart(Operation<PoseStack> original) {
         PoseStack ps = original.call();
 
         Render3DState.INSTANCE.setPoseStack(ps);
@@ -33,5 +35,16 @@ public class LevelRendererMixin {
         new RenderWorldEvent(levelRenderState).post();
 
         return ps;
+    }
+
+    @WrapOperation(
+        method = "lambda$addMainPass$0",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V")
+    )
+    private void devonian$renderEnd(ProfilerFiller instance, Operation<Void> original) {
+        original.call(instance);
+        instance.push("renderDevonian");
+        Render3DVertex.INSTANCE.internalBatchedRender();
+        instance.pop();
     }
 }
