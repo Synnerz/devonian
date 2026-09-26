@@ -21,7 +21,7 @@ object FactoryHelper : Feature(
     private val chocolateCostRegex = "^([\\d,]+) Chocolate$".toRegex()
     private val baseChocoRegex = "^Base Chocolate: ([\\d,.]+) per second$".toRegex()
     private val totalMultiplierRegex = "^Total Multiplier: ([\\d,.]+)x$".toRegex()
-    private val timeTowerMultiRegex = "^ *\\+([\\d.]+)x \\(Time Tower\\)\$".toRegex()
+    private val timeTowerMultiRegex = "^ *\\+([\\d.]+)x \\(Time Tower\\)$".toRegex()
     private val stats = mutableMapOf<Int, RabbitStat>()
     private var inFactory = false
     private var chocolatePurse = 0.0

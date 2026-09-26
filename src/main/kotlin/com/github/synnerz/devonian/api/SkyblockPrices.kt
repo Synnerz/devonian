@@ -49,7 +49,7 @@ object SkyblockPrices {
     fun sellPrice(name: String): Float {
         val data = loader.data ?: return 0f
         if (data.bazaarData.products.containsKey(name))
-            return data.bazaarData.products[name]?.quick_status?.sellPrice ?: return 0f
+            return data.bazaarData.products[name]?.quick_status?.sellPrice ?: 0f
 
         val auctionData = data.auctionData[name] ?: return 0f
         return auctionData
@@ -58,7 +58,7 @@ object SkyblockPrices {
     fun buyPrice(name: String): Float {
         val data = loader.data ?: return 0f
         if (data.bazaarData.products.containsKey(name))
-            return data.bazaarData.products[name]?.quick_status?.buyPrice ?: return 0f
+            return data.bazaarData.products[name]?.quick_status?.buyPrice ?: 0f
 
         val auctionData = data.auctionData[name] ?: return 0f
         return auctionData

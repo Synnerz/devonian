@@ -1,13 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.api.events.GuiClickEvent
-import com.github.synnerz.devonian.api.events.GuiKeyUpEvent
-import com.github.synnerz.devonian.api.events.KeyPressEvent
-import com.github.synnerz.devonian.api.events.KeyReleaseEvent
-import com.github.synnerz.devonian.api.events.MousePressEvent
-import com.github.synnerz.devonian.api.events.MouseReleaseEvent
-import com.github.synnerz.devonian.api.events.MouseScrollEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.math.MathUtils

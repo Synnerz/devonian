@@ -1,11 +1,6 @@
 package com.github.synnerz.devonian.features.misc
 
-import com.github.synnerz.devonian.api.events.EntityJoinEvent
-import com.github.synnerz.devonian.api.events.NameChangeEvent
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
-import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.TickEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.StringUtils

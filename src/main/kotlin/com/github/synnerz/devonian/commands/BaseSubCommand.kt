@@ -7,7 +7,6 @@ import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import org.spongepowered.asm.mixin.Mutable
 import java.util.*
 
 class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientCommandSource>, List<Any>) -> Int) {

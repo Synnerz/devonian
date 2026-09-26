@@ -179,9 +179,9 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
                 // Regex taken from <https://github.com/ChatTriggers/ChatTriggers> under MIT license
                 // i was lazy
                 cachedRegex = Regex(Regex.escape(reg)
-                    .replace(Regex("\\\$\\{[^*]+?}"), "\\\\E(.*)\\\\Q")
+                    .replace(Regex("\\$\\{[^*]+?}"), "\\\\E(.*)\\\\Q")
                     .replace(Regex("\\$\\{\\*?}"), "\\\\E(?:.*)\\\\Q")
-                    .replace(Regex("\\\$\\{[^+]+?}"), "\\\\E(.+)\\\\Q")
+                    .replace(Regex("\\$\\{[^+]+?}"), "\\\\E(.+)\\\\Q")
                     .replace(Regex("\\$\\{\\+?}"), "\\\\E(?:.+)\\\\Q"))
             } catch (_: IllegalArgumentException) {
                 println("Devonian\$TitleMessage(IllegalArgumentException, $reg, $message)")

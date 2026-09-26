@@ -46,7 +46,7 @@ object ChatWaypoint : Feature(
         "Show Sender Name",
     )
 
-    private val coordRegex = "(?:\\s|^)(?:x: )?(-?\\d+)(?:, y:)? (-?\\d+)(?:, z:)? (-?\\d+)(?:\\s|\$)".toRegex()
+    private val coordRegex = "(?:\\s|^)(?:x: )?(-?\\d+)(?:, y:)? (-?\\d+)(?:, z:)? (-?\\d+)(?:\\s|$)".toRegex()
     private val waypoints = mutableListOf<TimedWaypoint>()
 
     data class TimedWaypoint(val created: Long, val by: String, val x: Double, val y: Double, val z: Double)

@@ -37,7 +37,7 @@ object RunsLogger : Feature(
     private val defeatedRegex = "^ *☠ Defeated [\\w, ]+ in ([\\dms ]+)( \\(NEW RECORD!\\))?$".toRegex()
     private val deathsRegex = "^ *Deaths: (\\d+)$".toRegex()
     private val secretsFoundRegex = "^ *Secrets Found: (\\d+)$".toRegex()
-    private val milestoneRegex = "^ Your Milestone: .(.)\$".toRegex()
+    private val milestoneRegex = "^ Your Milestone: .(.)$".toRegex()
     private val milestonSymbols = listOf("⓿", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾")
     private val localTime = LocalDateTime.now()
     private val currentDate = "${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"

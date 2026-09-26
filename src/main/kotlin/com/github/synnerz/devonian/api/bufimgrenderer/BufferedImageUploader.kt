@@ -69,6 +69,7 @@ class BufferedImageUploader(val name: String) : AbstractTexture() {
 
     fun register(mcid: Identifier) = apply {
         // ignore intellij it lies
+        @Suppress("RedundantNullableReturnType")
         val texMng: TextureManager? = Devonian.minecraft.textureManager
         if (texMng != null) texMng.register(mcid, this)
         else EventBus.on<PostClientInitEvent> { event ->

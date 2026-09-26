@@ -32,7 +32,7 @@ import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.Identifier
 import org.joml.Matrix3x2f
 import java.awt.Color
-import java.util.Base64
+import java.util.*
 import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.cos

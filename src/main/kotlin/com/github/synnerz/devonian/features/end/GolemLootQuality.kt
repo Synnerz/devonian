@@ -29,7 +29,7 @@ object GolemLootQuality : Feature(
         80
     )
     private val golemKilledRegex = "^ *END STONE PROTECTOR DOWN!$".toRegex()
-    private val yourDamageRegex = "^ *Your Damage: ([\\d,]+)(?: \\(NEW RECORD!\\))? \\(Position #(\\d+)\\)\$".toRegex()
+    private val yourDamageRegex = "^ *Your Damage: ([\\d,]+)(?: \\(NEW RECORD!\\))? \\(Position #(\\d+)\\)$".toRegex()
     private val firstDamageRegex = "^ *1st Damager - .* - ([\\d,]+)$".toRegex()
     private val zealotKillsRegex = "^ *Zealots Contributed: (\\d+)/100$".toRegex()
     var golemKilled = false

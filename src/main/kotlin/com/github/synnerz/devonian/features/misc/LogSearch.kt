@@ -112,7 +112,7 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
                 val reg = input.text.toRegex(if (caseI.value) setOf(RegexOption.IGNORE_CASE) else emptySet())
                 RegexFilter(reg)
             } catch (e: Exception) {
-                addResult("§4Error creating Regex: ${e.toString()}")
+                addResult("§4Error creating Regex: $e")
                 return
             }
         } else StringFilter(input.text, caseI.value)

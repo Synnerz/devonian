@@ -22,7 +22,7 @@ object NoDeathAnimation : Feature(
         "Hide Dead Nametags",
     )
 
-    private val lividNameRegex = "^\\w+ Livid\$".toRegex()
+    private val lividNameRegex = "^\\w+ Livid$".toRegex()
 
     private val deadTags = mutableSetOf<Int>()
 

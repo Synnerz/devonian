@@ -1,14 +1,7 @@
 package com.github.synnerz.devonian.features.misc
 
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.events.ChatEvent
-import com.github.synnerz.devonian.api.events.ClientContainerCloseEvent
-import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
-import com.github.synnerz.devonian.api.events.RenderOverlayEvent
-import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
-import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
-import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
-import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature

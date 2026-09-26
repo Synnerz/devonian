@@ -133,7 +133,6 @@ object LegacyRegistry {
         "minecraft:gray_carpet" to 171,
         "minecraft:light_gray_carpet" to 171,
         "minecraft:red_carpet" to 171,
-        "minecraft:brown_carpet" to 171,
         "minecraft:magenta_carpet" to 171,
         "minecraft:blue_carpet" to 171,
         "minecraft:light_blue_carpet" to 171,
