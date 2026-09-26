@@ -22,6 +22,7 @@ import com.github.synnerz.devonian.features.debug.MousePositionRenderer
 import com.github.synnerz.devonian.features.debug.SoundDebugger
 import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger
+import com.github.synnerz.devonian.features.debug.renderers.DebugCounter
 import com.github.synnerz.devonian.features.debug.renderers.DungeonRoomComponentRenderer
 import com.github.synnerz.devonian.features.debug.renderers.RenderSlotIndex
 import com.github.synnerz.devonian.features.diana.BurrowGuesser
@@ -429,6 +430,7 @@ object Devonian : ClientModInitializer {
             WAILA,
             MousePositionLogger,
             MousePositionRenderer,
+            DebugCounter,
         )
     }
 
