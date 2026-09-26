@@ -8,7 +8,6 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import com.github.synnerz.devonian.utils.render.impl.Render3DVertex
 import kotlinx.atomicfu.atomic
-import net.minecraft.client.gui.Font
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -186,7 +185,6 @@ object ArrowAlignSolver : Feature(
         on<RenderWorldEvent> {
             if (!atDev) return@on
 
-            val layer = Font.DisplayMode.NORMAL
             val camPos = Render3DImmediate.camera.pos
 
             val scale = 0.03f
@@ -210,8 +208,8 @@ object ArrowAlignSolver : Feature(
 
                     Render3DVertex.renderString(
                         Render3DImmediate.poseStack,
-                        layer,
                         s,
+                        false,
                         Color.WHITE,
                         Color(0, true),
                     )
