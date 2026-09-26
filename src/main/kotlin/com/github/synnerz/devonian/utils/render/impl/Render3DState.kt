@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.world.phys.shapes.VoxelShape
 import java.awt.Color
+import kotlin.math.sqrt
 
 /**
  * you should never be calling methods here directly
@@ -22,45 +23,7 @@ object Render3DState {
     lateinit var poseStack: PoseStack
     lateinit var bufferSource: StagedVertexBuffer
 
-    private enum class Types(private val arr: Array<RenderType>) {
-        LINES(
-            arrayOf(
-                Render3DTypes.LINES_TRANSLUCENT,
-                Render3DTypes.LINES_TRANSLUCENT_ESP,
-                Render3DTypes.LINES_OPAQUE,
-                Render3DTypes.LINES_OPAQUE_ESP,
-            )
-        ),
-        TRIS(
-            arrayOf(
-                Render3DTypes.TRIANGLE_STRIP_TRANSLUCENT,
-                Render3DTypes.TRIANGLE_STRIP_TRANSLUCENT_ESP,
-                Render3DTypes.TRIANGLE_STRIP_OPAQUE,
-                Render3DTypes.TRIANGLE_STRIP_OPAQUE_ESP,
-            )
-        ),
-        QUADS(
-            arrayOf(
-                Render3DTypes.QUADS_TRANSLUCENT,
-                Render3DTypes.QUADS_TRANSLUCENT_ESP,
-                Render3DTypes.QUADS_OPAQUE,
-                Render3DTypes.QUADS_OPAQUE_ESP,
-            )
-        ),
-        BEACON(
-            arrayOf(
-                Render3DTypes.BEACON_BEAM_TRANSLUCENT,
-                Render3DTypes.BEACON_BEAM_TRANSLUCENT_ESP,
-                Render3DTypes.BEACON_BEAM_OPAQUE,
-                Render3DTypes.BEACON_BEAM_OPAQUE_ESP,
-            )
-        );
-
-        fun get(opaque: Boolean, phase: Boolean) = arr[
-            (if (opaque) 2 else 0) +
-                    (if (phase) 1 else 0)
-        ]
-    }
+    fun isOpaque(color: Color) = color.alpha == 255
 
     fun renderFilledShape(
         shape: VoxelShape,
@@ -72,11 +35,9 @@ object Render3DState {
     ) {
         if (!::camera.isInitialized) return
 
-        val type = Types.QUADS.get(color.alpha == 255, phase)
-
         Render3DVertex.renderFilledShape(
             poseStack,
-            type,
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.QUADS),
             shape,
             ox, oy, oz,
             color,
@@ -94,11 +55,9 @@ object Render3DState {
     ) {
         if (!::camera.isInitialized) return
 
-        val type = Types.LINES.get(color.alpha == 255, phase)
-
         Render3DVertex.renderWireframeShape(
             poseStack,
-            type,
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.LINES),
             shape,
             ox, oy, oz,
             color,
@@ -142,11 +101,9 @@ object Render3DState {
             h += 0.006
         }
 
-        val type = Types.TRIS.get(color.alpha == 255, phase)
-
         Render3DVertex.renderFilledBox(
             poseStack,
-            type,
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.TRIS),
             x, y, z,
             w, h, wz,
             color,
@@ -176,11 +133,9 @@ object Render3DState {
             false,
         )
 
-        val type = Types.LINES.get(color.alpha == 255, phase)
-
         Render3DVertex.renderWireframeBox(
             poseStack,
-            type,
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.LINES),
             x, y, z,
             w, h, wz,
             color,
@@ -201,17 +156,29 @@ object Render3DState {
     ) {
         if (!::camera.isInitialized) return
 
+        var scale = scale
+
+        val dist = x * x + y * y + z * z
+        if (dist > maxDist * maxDist) {
+            val f = sqrt(dist) / maxDist
+            scale = (scale * f).toFloat()
+        }
+
+        poseStack.pushPose()
+        poseStack.last()
+            .translate(x.toFloat(), y.toFloat(), z.toFloat())
+            .rotate(camera.orientation)
+            .scale(scale * 0.025f, -scale * 0.025f, scale * 0.025f)
+
         Render3DVertex.renderString(
-            camera,
             poseStack,
             if (phase) Font.DisplayMode.SEE_THROUGH else Font.DisplayMode.NORMAL,
             str,
-            x, y, z,
-            scale,
-            maxDist,
             color,
             backgroundBox,
         )
+
+        poseStack.popPose()
     }
 
     fun renderBeamInner(
@@ -223,8 +190,7 @@ object Render3DState {
 
         Render3DVertex.renderBeamInner(
             poseStack,
-            Types.BEACON.get(true, phase),
-            Types.BEACON.get(false, phase),
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.BEACON),
             color,
             h,
         )
@@ -239,8 +205,7 @@ object Render3DState {
 
         Render3DVertex.renderBeamOuter(
             poseStack,
-            Types.BEACON.get(true, phase),
-            Types.BEACON.get(false, phase),
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.BEACON),
             color,
             h,
         )
@@ -253,11 +218,9 @@ object Render3DState {
     ) {
         if (!::camera.isInitialized) return
 
-        val type = Types.LINES.get(opaque, phase)
-
         Render3DVertex.renderLines(
             poseStack,
-            type,
+            BatchedRenderType.get(opaque, phase, BatchedRenderType.Primitive.LINES),
             supplier,
         )
     }
@@ -269,11 +232,9 @@ object Render3DState {
     ) {
         if (!::camera.isInitialized) return
 
-        val type = Types.LINES.get(opaque, phase)
-
         Render3DVertex.renderLineStrip(
             poseStack,
-            type,
+            BatchedRenderType.get(opaque, phase, BatchedRenderType.Primitive.LINES),
             supplier,
         )
     }

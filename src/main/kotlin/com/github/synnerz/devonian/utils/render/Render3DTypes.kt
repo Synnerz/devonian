@@ -3,6 +3,8 @@ package com.github.synnerz.devonian.utils.render
 import net.minecraft.client.renderer.blockentity.BeaconRenderer
 import net.minecraft.client.renderer.rendertype.RenderSetup
 import net.minecraft.client.renderer.rendertype.RenderType
+import net.minecraft.resources.Identifier
+import net.minecraft.util.Util
 
 object Render3DTypes {
     val LINES_OPAQUE = RenderType.create(
@@ -29,27 +31,27 @@ object Render3DTypes {
             .createRenderSetup(),
     )
 
-    val TRIANGLE_STRIP_OPAQUE = RenderType.create(
-        "devonian/triangle_strip_opaque",
-        RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP_OPAQUE)
+    val TRIANGLES_OPAQUE = RenderType.create(
+        "devonian/triangles_opaque",
+        RenderSetup.builder(Render3DPipelines.TRIANGLES_OPAQUE)
             .createRenderSetup(),
     )
 
-    val TRIANGLE_STRIP_OPAQUE_ESP = RenderType.create(
-        "devonian/triangle_strip_opaque_esp",
-        RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP_OPAQUE_ESP)
+    val TRIANGLES_OPAQUE_ESP = RenderType.create(
+        "devonian/triangles_opaque_esp",
+        RenderSetup.builder(Render3DPipelines.TRIANGLES_OPAQUE_ESP)
             .createRenderSetup(),
     )
 
-    val TRIANGLE_STRIP_TRANSLUCENT = RenderType.create(
-        "devonian/triangle_strip_translucent",
-        RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP_TRANSLUCENT)
+    val TRIANGLES_TRANSLUCENT = RenderType.create(
+        "devonian/triangles_translucent",
+        RenderSetup.builder(Render3DPipelines.TRIANGLES_TRANSLUCENT)
             .createRenderSetup(),
     )
 
-    val TRIANGLE_STRIP_TRANSLUCENT_ESP = RenderType.create(
-        "devonian/triangle_strip_translucent_esp",
-        RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP_TRANSLUCENT_ESP)
+    val TRIANGLES_TRANSLUCENT_ESP = RenderType.create(
+        "devonian/triangles_translucent_esp",
+        RenderSetup.builder(Render3DPipelines.TRIANGLES_TRANSLUCENT_ESP)
             .createRenderSetup(),
     )
 
@@ -108,4 +110,24 @@ object Render3DTypes {
             .sortOnUpload()
             .createRenderSetup(),
     )
+
+    val TEXT = Util.memoize<Identifier, RenderType> { texture ->
+        RenderType.create(
+            "devonian/text",
+            RenderSetup.builder(Render3DPipelines.TEXT)
+                .withTexture("Sampler0", texture)
+                .useLightmap()
+                .createRenderSetup(),
+        )
+    }
+
+    val TEXT_ESP = Util.memoize<Identifier, RenderType> { texture ->
+        RenderType.create(
+            "devonian/text_esp",
+            RenderSetup.builder(Render3DPipelines.TEXT_ESP)
+                .withTexture("Sampler0", texture)
+                .useLightmap()
+                .createRenderSetup(),
+        )
+    }
 }

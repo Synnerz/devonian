@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.GameRendererScaleAccessor;
 import com.github.synnerz.devonian.features.misc.NoHurtCamera;
+import com.github.synnerz.devonian.utils.render.impl.Render3DVertex;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -77,6 +78,7 @@ public class GameRendererMixin implements GameRendererScaleAccessor {
     @Inject(method = "close", at = @At("TAIL"))
     private void devonian$onClose(CallbackInfo ci) {
         devonian$guiRenderer.close();
+        Render3DVertex.INSTANCE.internalClose();
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;endFrame()V"))

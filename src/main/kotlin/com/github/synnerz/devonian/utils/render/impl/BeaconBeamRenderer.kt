@@ -2,9 +2,6 @@ package com.github.synnerz.devonian.utils.render.impl
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
-import com.mojang.math.Axis
-import net.minecraft.client.renderer.StagedVertexBuffer
-import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.util.Mth
 import java.awt.Color
@@ -16,7 +13,7 @@ object BeaconBeamRenderer {
      * @author Mojang
      */
     fun renderBeamInner(
-        matrices: PoseStack,
+        pose: PoseStack.Pose,
         vertices: VertexConsumer,
         partialTicks: Float,
         worldTime: Long,
@@ -31,14 +28,13 @@ object BeaconBeamRenderer {
         val animationStep = -1f + wavePhase
         val renderYOffset = height.toFloat() * heightScale * (0.5f / innerRadius) + animationStep
 
-        matrices.pushPose()
-        matrices.rotate(Axis.YP.rotationDegrees(time * 2.25f - 45.0f))
-
         renderBeamLayer(
-            matrices.last(),
+            pose,
             vertices,
             color.rgb,
             0f,
+            height.toFloat(),
+            0f,
             innerRadius,
             innerRadius,
             0f,
@@ -46,16 +42,14 @@ object BeaconBeamRenderer {
             0f,
             0f,
             -innerRadius,
+            0f, 1f,
             renderYOffset,
             animationStep,
-            height.toFloat(),
         )
-
-        matrices.popPose()
     }
 
     fun renderBeamOuter(
-        matrices: PoseStack.Pose,
+        pose: PoseStack.Pose,
         vertices: VertexConsumer,
         partialTicks: Float,
         worldTime: Long,
@@ -71,9 +65,11 @@ object BeaconBeamRenderer {
         val renderYOffset = height.toFloat() * heightScale + animationStep
 
         renderBeamLayer(
-            matrices,
+            pose,
             vertices,
-            ((color.alpha / 4) shl 24) or (color.rgb and 0x00FFFFFF),
+            color.rgb,
+            height.toFloat(),
+            0f,
             -outerRadius,
             -outerRadius,
             outerRadius,
@@ -82,9 +78,9 @@ object BeaconBeamRenderer {
             outerRadius,
             outerRadius,
             outerRadius,
+            0f, 1f,
             renderYOffset,
             animationStep,
-            height.toFloat(),
         )
     }
 
@@ -92,6 +88,8 @@ object BeaconBeamRenderer {
         matrices: PoseStack.Pose,
         vertices: VertexConsumer,
         color: Int,
+        y1: Float,
+        y2: Float,
         x1: Float,
         z1: Float,
         x2: Float,
@@ -100,32 +98,36 @@ object BeaconBeamRenderer {
         z3: Float,
         x4: Float,
         z4: Float,
+        u1: Float,
+        u2: Float,
         v1: Float,
         v2: Float,
-        h: Float,
     ) {
-        renderBeamFace(matrices, vertices, color, x1, z1, x2, z2, v1, v2, h)
-        renderBeamFace(matrices, vertices, color, x4, z4, x3, z3, v1, v2, h)
-        renderBeamFace(matrices, vertices, color, x2, z2, x4, z4, v1, v2, h)
-        renderBeamFace(matrices, vertices, color, x3, z3, x1, z1, v1, v2, h)
+        renderBeamFace(matrices, vertices, color, y1, y2, x1, z1, x2, z2, u1, u2, v1, v2)
+        renderBeamFace(matrices, vertices, color, y1, y2, x4, z4, x3, z3, u1, u2, v1, v2)
+        renderBeamFace(matrices, vertices, color, y1, y2, x2, z2, x4, z4, u1, u2, v1, v2)
+        renderBeamFace(matrices, vertices, color, y1, y2, x3, z3, x1, z1, u1, u2, v1, v2)
     }
 
     fun renderBeamFace(
         matrix: PoseStack.Pose,
         vertices: VertexConsumer,
         color: Int,
+        y1: Float,
+        y2: Float,
         x1: Float,
         z1: Float,
         x2: Float,
         z2: Float,
+        u1: Float,
+        u2: Float,
         v1: Float,
         v2: Float,
-        h: Float,
     ) {
-        renderBeamVertex(matrix, vertices, color, h, x1, z1, 1f, v1)
-        renderBeamVertex(matrix, vertices, color, 0f, x1, z1, 1f, v2)
-        renderBeamVertex(matrix, vertices, color, 0f, x2, z2, 0f, v2)
-        renderBeamVertex(matrix, vertices, color, h, x2, z2, 0f, v1)
+        renderBeamVertex(matrix, vertices, color, y2, x1, z1, u2, v1)
+        renderBeamVertex(matrix, vertices, color, y1, x1, z1, u2, v2)
+        renderBeamVertex(matrix, vertices, color, y1, x2, z2, u1, v2)
+        renderBeamVertex(matrix, vertices, color, y2, x2, z2, u1, v1)
     }
 
     fun renderBeamVertex(
