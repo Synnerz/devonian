@@ -105,7 +105,7 @@ object MiddleClickGui : Feature(
             if (stack.isEmpty) return@on
             if (ItemUtils.skyblockId(stack) != null) return@on
 
-            val screenName = event.screen.title?.string ?: return@on
+            val screenName = event.screen.title.string ?: return@on
             if (
                 screenName.contains(" Minion ") ||
                 avoidGuis.any { screenName.startsWith(it) } ||

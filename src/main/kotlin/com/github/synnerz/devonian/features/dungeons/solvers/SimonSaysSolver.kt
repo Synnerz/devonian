@@ -108,8 +108,8 @@ object SimonSaysSolver : Feature(
 
     private fun shouldBlockClicks() = when (SETTING_BLOCK_INCORRECT.getCurrent()) {
         "Always" -> true
-        "WhenCrouching" -> minecraft?.player?.isShiftKeyDown ?: false
-        "ExceptWhenCrouching" -> !(minecraft?.player?.isShiftKeyDown ?: true)
+        "WhenCrouching" -> minecraft.player?.isShiftKeyDown ?: false
+        "ExceptWhenCrouching" -> !(minecraft.player?.isShiftKeyDown ?: true)
         else -> false
     }
     private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS

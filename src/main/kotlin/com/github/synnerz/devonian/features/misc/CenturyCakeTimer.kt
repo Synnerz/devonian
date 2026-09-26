@@ -180,7 +180,7 @@ object CenturyCakeTimer : TextHudFeature(
 
     override fun getEditText(): List<String> = listOf("1d 12h 34m 56s")
 
-    private val mcidIcon = Identifier.fromNamespaceAndPath("devonian", "cake")!!
+    private val mcidIcon = Identifier.fromNamespaceAndPath("devonian", "cake")
     private val iconUploader = BufferedImageUploader.fromResource("/assets/devonian/cake.png")!!
         .register(mcidIcon)
 

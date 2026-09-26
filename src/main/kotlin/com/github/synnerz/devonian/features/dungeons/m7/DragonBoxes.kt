@@ -45,7 +45,7 @@ object DragonBoxes : Feature(
             val w = minecraft.level ?: return@on
             alive.removeIf {
                 if (!WorldUtils.isChunkLoaded(it.chin.x, it.chin.z)) return@removeIf false
-                val bs = w.getBlockState(it.chin) ?: return@removeIf false
+                val bs = w.getBlockState(it.chin)
                 bs.isAir
             }
         }

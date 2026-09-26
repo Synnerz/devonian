@@ -183,7 +183,7 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
             else -> x to z
         }
     }
-    
+
     private fun rotatePos(x: Double, z: Double, degree: Int): Pair<Double, Double> {
         return when (degree) {
             0 -> x to z

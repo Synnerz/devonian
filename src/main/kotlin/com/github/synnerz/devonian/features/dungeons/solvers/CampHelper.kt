@@ -95,7 +95,7 @@ object CampHelper : Feature(
                     val pos = WorldPosition(it.x.toInt(), it.z.toInt()).toComponent().toRoom()
                     if (pos != bloodComp) return@forEach
 
-                    val head = it.getItemBySlot(EquipmentSlot.HEAD) ?: return@forEach
+                    val head = it.getItemBySlot(EquipmentSlot.HEAD)
                     if (head.isEmpty) return@forEach
                     if (head.item != Items.PLAYER_HEAD) return@forEach
 

@@ -119,7 +119,7 @@ object DungeonScanner {
 
         for (idx in 140 downTo 12) {
             val blockState = WorldUtils.getBlockState(x, idx, z) ?: continue
-            val block = blockState.block ?: continue
+            val block = blockState.block
             val blockId = getLegacyId(blockState, debug) ?: continue
             if (block == Blocks.IRON_BARS || block == Blocks.CHEST) {
                 str += "0"

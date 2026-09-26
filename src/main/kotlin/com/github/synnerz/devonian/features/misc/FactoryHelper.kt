@@ -34,7 +34,7 @@ object FactoryHelper : Feature(
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (packet is ClientboundOpenScreenPacket) {
-                inFactory = packet.title?.string == "Chocolate Factory"
+                inFactory = packet.title.string == "Chocolate Factory"
                 return@on
             }
 

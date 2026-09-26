@@ -38,7 +38,7 @@ object EventBus {
     val events = ConcurrentHashMap<KClass<*>, MutableList<EventListener<Event>>>()
     private val entityTypes = mutableMapOf<Int, EntityType<*>>()
     private val entityPos = mutableMapOf<Int, Vec3>()
-    var _internalSkipPing = Collections.newSetFromMap<Int>(ConcurrentHashMap())!!
+    var _internalSkipPing = Collections.newSetFromMap<Int>(ConcurrentHashMap())
 
     init {
         ClientEntityEvents.ENTITY_LOAD.register { entity, _ ->
@@ -171,7 +171,7 @@ object EventBus {
 
                 is ClientboundSetPlayerTeamPacket -> {
                     if (packet.parameters.isEmpty) return@on
-                    val team = packet.parameters?.get() ?: return@on
+                    val team = packet.parameters.get() ?: return@on
                     val teamPrefix = team.playerPrefix.string
                     val teamSuffix = team.playerSuffix.string
                     if (teamPrefix.isEmpty()) return@on
@@ -197,7 +197,7 @@ object EventBus {
                 }
 
                 is ClientboundSetActionBarTextPacket -> {
-                    val text = packet.text ?: return@on
+                    val text = packet.text
                     val message = text.string.clearCodes()
 
                     ActionbarEvent(message, text).post()
