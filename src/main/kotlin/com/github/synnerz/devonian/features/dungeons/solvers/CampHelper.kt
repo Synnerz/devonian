@@ -29,6 +29,8 @@ import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
 import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 object CampHelper : Feature(
@@ -55,6 +57,12 @@ object CampHelper : Feature(
         0.0, 10.0,
         "",
         "Camp Line Width",
+    )
+    private val SETTING_CHICKEN_MAN_MODE = addSwitch(
+        "chickenManMode",
+        false,
+        "Renders the location as a growing box rather than a traveling mob.",
+        "Chicken Man Mode",
     )
     private val SETTING_PLAY_SOUND = addSwitch(
         "playSound",
@@ -164,26 +172,36 @@ object CampHelper : Feature(
                     centered = true,
                 )
 
-                v.ent?.let {
-                    Render3DImmediate.renderWireframeBox(
-                        it.x, it.y + 1.7, it.z,
-                        w, h,
-                        Color.RED,
-                        lineWidth = SETTING_LINE_WIDTH.get(),
+                if (SETTING_CHICKEN_MAN_MODE.get()) {
+                    val f = 1.0 - min(1.0, max(0.0, ttl.toDouble() / v.maxTTL))
+                    Render3DImmediate.renderFilledBox(
+                        x, y + 1.0 + (h - f * h) / 2.0, z,
+                        w * f, h * f,
+                        Color.BLACK,
                         centered = true,
                     )
-                    Render3DImmediate.renderLine(
-                        Vec3(it.x, it.y + 1.7, it.z),
-                        Vec3(x, y + 1.0, z),
-                        Color.RED,
-                        lineWidth = SETTING_LINE_WIDTH.get(),
-                    )
+                } else {
+                    v.ent?.let {
+                        Render3DImmediate.renderWireframeBox(
+                            it.x, it.y + 1.7, it.z,
+                            w, h,
+                            Color.RED,
+                            lineWidth = SETTING_LINE_WIDTH.get(),
+                            centered = true,
+                        )
+                        Render3DImmediate.renderLine(
+                            Vec3(it.x, it.y + 1.7, it.z),
+                            Vec3(x, y + 1.0, z),
+                            Color.RED,
+                            lineWidth = SETTING_LINE_WIDTH.get(),
+                        )
+                    }
                 }
 
                 if (SETTING_SHOW_TIMER.get()) Render3DImmediate.renderString(
                     "${colorForNumber(ttl, v.maxTTL)}%.2f".format((ttl * 0.05).coerceAtLeast(0.0)),
-                    x, y + 1.5, z,
-                    scale = 2.5f,
+                    x, y + (if (SETTING_CHICKEN_MAN_MODE.get()) 0.5 else 1.5), z,
+                    scale = if (SETTING_CHICKEN_MAN_MODE.get()) 1.5f else 2.5f,
                     maxDist = 24.0,
                 )
             }
