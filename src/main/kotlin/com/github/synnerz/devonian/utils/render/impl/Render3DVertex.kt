@@ -9,11 +9,11 @@ import com.github.synnerz.devonian.utils.math.ShapeUtils
 import com.github.synnerz.devonian.utils.render.IRender3D.LinesBuilder
 import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
 import com.github.synnerz.devonian.utils.render.Render3DTypes
-import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
+import com.mojang.renderpearl.api.textures.GpuTextureView
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.StagedVertexBuffer
 import net.minecraft.client.renderer.feature.FeatureFrameContext
@@ -412,7 +412,8 @@ object Render3DVertex {
     private fun batchedRender(
         calls: Array<MutableList<BatchedDraw>>,
         textCalls: MutableList<TextFeatureRenderer.Submit>,
-        target: RenderTarget,
+        colorTarget: GpuTextureView,
+        depthTarget: GpuTextureView,
     ) {
         calls.forEach { arr ->
             if (arr.isEmpty()) return@forEach
@@ -453,9 +454,9 @@ object Render3DVertex {
                 .createCommandEncoder()
                 .createRenderPass(
                     { "Devonian Render Pass for $name" },
-                    target.colorTextureView!!,
+                    colorTarget,
                     Optional.empty<Vector4fc>(),
-                    target.depthTextureView,
+                    depthTarget,
                     OptionalDouble.empty(),
                 )
                 .use { renderPass ->
@@ -491,12 +492,12 @@ object Render3DVertex {
         vertexBuffer.endFrame()
     }
 
-    fun internalBatchedRender() {
-        batchedRender(batchedDraws, batchedText, minecraft.gameRenderer.mainRenderTarget())
+    fun internalBatchedRender(colorTarget: GpuTextureView, depthTarget: GpuTextureView) {
+        batchedRender(batchedDraws, batchedText, colorTarget, depthTarget)
     }
 
-    fun internalBatchedRenderPhase(target: RenderTarget) {
-        batchedRender(batchedDrawsPhase, batchedTextPhase, target)
+    fun internalBatchedRenderPhase(colorTarget: GpuTextureView, depthTarget: GpuTextureView) {
+        batchedRender(batchedDrawsPhase, batchedTextPhase, colorTarget, depthTarget)
     }
 
     fun internalHasPhaseRenders(): Boolean {

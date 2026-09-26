@@ -4,17 +4,16 @@ import com.github.synnerz.devonian.api.events.RenderWorldEvent;
 import com.github.synnerz.devonian.utils.render.Render3DImmediate;
 import com.github.synnerz.devonian.utils.render.impl.Render3DState;
 import com.github.synnerz.devonian.utils.render.impl.Render3DVertex;
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.resource.ResourceHandle;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.renderpearl.api.commands.RenderPass;
+import com.mojang.renderpearl.api.textures.GpuTextureView;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import org.spongepowered.asm.mixin.Final;
@@ -46,14 +45,25 @@ public class LevelRendererMixin {
         return ps;
     }
 
-    @Inject(
+    @Definition(id = "hasAlwaysOnTopGizmos", local = @Local(type = boolean.class, name = "hasAlwaysOnTopGizmos", argsOnly = true))
+    @Expression("hasAlwaysOnTopGizmos")
+    @ModifyExpressionValue(
         method = "lambda$addMainPass$0",
-        at = @At(value = "INVOKE", target = "Lcom/mojang/renderpearl/api/commands/RenderPass;close()V")
+        at = @At(value = "MIXINEXTRAS:EXPRESSION")
     )
-    private void devonian$renderEnd(RenderPass instance, Operation<Void> original) {
-        original.call(instance);
-//        instance.push("renderDevonian");
-        Render3DVertex.INSTANCE.internalBatchedRender();
-//        instance.pop();
+    private boolean devonian$renderEnd(boolean original, @Local(name = "mainTarget") RenderTarget mainTarget) {
+        assert mainTarget.getColorTextureView() != null;
+        assert mainTarget.getDepthTextureView() != null;
+        Render3DVertex.INSTANCE.internalBatchedRender(mainTarget.getColorTextureView(), mainTarget.getDepthTextureView());
+        return original || Render3DVertex.INSTANCE.internalHasPhaseRenders();
+    }
+
+    @Inject(
+        method = "executeAlwaysOnTop",
+        at = @At(value = "INVOKE", target = "Lcom/mojang/renderpearl/api/commands/RenderPass;close()V", ordinal = 0, shift = At.Shift.AFTER)
+    )
+    private void devonian$renderEndPhase(FeatureRenderDispatcher.PreparedFrame featureFrame, RenderTarget mainTarget, boolean consistentDepthRequired, CallbackInfo ci, @Local(name = "depthTextureView") GpuTextureView depthTextureView) {
+        assert mainTarget.getColorTextureView() != null;
+        Render3DVertex.INSTANCE.internalBatchedRenderPhase(mainTarget.getColorTextureView(), depthTextureView);
     }
 }
