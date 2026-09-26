@@ -7,7 +7,6 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import kotlinx.atomicfu.atomic
-import net.minecraft.client.gui.Font
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -187,7 +186,6 @@ object ArrowAlignSolver : Feature(
             if (!atDev) return@on
 
             val consumer = minecraft.renderBuffers().bufferSource()
-            val layer = Font.DisplayMode.NORMAL
             val camPos = Render3DImmediate.camera.pos
 
             val scale = 0.03f
@@ -211,7 +209,6 @@ object ArrowAlignSolver : Feature(
 
                     Render3DVertex.renderString(
                         Render3DImmediate.poseStack,
-                    textRenderer.drawInBatch(
                         s,
                         offset,
                         0f,
@@ -219,8 +216,8 @@ object ArrowAlignSolver : Feature(
                         true,
                         Render3DImmediate.poseStack.last().pose(),
                         consumer,
-                        layer,
                         0,
+                        false,
                         LightLayer.BLOCK.ordinal // TODO: double check
                     )
 
