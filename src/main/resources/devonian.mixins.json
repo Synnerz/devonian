@@ -85,6 +85,7 @@
   "mixins": [
     "BlockEntityRenderDispatcherMixin",
     "ChatComponentInnerMixin",
+    "DataComponentHolderMixin",
     "DefaultTooltipPositionerMixin",
     "EnderDragonRendererMixin",
     "EntityMixin",
