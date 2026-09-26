@@ -153,6 +153,7 @@ object TriviaSolver : Feature(
                 val seconds = "%.2fs".format(time)
                 if (PuzzleTimers.isEnabled())
                     ChatUtils.sendMessage("&bQuiz took&f: &6$seconds", true)
+                enteredAt = -1
                 quizRoom = null
                 resetSolution()
                 return@on
@@ -203,11 +204,11 @@ object TriviaSolver : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         inQuiz = false
         quizRoom = null
+        enteredAt = -1
         resetSolution()
     }
 
     private fun resetSolution() {
-        enteredAt = -1
         solution = null
         currentAnswer = null
     }
