@@ -153,7 +153,7 @@ object Render3DImmediate : IRender3D {
         poseStack.translate(x, y, z)
 
         Render3DState.renderBeamInner(color, phase, h)
-        Render3DState.renderBeamOuter(color, phase, h)
+        Render3DState.renderBeamOuter(Color(color.red, color.green, color.blue, color.alpha / 4), phase, h)
 
         poseStack.popPose()
     }

@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.events.GuiScaleEvent;
 import com.github.synnerz.devonian.features.misc.NoHurtCamera;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.github.synnerz.devonian.utils.render.impl.Render3DVertex;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -97,6 +98,7 @@ public class GameRendererMixin {
     @Inject(method = "close", at = @At("TAIL"))
     private void devonian$onClose(CallbackInfo ci) {
         devonian$guiRenderer.close();
+        Render3DVertex.INSTANCE.internalClose();
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;endFrame()V"))

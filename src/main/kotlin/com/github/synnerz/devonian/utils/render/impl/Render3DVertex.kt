@@ -1,20 +1,37 @@
 package com.github.synnerz.devonian.utils.render.impl
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.features.debug.renderers.DebugCounter
+import com.github.synnerz.devonian.mixin.accessor.RenderSetupAccessor
+import com.github.synnerz.devonian.mixin.accessor.RenderTypeAccessor
+import com.github.synnerz.devonian.mixin.accessor.RenderTypeFeatureRendererAccessor
+import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.math.ShapeUtils
 import com.github.synnerz.devonian.utils.render.IRender3D.LinesBuilder
 import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
+import com.github.synnerz.devonian.utils.render.Render3DTypes
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
+import com.mojang.blaze3d.vertex.VertexConsumer
+import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.ShapeRenderer
+import net.minecraft.client.renderer.StagedVertexBuffer
+import net.minecraft.client.renderer.feature.FeatureFrameContext
+import net.minecraft.client.renderer.feature.RenderTypeFeatureRenderer
+import net.minecraft.client.renderer.feature.TextFeatureRenderer
+import net.minecraft.client.renderer.rendertype.PreparedRenderType
 import net.minecraft.client.renderer.rendertype.RenderType
-import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.world.level.LightLayer
 import net.minecraft.world.phys.shapes.VoxelShape
+import org.joml.Matrix4f
 import org.joml.Vector3d
+import org.joml.Vector4fc
 import java.awt.Color
+import java.util.Optional
+import java.util.OptionalDouble
 import kotlin.math.sqrt
 
 /**
@@ -25,6 +42,18 @@ import kotlin.math.sqrt
 object Render3DVertex {
     private val minecraft = Devonian.minecraft
     private val textRenderer = minecraft.font
+    private val vertexBuffer = StagedVertexBuffer({ "Devonian Render Buffer "}, RenderType.SMALL_BUFFER_SIZE)
+    private val batchedDraws = Array(BatchedRenderType.MAX_ID + 1) { mutableListOf<BatchedDraw>() }
+    private data class BatchedDraw(val pose: PoseStack.Pose, val type: BatchedRenderType, val cb: (pose: PoseStack.Pose, consumer: VertexConsumer) -> Unit)
+    private val batchedText = mutableListOf<TextFeatureRenderer.Submit>()
+
+    private fun addBatchedDraw(
+        batch: BatchedRenderType,
+        stack: PoseStack,
+        cb: (pose: PoseStack.Pose, consumer: VertexConsumer) -> Unit
+    ) {
+        batchedDraws[batch.batchId].add(BatchedDraw(stack.last().copy(), batch, cb))
+    }
 
     fun renderFilledShape(
         stack: PoseStack,
@@ -35,26 +64,25 @@ object Render3DVertex {
         oz: Double,
         color: Color,
     ) {
-        val mat = stack.last()
-
         val faces = ShapeUtils.getFaces(shape)
-        for (i in faces.indices step 3) {
-            val x = faces[i + 0] + ox
-            val y = faces[i + 1] + oy
-            val z = faces[i + 2] + oz
+        addBatchedDraw(batchedType, stack) { pose, consumer ->
+            for (i in faces.indices step 3) {
+                val x = faces[i + 0] + ox
+                val y = faces[i + 1] + oy
+                val z = faces[i + 2] + oz
 
             val dir = Vector3d(x, y, z)
             dir.mul(-0.01 / dir.length())
 
             consumer
-                .addVertex(mat, (x + dir.x).toFloat(), (y + dir.y).toFloat(), (z + dir.z).toFloat())
+                .addVertex(pose, (x + dir.x).toFloat(), (y + dir.y).toFloat(), (z + dir.z).toFloat())
                 .setColor(color.rgb)
         }
     }
 
     fun renderWireframeShape(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        batchedType: BatchedRenderType,
         shape: VoxelShape,
         ox: Double,
         oy: Double,
@@ -62,19 +90,25 @@ object Render3DVertex {
         color: Color,
         lineWidth: Double,
     ) {
-        ShapeRenderer.renderShape(
-            stack,
-            consumer,
-            shape,
-            ox, oy, oz,
-            color.rgb,
-            lineWidth.toFloat(),
-        )
+        addBatchedDraw(batchedType, stack) { pose, consumer ->
+            shape.forAllEdges { h, j, k, l, m, n ->
+                val vector3f = Vector3f((l - h).toFloat(), (m - j).toFloat(), (n - k).toFloat()).normalize()
+
+                consumer.addVertex(pose, (h + ox).toFloat(), (j + oy).toFloat(), (k + oz).toFloat())
+                    .setColor(color.rgb)
+                    .setNormal(pose, vector3f)
+                    .setLineWidth(lineWidth.toFloat())
+                consumer.addVertex(pose, (l + ox).toFloat(), (m + oy).toFloat(), (n + oz).toFloat())
+                    .setColor(color.rgb)
+                    .setNormal(pose, vector3f)
+                    .setLineWidth(lineWidth.toFloat())
+            }
+        }
     }
 
     fun renderFilledBox(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        batchedType: BatchedRenderType,
         x: Double,
         y: Double,
         z: Double,
@@ -83,6 +117,8 @@ object Render3DVertex {
         wz: Double,
         color: Color,
     ) {
+        DebugCounter.tick("filled", 1000)
+
         val x1 = x.toFloat()
         val y1 = y.toFloat()
         val z1 = z.toFloat()
@@ -92,39 +128,63 @@ object Render3DVertex {
         val c = color.rgb
         val m = stack.last()
 
-        consumer.addVertex(m, x1, y1, z1).setColor(c)
-        consumer.addVertex(m, x1, y2, z1).setColor(c)
-        consumer.addVertex(m, x2, y1, z1).setColor(c)
-        consumer.addVertex(m, x2, y2, z1).setColor(c)
+        addBatchedDraw(batchedType, stack) { m, consumer ->
+            DebugCounter.tick("filled draw", 1000)
 
-        consumer.addVertex(m, x2, y1, z2).setColor(c)
-        consumer.addVertex(m, x2, y2, z2).setColor(c)
+            consumer.addVertex(m, x1, y1, z1).setColor(c)
+            consumer.addVertex(m, x1, y2, z1).setColor(c)
+            consumer.addVertex(m, x2, y1, z1).setColor(c)
 
-        consumer.addVertex(m, x1, y1, z2).setColor(c)
-        consumer.addVertex(m, x1, y2, z2).setColor(c)
+            consumer.addVertex(m, x2, y1, z1).setColor(c)
+            consumer.addVertex(m, x1, y2, z1).setColor(c)
+            consumer.addVertex(m, x2, y2, z1).setColor(c)
 
-        consumer.addVertex(m, x1, y1, z1).setColor(c)
-        consumer.addVertex(m, x1, y2, z1).setColor(c)
+            consumer.addVertex(m, x2, y1, z1).setColor(c)
+            consumer.addVertex(m, x2, y2, z1).setColor(c)
+            consumer.addVertex(m, x2, y1, z2).setColor(c)
 
-        consumer.addVertex(m, x1, y2, z1).setColor(c)
+            consumer.addVertex(m, x2, y1, z2).setColor(c)
+            consumer.addVertex(m, x2, y2, z1).setColor(c)
+            consumer.addVertex(m, x2, y2, z2).setColor(c)
 
-        consumer.addVertex(m, x1, y2, z2).setColor(c)
-        consumer.addVertex(m, x2, y2, z1).setColor(c)
-        consumer.addVertex(m, x2, y2, z2).setColor(c)
+            consumer.addVertex(m, x2, y1, z2).setColor(c)
+            consumer.addVertex(m, x2, y2, z2).setColor(c)
+            consumer.addVertex(m, x1, y1, z2).setColor(c)
 
-        consumer.addVertex(m, x2, y2, z2).setColor(c)
-        consumer.addVertex(m, x1, y1, z2).setColor(c)
+            consumer.addVertex(m, x1, y1, z2).setColor(c)
+            consumer.addVertex(m, x2, y2, z2).setColor(c)
+            consumer.addVertex(m, x1, y2, z2).setColor(c)
 
-        consumer.addVertex(m, x1, y1, z2).setColor(c)
-        consumer.addVertex(m, x1, y1, z1).setColor(c)
-        consumer.addVertex(m, x2, y1, z2).setColor(c)
-        consumer.addVertex(m, x2, y1, z1).setColor(c)
+            consumer.addVertex(m, x1, y1, z2).setColor(c)
+            consumer.addVertex(m, x1, y2, z2).setColor(c)
+            consumer.addVertex(m, x1, y1, z1).setColor(c)
+
+            consumer.addVertex(m, x1, y1, z1).setColor(c)
+            consumer.addVertex(m, x1, y2, z2).setColor(c)
+            consumer.addVertex(m, x1, y2, z1).setColor(c)
+
+            consumer.addVertex(m, x1, y2, z1).setColor(c)
+            consumer.addVertex(m, x1, y2, z2).setColor(c)
+            consumer.addVertex(m, x2, y2, z1).setColor(c)
+
+            consumer.addVertex(m, x2, y2, z1).setColor(c)
+            consumer.addVertex(m, x1, y2, z2).setColor(c)
+            consumer.addVertex(m, x2, y2, z2).setColor(c)
+
+            consumer.addVertex(m, x1, y1, z2).setColor(c)
+            consumer.addVertex(m, x1, y1, z1).setColor(c)
+            consumer.addVertex(m, x2, y1, z2).setColor(c)
+
+            consumer.addVertex(m, x2, y1, z2).setColor(c)
+            consumer.addVertex(m, x1, y1, z1).setColor(c)
+            consumer.addVertex(m, x2, y1, z1).setColor(c)
+        }
 
     }
 
     fun renderWireframeBox(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        batchedType: BatchedRenderType,
         x: Double,
         y: Double,
         z: Double,
@@ -141,7 +201,7 @@ object Render3DVertex {
         val y2 = y + h
         val z2 = z + wz
 
-        renderLines(stack, consumer) {
+        renderLines(stack, batchedType) {
             submit(x1, y1, z1, x2, y1, z1, color, color, lineWidth, lineWidth)
             submit(x1, y2, z1, x2, y2, z1, color, color, lineWidth, lineWidth)
             submit(x1, y1, z1, x1, y2, z1, color, color, lineWidth, lineWidth)
@@ -158,51 +218,33 @@ object Render3DVertex {
     }
 
     fun renderString(
-        camera: CameraRenderState,
         stack: PoseStack,
         bufferSource: MultiBufferSource.BufferSource,
         mode: Font.DisplayMode,
         str: String,
-        x: Double,
-        y: Double,
-        z: Double,
-        scale: Float,
-        maxDist: Double,
         color: Color,
         backgroundBox: Color,
     ) {
-        var scale = scale
-
         val offset = -textRenderer.width(str) * 0.5f
-        val dist = x * x + y * y + z * z
-        if (dist > maxDist * maxDist) {
-            val f = sqrt(dist) / maxDist
-            scale = (scale * f).toFloat()
-        }
+        val deltaPartialTick = minecraft.deltaTracker.getGameTimeDeltaPartialTick(true)
 
-        stack.pushPose()
-        stack.last()
-            .translate(x.toFloat(), y.toFloat(), z.toFloat())
-            .rotate(camera.orientation)
-            .scale(scale * 0.025f, -scale * 0.025f, scale * 0.025f)
-
-        textRenderer.drawInBatch(
-            str,
-            offset,
-            0f,
-            color.rgb,
-            true,
-            stack.last().pose(),
-            bufferSource,
-            mode,
-            ((minecraft.options.getBackgroundOpacity(0.25f) * backgroundBox.alpha).toInt() shl 24) or
-            (backgroundBox.rgb and 0x00FFFFFF),
-            LightLayer.BLOCK.ordinal,
+        batchedText.add(
+            TextFeatureRenderer.Submit(
+                Matrix4f(stack.last().pose()),
+                offset,
+                0f,
+                StringUtils.fromLegacy(str).visualOrderText,
+                true,
+                mode,
+                minecraft.entityRenderDispatcher.getPackedLightCoords(minecraft.player!!, deltaPartialTick),
+                color.rgb,
+                ((minecraft.options.getBackgroundOpacity(0.25f) * backgroundBox.alpha).toInt() shl 24) or
+                (backgroundBox.rgb and 0x00FFFFFF),
+                0,
+            )
         )
 
         bufferSource.endBatch()
-
-        stack.popPose()
     }
 
     // TODO: clip beam to view frustum https://github.com/PerseusPotter/Apelles/blob/42b1f9f83136293af648c0b92e76599aa4f6bd3d/java/src/main/kotlin/com/perseuspotter/apelles/Renderer.kt#L511
@@ -210,65 +252,70 @@ object Render3DVertex {
     fun renderBeamInner(
         stack: PoseStack,
         bufferSource: MultiBufferSource.BufferSource,
-        opaqueLayer: RenderType,
-        translucentLayer: RenderType,
+        batchedType: BatchedRenderType,
         color: Color,
         h: Double,
     ) {
-        BeaconBeamRenderer.renderBeamInner(
-            stack,
-            bufferSource,
-            opaqueLayer,
-            translucentLayer,
-            minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
-            minecraft.level?.gameTime ?: 0L,
-            color,
-            h,
-        )
+        val worldTime = minecraft.level?.gameTime ?: 0L
+        val partialTicks = minecraft.deltaTracker.getGameTimeDeltaPartialTick(false)
+        val time = Math.floorMod(worldTime, 40) + partialTicks
+
+        stack.pushPose()
+        stack.mulPose(Axis.YP.rotationDegrees(time * 2.25f - 45.0f))
+        addBatchedDraw(batchedType, stack) { pose, consumer ->
+            BeaconBeamRenderer.renderBeamInner(
+                pose,
+                consumer,
+                partialTicks,
+                worldTime,
+                color,
+                h,
+            )
+        }
+        stack.popPose()
     }
 
     fun renderBeamOuter(
         stack: PoseStack,
         bufferSource: MultiBufferSource.BufferSource,
-        opaqueLayer: RenderType,
-        translucentLayer: RenderType,
+        batchedType: BatchedRenderType,
         color: Color,
         h: Double,
     ) {
-        BeaconBeamRenderer.renderBeamOuter(
-            stack,
-            bufferSource,
-            opaqueLayer,
-            translucentLayer,
-            minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
-            minecraft.level?.gameTime ?: 0L,
-            color,
-            h,
-        )
+        addBatchedDraw(batchedType, stack) { pose, consumer ->
+            BeaconBeamRenderer.renderBeamOuter(
+                pose,
+                consumer,
+                minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
+                minecraft.level?.gameTime ?: 0L,
+                color,
+                h,
+            )
+        }
     }
 
     fun renderLines(
         stack: PoseStack,
+        batchedType: BatchedRenderType,
         consumer: VertexConsumer,
         supplier: LinesBuilder.() -> Unit,
     ) {
-        val mat = stack.last()
-
-        supplier.invoke(
-            object : LinesBuilder {
-                override fun submit(
-                    x0: Double, y0: Double, z0: Double,
-                    x1: Double, y1: Double, z1: Double,
-                    c0: Color, c1: Color,
-                    lineWidth0: Double, lineWidth1: Double,
-                ) {
-                    var dx = (x1 - x0).toFloat()
-                    var dy = (y1 - y0).toFloat()
-                    var dz = (z1 - z0).toFloat()
-                    val f = 1f / sqrt(dx * dx + dy * dy + dz * dz)
-                    dx *= f
-                    dy *= f
-                    dz *= f
+        addBatchedDraw(batchedType, stack) { pose, consumer ->
+            supplier.invoke(
+                object : LinesBuilder {
+                    override fun submit(
+                        x0: Double, y0: Double, z0: Double,
+                        x1: Double, y1: Double, z1: Double,
+                        c0: Color, c1: Color,
+                        lineWidth0: Double, lineWidth1: Double,
+                    ) {
+                        var dx = (x1 - x0).toFloat()
+                        var dy = (y1 - y0).toFloat()
+                        var dz = (z1 - z0).toFloat()
+                        val f = 1f / sqrt(dx * dx + dy * dy + dz * dz)
+                        dx *= f
+                        dy *= f
+                        dz *= f
 
                     consumer
                         .addVertex(mat, x0.toFloat(), y0.toFloat(), z0.toFloat())
@@ -288,6 +335,7 @@ object Render3DVertex {
 
     fun renderLineStrip(
         stack: PoseStack,
+        batchedType: BatchedRenderType,
         consumer: VertexConsumer,
         supplier: VertexBuilder.() -> Unit,
     ) {
@@ -298,7 +346,7 @@ object Render3DVertex {
         var pc = Color(0, true)
         var pw = 1.0
 
-        renderLines(stack, consumer) {
+        renderLines(stack, batchedType) {
             supplier.invoke(
                 object : VertexBuilder {
                     override fun submit(x: Double, y: Double, z: Double, c: Color, lineWidth: Double) {
@@ -319,5 +367,128 @@ object Render3DVertex {
                 }
             )
         }
+    }
+
+    private data class PreparedDraw(val name: String, val drawInfo: StagedVertexBuffer.Draw, val type: PreparedRenderType)
+    private val draws = mutableListOf<PreparedDraw>()
+
+    private fun getBuffer(batchedType: BatchedRenderType): VertexConsumer {
+        val renderType = batchedType.type
+        val pipeline = renderType.pipeline()
+        val vertexFormat = pipeline.getVertexFormatBinding(0)
+        val dataType = pipeline.primitiveTopology
+
+        val drawInfo = vertexBuffer.appendDraw(
+            vertexFormat!!,
+            dataType,
+            if (renderType.sortOnUpload()) RenderSystem.getProjectionType().vertexSorting() else null,
+        )
+
+        draws.add(PreparedDraw(batchedType.name, drawInfo, renderType.prepare()))
+
+        return vertexBuffer.getVertexBuilder(drawInfo)
+    }
+
+    @Suppress("CAST_NEVER_SUCCEEDS", "UNCHECKED_CAST")
+    private val textFeatureRenderer =
+        (TextFeatureRenderer() as RenderTypeFeatureRendererAccessor<TextFeatureRenderer.Submit>).also {
+            it.setCurrentGroup(
+                object : RenderTypeFeatureRenderer.Group(vertexBuffer, false) {
+                    override fun getVertexBuilder(renderType: RenderType): VertexConsumer {
+                        val rt = renderType as RenderTypeAccessor
+                        val setup = rt.state
+                        @Suppress("CAST_NEVER_SUCCEEDS")
+                        val texture = (setup as RenderSetupAccessor).textures
+                        val texturePath = texture.values.first().location
+                        val phase = rt.name == "text_see_through"
+                        val type = (if (phase) Render3DTypes.TEXT_ESP else Render3DTypes.TEXT).apply(texturePath)
+                        return getBuffer(BatchedRenderType("Text", type, 0))
+                    }
+                }
+            )
+        }
+
+    fun internalBatchedRender() {
+        batchedDraws.forEach { arr ->
+            if (arr.isEmpty()) return@forEach
+
+            val batchedType = arr[0].type
+            val buffer = getBuffer(batchedType)
+
+            arr.forEach { draw ->
+                draw.cb(draw.pose, buffer)
+            }
+            arr.clear()
+        }
+
+        val gameRenderer = minecraft.gameRenderer
+
+        val ffc = FeatureFrameContext(
+            gameRenderer.gameRenderState().optionsRenderState,
+            minecraft.font,
+            minecraft.modelManager.blockStateModelSet,
+            minecraft.blockColors,
+            minecraft.textureManager,
+            minecraft.atlasManager,
+            gameRenderer.lightmap(),
+            vertexBuffer,
+        )
+        textFeatureRenderer.invokeBuildGroup(ffc, batchedText)
+        batchedText.clear()
+
+        vertexBuffer.upload()
+
+        val target = gameRenderer.mainRenderTarget()
+
+        draws.forEach { (name, drawInfo, type) ->
+            val info = vertexBuffer.getExecuteInfo(drawInfo) ?: return@forEach
+
+            // type.drawFromBuffer(info)
+
+            RenderSystem
+                .getDevice()
+                .createCommandEncoder()
+                .createRenderPass(
+                    { "Devonian Render Pass for $name" },
+                    target.colorTextureView!!,
+                    Optional.empty<Vector4fc>(),
+                    target.depthTextureView,
+                    OptionalDouble.empty(),
+                )
+                .use { renderPass ->
+                    renderPass.setPipeline(type.pipeline)
+
+                    RenderSystem.bindDefaultUniforms(renderPass)
+                    renderPass.setUniform("DynamicTransforms", type.dynamicTransforms)
+
+                    if (type.scissorState.enabled()) renderPass.enableScissor(
+                        type.scissorState.x(), type.scissorState.y(),
+                        type.scissorState.width(), type.scissorState.height()
+                    )
+                    else renderPass.disableScissor()
+
+                    renderPass.setVertexBuffer(0, info.vertexBuffer.slice())
+                    renderPass.setIndexBuffer(info.indexBuffer, info.indexType)
+
+                    type.textures.forEach {
+                        renderPass.bindTexture(it.name, it.textureView, it.sampler)
+                    }
+
+                    renderPass.drawIndexed(
+                        info.indexCount,
+                        1,
+                        info.firstIndex,
+                        info.baseVertex,
+                        0
+                    )
+                }
+        }
+        draws.clear()
+
+        vertexBuffer.endFrame()
+    }
+
+    fun internalClose() {
+        vertexBuffer.close()
     }
 }

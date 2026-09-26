@@ -8,3 +8,6 @@ accessible method net/minecraft/network/chat/Style <init> (Lnet/minecraft/networ
 accessible method net/minecraft/client/gui/screens/inventory/InventoryScreen extractRenderState (Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 accessible class com/mojang/blaze3d/opengl/GlDevice
 accessible class com/mojang/blaze3d/opengl/GlCommandEncoder
+accessible class net/minecraft/client/renderer/feature/RenderTypeFeatureRenderer$Group
+accessible method net/minecraft/client/renderer/feature/RenderTypeFeatureRenderer$Group <init> (Lnet/minecraft/client/renderer/StagedVertexBuffer;Z)V
+accessible class net/minecraft/client/renderer/rendertype/RenderSetup$TextureBinding

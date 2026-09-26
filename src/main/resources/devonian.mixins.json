@@ -26,7 +26,6 @@
     "FogRendererMixin",
     "FontMixin",
     "GameRendererMixin",
-    "GlCommandEncoderMixin",
     "GlDeviceMixin",
     "GlobalSettingsUniformMixin",
     "GuiGraphicsMixin",
@@ -73,6 +72,9 @@
     "accessor.LocalPlayerAccessor",
     "accessor.ParticleAccessor",
     "accessor.RenderPipeline$BuilderAccessor",
+    "accessor.RenderSetupAccessor",
+    "accessor.RenderTypeAccessor",
+    "accessor.RenderTypeFeatureRendererAccessor",
     "accessor.ScreenAccessor"
   ],
   "injectors": {

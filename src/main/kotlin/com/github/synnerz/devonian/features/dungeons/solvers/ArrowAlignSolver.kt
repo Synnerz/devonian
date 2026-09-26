@@ -15,6 +15,7 @@ import net.minecraft.world.entity.decoration.ItemFrame
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.LightLayer
 import org.joml.Quaternionf
+import java.awt.Color
 import kotlin.math.floor
 import kotlin.math.max
 
@@ -185,7 +186,6 @@ object ArrowAlignSolver : Feature(
         on<RenderWorldEvent> {
             if (!atDev) return@on
 
-            val textRenderer = minecraft.font
             val consumer = minecraft.renderBuffers().bufferSource()
             val layer = Font.DisplayMode.NORMAL
             val camPos = Render3DImmediate.camera.pos
@@ -199,7 +199,6 @@ object ArrowAlignSolver : Feature(
                     val n = getClicks(id)
                     if (n == 0) continue
                     val s = n.toString()
-                    val offset = -textRenderer.width(s) * 0.5f
 
                     val dx = -1.9 - camPos.x
                     val dy = y + 0.5 - camPos.y
@@ -210,6 +209,8 @@ object ArrowAlignSolver : Feature(
                     Render3DImmediate.poseStack.last().rotate(quat)
                     Render3DImmediate.poseStack.scale(-scale, -scale, -scale)
 
+                    Render3DVertex.renderString(
+                        Render3DImmediate.poseStack,
                     textRenderer.drawInBatch(
                         s,
                         offset,
