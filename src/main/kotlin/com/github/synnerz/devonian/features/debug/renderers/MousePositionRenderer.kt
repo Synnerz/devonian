@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.debug
+package com.github.synnerz.devonian.features.debug.renderers
 
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.config.Categories
