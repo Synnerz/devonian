@@ -182,7 +182,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
             if (hud.isVisibleEdit()) hud.sampleDraw(graphics, mouseX, mouseY, hud == selectedHud)
         }
 
-        val window = minecraft?.window ?: return
+        val window = minecraft.window ?: return
         graphics.fill(0, 0, window.guiScaledWidth, window.guiScaledHeight, 0x80000000.toInt())
         super.extractRenderState(graphics, mouseX, mouseY, a)
         if (HudManagerGrid.isEnabled()) {

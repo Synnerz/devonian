@@ -83,7 +83,7 @@ object Serializer {
         obj.set("damage", stack.damageValue)
 
         stack.get(DataComponents.PROFILE)?.let {
-            val data = it.partialProfile() ?: return@let
+            val data = it.partialProfile()
             val profile = obj.getObject("Profile")
             profile.set("id", data.id.toString())
             profile.set("name", data.name)
@@ -176,7 +176,7 @@ object Serializer {
             name.set("customName", it.colorCodes())
             name.set("customName_", it.string)
         }
-        ent.displayName?.let {
+        ent.displayName.let {
             name.set("displayName", it.colorCodes())
             name.set("displayName_", it.string)
         }
@@ -198,7 +198,7 @@ object Serializer {
 
             val eq = JsonDataObject()
             EquipmentSlot.entries.forEach { slot ->
-                val item = ent.getItemBySlot(slot) ?: return@forEach
+                val item = ent.getItemBySlot(slot)
                 if (item.isEmpty) return@forEach
                 eq.set(slot.name, serializeItem(item))
             }

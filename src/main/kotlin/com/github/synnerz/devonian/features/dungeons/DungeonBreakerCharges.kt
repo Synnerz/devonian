@@ -30,7 +30,7 @@ object DungeonBreakerCharges : TextHudFeature(
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (packet !is ClientboundContainerSetSlotPacket) return@on
-            val itemStack = packet.item ?: return@on
+            val itemStack = packet.item
             if (ItemUtils.skyblockId(itemStack) != "DUNGEONBREAKER") return@on
             val usedCharge = itemStack.get(DataComponents.DAMAGE) ?: 1
 

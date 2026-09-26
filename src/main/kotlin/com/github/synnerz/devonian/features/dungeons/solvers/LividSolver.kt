@@ -88,7 +88,7 @@ object LividSolver : Feature(
 
         on<PreExtractRenderEntityEvent> { event ->
             if (!SETTING_HIDE_WRONG_LIVID.get() || lividEnt == null) return@on
-            val name = event.entity.name?.string ?: return@on
+            val name = event.entity.name.string ?: return@on
             if (!name.matches(lividNameRegex)) return@on
             if (event.entity.id == lividEnt?.id) return@on
 

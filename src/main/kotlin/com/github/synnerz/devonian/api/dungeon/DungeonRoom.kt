@@ -151,7 +151,7 @@ class DungeonRoom(comps: List<WorldComponentPosition>, var height: Int) {
             if (!WorldUtils.isChunkLoaded(x, z)) return@removeIf false
 
             val blockState = WorldUtils.getBlockState(x, height, z) ?: return@removeIf false
-            val block = blockState.block ?: return@removeIf false
+            val block = blockState.block
             if (block != Blocks.DYED_TERRACOTTA.blue) return@removeIf true
 
             rotation = idx * 90

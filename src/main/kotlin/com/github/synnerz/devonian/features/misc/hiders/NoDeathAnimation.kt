@@ -32,7 +32,7 @@ object NoDeathAnimation : Feature(
 
         if (entity.isAlive && entity.health > 0f) return false
 
-        val name = entity.name?.string
+        val name = entity.name.string
         if (name != null && lividNameRegex.matches(name)) return false
 
         val offset = if (entity is WitherSkeleton && (name?.contains("Withermancer") ?: false)) 3 else 1

@@ -45,7 +45,7 @@ object CustomTerminalScale : Feature(
     override fun initialize() {
         on<GuiScaleEvent> { event ->
             val screen = event.screen
-            val title = screen.title.string ?: return@on
+            val title = screen.title.string
 
             if (melodyRegex.matches(title)) event.setScale(SETTING_TERMINAL_MELODY_SCALE.get().roundToInt())
             else if (validGuis.any { it.matches(title) }) event.setScale(SETTING_TERMINAL_SCALE.get().roundToInt())
