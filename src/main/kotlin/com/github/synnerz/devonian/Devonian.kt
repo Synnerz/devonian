@@ -420,6 +420,7 @@ object Devonian : ClientModInitializer {
             DisableHotbarScrolling,
             InstaClearAlert,
             TerminalHitboxes,
+            CustomizeItems,
 
             // Debug
             CopyItem,
