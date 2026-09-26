@@ -12,9 +12,9 @@ import java.util.concurrent.ScheduledExecutorService
 
 object Scheduler {
     private val taskComp = compareBy<Task>({ it.delay }, { it.id })
-    private val tasks = PriorityBlockingQueue<Task>(10, taskComp)
+    private val tasks = PriorityBlockingQueue(10, taskComp)
     private var tick = atomic(0)
-    private val tasksServer = PriorityBlockingQueue<Task>(10, taskComp)
+    private val tasksServer = PriorityBlockingQueue(10, taskComp)
     private var tickServer = atomic(0)
     private var taskId = atomic(0)
     private val beforePacketTasks = ConcurrentLinkedQueue<() -> Unit>()

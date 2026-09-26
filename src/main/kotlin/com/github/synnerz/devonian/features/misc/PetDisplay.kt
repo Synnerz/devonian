@@ -4,17 +4,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.events.ChatEvent
-import com.github.synnerz.devonian.api.events.ClientContainerCloseEvent
-import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
-import com.github.synnerz.devonian.api.events.GuiClickEvent
-import com.github.synnerz.devonian.api.events.RenderGuiEvent
-import com.github.synnerz.devonian.api.events.RenderOverlayEvent
-import com.github.synnerz.devonian.api.events.RenderSlotEvent
-import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
-import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
-import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
-import com.github.synnerz.devonian.api.events.TabUpdateEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.DataObject
 import com.github.synnerz.devonian.config.json.JsonDataObject
@@ -40,8 +30,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.ResolvableProfile
 import java.awt.Color
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 
 object PetDisplay : TextHudFeature(
     "petDisplay",
@@ -196,7 +185,7 @@ object PetDisplay : TextHudFeature(
             result = 31 * result + colorCode.hashCode()
             // ignore lore so the equals can be backwards compat
             // result = 31 * result + (lore?.hashCode() ?: 0)
-            result = 31 * result + (skin?.hashCode() ?: 0)
+            result = 31 * result + skin.hashCode()
             result = 31 * result + componentLore.hashCode()
             return result
         }

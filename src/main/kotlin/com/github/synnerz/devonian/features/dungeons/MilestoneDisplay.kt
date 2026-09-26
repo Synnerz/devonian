@@ -14,7 +14,7 @@ object MilestoneDisplay : TextHudFeature(
     "catacombs",
     subcategory = "HUD",
 ) {
-    private val milestoneRegex = "^ Your Milestone: .(.)\$".toRegex()
+    private val milestoneRegex = "^ Your Milestone: .(.)$".toRegex()
     private val milestonSymbols = mutableListOf("⓿", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾")
     private var milestoneCount = 0
 

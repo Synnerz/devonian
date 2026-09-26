@@ -4,13 +4,7 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.SkyblockPrices
-import com.github.synnerz.devonian.api.events.ChatEvent
-import com.github.synnerz.devonian.api.events.ClientContainerCloseEvent
-import com.github.synnerz.devonian.api.events.Event
-import com.github.synnerz.devonian.api.events.EventBus
-import com.github.synnerz.devonian.api.events.ServerContainerCloseEvent
-import com.github.synnerz.devonian.api.events.ServerContainerOpenEvent
-import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
+import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import net.minecraft.world.item.ItemStack
@@ -19,7 +13,7 @@ import kotlin.math.roundToInt
 object GardenEvents {
     private const val OVERCLOCKER_3000 = "Overclocker 3000"
     private val pestDropRegex = "^You received (\\d+)x ([\\w ]+) for killing an? ([\\w ]+)!$".toRegex()
-    private val pestRareDropRegex = "^RARE DROP! (?:(\\d+)x )?([\\w ]+) \\(\\+[\\d,]+☘\\)\$".toRegex()
+    private val pestRareDropRegex = "^RARE DROP! (?:(\\d+)x )?([\\w ]+) \\(\\+[\\d,]+☘\\)$".toRegex()
     private val timesVisitedRegex = "^Times Visited: (\\d+)$".toRegex()
     private val offersAcceptedRegex = "^Offers Accepted: (\\d+)$".toRegex()
     private val farmingXPRegex = "^ \\+([\\d,.kMB]+) Farming XP$".toRegex()
@@ -42,8 +36,6 @@ object GardenEvents {
         "DEDICATION_IV" to "ENCHANTMENT_DEDICATION_4",
         "QUICKDRAW_CHIP" to "QUICKDRAW_GARDEN_CHIP",
         "HYPERCHARGE_CHIP" to "HYPERCHARGE_GARDEN_CHIP",
-        "DEDICATION_4" to "ENCHANTMENT_DEDICATION_4",
-        "DEDICATION_IV" to "ENCHANTMENT_DEDICATION_4",
         "JELLY_GARDEN_GREENHOUSE_SKIN" to "JELLY_GREENHOUSE_SKIN",
     )
     private var lastGui: String? = null

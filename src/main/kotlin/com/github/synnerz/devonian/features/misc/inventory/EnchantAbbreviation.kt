@@ -5,11 +5,7 @@ import com.github.synnerz.devonian.api.events.PostRenderSlotsEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.utils.EnchantRegistry
-import com.github.synnerz.devonian.utils.Enchantment
-import com.github.synnerz.devonian.utils.FixedIdentityMap
-import com.github.synnerz.devonian.utils.UltimateEnchant
-import com.github.synnerz.devonian.utils.UnknownEnchant
+import com.github.synnerz.devonian.utils.*
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import kotlin.jvm.optionals.getOrNull

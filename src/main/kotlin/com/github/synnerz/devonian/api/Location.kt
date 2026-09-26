@@ -5,7 +5,7 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.BasicState
 
 object Location {
-    val areaRegex = "^(?:Area|Dungeon): ([\\w ']+)\$".toRegex()
+    val areaRegex = "^(?:Area|Dungeon): ([\\w ']+)$".toRegex()
     val subAreaRegex = "^ ([⏣ф\uE067]) ".toRegex()
     var area: String? = null
     var subarea: String? = null

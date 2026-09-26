@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.ItemLore
 import java.awt.Color
-import java.util.Optional
+import java.util.*
 
 object EquipmentDisplay : Feature(
     "equipmentDisplay",
@@ -51,7 +51,7 @@ object EquipmentDisplay : Feature(
     private val borderSlotColor = Color(50, 50, 50, 150)
     private val equipmentSlots = setOf(10, 19, 28, 37)
     private var inGui = false
-    private val equipment = MutableList<EquipmentItem>(4) { EquipmentItem.EMPTY }
+    private val equipment = MutableList(4) { EquipmentItem.EMPTY }
     private val alignment get() = when (SETTING_ALIGNMENT.get()) {
         1 -> 19
         2 -> (27 * 2) - 2

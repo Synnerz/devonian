@@ -1,9 +1,11 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.Devonian;
-import com.github.synnerz.devonian.MouseHandlerAccessor;
 import com.github.synnerz.devonian.GameRendererScaleAccessor;
-import com.github.synnerz.devonian.api.events.*;
+import com.github.synnerz.devonian.MouseHandlerAccessor;
+import com.github.synnerz.devonian.api.events.GuiCloseEvent;
+import com.github.synnerz.devonian.api.events.GuiOpenEvent;
+import com.github.synnerz.devonian.api.events.GuiScaleEvent;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.platform.Window;

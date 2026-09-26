@@ -14,7 +14,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.item.ItemStack
-import java.util.WeakHashMap
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 object EstimatedValue : TextHudFeature(

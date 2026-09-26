@@ -36,7 +36,7 @@ object AutoRequeueDungeons : Feature(
         "catacombs_floor_six",
         "catacombs_floor_seven",
     )
-    private val extraStatsRegex = "^ *> EXTRA STATS <\$".toRegex()
+    private val extraStatsRegex = "^ *> EXTRA STATS <$".toRegex()
     private var needsDowntime = Collections.newSetFromMap<String>(ConcurrentHashMap())
     private var lastQueue = 0
     private var startedRun = false

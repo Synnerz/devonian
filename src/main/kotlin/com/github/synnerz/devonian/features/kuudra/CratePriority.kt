@@ -30,7 +30,7 @@ object CratePriority : Feature(
         "x cannon" to Triple(-130, 78, -114),
         "square" to Triple(-140, 78, -90),
     )
-    private val cratePriorities = mapOf<String, List<CratePriority>>(
+    private val cratePriorities = mapOf(
         "x" to listOf(CratePriority.X, CratePriority.SQUARE, CratePriority.SQUARE, CratePriority.SHOP, CratePriority.X_CANNON),
         "tri" to listOf(CratePriority.TRI, CratePriority.SQUARE, CratePriority.SQUARE, CratePriority.X_CANNON, CratePriority.SHOP),
         "equals" to listOf(CratePriority.EQUALS, CratePriority.SHOP, CratePriority.SQUARE, CratePriority.X_CANNON, CratePriority.SQUARE),

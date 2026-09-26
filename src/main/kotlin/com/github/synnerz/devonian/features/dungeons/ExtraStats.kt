@@ -12,7 +12,7 @@ object ExtraStats : Feature(
     "catacombs",
     subcategory = "QOL",
 ) {
-    private val extraStatsRegex = "^ *> EXTRA STATS <\$".toRegex()
+    private val extraStatsRegex = "^ *> EXTRA STATS <$".toRegex()
 
     override fun initialize() {
         on<ChatEvent> { event ->

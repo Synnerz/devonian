@@ -10,7 +10,6 @@ import com.github.synnerz.devonian.utils.*
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.item.ItemStack
-import java.util.*
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
 
@@ -90,7 +89,7 @@ object CustomEnchantLore : Feature(
             if (s == i - 1) {
                 if (!looseEnchantRegex.matchesAt(str, 0)) s = -1
             }
-            if (!str.isEmpty()) return@forEachIndexed
+            if (str.isNotEmpty()) return@forEachIndexed
             if (s == -1) s = i
             else return s + 1 to i
         }

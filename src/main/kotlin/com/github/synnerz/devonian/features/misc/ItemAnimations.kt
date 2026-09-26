@@ -191,7 +191,7 @@ object ItemAnimations : Feature(
         return if (MobEffectUtil.hasDigSpeed(player)) {
             6 - (1 + MobEffectUtil.getDigSpeedAmplification(player))
         } else {
-            return 6 + (1 + (player.getEffect(MobEffects.MINING_FATIGUE)?.amplifier ?: -1)) * 2
+            6 + (1 + (player.getEffect(MobEffects.MINING_FATIGUE)?.amplifier ?: -1)) * 2
         }
     }
 

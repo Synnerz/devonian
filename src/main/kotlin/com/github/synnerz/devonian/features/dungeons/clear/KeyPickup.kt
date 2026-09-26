@@ -1,12 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.dungeon.DungeonClass
-import com.github.synnerz.devonian.api.dungeon.DungeonRoom
-import com.github.synnerz.devonian.api.dungeon.DungeonScanner
-import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.dungeon.WorldPosition
+import com.github.synnerz.devonian.api.dungeon.*
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature

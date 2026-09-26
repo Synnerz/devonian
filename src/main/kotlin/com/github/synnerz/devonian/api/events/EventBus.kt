@@ -4,7 +4,6 @@ import com.github.synnerz.devonian.api.Ping
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.mixin.accessor.LevelRendererAccessor
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
-import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import com.github.synnerz.devonian.utils.render.impl.Render3DState
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents
