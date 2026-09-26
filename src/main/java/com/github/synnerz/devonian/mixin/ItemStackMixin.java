@@ -1,5 +1,7 @@
 package com.github.synnerz.devonian.mixin;
 
+import com.github.synnerz.devonian.api.ItemUtils;
+import com.github.synnerz.devonian.features.misc.CustomizeItems;
 import com.github.synnerz.devonian.features.misc.inventory.OldMasterStar;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -17,8 +19,14 @@ public class ItemStackMixin {
     )
     private Object devonian$oldMasterStar(ItemStack instance, DataComponentType dataComponentType, Operation<Object> original) {
         Object orig = original.call(instance, dataComponentType);
-        if (!OldMasterStar.INSTANCE.isEnabled() || !(orig instanceof Component)) return orig;
+        if (!(orig instanceof Component c)) return orig;
 
-        return OldMasterStar.INSTANCE.transformName((Component) orig);
+        if (CustomizeItems.INSTANCE.isEnabled()) {
+            String uuid = ItemUtils.INSTANCE.uuid(instance);
+            if (uuid != null) c = CustomizeItems.INSTANCE.getNameComponents().getOrDefault(uuid, c);
+        }
+        if (OldMasterStar.INSTANCE.isEnabled()) c = OldMasterStar.INSTANCE.transformName(c);
+
+        return c;
     }
 }
