@@ -14,16 +14,14 @@ import com.github.synnerz.devonian.config.TextConfig
 import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
 import com.github.synnerz.devonian.features.bossbar.BossBarHealth
-import com.github.synnerz.devonian.features.misc.chat.CommandAliases
-import com.github.synnerz.devonian.features.misc.chat.CopyChat
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.MousePositionLogger
-import com.github.synnerz.devonian.features.debug.renderers.MousePositionRenderer
 import com.github.synnerz.devonian.features.debug.SoundDebugger
 import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger
 import com.github.synnerz.devonian.features.debug.renderers.DebugCounter
 import com.github.synnerz.devonian.features.debug.renderers.DungeonRoomComponentRenderer
+import com.github.synnerz.devonian.features.debug.renderers.MousePositionRenderer
 import com.github.synnerz.devonian.features.debug.renderers.RenderSlotIndex
 import com.github.synnerz.devonian.features.diana.BurrowGuesser
 import com.github.synnerz.devonian.features.diana.BurrowWaypoint

@@ -1,9 +1,9 @@
 package com.github.synnerz.devonian.api
 
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.features.misc.chat.CompactChatComponent
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.mixin.accessor.ChatComponentAccessor
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.impl.command.client.ClientCommandInternals

@@ -5,7 +5,6 @@ import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
-import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import com.github.synnerz.devonian.utils.render.impl.Render3DVertex
 import kotlinx.atomicfu.atomic

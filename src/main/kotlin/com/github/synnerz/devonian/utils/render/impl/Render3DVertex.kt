@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.utils.render.impl
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.features.debug.renderers.DebugCounter
 import com.github.synnerz.devonian.mixin.accessor.RenderSetupAccessor
 import com.github.synnerz.devonian.mixin.accessor.RenderTypeAccessor
 import com.github.synnerz.devonian.mixin.accessor.RenderTypeFeatureRendererAccessor
@@ -27,8 +26,7 @@ import org.joml.Vector3d
 import org.joml.Vector3f
 import org.joml.Vector4fc
 import java.awt.Color
-import java.util.Optional
-import java.util.OptionalDouble
+import java.util.*
 import kotlin.math.sqrt
 
 /**
@@ -115,8 +113,6 @@ object Render3DVertex {
         wz: Double,
         color: Color,
     ) {
-        DebugCounter.tick("filled", 1000)
-
         val x1 = x.toFloat()
         val y1 = y.toFloat()
         val z1 = z.toFloat()
@@ -126,8 +122,6 @@ object Render3DVertex {
         val c = color.rgb
 
         addBatchedDraw(batchedType, stack) { m, consumer ->
-            DebugCounter.tick("filled draw", 1000)
-
             consumer.addVertex(m, x1, y1, z1).setColor(c)
             consumer.addVertex(m, x1, y2, z1).setColor(c)
             consumer.addVertex(m, x2, y1, z1).setColor(c)

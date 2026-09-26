@@ -2,13 +2,8 @@ package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.GameUnloadEvent
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.future.await
-import kotlinx.coroutines.launch
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest

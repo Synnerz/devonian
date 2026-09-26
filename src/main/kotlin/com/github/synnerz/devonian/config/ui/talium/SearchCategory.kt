@@ -42,7 +42,7 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
                     }
                     return@onCharType
                 }
-                if (previousText !== text)
+                if (previousText != text)
                     onSearch(text)
                 previousText = text
             }

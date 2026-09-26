@@ -14,7 +14,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
 import java.security.MessageDigest
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.TimeUnit
 

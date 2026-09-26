@@ -1,11 +1,9 @@
 package com.github.synnerz.devonian.utils.render.impl
 
 import com.github.synnerz.devonian.utils.render.IRender3D
-import com.github.synnerz.devonian.utils.render.Render3DTypes
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.StagedVertexBuffer
-import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.world.phys.shapes.VoxelShape
 import java.awt.Color

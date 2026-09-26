@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.api
 
 import com.github.synnerz.devonian.Devonian
-import com.github.synnerz.devonian.features.misc.inventory.ProtectItem.minecraft
 import com.github.synnerz.devonian.mixin.accessor.AbstractContainerScreenAccessor
 import com.github.synnerz.devonian.utils.render.Render2D
 import net.minecraft.client.gui.screens.Screen

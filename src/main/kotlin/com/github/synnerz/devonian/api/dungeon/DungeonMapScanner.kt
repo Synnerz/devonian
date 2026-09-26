@@ -48,6 +48,7 @@ object DungeonMapScanner {
         }
         val id = lastMapId ?: return
         try {
+            @Suppress("CAST_NEVER_SUCCEEDS")
             Devonian.minecraft.level?.overrideMapData(id, null as MapItemSavedData)
         } catch (e: Exception) {
             println("Devonian\$DungeonMapScanner error")

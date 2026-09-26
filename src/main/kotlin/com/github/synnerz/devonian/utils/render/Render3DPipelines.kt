@@ -5,13 +5,9 @@ import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.ColorTargetState
 import com.mojang.blaze3d.pipeline.DepthStencilState
 import com.mojang.blaze3d.pipeline.RenderPipeline
-import com.mojang.blaze3d.platform.BlendFactor
-import com.mojang.blaze3d.platform.BlendOp
 import com.mojang.blaze3d.platform.CompareOp
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import net.minecraft.client.renderer.RenderPipelines
-import net.minecraft.client.renderer.rendertype.RenderSetup
-import java.util.*
 
 object Render3DPipelines {
     // mc checks for "transparency" by the existence of a blend function
