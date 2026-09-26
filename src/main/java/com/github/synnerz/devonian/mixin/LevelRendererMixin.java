@@ -7,9 +7,9 @@ import com.github.synnerz.devonian.utils.render.impl.Render3DVertex;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.renderpearl.api.commands.RenderPass;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,12 +39,12 @@ public class LevelRendererMixin {
 
     @WrapOperation(
         method = "lambda$addMainPass$0",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V")
+        at = @At(value = "INVOKE", target = "Lcom/mojang/renderpearl/api/commands/RenderPass;close()V")
     )
-    private void devonian$renderEnd(ProfilerFiller instance, Operation<Void> original) {
+    private void devonian$renderEnd(RenderPass instance, Operation<Void> original) {
         original.call(instance);
-        instance.push("renderDevonian");
+//        instance.push("renderDevonian");
         Render3DVertex.INSTANCE.internalBatchedRender();
-        instance.pop();
+//        instance.pop();
     }
 }
