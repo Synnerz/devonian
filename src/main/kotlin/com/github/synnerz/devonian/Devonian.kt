@@ -18,7 +18,7 @@ import com.github.synnerz.devonian.features.misc.chat.CommandAliases
 import com.github.synnerz.devonian.features.misc.chat.CopyChat
 import com.github.synnerz.devonian.features.debug.CopyItem
 import com.github.synnerz.devonian.features.debug.MousePositionLogger
-import com.github.synnerz.devonian.features.debug.MousePositionRenderer
+import com.github.synnerz.devonian.features.debug.renderers.MousePositionRenderer
 import com.github.synnerz.devonian.features.debug.SoundDebugger
 import com.github.synnerz.devonian.features.debug.WAILA
 import com.github.synnerz.devonian.features.debug.packetlogger.PacketLogger
