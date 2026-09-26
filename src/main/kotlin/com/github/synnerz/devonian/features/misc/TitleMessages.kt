@@ -71,7 +71,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "Import", true).apply { textScale = 1.5f })
         onMouseRelease {
             if (it.button != 1) return@onMouseRelease
-            val encode = minecraft?.keyboardHandler?.clipboard
+            val encode = minecraft.keyboardHandler?.clipboard
             if (encode.isNullOrEmpty()) return@onMouseRelease
             val decoded = Base64.getDecoder().decode(encode)
             val json = PersistentJson.gson.fromJson<Map<String, String>>(

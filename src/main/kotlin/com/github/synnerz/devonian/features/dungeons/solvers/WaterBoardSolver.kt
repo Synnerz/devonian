@@ -164,7 +164,7 @@ object WaterBoardSolver : Feature(
             subvariant = ""
 
             for (idx in woolOrder.indices) {
-                val woolType = woolOrder[idx] ?: continue
+                val woolType = woolOrder[idx]
                 val roomPos = room.fromComp(PURPLE_WOOL.first, PURPLE_WOOL.second - idx) ?: continue
                 WorldUtils.fromBlockTypeOrNull(roomPos.first, 57, roomPos.second, woolType) ?: continue
 

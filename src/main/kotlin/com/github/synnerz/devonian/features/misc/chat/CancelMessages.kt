@@ -63,7 +63,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         addChild(UIText(0.0, 0.0, 100.0, 100.0, "Import", true).apply { textScale = 1.5f })
         onMouseRelease {
             if (it.button != 1) return@onMouseRelease
-            val encode = minecraft?.keyboardHandler?.clipboard
+            val encode = minecraft.keyboardHandler?.clipboard
             if (encode.isNullOrEmpty()) return@onMouseRelease
             val decoded = Base64.getDecoder().decode(encode)
             val json = PersistentJson.gson.fromJson<List<String>>(
@@ -98,7 +98,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
             if (json.isEmpty()) return@onMouseRelease
 
             val encoded = Base64.getEncoder().encodeToString(json.toByteArray(Charsets.UTF_8))
-            (minecraft ?: return@onMouseRelease).keyboardHandler.clipboard = encoded
+            minecraft.keyboardHandler.clipboard = encoded
             ChatUtils.sendMessage("&bExported CancelMessage to clipboard", true)
         }
     }

@@ -120,7 +120,7 @@ object ProtectItem : Feature(
         on<RenderSlotEvent> { event ->
             if (!highlightSlots) return@on
             val slot = event.slot
-            val item = slot.item ?: return@on
+            val item = slot.item
 
             if (!isLocked(item)) return@on
 

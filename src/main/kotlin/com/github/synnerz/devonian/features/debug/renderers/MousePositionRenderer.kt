@@ -14,7 +14,7 @@ object MousePositionRenderer : Feature(
 ) {
     override fun initialize() {
         on<RenderOverlayEvent> { event ->
-            val window = minecraft.window ?: return@on
+            val window = minecraft.window
             val mx = minecraft.mouseHandler.getScaledXPos(window).toInt()
             val my = minecraft.mouseHandler.getScaledYPos(window).toInt()
             Render2D.drawCircle(event.ctx, mx, my, 1, Color.RED)

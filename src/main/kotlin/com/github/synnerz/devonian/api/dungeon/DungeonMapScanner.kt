@@ -301,7 +301,7 @@ object DungeonMapScanner {
 
             val world = Devonian.minecraft.level ?: return@on
             val mapState = MapItem.getSavedData(mapId, world) ?: return@on
-            val colors = mapState.colors?.clone() ?: return@on
+            val colors = mapState.colors.clone() ?: return@on
             if (colors[0] != MapColors.EMPTY.color) lastMapId = mapId
 
             if (roomSize == -1 && !scanMapDimensions(colors)) return@on

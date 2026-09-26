@@ -54,9 +54,9 @@ object EnchantRegistry {
 }
 
 private val bestColor = ChromaText.createStyle()
-private val greatColor = Style.EMPTY.withColor(ChatFormatting.GOLD)!!
-private val goodColor = Style.EMPTY.withColor(ChatFormatting.BLUE)!!
-private val poorColor = Style.EMPTY.withColor(ChatFormatting.GRAY)!!
+private val greatColor = Style.EMPTY.withColor(ChatFormatting.GOLD)
+private val goodColor = Style.EMPTY.withColor(ChatFormatting.BLUE)
+private val poorColor = Style.EMPTY.withColor(ChatFormatting.GRAY)
 private val ultColor = Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE).withBold(true)
 private val unkColor = Style.EMPTY.withColor(ChatFormatting.DARK_RED)
 interface Enchantment {
