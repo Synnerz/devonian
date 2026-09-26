@@ -419,6 +419,7 @@ object Devonian : ClientModInitializer {
             KickedMessage,
             DisableHotbarScrolling,
             InstaClearAlert,
+            TerminalHitboxes,
 
             // Debug
             CopyItem,
