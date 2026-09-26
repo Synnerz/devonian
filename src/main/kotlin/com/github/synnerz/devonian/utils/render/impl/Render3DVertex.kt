@@ -356,8 +356,11 @@ object Render3DVertex {
 
     private data class PreparedDraw(val name: String, val drawInfo: StagedVertexBuffer.Draw, val type: PreparedRenderType)
     private val draws = mutableListOf<PreparedDraw>()
+    private val cachedDrawInfo = arrayOfNulls<StagedVertexBuffer.Draw>(BatchedRenderType.MAX_ID + 3)
 
-    private fun getBuffer(batchedType: BatchedRenderType): VertexConsumer {
+    private fun getDrawInfo(batchedType: BatchedRenderType): StagedVertexBuffer.Draw {
+        if (cachedDrawInfo[batchedType.batchId] != null) return cachedDrawInfo[batchedType.batchId]!!
+
         val renderType = batchedType.type
         val pipeline = renderType.pipeline()
         val vertexFormat = pipeline.getVertexFormatBinding(0)
@@ -371,7 +374,11 @@ object Render3DVertex {
 
         draws.add(PreparedDraw(batchedType.name, drawInfo, renderType.prepare()))
 
-        return vertexBuffer.getVertexBuilder(drawInfo)
+        return drawInfo
+    }
+
+    private fun getBuffer(batchedType: BatchedRenderType): VertexConsumer {
+        return vertexBuffer.getVertexBuilder(getDrawInfo(batchedType))
     }
 
     @Suppress("CAST_NEVER_SUCCEEDS", "UNCHECKED_CAST")
@@ -387,7 +394,8 @@ object Render3DVertex {
                         val texturePath = texture.values.first().location
                         val phase = rt.name == "text_see_through"
                         val type = (if (phase) Render3DTypes.TEXT_ESP else Render3DTypes.TEXT).apply(texturePath)
-                        return getBuffer(BatchedRenderType("Text", type, 0))
+                        val id = BatchedRenderType.MAX_ID + (if (phase) 2 else 1)
+                        return getBuffer(BatchedRenderType("Text", type, id))
                     }
                 }
             )
