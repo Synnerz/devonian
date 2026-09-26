@@ -170,8 +170,8 @@ object Render3DState {
 
         Render3DVertex.renderString(
             poseStack,
-            if (phase) Font.DisplayMode.SEE_THROUGH else Font.DisplayMode.NORMAL,
             str,
+            phase,
             color,
             backgroundBox,
         )

@@ -9,6 +9,7 @@ import com.github.synnerz.devonian.utils.math.ShapeUtils
 import com.github.synnerz.devonian.utils.render.IRender3D.LinesBuilder
 import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
 import com.github.synnerz.devonian.utils.render.Render3DTypes
+import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
@@ -39,15 +40,18 @@ object Render3DVertex {
     private val textRenderer = minecraft.font
     private val vertexBuffer = StagedVertexBuffer({ "Devonian Render Buffer "}, RenderType.SMALL_BUFFER_SIZE)
     private val batchedDraws = Array(BatchedRenderType.MAX_ID + 1) { mutableListOf<BatchedDraw>() }
+    private val batchedDrawsPhase = Array(BatchedRenderType.MAX_ID + 1) { mutableListOf<BatchedDraw>() }
     private data class BatchedDraw(val pose: PoseStack.Pose, val type: BatchedRenderType, val cb: (pose: PoseStack.Pose, consumer: VertexConsumer) -> Unit)
     private val batchedText = mutableListOf<TextFeatureRenderer.Submit>()
+    private val batchedTextPhase = mutableListOf<TextFeatureRenderer.Submit>()
 
     private fun addBatchedDraw(
         batch: BatchedRenderType,
         stack: PoseStack,
         cb: (pose: PoseStack.Pose, consumer: VertexConsumer) -> Unit
     ) {
-        batchedDraws[batch.batchId].add(BatchedDraw(stack.last().copy(), batch, cb))
+        val b = if (batch.phase) batchedDrawsPhase else batchedDraws
+        b[batch.batchId].add(BatchedDraw(stack.last().copy(), batch, cb))
     }
 
     fun renderFilledShape(
@@ -210,15 +214,17 @@ object Render3DVertex {
 
     fun renderString(
         stack: PoseStack,
-        mode: Font.DisplayMode,
         str: String,
+        phase: Boolean,
         color: Color,
         backgroundBox: Color,
     ) {
         val offset = -textRenderer.width(str) * 0.5f
         val deltaPartialTick = minecraft.deltaTracker.getGameTimeDeltaPartialTick(true)
+        val mode = if (phase) Font.DisplayMode.SEE_THROUGH else Font.DisplayMode.NORMAL
 
-        batchedText.add(
+        val b = if (phase) batchedTextPhase else batchedText
+        b.add(
             TextFeatureRenderer.Submit(
                 Matrix4f(stack.last().pose()),
                 mode,
@@ -397,14 +403,18 @@ object Render3DVertex {
                         val phase = rt.name == "text_see_through"
                         val type = (if (phase) Render3DTypes.TEXT_ESP else Render3DTypes.TEXT).apply(texturePath)
                         val id = BatchedRenderType.MAX_ID + (if (phase) 2 else 1)
-                        return getBuffer(BatchedRenderType("Text", type, id))
+                        return getBuffer(BatchedRenderType("Text", type, id, phase))
                     }
                 }
             )
         }
 
-    fun internalBatchedRender() {
-        batchedDraws.forEach { arr ->
+    private fun batchedRender(
+        calls: Array<MutableList<BatchedDraw>>,
+        textCalls: MutableList<TextFeatureRenderer.Submit>,
+        target: RenderTarget,
+    ) {
+        calls.forEach { arr ->
             if (arr.isEmpty()) return@forEach
 
             val batchedType = arr[0].type
@@ -428,12 +438,10 @@ object Render3DVertex {
             gameRenderer.lightmap(),
             vertexBuffer,
         )
-        textFeatureRenderer.invokeBuildGroup(ffc, batchedText)
-        batchedText.clear()
+        textFeatureRenderer.invokeBuildGroup(ffc, textCalls)
+        textCalls.clear()
 
         vertexBuffer.upload()
-
-        val target = gameRenderer.mainRenderTarget()
 
         draws.forEach { (name, drawInfo, type) ->
             val info = vertexBuffer.getExecuteInfo(drawInfo) ?: return@forEach
@@ -481,6 +489,18 @@ object Render3DVertex {
         draws.clear()
 
         vertexBuffer.endFrame()
+    }
+
+    fun internalBatchedRender() {
+        batchedRender(batchedDraws, batchedText, minecraft.gameRenderer.mainRenderTarget())
+    }
+
+    fun internalBatchedRenderPhase(target: RenderTarget) {
+        batchedRender(batchedDrawsPhase, batchedTextPhase, target)
+    }
+
+    fun internalHasPhaseRenders(): Boolean {
+        return batchedTextPhase.isNotEmpty() || batchedDrawsPhase.any { it.isNotEmpty() }
     }
 
     fun internalClose() {

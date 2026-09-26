@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.utils.render.Render3DTypes
 import net.minecraft.client.renderer.rendertype.RenderType
 
 
-data class BatchedRenderType(val name: String, val type: RenderType, val batchId: Int) {
+data class BatchedRenderType(val name: String, val type: RenderType, val batchId: Int, val phase: Boolean) {
     enum class Primitive(val types: Array<RenderType>) {
         LINES(
             arrayOf(
@@ -42,19 +42,16 @@ data class BatchedRenderType(val name: String, val type: RenderType, val batchId
 
     companion object {
         fun get(opaque: Boolean, phase: Boolean, primitive: Primitive): BatchedRenderType {
-            val id =
-                (if (opaque) 2 else 0) +
-                (if (phase) 1 else 0)
-
-            val type = primitive.types[id]
+            val type = primitive.types[(if (opaque) 2 else 0) + (if (phase) 1 else 0)]
 
             return BatchedRenderType(
                 "${primitive.name} ${if (opaque) "O" else "t"}${if (phase) "P" else "p"}",
                 type,
-                id or (primitive.ordinal shl 2)
+                (if (opaque) 0 else 1) + (primitive.ordinal shl 1),
+                phase,
             )
         }
 
-        val MAX_ID = 3 or ((Primitive.entries.size - 1) shl 2)
+        val MAX_ID = 1 or ((Primitive.entries.size - 1) shl 1)
     }
 }
