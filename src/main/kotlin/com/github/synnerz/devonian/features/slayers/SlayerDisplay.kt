@@ -3,11 +3,13 @@ package com.github.synnerz.devonian.features.slayers
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
+import com.github.synnerz.devonian.api.events.ScoreboardEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
+import kotlinx.atomicfu.atomic
 import net.minecraft.world.entity.LivingEntity
 
 object SlayerDisplay : TextHudFeature(
@@ -16,7 +18,10 @@ object SlayerDisplay : TextHudFeature(
     Categories.SLAYERS,
 ) {
     private val slayerRegex = "^Spawned by: (\\w+)$".toRegex()
+    private val questStartedRegex = "^Slay the boss!$".toRegex()
+    private val questCompletedRegex = "^Boss slain!$".toRegex()
     private val bossList = mutableListOf<SlayerBossData>()
+    private var hasBossQuest = atomic(false)
 //    private val carryingNames = mutableListOf<String>()
     // TODO: add carrying boss' support
 
@@ -27,7 +32,17 @@ object SlayerDisplay : TextHudFeature(
     )
 
     override fun initialize() {
+        on<ScoreboardEvent> { event ->
+            event.matches(questStartedRegex)?.let {
+                hasBossQuest.value = true
+            }
+            if (event.matches(questCompletedRegex) == null) return@on
+
+            hasBossQuest.value = false
+        }
+
         on<NameChangeEvent> { event ->
+            if (!hasBossQuest.value) return@on
             val name = event.name
             val match = slayerRegex.matchEntire(name)?.groupValues?.drop(1) ?: return@on
 
@@ -38,7 +53,7 @@ object SlayerDisplay : TextHudFeature(
         }
 
         on<TickEvent> {
-            if (bossList.isEmpty()) return@on
+            if (bossList.isEmpty() || !hasBossQuest.value) return@on
             val player = minecraft.player ?: return@on
             val world = minecraft.level ?: return@on
             val display = mutableListOf<String>()
@@ -71,6 +86,8 @@ object SlayerDisplay : TextHudFeature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         bossList.clear()
+        hasBossQuest.value = false
+        clearLines()
     }
 
     override fun getEditText(): List<String> = listOf(
