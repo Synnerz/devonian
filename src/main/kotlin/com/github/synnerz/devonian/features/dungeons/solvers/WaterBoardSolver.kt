@@ -196,6 +196,7 @@ object WaterBoardSolver : Feature(
                     }
                 }
                 println("Devonian\$WaterBoard[variant=\"$variant\", subvariant=\"$subvariant\"]")
+                ChatUtils.sendMessage("&bWaterBoard found variant ${variant}-${subvariant}", true)
             } else subvariant = null
         }
 
