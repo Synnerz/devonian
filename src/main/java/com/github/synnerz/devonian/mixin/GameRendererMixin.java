@@ -3,6 +3,8 @@ package com.github.synnerz.devonian.mixin;
 import com.github.synnerz.devonian.Devonian;
 import com.github.synnerz.devonian.MouseHandlerAccessor;
 import com.github.synnerz.devonian.api.events.GuiScaleEvent;
+import com.github.synnerz.devonian.api.events.PostRenderGuiEvent;
+import com.github.synnerz.devonian.api.events.RenderGuiEvent;
 import com.github.synnerz.devonian.features.misc.NoHurtCamera;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -126,6 +128,8 @@ public class GameRendererMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;extractRenderStateWithTooltipAndSubtitles(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V")
     )
     private void devonian$guiScaleEventPost(Screen instance, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, Operation<Void> original) {
+        if (new RenderGuiEvent(instance, mouseX, mouseY, a, graphics).post()) return;
+
         Minecraft mc = Devonian.INSTANCE.getMinecraft();
         GuiGraphicsExtractor scaledGraphics = graphics;
 
@@ -161,6 +165,8 @@ public class GameRendererMixin {
         }
 
         original.call(instance, scaledGraphics, mouseX, mouseY, a);
+
+        new PostRenderGuiEvent(instance, mouseX, mouseY, a, graphics).post();
 
         if (scale == -1) return;
 
