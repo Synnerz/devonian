@@ -1,8 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.Devonian;
-import com.github.synnerz.devonian.api.events.PostRenderGuiEvent;
-import com.github.synnerz.devonian.api.events.RenderGuiEvent;
 import com.github.synnerz.devonian.features.misc.RemoveContainerBackground;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,19 +16,5 @@ public class ScreenMixin {
         if (!RemoveContainerBackground.INSTANCE.isEnabled()) return;
         if (Devonian.INSTANCE.getMinecraft().level == null) return;
         ci.cancel();
-    }
-
-    @Inject(method = "extractRenderStateWithTooltipAndSubtitles", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;nextStratum()V", ordinal = 0), cancellable = true)
-    private void devonian$renderWithTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
-        Screen that = (Screen) (Object) this;
-
-        if (new RenderGuiEvent(that, mouseX, mouseY, a, graphics).post()) ci.cancel();
-    }
-
-    @Inject(method = "extractRenderStateWithTooltipAndSubtitles", at = @At("TAIL"))
-    private void devonian$postRenderWithTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
-        Screen that = (Screen) (Object) this;
-
-        new PostRenderGuiEvent(that, mouseX, mouseY, a, graphics).post();
     }
 }
