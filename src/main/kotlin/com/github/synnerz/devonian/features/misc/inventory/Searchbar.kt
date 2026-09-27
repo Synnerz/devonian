@@ -8,6 +8,8 @@ import com.github.synnerz.devonian.hud.HudFeature
 import com.github.synnerz.devonian.utils.BoundingBox
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.talium.components.UITextInput
+import com.github.synnerz.talium.effects.OutlineEffect
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import org.lwjgl.glfw.GLFW
@@ -22,24 +24,55 @@ object Searchbar : HudFeature(
         "bgcolor",
         Color(50, 50, 50, 255).rgb,
         "Background color of the searchbar",
-        "Searchbar Background"
+        "Background Color",
     )
     private val SETTING_NAME_MATCH_COLOR = addColorPicker(
         "nameMatchColor",
         Color(0, 255, 0, 255).rgb,
         "Background color of the items which matched their name",
-        "Searchbar Name Match"
+        "Name Match Color",
     )
     private val SETTING_LORE_MATCH_COLOR = addColorPicker(
         "loreMatchColor",
         Color(0, 255, 255, 255).rgb,
         "Background color of the items which matched their lore",
-        "Searchbar Lore Match"
+        "Lore Match Color",
     )
+    private val SETTING_DISABLED_COLOR = addColorPicker(
+        "disabledColor",
+        Color(255, 0, 0, 255).rgb,
+        "When double clicking the searchbar the highlight will be disabled, this color will be applied as outline",
+        "Disable Highlight Color",
+    )
+    private val SETTING_DISABLE_HIGHLIGHT = addSwitch(
+        "disableHighlight",
+        true,
+        "Disables the highlight if you double click on the searchbar after being focused",
+        "Disable Highlight",
+    )
+    private var disableHighlight = false
     private val input = UITextInput(x, y, 15.0, 5.0).apply {
         setColor(Color(SETTING_BACKGROUND_COLOR.get(), true))
         SETTING_BACKGROUND_COLOR.onChange {
             setColor(Color(it, true))
+        }
+        var clickCount = 0
+        onMouseClick {
+            if (!SETTING_DISABLE_HIGHLIGHT.get()) return@onMouseClick
+            if (it.button != 0) return@onMouseClick
+            if (!focused || focused && clickCount >= 2) {
+                removeEffects(OutlineEffect::class.java)
+                disableHighlight = false
+                clickCount = 0
+                return@onMouseClick
+            }
+
+            clickCount++
+            if (clickCount >= 2) {
+                addEffect(OutlineEffect(2.0, SETTING_DISABLED_COLOR.getColor()))
+                disableHighlight = true
+                clickCount = 2
+            }
         }
         onCharType {
             onKeyType()
@@ -174,7 +207,7 @@ object Searchbar : HudFeature(
             text.isNotEmpty() -> listOf(text) to InputType.FULL
             else -> listOf<String>() to InputType.NONE
         }
-        if (matchType == InputType.NONE) {
+        if (matchType == InputType.NONE || disableHighlight && SETTING_DISABLE_HIGHLIGHT.get()) {
             highlightItems.clear()
             return
         }
