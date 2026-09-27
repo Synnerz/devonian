@@ -7,11 +7,19 @@ import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import net.minecraft.world.entity.EquipmentSlot
+import kotlin.math.roundToInt
 
 object SpringBootsProgress : TextHudFeature(
     "springBootsProgress",
     "Displays the progress amount"
 ) {
+    private val SETTING_MAX_PROGRESS = addSlider(
+        "maxProgress",
+        10.0,
+        0.0, 30.0,
+        "Sets the max progress for the display (10 is default)",
+        "Max Progress",
+    )
     private val validPitches = listOf(0.6984127f, 0.82539684f, 0.8888889f)
     private var progress = 0
 
@@ -43,7 +51,7 @@ object SpringBootsProgress : TextHudFeature(
                 clearLines()
                 return@on
             }
-            val format = if (progress >= 10) "&a" else if (progress > 5) "&e" else "&c"
+            val format = if (progress >= SETTING_MAX_PROGRESS.get().roundToInt()) "&a" else if (progress > 5) "&e" else "&c"
 
             setLine("${format}${progress * 10}%")
         }
