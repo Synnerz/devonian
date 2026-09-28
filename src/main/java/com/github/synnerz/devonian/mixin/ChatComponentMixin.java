@@ -117,6 +117,15 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
         lastHovered = msg;
     }
 
+    @WrapOperation(
+        method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;forEachLine(Lnet/minecraft/client/gui/components/ChatComponent$AlphaCalculator;Lnet/minecraft/client/gui/components/ChatComponent$LineConsumer;)I")
+    )
+    private int devonian$checkHoveredMessage(ChatComponent instance, ChatComponent.AlphaCalculator alphaCalculator, ChatComponent.LineConsumer lineConsumer, Operation<Integer> original) {
+        lastHovered = null;
+        return original.call(instance, alphaCalculator, lineConsumer);
+    }
+
     @WrapOperation(method = "getHeight()I", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;getHeight(D)I"))
     private int devonian$onGetHeight(double d, Operation<Integer> original) {
         if (!PeekChatKeybind.INSTANCE.isEnabled()) return original.call(d);
