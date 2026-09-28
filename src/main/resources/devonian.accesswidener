@@ -11,3 +11,5 @@ accessible class com/mojang/blaze3d/opengl/GlCommandEncoder
 accessible class net/minecraft/client/renderer/feature/RenderTypeFeatureRenderer$Group
 accessible method net/minecraft/client/renderer/feature/RenderTypeFeatureRenderer$Group <init> (Lnet/minecraft/client/renderer/StagedVertexBuffer;Z)V
 accessible class net/minecraft/client/renderer/rendertype/RenderSetup$TextureBinding
+accessible class net/minecraft/client/gui/components/ChatComponent$LineConsumer
+accessible class net/minecraft/client/gui/components/ChatComponent$AlphaCalculator
