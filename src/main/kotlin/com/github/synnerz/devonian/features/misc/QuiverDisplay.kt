@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetContentEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
+import com.github.synnerz.devonian.api.events.ServerInventorySetSlotEvent
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.StringUtils
@@ -48,8 +49,7 @@ object QuiverDisplay : TextHudFeature(
     private var sentAlert = false
 
     override fun initialize() {
-        on<ServerContainerSetSlotEvent> { event ->
-            if (event.containerId != 0) return@on
+        on<ServerInventorySetSlotEvent> { event ->
             val arrowSlot = if (Dungeons.timeElapsed.value > 0 && !Dungeons.inBoss.value) 9 else 44
             if (event.slot != arrowSlot) return@on
 

@@ -623,6 +623,12 @@ class ContainerRenderEvent(
     val slot: Int,
 ) : CancellableEvent()
 
+@Threaded class ServerInventorySetSlotEvent(
+    val stateId: Int,
+    val itemStack: ItemStack,
+    val slot: Int,
+) : CancellableEvent()
+
 class ClientContainerCloseEvent(
     val containerId: Int
 ) : CancellableEvent()

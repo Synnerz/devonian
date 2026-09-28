@@ -235,8 +235,10 @@ object EventBus {
                 }
 
                 is ClientboundContainerSetSlotPacket -> {
-                    if (ServerContainerSetSlotEvent(packet.containerId, packet.stateId, packet.item, packet.slot).post())
-                        event.cancel()
+                    val event =
+                        if (packet.containerId == 0) ServerInventorySetSlotEvent(packet.stateId, packet.item, packet.slot)
+                        else ServerContainerSetSlotEvent(packet.containerId, packet.stateId, packet.item, packet.slot)
+                    if (event.post()) event.cancel()
                 }
             }
         }
