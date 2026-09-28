@@ -262,7 +262,7 @@ object CustomDungeonWaypoints : Feature(
                 if (SETTING_REMOVE_ON_COLLECT.get() && it.clicked) return@forEach
 
                 val pos = it.pos() ?: return@forEach
-                val color = when (it.type) {
+                val color = when (it.type ?: return@forEach) {
                     WaypointType.CHEST -> Color(0, 255, 0, 255)
                     WaypointType.ITEM -> Color(0, 0, 255, 255)
                     WaypointType.BAT -> Color(0, 255, 150, 255)
