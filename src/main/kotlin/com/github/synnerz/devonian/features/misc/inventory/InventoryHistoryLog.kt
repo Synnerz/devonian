@@ -57,31 +57,30 @@ object InventoryHistoryLog : TextHudFeature(
                     if (i == 8) return@forEachIndexed
                     if (v.isEmpty) return@forEachIndexed
 
-                    if (i in 36..38) {
-                        ItemUtils.extraAttributes(v)?.let { extraAttributes ->
-                            val dye = extraAttributes.getString("dye_item").getOrNull() ?: return@let
-                            val sbId = extraAttributes.getString("id").getOrNull() ?: return@let
-                            val uuid = extraAttributes.getString("uuid")
-                            if (animatedArmor[sbId] == dye && uuid.isEmpty) {
-                                animatedArmor[sbId] = dye
-                                return@forEachIndexed
-                            }
-
-                            animatedArmor[sbId] = dye
-                        }
-                    }
-
                     val customName = v.customName ?: v.itemName
-                    val name =
+                    var name =
                         if (customName.string == "Enchanted Book")
                             ItemUtils.lore(v, true)
                                 ?.getOrNull(2)
                                 ?: customName.colorCodes()
                         else
                             customName.colorCodes()
+                    name = name.clearName()
                     val count = v.count
-                    newInv.merge(name.clearName(), count, Int::plus)
-                    inventory?.merge(name.clearName(), -count, Int::plus)
+
+                    if (i in 36..38) {
+                        ItemUtils.extraAttributes(v)?.let { extraAttributes ->
+                            val dye = extraAttributes.getString("dye_item").getOrNull() ?: return@let
+                            val sbId = extraAttributes.getString("id").getOrNull() ?: return@let
+                            val uuid = extraAttributes.getString("uuid")
+
+                            if (uuid.isEmpty) animatedArmor[sbId]?.let { name = it }
+                            else animatedArmor[sbId] = name
+                        }
+                    }
+
+                    newInv.merge(name, count, Int::plus)
+                    inventory?.merge(name, -count, Int::plus)
                 }
 
                 inventory?.forEach { (k, v) ->
