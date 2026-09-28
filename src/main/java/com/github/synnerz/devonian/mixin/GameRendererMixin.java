@@ -128,15 +128,19 @@ public class GameRendererMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;extractRenderStateWithTooltipAndSubtitles(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V")
     )
     private void devonian$guiScaleEventPost(Screen instance, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, Operation<Void> original) {
-        if (new RenderGuiEvent(instance, mouseX, mouseY, a, graphics).post()) return;
+        boolean cancel = new RenderGuiEvent(instance, mouseX, mouseY, a, graphics).post();
 
         Minecraft mc = Devonian.INSTANCE.getMinecraft();
         GuiGraphicsExtractor scaledGraphics = graphics;
 
-        GuiScaleEvent evn = new GuiScaleEvent(instance);
-        evn.post();
+        int scale;
+        if (cancel) scale = -1;
+        else {
+            GuiScaleEvent evn = new GuiScaleEvent(instance);
+            evn.post();
+            scale = evn.getOverrideScale();
+        }
 
-        int scale = evn.getOverrideScale();
         int oldScale = -1;
         MouseHandlerAccessor mh = (MouseHandlerAccessor) mc.mouseHandler;
         mh.devonian$setGuiScaledWidthOverride(-1);
@@ -163,6 +167,8 @@ public class GameRendererMixin {
             scaledGraphics = new GuiGraphicsExtractor(minecraft, scaledGuiRenderState, mouseX, mouseY);
             devonian$Scaled = scale;
         }
+
+        if (cancel) return;
 
         original.call(instance, scaledGraphics, mouseX, mouseY, a);
 
