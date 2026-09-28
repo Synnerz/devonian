@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
@@ -27,6 +28,7 @@ import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.DyeColor
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import java.awt.Color
 import kotlin.math.abs
@@ -173,25 +175,28 @@ object TerminalSolvers : Feature(
 
     private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
 
-    data class InterimRubixSlot(val idx: Int, val color: Int, val clicks: Int = 0)
-    data class RedGreenSlot(val correct: Boolean, var clickCd: Long = 0L)
     data class Cell(val x: Int, val y: Int, val w: Int, val h: Int)
 
-    private fun onInteractSlot(slot: Slot, event: CancellableEvent, lc: Boolean): Boolean {
-        return if (SETTING_CANCEL_WRONG_CLICKS.get() && currentSolver?.cancelClick(slot, lc) == true) {
-            event.cancel()
+    private fun onInteractSlot(solver: TerminalData, slot: Slot, event: CancellableEvent?, btn: Int): Boolean {
+        if (slot.container == minecraft.player?.inventory) return false
+
+        if (SETTING_CANCEL_WRONG_CLICKS.get() && solver.cancelClick(slot, btn == 0)) {
+            event?.cancel()
             minecraft.level?.playPlayerSound(
                 PREVENTED_SOUND.value(),
                 SoundSource.MASTER,
                 1f, 0.5f,
             )
-            true
-        } else false
+            return true
+        } else {
+            solver.onClickSlot(slot, btn)
+            return false
+        }
     }
 
     override fun initialize() {
-        on<GuiOpenEvent> { event ->
-            val title = event.screen.title.string
+        on<ServerContainerOpenEvent> { event ->
+            val title = event.titleStr
             currentSolver = TerminalData.byMatch(title)
         }
 
@@ -200,12 +205,12 @@ object TerminalSolvers : Feature(
             currentSolver = null
         }
 
-        on<TooltipRenderEvent> { event ->
-            if (currentSolver != null) event.cancel()
-        }.setEnabled(SETTING_DISABLE_TOOLTIP.state)
-
-        on<TickEvent> {
-            currentSolver?.onTick()
+        on<ServerContainerSetSlotEvent> { event ->
+            val solver = currentSolver ?: return@on
+            Scheduler.scheduleTask {
+                val idx = event.slot
+                solver.onSetSlot(idx, event.itemStack)
+            }
         }
 
         on<RenderGuiEvent> { event ->
@@ -242,25 +247,29 @@ object TerminalSolvers : Feature(
         }
 
         on<DropItemEvent> { event ->
-            if (currentSolver == null) return@on
+            val solver = currentSolver ?: return@on
             val slot = event.slot ?: return@on
-            onInteractSlot(slot, event, true)
+            onInteractSlot(solver, slot, event, 0)
         }
 
         on<PickupItemInventoryEvent> { event ->
-            if (currentSolver == null) return@on
+            val solver = currentSolver ?: return@on
 
             if (event.isAll && SETTING_CANCEL_NONCLICKS.get()) {
                 event.cancel()
                 return@on
             }
 
-            if (onInteractSlot(event.slot, event, !event.isSplitItem)) return@on
+            if (onInteractSlot(solver, event.slot, event, if (event.isSplitItem) 1 else 0)) return@on
             if (SETTING_MIDDLE_CLICK.get() && currentSolver != TerminalData.RUBIX) {
                 event.cancel()
                 ScreenUtils.click(event.slot.index, false, "MIDDLE")
             }
         }
+
+        on<TooltipRenderEvent> { event ->
+            if (currentSolver != null) event.cancel()
+        }.setEnabled(SETTING_DISABLE_TOOLTIP.state)
 
         on<SwapItemEvent> { event ->
             if (currentSolver == null) return@on
@@ -283,7 +292,7 @@ object TerminalSolvers : Feature(
             }
 
             val slot = gui.menu.getSlot(idx)
-            if (solver.cancelClick(slot, click == "LEFT")) return@on
+            if (onInteractSlot(solver, slot, event, event.mbtn)) return@on
 
             ScreenUtils.click(idx, false, click)
         }.setEnabled(SETTING_CUSTOM_GUI.state)
@@ -298,13 +307,13 @@ object TerminalSolvers : Feature(
 }
 
 interface ITerminalSolver {
-    val changesWindow: Boolean
-
     fun getSlotsBox(): TerminalSolvers.Cell
 
     fun reset()
 
-    fun onTick()
+    fun onSetSlot(slot: Int, stack: ItemStack)
+
+    fun onClickSlot(slot: Slot, btn: Int)
 
     fun onRenderSlot(ctx: GuiGraphicsExtractor, slot: Slot, cell: TerminalSolvers.Cell, cancel: () -> Unit) {}
 
@@ -405,53 +414,31 @@ interface ITerminalSolver {
 
 enum class TerminalData(val title: Regex) : ITerminalSolver {
     NUMBERS("Click in order!".toRegex()) {
-        override val changesWindow: Boolean = true
         override fun getSlotsBox(): TerminalSolvers.Cell = TerminalSolvers.Cell(1, 1, 7, 2)
 
-        private var slots = emptyArray<Int>()
-        private var initSlots: Array<Int>? = null
+        private val slots = IntArray(36) { 0 }
         private var minCount = 14
 
         override fun reset() {
-            slots = emptyArray()
-            initSlots = null
+            slots.fill(0)
+            minCount = 14
         }
 
-        override fun onTick() {
-            val screen = minecraft.screen ?: return
-            val items = (screen as AbstractContainerScreen<*>).menu.items
-            if (initSlots == null && items.size > 45 && !(items.getOrNull(items.size - 45)?.isEmpty ?: true)) {
-                initSlots = Array(items.size) { idx ->
-                    val stack = items[idx]
-                    val count =
-                        if (stack.item == Items.RED_STAINED_GLASS_PANE)
-                            stack.count
-                        else
-                            0
-                    return@Array count
-                }
-            }
+        override fun onSetSlot(slot: Int, stack: ItemStack) {
+            if (slot !in slots.indices) return
+            val count = if (stack.item == Items.RED_STAINED_GLASS_PANE) stack.count() else 0
+            slots[slot] = count
+            if (count > 0) minCount = min(minCount, count)
+        }
 
-            minCount = 14
-            slots = Array(items.size) { idx ->
-                val _cached = initSlots?.getOrNull(idx)
-                val stack = items[idx]
-                val count =
-                    if (stack.item == Items.RED_STAINED_GLASS_PANE)
-                        stack.count
-                    else
-                        0
-                val fixedCount =
-                    if (
-                        _cached != null &&
-                        (stack.item == Items.AIR || count != 0 && count != _cached)
-                    )
-                        _cached
-                    else
-                        count
-                if (fixedCount > 0) minCount = min(minCount, fixedCount)
-                return@Array fixedCount
-            }
+        override fun onClickSlot(slot: Slot, btn: Int) {
+            val idx = slot.containerSlot
+
+            val count = slots.getOrNull(idx) ?: return
+            if (count != minCount) return
+
+            slots[idx] = 0
+            minCount++
         }
 
         override fun onRenderSlot(
@@ -487,10 +474,16 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
     },
     COLORS("^Select all the (.*?) items!$".toRegex()) {
-        override val changesWindow: Boolean = true
         override fun getSlotsBox(): TerminalSolvers.Cell = TerminalSolvers.Cell(1, 1, 7, 4)
 
-        private var slots = emptyArray<Boolean>()
+        private var toFind: String? = null
+        override var currentTitle: String = ""
+            set(value) {
+                toFind = title.matchEntire(value)?.groupValues?.drop(1)?.getOrNull(0)
+                field = value
+            }
+
+        private val slots = BooleanArray(54)
         private val fixedColorItems = mapOf(
             "light gray" to "silver",
             "wool" to "white",
@@ -504,26 +497,26 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         )
 
         override fun reset() {
-            slots = emptyArray()
+            slots.fill(false)
         }
 
-        override fun onTick() {
-            val screen = minecraft.screen ?: return
-            val toFind = title.matchEntire(screen.title.string)?.groupValues?.drop(1)?.getOrNull(0) ?: return
-            val items = (screen as AbstractContainerScreen<*>).menu.items
+        override fun onSetSlot(slot: Int, stack: ItemStack) {
+            if (slot !in slots.indices) return
+            if (stack.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return
+            val toFind = toFind ?: return
 
-            slots = Array(items.size) { idx ->
-                val stack = items[idx]
-                if (stack.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return@Array false
-
-                var name = stack.customName?.string ?: stack.itemName.string
-                for (fixed in fixedColorItems) {
-                    if (name.startsWith(fixed.key, ignoreCase = true))
-                        name = fixed.value
-                }
-
-                return@Array name.startsWith(toFind, ignoreCase = true)
+            var name = stack.customName?.string ?: stack.itemName.string
+            for ((old, replacement) in fixedColorItems) {
+                if (name.startsWith(old, ignoreCase = true))
+                    name = replacement
             }
+
+            slots[slot] = name.startsWith(toFind, ignoreCase = true)
+        }
+
+        override fun onClickSlot(slot: Slot, btn: Int) {
+            if (slot.containerSlot !in slots.indices) return
+            slots[slot.containerSlot] = false
         }
 
         override fun onRenderSlot(
@@ -550,28 +543,37 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
     },
     STARTS_WITH("^What starts with: '(.*?)'\\?$".toRegex()) {
-        override val changesWindow: Boolean = true
         override fun getSlotsBox(): TerminalSolvers.Cell = TerminalSolvers.Cell(1, 1, 7, 3)
 
-        private var slots = emptyArray<Boolean>()
+        private var toFind: String? = null
+        override var currentTitle: String = ""
+            set(value) {
+                toFind = title.matchEntire(value)?.groupValues?.drop(1)?.getOrNull(0)
+                field = value
+            }
+
+        private val slots = BooleanArray(45) { false }
+        private var firstScan = true
 
         override fun reset() {
-            slots = emptyArray()
+            slots.fill(false)
+            firstScan = true
         }
 
-        override fun onTick() {
-            val screen = minecraft.screen ?: return
-            val toFind = title.matchEntire(screen.title.string)?.groupValues?.drop(1)?.getOrNull(0) ?: return
-            val items = (screen as AbstractContainerScreen<*>).menu.items
+        override fun onSetSlot(slot: Int, stack: ItemStack) {
+            if (slot !in slots.indices) return
+            if (slot == 35) firstScan = false
+            if (!firstScan && stack.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return
+            val toFind = toFind ?: return
 
-            slots = Array(items.size) { idx ->
-                val stack = items[idx]
-                if (stack.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return@Array false
+            val name = stack.customName?.string ?: stack.itemName.string
 
-                var name = stack.customName?.string ?: stack.itemName.string
+            slots[slot] = name.startsWith(toFind, ignoreCase = true)
+        }
 
-                return@Array name.startsWith(toFind, ignoreCase = true)
-            }
+        override fun onClickSlot(slot: Slot, btn: Int) {
+            if (slot.containerSlot !in slots.indices) return
+            slots[slot.containerSlot] = false
         }
 
         override fun onRenderSlot(
@@ -598,7 +600,6 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
     },
     RUBIX("^Change all to same color!$".toRegex()) {
-        override val changesWindow: Boolean = true
         override fun getSlotsBox(): TerminalSolvers.Cell = TerminalSolvers.Cell(3, 1, 3, 3)
 
         private val rubixIndices = listOf(12, 13, 14, 21, 22, 23, 30, 31, 32)
@@ -630,71 +631,70 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             Component.literal("§c4"),
         )
 
-        private var slots = emptyArray<Int>()
-        private var customSlotColors = IntArray(45) { -1 }
-        private var lastClicked = -1
-        private var lastClickType = false
+        private val slots = IntArray(45) { 0 }
+        private val slotColors = IntArray(45) { -1 }
+        private var firstCalc = true
 
         override fun reset() {
-            slots = emptyArray()
-            customSlotColors.fill(-1)
-            lastClicked = -1
-            lastClickType = false
+            slots.fill(0)
+            slotColors.fill(-1)
+            firstCalc = true
         }
 
-        override fun onTick() {
-            val screen = minecraft.screen ?: return
-            val items = (screen as AbstractContainerScreen<*>).menu.items
-            val slotsIn = mutableListOf<TerminalSolvers.InterimRubixSlot>()
+        override fun onSetSlot(slot: Int, stack: ItemStack) {
+            if (slot !in slots.indices) return
+            if (!isRubix[slot]) return
 
-            val held = screen.menu.carried
+            val color = rubixOrder.indexOf(stack.item)
+            slotColors[slot] = color
+            if (color < 0) return
 
-            rubixIndices.forEach { idx ->
-                var item = items.getOrNull(idx)
-                if (item?.isEmpty != false) {
-                    if (idx == lastClicked) item = held
-                    if (item?.isEmpty != false) return@forEach
-                }
-
-                var color = rubixOrder.indexOf(item.item)
-                if (color < 0) return@forEach
-
-                if (item === held) {
-                    if (lastClickType) color++
-                    else color--
-
-                    if (color < 0) color += rubixOrder.size
-                    if (color >= rubixOrder.size) color -= rubixOrder.size
-                }
-
-                slotsIn.add(TerminalSolvers.InterimRubixSlot(idx, color))
-            }
+            if (!firstCalc) return
+            if (slot != 32) return
+            firstCalc = false
 
             var best = 19
             for (target in rubixOrder.indices) {
                 var clicks = 0
-                val needClicks = slotsIn.filter {
-                    var dist = abs(target - it.color)
+                rubixIndices.forEach {
+                    val color = slotColors[it]
+                    if (color == -1) return@forEach
+
+                    var dist = abs(target - color)
                     if (dist >= 3) dist = 5 - dist
+
                     clicks += dist
-                    dist > 0
                 }
 
-                if (clicks < best) {
-                    best = clicks
-                    slots = Array(items.size) { idx ->
-                        val tmp = needClicks.find { it.idx == idx } ?: return@Array 0
-                        var lc = target - tmp.color
-                        if (lc < 0) lc += 5
-                        return@Array lc
-                    }
+                if (clicks >= best) continue
+                best = clicks
+                slots.fill(0)
+                rubixIndices.forEach {
+                    val color = slotColors[it]
+                    if (color == -1) return@forEach
+
+                    var lc = target - color
+                    if (lc < 0) lc += 5
+                    slots[it] = lc
                 }
             }
+        }
 
-            customSlotColors.fill(-1)
-            slotsIn.forEach { s ->
-                customSlotColors[s.idx] = s.color
+        override fun onClickSlot(slot: Slot, btn: Int) {
+            if (slot.containerSlot !in slots.indices) return
+            val dir = when (btn) {
+                0 -> 1
+                1 -> -1
+                else -> return
             }
+
+            slots[slot.containerSlot] -= dir
+            slotColors[slot.containerSlot] += dir
+
+            if (slots[slot.containerSlot] < 0) slots[slot.containerSlot] += 5
+            if (slotColors[slot.containerSlot] < 0) slots[slot.containerSlot] += 5
+            if (slots[slot.containerSlot] == 5) slots[slot.containerSlot] -= 5
+            if (slotColors[slot.containerSlot] == 5) slots[slot.containerSlot] -= 5
         }
 
         override fun onRenderSlot(
@@ -708,7 +708,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             }
 
             if (!useCustomGui()) return
-            val idx = customSlotColors.getOrNull(slot.containerSlot) ?: return
+            val idx = slotColors.getOrNull(slot.containerSlot) ?: return
             if (idx == -1) return
 
             val color = rubixColors.getOrNull(idx) ?: return
@@ -730,34 +730,29 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
         override fun cancelClick(slot: Slot, lc: Boolean): Boolean {
             val clicks = slots.getOrElse(slot.containerSlot) { 0 }
-            if (clicks == 0) return true
-            lastClicked = slot.containerSlot
-            lastClickType = lc
-            return SETTING_RUBIX_BLOCK_SUBOPTIMAL.get() && clicks > 2 == lc
+            return clicks == 0 || SETTING_RUBIX_BLOCK_SUBOPTIMAL.get() && clicks > 2 == lc
         }
     },
     RED_GREEN("^Correct all the panes!$".toRegex()) {
-        override val changesWindow: Boolean = false
         override fun getSlotsBox(): TerminalSolvers.Cell = TerminalSolvers.Cell(2, 1, 5, 3)
 
-        private var slots = emptyArray<TerminalSolvers.RedGreenSlot>()
+        private val slots = BooleanArray(45) { false }
+        private val slotClickTimes = LongArray(45) { 0L }
 
         override fun reset() {
-            slots = emptyArray()
+            slots.fill(false)
+            slotClickTimes.fill(0L)
         }
 
-        override fun onTick() {
-            val screen = minecraft.screen ?: return
-            val items = (screen as AbstractContainerScreen<*>).menu.items
-            val time = System.currentTimeMillis()
+        override fun onSetSlot(slot: Int, stack: ItemStack) {
+            if (slot !in slots.indices) return
+            slots[slot] = stack.item == Items.RED_STAINED_GLASS_PANE
+        }
 
-            slots = Array(items.size) { idx ->
-                val cd = slots.getOrNull(idx)?.clickCd ?: 0L
-                TerminalSolvers.RedGreenSlot(
-                    cd <= time && items[idx].item == Items.RED_STAINED_GLASS_PANE,
-                    cd,
-                )
-            }
+        override fun onClickSlot(slot: Slot, btn: Int) {
+            if (slot.containerSlot !in slots.indices) return
+            slots[slot.containerSlot] = false
+            slotClickTimes[slot.containerSlot] = System.currentTimeMillis()
         }
 
         override fun useCustomGui(): Boolean = super.useCustomGui() && !SETTING_RED_GREEN_DISABLE_RENDER.get()
@@ -771,7 +766,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             if (SETTING_RED_GREEN_DISABLE_RENDER.get()) return
 
             val data = slots.getOrNull(slot.containerSlot)
-            if (data == null || !data.correct) {
+            if (data != true) {
                 if (SETTING_HIDE_DONE.get()) {
                     renderSlotBackground(ctx, cell)
                     cancel()
@@ -785,25 +780,33 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun cancelClick(slot: Slot): Boolean {
-            val data = slots.getOrNull(slot.containerSlot) ?: return true
-            if (!data.correct) return true
+            if (slot.containerSlot !in slots.indices) return true
 
-            data.clickCd = System.currentTimeMillis() + SETTING_RED_GREEN_PREVENT_RECLICK.get().toInt()
+            if (!slots[slot.containerSlot]) return true
+
+            val t = System.currentTimeMillis()
+            if (slotClickTimes[slot.containerSlot] > t) return true
+
+            slotClickTimes[slot.containerSlot] = t + SETTING_RED_GREEN_PREVENT_RECLICK.get().toInt()
             return false
         }
     },
     MELODY("^Click the button on time!$".toRegex()) {
-        override val changesWindow: Boolean = false
         override fun getSlotsBox(): TerminalSolvers.Cell = TerminalSolvers.Cell(0, 0, 9, 6)
 
         override fun reset() {}
 
-        override fun onTick() {}
+        override fun onSetSlot(slot: Int, stack: ItemStack) {}
+
+        override fun onClickSlot(slot: Slot, btn: Int) {}
 
         override fun useCustomGui(): Boolean = false
     };
 
+    open var currentTitle = ""
+
     companion object {
         fun byMatch(string: String) = TerminalData.entries.find { it.title.matches(string) }
+            ?.also { it.currentTitle = string }
     }
 }
