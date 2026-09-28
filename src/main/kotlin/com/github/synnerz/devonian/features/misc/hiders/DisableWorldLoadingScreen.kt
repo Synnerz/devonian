@@ -28,7 +28,6 @@ object DisableWorldLoadingScreen : Feature(
                     minecraft.gui.setOverlay(null)
                 return@on
             }
-            if (Location.area == null) return@on
             levelLoadingScreen = event.screen as? LevelLoadingScreenAccessor
             event.cancel()
             minecraft.gui.setScreen(null)
