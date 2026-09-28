@@ -33,6 +33,7 @@ object FavoriteAbiphone : Feature(
     private const val CONFIG_FAV_KEY = "favoriteAbiphoneContacts"
     private val favoriteContacts = mutableSetOf<String>()
 
+    private val abiphoneTitleReg = "^(\\(\\d/\\d\\) )?Abiphone".toRegex()
     private var inAbiphone = false
 
     private fun setFakeItem() {
@@ -83,7 +84,7 @@ object FavoriteAbiphone : Feature(
         }
 
         on<ServerContainerOpenEvent> { event ->
-            inAbiphone = event.titleStr.startsWith("Abiphone")
+            inAbiphone = abiphoneTitleReg.matchesAt(event.titleStr, 0)
         }
 
         on<ServerContainerCloseEvent> {
