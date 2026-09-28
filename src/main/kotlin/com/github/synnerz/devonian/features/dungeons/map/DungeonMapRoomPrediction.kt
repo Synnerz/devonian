@@ -57,20 +57,22 @@ object DungeonMapRoomPrediction : Feature(
                 val room = data?.room ?: continue@loop
                 if (room.explored) continue@loop
                 if (room.type == RoomTypes.BLOOD) {
-                    if (room.doors.any { it.rooms.any { it.explored } }) data.predictedTypes = listOf(RoomTypes.BLOOD)
+                    if (room.doors.any { it.rooms.any { it.explored } }) {
+                        data.predictedTypes = compR to listOf(RoomTypes.BLOOD)
+                    }
                     continue@loop
                 }
                 if (room.doors.any { it.type != DoorTypes.NORMAL }) continue@loop
                 if (!room.doors.any { it.rooms.any { it.explored } }) continue@loop
 
                 compR.getNeighbors().forEach { (neighborR, neighborD) ->
-                    if (neighborR.x >= floor.roomsWS * 2) return@forEach
-                    if (neighborR.z >= floor.roomsHS * 2) return@forEach
+                    if (neighborR.x >= floor.roomsW * 2) return@forEach
+                    if (neighborR.z >= floor.roomsH * 2) return@forEach
                     val room2 = rooms[neighborR.getRoomIdx()]?.room ?: continue@loop
                     if (room2.explored) return@forEach
 
-                    if (neighborR.getNeighbors().all { (r, d) ->
-                        doors[d.getDoorIdx()] == null || rooms[r.getRoomIdx()]?.room?.explored != true
+                    if (!neighborR.getNeighbors().any { (r, d) ->
+                        doors[d.getDoorIdx()] != null && rooms[r.getRoomIdx()]?.room?.explored == true
                     }) continue@loop
                 }
 
@@ -104,7 +106,7 @@ object DungeonMapRoomPrediction : Feature(
             val room = data?.room ?: return@forEach
             if (DungeonMap.SETTING_RENDER_HIDDEN_ROOMS && room.type != RoomTypes.UNKNOWN) return@forEach
 
-            data.predictedTypes = missingTypes
+            data.predictedTypes = comp to missingTypes
         }
     }
 }

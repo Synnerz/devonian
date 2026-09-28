@@ -328,7 +328,9 @@ class DungeonMapBaseRenderer :
                 }
 
                 ShapeTypes.Shape1x1 -> {
-                    val predictions = data.predictedTypes
+                    val p = data.predictedTypes
+                    val comp = p?.first
+                    val predictions = if (comp == cells[0].toComponent()) p.second else null
                     val bounds = getRoomBounds(cells[0].cx / 2, cells[0].cz / 2, 1, 1)
                     when (predictions?.size ?: 0) {
                         1 -> {
