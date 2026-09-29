@@ -8,6 +8,6 @@ public interface StagedVertexBufferDrawAccessor {
 //    @Accessor("format")
 //    VertexFormat dv_getFormat();
 //
-    @Accessor("primitiveTopology")
+//     @Accessor("primitiveTopology")
 //    PrimitiveTopology dv_getPrimitiveTopology();
 }
