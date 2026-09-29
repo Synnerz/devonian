@@ -3,7 +3,9 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.ComponentPosition
+import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.dungeon.WorldPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
@@ -76,6 +78,12 @@ object CampHelper : Feature(
         0.0, 10.0,
         "The amount of TICKS at which the PlaySound feature should play (1 tick = 0.05s, default is 1.3 = 0.065s)",
         "Camp Mob Sound Threshold"
+    )
+    private val SETTING_ONLY_MAGE = addSwitch(
+        "onlyMage",
+        false,
+        "Only enables the camp helper when playing the mage class or in the blood room.",
+        "Camp Helper Only Mage",
     )
 
     private var bloodComp: ComponentPosition? = null
@@ -205,7 +213,11 @@ object CampHelper : Feature(
                     maxDist = 24.0,
                 )
             }
-        }
+        }.setEnabled(
+            Dungeons.selfClass
+                .zip(SETTING_ONLY_MAGE.state) { c, s -> !s || c == DungeonClass.Mage }
+                .zip(Dungeons.currentRoom) { b, r -> b || r?.type == RoomTypes.BLOOD }
+        )
     }
 
     private fun colorForNumber(num: Int, max: Int) = when {
