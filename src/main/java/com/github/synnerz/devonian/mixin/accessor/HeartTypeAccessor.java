@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Hud.HeartType.class)
 public interface HeartTypeAccessor {
     @Invoker("forPlayer")
-    static Hud.HeartType invokeForPlayer(Player player) {
+    static Hud.HeartType dv_forPlayer(Player player) {
         throw new AssertionError();
     }
 }

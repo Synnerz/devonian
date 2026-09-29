@@ -61,7 +61,7 @@ object DungeonMap : HudFeature(
             Scheduler.scheduleTask {
                 minecraft.gui.openChatScreen(ChatComponent.ChatMethod.COMMAND)
                 Scheduler.scheduleTask(2) {
-                    (minecraft.gui.screen() as ScreenAccessor?)?.insertText("/dv font Mojangles", true)
+                    (minecraft.gui.screen() as ScreenAccessor?)?.dv_insertText("/dv font Mojangles", true)
                 }
             }
         },

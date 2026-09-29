@@ -705,9 +705,9 @@ object Deployables : TextHudFeature(
             ) ?: return
             part as ParticleAccessor
             part.lifetime = ttl
-            part.friction = 1f
-            part.speedUpWhenYMotionIsBlocked = false
-            part.hasPhysics = false
+            part.dv_setFriction(1f)
+            part.dv_setSpeedUpWhenYMotionIsBlocked(false)
+            part.dv_setHasPhysics(false)
         }
 
         data class Position(val x: Double, val y: Double, val z: Double)

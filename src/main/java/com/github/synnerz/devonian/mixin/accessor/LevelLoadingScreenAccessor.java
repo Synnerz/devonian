@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(LevelLoadingScreen.class)
 public interface LevelLoadingScreenAccessor {
     @Accessor("loadTracker")
-    LevelLoadTracker getLoadTracker();
+    LevelLoadTracker dv_getLoadTracker();
 }

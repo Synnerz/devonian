@@ -374,7 +374,7 @@ object StringUtils {
 
     fun tooltipAsString(tooltip: ClientTooltipComponent): String? {
         val tip = tooltip as? ClientTextTooltipAccessor ?: return null
-        val seq = tip.text
+        val seq = tip.dv_getText()
         return buildString {
             seq.accept { _, _, c ->
                 append(c.toChar())

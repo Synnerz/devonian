@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ClientTextTooltip.class)
 public interface ClientTextTooltipAccessor {
     @Accessor("text")
-    FormattedCharSequence getText();
+    FormattedCharSequence dv_getText();
 }

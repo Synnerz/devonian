@@ -7,17 +7,17 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(LocalPlayer.class)
 public interface LocalPlayerAccessor {
     @Accessor("xLast")
-    double getLastXClient();
+    double dv_getLastXClient();
 
     @Accessor("yLast")
-    double getLastYClient();
+    double dv_getLastYClient();
 
     @Accessor("zLast")
-    double getLastZClient();
+    double dv_getLastZClient();
 
     @Accessor("yRotLast")
-    float getLastYawClient();
+    float dv_getLastYawClient();
 
     @Accessor("xRotLast")
-    float getLastPitchClient();
+    float dv_getLastPitchClient();
 }

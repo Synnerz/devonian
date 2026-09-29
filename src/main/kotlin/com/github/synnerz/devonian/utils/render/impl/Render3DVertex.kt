@@ -392,15 +392,15 @@ object Render3DVertex {
     @Suppress("CAST_NEVER_SUCCEEDS", "UNCHECKED_CAST")
     private val textFeatureRenderer =
         (TextFeatureRenderer() as RenderTypeFeatureRendererAccessor<TextFeatureRenderer.Submit>).also {
-            it.setCurrentGroup(
+            it.dv_setCurrentGroup(
                 object : RenderTypeFeatureRenderer.Group(vertexBuffer, false) {
                     override fun getVertexBuilder(renderType: RenderType): VertexConsumer {
                         val rt = renderType as RenderTypeAccessor
-                        val setup = rt.state
+                        val setup = rt.dv_getState()
                         @Suppress("CAST_NEVER_SUCCEEDS")
-                        val texture = (setup as RenderSetupAccessor).textures
+                        val texture = (setup as RenderSetupAccessor).dv_getTextures()
                         val texturePath = texture.values.first().location
-                        val phase = rt.name == "text_see_through"
+                        val phase = rt.dv_getName() == "text_see_through"
                         val type = (if (phase) Render3DTypes.TEXT_ESP else Render3DTypes.TEXT).apply(texturePath)
                         val id = BatchedRenderType.MAX_ID + (if (phase) 2 else 1)
                         return getBuffer(BatchedRenderType("Text", type, id, phase))
@@ -439,7 +439,7 @@ object Render3DVertex {
             gameRenderer.lightmap(),
             vertexBuffer,
         )
-        textFeatureRenderer.invokeBuildGroup(ffc, textCalls)
+        textFeatureRenderer.dv_buildGroup(ffc, textCalls)
         textCalls.clear()
 
         vertexBuffer.upload()

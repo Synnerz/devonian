@@ -24,13 +24,13 @@ object Fullbright : Feature(
                     // FIXME
 //                    Scheduler.scheduleTask {
 //                        val device = RenderSystem.tryGetDevice() as? GlDeviceAccessor ?: return@scheduleTask
-//                        device.pipelineCache.remove(RenderPipelines.LIGHTMAP)
+//                        device.dv_getPipelineCache().remove(RenderPipelines.LIGHTMAP)
 //                        val key = GlDevice.ShaderCompilationKey(
 //                            RenderPipelines.LIGHTMAP.fragmentShader,
 //                            ShaderType.FRAGMENT,
 //                            RenderPipelines.LIGHTMAP.shaderDefines
 //                        )
-//                        device.shaderCache.remove(key)
+//                        device.dv_getShaderCache().remove(key)
 //                    }
                 }
             }

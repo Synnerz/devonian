@@ -12,11 +12,11 @@ import java.util.List;
 @Mixin(RenderTypeFeatureRenderer.class)
 public interface RenderTypeFeatureRendererAccessor<Submit extends SubmitNode> {
     @Accessor("groups")
-    List<RenderTypeFeatureRenderer.Group> getGroups();
+    List<RenderTypeFeatureRenderer.Group> dv_getGroups();
 
     @Invoker("buildGroup")
-    void invokeBuildGroup(FeatureFrameContext context, List<Submit> submits);
+    void dv_buildGroup(FeatureFrameContext context, List<Submit> submits);
 
     @Accessor("currentGroup")
-    void setCurrentGroup(RenderTypeFeatureRenderer.Group currentGroup);
+    void dv_setCurrentGroup(RenderTypeFeatureRenderer.Group currentGroup);
 }

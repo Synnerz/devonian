@@ -48,7 +48,7 @@ object EventBus {
         }
         ClientTickEvents.START_CLIENT_TICK.register { post(TickEvent(it, clientTicks++)) }
         LevelRenderEvents.START_MAIN.register {
-            (it.levelRenderer() as? LevelRendererAccessor)?.let { Render3DState.bufferSource = it.renderBuffers.stagedVertexBuffer() }
+            (it.levelRenderer() as? LevelRendererAccessor)?.let { Render3DState.bufferSource = it.dv_getRenderBuffers().stagedVertexBuffer() }
         }
         ClientLifecycleEvents.CLIENT_STARTED.register { post(GameLoadEvent(it)) }
         ClientLifecycleEvents.CLIENT_STOPPING.register { post(GameUnloadEvent(it)) }

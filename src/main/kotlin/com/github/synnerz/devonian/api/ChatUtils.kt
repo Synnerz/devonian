@@ -41,7 +41,7 @@ object ChatUtils {
         else
             chatGui.addServerSystemMessage(message)
 
-        chatLineIds[chatComponentAccessor.messages[0]] = id
+        chatLineIds[chatComponentAccessor.dv_getAllMessages()[0]] = id
     }
 
     fun sendMessage(message: Component) {
@@ -67,7 +67,7 @@ object ChatUtils {
 
     fun removeLines(cb: (GuiMessage) -> Boolean) {
         var removedLine = false
-        val messageList = chatComponentAccessor.messages?.listIterator() ?: return
+        val messageList = chatComponentAccessor.dv_getAllMessages()?.listIterator() ?: return
         var jdx = 0
 
         while (messageList.hasNext()) {
@@ -91,7 +91,7 @@ object ChatUtils {
         val indicator =
             if (!Minecraft.getInstance().isMultiplayerServer) GuiMessageTag.systemSinglePlayer()
             else GuiMessageTag.system()
-        val messageList = chatComponentAccessor.messages?.listIterator() ?: return
+        val messageList = chatComponentAccessor.dv_getAllMessages()?.listIterator() ?: return
         var jdx = 0
 
         while (messageList.hasNext()) {
@@ -151,7 +151,7 @@ object ChatUtils {
     fun getMessageFromLine(line: GuiMessage.Line): GuiMessage? = lineCache[line]
 
     fun deleteMessage(comp: Component, max: Int = 20) {
-        val iter = chatComponentAccessor.messages.listIterator()
+        val iter = chatComponentAccessor.dv_getAllMessages().listIterator()
         var i = max
 
         while (--i >= 0 && iter.hasNext()) {
@@ -171,12 +171,12 @@ object ChatUtils {
 
     fun refreshChat() {
         needRefresh++
-        if (needRefresh == 1) chatComponentAccessor.invokeRefresh()
+        if (needRefresh == 1) chatComponentAccessor.dv_invokeRefresh()
     }
 
     fun initialize() {
         EventBus.on<TickEvent> {
-            if (needRefresh > 1) chatComponentAccessor.invokeRefresh()
+            if (needRefresh > 1) chatComponentAccessor.dv_invokeRefresh()
             needRefresh = 0
         }
     }

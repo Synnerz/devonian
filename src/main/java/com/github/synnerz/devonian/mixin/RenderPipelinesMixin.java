@@ -25,8 +25,8 @@ public class RenderPipelinesMixin {
         }
 
         RenderPipeline$BuilderAccessor rp = (RenderPipeline$BuilderAccessor) instance;
-        var fragShader = rp.getShaders().get(ShaderType.FRAGMENT);
-        var verxShader = rp.getShaders().get(ShaderType.VERTEX);
+        var fragShader = rp.dv_getShaders().get(ShaderType.FRAGMENT);
+        var verxShader = rp.dv_getShaders().get(ShaderType.VERTEX);
 
         if (
             verxShader != null && verxShader.toString().equals("minecraft:core/text") ||

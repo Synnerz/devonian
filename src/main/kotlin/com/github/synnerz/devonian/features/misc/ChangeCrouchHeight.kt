@@ -49,11 +49,11 @@ object ChangeCrouchHeight : Feature(
         val eye = getEyeHeight()
         val isCrouching = camera.entity()?.pose == Pose.CROUCHING
         if (SETTING_INSTANT_CROUCH.get() && (isCrouching || wasCrouching)) {
-            camera.eyeHeightOld = eye
-            camera.eyeHeight = eye
+            camera.dv_setEyeHeightOld(eye)
+            camera.dv_setEyeHeight(eye)
         } else {
-            camera.eyeHeightOld = camera.eyeHeight
-            camera.eyeHeight += (eye - camera.eyeHeight) * 0.5f
+            camera.dv_setEyeHeightOld(camera.dv_getEyeHeight())
+            camera.dv_setEyeHeight(camera.dv_getEyeHeight() + (eye - camera.dv_getEyeHeight()) * 0.5f)
         }
         wasCrouching = isCrouching
         return true

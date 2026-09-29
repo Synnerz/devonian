@@ -12,8 +12,8 @@ import java.util.Map;
 @Mixin(GlDevice.class)
 public interface GlDeviceAccessor {
 //    @Accessor("pipelineCache")
-//    Map<RenderPipeline, GlRenderPipeline> getPipelineCache();
+//    Map<RenderPipeline, GlRenderPipeline> dv_getPipelineCache();
 //
 //    @Accessor("shaderCache")
-//    Map<GlDevice.ShaderCompilationKey, GlShaderModule> getShaderCache();
+//    Map<GlDevice.ShaderCompilationKey, GlShaderModule> dv_getShaderCache();
 }

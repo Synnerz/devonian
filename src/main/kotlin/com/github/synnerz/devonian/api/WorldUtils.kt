@@ -62,8 +62,8 @@ object WorldUtils {
         val player = Devonian.minecraft.player as? LocalPlayerAccessor ?: return false
         val cx = x shr 4
         val cz = z shr 4
-        val pcx = player.lastXClient.toInt() shr 4
-        val pcz = player.lastZClient.toInt() shr 4
+        val pcx = player.dv_getLastXClient().toInt() shr 4
+        val pcz = player.dv_getLastZClient().toInt() shr 4
         return abs(cx - pcx) <= 7 && abs(cz - pcz) <= 7 &&
             knownChunks.contains(szudzik(cx, cz)) &&
             chunkManager?.getChunk(cx, cz, false)?.let { it.javaClass === LevelChunk::class.java } ?: false

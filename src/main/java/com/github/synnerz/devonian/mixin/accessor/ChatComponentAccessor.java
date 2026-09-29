@@ -11,8 +11,8 @@ import java.util.List;
 @Mixin(ChatComponent.class)
 public interface ChatComponentAccessor {
     @Accessor("allMessages")
-    List<GuiMessage> getMessages();
+    List<GuiMessage> dv_getAllMessages();
 
     @Invoker("refreshTrimmedMessages")
-    void invokeRefresh();
+    void dv_invokeRefresh();
 }

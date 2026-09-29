@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(RenderType.class)
 public interface RenderTypeAccessor {
     @Accessor("state")
-    RenderSetup getState();
+    RenderSetup dv_getState();
 
     @Accessor("name")
-    String getName();
+    String dv_getName();
 }

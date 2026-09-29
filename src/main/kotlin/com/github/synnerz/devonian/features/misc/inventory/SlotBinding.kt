@@ -235,7 +235,7 @@ object SlotBinding : Feature(
             once = true
 
             val screen = event.screen as? AbstractContainerScreenAccessor ?: return@on
-            val slot = screen.hoveredSlot ?: return@on
+            val slot = screen.dv_getHoveredSlot() ?: return@on
             val boundSlots = currentProfile?.slots ?: return@on
 
             if (slot.container !== minecraft.player?.inventory) return@on
@@ -257,7 +257,7 @@ object SlotBinding : Feature(
             currentHeldSlot = null
 
             val screen = event.screen as? AbstractContainerScreenAccessor ?: return@on
-            val slot = screen.hoveredSlot ?: return@on
+            val slot = screen.dv_getHoveredSlot() ?: return@on
             val boundSlots = currentProfile?.slots ?: return@on
 
             if (slot.container !== minecraft.player?.inventory) return@on
@@ -343,7 +343,7 @@ object SlotBinding : Feature(
             val boundSlots = currentProfile?.slots ?: return@on
             val bound = boundSlots.getOrNull(idx) ?: return@on
 
-            val hovered = (event.screen as AbstractContainerScreenAccessor).hoveredSlot
+            val hovered = (event.screen as AbstractContainerScreenAccessor).dv_getHoveredSlot()
             val isHoveringBound =
                 hovered != null &&
                 hovered.container === minecraft.player?.inventory &&
@@ -408,7 +408,7 @@ object SlotBinding : Feature(
             Render2D.drawLine(
                 event.ctx,
                 curr.x + 8f, curr.y + 8f,
-                (event.mouseX - cont.leftPos).toFloat(), (event.mouseY - cont.topPos).toFloat(),
+                (event.mouseX - cont.dv_getLeftPos()).toFloat(), (event.mouseY - cont.dv_getTopPos()).toFloat(),
                 Color.GREEN,
             )
         }.prio = 2

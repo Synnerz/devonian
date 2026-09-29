@@ -81,7 +81,7 @@ object ProtectItem : Feature(
 
             if (event.screen !is ContainerScreen && event.screen !is InventoryScreen) return@on
             val screen = event.screen as? AbstractContainerScreenAccessor ?: return@on
-            val stack = screen.hoveredSlot?.item ?: return@on
+            val stack = screen.dv_getHoveredSlot()?.item ?: return@on
 
             var uuid = ItemUtils.uuid(stack)
             if (uuid == null && SETTING_USE_ITEM_ID.get()) uuid = ItemUtils.skyblockId(stack)

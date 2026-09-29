@@ -7,5 +7,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ClientboundGameEventPacket.Type.class)
 public interface ClientboundGameEventPacket$TypeAccessor {
     @Accessor("id")
-    int getId();
+    int dv_getId();
 }

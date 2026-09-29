@@ -7,14 +7,14 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(Camera.class)
 public interface CameraAccessor {
     @Accessor("eyeHeightOld")
-    float getEyeHeightOld();
+    float dv_getEyeHeightOld();
 
     @Accessor("eyeHeightOld")
-    void setEyeHeightOld(float f);
+    void dv_setEyeHeightOld(float f);
 
     @Accessor("eyeHeight")
-    float getEyeHeight();
+    float dv_getEyeHeight();
 
     @Accessor("eyeHeight")
-    void setEyeHeight(float f);
+    void dv_setEyeHeight(float f);
 }

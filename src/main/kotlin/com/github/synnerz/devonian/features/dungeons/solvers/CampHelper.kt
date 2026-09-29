@@ -129,7 +129,7 @@ object CampHelper : Feature(
 
         on<PacketReceivedEvent> { event ->
             val packet = event.packet as? ClientboundMoveEntityPacket ?: return@on
-            val id = (event.packet as? ClientboundMoveEntityPacketAccessor)?.entityId ?: return@on
+            val id = (event.packet as? ClientboundMoveEntityPacketAccessor)?.dv_getEntityId() ?: return@on
             val delta = packet.positionDelta
             if (delta !is VecDelta.Linear) return@on
 

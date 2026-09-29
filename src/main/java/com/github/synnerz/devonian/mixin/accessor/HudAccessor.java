@@ -10,12 +10,12 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Hud.class)
 public interface HudAccessor {
     @Accessor("random")
-    RandomSource getRandom();
+    RandomSource dv_getRandom();
 
     @Invoker("extractHeart")
-    void invokeRenderHeart(
-            GuiGraphicsExtractor guiGraphics, Hud.HeartType heartType,
-            int x, int y,
-            boolean hardcore, boolean blinking, boolean half
+    void dv_extractHeart(
+        GuiGraphicsExtractor guiGraphics, Hud.HeartType heartType,
+        int x, int y,
+        boolean hardcore, boolean blinking, boolean half
     );
 }

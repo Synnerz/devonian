@@ -47,7 +47,7 @@ object AccurateAbsorption : Feature(
     ) {
         val gui = gui as? HudAccessor ?: return
         val hardcore = player.level().levelData.isHardcore
-        val heart = HeartTypeAccessor.invokeForPlayer(player)
+        val heart = HeartTypeAccessor.dv_forPlayer(player)
 
         val initialHearts = hearts
         var hearts = ceil(hearts / maxHearts * SETTING_MAX_HP.get()).toInt()
@@ -61,10 +61,10 @@ object AccurateAbsorption : Feature(
             val col = slot % 10
             val x = left + col * 8
             var y = top - row * rowGap
-            if (initialHearts <= 4) y += gui.getRandom().nextInt(2)
+            if (initialHearts <= 4) y += gui.dv_getRandom().nextInt(2)
             if (slot < maxHearts && slot == regen) y -= 2
 
-            gui.invokeRenderHeart(
+            gui.dv_extractHeart(
                 guiGraphics, Hud.HeartType.CONTAINER,
                 x, y,
                 hardcore, blinking, false
@@ -75,7 +75,7 @@ object AccurateAbsorption : Feature(
 
             if (absorption > 0 && heartHp != 2) {
                 val absorbHp = min(2 - heartHp, absorption)
-                gui.invokeRenderHeart(
+                gui.dv_extractHeart(
                     guiGraphics, Hud.HeartType.ABSORBING,
                     x, y,
                     hardcore, false, absorbHp == 1 && heartHp == 0
@@ -84,7 +84,7 @@ object AccurateAbsorption : Feature(
             }
 
             if (heartHp > 0) {
-                gui.invokeRenderHeart(
+                gui.dv_extractHeart(
                     guiGraphics, heart,
                     x, y,
                     hardcore, blink, heartHp == 1

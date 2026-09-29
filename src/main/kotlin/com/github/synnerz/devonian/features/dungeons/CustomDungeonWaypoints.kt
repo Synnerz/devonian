@@ -343,7 +343,7 @@ object CustomDungeonWaypoints : Feature(
                 Scheduler.scheduleTask {
                     minecraft.gui.openChatScreen(ChatComponent.ChatMethod.COMMAND)
                     Scheduler.scheduleTask {
-                        (minecraft.gui.screen() as ScreenAccessor?)?.insertText("/dv cdw settext ", true)
+                        (minecraft.gui.screen() as ScreenAccessor?)?.dv_insertText("/dv cdw settext ", true)
                     }
                 }
             }

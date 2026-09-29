@@ -32,7 +32,7 @@ object CopyItem : Feature(
             val screenAcc = minecraft.gui.screen() as? AbstractContainerScreenAccessor ?: return@on
             event.cancel()
 
-            val slot = screenAcc.hoveredSlot
+            val slot = screenAcc.dv_getHoveredSlot()
             if (slot == null) {
                 val obj = JsonDataObject()
                 obj.set("name", screen.title.colorCodes())

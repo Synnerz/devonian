@@ -11,5 +11,5 @@ import java.util.Map;
 @Mixin(RenderPipeline.Builder.class)
 public interface RenderPipeline$BuilderAccessor {
     @Accessor(value = "shaders", remap = false)
-    Map<ShaderType, Identifier> getShaders();
+    Map<ShaderType, Identifier> dv_getShaders();
 }
