@@ -175,7 +175,7 @@ object TerminalSolvers : Feature(
     private var currentSolver: TerminalData? = null
 
     private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
-    private val DROP_KEYBIND = minecraft.options.keyDrop
+    private val DROP_KEYBIND by lazy { minecraft.options.keyDrop }
 
     data class Cell(val x: Int, val y: Int, val w: Int, val h: Int)
 
