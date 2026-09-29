@@ -303,10 +303,12 @@ object TerminalSolvers : Feature(
             ScreenUtils.click(idx, false, click)
         }.setEnabled(SETTING_CUSTOM_GUI.state)
 
-        on<KeyPressEvent> { event ->
+        on<GuiKeyDownEvent> { event ->
             val solver = currentSolver ?: return@on
             if (!solver.useCustomGui()) return@on
-            if (!DROP_KEYBIND.matches(event.underlying)) return@on
+            if (!DROP_KEYBIND.matches(event.event)) return@on
+
+            event.cancel()
 
             val gui = minecraft.gui.screen() as? AbstractContainerScreen<*> ?: return@on
             val idx = solver.getSlotCustom(Render2D.Mouse.x.toInt(), Render2D.Mouse.y.toInt()) ?: return@on
