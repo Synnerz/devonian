@@ -176,8 +176,8 @@ object EquipmentDisplay : Feature(
                 val slot = (event.screen as? AbstractContainerScreen<*> ?: return@forEachIndexed)
                     .menu
                     .slots.find { it.containerSlot == 36 + idx } ?: return@on
-                val x = screenAcc.leftPos + slot.x + alignment.toDouble()
-                val y = screenAcc.topPos + slot.y.toDouble()
+                val x = screenAcc.dv_getLeftPos() + slot.x + alignment.toDouble()
+                val y = screenAcc.dv_getTopPos() + slot.y.toDouble()
                 if (event.mx !in x..x + 16 || event.my !in y..y + 16) return@forEachIndexed
 
                 if (SETTING_COMMAND_MODE.get() == 2) {
@@ -201,8 +201,8 @@ object EquipmentDisplay : Feature(
                 val slot = screen
                     .menu
                     .slots.find { it.containerSlot == 36 + idx } ?: return@on
-                val x = screenAcc.leftPos + slot.x + alignment.toDouble()
-                val y = screenAcc.topPos + slot.y.toDouble()
+                val x = screenAcc.dv_getLeftPos() + slot.x + alignment.toDouble()
+                val y = screenAcc.dv_getTopPos() + slot.y.toDouble()
                 val mx = minecraft.mouseHandler.getScaledXPos(minecraft.window)
                 val my = minecraft.mouseHandler.getScaledYPos(minecraft.window)
 

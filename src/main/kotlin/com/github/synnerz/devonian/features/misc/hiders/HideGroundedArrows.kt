@@ -14,7 +14,7 @@ object HideGroundedArrows : Feature(
     override fun initialize() {
         on<PreExtractRenderEntityEvent> { event ->
             val arrow = event.entity as? AbstractArrowAccessor ?: return@on
-            if (arrow.isInGround) event.cancel()
+            if (arrow.dv_isInGround()) event.cancel()
         }
     }
 }

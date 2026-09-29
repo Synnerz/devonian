@@ -16,7 +16,7 @@ object EntityEventPacket : ISerializer<ClientboundEntityEventPacket> {
         packet: ClientboundEntityEventPacket,
         obj: JsonDataObject
     ) {
-        obj.set("entityId", (packet as ClientboundEntityEventPacketAccessor).entityId)
+        obj.set("entityId", (packet as ClientboundEntityEventPacketAccessor).dv_getEntityId())
         obj.set("eventId", packet.eventId)
     }
 }

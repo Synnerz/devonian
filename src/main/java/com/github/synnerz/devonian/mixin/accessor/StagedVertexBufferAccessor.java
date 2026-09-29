@@ -9,10 +9,10 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(StagedVertexBuffer.class)
 public interface StagedVertexBufferAccessor {
     @Nullable
-    @Accessor
-    StagedVertexBuffer.Draw getLastBuildingDraw();
+    @Accessor("lastBuildingDraw")
+    StagedVertexBuffer.Draw dv_getLastBuildingDraw();
 
     @Nullable
-    @Accessor
-    GpuBuffer getCurrentVertexBuffer();
+    @Accessor("currentVertexBuffer")
+    GpuBuffer dv_getCurrentVertexBuffer();
 }

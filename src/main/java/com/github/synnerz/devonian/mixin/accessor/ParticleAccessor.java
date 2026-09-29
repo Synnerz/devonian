@@ -7,20 +7,20 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(Particle.class)
 public interface ParticleAccessor {
     @Accessor("friction")
-    float getFriction();
+    float dv_getFriction();
 
     @Accessor("friction")
-    void setFriction(float friction);
+    void dv_setFriction(float friction);
 
     @Accessor("speedUpWhenYMotionIsBlocked")
-    boolean getSpeedUpWhenYMotionIsBlocked();
+    boolean dv_getSpeedUpWhenYMotionIsBlocked();
 
     @Accessor("speedUpWhenYMotionIsBlocked")
-    void setSpeedUpWhenYMotionIsBlocked(boolean b);
+    void dv_setSpeedUpWhenYMotionIsBlocked(boolean b);
 
     @Accessor("hasPhysics")
-    boolean getHasPhysics();
+    boolean dv_getHasPhysics();
 
     @Accessor("hasPhysics")
-    void setHasPhysics(boolean b);
+    void dv_setHasPhysics(boolean b);
 }

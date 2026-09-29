@@ -45,7 +45,7 @@ object DisableWorldLoadingScreen : Feature(
 
         override fun tick() {
             val screen = levelLoadingScreen ?: return
-            if (screen.loadTracker.isLevelReady || (minecraft.singleplayerServer?.isReady ?: false)) {
+            if (screen.dv_getLoadTracker().isLevelReady || (minecraft.singleplayerServer?.isReady ?: false)) {
                 minecraft.gui.setOverlay(null)
             }
         }

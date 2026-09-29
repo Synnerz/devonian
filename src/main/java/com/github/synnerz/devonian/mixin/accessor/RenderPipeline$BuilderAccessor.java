@@ -10,8 +10,8 @@ import java.util.Optional;
 @Mixin(RenderPipeline.Builder.class)
 public interface RenderPipeline$BuilderAccessor {
     @Accessor(value = "fragmentShader", remap = false)
-    Optional<Identifier> getFragmentShader();
+    Optional<Identifier> dv_getFragmentShader();
 
     @Accessor(value = "vertexShader", remap = false)
-    Optional<Identifier> getVertexShader();
+    Optional<Identifier> dv_getVertexShader();
 }

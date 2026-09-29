@@ -355,9 +355,9 @@ object BurrowGuesser : Feature(
             spadeUsePositions.add(
                 PositionTime(
                     EventBus.serverTicks() + (Ping.getMedianPing() / 50.0 + 10.0).toInt(),
-                    player.lastXClient,
-                    player.lastYClient + minecraft.player!!.eyeHeight,
-                    player.lastZClient
+                    player.dv_getLastXClient(),
+                    player.dv_getLastYClient() + minecraft.player!!.eyeHeight,
+                    player.dv_getLastZClient()
                 )
             )
         }

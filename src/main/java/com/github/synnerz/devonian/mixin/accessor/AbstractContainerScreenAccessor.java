@@ -9,20 +9,20 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(AbstractContainerScreen.class)
 public interface AbstractContainerScreenAccessor {
     @Invoker("getHoveredSlot")
-    Slot getSlotAtPos(double mouseX, double mouseY);
+    Slot dv_getSlotAtPos(double mouseX, double mouseY);
 
     @Accessor("hoveredSlot")
-    Slot getHoveredSlot();
+    Slot dv_getHoveredSlot();
 
     @Accessor("leftPos")
-    int getLeftPos();
+    int dv_getLeftPos();
 
     @Accessor("topPos")
-    int getTopPos();
+    int dv_getTopPos();
 
     @Accessor("leftPos")
-    void setLeft(int pos);
+    void dv_setLeftPos(int pos);
 
     @Accessor("topPos")
-    void setTop(int pos);
+    void dv_setTopPos(int pos);
 }

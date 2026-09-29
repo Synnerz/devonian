@@ -127,7 +127,7 @@ object CommandWaypoints : Feature(
                     Scheduler.scheduleTask {
                         minecraft.gui.openChatScreen(ChatComponent.ChatMethod.COMMAND)
                         Scheduler.scheduleTask {
-                            (minecraft.gui.screen() as ScreenAccessor?)?.insertText("/dv cmdw setcmd ", true)
+                            (minecraft.gui.screen() as ScreenAccessor?)?.dv_insertText("/dv cmdw setcmd ", true)
                         }
                     }
                     return@on

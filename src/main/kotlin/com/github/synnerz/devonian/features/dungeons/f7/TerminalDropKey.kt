@@ -48,8 +48,8 @@ object TerminalDropKey : Feature(
         on<ServerContainerOpenEvent> { event ->
             if (terminalGuis.any { it.matches(event.titleStr) } && !inTerminal) {
                 inTerminal = true
-                lastDropKey = (minecraft.options.keyDrop as KeyMappingAccessor).key
-                minecraft.options.keyDrop.setKey((keybind as KeyMappingAccessor).key)
+                lastDropKey = (minecraft.options.keyDrop as KeyMappingAccessor).dv_getKey()
+                minecraft.options.keyDrop.setKey((keybind as KeyMappingAccessor).dv_getKey())
             }
         }
 

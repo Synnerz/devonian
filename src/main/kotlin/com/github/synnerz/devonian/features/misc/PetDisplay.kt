@@ -554,8 +554,8 @@ object PetDisplay : TextHudFeature(
             val screenAcc = event.screen as? AbstractContainerScreenAccessor ?: return@on
             val screen = event.screen
             val slot = screen.menu.slots.find { it.containerSlot == 9 } ?: return@on
-            val x = screenAcc.leftPos + slot.x + alignment.first.toDouble()
-            val y = screenAcc.topPos + slot.y.toDouble() + alignment.second.toDouble()
+            val x = screenAcc.dv_getLeftPos() + slot.x + alignment.first.toDouble()
+            val y = screenAcc.dv_getTopPos() + slot.y.toDouble() + alignment.second.toDouble()
             val mx = minecraft.mouseHandler.getScaledXPos(minecraft.window)
             val my = minecraft.mouseHandler.getScaledYPos(minecraft.window)
 
@@ -578,8 +578,8 @@ object PetDisplay : TextHudFeature(
             val screenAcc = event.screen as? AbstractContainerScreenAccessor ?: return@on
 
             val slot = screen.menu.slots.find { it.containerSlot == 9 } ?: return@on
-            val x = screenAcc.leftPos + slot.x + alignment.first.toDouble()
-            val y = screenAcc.topPos + slot.y.toDouble() + alignment.second.toDouble()
+            val x = screenAcc.dv_getLeftPos() + slot.x + alignment.first.toDouble()
+            val y = screenAcc.dv_getTopPos() + slot.y.toDouble() + alignment.second.toDouble()
             val mx = minecraft.mouseHandler.getScaledXPos(minecraft.window)
             val my = minecraft.mouseHandler.getScaledYPos(minecraft.window)
 

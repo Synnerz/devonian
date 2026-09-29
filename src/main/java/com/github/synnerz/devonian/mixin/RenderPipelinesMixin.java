@@ -21,8 +21,8 @@ public class RenderPipelinesMixin {
         RenderPipeline$BuilderAccessor rp = (RenderPipeline$BuilderAccessor) instance;
 
         if (
-            rp.getFragmentShader().isPresent() && rp.getFragmentShader().get().toString().equals("minecraft:core/text") ||
-            rp.getVertexShader().isPresent() && rp.getVertexShader().get().toString().equals("minecraft:core/text")
+            rp.dv_getFragmentShader().isPresent() && rp.dv_getFragmentShader().get().toString().equals("minecraft:core/text") ||
+            rp.dv_getVertexShader().isPresent() && rp.dv_getVertexShader().get().toString().equals("minecraft:core/text")
         ) {
             instance
                 .withBindGroupLayout(BindGroupLayout

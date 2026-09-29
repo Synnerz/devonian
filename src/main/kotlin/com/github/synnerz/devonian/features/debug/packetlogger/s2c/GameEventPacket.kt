@@ -16,7 +16,7 @@ object GameEventPacket : ISerializer<ClientboundGameEventPacket> {
         packet: ClientboundGameEventPacket,
         obj: JsonDataObject
     ) {
-        obj.set("event", (packet.event as `ClientboundGameEventPacket$TypeAccessor`).id)
+        obj.set("event", (packet.event as `ClientboundGameEventPacket$TypeAccessor`).dv_getId())
         obj.set("param", packet.param)
     }
 }

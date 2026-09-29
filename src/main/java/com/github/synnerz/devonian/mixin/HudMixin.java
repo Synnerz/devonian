@@ -148,11 +148,11 @@ public class HudMixin {
             return;
         }
         GuiGraphicsExtractorAccessor accessor = (GuiGraphicsExtractorAccessor) instance;
-        TextureAtlasSprite sprite = accessor.getGuiSprites().getSprite(location);
+        TextureAtlasSprite sprite = accessor.dv_getGuiSprites().getSprite(location);
         AbstractTexture tex = minecraft.getTextureManager().getTexture(
-                accessor.getGuiSprites().getSprite(location).atlasLocation()
+                accessor.dv_getGuiSprites().getSprite(location).atlasLocation()
         );
-        GuiSpriteScaling scaling = GuiGraphicsExtractorAccessor.invokeSpriteScaling(sprite);
+        GuiSpriteScaling scaling = GuiGraphicsExtractorAccessor.dv_getSpriteScaling(sprite);
         TextureSetup texture = new TextureSetup(
                 tex.getTextureView(), null, null,
                 tex.getSampler(), null, null

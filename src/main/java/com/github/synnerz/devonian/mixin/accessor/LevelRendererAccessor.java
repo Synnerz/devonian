@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(LevelRenderer.class)
 public interface LevelRendererAccessor {
     @Accessor("renderBuffers")
-    RenderBuffers getRenderBuffers();
+    RenderBuffers dv_getRenderBuffers();
 
-    @Accessor
-    SubmitNodeStorage getSubmitNodeStorage();
+    @Accessor("submitNodeStorage")
+    SubmitNodeStorage dv_getSubmitNodeStorage();
 }

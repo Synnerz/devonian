@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(GuiGraphicsExtractor.class)
 public interface GuiGraphicsExtractorAccessor {
     @Accessor("guiSprites")
-    TextureAtlas getGuiSprites();
+    TextureAtlas dv_getGuiSprites();
 
     @Invoker("getSpriteScaling")
-    static GuiSpriteScaling invokeSpriteScaling(TextureAtlasSprite sprite) {
+    static GuiSpriteScaling dv_getSpriteScaling(TextureAtlasSprite sprite) {
         throw new IllegalStateException();
     }
 }

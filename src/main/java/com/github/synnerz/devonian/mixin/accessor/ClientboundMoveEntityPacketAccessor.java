@@ -7,5 +7,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ClientboundMoveEntityPacket.class)
 public interface ClientboundMoveEntityPacketAccessor {
     @Accessor("entityId")
-    int getEntityId();
+    int dv_getEntityId();
 }

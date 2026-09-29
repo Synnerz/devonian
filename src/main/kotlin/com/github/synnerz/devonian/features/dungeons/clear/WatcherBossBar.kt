@@ -45,7 +45,7 @@ object WatcherBossBar : Feature(
 
         if (!SETTING_SHOW_PROGRESS.get()) return comp
 
-        val f = (event as LerpingBossEventAccessor).targetPercent
+        val f = (event as LerpingBossEventAccessor).dv_getTargetPercent()
         val total = Dungeons.floor.bloodMobs
 
         val clone = comp.copy()

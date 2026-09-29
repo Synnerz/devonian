@@ -43,7 +43,7 @@ object ScreenUtils {
         if (!(screen is InventoryScreen || screen is ContainerScreen)) return null
         val accessor = screen as AbstractContainerScreenAccessor
 
-        return accessor.getSlotAtPos(
+        return accessor.dv_getSlotAtPos(
             Render2D.Mouse.x,
             Render2D.Mouse.y,
         )

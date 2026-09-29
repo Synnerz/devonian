@@ -182,12 +182,12 @@ object EtherwarpOverlay : Feature(
                 lookVec = player.getViewVector(pt)
             } else {
                 val playerAccessor = player as LocalPlayerAccessor
-                px = playerAccessor.lastXClient
-                py = playerAccessor.lastYClient +
+                px = playerAccessor.dv_getLastXClient()
+                py = playerAccessor.dv_getLastYClient() +
                         if (player.isShiftKeyDown) 1.27f
                         else 1.62f
-                pz = playerAccessor.lastZClient
-                lookVec = player.calculateViewVector(playerAccessor.lastPitchClient, playerAccessor.lastYawClient)
+                pz = playerAccessor.dv_getLastZClient()
+                lookVec = player.calculateViewVector(playerAccessor.dv_getLastPitchClient(), playerAccessor.dv_getLastYawClient())
             }
 
             var hitResult = WorldUtils.raycast(

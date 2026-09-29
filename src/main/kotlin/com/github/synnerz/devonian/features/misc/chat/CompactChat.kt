@@ -53,11 +53,11 @@ object CompactChat : Feature(
         cachedData.lastTime = time
         if (cachedData.count <= 1) {
             recentMessages[textStr] = 1
-            cachedData.lastCheck = ChatUtils.chatComponentAccessor.messages.firstOrNull()
+            cachedData.lastCheck = ChatUtils.chatComponentAccessor.dv_getAllMessages().firstOrNull()
             return text
         }
 
-        val iter = ChatUtils.chatComponentAccessor.messages.listIterator()
+        val iter = ChatUtils.chatComponentAccessor.dv_getAllMessages().listIterator()
         var refresh = false
         var first: GuiMessage? = null
         var jdx = 0

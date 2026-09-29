@@ -8,8 +8,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(StagedVertexBuffer.Draw.class)
 public interface StagedVertexBufferDrawAccessor {
-    @Accessor
-    VertexFormat getFormat();
-    @Accessor
-    PrimitiveTopology getPrimitiveTopology();
+    @Accessor("format")
+    VertexFormat dv_getFormat();
+
+    @Accessor("primitiveTopology")
+    PrimitiveTopology dv_getPrimitiveTopology();
 }

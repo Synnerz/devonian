@@ -134,9 +134,9 @@ object Projectile {
         visited.set(prevBestTarget)
         val p = Devonian.minecraft.player ?: return null
         val pa = p as? LocalPlayerAccessor ?: return null
-        val x = pa.lastXClient - xo
-        val y = pa.lastYClient - yo + (if (p.pose == Pose.CROUCHING) 1.54f else p.eyeHeight)
-        val z = pa.lastZClient - zo
+        val x = pa.dv_getLastXClient() - xo
+        val y = pa.dv_getLastYClient() - yo + (if (p.pose == Pose.CROUCHING) 1.54f else p.eyeHeight)
+        val z = pa.dv_getLastZClient() - zo
 
         var bestI = prevBestTarget
         var best = solve(
