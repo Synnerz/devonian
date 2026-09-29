@@ -20,6 +20,7 @@ import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SET
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.color
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.minecraft
 import com.github.synnerz.devonian.utils.BasicState
+import com.github.synnerz.devonian.utils.render.Render2D
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
@@ -174,6 +175,7 @@ object TerminalSolvers : Feature(
     private var currentSolver: TerminalData? = null
 
     private val PREVENTED_SOUND = SoundEvents.NOTE_BLOCK_BASS
+    private val DROP_KEYBIND = minecraft.options.keyDrop
 
     data class Cell(val x: Int, val y: Int, val w: Int, val h: Int)
 
@@ -248,6 +250,10 @@ object TerminalSolvers : Feature(
 
         on<DropItemEvent> { event ->
             val solver = currentSolver ?: return@on
+            if (solver.useCustomGui()) {
+                event.cancel()
+                return@on
+            }
             val slot = event.slot ?: return@on
             onInteractSlot(solver, slot, event, 0)
         }
@@ -292,9 +298,24 @@ object TerminalSolvers : Feature(
             }
 
             val slot = gui.menu.getSlot(idx)
-            if (onInteractSlot(solver, slot, event, event.mbtn)) return@on
+            if (onInteractSlot(solver, slot, null, event.mbtn)) return@on
 
             ScreenUtils.click(idx, false, click)
+        }.setEnabled(SETTING_CUSTOM_GUI.state)
+
+        on<KeyPressEvent> { event ->
+            val solver = currentSolver ?: return@on
+            if (!solver.useCustomGui()) return@on
+            if (!DROP_KEYBIND.matches(event.underlying)) return@on
+
+            val gui = minecraft.gui.screen() as? AbstractContainerScreen<*> ?: return@on
+            val idx = solver.getSlotCustom(Render2D.Mouse.x.toInt(), Render2D.Mouse.y.toInt()) ?: return@on
+            if (idx !in gui.menu.slots.indices) return@on
+
+            val slot = gui.menu.getSlot(idx)
+            if (onInteractSlot(solver, slot, null, 0)) return@on
+
+            ScreenUtils.click(idx, false, "LEFT")
         }.setEnabled(SETTING_CUSTOM_GUI.state)
     }
 
