@@ -3,32 +3,29 @@ package com.github.synnerz.devonian.utils.render.impl
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.mixin.accessor.RenderSetupAccessor
 import com.github.synnerz.devonian.mixin.accessor.RenderTypeAccessor
-import com.github.synnerz.devonian.mixin.accessor.RenderTypeFeatureRendererAccessor
 import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.devonian.utils.math.ShapeUtils
 import com.github.synnerz.devonian.utils.render.IRender3D.LinesBuilder
 import com.github.synnerz.devonian.utils.render.IRender3D.VertexBuilder
 import com.github.synnerz.devonian.utils.render.Render3DTypes
+import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.BufferBuilder
+import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
-import com.mojang.blaze3d.vertex.VertexConsumer
+import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.ShapeRenderer
-import net.minecraft.client.renderer.StagedVertexBuffer
-import net.minecraft.client.renderer.feature.FeatureFrameContext
-import net.minecraft.client.renderer.feature.RenderTypeFeatureRenderer
-import net.minecraft.client.renderer.feature.TextFeatureRenderer
-import net.minecraft.client.renderer.rendertype.PreparedRenderType
+import net.minecraft.client.renderer.SubmitNodeStorage
 import net.minecraft.client.renderer.rendertype.RenderType
-import net.minecraft.world.level.LightLayer
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Matrix4f
 import org.joml.Vector3d
-import org.joml.Vector4fc
+import org.joml.Vector3f
+import org.joml.Vector4f
 import java.awt.Color
 import java.util.*
 import kotlin.math.sqrt
@@ -41,12 +38,12 @@ import kotlin.math.sqrt
 object Render3DVertex {
     private val minecraft = Devonian.minecraft
     private val textRenderer = minecraft.font
-    private val vertexBuffer = StagedVertexBuffer({ "Devonian Render Buffer "}, RenderType.SMALL_BUFFER_SIZE)
+    private val vertexAllocator = ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE)
     private val batchedDraws = Array(BatchedRenderType.MAX_ID + 1) { mutableListOf<BatchedDraw>() }
     private val batchedDrawsPhase = Array(BatchedRenderType.MAX_ID + 1) { mutableListOf<BatchedDraw>() }
     private data class BatchedDraw(val pose: PoseStack.Pose, val type: BatchedRenderType, val cb: (pose: PoseStack.Pose, consumer: VertexConsumer) -> Unit)
-    private val batchedText = mutableListOf<TextFeatureRenderer.Submit>()
-    private val batchedTextPhase = mutableListOf<TextFeatureRenderer.Submit>()
+    private val batchedText = mutableListOf<SubmitNodeStorage.TextSubmit>()
+    private val batchedTextPhase = mutableListOf<SubmitNodeStorage.TextSubmit>()
 
     private fun addBatchedDraw(
         batch: BatchedRenderType,
@@ -59,7 +56,7 @@ object Render3DVertex {
 
     fun renderFilledShape(
         stack: PoseStack,
-        consumer: VertexConsumer,
+        batchedType: BatchedRenderType,
         shape: VoxelShape,
         ox: Double,
         oy: Double,
@@ -73,12 +70,13 @@ object Render3DVertex {
                 val y = faces[i + 1] + oy
                 val z = faces[i + 2] + oz
 
-            val dir = Vector3d(x, y, z)
-            dir.mul(-0.01 / dir.length())
+                val dir = Vector3d(x, y, z)
+                dir.mul(-0.01 / dir.length())
 
-            consumer
-                .addVertex(pose, (x + dir.x).toFloat(), (y + dir.y).toFloat(), (z + dir.z).toFloat())
-                .setColor(color.rgb)
+                consumer
+                    .addVertex(pose, (x + dir.x).toFloat(), (y + dir.y).toFloat(), (z + dir.z).toFloat())
+                    .setColor(color.rgb)
+            }
         }
     }
 
@@ -126,7 +124,6 @@ object Render3DVertex {
         val y2 = (y + h).toFloat()
         val z2 = (z + wz).toFloat()
         val c = color.rgb
-        val m = stack.last()
 
         addBatchedDraw(batchedType, stack) { m, consumer ->
             consumer.addVertex(m, x1, y1, z1).setColor(c)
@@ -177,7 +174,6 @@ object Render3DVertex {
             consumer.addVertex(m, x1, y1, z1).setColor(c)
             consumer.addVertex(m, x2, y1, z1).setColor(c)
         }
-
     }
 
     fun renderWireframeBox(
@@ -217,7 +213,6 @@ object Render3DVertex {
 
     fun renderString(
         stack: PoseStack,
-        bufferSource: MultiBufferSource.BufferSource,
         str: String,
         phase: Boolean,
         color: Color,
@@ -229,7 +224,7 @@ object Render3DVertex {
 
         val b = if (phase) batchedTextPhase else batchedText
         b.add(
-            TextFeatureRenderer.Submit(
+            SubmitNodeStorage.TextSubmit(
                 Matrix4f(stack.last().pose()),
                 offset,
                 0f,
@@ -243,15 +238,12 @@ object Render3DVertex {
                 0,
             )
         )
-
-        bufferSource.endBatch()
     }
 
     // TODO: clip beam to view frustum https://github.com/PerseusPotter/Apelles/blob/42b1f9f83136293af648c0b92e76599aa4f6bd3d/java/src/main/kotlin/com/perseuspotter/apelles/Renderer.kt#L511
 
     fun renderBeamInner(
         stack: PoseStack,
-        bufferSource: MultiBufferSource.BufferSource,
         batchedType: BatchedRenderType,
         color: Color,
         h: Double,
@@ -277,7 +269,6 @@ object Render3DVertex {
 
     fun renderBeamOuter(
         stack: PoseStack,
-        bufferSource: MultiBufferSource.BufferSource,
         batchedType: BatchedRenderType,
         color: Color,
         h: Double,
@@ -297,7 +288,6 @@ object Render3DVertex {
     fun renderLines(
         stack: PoseStack,
         batchedType: BatchedRenderType,
-        consumer: VertexConsumer,
         supplier: LinesBuilder.() -> Unit,
     ) {
         addBatchedDraw(batchedType, stack) { pose, consumer ->
@@ -317,26 +307,26 @@ object Render3DVertex {
                         dy *= f
                         dz *= f
 
-                    consumer
-                        .addVertex(mat, x0.toFloat(), y0.toFloat(), z0.toFloat())
-                        .setColor(c0.rgb)
-                        .setNormal(mat, dx, dy, dz)
-                        .setLineWidth(lineWidth0.toFloat())
+                        consumer
+                            .addVertex(pose, x0.toFloat(), y0.toFloat(), z0.toFloat())
+                            .setColor(c0.rgb)
+                            .setNormal(pose, dx, dy, dz)
+                            .setLineWidth(lineWidth0.toFloat())
 
-                    consumer
-                        .addVertex(mat, x1.toFloat(), y1.toFloat(), z1.toFloat())
-                        .setColor(c1.rgb)
-                        .setNormal(mat, dx, dy, dz)
-                        .setLineWidth(lineWidth1.toFloat())
+                        consumer
+                            .addVertex(pose, x1.toFloat(), y1.toFloat(), z1.toFloat())
+                            .setColor(c1.rgb)
+                            .setNormal(pose, dx, dy, dz)
+                            .setLineWidth(lineWidth1.toFloat())
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     fun renderLineStrip(
         stack: PoseStack,
         batchedType: BatchedRenderType,
-        consumer: VertexConsumer,
         supplier: VertexBuilder.() -> Unit,
     ) {
         var first = true
@@ -369,137 +359,142 @@ object Render3DVertex {
         }
     }
 
-    private data class PreparedDraw(val name: String, val drawInfo: StagedVertexBuffer.Draw, val type: PreparedRenderType)
-    private val draws = mutableListOf<PreparedDraw>()
-    private val cachedDrawInfo = arrayOfNulls<StagedVertexBuffer.Draw>(BatchedRenderType.MAX_ID + 3)
+    private var textBuffer: BufferBuilder? = null
+    private var textBufferType: BatchedRenderType? = null
+    private val textRendererBufferSource = MultiBufferSource { renderType ->
+        if (textBuffer == null) {
+            val rt = renderType as RenderTypeAccessor
+            val setup = rt.state
 
-    private fun getDrawInfo(batchedType: BatchedRenderType): StagedVertexBuffer.Draw {
-        if (cachedDrawInfo[batchedType.batchId] != null) return cachedDrawInfo[batchedType.batchId]!!
+            @Suppress("CAST_NEVER_SUCCEEDS")
+            val texture = (setup as RenderSetupAccessor).textures2
+            val texturePath = texture.values.first().location
+            val phase = rt.name == "text_see_through"
+            val type = (if (phase) Render3DTypes.TEXT_ESP else Render3DTypes.TEXT).apply(texturePath)
+            val id = BatchedRenderType.MAX_ID + (if (phase) 2 else 1)
 
-        val renderType = batchedType.type
-        val pipeline = renderType.pipeline()
-        val vertexFormat = pipeline.getVertexFormatBinding(0)
-        val dataType = pipeline.primitiveTopology
-
-        val drawInfo = vertexBuffer.appendDraw(
-            vertexFormat!!,
-            dataType,
-            if (renderType.sortOnUpload()) RenderSystem.getProjectionType().vertexSorting() else null,
-        )
-
-        draws.add(PreparedDraw(batchedType.name, drawInfo, renderType.prepare()))
-
-        return drawInfo
-    }
-
-    private fun getBuffer(batchedType: BatchedRenderType): VertexConsumer {
-        return vertexBuffer.getVertexBuilder(getDrawInfo(batchedType))
-    }
-
-    @Suppress("CAST_NEVER_SUCCEEDS", "UNCHECKED_CAST")
-    private val textFeatureRenderer =
-        (TextFeatureRenderer() as RenderTypeFeatureRendererAccessor<TextFeatureRenderer.Submit>).also {
-            it.setCurrentGroup(
-                object : RenderTypeFeatureRenderer.Group(vertexBuffer, false) {
-                    override fun getVertexBuilder(renderType: RenderType): VertexConsumer {
-                        val rt = renderType as RenderTypeAccessor
-                        val setup = rt.state
-                        @Suppress("CAST_NEVER_SUCCEEDS")
-                        val texture = (setup as RenderSetupAccessor).textures
-                        val texturePath = texture.values.first().location
-                        val phase = rt.name == "text_see_through"
-                        val type = (if (phase) Render3DTypes.TEXT_ESP else Render3DTypes.TEXT).apply(texturePath)
-                        val id = BatchedRenderType.MAX_ID + (if (phase) 2 else 1)
-                        return getBuffer(BatchedRenderType("Text", type, id, phase))
-                    }
-                }
-            )
+            textBuffer = BufferBuilder(vertexAllocator, type.mode(), type.format())
+            textBufferType = BatchedRenderType("Text", type, id, phase)
         }
+
+        return@MultiBufferSource textBuffer!!
+    }
+
+    private fun drawBuffer(target: RenderTarget, rType: BatchedRenderType, buf: BufferBuilder) {
+        val built = buf.build() ?: return
+        val drawState = built.drawState()
+
+        val type = rType.type
+        // rType.type.draw(built)
+
+        // TODO: sort on upload
+
+        val rt = type as RenderTypeAccessor
+        @Suppress("CAST_NEVER_SUCCEEDS")
+        val rs = rt.state as RenderSetupAccessor
+
+        val dynamicTransforms = RenderSystem.getDynamicUniforms()
+            .writeTransform(
+                RenderSystem.getModelViewMatrix(),
+                Vector4f(1f),
+                Vector3f(),
+                rs.textureTransform.matrix,
+            )
+        val textures = rt.state.textures
+
+        built.use { mesh ->
+            val vertices = drawState.format.uploadImmediateVertexBuffer(mesh.vertexBuffer())
+            val indexType: VertexFormat.IndexType
+            val indices: GpuBuffer
+            mesh.indexBuffer().let { iBuf ->
+                if (iBuf == null) {
+                    val autoIndices = RenderSystem.getSequentialBuffer(drawState.mode)
+                    indexType = autoIndices.type()
+                    indices = autoIndices.getBuffer(drawState.indexCount)
+                } else {
+                    indexType = drawState.indexType
+                    indices = drawState.format.uploadImmediateIndexBuffer(iBuf)
+                }
+            }
+
+            RenderSystem
+                .getDevice()
+                .createCommandEncoder()
+                .createRenderPass(
+                    { "Devonian Render Pass for ${rType.name}" },
+                    target.colorTextureView!!,
+                    OptionalInt.empty(),
+                    target.depthTextureView,
+                    OptionalDouble.empty(),
+                )
+                .use { renderPass ->
+                    renderPass.setPipeline(type.pipeline())
+
+                    RenderSystem.bindDefaultUniforms(renderPass)
+                    renderPass.setUniform("DynamicTransforms", dynamicTransforms)
+
+                    val scissor = RenderSystem.getScissorStateForRenderTypeDraws()
+                    if (scissor.enabled()) renderPass.enableScissor(
+                        scissor.x(), scissor.y(),
+                        scissor.width(), scissor.height()
+                    )
+                    else renderPass.disableScissor()
+
+                    renderPass.setVertexBuffer(0, vertices)
+                    renderPass.setIndexBuffer(indices, indexType)
+
+                    textures.forEach { (name, value) ->
+                        renderPass.bindTexture(name, value.textureView, value.sampler)
+                    }
+
+                    renderPass.drawIndexed(0, 0, drawState.indexCount, 1)
+                }
+        }
+    }
 
     private fun batchedRender(
         calls: Array<MutableList<BatchedDraw>>,
-        textCalls: MutableList<TextFeatureRenderer.Submit>,
+        textCalls: MutableList<SubmitNodeStorage.TextSubmit>,
         target: RenderTarget,
     ) {
         calls.forEach { arr ->
             if (arr.isEmpty()) return@forEach
 
             val batchedType = arr[0].type
-            val buffer = getBuffer(batchedType)
+            val buf = BufferBuilder(vertexAllocator, batchedType.type.mode(), batchedType.type.format())
 
             arr.forEach { draw ->
-                draw.cb(draw.pose, buffer)
+                draw.cb(draw.pose, buf)
             }
             arr.clear()
+
+            drawBuffer(target, batchedType, buf)
         }
 
-        val gameRenderer = minecraft.gameRenderer
-
-        val ffc = FeatureFrameContext(
-            gameRenderer.gameRenderState().optionsRenderState,
-            minecraft.font,
-            minecraft.modelManager.blockStateModelSet,
-            minecraft.blockColors,
-            minecraft.textureManager,
-            minecraft.atlasManager,
-            gameRenderer.lightmap(),
-            vertexBuffer,
-        )
-        textFeatureRenderer.invokeBuildGroup(ffc, textCalls)
+        val font = minecraft.font
+        textCalls.forEach {
+            font.drawInBatch(
+                it.string,
+                it.x, it.y,
+                it.color,
+                it.dropShadow,
+                it.pose,
+                textRendererBufferSource,
+                it.displayMode,
+                it.backgroundColor,
+                it.lightCoords,
+            )
+        }
         textCalls.clear()
 
-        vertexBuffer.upload()
+        if (textBuffer != null) drawBuffer(target, textBufferType!!, textBuffer!!)
 
-        draws.forEach { (name, drawInfo, type) ->
-            val info = vertexBuffer.getExecuteInfo(drawInfo) ?: return@forEach
-
-            // type.drawFromBuffer(info)
-
-            RenderSystem
-                .getDevice()
-                .createCommandEncoder()
-                .createRenderPass(
-                    { "Devonian Render Pass for $name" },
-                    target.colorTextureView!!,
-                    Optional.empty<Vector4fc>(),
-                    target.depthTextureView,
-                    OptionalDouble.empty(),
-                )
-                .use { renderPass ->
-                    renderPass.setPipeline(type.pipeline)
-
-                    RenderSystem.bindDefaultUniforms(renderPass)
-                    renderPass.setUniform("DynamicTransforms", type.dynamicTransforms)
-
-                    if (type.scissorState.enabled()) renderPass.enableScissor(
-                        type.scissorState.x(), type.scissorState.y(),
-                        type.scissorState.width(), type.scissorState.height()
-                    )
-                    else renderPass.disableScissor()
-
-                    renderPass.setVertexBuffer(0, info.vertexBuffer.slice())
-                    renderPass.setIndexBuffer(info.indexBuffer, info.indexType)
-
-                    type.textures.forEach {
-                        renderPass.bindTexture(it.name, it.textureView, it.sampler)
-                    }
-
-                    renderPass.drawIndexed(
-                        info.indexCount,
-                        1,
-                        info.firstIndex,
-                        info.baseVertex,
-                        0
-                    )
-                }
-        }
-        draws.clear()
-
-        vertexBuffer.endFrame()
+        textBuffer = null
+        textBufferType = null
     }
 
     fun internalBatchedRender() {
-        batchedRender(batchedDraws, batchedText, minecraft.gameRenderer.mainRenderTarget())
+        batchedRender(batchedDraws, batchedText, minecraft.mainRenderTarget)
     }
 
     fun internalBatchedRenderPhase(target: RenderTarget) {
@@ -511,6 +506,6 @@ object Render3DVertex {
     }
 
     fun internalClose() {
-        vertexBuffer.close()
+        vertexAllocator.close()
     }
 }

@@ -19,49 +19,8 @@ import kotlin.math.sqrt
 object Render3DState {
     lateinit var camera: CameraRenderState
     lateinit var poseStack: PoseStack
-    lateinit var bufferSource: MultiBufferSource.BufferSource
 
     fun isOpaque(color: Color) = color.alpha == 255
-
-    private enum class Types(private val arr: Array<RenderType>) {
-        LINES(
-            arrayOf(
-                Render3DTypes.LINES_TRANSLUCENT,
-                Render3DTypes.LINES_TRANSLUCENT_ESP,
-                Render3DTypes.LINES_OPAQUE,
-                Render3DTypes.LINES_OPAQUE_ESP,
-            )
-        ),
-        TRIS(
-            arrayOf(
-                Render3DTypes.TRIANGLE_STRIP_TRANSLUCENT,
-                Render3DTypes.TRIANGLE_STRIP_TRANSLUCENT_ESP,
-                Render3DTypes.TRIANGLE_STRIP_OPAQUE,
-                Render3DTypes.TRIANGLE_STRIP_OPAQUE_ESP,
-            )
-        ),
-        QUADS(
-            arrayOf(
-                Render3DTypes.QUADS_TRANSLUCENT,
-                Render3DTypes.QUADS_TRANSLUCENT_ESP,
-                Render3DTypes.QUADS_OPAQUE,
-                Render3DTypes.QUADS_OPAQUE_ESP,
-            )
-        ),
-        BEACON(
-            arrayOf(
-                Render3DTypes.BEACON_BEAM_TRANSLUCENT,
-                Render3DTypes.BEACON_BEAM_TRANSLUCENT_ESP,
-                Render3DTypes.BEACON_BEAM_OPAQUE,
-                Render3DTypes.BEACON_BEAM_OPAQUE_ESP,
-            )
-        );
-
-        fun get(opaque: Boolean, phase: Boolean) = arr[
-            (if (opaque) 2 else 0) +
-            (if (phase) 1 else 0)
-        ]
-    }
 
     fun renderFilledShape(
         shape: VoxelShape,
@@ -75,7 +34,7 @@ object Render3DState {
 
         Render3DVertex.renderFilledShape(
             poseStack,
-            bufferSource.getBuffer(BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.QUADS)),
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.QUADS),
             shape,
             ox, oy, oz,
             color,
@@ -95,7 +54,7 @@ object Render3DState {
 
         Render3DVertex.renderWireframeShape(
             poseStack,
-            bufferSource.getBuffer(BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.LINES)),
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.LINES),
             shape,
             ox, oy, oz,
             color,
@@ -141,7 +100,7 @@ object Render3DState {
 
         Render3DVertex.renderFilledBox(
             poseStack,
-            bufferSource.getBuffer(BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.TRIS)),
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.TRIS),
             x, y, z,
             w, h, wz,
             color,
@@ -173,7 +132,7 @@ object Render3DState {
 
         Render3DVertex.renderWireframeBox(
             poseStack,
-            bufferSource.getBuffer(BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.LINES)),
+            BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.LINES),
             x, y, z,
             w, h, wz,
             color,
@@ -210,7 +169,6 @@ object Render3DState {
 
         Render3DVertex.renderString(
             poseStack,
-            bufferSource,
             str,
             phase,
             color,
@@ -229,7 +187,6 @@ object Render3DState {
 
         Render3DVertex.renderBeamInner(
             poseStack,
-            bufferSource,
             BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.BEACON),
             color,
             h,
@@ -245,7 +202,6 @@ object Render3DState {
 
         Render3DVertex.renderBeamOuter(
             poseStack,
-            bufferSource,
             BatchedRenderType.get(isOpaque(color), phase, BatchedRenderType.Primitive.BEACON),
             color,
             h,
@@ -261,7 +217,7 @@ object Render3DState {
 
         Render3DVertex.renderLines(
             poseStack,
-            bufferSource.getBuffer(BatchedRenderType.get(opaque, phase, BatchedRenderType.Primitive.LINES)),
+            BatchedRenderType.get(opaque, phase, BatchedRenderType.Primitive.LINES),
             supplier,
         )
     }
@@ -275,7 +231,7 @@ object Render3DState {
 
         Render3DVertex.renderLineStrip(
             poseStack,
-            bufferSource.getBuffer(BatchedRenderType.get(opaque, phase, BatchedRenderType.Primitive.LINES)),
+            BatchedRenderType.get(opaque, phase, BatchedRenderType.Primitive.LINES),
             supplier,
         )
     }

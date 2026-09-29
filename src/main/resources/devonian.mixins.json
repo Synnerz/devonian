@@ -74,7 +74,6 @@
     "accessor.RenderPipeline$BuilderAccessor",
     "accessor.RenderSetupAccessor",
     "accessor.RenderTypeAccessor",
-    "accessor.RenderTypeFeatureRendererAccessor",
     "accessor.ScreenAccessor"
   ],
   "injectors": {

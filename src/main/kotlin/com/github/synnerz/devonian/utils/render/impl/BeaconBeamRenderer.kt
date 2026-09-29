@@ -2,7 +2,6 @@ package com.github.synnerz.devonian.utils.render.impl
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
-import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
@@ -17,9 +16,7 @@ object BeaconBeamRenderer {
      */
     fun renderBeamInner(
         pose: PoseStack.Pose,
-        bufferSource: MultiBufferSource,
-        opaqueLayer: RenderType,
-        translucentLayer: RenderType,
+        vertices: VertexConsumer,
         partialTicks: Float,
         worldTime: Long,
         color: Color,
@@ -34,8 +31,8 @@ object BeaconBeamRenderer {
         val renderYOffset = height.toFloat() * heightScale * (0.5f / innerRadius) + animationStep
 
         renderBeamLayer(
-            matrices,
-            bufferSource.getBuffer(if (color.alpha == 255) opaqueLayer else translucentLayer),
+            pose,
+            vertices,
             color.rgb,
             0f,
             height.toFloat(),
@@ -54,10 +51,8 @@ object BeaconBeamRenderer {
     }
 
     fun renderBeamOuter(
-        pose: PoseStack,
-        bufferSource: MultiBufferSource,
-        opaqueLayer: RenderType,
-        translucentLayer: RenderType,
+        pose: PoseStack.Pose,
+        vertices: VertexConsumer,
         partialTicks: Float,
         worldTime: Long,
         color: Color,
@@ -73,7 +68,7 @@ object BeaconBeamRenderer {
 
         renderBeamLayer(
             pose,
-            bufferSource.getBuffer(translucentLayer),
+            vertices,
             color.rgb,
             height.toFloat(),
             0f,
@@ -92,7 +87,7 @@ object BeaconBeamRenderer {
     }
 
     fun renderBeamLayer(
-        matrices: PoseStack,
+        pose: PoseStack.Pose,
         vertices: VertexConsumer,
         color: Int,
         y1: Float,
@@ -110,11 +105,10 @@ object BeaconBeamRenderer {
         v1: Float,
         v2: Float,
     ) {
-        val entry = matrices.last()
-        renderBeamFace(entry, vertices, color, y1, y2, x1, z1, x2, z2, u1, u2, v1, v2)
-        renderBeamFace(entry, vertices, color, y1, y2, x4, z4, x3, z3, u1, u2, v1, v2)
-        renderBeamFace(entry, vertices, color, y1, y2, x2, z2, x4, z4, u1, u2, v1, v2)
-        renderBeamFace(entry, vertices, color, y1, y2, x3, z3, x1, z1, u1, u2, v1, v2)
+        renderBeamFace(pose, vertices, color, y1, y2, x1, z1, x2, z2, u1, u2, v1, v2)
+        renderBeamFace(pose, vertices, color, y1, y2, x4, z4, x3, z3, u1, u2, v1, v2)
+        renderBeamFace(pose, vertices, color, y1, y2, x2, z2, x4, z4, u1, u2, v1, v2)
+        renderBeamFace(pose, vertices, color, y1, y2, x3, z3, x1, z1, u1, u2, v1, v2)
     }
 
     fun renderBeamFace(

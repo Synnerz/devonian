@@ -6,13 +6,13 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
+import com.github.synnerz.devonian.utils.render.impl.Render3DVertex
 import kotlinx.atomicfu.atomic
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.decoration.ItemFrame
 import net.minecraft.world.item.Items
-import net.minecraft.world.level.LightLayer
 import org.joml.Quaternionf
 import java.awt.Color
 import kotlin.math.floor
@@ -210,15 +210,9 @@ object ArrowAlignSolver : Feature(
                     Render3DVertex.renderString(
                         Render3DImmediate.poseStack,
                         s,
-                        offset,
-                        0f,
-                        0xFFFFFFFF.toInt(),
-                        true,
-                        Render3DImmediate.poseStack.last().pose(),
-                        consumer,
-                        0,
                         false,
-                        LightLayer.BLOCK.ordinal // TODO: double check
+                        Color.WHITE,
+                        Color(0, true),
                     )
 
                     consumer.endBatch()

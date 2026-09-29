@@ -47,9 +47,6 @@ object EventBus {
             post(EntityLeaveEvent(entity))
         }
         ClientTickEvents.START_CLIENT_TICK.register { post(TickEvent(it, clientTicks++)) }
-        LevelRenderEvents.START_MAIN.register {
-            (it.levelRenderer() as? LevelRendererAccessor)?.let { Render3DState.bufferSource = it.renderBuffers.bufferSource() }
-        }
         ClientLifecycleEvents.CLIENT_STARTED.register { post(GameLoadEvent(it)) }
         ClientLifecycleEvents.CLIENT_STOPPING.register { post(GameUnloadEvent(it)) }
         ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register { mc, world ->

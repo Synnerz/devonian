@@ -7,17 +7,18 @@ import com.github.synnerz.devonian.utils.render.impl.Render3DVertex;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.resource.ResourceHandle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
-import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
+import net.minecraft.client.renderer.gizmos.DrawableGizmoPrimitives;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.joml.Matrix4fc;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -41,27 +42,27 @@ public class LevelRendererMixin {
         return ps;
     }
 
-    @Inject(
-        method = "lambda$addMainPass$0",
-        at = @At("TAIL")
+    @WrapOperation(
+        method = "lambda$addLateDebugPass$0",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/gizmos/DrawableGizmoPrimitives;isEmpty()Z")
     )
-    private void devonian$renderEnd(GpuBufferSlice terrainFog, LevelRenderState levelRenderState, ProfilerFiller profiler, ChunkSectionsToRender chunkSectionsToRender, ResourceHandle entityOutlineTarget, FeatureRenderDispatcher.PreparedFrame featureFrame, ResourceHandle translucentTarget, ResourceHandle mainTarget, ResourceHandle itemEntityTarget, ResourceHandle particleTarget, CallbackInfo ci) {
+    private boolean devonian$hasPhaseRenders(DrawableGizmoPrimitives instance, Operation<Boolean> original) {
+        return original.call(instance) && !Render3DVertex.INSTANCE.internalHasPhaseRenders();
+    }
+
+    @Inject(
+        method = "lambda$addLateDebugPass$0",
+        at = @At(value = "FIELD", target = "Lcom/mojang/blaze3d/systems/RenderSystem;outputColorTextureOverride:Lcom/mojang/blaze3d/textures/GpuTextureView;", opcode = Opcodes.PUTSTATIC, ordinal = 0)
+    )
+    private void devonian$renderEnd(GpuBufferSlice fog, ResourceHandle<RenderTarget> mainTarget, CameraRenderState camera, Matrix4fc modelViewMatrix, CallbackInfo ci) {
         Render3DVertex.INSTANCE.internalBatchedRender();
     }
 
     @Inject(
-        method = "lambda$addAlwaysOnTopPass$0",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher$PreparedFrame;executeAlwaysOnTop()V", shift = At.Shift.AFTER)
+        method = "lambda$addLateDebugPass$0",
+        at = @At(value = "FIELD", target = "Lcom/mojang/blaze3d/systems/RenderSystem;outputColorTextureOverride:Lcom/mojang/blaze3d/textures/GpuTextureView;", opcode = Opcodes.PUTSTATIC, ordinal = 1)
     )
-    private void devonian$renderEndPhase(GpuBufferSlice fog, ResourceHandle mainTarget, FeatureRenderDispatcher.PreparedFrame featureFrame, CallbackInfo ci, @Local(name = "mainRenderTarget") RenderTarget mainRenderTarget) {
-        Render3DVertex.INSTANCE.internalBatchedRenderPhase(mainRenderTarget);
-    }
-
-    @WrapOperation(
-        method = "addAlwaysOnTopPass",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher$PreparedFrame;hasAnyAlwaysOnTop()Z")
-    )
-    private boolean devonian$hasPhaseDraws(FeatureRenderDispatcher.PreparedFrame instance, Operation<Boolean> original) {
-        return original.call(instance) || Render3DVertex.INSTANCE.internalHasPhaseRenders();
+    private void devonian$renderEndPhase(GpuBufferSlice fog, ResourceHandle<RenderTarget> mainTarget, CameraRenderState camera, Matrix4fc modelViewMatrix, CallbackInfo ci) {
+        Render3DVertex.INSTANCE.internalBatchedRenderPhase(mainTarget.get());
     }
 }

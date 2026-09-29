@@ -163,7 +163,7 @@ object BoxStarMob : Feature(
                             lastStand = packet.id
                         }
 
-                        EntityTypes.PLAYER -> {
+                        EntityType.PLAYER -> {
                             val uuid = packet.uuid
                             val data = playerMobMap[uuid] ?: return@on
                             starredIdQ.add(Pair(packet.id, data))
