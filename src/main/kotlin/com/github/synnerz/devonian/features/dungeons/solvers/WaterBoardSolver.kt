@@ -33,7 +33,7 @@ object WaterBoardSolver : Feature(
     private val SETTING_SOLUTION_MODE = addSelection(
         "solutionMode",
         0,
-        listOf("Desco1", "Efficient"),
+        listOf("Devonian", "Efficient"),
         "Choose the waterboard solutions mode.",
         "WaterBoardSolver Mode"
     )
