@@ -387,12 +387,16 @@ object Render3DVertex {
         return vertexBuffer.getVertexBuilder(getDrawInfo(batchedType))
     }
 
+    private var lastTextType: RenderType? = null
+    private var lastTextBuffer: VertexConsumer? = null
     @Suppress("CAST_NEVER_SUCCEEDS", "UNCHECKED_CAST")
     private val textFeatureRenderer =
         (TextFeatureRenderer() as RenderTypeFeatureRendererAccessor<TextFeatureRenderer.Submit>).also {
             it.dv_setCurrentGroup(
                 object : RenderTypeFeatureRenderer.Group(vertexBuffer, false) {
                     override fun getVertexBuilder(renderType: RenderType): VertexConsumer {
+                        if (renderType === lastTextType) return lastTextBuffer!!
+
                         val rt = renderType as RenderTypeAccessor
                         val setup = rt.dv_getState()
                         @Suppress("CAST_NEVER_SUCCEEDS")
@@ -401,7 +405,11 @@ object Render3DVertex {
                         val phase = rt.dv_getName() == "text_see_through"
                         val type = (if (phase) Render3DTypes.TEXT_ESP else Render3DTypes.TEXT).apply(texturePath)
                         val id = BatchedRenderType.MAX_ID + (if (phase) 2 else 1)
-                        return getBuffer(BatchedRenderType("Text", type, id, phase))
+
+                        lastTextType = renderType
+                        lastTextBuffer = getBuffer(BatchedRenderType("Text", type, id, phase))
+
+                        return lastTextBuffer!!
                     }
                 }
             )
@@ -438,6 +446,8 @@ object Render3DVertex {
         )
         textFeatureRenderer.dv_buildGroup(ffc, textCalls)
         textCalls.clear()
+        lastTextType = null
+        lastTextBuffer = null
 
         vertexBuffer.upload()
 
