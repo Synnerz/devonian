@@ -1,7 +1,10 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.Scheduler
+import com.github.synnerz.devonian.api.dungeon.DungeonClass
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
@@ -11,26 +14,37 @@ import com.github.synnerz.devonian.utils.BasicState
 
 object WatcherKillAlert : Feature(
     "watcherKillAlert",
-    "Displays an alert whenever you should start killing watcher mobs for dialog skip",
+    "Displays an alert whenever you should start killing watcher mobs for dialog skip.",
     Categories.DUNGEONS,
     "catacombs",
     subcategory = "Alerts"
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.WatcherDialog.hasFinishedState)
+        return super.createRequirements() + listOf(
+            Stages.WatcherDialog.hasFinishedState,
+            Dungeons.selfClass
+                .zip(SETTING_ONLY_MAGE.state) { c, s -> !s || c == DungeonClass.Mage }
+                .zip(Dungeons.currentRoom) { b, r -> b || r?.type == RoomTypes.BLOOD }
+        )
     }
 
     private val SETTING_PLAY_SOUND = addSwitch(
         "playSound",
         true,
-        "Plays a sound whenever the alert is shown",
+        "Plays a sound whenever the alert is shown.",
         "WatcherKillAlert Sound"
     )
     private val SETTING_ESTIMATE_ALERT = addSwitch(
         "estimateAlert",
         true,
-        "Shows the predicted time to kill alert",
+        "Shows the predicted time to kill alert.",
         "WatcherKillAlert Estimate"
+    )
+    private val SETTING_ONLY_MAGE = addSwitch(
+        "onlyMage",
+        false,
+        "Only shows the alert when playing the mage class or in the blood room.",
+        "WatcherKillAlert Only Mage",
     )
     private var assigned = false
 
