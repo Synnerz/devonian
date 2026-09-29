@@ -12,7 +12,8 @@ import net.minecraft.client.renderer.RenderPipelines
 
 object Fullbright : Feature(
     "fullbright",
-    category = Categories.VANILLA_TWEAKS,
+    "Toggling requires a restart.",
+    Categories.VANILLA_TWEAKS,
 ) {
     override fun initialize() {
         children.add(
