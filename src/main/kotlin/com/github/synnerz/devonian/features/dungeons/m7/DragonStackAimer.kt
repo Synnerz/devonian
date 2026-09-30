@@ -44,6 +44,13 @@ object DragonStackAimer : TextHudFeature(
         "timer for when to start running",
         "HUD Display",
     )
+    private val SETTING_TIMER_OFFSET = addSlider(
+        "timerOffset",
+        0.0,
+        -2000.0, 2000.0,
+        "ms offset for when the hud timer says to run, lower = earlier",
+        "Run Timer Offset"
+    )
     private val SETTING_AIM_COLOR = addColorPicker(
         "aimColor",
         Color(0, 255, 255).rgb,
@@ -105,7 +112,10 @@ object DragonStackAimer : TextHudFeature(
 
             val d = data ?: return@on
 
-            val ttl = ((remaining - d.ticks) * 50 - (if (SETTING_PING.get()) Ping.getMedianPing() else 0.0)).toInt()
+            val ttl =
+                ((remaining - d.ticks) * 50 -
+                (if (SETTING_PING.get()) Ping.getMedianPing() else 0.0)).toInt() +
+                SETTING_TIMER_OFFSET.get().toInt()
             if (ttl < -1000) return@on
             if (ttl < 0) setLine("&bNOW")
             else setLine("${StringUtils.colorForNumber(ttl, 5000)}${ttl}")
