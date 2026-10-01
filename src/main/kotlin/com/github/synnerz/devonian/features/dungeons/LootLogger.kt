@@ -89,9 +89,9 @@ object LootLogger : Feature(
         DevonianCommand.command.subcommand("lootlogger") { _, args ->
             val mode = args.getOrNull(0) as? String?
             val floor = args.getOrNull(1) as? String?
-            val dates = (args.getOrNull(2) as? String?)?.replace("*", "")
-            val date = dates?.split(" ")?.getOrNull(0)
-            val date2 = dates?.split(" ")?.getOrNull(1)
+            val date = (args.getOrNull(2) as? String?)?.replace("*", "")
+            val date2 = (args.getOrNull(3) as? String?)?.replace("*", "")
+
             if (mode.isNullOrEmpty()) {
                 ChatUtils.sendMessage("&cLootLogger not a valid mode was set", true)
                 return@subcommand 0
@@ -104,6 +104,7 @@ object LootLogger : Feature(
                 ChatUtils.sendMessage("&cLootLogger You did not set a valid date. here are the current ones&7: &7${lootData.data!!.keys.joinToString(", ")}", true)
                 return@subcommand 0
             }
+
             val list =
                 if (date2.isNullOrEmpty())
                     lootData.data!![date]?.get(floor)
@@ -190,21 +191,10 @@ object LootLogger : Feature(
                 "E", "F1", "F2", "F3", "F4", "F5", "F6", "F7",
                 "M1", "M2", "M3", "M4", "M5", "M6", "M7"
             ).toTypedArray())
-            .greedyString("date")
-            .suggest("date") {
-                buildList {
-                    val current = "*${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
-
-                    add(current)
-
-                    lootData.data!!.mapNotNull {
-                        if (it.key == current) null
-                        else it.key
-                    }.forEach {
-                        add(it)
-                    }
-                }.toMutableList()
-            }
+            .dateString("from")
+            .dateString("to")
+            .suggest("from", ::dateSuggestions)
+            .suggest("to", ::dateSuggestions)
 
         on<ServerContainerOpenEvent> { event ->
             croesusChestRegex.matchEntire(event.titleStr)?.let {
@@ -261,6 +251,19 @@ object LootLogger : Feature(
             scan = false
         }
     }
+
+    private fun dateSuggestions(args: List<Any>): MutableList<String> = buildList {
+        val current = "*${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
+
+        add(current)
+
+        lootData.data!!.mapNotNull {
+            if (it.key == current) null
+            else it.key
+        }.forEach {
+            add(it)
+        }
+    }.toMutableList()
 
     private fun parseItem(itemStack: ItemStack, slot: Int, chestData: ChestData) {
         if (slot == 31) {
