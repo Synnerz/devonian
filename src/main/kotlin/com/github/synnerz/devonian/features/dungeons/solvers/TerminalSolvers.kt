@@ -10,6 +10,8 @@ import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_BACKGROUND_SLOT
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_BACKGROUND_TERMINAL_COLOR
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_CUSTOM_GUI
+import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_CUSTOM_GUI_OUTLINE_LEFT
+import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_CUSTOM_GUI_OUTLINE_RIGHT
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_CUSTOM_GUI_SCALE
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_HIDE_DONE
 import com.github.synnerz.devonian.features.dungeons.solvers.TerminalSolvers.SETTING_HIDE_ITEMS
@@ -25,6 +27,7 @@ import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 import com.github.synnerz.devonian.utils.math.Rectangle
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.github.synnerz.devonian.utils.render.states.QuadRenderState
+import com.github.synnerz.talium.utils.state.GradientRectangleState
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.RenderPipelines
@@ -40,6 +43,7 @@ import net.minecraft.world.item.Items
 import org.joml.Matrix3x2f
 import java.awt.Color
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.min
 
 // Credits to <https://github.com/UnclaimedBloom6/BloomModule/blob/main/features/TerminalSolvers.js>
@@ -176,6 +180,18 @@ object TerminalSolvers : Feature(
         0.01, 5.0,
         "",
         "Custom Terminal Gui Scale",
+    )
+    val SETTING_CUSTOM_GUI_OUTLINE_LEFT = addColorPicker(
+        "customGuiOutlineLeft",
+        Color(0, 255, 255, 255).rgb,
+        "",
+        "Custom Terminal Gui Outline Left",
+    )
+    val SETTING_CUSTOM_GUI_OUTLINE_RIGHT = addColorPicker(
+        "customGuiOutlineRight",
+        Color(0, 255, 255, 255).rgb,
+        "",
+        "Custom Terminal Gui Outline Right",
     )
 
     private var currentSolver: TerminalData? = null
@@ -371,26 +387,64 @@ interface ITerminalSolver {
         )
     }
 
+    fun renderGradientRectangle(
+        ctx: GuiGraphicsExtractor,
+        rect: Rectangle,
+        color1: Int,
+        color2: Int,
+    ) {
+        renderGradientRectangle(ctx, rect.x1, rect.y1, rect.x2, rect.y2, color1, color2, color1, color2)
+    }
+
+    fun renderGradientRectangle(
+        ctx: GuiGraphicsExtractor,
+        x1: Double, y1: Double,
+        x2: Double, y2: Double,
+        color1: Int, color2: Int,
+        color3: Int, color4: Int,
+    ) {
+        ctx.guiRenderState.addGuiElement(
+            GradientRectangleState(
+                Matrix3x2f(ctx.pose()),
+                x1, y1,
+                x2, y2,
+                color1, color2,
+                color3, color4,
+                scissorArea = ctx.scissorStack.peek(),
+            )
+        )
+    }
+
     fun renderCenteredString(ctx: GuiGraphicsExtractor, str: String, x: Double, y: Double) {
         renderCenteredString(ctx, Component.literal(str.replaceCodes()), x, y)
     }
 
     fun renderCenteredString(ctx: GuiGraphicsExtractor, comp: Component, x: Double, y: Double) {
-        val x = x.toFloat()
-        val y = y.toFloat()
+        var _x = x.toFloat()
+        var _y = y.toFloat()
 
         val font = minecraft.font
 
         val fcs = comp.visualOrderText
         val w = font.width(fcs)
+        val s = ceil(SETTING_CUSTOM_GUI_SCALE.get()).toInt()
+
+        if (s != 1) {
+            ctx.pose().pushMatrix()
+            ctx.pose().translate(x.toFloat(), y.toFloat())
+            ctx.pose().scale(SETTING_CUSTOM_GUI_SCALE.get().toFloat())
+
+            _x = 0f
+            _y = 2f
+        }
 
         ctx.guiRenderState.addText(
             GuiTextRenderState(
                 font,
                 fcs,
                 Matrix3x2f(ctx.pose()),
-                (x - w / 2).toInt(),
-                y.toInt(),
+                (_x - w / 2).toInt(),
+                _y.toInt(),
                 -1,
                 0,
                 false,
@@ -398,25 +452,44 @@ interface ITerminalSolver {
                 ctx.scissorStack.peek(),
             ).also {
                 @Suppress("CAST_NEVER_SUCCEEDS")
-                val that = it as? GuiTextRenderStateAccessor ?: return@also
-                that.`devonian$setXf`(x - w / 2)
-                that.`devonian$setYf`(y)
+                (it as? GuiTextRenderStateAccessor?)?.apply {
+                    `devonian$setXf`(_x - w / 2)
+                    `devonian$setYf`(_y)
+                }
             }
         )
+
+        if (s != 1) ctx.pose().popMatrix()
     }
+
+    private fun getBorderSize() = 0.5 * SETTING_CUSTOM_GUI_SCALE.get()
 
     fun onRenderBackground(ctx: GuiGraphicsExtractor) {
         val bounds = getCustomLocation(getSlotsBox())
         val color = SETTING_BACKGROUND_TERMINAL_COLOR.getColor()
         if (color.alpha == 0) return
+        val outlineColorLeft = SETTING_CUSTOM_GUI_OUTLINE_LEFT.getColor()
+        val outlineColorRight = SETTING_CUSTOM_GUI_OUTLINE_RIGHT.getColor()
 
         val s = getSlotSize()
+        val b = getBorderSize()
+        if (outlineColorLeft.alpha != 0 && outlineColorRight.alpha != 0)
+            renderGradientRectangle(
+                ctx,
+                bounds.x1 - s * 0.4,
+                bounds.y1 - s * 0.6,
+                bounds.x2 + s * 0.4,
+                bounds.y2 + s * 0.6,
+                outlineColorLeft.rgb, outlineColorRight.rgb,
+                outlineColorLeft.rgb, outlineColorRight.rgb,
+            )
+
         renderRectangle(
             ctx,
-            bounds.x1 - s * 0.4,
-            bounds.y1 - s * 0.6,
-            bounds.x2 + s * 0.4,
-            bounds.y2 + s * 0.6,
+            bounds.x1 - s * 0.4 + b,
+            bounds.y1 - s * 0.6 + b,
+            bounds.x2 + s * 0.4 - b,
+            bounds.y2 + s * 0.6 - b,
             color.rgb,
         )
     }
@@ -434,6 +507,14 @@ interface ITerminalSolver {
     }
 
     fun renderSlot(ctx: GuiGraphicsExtractor, loc: Rectangle, idx: Int) {
+        renderRectangle(
+            ctx,
+            loc.x1 - 1,
+            loc.y1 - 1,
+            loc.x2 + 1,
+            loc.y2 + 1,
+            Color(color(idx), true).brighter().rgb,
+        )
         renderRectangle(ctx, loc, color(idx))
     }
 
@@ -456,7 +537,7 @@ interface ITerminalSolver {
         val box = getSlotsBox()
 
         val cx = box.x + box.w / 2.0
-        val cy = box.y + box.h / 2.0 + 1.0
+        val cy = box.y + box.h / 2.0
 
         val wx = window.guiScaledWidth / 2
         val wy = window.guiScaledHeight / 2
@@ -479,7 +560,7 @@ interface ITerminalSolver {
         val box = getSlotsBox()
 
         val cx = box.x + box.w / 2.0
-        val cy = box.y + box.h / 2.0 + 1.0
+        val cy = box.y + box.h / 2.0
 
         val wx = window.guiScaledWidth / 2
         val wy = window.guiScaledHeight / 2
@@ -620,7 +701,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
     },
     STARTS_WITH("^What starts with: '(.*?)'\\?$".toRegex()) {
-        override fun getSlotsBox(): Cell = Cell(1, 1, 7, 3)
+        override fun getSlotsBox(): Cell = Cell(1, 1, 7, 4)
 
         private var toFind: String? = null
         override var currentTitle: String = ""
@@ -639,7 +720,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
         override fun onSetSlot(slot: Int, stack: ItemStack) {
             if (slot !in slots.indices) return
-            if (slot == 35) firstScan = false
+            if (slot == 44) firstScan = false
             if (!firstScan && stack.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return
             val toFind = toFind ?: return
 
@@ -780,6 +861,14 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
             val color = rubixColors.getOrNull(idx) ?: return
 
+            renderRectangle(
+                ctx,
+                loc.x1 - 1,
+                loc.y1 - 1,
+                loc.x2 + 1,
+                loc.y2 + 1,
+                Color(color, true).brighter().rgb,
+            )
             renderRectangle(ctx, loc, color)
         }
 
