@@ -202,18 +202,15 @@ object TerminalSolvers : Feature(
     private fun onInteractSlot(solver: TerminalData, slot: Slot, event: CancellableEvent?, btn: Int): Boolean {
         if (slot.container == minecraft.player?.inventory) return false
 
-        if (SETTING_CANCEL_WRONG_CLICKS.get() && solver.cancelClick(slot, btn == 0)) {
+        return if (SETTING_CANCEL_WRONG_CLICKS.get() && solver.cancelClick(slot, btn)) {
             event?.cancel()
             minecraft.level?.playPlayerSound(
                 PREVENTED_SOUND.value(),
                 SoundSource.MASTER,
                 1f, 0.5f,
             )
-            return true
-        } else {
-            solver.onClickSlot(slot, btn)
-            return false
-        }
+            true
+        } else false
     }
 
     override fun initialize() {
@@ -274,8 +271,11 @@ object TerminalSolvers : Feature(
                 event.cancel()
                 return@on
             }
+
             val slot = event.slot ?: return@on
-            onInteractSlot(solver, slot, event, 0)
+            if (onInteractSlot(solver, slot, event, 0)) return@on
+
+            solver.onClickSlot(slot, 0)
         }
 
         on<PickupItemInventoryEvent> { event ->
@@ -286,11 +286,21 @@ object TerminalSolvers : Feature(
                 return@on
             }
 
-            if (onInteractSlot(solver, event.slot, event, if (event.isSplitItem) 1 else 0)) return@on
+            val btn = if (event.isSplitItem) 1 else 0
+            if (onInteractSlot(solver, event.slot, event, btn)) return@on
+
             if (SETTING_MIDDLE_CLICK.get() && currentSolver != TerminalData.RUBIX) {
                 event.cancel()
                 ScreenUtils.click(event.slot.index, false, "MIDDLE")
-            }
+            } else solver.onClickSlot(event.slot, btn)
+        }
+
+        on<MiddleClickItemEvent> { event ->
+            val solver = currentSolver ?: return@on
+
+            if (onInteractSlot(solver, event.slot, event, 2)) return@on
+
+            solver.onClickSlot(event.slot, 2)
         }
 
         on<TooltipRenderEvent> { event ->
@@ -365,7 +375,7 @@ interface ITerminalSolver {
     fun doOnAfterRender() = false
     fun onAfterRender(ctx: GuiGraphicsExtractor, slot: Slot, loc: Rectangle) {}
 
-    fun cancelClick(slot: Slot, lc: Boolean): Boolean = cancelClick(slot)
+    fun cancelClick(slot: Slot, btn: Int): Boolean = cancelClick(slot)
     fun cancelClick(slot: Slot): Boolean = false
 
     fun useCustomGui() = SETTING_CUSTOM_GUI.get()
@@ -462,7 +472,10 @@ interface ITerminalSolver {
         if (s != 1) ctx.pose().popMatrix()
     }
 
-    private fun getBorderSize() = 0.5 * SETTING_CUSTOM_GUI_SCALE.get()
+    fun getBackgroundBorderSize() = 0.5 * SETTING_CUSTOM_GUI_SCALE.get()
+    fun getSlotBorderSize() = 0.5 * SETTING_CUSTOM_GUI_SCALE.get()
+    fun getSlotSize() = 24.0 * SETTING_CUSTOM_GUI_SCALE.get()
+    fun getSlotPadding() = 1.5 * SETTING_CUSTOM_GUI_SCALE.get()
 
     fun onRenderBackground(ctx: GuiGraphicsExtractor) {
         val bounds = getCustomLocation(getSlotsBox())
@@ -472,7 +485,7 @@ interface ITerminalSolver {
         val outlineColorRight = SETTING_CUSTOM_GUI_OUTLINE_RIGHT.getColor()
 
         val s = getSlotSize()
-        val b = getBorderSize()
+        val b = getBackgroundBorderSize()
         if (outlineColorLeft.alpha != 0 && outlineColorRight.alpha != 0)
             renderGradientRectangle(
                 ctx,
@@ -507,19 +520,19 @@ interface ITerminalSolver {
     }
 
     fun renderSlot(ctx: GuiGraphicsExtractor, loc: Rectangle, idx: Int) {
+        val b = getSlotBorderSize()
+        val c = color(idx)
+
+        renderRectangle(ctx, loc, Color(c, true).brighter().rgb)
         renderRectangle(
             ctx,
-            loc.x1 - 1,
-            loc.y1 - 1,
-            loc.x2 + 1,
-            loc.y2 + 1,
-            Color(color(idx), true).brighter().rgb,
+            loc.x1 + b,
+            loc.y1 + b,
+            loc.x2 - b,
+            loc.y2 - b,
+            c,
         )
-        renderRectangle(ctx, loc, color(idx))
     }
-
-    private fun getSlotSize() = 24.0 * SETTING_CUSTOM_GUI_SCALE.get()
-    private fun getSlotPadding() = 1.5 * SETTING_CUSTOM_GUI_SCALE.get()
 
     fun getCustomLocation(slot: Slot): Rectangle? {
         if (slot.container == minecraft.player?.inventory) return null
@@ -861,15 +874,16 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
             val color = rubixColors.getOrNull(idx) ?: return
 
+            val b = getSlotBorderSize()
+            renderRectangle(ctx, loc, Color(color, true).brighter().rgb)
             renderRectangle(
                 ctx,
-                loc.x1 - 1,
-                loc.y1 - 1,
-                loc.x2 + 1,
-                loc.y2 + 1,
-                Color(color, true).brighter().rgb,
+                loc.x1 + b,
+                loc.y1 + b,
+                loc.x2 - b,
+                loc.y2 - b,
+                color,
             )
-            renderRectangle(ctx, loc, color)
         }
 
         override fun doOnAfterRender(): Boolean = true
@@ -889,9 +903,10 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             )
         }
 
-        override fun cancelClick(slot: Slot, lc: Boolean): Boolean {
+        override fun cancelClick(slot: Slot, btn: Int): Boolean {
+            if (btn == 2) return true
             val clicks = slots.getOrElse(slot.containerSlot) { 0 }
-            return clicks == 0 || SETTING_RUBIX_BLOCK_SUBOPTIMAL.get() && clicks > 2 == lc
+            return clicks == 0 || SETTING_RUBIX_BLOCK_SUBOPTIMAL.get() && ((clicks > 2) == (btn == 0))
         }
     },
     RED_GREEN("^Correct all the panes!$".toRegex()) {
