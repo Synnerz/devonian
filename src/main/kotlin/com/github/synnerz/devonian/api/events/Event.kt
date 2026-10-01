@@ -493,6 +493,11 @@ class QuickCraftMoveEvent(
     val screen: AbstractContainerScreen<*>
 ) : CancellableEvent()
 
+class MiddleClickItemEvent(
+    val slot: Slot,
+    val screen: AbstractContainerScreen<*>
+) : CancellableEvent()
+
 @Ordered class PostRenderSlotsEvent(
     val ctx: GuiGraphicsExtractor,
     val mouseX: Int,
