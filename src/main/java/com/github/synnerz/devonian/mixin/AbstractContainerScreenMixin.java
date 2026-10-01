@@ -76,6 +76,9 @@ public abstract class AbstractContainerScreenMixin {
                 if (slot == null) break;
                 event = new QuickCraftMoveEvent(slot, (buttonNum & 4) > 0, that);
                 break;
+            case CLONE:
+                if (slot != null) event = new MiddleClickItemEvent(slot, that);
+                break;
         }
 
         if (event != null && event.post()) ci.cancel();
