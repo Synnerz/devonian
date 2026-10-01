@@ -465,11 +465,12 @@ interface ITerminalSolver {
         val padding = getSlotPadding()
         val slotBounds = size + padding * 2
 
+        val x = (cell.x - cx) * slotBounds + wx + padding
+        val y = (cell.y - cy) * slotBounds + wy + padding
         return Rectangle(
-            (cell.x - cx) * slotBounds + wx + padding,
-            (cell.y - cy) * slotBounds + wy + padding,
-            slotBounds * (cell.w - 1) + size,
-            slotBounds * (cell.h - 1) + size,
+            x, y,
+            x + slotBounds * (cell.w - 1) + size,
+            y + slotBounds * (cell.h - 1) + size,
         )
     }
 
