@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.features.misc.inventory.MiddleClickGui
 import com.github.synnerz.devonian.utils.render.Render2D.width
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.world.item.Item
@@ -50,18 +51,17 @@ object ExperimentationTable : Feature(
     )
     private val superpairsRegex = "^Superpairs \\(\\w+\\)$".toRegex()
     private val chronomatronRegex = "^Chronomatron \\([\\w ]+\\)$".toRegex()
-    // TODO: this is only used for debugging, remove once feature is fully done
-    private val chronomatronItems = listOf(
-        Items.STAINED_GLASS_PANE.red,
-        Items.STAINED_GLASS_PANE.blue,
-        Items.STAINED_GLASS_PANE.lime,
-        Items.STAINED_GLASS_PANE.yellow,
-        Items.STAINED_GLASS_PANE.lightBlue,
-        Items.STAINED_GLASS_PANE.pink,
-        Items.STAINED_GLASS_PANE.green,
-        Items.STAINED_GLASS_PANE.cyan,
-        Items.STAINED_GLASS_PANE.orange,
-        Items.STAINED_GLASS_PANE.purple,
+    private val superpairGlass = listOf(
+        Items.STAINED_GLASS.red,
+        Items.STAINED_GLASS.blue,
+        Items.STAINED_GLASS.lime,
+        Items.STAINED_GLASS.yellow,
+        Items.STAINED_GLASS.lightBlue,
+        Items.STAINED_GLASS.pink,
+        Items.STAINED_GLASS.green,
+        Items.STAINED_GLASS.cyan,
+        Items.STAINED_GLASS.orange,
+        Items.STAINED_GLASS.purple,
     )
     private val chronomatronHighlightItems = listOf(
         Items.DYED_TERRACOTTA.red,
@@ -156,7 +156,8 @@ object ExperimentationTable : Feature(
         on<ServerContainerSetSlotEvent> { event ->
             if (inSuperpairs && event.slot < 45) {
                 val itemStack = event.itemStack
-                if (itemStack.item !in chronomatronItems) {
+                if (itemStack.item !in superpairGlass) {
+                    if (itemStack.isEmpty) return@on
                     Scheduler.scheduleTask {
                         superpairSlots[event.slot] = itemStack
                     }
@@ -175,6 +176,20 @@ object ExperimentationTable : Feature(
             }
             if (event.slot != 49 || !(inChrono || inUltra)) return@on
             currentSlot49 = event.itemStack.item
+        }
+
+        on<TickEvent> {
+            if (MiddleClickGui.isEnabled()) return@on
+            if (!inSuperpairs) return@on
+            val menu = (minecraft.gui.screen() as? AbstractContainerScreen<*>)?.menu ?: return@on
+
+            menu.items.forEachIndexed { idx, stack ->
+                if (idx > 49) return@forEachIndexed
+                val cache = superpairSlots.getOrNull(idx) ?: return@forEachIndexed
+                if (cache == stack || cache.isEmpty) return@forEachIndexed
+
+                menu.setItem(idx, menu.stateId, cache)
+            }
         }
 
         on<SoundPlayEvent> { event ->
