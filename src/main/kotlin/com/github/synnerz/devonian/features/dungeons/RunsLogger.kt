@@ -64,9 +64,8 @@ object RunsLogger : Feature(
         DevonianCommand.command.subcommand("runslogger") { _, args ->
             val mode = args.getOrNull(0) as? String?
             val floor = args.getOrNull(1) as? String?
-            val dates = (args.getOrNull(2) as? String?)?.replace("*", "")
-            val date = dates?.split(" ")?.getOrNull(0)
-            val date2 = dates?.split(" ")?.getOrNull(1)
+            val date = (args.getOrNull(2) as? String?)?.replace("*", "")
+            val date2 = (args.getOrNull(3) as? String?)?.replace("*", "")
             if (mode.isNullOrEmpty()) {
                 ChatUtils.sendMessage("&cRunsLogger not a valid mode was set", true)
                 return@subcommand 0
@@ -230,21 +229,10 @@ object RunsLogger : Feature(
                 "E", "F1", "F2", "F3", "F4", "F5", "F6", "F7",
                 "M1", "M2", "M3", "M4", "M5", "M6", "M7"
             ).toTypedArray())
-            .greedyString("date")
-            .suggest("date") {
-                buildList {
-                    val current = "*${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
-
-                    add(current)
-
-                    dungeonsData.data!!.mapNotNull {
-                        if (it.key == current) null
-                        else it.key
-                    }.forEach {
-                        add(it)
-                    }
-                }.toMutableList()
-            }
+            .dateString("from")
+            .dateString("to")
+            .suggest("from", ::dateSuggestions)
+            .suggest("to", ::dateSuggestions)
 
         on<TabUpdateEvent> { event ->
             val match = event.matches(milestoneRegex) ?: return@on
@@ -308,6 +296,19 @@ object RunsLogger : Feature(
             hasAdded = true
         }
     }
+
+    fun dateSuggestions(args: List<Any>): MutableList<String> = buildList {
+        val current = "*${localTime.monthValue}/${localTime.dayOfMonth}/${localTime.year}"
+
+        add(current)
+
+        dungeonsData.data!!.mapNotNull {
+            if (it.key == current) null
+            else it.key
+        }.forEach {
+            add(it)
+        }
+    }.toMutableList()
 
     override fun onWorldChange(event: WorldChangeEvent) {
         currentStat = null
