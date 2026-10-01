@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.commands
 
+import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.*
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
@@ -12,7 +13,7 @@ import java.util.*
 class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientCommandSource>, List<Any>) -> Int) {
     private val commandArgs = mutableListOf<Pair<String, ArgumentType<*>>>()
     private val commandSuggestions = mutableMapOf<String, MutableList<String>>()
-    private val commandSuggestionsCb = mutableMapOf<String, () -> MutableList<String>>()
+    private val commandSuggestionsCb = mutableMapOf<String, (List<Any>) -> MutableList<String>>()
     var isOptional = false
 
     /**
@@ -30,20 +31,26 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
             val argBuilder = argument(argName, argType)
             var suggestions = commandSuggestions[argName]
             val suggestionsCb = commandSuggestionsCb[argName]
-            if (suggestionsCb != null) {
-                if (suggestions == null) suggestions = mutableListOf()
-                suggestions.addAll(suggestionsCb())
-            }
+            if (suggestionsCb != null && suggestions == null)
+                suggestions = mutableListOf()
+
             if (suggestions != null) {
                 val map = TreeSet(String.CASE_INSENSITIVE_ORDER)
                 map.addAll(suggestions)
-                argBuilder.suggests { _, builder ->
+
+                argBuilder.suggests { ctx, builder ->
+                    val cbSuggestions = suggestionsCb?.invoke(commandArgs.map { (key, type) -> getArgument(ctx, key, type) })
+                    cbSuggestions?.let { map.addAll(it) }
+
                     val pre = builder.input.substring(builder.start)
                     val iter = map.tailSet(pre, true)
                     for (str in iter) {
                         if (str.startsWith(pre, true)) builder.suggest(str)
                         else break
                     }
+
+                    cbSuggestions?.let { map.removeAll(it) }
+
                     builder.buildFuture()
                 }
             }
@@ -85,6 +92,14 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
      */
     fun greedyString(name: String) = apply {
         add(name, StringArgumentType.greedyString())
+    }
+
+    /**
+     * - Sets a date string argument that is similar to "mm/dd/yyyy"
+     * @param name The name of the argument
+     */
+    fun dateString(name: String) = apply {
+        add(name, StringDateArgumentType)
     }
 
     /**
@@ -155,13 +170,14 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
      * @param name The name of the argument
      * @param cb The callback which returns a list of suggestions
      */
-    fun suggest(name: String, cb: () -> MutableList<String>) = apply {
+    fun suggest(name: String, cb: (List<Any>) -> MutableList<String>) = apply {
         commandSuggestionsCb[name] = cb
     }
 
     private fun getArgument(ctx: CommandContext<FabricClientCommandSource>, name: String, type: ArgumentType<*>): Any {
         return when (type) {
             is StringArgumentType -> getOrNull<String>(ctx, name) ?: ""
+            is StringDateArgumentType -> getOrNull<String>(ctx, name) ?: ""
             is BoolArgumentType -> getOrNull<Boolean>(ctx, name) ?: false
             is DoubleArgumentType -> getOrNull<Double>(ctx, name) ?: 0.0
             is FloatArgumentType -> getOrNull<Float>(ctx, name) ?: 0f
@@ -176,4 +192,20 @@ class BaseSubCommand(val name: String, val cb: (CommandContext<FabricClientComma
         } catch (e: IllegalArgumentException) {
             null
         }
+
+    // we're supposed to register this but since we don't use mojang's internal system for
+    //  ours i'll just ignore it (:
+    object StringDateArgumentType : ArgumentType<String> {
+        override fun parse(reader: StringReader?): String? {
+            // this should throw command exception instead
+            reader ?: return null
+
+            val start = reader.cursor
+
+            while (reader.canRead() && (reader.peek() == '*' || reader.peek() == '/' || reader.peek().isDigit()))
+                reader.skip()
+
+            return reader.string.substring(start, reader.cursor)
+        }
+    }
 }
