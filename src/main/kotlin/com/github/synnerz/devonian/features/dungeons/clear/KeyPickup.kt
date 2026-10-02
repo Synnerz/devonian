@@ -17,7 +17,7 @@ import net.minecraft.world.item.Items
 import java.awt.Color
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.math.abs
+import kotlin.math.truncate
 
 object KeyPickup : Feature(
     "keyPickup",
@@ -182,23 +182,8 @@ object KeyPickup : Feature(
                 (id != bloodKeyId || ItemUtils.skyblockId(item) != null)
             ) return@on
 
-            val x = event.spawnPos.x.toInt()
-            val z = event.spawnPos.z.toInt()
-            val comp = WorldPosition(x, z).toComponent()
-            val idx = comp.getRoomIdx()
-            if (idx !in 0..35) return@on
-
-            currentKeyRoom = DungeonScanner.rooms[idx]
-            currentKeyRoom ?: return@on
-            val roomWaypoints = currentKeyRoom!!.roomID?.let {
-                DungeonWaypoints.waypointsData[it]?.waypoints?.get(DungeonWaypoints.WaypointType.ESSENCE)
-            } ?: return@on
-            if (roomWaypoints.any {
-                val ( dx, dz ) = currentKeyRoom!!.fromComp(it.x, it.z) ?: return@any false
-                val dist = abs(dx - x) + abs(dz - z)
-
-                dist <= 3
-            }) return@on
+            // wither essence
+            if (event.spawnPos.y.let { it - truncate(it) } == 0.53125) return@on
 
             idQ.add(Triple(id == bloodKeyId, 10, event.entityId))
         }
