@@ -119,7 +119,7 @@ object ActionbarParser : Feature(
             "",
         ) {
             override fun modifyStringHud(str: String): String
-                = str.replace("\uE010", "❤")
+                = str.replace('\uE010', '❤')
         },
         Vitality(
             null,
@@ -141,7 +141,7 @@ object ActionbarParser : Feature(
             "",
         ) {
             override fun modifyStringHud(str: String): String
-                = str.replace("\uE028", "♨")
+                = str.replace('\uE028', '♨')
         },
         Defense(
             "\uE008",
@@ -184,7 +184,7 @@ object ActionbarParser : Feature(
                 else super.shouldShow()
 
             override fun modifyStringHud(str: String): String
-                = str.replace("\uE008", "❈")
+                = str.replace('\uE008', '❈')
         },
         Mana(
             null,
@@ -207,13 +207,13 @@ object ActionbarParser : Feature(
             override fun modifyStringHud(str: String): String
                 = if (str.endsWith(" Mana"))
                     str
-                        .replace("\uE003", "✎")
-                        .replace("\uE017", "ʬ")
+                        .replace('\uE003', '✎')
+                        .replace('\uE017', 'ʬ')
                         .dropLast(" Mana".length)
                 else
                     str
-                        .replace("\uE003", "✎")
-                        .replace("\uE017", "ʬ")
+                        .replace('\uE003', '✎')
+                        .replace('\uE017', 'ʬ')
         },
         ManaUse(
             ")",
@@ -536,7 +536,29 @@ object ActionbarParser : Feature(
                 searchTags = hideTags,
             ) {},
             pad = "",
-        );
+        ),
+        Zone(
+            null,
+            null,
+            object : TextHudFeature(
+                "customZoneHud",
+                "$desc Allows you to move the zone that appears in the actionbar (above your hotbar).",
+                Categories.Actionbar,
+                searchTags = customTags,
+            ) {
+                override fun getEditText(): List<String> = listOf("§7⏣ §bVillage")
+            },
+            object : Feature(
+                "hideZoneActionbar",
+                "$desc Hides the zone that appears in the actionbar (above your hotbar).",
+                Categories.Actionbar,
+                searchTags = hideTags,
+            ) {},
+            startsWith = "§7\uE067",
+        ) {
+            override fun modifyStringHud(str: String): String =
+                str.replace('\uE067', '⏣')
+        };
 
         open fun initialize() {}
 
