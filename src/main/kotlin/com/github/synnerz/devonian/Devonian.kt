@@ -421,6 +421,7 @@ object Devonian : ClientModInitializer {
             InstaClearAlert,
             TerminalHitboxes,
             CustomizeItems,
+            MuteWitherbornSound,
 
             // Debug
             CopyItem,
