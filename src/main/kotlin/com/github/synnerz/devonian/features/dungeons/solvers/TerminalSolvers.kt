@@ -322,22 +322,16 @@ object TerminalSolvers : Feature(
             val idx = solver.getSlotCustom(event.mx.toInt(), event.my.toInt()) ?: return@on
             if (idx !in gui.menu.slots.indices) return@on
             val click = when (event.mbtn) {
-                3 -> "RIGHT"
+                1 -> "RIGHT"
                 2 -> "MIDDLE"
-                else -> "LEFT" // 1
-            }
-            // ONLY WORKS IN >26.3
-            val legacyBtn = when (event.mbtn) {
-                1 -> 0
-                3 -> 1
-                else -> event.mbtn
+                else -> "LEFT" // 0
             }
 
             val slot = gui.menu.getSlot(idx)
-            if (onInteractSlot(solver, slot, null, legacyBtn)) return@on
+            if (onInteractSlot(solver, slot, null, event.mbtn)) return@on
 
             ScreenUtils.click(idx, false, click)
-            solver.onClickSlot(slot, legacyBtn)
+            solver.onClickSlot(slot, event.mbtn)
         }.setEnabled(SETTING_CUSTOM_GUI.state)
 
         on<GuiKeyDownEvent> { event ->
