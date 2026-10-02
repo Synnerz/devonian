@@ -202,15 +202,18 @@ object TerminalSolvers : Feature(
     private fun onInteractSlot(solver: TerminalData, slot: Slot, event: CancellableEvent?, btn: Int): Boolean {
         if (slot.container == minecraft.player?.inventory) return false
 
-        return if (SETTING_CANCEL_WRONG_CLICKS.get() && solver.cancelClick(slot, btn)) {
+        if (SETTING_CANCEL_WRONG_CLICKS.get() && solver.cancelClick(slot, btn)) {
             event?.cancel()
             minecraft.level?.playPlayerSound(
                 PREVENTED_SOUND.value(),
                 SoundSource.MASTER,
                 1f, 0.5f,
             )
-            true
-        } else false
+            return true
+        } else {
+            solver.onClickSlot(slot, btn)
+            return false
+        }
     }
 
     override fun initialize() {
@@ -274,8 +277,6 @@ object TerminalSolvers : Feature(
 
             val slot = event.slot ?: return@on
             if (onInteractSlot(solver, slot, event, 0)) return@on
-
-            solver.onClickSlot(slot, 0)
         }
 
         on<PickupItemInventoryEvent> { event ->
@@ -292,15 +293,13 @@ object TerminalSolvers : Feature(
             if (SETTING_MIDDLE_CLICK.get() && currentSolver != TerminalData.RUBIX) {
                 event.cancel()
                 ScreenUtils.click(event.slot.index, false, "MIDDLE")
-            } else solver.onClickSlot(event.slot, btn)
+            }
         }
 
         on<MiddleClickItemEvent> { event ->
             val solver = currentSolver ?: return@on
 
             if (onInteractSlot(solver, event.slot, event, 2)) return@on
-
-            solver.onClickSlot(event.slot, 2)
         }
 
         on<TooltipRenderEvent> { event ->
@@ -331,7 +330,6 @@ object TerminalSolvers : Feature(
             if (onInteractSlot(solver, slot, null, event.mbtn)) return@on
 
             ScreenUtils.click(idx, false, click)
-            solver.onClickSlot(slot, event.mbtn)
         }.setEnabled(SETTING_CUSTOM_GUI.state)
 
         on<GuiKeyDownEvent> { event ->
@@ -537,7 +535,12 @@ interface ITerminalSolver {
 
     fun getCustomLocation(slot: Slot): Rectangle? {
         if (slot.container == minecraft.player?.inventory) return null
-        if (!useCustomGui()) return Rectangle(slot.x.toDouble(), slot.y.toDouble(), 16.0, 16.0)
+        if (!useCustomGui()) return Rectangle(
+            slot.x.toDouble(),
+            slot.y.toDouble(),
+            slot.x + 16.0,
+            slot.y + 16.0,
+        )
 
         val x = slot.containerSlot % 9
         val y = slot.containerSlot / 9
@@ -647,7 +650,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun cancelClick(slot: Slot): Boolean {
-            return slots.getOrElse(slot.containerSlot) { 0 } == 0
+            return slots.getOrElse(slot.containerSlot) { 0 } != minCount
         }
     },
     COLORS("^Select all the (.*?) items!$".toRegex()) {
@@ -865,7 +868,7 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         }
 
         override fun onRenderSlot(ctx: GuiGraphicsExtractor, slot: Slot, loc: Rectangle, cancel: () -> Unit) {
-            if (!SETTING_HIDE_DONE.get() && !isRubix.getOrElse(slot.containerSlot) { false }) {
+            if (SETTING_HIDE_DONE.get() && !isRubix.getOrElse(slot.containerSlot) { false }) {
                 renderSlotBackground(ctx, loc)
             }
 
