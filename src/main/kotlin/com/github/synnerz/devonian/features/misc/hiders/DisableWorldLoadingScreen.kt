@@ -23,6 +23,7 @@ object DisableWorldLoadingScreen : Feature(
 
     override fun initialize() {
         on<GuiOpenEvent> { event ->
+            if (minecraft.level == null) return@on
             if (event.screen !is LevelLoadingScreen) {
                 if (minecraft.overlay is PausingOverlay) minecraft.overlay = null
                 return@on
