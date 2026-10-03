@@ -83,6 +83,10 @@ object Dungeons {
     val discoveries = BasicState(0)
     val totalPuzzles = BasicState(0)
     val completedPuzzles = BasicState(0)
+    val blazeDoneC = BasicState(false)
+    val blazeDoneS = BasicState(false)
+    val tttDoneC = BasicState(false)
+    val tttDoneS = BasicState(false)
     val mimicKilled = BasicState(false)
     val princeKilled = BasicState(false)
     val batScoreKilled = BasicState(false)
@@ -132,7 +136,14 @@ object Dungeons {
         if (deaths == 0) 0
         else 2 * deaths - (if (spirit) 1 else 0)
     }
-    val puzzlePenalty = completedPuzzles.zip(totalPuzzles) { completed, total ->
+    val actualCompletedPuzzles: BasicState<Int>
+    init {
+        val blazeMod = blazeDoneC.zip(blazeDoneS) { c, s -> if (c && !s) 1 else 0 }
+        val tttMod = tttDoneC.zip(tttDoneS) { c, s -> if (c && !s) 1 else 0 }
+        val totalMod = blazeMod.zip(tttMod, Int::plus)
+        actualCompletedPuzzles = completedPuzzles.zip(totalMod, Int::plus)
+    }
+    val puzzlePenalty = actualCompletedPuzzles.zip(totalPuzzles) { completed, total ->
         10 * (total - completed)
     }
     val totalPenalty = deathPenalty.zip(puzzlePenalty, Int::plus)
@@ -231,6 +242,10 @@ object Dungeons {
             }
 
             event.matches(puzzleNameRegex)?.let {
+                when (it[0]) {
+                    "Higher Or Lower" -> blazeDoneS.value = it[1] == "✔"
+                    "Tic Tac Toe" -> tttDoneS.value = it[1] == "✔"
+                }
                 if (it[1].isEmpty() || it[1] != "✔") return@on
                 completedPuzzles.value = min(completedPuzzles.value + 1, totalPuzzles.value)
                 return@on
@@ -358,6 +373,13 @@ object Dungeons {
                 "bat dead",
                 "bat dead!"
                     -> batScoreKilled.value = true
+
+                "blaze done"
+                    -> blazeDoneC.value = true
+
+                "tic tac toe done",
+                "ttt done"
+                    -> tttDoneC.value = true
             }
         }.setEnabled(Location.stateInArea("catacombs"))
 
@@ -548,6 +570,10 @@ object Dungeons {
         discoveries.value = 0
         totalPuzzles.value = 0
         completedPuzzles.value = 0
+        blazeDoneC.value = false
+        blazeDoneS.value = false
+        tttDoneC.value = false
+        tttDoneS.value = false
         mimicKilled.value = false
         princeKilled.value = false
         batScoreKilled.value = false
