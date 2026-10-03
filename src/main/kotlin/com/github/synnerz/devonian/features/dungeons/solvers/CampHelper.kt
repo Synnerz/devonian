@@ -3,7 +3,9 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.ComponentPosition
+import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.dungeon.WorldPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
@@ -75,6 +77,18 @@ object CampHelper : Feature(
         0.0, 10.0,
         "The amount of TICKS at which the PlaySound feature should play (1 tick = 0.05s, default is 1.3 = 0.065s)",
         "Camp Mob Sound Threshold"
+    )
+    private val SETTING_ONLY_MAGE = addSwitch(
+        "onlyMage",
+        false,
+        "Only enables the camp helper when playing the mage class or in the blood room.",
+        "Camp Helper Only Mage",
+    )
+    private val SETTING_FLOOR_RENDER = addSwitch(
+        "renderOnFloor",
+        false,
+        "Also renders the mob locations/timer on the floor (for rcm/bers).",
+        "Camp Helper Render On Floor",
     )
 
     private var bloodComp: ComponentPosition? = null
@@ -161,8 +175,16 @@ object CampHelper : Feature(
                     minecraft.player?.playSound(SoundEvents.NOTE_BLOCK_COW_BELL.value())
                 }
 
+                val yF = 69.01
                 Render3DImmediate.renderWireframeBox(
                     x, y + 1.0, z,
+                    w, h,
+                    color,
+                    lineWidth = SETTING_LINE_WIDTH.get(),
+                    centered = true,
+                )
+                if (SETTING_FLOOR_RENDER.get()) Render3DImmediate.renderWireframeBox(
+                    x, yF - h, z,
                     w, h,
                     color,
                     lineWidth = SETTING_LINE_WIDTH.get(),
@@ -174,6 +196,12 @@ object CampHelper : Feature(
                     Render3DImmediate.renderFilledBox(
                         x, y + 1.0 + (h - f * h) / 2.0, z,
                         w * f, h * f,
+                        Color.BLACK,
+                        centered = true,
+                    )
+                    if (SETTING_FLOOR_RENDER.get()) Render3DImmediate.renderFilledBox(
+                        x, yF - h, z,
+                        w * f, h,
                         Color.BLACK,
                         centered = true,
                     )
@@ -192,17 +220,45 @@ object CampHelper : Feature(
                             Color.RED,
                             lineWidth = SETTING_LINE_WIDTH.get(),
                         )
+
+                        if (!SETTING_FLOOR_RENDER.get()) return@let
+                        Render3DImmediate.renderWireframeBox(
+                            it.x, yF - h, it.z,
+                            w, h,
+                            Color.RED,
+                            lineWidth = SETTING_LINE_WIDTH.get(),
+                            centered = true,
+                        )
+                        Render3DImmediate.renderLine(
+                            Vec3(it.x, yF, it.z),
+                            Vec3(x, yF, z),
+                            Color.RED,
+                            lineWidth = SETTING_LINE_WIDTH.get(),
+                        )
                     }
                 }
 
-                if (SETTING_SHOW_TIMER.get()) Render3DImmediate.renderString(
-                    "${colorForNumber(ttl, v.maxTTL)}%.2f".format((ttl * 0.05).coerceAtLeast(0.0)),
-                    x, y + (if (SETTING_CHICKEN_MAN_MODE.get()) 0.5 else 1.5), z,
-                    scale = if (SETTING_CHICKEN_MAN_MODE.get()) 1.5f else 2.5f,
-                    maxDist = 24.0,
-                )
+                if (SETTING_SHOW_TIMER.get()) {
+                    val s = "${colorForNumber(ttl, v.maxTTL)}%.2f".format((ttl * 0.05).coerceAtLeast(0.0))
+                    Render3DImmediate.renderString(
+                        s,
+                        x, y + (if (SETTING_CHICKEN_MAN_MODE.get()) 0.5 else 1.5), z,
+                        scale = if (SETTING_CHICKEN_MAN_MODE.get()) 1.5f else 2.5f,
+                        maxDist = 24.0,
+                    )
+                    if (SETTING_FLOOR_RENDER.get() && !SETTING_CHICKEN_MAN_MODE.get()) Render3DImmediate.renderString(
+                        s,
+                        x, yF + 1.0, z,
+                        scale = 2.5f,
+                        maxDist = 24.0,
+                    )
+                }
             }
-        }
+        }.setEnabled(
+            Dungeons.selfClass
+                .zip(SETTING_ONLY_MAGE.state) { c, s -> !s || c == DungeonClass.Mage }
+                .zip(Dungeons.currentRoom) { b, r -> b || r?.type == RoomTypes.BLOOD }
+        )
     }
 
     private fun colorForNumber(num: Int, max: Int) = when {
