@@ -6,20 +6,15 @@ import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
-import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
-import net.minecraft.world.entity.EntityTypes
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.math.abs
 import kotlin.math.min
 
 object DragonHitCount : Feature(
@@ -34,50 +29,30 @@ object DragonHitCount : Feature(
     }
 
     private var currType: M7Dragon? = null
-    private var currId = 0
     private var hits = CopyOnWriteArrayList(mutableListOf(0))
 
     override fun initialize() {
-        on<M7Events.DragonSpawned2> { event ->
-            currType = event.dragon
-            currId = 0
+        on<M7Events.DragonSpawned> { event ->
+            currType = event.dragon.type
             hits = CopyOnWriteArrayList(mutableListOf(0))
         }
 
         on<PacketReceivedEvent> { event ->
-            when (val packet = event.packet) {
-                is ClientboundAddEntityPacket -> {
-                    if (packet.type != EntityTypes.ENDER_DRAGON) return@on
-                    val type = M7Dragon.entries.minBy {
-                        abs(it.path[0].x - packet.x) +
-                        abs(it.path[0].y - packet.y) +
-                        abs(it.path[0].z - packet.z)
-                    }
-                    if (type != currType) return@on
-                    currId = packet.id
-                }
+            val packet = event.packet as? ClientboundSoundPacket ?: return@on
+            if (currType == null) return@on
 
-                is ClientboundSoundPacket -> {
-                    if (currId == 0) return@on
-                    if (packet.sound.value() != SoundEvents.ARROW_HIT_PLAYER) return@on
-                    if (packet.source != SoundSource.NEUTRAL) return@on
-                    if (packet.volume != 1f) return@on
-                    hits[hits.size - 1]++
-                }
-            }
+            if (packet.sound.value() != SoundEvents.ARROW_HIT_PLAYER) return@on
+            if (packet.source != SoundSource.NEUTRAL) return@on
+            if (packet.volume != 1f) return@on
+            hits[hits.size - 1]++
         }
 
-        on<TickEvent> {
-            val id = currId
-            if (id == 0) return@on
-
-            val w = minecraft.level ?: return@on
-            val ent = w.getEntity(id) as? EnderDragon?
-            if (ent == null || ent.dragonDeathTime > 0) end()
+        on<M7Events.DragonDeath> {
+            end()
         }
 
         on<ServerTickEvent> {
-            if (currId == 0) return@on
+            if (currType == null) return@on
             if (hits.size >= 90) end()
             else hits.add(0)
         }
@@ -114,13 +89,11 @@ object DragonHitCount : Feature(
         )
 
         currType = null
-        currId = 0
         hits = CopyOnWriteArrayList(mutableListOf(0))
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
         currType = null
-        currId = 0
         hits = CopyOnWriteArrayList(mutableListOf(0))
     }
 }
