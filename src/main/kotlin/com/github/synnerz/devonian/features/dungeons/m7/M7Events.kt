@@ -59,7 +59,7 @@ object M7Events {
                     if (c == 0 && Dungeons.selfPlayer.role == DungeonClass.Healer) return@on
                     if (c == 1 && Dungeons.selfPlayer.role == DungeonClass.Tank) return@on
 
-                    val drag = M7DragonSpawn(dragon, isHigh, tick + 100)
+                    val drag = M7DragonSpawn(dragon, isHigh, tick + (if (c < 2) 60 else 100))
                     DragonParticles(drag).post()
                     println("DEBUGPRINT PARTICLES $tick")
 
@@ -77,13 +77,13 @@ object M7Events {
                         abs(it.path[0].y - packet.y) +
                         abs(it.path[0].z - packet.z)
                     }
+                    println("DEBUGPRINT SPAWN ${EventBus.serverTicks()}")
 
                     Scheduler.scheduleAfterPacket {
                         val ent = Devonian.minecraft.level?.getEntity(packet.id) as? EnderDragon? ?: return@scheduleAfterPacket
                         val drag = queuedDrags.find { it.type == type } ?: return@scheduleAfterPacket
 
                         DragonSpawned(drag, ent).post()
-                        println("DEBUGPRINT SPAWN ${EventBus.serverTicks()}")
                         aliveDrags.add(drag to ent)
                     }
                 }
