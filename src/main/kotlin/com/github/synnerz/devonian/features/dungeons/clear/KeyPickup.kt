@@ -186,6 +186,14 @@ object KeyPickup : Feature(
             if (event.spawnPos.y.let { it - truncate(it) } == 0.53125) return@on
 
             idQ.add(Triple(id == bloodKeyId, 10, event.entityId))
+
+            val x = event.spawnPos.x.toInt()
+            val z = event.spawnPos.z.toInt()
+            val comp = WorldPosition(x, z).toComponent()
+            val idx = comp.getRoomIdx()
+            if (idx !in 0..35) return@on
+
+            currentKeyRoom = DungeonScanner.rooms[idx]
         }
 
         on<TickEvent> {
