@@ -24,7 +24,6 @@ object MelodyKeys : Feature(
         GLFW.GLFW_KEY_1,
         GLFW.GLFW_KEY_2,
         GLFW.GLFW_KEY_3,
-        GLFW.GLFW_KEY_4,
     )
 
     override fun initialize() {
