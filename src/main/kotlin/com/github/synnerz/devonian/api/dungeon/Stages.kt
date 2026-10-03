@@ -199,7 +199,7 @@ object Stages {
         Goldor = SplitStage("The Core entrance is opening!").withName("&8Goldor")
         Necron = SplitStage("[BOSS] Necron: You went further than any human before, congratulations.")
             .withName("&4Necron")
-        WitherKing = object : SplitStage("[BOSS] Necron: All this, for nothing...") {
+        WitherKing = object : SplitStage("[BOSS] Necron: ARGH!") {
             override fun getThisSplit(format: TimeUnit.Format, force: TimeUnit?): MutableList<String> {
                 if (Dungeons.floor == FloorType.F7) return mutableListOf()
                 return super.getThisSplit(format, force)
