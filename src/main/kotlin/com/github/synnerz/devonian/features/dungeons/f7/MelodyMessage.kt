@@ -21,7 +21,8 @@ object MelodyMessage : Feature(
         "MelodyMessage Announce"
     )
     private val melodyRegex = "^Click the button on time!$".toRegex()
-    private val melodySlots = listOf(25, 34, 43) // first slot is 16
+    private val melodySlots = listOf(25, 34) // first slot is 16
+    private val melodyProgress = arrayOf("33", "67")
     private var inMelody = false
 
     override fun initialize() {
@@ -49,7 +50,7 @@ object MelodyMessage : Feature(
             if (event.itemStack.item != Items.LIME_TERRACOTTA) return@on
 
             Scheduler.scheduleTask {
-                ChatUtils.command("pc melody ${(idx + 1) * 25}%")
+                ChatUtils.command("pc melody ${melodyProgress[idx]}%")
             }
         }
     }
