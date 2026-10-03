@@ -19,11 +19,11 @@ object SimonSaysProgressDisplay : TextHudFeature(
         return super.createRequirements() + listOf(Stages.S1.isActiveState)
     }
 
-    override fun getEditText(): List<String> = listOf("SS at 4/5")
+    override fun getEditText(): List<String> = listOf("SS at 3/4")
 
     override fun initialize() {
         on<RenderOverlayEvent> { event ->
-            setLine("SS at ${SimonSaysSolver.solutionTotal}/5")
+            setLine("SS at ${SimonSaysSolver.solutionTotal}/4")
             draw(event.ctx)
         }
     }
