@@ -311,6 +311,67 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
         ignoreFirst = false
     }
 
+    private fun handleSetStuff(ign: String, type: String, index: Int) {
+        if (index == lastIndex) {
+            if (ign == lastIgn) return
+            if (type == "device") {
+                when (section) {
+                    1 -> {
+                        if (!Stages.S4.deviceDone) Stages.S4.deviceDone = true
+                        else if (!Stages.S2.deviceDone) Stages.S2.deviceDone = true
+                        // else Stages.S3.deviceDone = true
+                    }
+
+                    2 -> {
+                        if (!Stages.S4.deviceDone) Stages.S4.deviceDone = true
+                        // else Stages.S3.deviceDone = true
+                    }
+
+                    // 3 -> Stages.S4.deviceDone = true
+                }
+                return
+            } else if (lastType == "device") deviceDone = false
+        } else if (index == 2 && lastIndex == 0) {
+            if (!deviceDone) {
+                when (section) {
+                    2 -> {
+                        if (Stages.S4.deviceDone) Stages.S4.deviceDone = false
+                        // else Stages.S3.deviceDone = false
+                    }
+                }
+            }
+            deviceDone = true
+        } else if (index == 1) {
+            if (type == "device") {
+                if (section == 1) {
+                    if (!Stages.S4.deviceDone) Stages.S4.deviceDone = true
+                    else if (!Stages.S2.deviceDone) Stages.S2.deviceDone = true
+
+                    return
+                }
+            } else {
+                if (deviceDone) {
+                    when (section) {
+                        2 -> {
+                            if (!Stages.S4.deviceDone) Stages.S4.deviceDone = true
+                            // else if (!Stages.S3.deviceDone) Stages.S3.deviceDone = true
+                        }
+                    }
+                }
+                deviceDone = false
+            }
+        }
+
+        when (type) {
+            "terminal" -> termsDone++
+            "lever" -> leversDone++
+            "device" -> {
+                if (deviceDone && section == 2) Stages.S4.deviceDone = true
+                deviceDone = true
+            }
+        }
+    }
+
     override fun onChat(msg: String) {
         if (!isActive()) return
         if (ignoreFirst) {
@@ -323,39 +384,8 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
             val ign = match.groupValues.getOrNull(1) ?: return
             val type = match.groupValues.getOrNull(2) ?: return
             val index = match.groupValues.getOrNull(3)?.toIntOrNull() ?: return
-            if (index == lastIndex) {
-                if (ign == lastIgn) return
-                if (type == "device") {
-                    when (section) {
-                        1 -> {
-                            if (!Stages.S4.deviceDone) Stages.S4.deviceDone = true
-                            else if (!Stages.S2.deviceDone) Stages.S2.deviceDone = true
-                            else Stages.S3.deviceDone = true
-                        }
 
-                        2 -> {
-                            if (!Stages.S3.deviceDone) Stages.S3.deviceDone = true
-                            else Stages.S4.deviceDone = true
-                        }
-
-                        3 -> Stages.S4.deviceDone = true
-                    }
-                    return
-                } else if (lastType == "device") deviceDone = false
-            } else if (index == 2 && lastIndex == 0) {
-                deviceDone = true
-            } else if (index == 1 && type != "device") {
-                deviceDone = false
-            }
-
-            when (type) {
-                "terminal" -> termsDone++
-                "lever" -> leversDone++
-                "device" -> {
-                    if (deviceDone && section == 2) Stages.S4.deviceDone = true
-                    deviceDone = true
-                }
-            }
+            handleSetStuff(ign, type, index)
 
             lastIgn = ign
             lastIndex = index
