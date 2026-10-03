@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
@@ -222,6 +223,7 @@ object BlazeSolver : Feature(
                 if (!hasSent) {
                     hasSent = true
                     if (SETTING_SEND_MSG.get()) ChatUtils.command("pc Blaze done")
+                    Dungeons.blazeDoneC.value = true
                 }
                 return@on
             }
