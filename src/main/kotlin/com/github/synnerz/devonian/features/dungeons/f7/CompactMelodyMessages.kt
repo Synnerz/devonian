@@ -25,6 +25,8 @@ object CompactMelodyMessages : Feature(
         listOf("melody"),
         listOf("Melody Terminal start"),
         listOf("Melody Terminal Start"),
+        listOf("melody terminal"),
+
         listOf(
             "Melody terminal is at 25%",
             "Melody terminal is at 50%",
@@ -40,9 +42,43 @@ object CompactMelodyMessages : Feature(
             "Melody 50%",
             "Melody 75%",
         ),
+        listOf(
+            "melody 25%",
+            "melody 50%",
+            "melody 75%",
+        ),
+
+        listOf(
+            "Melody terminal is at 33%",
+            "Melody terminal is at 67%",
+        ),
+        listOf(
+            "Melody terminal is at 33%",
+            "Melody terminal is at 66%",
+        ),
+        listOf(
+            "Melody ♪ Terminal [1/3]!",
+            "Melody ♪ Terminal [2/3]!",
+        ),
+        listOf(
+            "Melody 33%",
+            "Melody 67%",
+        ),
+        listOf(
+            "melody 33%",
+            "melody 67%",
+        ),
+        listOf(
+            "Melody 33%",
+            "Melody 66%",
+        ),
+        listOf(
+            "melody 33%",
+            "melody 66%",
+        ),
     )
     private val melodyFracRegex = "\\b([0-3])/[34]\\b".toRegex()
-    private val melodyPercRegex = "\\b([27]5|[50]?0)%(?=[\\s\\W]|$)".toRegex()
+    private val melodyPercRegex = "\\b((?:[27]5|[50]?0)|(?:33|6[67]))%(?=[\\s\\W]|$)".toRegex()
 
     private fun isMelodyMessage(msg: String): Boolean {
         return melodyFracRegex.containsMatchIn(msg) || melodyPercRegex.containsMatchIn(msg)

@@ -604,7 +604,7 @@ interface ITerminalSolver {
 
 enum class TerminalData(val title: Regex) : ITerminalSolver {
     NUMBERS("Click in order!".toRegex()) {
-        override fun getSlotsBox(): Cell = Cell(1, 1, 7, 2)
+        override fun getSlotsBox(): Cell = Cell(2, 1, 5, 2)
 
         private val slots = IntArray(36) { 0 }
         private var minCount = 14
