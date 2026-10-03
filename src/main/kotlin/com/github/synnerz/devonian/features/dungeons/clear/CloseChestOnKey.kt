@@ -40,8 +40,7 @@ object CloseChestOnKey : Feature(
                 if (!it.matches(event.event)) return@forEach
 
                 event.cancel()
-                minecraft.connection?.send(ServerboundContainerClosePacket(containerId))
-                minecraft.gui.setScreen(null)
+                minecraft.gui.screen()!!.onClose()
                 return@on
             }
         }
