@@ -28,7 +28,7 @@ object PurplePadTimer : TextHudFeature(
     override fun initialize() {
         on<ChatEvent> { event ->
             if (triggered || event.matches(stormRegex) == null) return@on
-            startedAt = 68
+            startedAt = 56
             triggered = true
         }
 
