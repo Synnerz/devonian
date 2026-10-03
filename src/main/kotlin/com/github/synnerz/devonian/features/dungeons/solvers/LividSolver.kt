@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
@@ -63,10 +64,15 @@ object LividSolver : Feature(
     var started = false
     var currentLivid: String? = null
     var lividEnt: Entity? = null
+    var hasDelay = false
 
     override fun initialize() {
         on<ChatEvent> { event ->
-            if (event.message == "[BOSS] Livid: I respect you for making it to here, but I'll be your undoing.") started = true
+            if (event.message != "[BOSS] Livid: I respect you for making it to here, but I'll be your undoing.") return@on
+            started = true
+            Scheduler.scheduleServerTask(40) {
+                hasDelay = true
+            }
         }
 
         on<PacketReceivedEvent> { event ->
@@ -80,7 +86,7 @@ object LividSolver : Feature(
         }
 
         on<TickEvent> {
-            if (!started) return@on
+            if (!started || !hasDelay) return@on
             val name = if (currentLivid == null) return@on else "$currentLivid Livid"
             val world = minecraft.level ?: return@on
             lividEnt = world.players().find { it.name.string.contains(name) }
@@ -96,7 +102,7 @@ object LividSolver : Feature(
         }
 
         on<RenderWorldEvent> {
-            if (!started) return@on
+            if (!started || !hasDelay) return@on
             val entity = lividEnt ?: return@on
 
             val pos = entity.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
@@ -116,6 +122,7 @@ object LividSolver : Feature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
+        hasDelay = false
         started = false
         currentLivid = "Hockey"
         lividEnt = null
