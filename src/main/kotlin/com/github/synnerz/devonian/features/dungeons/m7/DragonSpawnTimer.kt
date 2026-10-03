@@ -50,17 +50,20 @@ object DragonSpawnTimer : TextHudFeature(
         }
 
         on<ClientThreadServerTickEvent> {
+            val t = EventBus.serverTicks()
             when (spawned.size) {
                 1 -> {
                     val ticks = spawned.values.firstOrNull() ?: return@on
-                    setLine("%.2fs".format(ticks * 0.05))
-                    if (ticks <= 0) spawned.clear()
+                    val ttl = ticks - t
+                    setLine("%.2fs".format(ttl * 0.05))
+                    if (ttl <= 0) spawned.clear()
                 }
                 else -> {
                     val lines = mutableListOf<String>()
                     spawned.entries.removeIf { (drag, ticks) ->
-                        lines.add("${drag.textColor}${drag.displayName}: %.2fs".format(ticks * 0.05))
-                        ticks <= 0
+                        val ttl = ticks - t
+                        lines.add("${drag.textColor}${drag.displayName}: %.2fs".format(ttl * 0.05))
+                        ttl <= 0
                     }
                     setLines(lines)
                 }
