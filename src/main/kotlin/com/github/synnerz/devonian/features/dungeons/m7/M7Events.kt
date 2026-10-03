@@ -59,7 +59,7 @@ object M7Events {
                     if (c == 0 && Dungeons.selfPlayer.role == DungeonClass.Healer) return@on
                     if (c == 1 && Dungeons.selfPlayer.role == DungeonClass.Tank) return@on
 
-                    val drag = M7DragonSpawn(dragon, isHigh, tick + (if (c < 2) 60 else 100))
+                    val drag = M7DragonSpawn(dragon, isHigh, tick + 100)
                     DragonParticles(drag).post()
                     println("DEBUGPRINT PARTICLES $tick")
 
