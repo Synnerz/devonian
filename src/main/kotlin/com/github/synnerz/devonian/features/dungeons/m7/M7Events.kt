@@ -61,7 +61,6 @@ object M7Events {
 
                     val drag = M7DragonSpawn(dragon, isHigh, tick + 100)
                     DragonParticles(drag).post()
-                    println("DEBUGPRINT PARTICLES $tick")
 
                     Scheduler.scheduleTask {
                         queuedDrags.add(drag)
@@ -77,7 +76,6 @@ object M7Events {
                         abs(it.path[0].y - packet.y) +
                         abs(it.path[0].z - packet.z)
                     }
-                    println("DEBUGPRINT SPAWN ${EventBus.serverTicks()}")
 
                     Scheduler.scheduleAfterPacket {
                         val ent = Devonian.minecraft.level?.getEntity(packet.id) as? EnderDragon? ?: return@scheduleAfterPacket
