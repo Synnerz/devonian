@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
@@ -152,9 +153,10 @@ object TicTacToeSolver : Feature(
                 list[emptySlot] = nstatus
 
                 val hasAIWon = isWinner(list, "X")
-                if (!hasAIWon && SETTING_SEND_MSG.get() && !hasSent) {
+                if (!hasAIWon && !hasSent) {
                     hasSent = true
-                    ChatUtils.command("pc Tic Tac Toe done")
+                    if (SETTING_SEND_MSG.get()) ChatUtils.command("pc Tic Tac Toe done")
+                    Dungeons.tttDoneC.value = true
                 }
             }
             lastStatus = null
