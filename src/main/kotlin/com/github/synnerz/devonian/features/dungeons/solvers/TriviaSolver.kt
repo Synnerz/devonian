@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.ModifyChatEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
@@ -123,21 +124,7 @@ object TriviaSolver : Feature(
             inQuiz = false
         }
 
-        on<ModifyChatEvent> { event ->
-            event.matches("^ *([ⓐⓑⓒ]) (.*)$".toRegex())?.let {
-                if (solution == null) return@on
-                val ( type, msg ) = it
-
-                if (!solution!!.contains(msg)) {
-                    event.overrideValue = Component.literal("    §c$type $msg")
-                } else {
-                    currentAnswer = type
-                    event.overrideValue = Component.literal("    §a$type $msg")
-                }
-
-                return@on
-            }
-
+        on<ChatEvent> { event ->
             event.matches("^\\[STATUE] Oruo the Omniscient: I am Oruo the Omniscient\\. I have lived many lives\\. I have learned all there is to know\\.$".toRegex())?.let {
                 enteredAt = EventBus.serverTicks()
                 return@on
@@ -178,6 +165,18 @@ object TriviaSolver : Feature(
             val solutionData = solutions[question] ?: return@on
 
             solution = solutionData
+        }
+
+        on<ModifyChatEvent> { event ->
+            if (solution == null) return@on
+            val ( type, msg ) = event.matches("^ *([ⓐⓑⓒ]) (.*)$".toRegex()) ?: return@on
+
+            if (!solution!!.contains(msg)) {
+                event.overrideValue = Component.literal("    §c$type $msg")
+            } else {
+                currentAnswer = type
+                event.overrideValue = Component.literal("    §a$type $msg")
+            }
         }
 
         on<RenderWorldEvent> {
