@@ -21,7 +21,7 @@ object WatcherKillAlert : Feature(
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(
-            Stages.WatcherDialog.hasFinishedState,
+            Stages.WatcherDialog.hasStartedState,
             Dungeons.selfClass
                 .zip(SETTING_ONLY_MAGE.state) { c, s -> !s || c == DungeonClass.Mage }
                 .zip(Dungeons.currentRoom) { b, r -> b || r?.type == RoomTypes.BLOOD }
@@ -34,12 +34,6 @@ object WatcherKillAlert : Feature(
         "Plays a sound whenever the alert is shown.",
         "WatcherKillAlert Sound"
     )
-    private val SETTING_ESTIMATE_ALERT = addSwitch(
-        "estimateAlert",
-        true,
-        "Shows the predicted time to kill alert.",
-        "WatcherKillAlert Estimate"
-    )
     private val SETTING_ONLY_MAGE = addSwitch(
         "onlyMage",
         false,
@@ -51,32 +45,11 @@ object WatcherKillAlert : Feature(
     override fun initialize() {
         on<ClientThreadServerTickEvent> {
             val stage = Stages.WatcherDialog
-            if (!stage.hasFinished()) return@on
-
-            if (!assigned) {
-                val ticks = stage.getTime().tick
-                val prediction = when {
-                    ticks < 390 -> 22
-                    ticks < 441 -> 23
-                    ticks < 460 -> 25
-                    ticks < 490 -> 26
-                    ticks < 510 -> 27
-                    ticks < 550 -> 29
-                    ticks < 570 -> 31
-                    ticks < 610 -> 32
-                    ticks < 630 -> 34
-                    ticks < 670 -> 35
-                    ticks < 690 -> 37
-                    ticks < 730 -> 38
-                    else -> ticks * 20 + 3
-                } / 0.05
-
+            if (stage.hasStarted() && !assigned) {
                 assigned = true
-                if (SETTING_ESTIMATE_ALERT.get())
-                    Alert.show("&c[Watcher] &aEstimate ${"%.2fs".format(prediction * 0.05)}", 1000, false)
 
-                Scheduler.scheduleServerTask((prediction - ticks).toInt()) {
-                    if (!isEnabled() || !stage.hasFinished()) return@scheduleServerTask
+                Scheduler.scheduleServerTask((20 / 0.05).toInt()) {
+                    if (!isEnabled() || !stage.hasStarted()) return@scheduleServerTask
                     Alert.show("&c[Watcher] Kill Now", 1500, SETTING_PLAY_SOUND.get())
                 }
             }
