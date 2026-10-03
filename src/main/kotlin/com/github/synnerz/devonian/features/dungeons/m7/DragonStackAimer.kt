@@ -64,9 +64,7 @@ object DragonStackAimer : TextHudFeature(
         "Aim Tracer Color",
     )
 
-    private var spawned: M7Dragon? = null
-    private var isHigh = false
-    private var ticks = 0
+    private var spawned: M7DragonSpawn? = null
     private var done = false
     private var prevBest = 0
     private var data: Projectile.ProjectileData? = null
@@ -77,16 +75,21 @@ object DragonStackAimer : TextHudFeature(
             if (event.message == "[BOSS] Wither King: Incredible. You did what I couldn't do myself.") done = true
         }
 
-        on<M7Events.DragonSpawned2> { event ->
+        on<M7Events.ActiveDragonChanged> { event ->
             if (done) return@on
             spawned = event.dragon
-            isHigh = event.isHigh
-            ticks = EventBus.serverTicks() + 100
+        }
+
+        on<M7Events.DragonDeath> { event ->
+            val spawn = spawned ?: return@on
+            if (event.dragon == spawn.type) spawned = null
         }
 
         on<ServerTickEvent> {
-            val drag = spawned ?: return@on
-            var ttl = (ticks - EventBus.serverTicks()).toDouble()
+            val spawn = spawned ?: return@on
+            val drag = spawn.type
+
+            var ttl = (spawn.spawnTick - EventBus.serverTicks()).toDouble()
             if (ttl < -30.0) {
                 data = null
                 return@on
@@ -98,7 +101,7 @@ object DragonStackAimer : TextHudFeature(
                 drag.path,
                 prevBest,
                 0.001, -0.05, 3.0, 0.99, false,
-                0.0, if (isHigh) 8.0 else 0.0, 0.0,
+                0.0, if (spawn.isHigh) 8.0 else 0.0, 0.0,
             ) ?: return@on
 
             prevBest = t
@@ -107,7 +110,8 @@ object DragonStackAimer : TextHudFeature(
 
         on<ClientThreadServerTickEvent> {
             visible = false
-            val remaining = ticks - EventBus.serverTicks()
+            val spawn = spawned ?: return@on
+            val remaining = spawn.spawnTick - EventBus.serverTicks()
             if (remaining <= 0) return@on
 
             val d = data ?: return@on
@@ -130,7 +134,7 @@ object DragonStackAimer : TextHudFeature(
         }.setEnabled(SETTING_HUD.state)
 
         on<RenderWorldEvent> {
-            if (ticks <= 0) return@on
+            if (spawned == null) return@on
 
             val d = data ?: return@on
 
@@ -161,8 +165,6 @@ object DragonStackAimer : TextHudFeature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         spawned = null
-        isHigh = false
-        ticks = 0
         done = false
         prevBest = 0
         data = null
