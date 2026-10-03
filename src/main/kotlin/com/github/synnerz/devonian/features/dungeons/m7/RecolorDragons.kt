@@ -1,14 +1,10 @@
 package com.github.synnerz.devonian.features.dungeons.m7
 
 import com.github.synnerz.devonian.api.dungeon.Stages
-import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.BasicState
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
-import net.minecraft.world.entity.EntityTypes
-import java.util.concurrent.ConcurrentHashMap
 
 object RecolorDragons : Feature(
     "recolorDragons",
@@ -24,19 +20,15 @@ object RecolorDragons : Feature(
 
     val COLORS = M7Dragon.entries.map { (it.color.rgb and (0x00FFFFFF)) or (0xFF000000.toInt()) }.toIntArray()
 
-    private var dragons = ConcurrentHashMap<Int, Int>()
+    private var dragons = mutableMapOf<Int, Int>()
 
     override fun initialize() {
-        on<PacketReceivedEvent> { event ->
-            val packet = event.packet as? ClientboundAddEntityPacket ?: return@on
-            if (packet.type != EntityTypes.ENDER_DRAGON) return@on
+        on<M7Events.DragonSpawned> { event ->
+            dragons[event.ent.id] = event.dragon.type.ordinal
+        }
 
-            val type = M7Dragon.entries.minBy {
-                (it.path[0].x - packet.x) * (it.path[0].x - packet.x) +
-                (it.path[0].y - packet.y) * (it.path[0].y - packet.y) +
-                (it.path[0].z - packet.z) * (it.path[0].z - packet.z)
-            }
-            dragons[packet.id] = type.ordinal
+        on<M7Events.DragonDeath> { event ->
+            dragons.remove(event.ent.id)
         }
     }
 

@@ -259,3 +259,5 @@ enum class M7Dragon(
         ),
     );
 }
+
+data class M7DragonSpawn(val type: M7Dragon, val isHigh: Boolean, val spawnTick: Int)
