@@ -88,7 +88,8 @@ object Dungeons {
     val tttDoneS = BasicState(false)
     val mimicKilled = BasicState(false)
     val princeKilled = BasicState(false)
-    val batScoreKilled = BasicState(false)
+//    val batScoreKilled = BasicState(false)
+    val batScoreKilled = BasicState(0)
     val isPaul = BasicState(false)
     val totalRoomSecrets = BasicState(0)
 
@@ -169,7 +170,8 @@ object Dungeons {
     }.zip(princeKilled) { score, prince ->
         score + (if (prince) 1 else 0)
     }.zip(batScoreKilled) { score, batKill ->
-        score + (if (batKill) 1 else 0)
+//        score + (if (batKill) 1 else 0)
+        score + batKill.coerceIn(0, 5)
     }.zip(isPaul) { score, paul ->
         score + (if (paul) 10 else 0).toDouble()
     }
@@ -350,6 +352,8 @@ object Dungeons {
         }
 
         EventBus.on<ChatChannelEvent.PartyChatEvent> { event ->
+            if (event.name == selfPlayer.name) return@on
+
             when (event.userMessage.lowercase()) {
                 "mimic killed",
                 "mimic killed!",
@@ -371,7 +375,8 @@ object Dungeons {
                 "bat killed",
                 "bat dead",
                 "bat dead!"
-                    -> batScoreKilled.value = true
+//                    -> batScoreKilled.value = true
+                    -> batScoreKilled.value++
 
                 "blaze done"
                     -> blazeDoneC.value = true
@@ -399,7 +404,8 @@ object Dungeons {
             }
 
             if (event.message == "A Bat has been slain. +1 Bonus Score") {
-                batScoreKilled.value = true
+//                batScoreKilled.value = true
+                batScoreKilled.value++
                 DungeonEvent.BatScoreKilled().post()
                 return@on
             }
@@ -574,7 +580,8 @@ object Dungeons {
         tttDoneS.value = false
         mimicKilled.value = false
         princeKilled.value = false
-        batScoreKilled.value = false
+//        batScoreKilled.value = false
+        batScoreKilled.value = 0
         inBoss.value = false
         bloodCleared.value = false
         started.value = false
