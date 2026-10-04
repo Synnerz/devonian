@@ -382,7 +382,9 @@ object Dungeons {
                     batScorePlayers.add(event.name)
                 }
 
-                "blaze done"
+                "blaze done",
+                "blaze puzzle solved!",
+                "blaze puzzle solved"
                     -> blazeDoneC.value = true
 
                 "tic tac toe done",
