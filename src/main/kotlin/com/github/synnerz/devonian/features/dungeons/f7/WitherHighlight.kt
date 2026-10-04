@@ -40,6 +40,13 @@ object WitherHighlight : Feature(
         "",
         "Wither Box Fill Color",
     )
+    private val SETTING_WIRE_PHASE = addSwitch(
+        "wirePhase",
+        false,
+        "see through walls or not, may be considered a cheat",
+        "Wire Phase",
+        cheeto = true,
+    )
     private val SETTING_LINE_WIDTH = addSlider(
         "lineWidth",
         3.0,
@@ -67,7 +74,7 @@ object WitherHighlight : Feature(
                     x, y, z,
                     1.2, 3.6,
                     SETTING_BOX_WIRE_COLOR.getColor(),
-                    phase = true,
+                    phase = SETTING_WIRE_PHASE.get(),
                     lineWidth = SETTING_LINE_WIDTH.get(),
                     centered = true,
                 )
