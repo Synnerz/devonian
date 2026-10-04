@@ -23,13 +23,11 @@ import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.client.gui.components.ChatComponent
-import net.minecraft.world.level.block.Block
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import java.util.*
-import kotlin.math.abs
 
 object CustomDungeonWaypoints : Feature(
     "customDungeonWaypoints",
@@ -42,7 +40,7 @@ object CustomDungeonWaypoints : Feature(
     private val SETTING_REMOVE_ON_COLLECT = addSwitch(
         "removeOnCollect",
         true,
-        "Removes the secret waypoints that you've already collected/clicked/killed/etherwarped onto.",
+        "Removes the waypoints that you've already collected/clicked/killed/etherwarped onto.",
         "CDW Remove Collected",
     )
     private val SETTING_LINE_WIDTH = addSlider(
@@ -105,7 +103,7 @@ object CustomDungeonWaypoints : Feature(
     private var currentProfile = "default"
     private var currentRoom: Int? = null
     private var currentParent: ParentWaypoint? = null
-    private var currentWaypointType = WaypointType.CHEST
+    private var currentWaypointType = WaypointType.BLOCK
     private var textPos: Triple<Int, Int, Int>? = null
 
     data class WaypointProfile(val name: String, val parents: MutableList<ParentWaypoint>) {
@@ -161,17 +159,10 @@ object CustomDungeonWaypoints : Feature(
     }
 
     enum class WaypointType(val shape: VoxelShape = Shapes.block()) {
-        CHEST(Block.column(14.0, 0.0, 14.0)),
-        ITEM(Block.column(8.0, 0.0, 8.0)),
-        BAT(Block.column(8.0, 0.0, 8.0)),
-        ESSENCE(Block.column(8.0, 0.0, 8.0)),
-        REDSTONE(Block.column(8.0, 0.0, 8.0)),
+        BLOCK,
         ETHERWARP,
-        ETHERWARPPEARL,
-        DOUBLEPEARL,
         TEXT,
         MINE,
-        LEVER(Block.column(7.2, 0.0, 7.2)),
         SUPERBOOM;
 
         companion object {
@@ -263,18 +254,11 @@ object CustomDungeonWaypoints : Feature(
                 if (SETTING_REMOVE_ON_COLLECT.get() && it.clicked) return@forEach
 
                 val pos = it.pos() ?: return@forEach
-                val color = when (it.type) {
-                    WaypointType.CHEST -> Color(0, 255, 0, 255)
-                    WaypointType.ITEM -> Color(0, 0, 255, 255)
-                    WaypointType.BAT -> Color(0, 255, 150, 255)
-                    WaypointType.ESSENCE -> Color(255, 0, 255, 255)
-                    WaypointType.REDSTONE -> Color(255, 0, 0, 255)
+                val color = when (it.type ?: return@forEach) {
+                    WaypointType.BLOCK -> Color(0, 255, 0, 255)
                     WaypointType.ETHERWARP -> Color(0, 255, 255, 255)
-                    WaypointType.ETHERWARPPEARL -> Color(172, 0, 249)
-                    WaypointType.DOUBLEPEARL -> Color(249, 117, 0)
                     WaypointType.TEXT -> Color(0, 0, 0, 0)
                     WaypointType.MINE -> Color(230, 250, 50, 255)
-                    WaypointType.LEVER -> Color(0, 150, 255, 255)
                     WaypointType.SUPERBOOM -> Color(255, 0, 0, 255)
                 }
 
@@ -331,11 +315,7 @@ object CustomDungeonWaypoints : Feature(
 
             val pos = ComponentWaypointPosition(
                 comps.first,
-                when (currentWaypointType) {
-                    WaypointType.ITEM -> bp.y + 1
-                    WaypointType.BAT -> bp.y - 1
-                    else -> bp.y
-                },
+                bp.y,
                 comps.second,
                 currentWaypointType,
             )
@@ -385,10 +365,6 @@ object CustomDungeonWaypoints : Feature(
             }
             profile.onRoomEnter(room)
         }
-
-        on<DungeonEvent.SecretClicked> { event -> onSecret(event.x, event.y, event.z, 0) }
-        on<DungeonEvent.SecretBat> { event -> onSecret(event.x, event.y, event.z, 1) }
-        on<DungeonEvent.SecretPickup> { event -> onSecret(event.x, event.y, event.z, 2) }
 
         on<DungeonEvent.RoomUpdateEvent> { event ->
             if (
@@ -597,31 +573,31 @@ object CustomDungeonWaypoints : Feature(
         return 1
     }
 
-    private fun onSecret(x: Double, y: Double, z: Double, type: Int) {
-        // TODO: ETHER, REDSTONE, LOCKED_CHEST, BLOCK_MINE
-        if (!SETTING_REMOVE_ON_COLLECT.get()) return
-        if (editMode) return
-        val room = DungeonScanner.currentRoom ?: return
-        val roomId = room.roomID ?: return
-        if (currentParent == null || currentParent!!.id != roomId) return
-
-        currentParent!!.waypoints.forEach {
-            if (
-                type == 0 && (it.type != WaypointType.CHEST && it.type != WaypointType.ESSENCE) ||
-                type == 1 && it.type != WaypointType.BAT ||
-                type == 2 && it.type != WaypointType.ITEM
-            ) return@forEach
-            val pos = it.pos() ?: return@forEach
-            if (it.clicked) return@forEach
-            val dist = abs(pos.x - x.toInt()) + abs(pos.z - z.toInt())
-            if (type == 1 && dist < 10 || type == 2 && dist < 8) {
-                it.clicked = true
-                return@forEach
-            }
-            if (pos.x != x.toInt() || pos.y != y.toInt() || pos.z != z.toInt()) return@forEach
-            it.clicked = true
-        }
-    }
+//    private fun onSecret(x: Double, y: Double, z: Double, type: Int) {
+//        // TODO: ETHER, REDSTONE, LOCKED_CHEST, BLOCK_MINE
+//        if (!SETTING_REMOVE_ON_COLLECT.get()) return
+//        if (editMode) return
+//        val room = DungeonScanner.currentRoom ?: return
+//        val roomId = room.roomID ?: return
+//        if (currentParent == null || currentParent!!.id != roomId) return
+//
+//        currentParent!!.waypoints.forEach {
+//            if (
+//                type == 0 && (it.type != WaypointType.CHEST && it.type != WaypointType.ESSENCE) ||
+//                type == 1 && it.type != WaypointType.BAT ||
+//                type == 2 && it.type != WaypointType.ITEM
+//            ) return@forEach
+//            val pos = it.pos() ?: return@forEach
+//            if (it.clicked) return@forEach
+//            val dist = abs(pos.x - x.toInt()) + abs(pos.z - z.toInt())
+//            if (type == 1 && dist < 10 || type == 2 && dist < 8) {
+//                it.clicked = true
+//                return@forEach
+//            }
+//            if (pos.x != x.toInt() || pos.y != y.toInt() || pos.z != z.toInt()) return@forEach
+//            it.clicked = true
+//        }
+//    }
 
     private fun setCurrentParent() {
         if (currentParent == null) return
