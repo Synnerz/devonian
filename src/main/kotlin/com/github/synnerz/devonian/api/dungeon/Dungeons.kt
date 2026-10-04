@@ -90,6 +90,7 @@ object Dungeons {
     val princeKilled = BasicState(false)
 //    val batScoreKilled = BasicState(false)
     val batScoreKilled = BasicState(0)
+    val batScorePlayers = mutableListOf<String>() // the bat score stuff is temp until hypixel fixes shard
     val isPaul = BasicState(false)
     val totalRoomSecrets = BasicState(0)
 
@@ -352,8 +353,6 @@ object Dungeons {
         }
 
         EventBus.on<ChatChannelEvent.PartyChatEvent> { event ->
-            if (event.name == selfPlayer.name) return@on
-
             when (event.userMessage.lowercase()) {
                 "mimic killed",
                 "mimic killed!",
@@ -376,7 +375,11 @@ object Dungeons {
                 "bat dead",
                 "bat dead!"
 //                    -> batScoreKilled.value = true
-                    -> batScoreKilled.value++
+                    -> {
+                    if (batScorePlayers.contains(event.name)) return@on
+                    batScoreKilled.value++
+                    batScorePlayers.add(event.name)
+                }
 
                 "blaze done"
                     -> blazeDoneC.value = true
@@ -406,6 +409,7 @@ object Dungeons {
             if (event.message == "A Bat has been slain. +1 Bonus Score") {
 //                batScoreKilled.value = true
                 batScoreKilled.value++
+                batScorePlayers.add(selfPlayer.name)
                 DungeonEvent.BatScoreKilled().post()
                 return@on
             }
@@ -582,6 +586,7 @@ object Dungeons {
         princeKilled.value = false
 //        batScoreKilled.value = false
         batScoreKilled.value = 0
+        batScorePlayers.clear()
         inBoss.value = false
         bloodCleared.value = false
         started.value = false
