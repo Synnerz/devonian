@@ -85,6 +85,7 @@ object ScoreDisplay : TextHudFeature(
         score: Int,
         mimic: Boolean,
         prince: Boolean,
+        bats: Int,
         crypts: Int,
         secrets: Int,
         secretsRequired: Int,
@@ -103,12 +104,13 @@ object ScoreDisplay : TextHudFeature(
         }
         val m = if (mimic) "&a&l✔" else "&c&l✘"
         val p = if (prince) "&a&l✔" else "&c&l✘"
+        val b = if (bats > 0) "&a+${bats.coerceAtMost(5)}" else "&c0"
         val unfound = if (SETTING_SHOW_UNFOUND.get())
-            "&7Unfound: &a${(totalSecrets - totalRoomSecrets).coerceAtLeast(0)} "
+            "&7UNF: &a${(totalSecrets - totalRoomSecrets).coerceAtLeast(0)} "
             else ""
         if (SETTING_ILLEGALMAP_FORMAT.get()) return listOf(
             "&7Secrets: &b$secrets&7-&e${remainingSecrets}&7-&c$totalSecrets &8| &7Score: $tierColor$score",
-            "$unfound&7C: ${if (crypts >= 5) "&a" else "&c"}$crypts &8|${if (floor.floorNum >= 6) " &7M: $m &8|" else ""} &7P: $p"
+            "$unfound&7C: ${if (crypts >= 5) "&a" else "&c"}$crypts &8| &7P: $p &8| &7B: $b${if (floor.floorNum >= 6) " &7M: $m" else ""}"
         )
         val tier = when {
             score < 100 -> "D"
@@ -140,7 +142,7 @@ object ScoreDisplay : TextHudFeature(
 
     override fun getEditText(): List<String> = getLines(
         301,
-        false, true, 4,
+        false, true, 0, 4,
         54, 61, 61,
         0, 0,
         FloorType.M7
@@ -153,6 +155,7 @@ object ScoreDisplay : TextHudFeature(
                     Dungeons.score.value,
                     Dungeons.mimicKilled.value,
                     Dungeons.princeKilled.value,
+                    Dungeons.batScoreKilled.value,
                     Dungeons.crypts.value,
                     Dungeons.secretsFound.value,
                     Dungeons.totalSecretsRequired.value,
