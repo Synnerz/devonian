@@ -205,7 +205,10 @@ object DungeonScanner {
 
             if (lastIdx == jdx) return@on
             lastIdx = jdx
-            if (currentRoom != null) DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
+            if (currentRoom != null) {
+                DungeonEvent.RoomEnter(currentRoom!!, jdx).post()
+                Dungeons.currentRoom.value = currentRoom
+            }
         }.setEnabled(Location.stateInArea("catacombs"))
 
         var lastRoom: DungeonRoom? = null

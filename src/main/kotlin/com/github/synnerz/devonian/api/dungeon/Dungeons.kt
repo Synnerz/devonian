@@ -61,6 +61,7 @@ object Dungeons {
     val players = linkedMapOf(selfPlayer.name to selfPlayer)
     val playerClasses = ConcurrentHashMap(mapOf(selfPlayer.name to selfPlayer.role))
     val selfClass = BasicState(selfPlayer.role)
+    val currentRoom = BasicState<DungeonRoom?>(null)
     private var needReset = true
     private var worldId = 0
 
@@ -563,6 +564,7 @@ object Dungeons {
         playerClasses.clear()
         playerClasses[selfPlayer.name] = selfPlayer.role
         selfClass.value = selfPlayer.role
+        currentRoom.value = null
         worldId++
 
         floor = FloorType.None
