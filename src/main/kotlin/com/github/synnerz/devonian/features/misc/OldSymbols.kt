@@ -11,6 +11,18 @@ object OldSymbols : Feature(
     @JvmField
     val REPLACEMENTS: IntArray
 
+    @JvmStatic
+    fun replaceChar(c: Char): Char {
+        return replaceChar(c.code).toChar()
+    }
+
+    @JvmStatic
+    fun replaceChar(c: Int): Int {
+        val offset = c - 0xE000
+        val n = REPLACEMENTS.getOrNull(offset) ?: return c
+        return if (n == 0) c else n
+    }
+
     init {
         val map = linkedMapOf(
             1 to '⚔', // attack speed

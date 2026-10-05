@@ -31,13 +31,7 @@ public class FontMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GlyphSource;getGlyph(I)Lnet/minecraft/client/gui/font/glyphs/BakedGlyph;")
     )
     private BakedGlyph devonian$oldSymbols(GlyphSource instance, int i, Operation<BakedGlyph> original) {
-        if (OldSymbols.INSTANCE.isEnabled()) {
-            int offset = i - 0xE000;
-            if (0 <= offset && offset < OldSymbols.REPLACEMENTS.length) {
-                int c = OldSymbols.REPLACEMENTS[offset];
-                if (c != 0) i = c;
-            }
-        }
+        if (OldSymbols.INSTANCE.isEnabled()) i = OldSymbols.replaceChar(i);
 
         return original.call(instance, i);
     }

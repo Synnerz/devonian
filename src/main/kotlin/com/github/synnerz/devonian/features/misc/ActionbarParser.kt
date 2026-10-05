@@ -117,10 +117,7 @@ object ActionbarParser : Feature(
                 searchTags = hideTags,
             ) {},
             "",
-        ) {
-            override fun modifyStringHud(str: String): String
-                = str.replace('\uE010', '❤')
-        },
+        ),
         Vitality(
             null,
             listOf("\uE028"),
@@ -139,10 +136,7 @@ object ActionbarParser : Feature(
                 searchTags = hideTags,
             ) {},
             "",
-        ) {
-            override fun modifyStringHud(str: String): String
-                = str.replace('\uE028', '♨')
-        },
+        ),
         Defense(
             "\uE008",
             null,
@@ -182,9 +176,6 @@ object ActionbarParser : Feature(
             override fun shouldShow(): Boolean =
                 if (SETTING_ALWAYS_SHOW.get()) ignore != updateCount
                 else super.shouldShow()
-
-            override fun modifyStringHud(str: String): String
-                = str.replace('\uE008', '❈')
         },
         Mana(
             null,
@@ -204,16 +195,9 @@ object ActionbarParser : Feature(
                 searchTags = hideTags,
             ) {},
         ) {
-            override fun modifyStringHud(str: String): String
-                = if (str.endsWith(" Mana"))
-                    str
-                        .replace('\uE003', '✎')
-                        .replace('\uE017', 'ʬ')
-                        .dropLast(" Mana".length)
-                else
-                    str
-                        .replace('\uE003', '✎')
-                        .replace('\uE017', 'ʬ')
+            override fun modifyStringHud(str: String): String =
+                if (str.endsWith(" Mana")) str.dropLast(" Mana".length)
+                else str
         },
         ManaUse(
             ")",
@@ -555,10 +539,7 @@ object ActionbarParser : Feature(
                 searchTags = hideTags,
             ) {},
             startsWith = "§7\uE067",
-        ) {
-            override fun modifyStringHud(str: String): String =
-                str.replace('\uE067', '⏣')
-        };
+        );
 
         open fun initialize() {}
 
