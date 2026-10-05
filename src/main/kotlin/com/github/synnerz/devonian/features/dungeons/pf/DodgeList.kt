@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.dungeons
+package com.github.synnerz.devonian.features.dungeons.pf
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
@@ -16,8 +16,8 @@ object DodgeList : Feature(
     "dodgeList",
     "list where you can add/remove players with a reason as to why they were added to the \"dodge\" zone." +
             " whenever a user joins through party finder it will search for a dodge reason (do /dv dodge help)",
-    Categories.DUNGEONS,
-    subcategory = "QOL",
+    Categories.PARTY_FINDER,
+    subcategory = "General",
     searchTags = setOf("shitter")
 ) {
     private val partyFinderJoinRegex = "^Party Finder > (\\w{1,16}) joined the dungeon group! \\((?:Healer|Tank|Mage|Berserk|Archer) Level \\d+\\)$".toRegex()

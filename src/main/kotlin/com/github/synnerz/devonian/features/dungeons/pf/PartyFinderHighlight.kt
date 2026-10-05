@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.features.dungeons
+package com.github.synnerz.devonian.features.dungeons.pf
 
 import com.github.synnerz.devonian.api.dungeon.PartyFinderListener
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
