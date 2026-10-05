@@ -9,7 +9,7 @@ import com.github.synnerz.devonian.api.events.*
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
-import net.minecraft.world.entity.EntityTypes
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import java.util.*
 import kotlin.math.abs
@@ -69,7 +69,7 @@ object M7Events {
                 }
 
                 is ClientboundAddEntityPacket -> {
-                    if (packet.type != EntityTypes.ENDER_DRAGON) return@on
+                    if (packet.type != EntityType.ENDER_DRAGON) return@on
 
                     val type = M7Dragon.entries.minBy {
                         abs(it.path[0].x - packet.x) +
