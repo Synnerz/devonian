@@ -93,6 +93,7 @@
     "GLFWMixin",
     "ItemCooldownsMixin",
     "ItemStackMixin",
+    "MinecraftServicesKeyInfoMixin",
     "StringDecomposerMixin",
     "accessor.AbstractArrowAccessor",
     "accessor.ClientboundEntityEventPacketAccessor",
