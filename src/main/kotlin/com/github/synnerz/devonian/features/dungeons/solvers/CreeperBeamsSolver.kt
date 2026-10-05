@@ -238,11 +238,12 @@ object CreeperBeamsSolver : Feature(
             if (!data.blacklisted) continue
             blacklisting++
         }
-        if (blacklisting != 4 || !PuzzleTimers.isEnabled()) return
+        if (blacklisting != 4) return
 
         val time = (EventBus.serverTicks() - enteredAt) * 0.05
         val seconds = "%.2fs".format(time)
-        ChatUtils.sendMessage("&bCreeper Beams took&f: &6$seconds", true)
+        if (PuzzleTimers.isEnabled())
+            ChatUtils.sendMessage("&bCreeper Beams took&f: &6$seconds", true)
         enteredAt = -1
     }
 }

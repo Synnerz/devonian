@@ -130,11 +130,12 @@ object IcePathSolver : Feature(
             val z = pos.z
             val room = DungeonScanner.currentRoom ?: return@on
             val compPos = room.fromPos(x, z) ?: return@on
-            if (compPos.first != 15 || y != 67 || compPos.second != 28 || !PuzzleTimers.isEnabled()) return@on
+            if (compPos.first != 15 || y != 67 || compPos.second != 28) return@on
 
             val time = (EventBus.serverTicks() - enteredAt) * 0.05
             val seconds = "%.2fs".format(time)
-            ChatUtils.sendMessage("&bIce Path took&f: &6$seconds", true)
+            if (PuzzleTimers.isEnabled())
+                ChatUtils.sendMessage("&bIce Path took&f: &6$seconds", true)
             enteredAt = -1
             wasCompleted = true
         }
