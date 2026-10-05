@@ -87,11 +87,12 @@ object TicTacToeSolver : Feature(
             }
 
             event.matches(completedPuzzleRegex) ?: return@on
-            if (!PuzzleTimers.isEnabled() || enteredAt == -1) return@on
+            if (enteredAt == -1) return@on
 
             val time = (EventBus.serverTicks() - enteredAt) * 0.05
             val seconds = "%.2fs".format(time)
-            ChatUtils.sendMessage("&bTic Tac Toe took&f: &6$seconds", true)
+            if (PuzzleTimers.isEnabled())
+                ChatUtils.sendMessage("&bTic Tac Toe took&f: &6$seconds", true)
             reset()
         }
 

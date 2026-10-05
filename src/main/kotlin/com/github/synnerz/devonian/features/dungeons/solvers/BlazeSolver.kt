@@ -207,10 +207,11 @@ object BlazeSolver : Feature(
             }
 
             if (blazes.size == 9 && startedAt == 0) startedAt = EventBus.serverTicks()
-            if (blazes.isEmpty() && startedAt != 0 && lastBlazes == 1 && PuzzleTimers.isEnabled()) {
+            if (blazes.isEmpty() && startedAt != 0 && lastBlazes == 1) {
                 val time = (EventBus.serverTicks() - startedAt) * 0.05
                 val seconds = "%.2fs".format(time)
-                ChatUtils.sendMessage("&bBlaze took&f: &6$seconds &7(${"%.2fs".format((EventBus.serverTicks() - enteredRoomAt) * 0.05)})", true)
+                if (PuzzleTimers.isEnabled())
+                    ChatUtils.sendMessage("&bBlaze took&f: &6$seconds &7(${"%.2fs".format((EventBus.serverTicks() - enteredRoomAt) * 0.05)})", true)
                 blazes.clear()
                 entityList.clear()
                 inBlaze = false

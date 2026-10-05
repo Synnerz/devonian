@@ -225,11 +225,12 @@ object WaterBoardSolver : Feature(
                 if (compPos.first != 15 || y != 56 || compPos.second != 22) return@on
 
                 val sol = solution ?: return@on
-                if (sol.isNotEmpty() || !PuzzleTimers.isEnabled()) return@on
+                if (sol.isNotEmpty()) return@on
 
                 val time = (EventBus.serverTicks() - openedWaterAt) * 0.05
                 val seconds = "%.2fs".format(time)
-                ChatUtils.sendMessage("&bWater Board took&f: &6$seconds", true)
+                if (PuzzleTimers.isEnabled())
+                    ChatUtils.sendMessage("&bWater Board took&f: &6$seconds", true)
                 openedWaterAt = -1
 
                 return@on
