@@ -33,6 +33,7 @@ import com.github.synnerz.devonian.features.dungeons.f7.*
 import com.github.synnerz.devonian.features.dungeons.m7.*
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMap
 import com.github.synnerz.devonian.features.dungeons.map.DungeonMapRoomPrediction
+import com.github.synnerz.devonian.features.dungeons.pf.*
 import com.github.synnerz.devonian.features.dungeons.solvers.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.*
