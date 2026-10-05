@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.hud.texthud
 
+import com.github.synnerz.devonian.features.misc.OldSymbols
 import java.awt.*
 import java.awt.font.TextAttribute
 import java.text.AttributedCharacterIterator
@@ -108,7 +109,8 @@ object StringParser {
 
         var i = 0
         while (i < str.length) {
-            val c = str[i]
+            val c = OldSymbols.replaceChar(str[i])
+
             if ((c == '&' || c == '§') && i < str.length - 1) {
                 val k = str[i + 1]
                 if (k == '\u200B') {
