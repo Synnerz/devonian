@@ -38,11 +38,25 @@ object ArrowAlignSolver : Feature(
         return super.createRequirements() + listOf(Stages.F7.isActiveState, Stages.S3.hasFinishedState.map(Boolean::not))
     }
 
-    private fun shouldBlockClicks() = when (SETTING_BLOCK_INCORRECT.getCurrent()) {
-        "Always" -> true
-        "WhenCrouching" -> minecraft.player?.isShiftKeyDown ?: false
-        "ExceptWhenCrouching" -> !(minecraft.player?.isShiftKeyDown ?: true)
-        else -> false
+    private fun shouldBlockClicks(): Boolean {
+        val setting = when (SETTING_BLOCK_INCORRECT.getCurrent()) {
+            "Always" -> true
+            "WhenCrouching" -> minecraft.player?.isShiftKeyDown ?: false
+            "ExceptWhenCrouching" -> !(minecraft.player?.isShiftKeyDown ?: true)
+            else -> false
+        }
+        if (!setting) return false
+
+        val sol = solution ?: return false
+        synchronized(frameState) {
+            for (i in 0 until 37) {
+                val s = sol[i]
+                if (s == 9) continue
+                if (s != frameState[i]) return true
+            }
+        }
+
+        return false
     }
 
     private val solutions = arrayOf(

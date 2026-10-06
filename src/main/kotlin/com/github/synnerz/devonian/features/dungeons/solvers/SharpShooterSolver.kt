@@ -9,6 +9,8 @@ import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.core.BlockPos
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket
 import net.minecraft.world.level.block.Blocks
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArraySet
@@ -49,6 +51,12 @@ object SharpShooterSolver : Feature(
         false,
         "Hides all particles when doing the sharpshooter device.",
         "SharpShooter Hide Particles",
+    )
+    private val SETTING_HIDE_TITLES = addSwitch(
+        "hideTitles",
+        false,
+        "Hides all titles when doing the sharpshooter device.",
+        "SharpShooter Hide Titles",
     )
 
     private val deviceCompletedRegex = "^(\\w{1,16}) completed a device! \\(\\d/7\\)$".toRegex()
@@ -126,6 +134,11 @@ object SharpShooterSolver : Feature(
 
             event.cancel()
         }.setEnabled(SETTING_HIDE_PARTICLES.state)
+
+        on<PacketReceivedEvent> { event ->
+            if (event.packet is ClientboundSetTitleTextPacket) event.cancel()
+            if (event.packet is ClientboundSetSubtitleTextPacket) event.cancel()
+        }.setEnabled(SETTING_HIDE_TITLES.state)
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {

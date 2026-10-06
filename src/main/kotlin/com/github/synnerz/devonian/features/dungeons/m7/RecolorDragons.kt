@@ -28,7 +28,7 @@ object RecolorDragons : Feature(
         }
 
         on<M7Events.DragonDeath> { event ->
-            dragons.remove(event.ent.id)
+            event.ent?.let { dragons.remove(it.id) }
         }
     }
 

@@ -18,7 +18,7 @@ object M7Events {
     @Threaded class DragonParticles(val dragon: M7DragonSpawn) : Event
     class ActiveDragonChanged(val dragon: M7DragonSpawn) : Event
     class DragonSpawned(val dragon: M7DragonSpawn, val ent: EnderDragon) : Event
-    class DragonDeath(val dragon: M7Dragon, val ent: EnderDragon) : Event
+    class DragonDeath(val dragon: M7Dragon, val ent: EnderDragon?) : Event
 
     val cooldown = EnumMap<M7Dragon, Int>(M7Dragon::class.java)
     var count = 0
@@ -64,6 +64,14 @@ object M7Events {
 
                     Scheduler.scheduleTask {
                         queuedDrags.add(drag)
+                        if (queuedDrags.size > 1) {
+                            while (true) {
+                                val head = queuedDrags.firstOrNull() ?: break
+                                if (head.spawnTick > tick) break
+
+                                queuedDrags.removeFirst().let { DragonDeath(it.type, null).post() }
+                            }
+                        }
                         if (queuedDrags.size == 1) ActiveDragonChanged(drag).post()
                     }
                 }
@@ -89,6 +97,8 @@ object M7Events {
         }.setEnabled(Stages.WitherKing.isActiveState)
 
         EventBus.on<TickEvent> {
+            val first = queuedDrags.firstOrNull()
+
             aliveDrags.removeIf { (drag, ent) ->
                 if (ent.isRemoved) {
                     queuedDrags.remove(drag)
@@ -97,13 +107,12 @@ object M7Events {
                 if (ent.dragonDeathTime <= 0) return@removeIf false
 
                 DragonDeath(drag.type, ent)
-                val f = queuedDrags.firstOrNull()
                 queuedDrags.remove(drag)
-                if (f != null) queuedDrags.firstOrNull()?.let {
-                    ActiveDragonChanged(it).post()
-                }
-
                 return@removeIf true
+            }
+
+            queuedDrags.firstOrNull()?.let {
+                if (first !== it) ActiveDragonChanged(it).post()
             }
         }.setEnabled(Stages.WitherKing.isActiveState)
 
