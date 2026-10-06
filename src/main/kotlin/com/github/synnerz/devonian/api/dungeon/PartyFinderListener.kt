@@ -33,7 +33,6 @@ object PartyFinderListener {
     var currentRole = DungeonClass.Unknown
         private set
 
-    @Threaded class PartyFinderResetEvent : Event
     @Threaded class PartyFinderScannedEvent(
         val parties: List<PartyFinderData>
     ) : Event
@@ -53,7 +52,6 @@ object PartyFinderListener {
     )
 
     private fun clearParties() {
-        if (currentParties.isNotEmpty()) PartyFinderResetEvent().post()
         currentParties = emptyList()
         parties.clear()
     }
