@@ -121,7 +121,7 @@ object PartyFinderOverview : Feature(
                         masterMode = true,
                         floor = 3,
                         style = message,
-                        nameColor = "§r§b${minecraft.player!!.name.string}§r§f",
+                        nameColor = "§b",
                         memberData = PartyMemberData(
                             minecraft.player!!.name.string,
                             "§b",
