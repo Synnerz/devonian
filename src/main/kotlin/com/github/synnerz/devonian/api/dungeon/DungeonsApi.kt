@@ -95,8 +95,8 @@ object DungeonsApi {
 
     fun fetchPlayer(player: String, cb: (DungeonsApiResult) -> Unit, cooldown: Int = 10) {
         val cache = getFromCache(player, cooldown)
-        cache?.let { cb(it.player) }
-        if (cache?.isOutdated != false) synchronized(playerQueue) {
+        if (cache?.isOutdated == false) cb(cache.player)
+        else synchronized(playerQueue) {
             playerQueue.getOrPut(player.lowercase()) { mutableListOf() }.add(cb)
         }
     }
