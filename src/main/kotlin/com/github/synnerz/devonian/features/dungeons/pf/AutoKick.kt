@@ -81,11 +81,8 @@ object AutoKick : Feature(
             if (floor == 0) return field
             return floor > 7
         }
-    private var lastRequest = ""
 
     override fun initialize() {
-        DungeonsApi.on { username, data -> onResponse(username, data) }
-
         on<ServerContainerOpenEvent> { event ->
             inPF = event.titleStr == "Party Finder"
             inPFBuilder = event.titleStr == "Group Builder"
@@ -139,13 +136,8 @@ object AutoKick : Feature(
             val match = event.matches(partyFinderJoinRegex) ?: return@on
             val username = match.firstOrNull() ?: return@on
 
-            lastRequest = username.lowercase()
-            DungeonsApi.playerOrRequest(username)?.let { onResponse(lastRequest, it) }
+            DungeonsApi.fetchPlayer(username, { onResponse(username, it) })
         }
-    }
-
-    override fun onWorldChange(event: WorldChangeEvent) {
-        lastRequest = ""
     }
 
     private fun onBuildingParty(event: ServerContainerSetSlotEvent) {
@@ -186,10 +178,6 @@ object AutoKick : Feature(
     private fun onResponse(username: String, data: DungeonsApi.DungeonsApiResult) {
         if (!Party.inParty || !Party.isLeader) return
         if (!SETTING_IGNORE_FLOOR.get() && (currentFloor + if (isMMFloor) 7 else 0) == SETTING_FLOOR.get()) return
-        if (lastRequest.isEmpty()) return
-        if (username != lastRequest) return
-
-        lastRequest = ""
 
         val pbMode = when (SETTING_PB_MODE.get()) {
             0 -> "s"

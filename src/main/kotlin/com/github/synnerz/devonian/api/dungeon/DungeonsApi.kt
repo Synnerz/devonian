@@ -5,15 +5,12 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WebRequests
 import com.github.synnerz.devonian.utils.PersistentJson
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 
 object DungeonsApi {
     private const val DUNGEONS_API = "https://api.docilelm.top/v2/dungeons/"
-    private val playerQueue = CopyOnWriteArrayList<String>()
+    private val playerQueue = LinkedHashMap<String, MutableList<(DungeonsApiResult) -> Unit>>()
     private val playerData = ConcurrentHashMap<String, DungeonsApiResult>()
-    private val requestListeners = CopyOnWriteArrayList<(String, DungeonsApiResult) -> Unit>()
-    private val customCooldowns = ConcurrentHashMap<String, Int>()
 
     data class UserDungeonsData(
         val cataXP: Double,
@@ -27,13 +24,30 @@ object DungeonsApi {
         val magical_power: Int,
         val personal_best_normal: Map<String, Map<String, String>>?, // { s: { "floor_1": "1:15" }, s_plus: { "floor_1": "1:15" } }
         val personal_best_master: Map<String, Map<String, String>>?,
-    )
+    ) {
+        companion object {
+            val EMPTY = UserDungeonsData(
+                0.0,
+                0.0,
+                emptyMap(),
+                0,
+                0.0,
+                emptyMap(),
+                emptyList(),
+                emptyList(),
+                0,
+                null,
+                null,
+            )
+        }
+    }
     data class DungeonsApiResult(
-        var timeTaken: Long,
         val success: Boolean,
         val status: String,
         val data: UserDungeonsData?
     ) {
+        var snapshotTime = 0L
+
         fun cataXP(): Double = data?.cataXP ?: 0.0
 
         fun level(): Double = data?.level ?: 0.0
@@ -58,66 +72,65 @@ object DungeonsApi {
     }
     data class MultiDungeonApiResult(val result: Map<String /* player's name */, DungeonsApiResult>?)
 
-    fun initialize() {
-        Scheduler.schedulePool.scheduleWithFixedDelay({
-            WebRequests.withName("DungeonsApi") {
-                val names = playerQueue
-                    .filter {
-                        val _cache = playerData[it]
-                        _cache == null ||
-                        System.currentTimeMillis() - _cache.timeTaken >= 1000 * 60 * (customCooldowns[it] ?: 10)
-                    }
-                if (names.isEmpty()) return@withName
+    data class CacheResult(val player: DungeonsApiResult, val isOutdated: Boolean)
 
-                val result = WebRequests.get("${DUNGEONS_API}${names.joinToString(",")}")
-                val response: MultiDungeonApiResult = PersistentJson.gson.fromJson(result, MultiDungeonApiResult::class.java) ?: return@withName
+    fun getFromCache(player: String, cooldown: Int = 10): CacheResult? {
+        val key = player.lowercase()
+        val cache = playerData[key] ?: return null
+        val t = System.currentTimeMillis()
+        return CacheResult(cache, t - cache.snapshotTime >= 1000 * 60 * cooldown)
+    }
 
-                playerQueue.removeIf { names.contains(it) }
+    fun ensureCache(players: List<String>, cooldown: Int = 10) {
+        val needAdd = players.filter {
+            getFromCache(it, cooldown)?.isOutdated != false
+        }
 
-                response.result?.entries?.forEach { (k, v) ->
-                    if (!v.success) {
-//                        playerQueue.add(k)
-                        println("DungeonsApi unsuccessful request $k - ${v.status}")
-                        Scheduler.scheduleTask { ChatUtils.sendMessage("&cDungeonsApi failed to fetch data for user &b$k &7(${v.status})", true) }
-                        return@forEach
-                    }
-                    v.timeTaken = System.currentTimeMillis()
-                    playerData[k] = v
-                    requestListeners.forEach { it(k.lowercase(), v) }
-                }
+        synchronized(playerQueue) {
+            needAdd.forEach {
+                playerQueue.putIfAbsent(it, mutableListOf())
             }
-        }, 5L, 5L, TimeUnit.SECONDS)
-    }
-
-    fun on(cb: (String, DungeonsApiResult) -> Unit) {
-        requestListeners.add(cb)
-    }
-
-    fun requestPlayer(name: String) {
-        if (playerQueue.contains(name.lowercase())) return
-        playerQueue.add(name.lowercase())
-    }
-
-    fun requestPlayers(names: List<String>) {
-        names.forEach {
-            if (playerQueue.contains(it.lowercase())) return@forEach
-
-            playerQueue.add(it.lowercase())
         }
     }
 
-    fun player(name: String, cooldown: Int = 10): DungeonsApiResult? {
-        customCooldowns[name.lowercase()] = cooldown
-        return playerData[name.lowercase()]
+    fun fetchPlayer(player: String, cb: (DungeonsApiResult) -> Unit, cooldown: Int = 10) {
+        val cache = getFromCache(player, cooldown)
+        cache?.let { cb(it.player) }
+        if (cache?.isOutdated != false) synchronized(playerQueue) {
+            playerQueue.getOrPut(player.lowercase()) { mutableListOf() }.add(cb)
+        }
     }
 
-    fun playerOrRequest(name: String, cooldown: Int = 10): DungeonsApiResult? {
-        val _cache = playerData[name.lowercase()]
-        if (_cache == null)
-            playerQueue.add(name.lowercase())
-        customCooldowns[name.lowercase()] = cooldown
+    fun initialize() {
+        Scheduler.schedulePool.scheduleWithFixedDelay({
+            WebRequests.withName("DungeonsApi") {
+                val names: LinkedHashMap<String, List<(DungeonsApiResult) -> Unit>>
 
-        return _cache
+                synchronized(playerQueue) {
+                    names = LinkedHashMap(playerQueue)
+                    playerQueue.clear()
+                }
+
+                if (names.isEmpty()) return@withName
+
+                val result = WebRequests.get("${DUNGEONS_API}${names.keys.joinToString(",")}")
+                val response = PersistentJson.gson.fromJson(result, MultiDungeonApiResult::class.java) ?: return@withName
+
+                val t = System.currentTimeMillis()
+                response.result?.entries?.forEach { (k, v) ->
+                    if (!v.success) {
+                        // playerQueue.add(k)
+                        println("DungeonsApi unsuccessful request $k - ${v.status}")
+                        ChatUtils.sendMessage("&cDungeonsApi failed to fetch data for user &b$k &7(${v.status})", true)
+                        return@forEach
+                    }
+                    v.snapshotTime = t
+                    playerData[k] = v
+
+                    names[k]?.forEach { it(v) }
+                }
+            }
+        }, 5L, 5L, TimeUnit.SECONDS)
     }
 
     fun playerData() = playerData

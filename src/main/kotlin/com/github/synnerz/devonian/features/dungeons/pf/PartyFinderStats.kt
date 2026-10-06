@@ -10,7 +10,6 @@ import com.github.synnerz.devonian.utils.StringUtils
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.HoverEvent
 import net.minecraft.network.chat.Style
-import java.util.concurrent.CopyOnWriteArrayList
 
 object PartyFinderStats : Feature(
     "partyFinderStats",
@@ -32,29 +31,13 @@ object PartyFinderStats : Feature(
         "healer" to "&a❤ Healer",
         "tank" to "&7❈ Tank",
     )
-    private val requestedUsernames = CopyOnWriteArrayList<String>()
 
     override fun initialize() {
-        DungeonsApi.on { name, data ->
-            if (requestedUsernames.isEmpty() || !requestedUsernames.contains(name)) return@on
-
-            onData(data, name)
-            requestedUsernames.remove(name)
-        }
-
         on<ChatEvent> { event ->
             val ( username ) = event.matches(partyFinderJoinRegex) ?: return@on
             if (username == Dungeons.selfPlayer.name) return@on
-            val cache = DungeonsApi.player(username)
-            if (cache == null) {
-                if (!requestedUsernames.contains(username.lowercase())) {
-                    requestedUsernames.add(username.lowercase())
-                    DungeonsApi.requestPlayer(username)
-                }
-                return@on
-            }
 
-            onData(cache, username.lowercase())
+            DungeonsApi.fetchPlayer(username, { onData(it, username) })
         }
     }
 

@@ -1,13 +1,13 @@
 package com.github.synnerz.devonian.features.dungeons.pf
 
+import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.PartyFinderListener
+import com.github.synnerz.devonian.api.events.ClientContainerCloseEvent
 import com.github.synnerz.devonian.api.events.RenderSlotEvent
-import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import java.awt.Color
 import java.util.*
-import java.util.concurrent.CopyOnWriteArrayList
 
 object PartyFinderHighlight : Feature(
     "partyFinderHighlight",
@@ -20,53 +20,52 @@ object PartyFinderHighlight : Feature(
         "ignoreCataRequirement",
         false,
         "Ignores the cata level requirement.",
-        "Cata Level",
+        "Ignore Cata Level",
     )
     private val SETTING_IGNORE_ROLE_LEVEL = addSwitch(
         "ignoreRoleLevel",
         false,
         "Ignores the class level requirement.",
-        "Role Level",
+        "Ignore Role Level",
     )
     private val SETTING_IGNORE_OWN_ROLE = addSwitch(
         "ignoreOwnRole",
         false,
         "Ignores your own class (if dupe class it wont be red highlight).",
-        "Own Role",
+        "Ignore Own Role",
     )
-    private val whitelist = CopyOnWriteArrayList<Boolean>()
-    private val blacklist = CopyOnWriteArrayList<Boolean>()
+
+    private val whitelist = BooleanArray(54)
+    private val blacklist = BooleanArray(54)
 
     override fun initialize() {
-        PartyFinderListener.initialize()
+        on<PartyFinderListener.PartyFinderScannedEvent> { event ->
+            Scheduler.scheduleTask {
+                whitelist.fill(false)
+                blacklist.fill(false)
 
-        on<PartyFinderListener.PartyFinderEvent> { event ->
-            if (event.parties.isEmpty()) {
-                blacklist.clear()
-                whitelist.clear()
-                return@on
+                if (event.parties.isEmpty()) return@scheduleTask
+
+                val ignoring = EnumSet.noneOf(PartyFinderListener.PartyFinderStatus::class.java)
+                if (SETTING_IGNORE_CATA_REQUIREMENT.get()) ignoring.add(PartyFinderListener.PartyFinderStatus.LOW_CATA)
+                if (SETTING_IGNORE_ROLE_LEVEL.get()) ignoring.add(PartyFinderListener.PartyFinderStatus.LOW_CLASS)
+                if (SETTING_IGNORE_OWN_ROLE.get()) ignoring.add(PartyFinderListener.PartyFinderStatus.DUPE_CLASS)
+
+                event.parties.forEach {
+                    val arr = if ((it.disqualifications - ignoring).isEmpty()) whitelist else blacklist
+                    if (it.idx >= arr.size) return@forEach
+                    arr[it.idx] = true
+                }
             }
+        }
 
-            val ignoring = EnumSet.noneOf(PartyFinderListener.PartyFinderStatus::class.java)
-            if (SETTING_IGNORE_CATA_REQUIREMENT.get()) ignoring.add(PartyFinderListener.PartyFinderStatus.LOW_CATA)
-            if (SETTING_IGNORE_ROLE_LEVEL.get()) ignoring.add(PartyFinderListener.PartyFinderStatus.LOW_ROLE)
-            if (SETTING_IGNORE_OWN_ROLE.get()) ignoring.add(PartyFinderListener.PartyFinderStatus.DUPE_CLASS)
-
-            val white = mutableListOf<Boolean>()
-            val black = mutableListOf<Boolean>()
-            event.parties.forEach {
-                val list = if ((it.canJoin - ignoring).isEmpty()) white else black
-                while (list.size <= it.idx) list.add(false)
-                list[it.idx] = true
-            }
-
-            whitelist.clear()
-            whitelist.addAll(white)
-            blacklist.clear()
-            blacklist.addAll(black)
+        on<ClientContainerCloseEvent> {
+            whitelist.fill(false)
+            blacklist.fill(false)
         }
 
         on<RenderSlotEvent> { event ->
+            if (!PartyFinderListener.inPF) return@on
             if (event.isInventory()) return@on
             val slot = event.slot
 
@@ -76,10 +75,5 @@ object PartyFinderHighlight : Feature(
                 event.ctx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, Color.GREEN.rgb)
             }
         }.prio = 30
-    }
-
-    override fun onWorldChange(event: WorldChangeEvent) {
-        blacklist.clear()
-        whitelist.clear()
     }
 }
