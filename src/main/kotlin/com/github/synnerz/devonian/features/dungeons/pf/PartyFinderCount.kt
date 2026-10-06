@@ -12,30 +12,28 @@ object PartyFinderCount : Feature(
     Categories.PARTY_FINDER,
     searchTags = setOf("pf"),
 ) {
-    private val parties = mutableListOf<PartyFinderListener.PartyFinderData>()
+    private val parties = IntArray(54)
 
     override fun initialize() {
-        on<PartyFinderListener.PartyFinderEvent> { event ->
-            val p = event.parties
-            if (p.isEmpty()) {
-                Scheduler.scheduleTask { parties.clear() }
-                return@on
-            }
-
+        on<PartyFinderListener.PartyFinderScannedEvent> { event ->
             Scheduler.scheduleTask {
-                parties.clear()
-                parties.addAll(p)
+                parties.fill(0)
+                event.parties.forEach {
+                    if (it.idx !in parties.indices) return@forEach
+                    parties[it.idx] = it.members.size
+                }
             }
         }
 
         on<PostRenderSlotsEvent> { event ->
             event.container.menu.slots.forEach { slot ->
                 if (slot.container == minecraft.player?.inventory) return@forEach
-                val data = parties.find { it.idx == slot.containerSlot } ?: return@forEach
+                val count = parties.getOrNull(slot.containerSlot) ?: return@forEach
+                if (count == 0) return@forEach
 
                 event.ctx.centeredText(
                     minecraft.font,
-                    "${data.members.size}",
+                    "$count",
                     slot.x + 14, slot.y + 8, -1
                 )
             }
