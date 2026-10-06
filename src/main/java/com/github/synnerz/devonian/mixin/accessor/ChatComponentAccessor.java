@@ -15,4 +15,13 @@ public interface ChatComponentAccessor {
 
     @Invoker("refreshTrimmedMessages")
     void dv_invokeRefresh();
+
+    @Accessor("trimmedMessages")
+    List<GuiMessage.Line> dv_getTrimmedMessages();
+
+    @Invoker("getWidth")
+    int dv_getWidth();
+
+    @Invoker("getScale")
+    double dv_getScale();
 }

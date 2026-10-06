@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api
 
+import com.github.synnerz.devonian.ChatComponentAccessor2
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.TickEvent
@@ -21,7 +22,11 @@ object ChatUtils {
     const val prefix = "&8&l[&3&lDevonian&8&l]&r"
     val chatLineIds = mutableMapOf<GuiMessage, Int>()
     val lineCache = IdentityHashMap<GuiMessage.Line, GuiMessage>()
+    val reverseLineCache = IdentityHashMap<GuiMessage, MutableList<GuiMessage.Line>>()
+    val removedLines: MutableSet<GuiMessage> = Collections.newSetFromMap(IdentityHashMap())
+    val replacedLines = IdentityHashMap<GuiMessage, GuiMessage>()
     val chatComponentAccessor get() = Minecraft.getInstance().gui.hud.chat as ChatComponentAccessor
+    val chatComponentAccessor2 get() = Minecraft.getInstance().gui.hud.chat as ChatComponentAccessor2
     val chatGui get() = Minecraft.getInstance().gui.hud.chat
 
     data class TextComponent(var text: Component, var id: Int = 0)
@@ -78,6 +83,7 @@ object ChatUtils {
 
             messageList.remove()
             chatLineIds.remove(msg)
+            removedLines.add(msg)
             removedLine = true
         }
 
@@ -106,6 +112,8 @@ object ChatUtils {
 
             val line = GuiMessage(msg.addedTime, replaceWith.text, null, GuiMessageSource.SYSTEM_SERVER, indicator)
             chatLineIds[line] = replaceWith.id
+            removedLines.add(msg)
+            replacedLines[msg] = line
             messageList.add(line)
         }
 
@@ -161,6 +169,7 @@ object ChatUtils {
                 (line.content.siblings.lastOrNull()?.contents as? CompactChatComponent)?.orig === comp
             ) {
                 iter.remove()
+                removedLines.add(line)
                 refreshChat()
                 break
             }
@@ -169,14 +178,47 @@ object ChatUtils {
 
     private var needRefresh = 0
 
+    private fun doRefresh() {
+        val msgs = chatComponentAccessor.dv_getTrimmedMessages().listIterator()
+
+        var foundHead = true
+        var shouldRemove = false
+        while (msgs.hasNext()) {
+            val line = msgs.next()
+            if (!foundHead) {
+                if (!line.endOfEntry) {
+                    if (shouldRemove) msgs.remove()
+                    continue
+                } else {
+                    foundHead = true
+                    shouldRemove = false
+                }
+            }
+
+            val msg = lineCache[line] ?: continue
+            foundHead = false
+
+            if (msg in removedLines) {
+                msgs.remove()
+                shouldRemove = true
+            }
+
+            val replaced = replacedLines[msg] ?: continue
+            chatComponentAccessor2.`devonian$injectAddMessage`(replaced,  msgs)
+        }
+
+        removedLines.clear()
+        replacedLines.clear()
+    }
+
     fun refreshChat() {
         needRefresh++
-        if (needRefresh == 1) chatComponentAccessor.dv_invokeRefresh()
+        if (needRefresh == 1) doRefresh()
     }
 
     fun initialize() {
         EventBus.on<TickEvent> {
-            if (needRefresh > 1) chatComponentAccessor.dv_invokeRefresh()
+            if (needRefresh > 1) doRefresh()
             needRefresh = 0
         }
     }

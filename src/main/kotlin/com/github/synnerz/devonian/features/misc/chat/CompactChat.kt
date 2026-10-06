@@ -81,26 +81,28 @@ object CompactChat : Feature(
                     val count = recentMessages.merge(msg, 1, Int::plus) ?: 1
                     if (count == 1 || nonLineBreakMessage.containsMatchIn(msg)) {
                         iter.remove()
+                        ChatUtils.removedLines.add(line)
                     } else {
                         // Immutable java.lang.UnsupportedOperationException
                         // line.content.siblings.removeIf { it.contents is CompactChatComponent }
-                        iter.set(
-                            GuiMessage(
-                                line.addedTime,
-                                line.content.copy()
-                                    .also { it.siblings.removeIf { it.contents is CompactChatComponent } },
-                                line.signature,
-                                GuiMessageSource.SYSTEM_SERVER,
-                                line.tag
-                            )
+                        val replacement = GuiMessage(
+                            line.addedTime,
+                            line.content.copy()
+                                .also { it.siblings.removeIf { it.contents is CompactChatComponent } },
+                            line.signature,
+                            GuiMessageSource.SYSTEM_SERVER,
+                            line.tag
                         )
+                        iter.set(replacement)
+                        ChatUtils.removedLines.add(line)
+                        ChatUtils.replacedLines[line] = replacement
                     }
                     refresh = true
                     break
                 }
             }
         } catch (e: ConcurrentModificationException) {
-            println("Devonian\$CompactChat")
+            println($$"Devonian$CompactChat")
             e.printStackTrace()
         }
         if (refresh) ChatUtils.refreshChat()
