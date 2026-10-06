@@ -59,6 +59,7 @@ object ItemRarityBackground : Feature(
         "LEGENDARY" to TextColor.fromLegacyFormat(ChatFormatting.GOLD)!!.value,
         "MYTHIC" to TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE)!!.value,
         "SPECIAL" to TextColor.fromLegacyFormat(ChatFormatting.RED)!!.value,
+        "VERY SPECIAL" to TextColor.fromLegacyFormat(ChatFormatting.RED)!!.value,
         "ULTIMATE" to TextColor.fromLegacyFormat(ChatFormatting.DARK_RED)!!.value,
         "ADMIN" to TextColor.fromLegacyFormat(ChatFormatting.DARK_RED)!!.value,
 
