@@ -184,7 +184,7 @@ object ChatUtils {
         var shouldRemove = false
         var removeC = removedLines.size
         var replaceC = replacedLines.size
-        while (msgs.hasNext() && removeC > 0 && replaceC > 0) {
+        while (msgs.hasNext() && (removeC > 0 || replaceC > 0)) {
             val line = msgs.next()
             if (!foundHead) {
                 if (!line.endOfEntry) {
