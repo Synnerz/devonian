@@ -182,7 +182,9 @@ object ChatUtils {
 
         var foundHead = true
         var shouldRemove = false
-        while (msgs.hasNext()) {
+        var removeC = removedLines.size
+        var replaceC = replacedLines.size
+        while (msgs.hasNext() && removeC > 0 && replaceC > 0) {
             val line = msgs.next()
             if (!foundHead) {
                 if (!line.endOfEntry) {
@@ -198,11 +200,13 @@ object ChatUtils {
             foundHead = false
 
             if (msg in removedLines) {
+                removeC--
                 msgs.remove()
                 shouldRemove = true
             }
 
             val replaced = replacedLines[msg] ?: continue
+            replaceC--
             chatComponentAccessor2.`devonian$injectAddMessage`(replaced,  msgs)
         }
 
