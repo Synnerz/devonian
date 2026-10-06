@@ -81,8 +81,6 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     )
     private void devonian$trackDisplayLine(GuiMessage guiMessage, CallbackInfo ci) {
         ChatUtils.INSTANCE.getLineCache().put(this.trimmedMessages.getFirst(), guiMessage);
-        List<GuiMessage.Line> arr = ChatUtils.INSTANCE.getReverseLineCache().putIfAbsent(guiMessage, new ArrayList<>());
-        if (arr != null) arr.add(this.trimmedMessages.getFirst());
     }
 
     @Inject(
@@ -91,7 +89,6 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     )
     private void devonian$refreshTrimmedMessages(CallbackInfo ci) {
         ChatUtils.INSTANCE.getLineCache().clear();
-        ChatUtils.INSTANCE.getReverseLineCache().clear();
     }
 
     @Shadow
