@@ -15,6 +15,7 @@ import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
+import java.util.UUID
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.max
 
@@ -48,23 +49,28 @@ object MutePartySpam : Feature(
     private var CONFIG_KEY = "mutePartySpam"
 
     private val messages = CopyOnWriteArrayList<String>()
-    private val leapMessages = mutableMapOf<String, String>()
+    private val leapMessages = mutableMapOf<String, Regex>()
+    private val nameRegexCache = mutableMapOf<UUID, Regex?>()
     private val messageHeatMap = mutableMapOf<String, LinkedHashMap<String, Int>>()
 
     val muteNextNMessages = atomic(0)
 
     private fun isLeapMsg(name: String, msg: String): Boolean {
-        leapMessages[name]?.let { return msg.startsWith(it) }
+        leapMessages[name]?.let { return it.matches(msg) }
 
-        val mentionsName = Party.members.any {
-            val info = minecraft.connection?.getPlayerInfo(it.key) ?: return@any false
-            return@any msg.endsWith(info.profile.name, true)
+        var str: String? = null
+        for (member in Party.members.keys) {
+            val reg = nameRegexCache.getOrPut(member) {
+                val info = minecraft.connection?.getPlayerInfo(member) ?: return@getOrPut null
+                return@getOrPut "\\b${info.profile.name}\\b".toRegex(RegexOption.IGNORE_CASE)
+
+            } ?: continue
+
+            val m = reg.find(msg) ?: continue
+            str = msg.substring(0, m.range.first) + "\\w+" + msg.substring(m.range.last + 1)
+            break
         }
-        if (!mentionsName) return false
-
-        val i = msg.lastIndexOf(' ')
-        if (i < 0) return false
-        val msgPrefix = msg.substring(0, i)
+        if (str == null) return false
 
         val count = messageHeatMap.getOrPut(name) {
             object : LinkedHashMap<String, Int>(10, 0.75f, true) {
@@ -72,11 +78,11 @@ object MutePartySpam : Feature(
                     return size >= 10
                 }
             }
-        }.merge(msgPrefix, 1, Int::plus) ?: 0
+        }.merge(str, 1, Int::plus) ?: 0
         if (count < 5) return false
 
-        ChatUtils.sendMessage("&8&l[&3&lMutePartySpam&8&l]&r muting leap message: $msgPrefix", false)
-        leapMessages[name] = msgPrefix
+        ChatUtils.sendMessage("&8&l[&3&lMutePartySpam&8&l]&r muting leap message: $str", false)
+        leapMessages[name] = str.toRegex()
         messageHeatMap.remove(name)
         return true
     }
@@ -138,6 +144,8 @@ object MutePartySpam : Feature(
         }
 
         on<ChatChannelEvent.PartyChatEvent> { event ->
+            if (event.name == minecraft.player?.name?.string) return@on
+
             if (
                 messages.any { event.userMessage.startsWith(it) } ||
                 SETTING_DETECT_LEAP.get() && isLeapMsg(event.name, event.userMessage)
