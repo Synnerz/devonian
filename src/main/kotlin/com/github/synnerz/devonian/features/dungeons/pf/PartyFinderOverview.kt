@@ -255,7 +255,7 @@ object PartyFinderOverview : Feature(
                                     // [A] DocilElm [52 | 60] [120K | 5.4] [NO PB]
 
                                     append("&8[$roleCode${role.singleLetter.uppercase()}&8] ")
-                                    append("$nameColor${memberData.nameColor} ")
+                                    append("$nameColor${memberData.name} ")
 
                                     append("&8[&e${memberData.roleLevel} &7| ")
                                     append("&6${data.level.toInt()}&8] ")
