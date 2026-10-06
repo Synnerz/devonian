@@ -46,9 +46,10 @@ object WatcherKillAlert : Feature(
         on<ClientThreadServerTickEvent> {
             val stage = Stages.WatcherDialog
             if (stage.hasStarted() && !assigned) {
+                val seconds = if (Dungeons.floor.floorNum == 7) 20.5 else 20.0
                 assigned = true
 
-                Scheduler.scheduleServerTask((20 / 0.05).toInt()) {
+                Scheduler.scheduleServerTask((seconds / 0.05).toInt()) {
                     if (!isEnabled() || !stage.hasStarted()) return@scheduleServerTask
                     Alert.show("&c[Watcher] Kill Now", 1500, SETTING_PLAY_SOUND.get())
                 }
