@@ -88,7 +88,7 @@ object DungeonsApi {
 
         synchronized(playerQueue) {
             needAdd.forEach {
-                playerQueue.putIfAbsent(it, mutableListOf())
+                playerQueue.putIfAbsent(it.lowercase(), mutableListOf())
             }
         }
     }
