@@ -251,19 +251,28 @@ object StringUtils {
                 append("%02dm ".format(m))
                 if (--i <= 0) return@buildString
                 append("%02d".format(s))
-                if (--i <= 0) return@buildString
+                if (--i <= 0) {
+                    append("s")
+                    return@buildString
+                }
             } else if (h > 0) {
                 append("${h}h ")
                 if (--i <= 0) return@buildString
                 append("%02dm ".format(m))
                 if (--i <= 0) return@buildString
                 append("%02d".format(s))
-                if (--i <= 0) return@buildString
+                if (--i <= 0) {
+                    append("s")
+                    return@buildString
+                }
             } else if (m > 0) {
                 append("${m}m ")
                 if (--i <= 0) return@buildString
                 append("%02d".format(s))
-                if (--i <= 0) return@buildString
+                if (--i <= 0) {
+                    append("s")
+                    return@buildString
+                }
             } else append(s)
             append("%.${decimals}f".format(ms / 1000.0).substring(1))
             append("s")
