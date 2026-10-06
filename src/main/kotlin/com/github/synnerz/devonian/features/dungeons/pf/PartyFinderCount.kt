@@ -26,6 +26,8 @@ object PartyFinderCount : Feature(
         }
 
         on<PostRenderSlotsEvent> { event ->
+            if (!PartyFinderListener.inPF) return@on
+
             event.container.menu.slots.forEach { slot ->
                 if (slot.container == minecraft.player?.inventory) return@forEach
                 val count = parties.getOrNull(slot.containerSlot) ?: return@forEach
