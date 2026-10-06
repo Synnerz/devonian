@@ -112,6 +112,8 @@ enum class DungeonClass(
         get() = cachedColorCode
 
     companion object {
+        val Roles = arrayOf(Archer, Berserk, Mage, Healer, Tank)
+
         fun from(fullName: String): DungeonClass = when (fullName) {
             "Archer" -> Archer
             "Berserk" -> Berserk
