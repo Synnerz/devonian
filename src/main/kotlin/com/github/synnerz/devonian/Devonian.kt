@@ -424,6 +424,7 @@ object Devonian : ClientModInitializer {
             TerminalHitboxes,
             CustomizeItems,
             MuteWitherbornSound,
+            PartyFinderJoinAlert,
 
             // Debug
             CopyItem,
