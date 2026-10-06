@@ -22,7 +22,6 @@ object ChatUtils {
     const val prefix = "&8&l[&3&lDevonian&8&l]&r"
     val chatLineIds = mutableMapOf<GuiMessage, Int>()
     val lineCache = IdentityHashMap<GuiMessage.Line, GuiMessage>()
-    val reverseLineCache = IdentityHashMap<GuiMessage, MutableList<GuiMessage.Line>>()
     val removedLines: MutableSet<GuiMessage> = Collections.newSetFromMap(IdentityHashMap())
     val replacedLines = IdentityHashMap<GuiMessage, GuiMessage>()
     val chatComponentAccessor get() = Minecraft.getInstance().gui.hud.chat as ChatComponentAccessor
