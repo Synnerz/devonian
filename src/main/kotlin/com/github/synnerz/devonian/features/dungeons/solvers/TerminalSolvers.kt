@@ -227,6 +227,11 @@ object TerminalSolvers : Feature(
             currentSolver = null
         }
 
+        on<TickEvent> {
+            val solver = currentSolver ?: return@on
+            solver.onTick()
+        }
+
         on<ServerContainerSetSlotEvent> { event ->
             val solver = currentSolver ?: return@on
             Scheduler.scheduleTask {
@@ -364,6 +369,8 @@ interface ITerminalSolver {
     fun getSlotsBox(): Cell
 
     fun reset()
+
+    fun onTick() {}
 
     fun onSetSlot(slot: Int, stack: ItemStack)
 
@@ -814,12 +821,11 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
         override fun onSetSlot(slot: Int, stack: ItemStack) {
             if (slot !in slots.indices) return
             if (!isRubix[slot]) return
+            if (!firstCalc) return
 
             val color = rubixOrder.indexOf(stack.item)
             slotColors[slot] = color
-            if (color < 0) return
 
-            if (!firstCalc) return
             if (slot != 32) return
             firstCalc = false
 
@@ -862,9 +868,9 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             slotColors[slot.containerSlot] += dir
 
             if (slots[slot.containerSlot] < 0) slots[slot.containerSlot] += 5
-            if (slotColors[slot.containerSlot] < 0) slots[slot.containerSlot] += 5
+            if (slotColors[slot.containerSlot] < 0) slotColors[slot.containerSlot] += 5
             if (slots[slot.containerSlot] == 5) slots[slot.containerSlot] -= 5
-            if (slotColors[slot.containerSlot] == 5) slots[slot.containerSlot] -= 5
+            if (slotColors[slot.containerSlot] == 5) slotColors[slot.containerSlot] -= 5
         }
 
         override fun onRenderSlot(ctx: GuiGraphicsExtractor, slot: Slot, loc: Rectangle, cancel: () -> Unit) {
@@ -918,10 +924,27 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
 
         private val slots = BooleanArray(45) { false }
         private val slotClickTimes = LongArray(45) { 0L }
+        private var sanity = 0
 
         override fun reset() {
             slots.fill(false)
             slotClickTimes.fill(0L)
+            sanity = 0
+        }
+
+        override fun onTick() {
+            if (slots.any { it }) return
+
+            if (++sanity < 10) return
+
+            val screen = minecraft.gui.screen() as? AbstractContainerScreen<*>? ?: return
+            sanity = 0
+
+            screen.menu.items.forEachIndexed { i, stack ->
+                if (i !in slots.indices) return
+
+                slots[i] = stack.item == Items.STAINED_GLASS_PANE.red
+            }
         }
 
         override fun onSetSlot(slot: Int, stack: ItemStack) {
