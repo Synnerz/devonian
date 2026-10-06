@@ -22,15 +22,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Mixin(ChatComponent.class)
 public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     @Shadow
-    @Final
-    private List<GuiMessage.Line> trimmedMessages;
+    private List<GuiMessage.Line> trimmedMessages = new LinkedList<>();
 
     @ModifyExpressionValue(
         method = { "addMessageToQueue", "addMessageToDisplayQueue" },
@@ -82,6 +81,8 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     )
     private void devonian$trackDisplayLine(GuiMessage guiMessage, CallbackInfo ci) {
         ChatUtils.INSTANCE.getLineCache().put(this.trimmedMessages.getFirst(), guiMessage);
+        List<GuiMessage.Line> arr = ChatUtils.INSTANCE.getReverseLineCache().putIfAbsent(guiMessage, new ArrayList<>());
+        if (arr != null) arr.add(this.trimmedMessages.getFirst());
     }
 
     @Inject(
@@ -90,6 +91,7 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     )
     private void devonian$refreshTrimmedMessages(CallbackInfo ci) {
         ChatUtils.INSTANCE.getLineCache().clear();
+        ChatUtils.INSTANCE.getReverseLineCache().clear();
     }
 
     @Shadow
@@ -103,6 +105,12 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     public static int getHeight(double d) {
         return 0;
     }
+
+    @Shadow
+    private int chatScrollbarPos;
+
+    @Shadow
+    protected abstract void addMessageToDisplayQueue(GuiMessage message);
 
     @Unique
     private GuiMessage lastHovered = null;
@@ -130,5 +138,57 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     private int devonian$onGetHeight(double d, Operation<Integer> original) {
         if (!PeekChatKeybind.INSTANCE.isEnabled()) return original.call(d);
         return getHeight(PeekChatKeybind.INSTANCE.getKeybind().isDown() ? minecraft.options.chatHeightFocused().get() : d);
+    }
+
+    @Unique
+    private ListIterator<GuiMessage.Line> trimmedIter = null;
+
+    @ModifyVariable(
+        method = "forEachLine",
+        at = @At(value = "STORE"),
+        name = "i"
+    )
+    private int devonian$trimmedIteratorStart(int i) {
+        trimmedIter = trimmedMessages.listIterator(i + chatScrollbarPos);
+        return i;
+    }
+
+    @WrapOperation(
+        method = "forEachLine",
+        at = @At(value = "INVOKE", target = "Ljava/util/List;get(I)Ljava/lang/Object;")
+    )
+    private <E> E devonian$trimmedIteratorGet(List<GuiMessage.Line> instance, int i, Operation<GuiMessage.Line> original) {
+        while (i > trimmedIter.previousIndex()) trimmedIter.next();
+        while (i < trimmedIter.previousIndex()) trimmedIter.previous();
+        @SuppressWarnings("unchecked")
+        E obj = (E) trimmedIter.previous();
+        return obj;
+    }
+
+    @Inject(
+        method = "forEachLine",
+        at = @At(value = "TAIL")
+    )
+    private void devonian$trimmedIterEnd(ChatComponent.AlphaCalculator alphaCalculator, ChatComponent.LineConsumer lineConsumer, CallbackInfoReturnable<Integer> cir) {
+        trimmedIter = null;
+    }
+
+    @Unique
+    private ListIterator<GuiMessage.Line> injectedIterator;
+
+    @Override
+    public void devonian$injectAddMessage(GuiMessage message, ListIterator<GuiMessage.Line> iterator) {
+        injectedIterator = iterator;
+        addMessageToDisplayQueue(message);
+        injectedIterator = null;
+    }
+
+    @WrapOperation(
+        method = "addMessageToDisplayQueue",
+        at = @At(value = "INVOKE", target = "Ljava/util/List;addFirst(Ljava/lang/Object;)V")
+    )
+    private <E> void devonian$injectAddMessageAdd(List<E> instance, E e, Operation<Void> original) {
+        if (injectedIterator != null) injectedIterator.add((GuiMessage.Line) e);
+        else original.call(instance, e);
     }
 }
