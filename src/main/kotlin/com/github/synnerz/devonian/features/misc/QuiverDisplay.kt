@@ -5,7 +5,6 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.ServerContainerSetContentEvent
-import com.github.synnerz.devonian.api.events.ServerContainerSetSlotEvent
 import com.github.synnerz.devonian.api.events.ServerInventorySetSlotEvent
 import com.github.synnerz.devonian.hud.texthud.Alert
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
