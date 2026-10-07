@@ -13,7 +13,7 @@ import java.security.Signature;
 public class MinecraftServicesKeyInfoMixin {
     @WrapOperation(method = "validateProperty", at = @At(value = "INVOKE", target = "Ljava/security/Signature;verify([B)Z"))
     private boolean devonian$hasSignature(Signature instance, byte[] signature, Operation<Boolean> original) {
-        if (signature.length != 0) return original.call(instance, signature);
+        if (signature.length < 512) return original.call(instance, signature);
 
         return false;
     }
