@@ -26,6 +26,13 @@ object InstaClearAlert : Feature(
             val previousCheck = event.previousCheck
             val room = event.room
             val roomName = room.name ?: return@on
+            println("Devonian\$roomUpdate(" +
+                    "cache=\"${roomChecks[roomName]}\"" +
+                    ", bus=\"${EventBus.serverTicks()}\"" +
+                    ", name=\"$roomName\"" +
+                    ", check=\"$previousCheck -> $currentCheck\"" +
+                    ", witherDoor=\"${room.doors.any { it.type == DoorTypes.WITHER || it.type == DoorTypes.BLOOD }}\")"
+            )
             if (
                 room.type != RoomTypes.FAIRY &&
                 (roomChecks[roomName] == null || EventBus.serverTicks() - roomChecks[roomName]!!.second < 5) &&
