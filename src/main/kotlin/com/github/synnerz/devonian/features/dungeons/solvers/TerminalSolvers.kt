@@ -217,15 +217,6 @@ object TerminalSolvers : Feature(
     }
 
     override fun initialize() {
-        // TODO: this is only for testing
-        on<GuiOpenEvent> {
-            Scheduler.scheduleTask(2) {
-                val solver = currentSolver ?: return@scheduleTask
-                val screen = minecraft.gui.screen() as? AbstractContainerScreen<*> ?: return@scheduleTask
-                screen.menu.items.forEachIndexed { idx, stack -> solver.onSetSlot(idx, stack) }
-            }
-        }
-
         on<ServerContainerOpenEvent> { event ->
             val title = event.titleStr
             currentSolver = TerminalData.byMatch(title)
