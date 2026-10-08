@@ -217,6 +217,15 @@ object TerminalSolvers : Feature(
     }
 
     override fun initialize() {
+        // TODO: this is only for testing
+        on<GuiOpenEvent> {
+            Scheduler.scheduleTask(2) {
+                val solver = currentSolver ?: return@scheduleTask
+                val screen = minecraft.gui.screen() as? AbstractContainerScreen<*> ?: return@scheduleTask
+                screen.menu.items.forEachIndexed { idx, stack -> solver.onSetSlot(idx, stack) }
+            }
+        }
+
         on<ServerContainerOpenEvent> { event ->
             val title = event.titleStr
             currentSolver = TerminalData.byMatch(title)
@@ -792,11 +801,11 @@ enum class TerminalData(val title: Regex) : ITerminalSolver {
             Items.STAINED_GLASS_PANE.red,
         )
         private val rubixColors = arrayOf(
-            DyeColor.ORANGE.textureDiffuseColor,
-            DyeColor.YELLOW.textureDiffuseColor,
-            DyeColor.GREEN.textureDiffuseColor,
-            DyeColor.BLUE.textureDiffuseColor,
-            DyeColor.RED.textureDiffuseColor,
+            Color(191, 87, 0).rgb,
+            Color(184, 134, 11).rgb,
+            Color(0, 86, 59).rgb,
+            Color(0, 50, 98).rgb,
+            Color(150, 0, 24).rgb,
         )
         private val strings = arrayOf(
             Component.literal("§e-2"),
