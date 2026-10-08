@@ -36,7 +36,7 @@ object InstaClearAlert : Feature(
             if (
                 room.type != RoomTypes.FAIRY &&
                 (roomChecks[roomName] == null || EventBus.serverTicks() - roomChecks[roomName]!!.second < 5) &&
-                previousCheck == CheckmarkTypes.NONE &&
+                (previousCheck == CheckmarkTypes.NONE || previousCheck == CheckmarkTypes.UNEXPLORED) &&
                 (currentCheck == CheckmarkTypes.WHITE || currentCheck == CheckmarkTypes.GREEN) &&
                 room.doors.any { it.type == DoorTypes.WITHER || it.type == DoorTypes.BLOOD }
             ) {
