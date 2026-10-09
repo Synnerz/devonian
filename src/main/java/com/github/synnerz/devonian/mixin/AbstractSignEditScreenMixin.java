@@ -19,6 +19,9 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
     @Final
     private SignText.Mutable text;
 
+    @Shadow
+    protected abstract void onDone();
+
     protected AbstractSignEditScreenMixin(Component component) {
         super(component);
     }
@@ -29,7 +32,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         if (!SignEnterKey.INSTANCE.shouldEnter(text.asImmutable().getMessages(false))) return;
 
         //noinspection DataFlowIssue
-        minecraft.gui.setScreen(null);
+        onDone();
         cir.setReturnValue(true);
         cir.cancel();
     }

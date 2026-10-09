@@ -93,7 +93,7 @@ object SignEnterKey : Feature(
 ) {
     fun shouldEnter(comps: List<Component>): Boolean {
         if (!isEnabled()) return false
-        return InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
+        return !InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
     }
 }
 object RemoveHypixelScoreboard : Feature("removeHypixelScoreboard", "www.hypixel.net", category = Categories.VANILLA_TWEAKS, subcategory = "Hider")
