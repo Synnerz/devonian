@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.RenderPipelines
 import org.joml.Matrix3x2f
 import java.awt.Color
+import kotlin.math.ceil
 import kotlin.math.hypot
 import kotlin.math.max
 
@@ -26,8 +27,8 @@ object Render2D {
     val screenHeight get() = window.height
     val scaledWidth get() = window.guiScaledWidth
     val scaledHeight get() = window.guiScaledHeight
-    val customScaleWidth get() = screenWidth / scale
-    val customScaleHeight get() = screenHeight / scale
+    val customScaleWidth get() = ceil(screenWidth.toDouble() / scale.toDouble()).toInt()
+    val customScaleHeight get() = ceil(screenHeight.toDouble() / scale.toDouble()).toInt()
 
     @JvmOverloads
     fun drawString(ctx: GuiGraphicsExtractor, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
