@@ -79,6 +79,7 @@ object Dungeons {
     val secretsFoundPercent = BasicState(0.0)
     val secretsFound = BasicState(0)
     val completedRooms = BasicState(0)
+    val adjustedCompletedRooms = BasicState(0)
     val openedRooms = BasicState(0)
     val discoveries = BasicState(0)
     val totalPuzzles = BasicState(0)
@@ -131,7 +132,7 @@ object Dungeons {
         val tttMod = tttDoneC.zip(tttDoneS) { c, s -> if (c && !s) 1 else 0 }
         val totalMod = blazeMod.zip(tttMod, Int::plus)
         actualCompletedPuzzles = completedPuzzles.zip(totalMod, Int::plus)
-        actualCompletedRooms = completedRooms.zip(totalMod, Int::plus)
+        actualCompletedRooms = adjustedCompletedRooms.zip(totalMod, Int::plus)
     }
 
     // [0, 1]
@@ -218,7 +219,8 @@ object Dungeons {
             }
 
             event.matches(completedRoomsRegex)?.let {
-                completedRooms.value = it[0].toInt() +
+                completedRooms.value = it[0].toInt()
+                adjustedCompletedRooms.value = it[0].toInt() +
                     (if (inBoss.value) 0 else 1) +
                     (if (bloodCleared.value) 0 else 1)
                 return@on
@@ -383,8 +385,10 @@ object Dungeons {
                 }
 
                 "blaze done",
+                "blaze puzzle solved",
                 "blaze puzzle solved!",
-                "blaze puzzle done"
+                "blaze puzzle done",
+                "blaze puzzle done!",
                     -> blazeDoneC.value = true
 
                 "tic tac toe done",
@@ -578,6 +582,7 @@ object Dungeons {
         secretsFoundPercent.value = 0.0
         secretsFound.value = 0
         completedRooms.value = 0
+        adjustedCompletedRooms.value = 0
         openedRooms.value = 0
         discoveries.value = 0
         totalPuzzles.value = 0
