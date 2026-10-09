@@ -45,15 +45,6 @@ public class ItemInHandRendererMixin {
         return ItemAnimations.INSTANCE.getSwingAnimation(partialTicks);
     }
 
-//    @Inject(
-//        method = "shouldInstantlyReplaceVisibleItem",
-//        at = @At("HEAD"),
-//        cancellable = true
-//    )
-//    private void devonian$itemAnimationsReequip(ItemStack itemStack, ItemStack itemStack2, CallbackInfoReturnable<Boolean> cir) {
-//        if (ItemAnimations.INSTANCE.disableReequip()) cir.setReturnValue(true);
-//    }
-
     @Inject(
         method = "submitHandsWithItems",
         at = @At(
@@ -69,15 +60,6 @@ public class ItemInHandRendererMixin {
         if (mainHandItem.has(DataComponents.MAP_ID) && !ItemAnimations.INSTANCE.affectMap()) return;
         ItemAnimations.INSTANCE.applyTransformations(poseStack);
     }
-
-//    @WrapOperation(
-//        method = "tick",
-//        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getItemSwapScale(F)F")
-//    )
-//    private float devonian$itemAnimationsBob(LocalPlayer instance, float v, Operation<Float> original) {
-//        if (ItemAnimations.INSTANCE.disableReequip() || ItemAnimations.INSTANCE.disableSwingBob()) return 1f;
-//        return original.call(instance, v);
-//    }
 
     @WrapWithCondition(
         method = "submitHandsWithItems",

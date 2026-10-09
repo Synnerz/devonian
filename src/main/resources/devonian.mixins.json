@@ -23,6 +23,7 @@
     "EntityRenderDispatcherMixin",
     "EntityRendererMixin",
     "FallingBlockRendererMixin",
+    "FirstPersonHandsAndItemsMixin",
     "FogRendererMixin",
     "FontMixin",
     "GameRendererMixin",
