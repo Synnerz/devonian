@@ -425,6 +425,7 @@ object Devonian : ClientModInitializer {
             CustomizeItems,
             MuteWitherbornSound,
             PartyFinderJoinAlert,
+            HideDungeonChestMessage,
 
             // Debug
             CopyItem,
