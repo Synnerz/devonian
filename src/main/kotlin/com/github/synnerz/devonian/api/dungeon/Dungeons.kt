@@ -124,7 +124,15 @@ object Dungeons {
     }
     val secretScore = actualSecretPercent.map { it * 40.0 }
 
-    val actualCompletedRooms = BasicState(0)
+    val actualCompletedRooms: BasicState<Int>
+    val actualCompletedPuzzles: BasicState<Int>
+    init {
+        val blazeMod = blazeDoneC.zip(blazeDoneS) { c, s -> if (c && !s) 1 else 0 }
+        val tttMod = tttDoneC.zip(tttDoneS) { c, s -> if (c && !s) 1 else 0 }
+        val totalMod = blazeMod.zip(tttMod, Int::plus)
+        actualCompletedPuzzles = completedPuzzles.zip(totalMod, Int::plus)
+        actualCompletedRooms = completedRooms.zip(totalMod, Int::plus)
+    }
 
     // [0, 1]
     val actualClearPercent = actualCompletedRooms.zip(totalRooms) { completed, total ->
@@ -137,13 +145,6 @@ object Dungeons {
     val deathPenalty = deaths.zip(hasSpirit) { deaths, spirit ->
         if (deaths == 0) 0
         else 2 * deaths - (if (spirit) 1 else 0)
-    }
-    val actualCompletedPuzzles: BasicState<Int>
-    init {
-        val blazeMod = blazeDoneC.zip(blazeDoneS) { c, s -> if (c && !s) 1 else 0 }
-        val tttMod = tttDoneC.zip(tttDoneS) { c, s -> if (c && !s) 1 else 0 }
-        val totalMod = blazeMod.zip(tttMod, Int::plus)
-        actualCompletedPuzzles = completedPuzzles.zip(totalMod, Int::plus)
     }
     val puzzlePenalty = actualCompletedPuzzles.zip(totalPuzzles) { completed, total ->
         10 * (total - completed)
@@ -217,8 +218,7 @@ object Dungeons {
             }
 
             event.matches(completedRoomsRegex)?.let {
-                completedRooms.value = it[0].toInt()
-                actualCompletedRooms.value = it[0].toInt() +
+                completedRooms.value = it[0].toInt() +
                     (if (inBoss.value) 0 else 1) +
                     (if (bloodCleared.value) 0 else 1)
                 return@on
@@ -384,7 +384,7 @@ object Dungeons {
 
                 "blaze done",
                 "blaze puzzle solved!",
-                "blaze puzzle solved"
+                "blaze puzzle done"
                     -> blazeDoneC.value = true
 
                 "tic tac toe done",
