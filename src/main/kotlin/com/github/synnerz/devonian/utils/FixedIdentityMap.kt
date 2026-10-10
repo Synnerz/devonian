@@ -3,17 +3,21 @@ package com.github.synnerz.devonian.utils
 class FixedIdentityMap<K, V>(val maxSize: Int) : MutableMap<K, V> {
     private val delegate = object : LinkedHashMap<KeyWrapper, V>() {
         override fun removeEldestEntry(eldest: Map.Entry<KeyWrapper, V?>?): Boolean {
-            return size >= maxSize
+            return size > maxSize
         }
     }
 
-    override val size: Int = delegate.size
+    override val size: Int get() = delegate.size
     override val keys: MutableSet<K> get() = throw UnsupportedOperationException("lazy")
-    override val values: MutableCollection<V> = delegate.values
+    override val values: MutableCollection<V> get() = delegate.values
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() = throw UnsupportedOperationException("lazy")
 
-    override fun get(key: K): V? {
+    override operator fun get(key: K): V? {
         return delegate[KeyWrapper(key)]
+    }
+
+    operator fun set(key: K, value: V): V? {
+        return delegate.put(KeyWrapper(key), value)
     }
 
     override fun put(key: K, value: V): V? {
