@@ -19,7 +19,6 @@ import com.google.common.collect.ImmutableMultimap
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.google.gson.internal.NonNullElementWrapperList
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import com.mojang.authlib.properties.PropertyMap
@@ -155,8 +154,7 @@ object PetDisplay : TextHudFeature(
                 val page = obj.get<Int>("page") ?: return null
                 val level = obj.get<Int>("level")
                 val cosmeticLevel = obj.get<Int>("cosmeticLevel")
-                val lore = (obj.getList("lore") as? NonNullElementWrapperList<JsonPrimitive>)
-                    ?.map { it.asString }?.toList()
+                val lore = obj.getList("lore")?.map { (it as? JsonPrimitive)?.asString ?: "" }?.toList()
                 val skin = obj.getObject("skin").let {
                     val id = it.get<String>("id")?.let { UUID.fromString(it) } ?: return@let null
                     val value = it.get<String>("value") ?: return@let null

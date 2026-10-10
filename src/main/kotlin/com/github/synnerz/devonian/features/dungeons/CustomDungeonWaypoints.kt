@@ -246,7 +246,7 @@ object CustomDungeonWaypoints : Feature(
             }
         }
 
-        on<RenderWorldEvent> { event ->
+        on<RenderWorldEvent> {
             if (Dungeons.inBoss.value && currentRoom != null && currentRoom!! < BOSS_ID) return@on
             if (SETTING_REMOVE_ON_DONE.get() && clearedRooms.contains(currentRoom)) return@on
 
@@ -254,7 +254,7 @@ object CustomDungeonWaypoints : Feature(
                 if (SETTING_REMOVE_ON_COLLECT.get() && it.clicked) return@forEach
 
                 val pos = it.pos() ?: return@forEach
-                val color = when (it.type ?: return@forEach) {
+                val color = when (it.type) {
                     WaypointType.BLOCK -> Color(0, 255, 0, 255)
                     WaypointType.ETHERWARP -> Color(0, 255, 255, 255)
                     WaypointType.TEXT -> Color(0, 0, 0, 0)
