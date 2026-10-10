@@ -350,7 +350,7 @@ public class HudMixin {
                 instance, graphics,
                 font, ticks,
                 mouseX, mouseY,
-                PeekChatKeybind.INSTANCE.isEnabled() && PeekChatKeybind.INSTANCE.getKeybind().isDown()
+                PeekChatKeybind.INSTANCE.isPeeking()
                         ? ChatComponent.DisplayMode.FOREGROUND
                         : displayMode,
                 changeCursorOnInsertions

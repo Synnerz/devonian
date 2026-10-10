@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.mixin;
 
 import com.github.synnerz.devonian.ChatComponentAccessor2;
-import com.github.synnerz.devonian.api.ChatUtils;
 import com.github.synnerz.devonian.features.misc.DisableChatAutoScroll;
 import com.github.synnerz.devonian.features.misc.DisableChatReset;
 import com.github.synnerz.devonian.features.misc.PeekChatKeybind;
@@ -42,12 +41,12 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
 
     @ModifyVariable(method = "addMessage", at = @At("HEAD"), argsOnly = true, name = "contents")
     private Component devonian$addMessage(Component contents) {
-        if (contents == null) return contents;
+        if (contents == null) return null;
         return CompactChat.INSTANCE.compactText(contents);
     }
 
     @Inject(method = "clearMessages", at = @At("HEAD"))
-    private void devonian$clearMessages(boolean bl, CallbackInfo ci) {
+    private void devonian$clearMessages(boolean history, CallbackInfo ci) {
         CompactChat.INSTANCE.clearHistory();
     }
 
@@ -70,9 +69,9 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
         method = "addMessageToDisplayQueue",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;scrollChat(I)V")
     )
-    private void devonian$onChatScroll(ChatComponent instance, int i, Operation<Void> original) {
+    private void devonian$onChatScroll(ChatComponent instance, int dir, Operation<Void> original) {
         if (DisableChatAutoScroll.INSTANCE.isEnabled()) return;
-        original.call(instance, i);
+        original.call(instance, dir);
     }
 
     @Shadow
@@ -81,11 +80,6 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     @Shadow
     @Final
     private Minecraft minecraft;
-
-    @Shadow
-    public static int getHeight(double d) {
-        return 0;
-    }
 
     @Shadow
     private int chatScrollbarPos;
@@ -116,9 +110,8 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
     }
 
     @WrapOperation(method = "getHeight()I", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;getHeight(D)I"))
-    private int devonian$onGetHeight(double d, Operation<Integer> original) {
-        if (!PeekChatKeybind.INSTANCE.isEnabled()) return original.call(d);
-        return getHeight(PeekChatKeybind.INSTANCE.getKeybind().isDown() ? minecraft.options.chatHeightFocused().get() : d);
+    private int devonian$onGetHeight(double pct, Operation<Integer> original) {
+        return original.call(PeekChatKeybind.INSTANCE.isPeeking() ? minecraft.options.chatHeightFocused().get() : pct);
     }
 
     @Unique
