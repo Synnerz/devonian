@@ -189,6 +189,7 @@ object BoxDoors : Feature(
                 val room = DungeonScanner.currentRoom ?: return@on
                 room.doors.forEach {
                     if (it.type !== DoorTypes.NORMAL && it.type !== DoorTypes.ENTRANCE) return@forEach
+                    if (it.wasBlood && SETTING_OUTLINE_OPENED_BLOOD.get()) return@forEach
                     if (
                         SETTING_HIDE_NORMAL_DOOR_GREEN.get() &&
                         it.rooms.all {
