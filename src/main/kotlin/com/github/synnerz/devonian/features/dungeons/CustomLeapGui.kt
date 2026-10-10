@@ -192,7 +192,7 @@ object CustomLeapGui : Feature(
                     else {
                         val mut = mutableListOf<LeapPlayer>()
                         val currentRoles = playerList.map { it.role.name }
-                        val amounts = currentRoles.groupingBy { it }.eachCount()
+                        val amounts = currentRoles.toMutableList().apply { add(player.role.name) }.groupingBy { it }.eachCount()
                         if (amounts.any { it.value > 1 }) {
                             playerList
                         } else {
@@ -263,7 +263,7 @@ object CustomLeapGui : Feature(
                         else {
                             val mut = mutableListOf<LeapPlayer>()
                             val currentRoles = playerList.map { it.role.name }
-                            val amounts = currentRoles.groupingBy { it }.eachCount()
+                            val amounts = currentRoles.toMutableList().apply { add(player.role.name) }.groupingBy { it }.eachCount()
                             if (amounts.any { it.value > 1 }) {
                                 playerList
                             } else {
