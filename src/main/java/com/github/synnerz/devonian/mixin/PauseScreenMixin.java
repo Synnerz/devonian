@@ -16,7 +16,7 @@ public abstract class PauseScreenMixin {
     @Unique
     long lastClick = -1L;
 
-    @WrapMethod(method = "lambda$createPauseMenu$10")
+    @WrapMethod(method = "lambda$createPauseMenu$11")
     private void devonian$onDisconnectButton(Button button, Operation<Void> original) {
         if (!ConfirmDisconnect.INSTANCE.isEnabled()) {
             original.call(button);
