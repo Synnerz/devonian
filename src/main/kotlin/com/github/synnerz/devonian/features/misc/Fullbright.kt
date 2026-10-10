@@ -3,17 +3,12 @@ package com.github.synnerz.devonian.features.misc
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
-import com.github.synnerz.devonian.mixin.accessor.GlDeviceAccessor
+import com.github.synnerz.devonian.mixin.accessor.RenderSystemAccessor
 import com.github.synnerz.devonian.utils.Toggleable
-import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.renderpearl.api.pipeline.ShaderType
-import com.mojang.renderpearl.backend.opengl.GlDevice
-import net.minecraft.client.renderer.RenderPipelines
 
 object Fullbright : Feature(
     "fullbright",
-    "Toggling requires a restart.",
-    Categories.VANILLA_TWEAKS,
+    category = Categories.VANILLA_TWEAKS,
 ) {
     override fun initialize() {
         children.add(
@@ -22,17 +17,10 @@ object Fullbright : Feature(
                 override fun remove() {}
 
                 override fun change() {
-                    // FIXME
-//                    Scheduler.scheduleTask {
-//                        val device = RenderSystem.tryGetDevice() as? GlDeviceAccessor ?: return@scheduleTask
-//                        device.dv_getPipelineCache().remove(RenderPipelines.LIGHTMAP)
-//                        val key = GlDevice.ShaderCompilationKey(
-//                            RenderPipelines.LIGHTMAP.fragmentShader,
-//                            ShaderType.FRAGMENT,
-//                            RenderPipelines.LIGHTMAP.shaderDefines
-//                        )
-//                        device.dv_getShaderCache().remove(key)
-//                    }
+                    Scheduler.scheduleTask {
+                        RenderSystemAccessor.getCurrentPipelineCache()?.clear()
+                        RenderSystemAccessor.getFallbackPipelineCache()?.clear()
+                    }
                 }
             }
         )
