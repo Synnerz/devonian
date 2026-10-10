@@ -6,6 +6,9 @@ import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
+import com.github.synnerz.devonian.config.Categories
+import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ConfigData
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket
@@ -24,6 +27,17 @@ object M7Events {
     var count = 0
     val queuedDrags = mutableListOf<M7DragonSpawn>()
     val aliveDrags = mutableListOf<Pair<M7DragonSpawn, EnderDragon>>()
+
+    private val secondDragPrio = ConfigData.TextInput(
+        $$"dragPrio$second",
+        "th",
+        null,
+        "Classes that should go exclusively to the 2nd dragon spawned, as opposed to both dragons.",
+        "Dragon Priority",
+        "General",
+    ).also {
+        Config.registerCategory(it, Categories.M7, "General")
+    }
 
     fun init() {
         EventBus.on<PacketReceivedEvent> { event ->
@@ -56,8 +70,7 @@ object M7Events {
                     cooldown[dragon] = tick + 100
 
                     val c = count++
-                    if (c == 0 && Dungeons.selfPlayer.role == DungeonClass.Healer) return@on
-                    if (c == 1 && Dungeons.selfPlayer.role == DungeonClass.Tank) return@on
+                    if (c == 0 && secondDragPrio.get().contains(Dungeons.selfPlayer.role.singleLetter)) return@on
 
                     val drag = M7DragonSpawn(dragon, isHigh, tick + 100)
                     DragonParticles(drag).post()
