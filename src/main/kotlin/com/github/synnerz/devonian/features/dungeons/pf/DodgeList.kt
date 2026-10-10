@@ -208,9 +208,10 @@ object DodgeList : Feature(
     }
 
     private fun loadImport(link: String, successCb: (Map<String, String>) -> Unit) {
-        WebRequests.withName("DodgeList\$Import") {
+        WebRequests.withName($$"DodgeList$Import") {
             val response = WebRequests.get(link)
             if (response.isEmpty()) return@withName
+            @Suppress("UNCHECKED_CAST")
             val data = PersistentJson.gson.fromJson(response, Map::class.java) as? Map<String, String> ?: return@withName
 
             Scheduler.scheduleTask { successCb(data) }

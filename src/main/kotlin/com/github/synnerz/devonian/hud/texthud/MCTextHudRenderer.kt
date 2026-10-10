@@ -91,6 +91,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         false,
                         ctx.scissorStack.peek()
                     ).also {
+                        @Suppress("CAST_NEVER_SUCCEEDS")
                         val that = it as? GuiTextRenderStateAccessor ?: return@also
                         that.`devonian$setXf`(x - 1)
                         that.`devonian$setYf`(y + 2)
@@ -108,6 +109,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         false,
                         ctx.scissorStack.peek()
                     ).also {
+                        @Suppress("CAST_NEVER_SUCCEEDS")
                         val that = it as? GuiTextRenderStateAccessor ?: return@also
                         that.`devonian$setXf`(x + 1)
                         that.`devonian$setYf`(y + 2)
@@ -125,6 +127,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         false,
                         ctx.scissorStack.peek()
                     ).also {
+                        @Suppress("CAST_NEVER_SUCCEEDS")
                         val that = it as? GuiTextRenderStateAccessor ?: return@also
                         that.`devonian$setXf`(x)
                         that.`devonian$setYf`(y + 2 - 1)
@@ -142,6 +145,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                         false,
                         ctx.scissorStack.peek()
                     ).also {
+                        @Suppress("CAST_NEVER_SUCCEEDS")
                         val that = it as? GuiTextRenderStateAccessor ?: return@also
                         that.`devonian$setXf`(x)
                         that.`devonian$setYf`(y + 2 + 1)
@@ -162,6 +166,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                     false, // "includeEmpty" param i think this is right
                     ctx.scissorStack.peek()
                 ).also {
+                    @Suppress("CAST_NEVER_SUCCEEDS")
                     val that = it as? GuiTextRenderStateAccessor ?: return@also
                     that.`devonian$setXf`(x)
                     that.`devonian$setYf`(y + 2)

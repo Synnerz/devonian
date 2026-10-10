@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
@@ -37,7 +38,7 @@ object EventBus {
     val events = ConcurrentHashMap<KClass<*>, MutableList<EventListener<Event>>>()
     private val entityTypes = mutableMapOf<Int, EntityType<*>>()
     private val entityPos = mutableMapOf<Int, Vec3>()
-    var _internalSkipPing = Collections.newSetFromMap<Int>(ConcurrentHashMap())
+    var _internalSkipPing: MutableSet<Int> = Collections.newSetFromMap(ConcurrentHashMap())
 
     init {
         ClientEntityEvents.ENTITY_LOAD.register { entity, _ ->
@@ -96,7 +97,7 @@ object EventBus {
                 !event.isCancelled()
             }
         }
-        LevelRenderEvents.AFTER_BLOCK_OUTLINE_EXTRACTION.register { worldContext, hitResult ->
+        LevelExtractionEvents.AFTER_BLOCK_OUTLINE_EXTRACTION.register { worldContext, hitResult ->
             val cancel = BeforeBlockOutlineEvent(worldContext, hitResult).post()
             if (cancel) worldContext.levelState().blockOutlineRenderState = null
             !cancel
@@ -170,7 +171,7 @@ object EventBus {
 
                 is ClientboundSetPlayerTeamPacket -> {
                     if (packet.parameters.isEmpty) return@on
-                    val team = packet.parameters.get() ?: return@on
+                    val team = packet.parameters.get()
                     val teamPrefix = team.playerPrefix.string
                     val teamSuffix = team.playerSuffix.string
                     if (teamPrefix.isEmpty()) return@on
