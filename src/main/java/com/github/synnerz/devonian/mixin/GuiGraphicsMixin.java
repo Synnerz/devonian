@@ -81,11 +81,11 @@ public abstract class GuiGraphicsMixin {
     }
 
     @Inject(
-            method = "tooltip",
-            at = @At("HEAD"),
-            cancellable = true
+        method = "setTooltipForNextFrameInternal(Lnet/minecraft/client/gui/Font;Ljava/util/List;IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;Lnet/minecraft/resources/Identifier;ZZ)V",
+        at = @At("HEAD"),
+        cancellable = true
     )
-    private void devonian$renderTooltip(Font font, List<ClientTooltipComponent> lines, int xo, int yo, ClientTooltipPositioner positioner, @Nullable Identifier style, boolean extraSpaceAfterFirstLine, CallbackInfo ci) {
+    private void devonian$renderTooltip(Font font, List<ClientTooltipComponent> lines, int xo, int yo, ClientTooltipPositioner positioner, @Nullable Identifier style, boolean replaceExisting, boolean extraSpaceAfterFirstLine, CallbackInfo ci) {
         if (new TooltipRenderEvent(lines instanceof ArrayList<?> ? lines : new ArrayList<>(lines), xo, yo).post()) ci.cancel();
     }
 }
