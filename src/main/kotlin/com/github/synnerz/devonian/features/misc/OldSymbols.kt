@@ -105,6 +105,24 @@ object OldSymbols : Feature(
             134 to '⸙', // woodland
             135 to '☋', // critter (did not exist before)
             136 to '♿', // timid (did not exist before)
+
+            144 to '☢', // acid rain
+            145 to '❍', // ashfall
+            146 to '☃', // blizzard
+            147 to '❦', // blossoming
+            148 to '☴', // breeze
+            149 to '⛮', // voidstorm
+            150 to '⛅', // wispfall
+            151 to '⛞', // hellstorm
+            152 to '⛆', // mist
+            153 to '☾', // moonfall
+            154 to '☂', // rain
+            155 to '❀', // blooming
+            156 to '⛑', // rockfall
+            157 to '☁', // smog
+            158 to '❄', // snowstorm
+            256 to '⛈', // thunderstorm (⚡)
+            257 to '☔', // tropical rain
         )
 
         val max = map.keys.maxOrNull() ?: -1
