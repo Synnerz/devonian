@@ -120,7 +120,7 @@ object ActionbarParser : Feature(
         ),
         Vitality(
             null,
-            listOf("\uE028"),
+            listOf("\uE028", "NOT ENOUGH VITALITY"),
             object : TextHudFeature(
                 "customVitalityHud",
                 "$desc Allows you to move the vitality that appears in the actionbar (above your hotbar).",
@@ -179,7 +179,7 @@ object ActionbarParser : Feature(
         },
         Mana(
             null,
-            listOf("\uE003", "\uE017", " Mana"),
+            listOf("\uE003", "\uE017", " Mana", "NOT ENOUGH MANA"),
             object : TextHudFeature(
                 "customManaHud",
                 "$desc Allows you to move the mana that appears in the actionbar (above your hotbar).",
@@ -219,7 +219,7 @@ object ActionbarParser : Feature(
             startsWith = "§b",
         ),
         TrueDefense(
-            "❈ True Defense",
+            "\uE027",
             null,
             object : TextHudFeature(
                 "customTrueDefenseHud",
@@ -257,8 +257,6 @@ object ActionbarParser : Feature(
             override fun shouldShow(): Boolean =
                 if (SETTING_ALWAYS_SHOW.get()) ignore != updateCount
                 else super.shouldShow()
-
-            override fun modifyStringHud(str: String): String = str.dropLast(" True Defense".length)
         },
         SkillXP(
             ")",
@@ -351,7 +349,7 @@ object ActionbarParser : Feature(
                 Categories.Actionbar,
                 searchTags = customTags,
             ) {
-                override fun getEditText(): List<String> = listOf("§22,609/3k Drill Fuel")
+                override fun getEditText(): List<String> = listOf("§22,609/3k")
             },
             object : Feature(
                 "hideDrillFuelActionbar",
@@ -539,7 +537,27 @@ object ActionbarParser : Feature(
                 searchTags = hideTags,
             ) {},
             startsWith = "§7\uE067",
-        );
+        ),
+        Water(
+            " Water",
+            null,
+            object : TextHudFeature(
+                "customWaterHud",
+                "$desc Allows you to move the water that appears in the actionbar (above your hotbar).",
+                Categories.Actionbar,
+                searchTags = customTags,
+            ) {
+                override fun getEditText(): List<String> = listOf("§b2,400§7/3k")
+            },
+            object : Feature(
+                "hideWaterActionbar",
+                "$desc Hides the water that appears in the actionbar (above your hotbar).",
+                Categories.Actionbar,
+                searchTags = hideTags,
+            ) {},
+        ) {
+            override fun modifyStringHud(str: String): String = str.dropLast(" Water".length)
+        };
 
         open fun initialize() {}
 
