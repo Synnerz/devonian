@@ -13,7 +13,7 @@ enum class FloorType(
     val longName: String = shortName,
     val requiredPercent: Double = 1.0,
     val requiredSpeed: Int = 600,
-    val bloodMobs: Int = floorNum + 12,
+    val bloodMobs: Int = floorNum + 8,
 ) {
     None(0, false, "", 0, 0, longName = ""),
 
