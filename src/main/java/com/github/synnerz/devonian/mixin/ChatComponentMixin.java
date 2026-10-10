@@ -75,22 +75,6 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
         original.call(instance, i);
     }
 
-    @Inject(
-        method = "addMessageToDisplayQueue",
-        at = @At(value = "INVOKE", target = "Ljava/util/List;addFirst(Ljava/lang/Object;)V", shift = At.Shift.AFTER)
-    )
-    private void devonian$trackDisplayLine(GuiMessage guiMessage, CallbackInfo ci) {
-        ChatUtils.INSTANCE.getLineCache().put(this.trimmedMessages.getFirst(), guiMessage);
-    }
-
-    @Inject(
-        method = "refreshTrimmedMessages",
-        at = @At("HEAD")
-    )
-    private void devonian$refreshTrimmedMessages(CallbackInfo ci) {
-        ChatUtils.INSTANCE.getLineCache().clear();
-    }
-
     @Shadow
     private List<GuiMessage> allMessages = new LinkedList<>();
 

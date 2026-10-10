@@ -21,7 +21,6 @@ import kotlin.math.roundToInt
 object ChatUtils {
     const val prefix = "&8&l[&3&lDevonian&8&l]&r"
     val chatLineIds = mutableMapOf<GuiMessage, Int>()
-    val lineCache = IdentityHashMap<GuiMessage.Line, GuiMessage>()
     val removedLines: MutableSet<GuiMessage> = Collections.newSetFromMap(IdentityHashMap())
     val replacedLines = IdentityHashMap<GuiMessage, GuiMessage>()
     val chatComponentAccessor get() = Minecraft.getInstance().gui.hud.chat as ChatComponentAccessor
@@ -155,8 +154,6 @@ object ChatUtils {
         connection.sendChat(message)
     }
 
-    fun getMessageFromLine(line: GuiMessage.Line): GuiMessage? = lineCache[line]
-
     fun deleteMessage(comp: Component, max: Int = 20) {
         val iter = chatComponentAccessor.dv_getAllMessages().listIterator()
         var i = max
@@ -178,26 +175,25 @@ object ChatUtils {
     private var needRefresh = 0
 
     private fun doRefresh() {
-        val msgs = chatComponentAccessor.dv_getTrimmedMessages().listIterator()
+        val msgs = chatComponentAccessor.dv_getTrimmedMessages().let { it.listIterator(it.size) }
 
         var foundHead = true
         var shouldRemove = false
         var removeC = removedLines.size
         var replaceC = replacedLines.size
-        while (msgs.hasNext() && (removeC > 0 || replaceC > 0)) {
-            val line = msgs.next()
+        while (msgs.hasPrevious() && (removeC > 0 || replaceC > 0 || !foundHead)) {
+            val line = msgs.previous()
             if (!foundHead) {
-                if (!line.endOfEntry) {
-                    if (shouldRemove) msgs.remove()
-                    continue
-                } else {
+                if (shouldRemove) msgs.remove()
+                if (line.endOfEntry) {
                     foundHead = true
                     shouldRemove = false
                 }
+                continue
             }
 
-            val msg = lineCache[line] ?: continue
-            foundHead = false
+            val msg = line.parent
+            foundHead = line.endOfEntry
 
             if (msg in removedLines) {
                 removeC--
