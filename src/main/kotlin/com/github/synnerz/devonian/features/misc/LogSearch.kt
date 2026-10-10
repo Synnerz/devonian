@@ -6,6 +6,7 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.talium.components.*
 import com.mojang.blaze3d.Blaze3D
+import kotlinx.atomicfu.locks.withLock
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
@@ -16,6 +17,9 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStreamReader
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.concurrent.*
 import java.util.concurrent.locks.ReentrantLock
 import java.util.zip.GZIPInputStream
@@ -60,11 +64,21 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
         it.setColor(0, 0, 0, 128)
         it.drawScrollbar = true
     }
+    private val resultsChildren = mutableListOf<UIResult>()
+
+    private data class UIResult(val result: LogSearcher.Result?, val ui: UIBase)
+    private val RESULT_COMPARATOR = Comparator.comparing<UIResult, LocalDate>(
+        { it.result?.log?.date },
+        Comparator.nullsFirst<LocalDate> { t1, t2 -> t2.compareTo(t1) }
+    )
+        .thenByDescending { it.result?.log?.ordinal }
+        .thenBy { it.result?.line ?: Int.MAX_VALUE }
 
     // me when
     private val regexRegex = "^/(.+?)/([a-z]*)$".toRegex()
 
     private var resultQ: ConcurrentLinkedQueue<LogSearcher.Result>? = null
+    private val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
     fun initialize() {
         DevonianCommand.command.subcommand("search") { _, args ->
@@ -78,8 +92,7 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
                         regex.value = true
                         input.text = m.groupValues.getOrElse(1) { "" }
                         caseI.value = m.groupValues.getOrNull(2)?.let {
-                            if (it.isEmpty()) true
-                            else it.contains('i')
+                            it.isEmpty() || it.contains('i')
                         } ?: true
                     }
                 }
@@ -98,13 +111,16 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
 
     fun clearResults() {
         results.clearChildren()
+        results.yOffset = 0.0
+        resultsChildren.clear()
         resultQ = null
     }
 
     fun search() {
         clearResults()
+        LogSearcher.stop()
         if (input.text.isBlank()) {
-            addResult("§4Empty Search Criteria.")
+            addMessage("§4Empty Search Criteria.")
             return
         }
 
@@ -113,7 +129,7 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
                 val reg = input.text.toRegex(if (caseI.value) setOf(RegexOption.IGNORE_CASE) else emptySet())
                 RegexFilter(reg)
             } catch (e: Exception) {
-                addResult("§4Error creating Regex: $e")
+                addMessage("§4Error creating Regex: $e")
                 return
             }
         } else StringFilter(input.text, caseI.value)
@@ -124,33 +140,75 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
         LogSearcher.submit(filter, q)
     }
 
-    fun addResult(str: String, path: File? = null) {
-        results.addChild(
-            UIRect(
-                0.0, results.children.size * 5.0,
-                100.0, 5.0,
-            ).also { rect ->
-                rect.onMouseEnter {
-                    rect.setColor(100, 100, 100, 128)
-                }
-                rect.onMouseLeave {
-                    rect.setColor(0, 0, 0, 0)
-                }
-
-                rect.addChild(
-                    UIText(
-                        0.0, 30.0,
-                        100.0, 70.0,
-                        text = str,
-                    ).also { txt ->
-                        if (path == null) return@also
-                        txt.onMouseClick {
-                            Blaze3D.openPath(path.toPath())
-                        }
-                    }
-                )
-            }
+    private fun createBaseChild(): UIRect {
+        val child = UIRect(
+            0.0, 0.0,
+            100.0, 5.0,
         )
+
+        child.onMouseEnter {
+            child.setColor(100, 100, 100, 128)
+        }
+        child.onMouseLeave {
+            child.setColor(0, 0, 0, 0)
+        }
+
+        return child
+    }
+
+    private fun insertChild(elem: UIResult) {
+        var idx = resultsChildren.binarySearch(elem, RESULT_COMPARATOR)
+        if (idx < 0) idx = idx.inv()
+
+        elem.ui._y = idx * 5.0
+        for (i in idx until resultsChildren.size) {
+            resultsChildren[i].ui._y = (i + 1) * 5.0
+        }
+
+        resultsChildren.add(idx, elem)
+        results.addChild(elem.ui)
+    }
+
+    private fun addMessage(msg: String) {
+        val base = createBaseChild()
+
+        base.addChild(
+            UIText(
+                0.0, 30.0,
+                100.0, 70.0,
+                text = msg,
+            )
+        )
+
+        insertChild(UIResult(null, base))
+    }
+
+    private fun addResult(result: LogSearcher.Result) {
+        val base = createBaseChild()
+
+        val date =
+            if (result.log === LogDate.Latest) "latest"
+            else "${result.log.date.format(dateFormatter)}-${result.log.ordinal}"
+
+        base.addChild(
+            UIText(
+                0.0, 30.0,
+                20.0, 70.0,
+                text = "§7$date §8${result.line}",
+            )
+        )
+        base.addChild(
+            UIText(
+                20.0, 30.0,
+                80.0, 70.0,
+                text = result.match,
+            )
+        )
+        base.onMouseClick {
+            Blaze3D.openPath(result.path.toPath())
+        }
+
+        insertChild(UIResult(result, base))
     }
 
     override fun tick() {
@@ -160,7 +218,7 @@ object LogSearch : Screen(Component.literal("Devonian.LogSearch")) {
         var l = q.size
         while (--l >= 0) {
             val e = q.poll() ?: break
-            addResult("§8${e.line} §r${e.match}", e.path)
+            addResult(e)
         }
     }
 
@@ -201,9 +259,15 @@ private class RegexFilter(val filter: Regex) : Filter {
     override fun matches(str: String): Boolean = filter.containsMatchIn(str)
 }
 
+data class LogDate(val date: LocalDate, val ordinal: Int) {
+    companion object {
+        val Latest = LogDate(LocalDate.now(), Int.MAX_VALUE)
+    }
+}
+
 private object LogSearcher {
     private val logsFolder = File(Devonian.minecraft.gameDirectory, "logs")
-    private val logRegex = "^\\d{4}-\\d{2}-\\d{2}-\\d\\.log\\.gz$".toRegex()
+    private val logRegex = "^(\\d{4})-(\\d{2})-(\\d{2})-(\\d+)\\.log\\.gz$".toRegex()
 
     private var pool: AbstractExecutorService? = null
     private var lock = ReentrantLock(true)
@@ -218,26 +282,38 @@ private object LogSearcher {
         if (!lock.tryLock()) return
 
         try {
-            pool?.shutdownNow()
             pool = createPool()
 
             logsFolder.listFiles()?.forEach {
                 if (it.isDirectory) return@forEach
-                if (it.name != "latest.log" && !logRegex.matches(it.name)) return@forEach
-                pool!!.submit(Searcher(it, filter, resultQ))
+                val date =
+                    if (it.name == "latest.log") LogDate.Latest
+                    else {
+                        val m = logRegex.matchEntire(it.name) ?: return@forEach
+                        val (year, month, day, ordinal) = m.groupValues.drop(1)
+                        LogDate(LocalDate.of(year.toInt(), month.toInt(), day.toInt()), ordinal.toInt())
+                    }
+                pool!!.submit(Searcher(it, filter, resultQ, date))
             }
 
-            pool!!.close()
+            pool!!.shutdown()
         } finally {
             lock.unlock()
         }
     }
 
-    data class Result(val match: String, val line: Int, val path: File)
+    fun stop() {
+        lock.withLock {
+            pool?.shutdownNow()
+            pool = null
+        }
+    }
+
+    data class Result(val match: String, val line: Int, val path: File, val log: LogDate)
 
     private const val OFFSET1 = "[15:15:44] [Render thread/INFO] (Minecraft) [System] ".length
     private const val OFFSET2 = "[15:15:44] [Render thread/INFO] (Minecraft) [System] [CHAT] ".length
-    class Searcher(val path: File, val filter: Filter, val q: ConcurrentLinkedQueue<Result>) : Runnable {
+    class Searcher(val path: File, val filter: Filter, val q: ConcurrentLinkedQueue<Result>, val log: LogDate) : Runnable {
         override fun run() {
             val fileStream = FileInputStream(path)
             val inStream = if (path.extension == "gz") GZIPInputStream(fileStream) else fileStream
@@ -247,11 +323,11 @@ private object LogSearcher {
             bufStream.use {
                 var str = it.readLine()
                 var i = 1
-                while (str != null) {
+                while (str != null && !Thread.interrupted()) {
                     if (str.startsWith("[CHAT]", OFFSET1)) {
                         val s = str.drop(OFFSET2).clearCodes()
                         if (filter.matches(s)) {
-                            q.offer(Result(s, i, path))
+                            q.offer(Result(s, i, path, log))
                         }
                     }
                     str = it.readLine()
