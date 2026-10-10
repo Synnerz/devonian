@@ -26,7 +26,7 @@ public class ChatComponentInnerMixin {
     private boolean devonian$captureHoveredMessage(ChatComponent.ChatGraphicsAccess instance, int i, float v, FormattedCharSequence formattedCharSequence, Operation<Boolean> original, @Local(argsOnly = true) GuiMessage.Line line) {
         boolean hovered = original.call(instance, i, v, formattedCharSequence);
 
-        if (hovered) ((ChatComponentAccessor2) this$0).devonian$setLastHoveredMessage(ChatUtils.INSTANCE.getMessageFromLine(line));
+        if (hovered) ((ChatComponentAccessor2) this$0).devonian$setLastHoveredMessage(line.parent());
 
         return hovered;
     }
