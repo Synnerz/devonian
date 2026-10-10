@@ -43,7 +43,7 @@ object InstaClearAlert : Feature(
             }
             if (event.clientSide) return@on
 
-            roomChecks[roomName] = currentCheck to EventBus.serverTicks(event.clientSide)
+            roomChecks[roomName] = currentCheck to EventBus.serverTicks()
         }
     }
 
