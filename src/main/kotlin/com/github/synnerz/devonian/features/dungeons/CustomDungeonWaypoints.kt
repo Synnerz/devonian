@@ -137,7 +137,7 @@ object CustomDungeonWaypoints : Feature(
         val cx: Int,
         val cy: Int,
         val cz: Int,
-        val type: WaypointType,
+        val type: WaypointType?,
         var text: String? = null,
         @Transient var clicked: Boolean = false,
     ) {
@@ -254,7 +254,7 @@ object CustomDungeonWaypoints : Feature(
                 if (SETTING_REMOVE_ON_COLLECT.get() && it.clicked) return@forEach
 
                 val pos = it.pos() ?: return@forEach
-                val color = when (it.type) {
+                val color = when (it.type ?: return@forEach) {
                     WaypointType.BLOCK -> Color(0, 255, 0, 255)
                     WaypointType.ETHERWARP -> Color(0, 255, 255, 255)
                     WaypointType.TEXT -> Color(0, 0, 0, 0)
