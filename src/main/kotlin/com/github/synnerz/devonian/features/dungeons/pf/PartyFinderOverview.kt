@@ -1,7 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.pf
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.DungeonsApi
 import com.github.synnerz.devonian.api.dungeon.PartyFinderListener
@@ -18,7 +17,6 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.ItemLore
-import java.util.IdentityHashMap
 
 object PartyFinderOverview : Feature(
     "partyFinderOverview",
