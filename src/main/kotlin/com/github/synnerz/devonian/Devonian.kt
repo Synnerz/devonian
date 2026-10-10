@@ -16,6 +16,8 @@ import com.github.synnerz.devonian.config.ui.talium.ConfigGui
 import com.github.synnerz.devonian.features.*
 import com.github.synnerz.devonian.features.bossbar.BossBarHealth
 import com.github.synnerz.devonian.features.debug.CopyItem
+import com.github.synnerz.devonian.features.debug.CopyScoreboard
+import com.github.synnerz.devonian.features.debug.CopyTablist
 import com.github.synnerz.devonian.features.debug.MousePositionLogger
 import com.github.synnerz.devonian.features.debug.SoundDebugger
 import com.github.synnerz.devonian.features.debug.WAILA
@@ -436,6 +438,8 @@ object Devonian : ClientModInitializer {
             MousePositionLogger,
             MousePositionRenderer,
             DebugCounter,
+            CopyScoreboard,
+            CopyTablist,
         )
     }
 
