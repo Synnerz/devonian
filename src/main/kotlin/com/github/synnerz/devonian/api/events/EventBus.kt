@@ -73,6 +73,13 @@ object EventBus {
                 !event.isCancelled()
             }
 
+            ScreenMouseEvents.allowMouseScroll(screen).register { screen, mx, my, hd, vd ->
+                if (vd == 0.0) return@register true
+                val event = GuiScrollEvent(mx, my, vd, screen)
+                post(event)
+                !event.isCancelled()
+            }
+
             ScreenKeyboardEvents.allowKeyPress(screen).register { _, event ->
                 val event = GuiKeyDownEvent(
                     GLFW.glfwGetKeyName(event.key, event.scancode),

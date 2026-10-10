@@ -201,6 +201,13 @@ class GuiClickEvent(
     val event: MouseButtonEvent,
 ) : CancellableEvent()
 
+class GuiScrollEvent(
+    val mx: Double,
+    val my: Double,
+    val delta: Double,
+    val screen: Screen,
+) : CancellableEvent()
+
 class GuiKeyDownEvent(
     val keyName: String?,
     val key: Int,
