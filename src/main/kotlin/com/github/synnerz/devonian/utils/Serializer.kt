@@ -78,6 +78,12 @@ object Serializer {
             obj.set("name", it.colorCodes())
             obj.set("name_", it.string)
         }
+        stack.get(DataComponents.ITEM_MODEL)?.let {
+            obj.set("itemModel", "${it.namespace}:${it.path}")
+        }
+        stack.get(DataComponents.TOOLTIP_STYLE)?.let {
+            obj.set("tooltipStyle", "${it.namespace}:${it.path}")
+        }
         obj.set("id", BuiltInRegistries.ITEM.getKey(item).toString())
         obj.set("count", stack.count)
         obj.set("damage", stack.damageValue)
