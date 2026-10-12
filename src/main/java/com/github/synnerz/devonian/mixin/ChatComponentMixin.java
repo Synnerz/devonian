@@ -60,7 +60,7 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
             cancellable = true
     )
     private void devonian$clearMessagesPost(boolean history, CallbackInfo ci) {
-        if (!DisableChatReset.INSTANCE.isEnabled()) return;
+        if (!DisableChatReset.INSTANCE.isEnabled() || !history) return;
 
         ci.cancel();
     }
