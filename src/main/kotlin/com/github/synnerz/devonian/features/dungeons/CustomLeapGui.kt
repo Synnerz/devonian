@@ -150,7 +150,7 @@ object CustomLeapGui : Feature(
         on<PacketReceivedEvent> { event ->
             val packet = event.packet
             if (packet is ClientboundContainerClosePacket) {
-                Scheduler.scheduleTask { background.clearChildren() }
+                Scheduler.scheduleTask { resetChildren() }
                 containerId = -1
                 inHaunt = false
                 return@on
@@ -158,13 +158,15 @@ object CustomLeapGui : Feature(
 
             if (packet is ClientboundOpenScreenPacket) {
                 if (!validTitle(packet.title.string)) {
-                    Scheduler.scheduleTask { background.clearChildren() }
+                    Scheduler.scheduleTask { resetChildren() }
                     containerId = -1
+                    background.focused = false
                     return@on
                 }
-                if (containerId != -1) Scheduler.scheduleTask { background.clearChildren() }
+                if (containerId != -1) Scheduler.scheduleTask { resetChildren() }
                 containerId = packet.containerId
                 inHaunt = packet.title.string == "Teleport to Player"
+                background.focused = true
                 return@on
             }
         }
@@ -331,7 +333,7 @@ object CustomLeapGui : Feature(
             if (packet !is ServerboundContainerClosePacket) return@on
 
             containerId = -1
-            background.clearChildren()
+            resetChildren()
         }
 
         on<RenderGuiEvent> { event ->
@@ -359,7 +361,12 @@ object CustomLeapGui : Feature(
     override fun onWorldChange(event: WorldChangeEvent) {
         containerId = -1
         inHaunt = false
+        resetChildren()
+    }
+
+    private fun resetChildren() {
         background.clearChildren()
+        background.focused = false
     }
 
     private fun validTitle(title: String): Boolean = title == CONTAINER_NAME || title == "Teleport to Player"
