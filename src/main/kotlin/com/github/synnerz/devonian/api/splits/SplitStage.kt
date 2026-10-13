@@ -120,27 +120,39 @@ open class SplitStage {
         return stop.diff(start)
     }
 
-    open fun formatTime(ms: Long): String {
-        return if (shortenTime) StringUtils.formatTime(ms, 2)
-        else "%.2fs".format(ms / 1000.0)
+    open fun formatTime(style: TimeUnit.Style, ms: Long): String {
+        return if (shortenTime) StringUtils.formatTime(ms, style.decimals)
+        else "%.${style.decimals}fs".format(ms / 1000.0)
     }
 
-    fun format(format: TimeUnit.Format, force: TimeUnit? = null): String {
+    fun format(style: TimeUnit.Style, force: TimeUnit? = null): String {
         val time = getTime(force)
-        return when (format) {
-            TimeUnit.Format.RealTime -> "${name}&r&f: &a${formatTime(time.unix)}"
-            TimeUnit.Format.ServerTick -> "${name}&r&f: &b${formatTime(time.tick * 50L)}"
-            TimeUnit.Format.Both -> "${name}&r&f: &a${formatTime(time.unix)} &7(&b${formatTime(time.tick * 50L)}&7)"
+        return when (style.format) {
+            TimeUnit.Format.RealTime -> "${name}&r&f: &a${formatTime(style, time.unix)}"
+            TimeUnit.Format.ServerTick -> "${name}&r&f: &b${formatTime(style, time.tick * 50L)}"
+            TimeUnit.Format.Both -> "${name}&r&f: &a${formatTime(style, time.unix)} &7(&b${formatTime(style, time.tick * 50L)}&7)"
+            TimeUnit.Format.Difference -> {
+                val diff = time.unix - time.tick * 50L
+                val pre = when {
+                    diff < -100L -> "&a"
+                    diff < 0L -> "&2"
+                    diff < 250L -> "&2+"
+                    diff < 1_000L -> "&e+"
+                    diff < 3_000L -> "&6+"
+                    else -> "&4+"
+                }
+                "${name}&r&f: &b${formatTime(style, time.tick * 50L)} &7(${pre}${formatTime(style, diff)}&7)"
+            }
         }
     }
 
-    open fun getThisSplit(format: TimeUnit.Format, force: TimeUnit? = null): MutableList<String> {
+    open fun getThisSplit(style: TimeUnit.Style, force: TimeUnit? = null): MutableList<String> {
         if (name == "") return mutableListOf()
-        return mutableListOf(format(format, force))
+        return mutableListOf(format(style, force))
     }
 
-    open fun getSplits(format: TimeUnit.Format, force: TimeUnit? = null): List<String> {
+    open fun getSplits(style: TimeUnit.Style, force: TimeUnit? = null): List<String> {
         if (!hasStarted() && force == null) return emptyList()
-        return children.flatMapTo(getThisSplit(format, force)) { it.getSplits(format, force) }
+        return children.flatMapTo(getThisSplit(style, force)) { it.getSplits(style, force) }
     }
 }

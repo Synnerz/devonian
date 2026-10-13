@@ -1,14 +1,13 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
-import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.hud.texthud.SplitsFeature
 import com.github.synnerz.devonian.utils.BasicState
 
-object WatcherSplits : TextHudFeature(
+object WatcherSplits : SplitsFeature(
     "watcherSplits",
     "Displays Dialog Time, Watcher Move and Blood Clear",
     Categories.DUNGEONS,
@@ -20,13 +19,6 @@ object WatcherSplits : TextHudFeature(
         return super.createRequirements() + listOf(Stages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
     }
 
-    private val SETTING_FORMAT = addSelection(
-        "format",
-        0,
-        listOf("Real Time", "Server Ticks", "Both"),
-        "",
-        "Time Format",
-    )
     private val SETTING_SHOW_IN_BOSS = addSwitch(
         "showInBoss",
         false,
@@ -34,11 +26,21 @@ object WatcherSplits : TextHudFeature(
         "Show In Boss",
     )
 
+    override fun getMaxName(): String = "Watcher Dialogue"
+
+    override fun getSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> =
+        Stages.WatcherSplit.getSplits(style, force)
+
+    override fun getChatSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> =
+        listOf(super.getChatSplits(style, force).joinToString(" &f| "))
+
     private var entityId = -1
     private var sent = false
     private var dialogTicks = -1
 
     override fun initialize() {
+        super.initialize()
+
         on<NameChangeEvent> { event ->
             if (!event.name.contains(" The Watcher")) return@on
             entityId = event.entityId
@@ -54,10 +56,7 @@ object WatcherSplits : TextHudFeature(
 
         on<ClientThreadServerTickEvent> {
             if (Stages.WatcherClear.hasFinished() && !sent) {
-                ChatUtils.sendMessage(
-                    Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]).joinToString(" &f| "),
-                    true
-                )
+                sendMessage()
                 sent = true
                 return@on
             }
@@ -81,11 +80,6 @@ object WatcherSplits : TextHudFeature(
             ) return@on
             Stages.WatcherMove.stop()
         }
-
-        on<RenderOverlayEvent> {
-            setLines(Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()]))
-            draw(it.ctx)
-        }
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
@@ -94,6 +88,4 @@ object WatcherSplits : TextHudFeature(
         sent = false
         Stages.WatcherMove.reset()
     }
-
-    override fun getEditText(): List<String> = Stages.WatcherSplit.getSplits(TimeUnit.Format.entries[SETTING_FORMAT.get()], TimeUnit.now())
 }
