@@ -40,12 +40,14 @@ object TriviaSplits : SplitsFeature(
     override fun initialize() {
         super.initialize()
 
+        Stages.QuizSplits.feature = this
+
         on<ChatEvent> { event ->
             Stages.QuizSplits.onChat(event.message)
             if (event.matches("^\\[STATUE] Oruo the Omniscient: \\w+ answered the final question correctly!$".toRegex()) == null) return@on
             if (sent) return@on
 
-            sendMessage()
+            sendMessageAll()
             sent = true
         }
     }

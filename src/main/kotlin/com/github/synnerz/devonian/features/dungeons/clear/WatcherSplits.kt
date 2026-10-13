@@ -41,6 +41,8 @@ object WatcherSplits : SplitsFeature(
     override fun initialize() {
         super.initialize()
 
+        Stages.WatcherSplit.feature = this
+
         on<NameChangeEvent> { event ->
             if (!event.name.contains(" The Watcher")) return@on
             entityId = event.entityId
@@ -56,7 +58,7 @@ object WatcherSplits : SplitsFeature(
 
         on<ClientThreadServerTickEvent> {
             if (Stages.WatcherClear.hasFinished() && !sent) {
-                sendMessage()
+                sendMessageAll()
                 sent = true
                 return@on
             }

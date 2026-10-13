@@ -28,4 +28,10 @@ object RunSplits : SplitsFeature(
 
     override fun getSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> =
         Stages.Clear.getSplits(style, force)
+
+    override fun initialize() {
+        super.initialize()
+
+        Stages.Clear.feature = this
+    }
 }

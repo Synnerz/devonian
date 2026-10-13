@@ -24,6 +24,12 @@ object BossSplits : SplitsFeature(
         Stages.Boss.getSplits(style, force) +
         Stages.Root.getThisSplit(style, force)
 
+    override fun initialize() {
+        super.initialize()
+
+        Stages.Boss.feature = this
+    }
+
     val floors = arrayOf(Stages.F1, Stages.F2, Stages.F3, Stages.F4, Stages.F5, Stages.F6, Stages.F7)
     override fun getEditText(): List<String> {
         if (editTime.isEmpty()) editTime = TimeUnit.now()

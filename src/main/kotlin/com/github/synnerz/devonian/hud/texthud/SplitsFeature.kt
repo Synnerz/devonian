@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
+import com.github.synnerz.devonian.api.splits.SplitStage
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
@@ -42,8 +43,14 @@ abstract class SplitsFeature(
     private val SETTING_SEND_ALL_END = addSwitch(
         "sendAllOnEnd",
         false,
-        "Sends all of the splits in chat whenever the run ends. §cIGNORES PARENT TOGGLE",
-        "Send Splits In Chat",
+        "Sends all of the splits in chat whenever the split ends. §cIGNORES PARENT TOGGLE",
+        "Send Splits On End",
+    )
+    private val SETTING_SEND_INCREMENTALLY = addSwitch(
+        "sendIncrementally",
+        false,
+        "Sends each split time after it is completed. §cIGNORES PARENT TOGGLE",
+        "Send Splits After Each",
     )
     private val SETTING_FORMAT = addSelection(
         "format",
@@ -85,13 +92,23 @@ abstract class SplitsFeature(
     protected fun getChatSplits(force: TimeUnit? = null) =
         getChatSplits(getStyle(), force)
 
-    open fun sendMessage() {
+    open fun sendMessageAll() {
         // if (!isEnabled()) return
         if (!SETTING_SEND_ALL_END.get()) return
         Scheduler.scheduleServerTask(2) {
             getChatSplits().forEach {
                 ChatUtils.sendMessage(it.replaceCodes())
             }
+        }
+    }
+
+    protected open fun shouldSendMessage(stage: SplitStage) = true
+
+    open fun sendMessage(stage: SplitStage) {
+        if (!SETTING_SEND_INCREMENTALLY.get()) return
+        if (!shouldSendMessage(stage)) return
+        stage.getThisSplit(getStyle()).forEach {
+            ChatUtils.sendMessage(it.replaceCodes())
         }
     }
 
