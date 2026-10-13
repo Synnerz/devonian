@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.api.splits
 
+import com.github.synnerz.devonian.hud.texthud.SplitsFeature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
 
@@ -7,6 +8,7 @@ open class SplitStage {
     val children: Array<SplitStage>
     var parent: SplitStage? = null
         protected set
+    var feature: SplitsFeature? = null
     protected val filterStr: String?
     protected val filterReg: Regex?
     var startTime = TimeUnit.EMPTY
@@ -83,6 +85,15 @@ open class SplitStage {
         isActiveState.value = false
         hasFinishedState.value = true
         stopTime = TimeUnit.now()
+
+        if (name.isEmpty()) return
+
+        var curr: SplitStage? = this
+        while (curr != null && curr.feature == null) curr = curr.parent
+
+        val feat = curr?.feature ?: return
+        feature = feat
+        feat.sendMessage(this)
     }
 
     open fun start() {

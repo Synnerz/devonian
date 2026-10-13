@@ -72,8 +72,8 @@ object Stages {
     val BossEnd = object : SplitStage("^ +> EXTRA STATS <$".toRegex()) {
         override fun _start() {
             super._start()
-            RunSplits.sendMessage()
-            BossSplits.sendMessage()
+            RunSplits.sendMessageAll()
+            BossSplits.sendMessageAll()
         }
     }
 
