@@ -4,8 +4,6 @@ import com.github.synnerz.devonian.utils.BasicState
 
 class BranchingSplitStage : SplitStage {
     constructor(children: Array<SplitStage>) : super(children)
-    constructor(filter: String, children: Array<SplitStage> = arrayOf()) : super(filter, children)
-    constructor(filter: Regex, children: Array<SplitStage> = arrayOf()) : super(filter, children)
 
     var chosenChild: SplitStage? = null
     val chosenChildState: BasicState<SplitStage?> = BasicState(null)
@@ -36,10 +34,10 @@ class BranchingSplitStage : SplitStage {
         chosenChildState.value = child
     }
 
-    override fun getSplits(format: TimeUnit.Format, force: TimeUnit?): List<String> {
+    override fun getSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> {
         if (!hasStarted() && force == null) return emptyList()
-        val list = getThisSplit(format, force)
-        list.addAll(chosenChild?.getSplits(format, force) ?: emptyList())
+        val list = getThisSplit(style, force)
+        list.addAll(chosenChild?.getSplits(style, force) ?: emptyList())
         return list
     }
 }

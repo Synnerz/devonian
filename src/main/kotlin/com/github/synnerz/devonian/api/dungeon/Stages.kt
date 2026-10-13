@@ -72,8 +72,8 @@ object Stages {
     val BossEnd = object : SplitStage("^ +> EXTRA STATS <$".toRegex()) {
         override fun _start() {
             super._start()
-            RunSplits.onFloorEnd()
-            BossSplits.onFloorEnd()
+            RunSplits.sendMessage()
+            BossSplits.sendMessage()
         }
     }
 
@@ -200,9 +200,9 @@ object Stages {
         Necron = SplitStage("[BOSS] Necron: You went further than any human before, congratulations.")
             .withName("&4Necron")
         WitherKing = object : SplitStage("[BOSS] Necron: ARGH!") {
-            override fun getThisSplit(format: TimeUnit.Format, force: TimeUnit?): MutableList<String> {
+            override fun getThisSplit(style: TimeUnit.Style, force: TimeUnit?): MutableList<String> {
                 if (Dungeons.floor == FloorType.F7) return mutableListOf()
-                return super.getThisSplit(format, force)
+                return super.getThisSplit(style, force)
             }
         }.also {
             it.withName("&0Wither King")

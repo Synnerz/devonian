@@ -10,8 +10,10 @@ data class TimeUnit(val unix: Long, val tick: Int) : Comparable<TimeUnit> {
         return unix.compareTo(other.unix)
     }
 
+    data class Style(val format: Format, val decimals: Int)
+
     enum class Format {
-        RealTime, ServerTick, Both;
+        RealTime, ServerTick, Both, Difference;
     }
 
     companion object {
