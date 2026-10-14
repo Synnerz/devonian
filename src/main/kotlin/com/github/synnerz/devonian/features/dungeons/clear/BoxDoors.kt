@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.dungeon.WorldComponentPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
@@ -260,7 +261,7 @@ object BoxDoors : Feature(
         if (
             !SETTING_DOOR_TRACER.get() ||
             (!SETTING_DOOR_TRACER_ALWAYS.get() && !hasKey) ||
-            !room.doors.any { it.type == DoorTypes.WITHER || it.type == DoorTypes.BLOOD }
+            !Dungeons.inBloodRush.value
         ) return
         Render3DImmediate.renderTracer(
             comp.wx + 0.5, 71.0, comp.wz + 0.5,

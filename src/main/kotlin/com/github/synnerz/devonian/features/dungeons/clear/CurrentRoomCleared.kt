@@ -3,6 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
@@ -60,7 +61,7 @@ object CurrentRoomCleared : Feature(
             val isCleared = room.checkmark === CheckmarkTypes.WHITE || room.checkmark === CheckmarkTypes.GREEN
             val shouldTrigger = if (SETTING_NO_BLOOD_ALERT.get()) room.type !== RoomTypes.BLOOD else true
             if (lastRoom === room && !wasCleared && isCleared && room.type !== RoomTypes.FAIRY && shouldTrigger) {
-                if (!SETTING_ONLY_KEY.get() || room.doors.any { it.type === DoorTypes.WITHER || it.type === DoorTypes.BLOOD }) {
+                if (!SETTING_ONLY_KEY.get() || Dungeons.inBloodRush.value) {
                     Alert.show("&aRoom Cleared!", (SETTING_ALERT_TIME.get() * 1000.0).toInt())
                 }
             }

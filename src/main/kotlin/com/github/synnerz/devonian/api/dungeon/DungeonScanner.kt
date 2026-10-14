@@ -180,28 +180,31 @@ object DungeonScanner {
             if (lastIdx != null && lastIdx != jdx)
                 DungeonEvent.RoomLeave(currentRoom, lastIdx!!).post()
 
-            currentRoom = rooms[jdx]
-            if (currentRoom?.clientExplored == false && currentRoom?.explored == false) {
-                Dungeons.totalRoomSecrets.value += currentRoom!!.totalSecrets
-                currentRoom?.clientExplored = true
-                currentRoom?.explored = true
-                currentRoom?.lastClient = EventBus.serverTicks(true) + 10
-                updateMap = true
-            }
-            if (currentRoom?.checkmark == CheckmarkTypes.UNEXPLORED) {
-                currentRoom?.let {
+            val room = rooms[jdx]
+            currentRoom = room
+            if (room != null) {
+                if (!room.clientExplored && !room.explored) {
+                    Dungeons.totalRoomSecrets.value += room.totalSecrets
+                    room.clientExplored = true
+                    room.explored = true
+                    room.lastClient = EventBus.serverTicks(true) + 10
+                    updateMap = true
+                }
+                if (room.checkmark == CheckmarkTypes.UNEXPLORED) {
                     DungeonEvent.RoomUpdateEvent(
-                        it,
-                        it.checkmark,
+                        room,
+                        room.checkmark,
                         CheckmarkTypes.NONE,
                         true
                     ).post()
+                    room.checkmark = CheckmarkTypes.NONE
+                    updateMap = true
                 }
-                currentRoom?.checkmark = CheckmarkTypes.NONE
-                updateMap = true
             }
 
             if (updateMap) DungeonMap.redrawMap(rooms.toList(), doors.toList())
+
+            Dungeons.inBloodRush.value = room?.doors?.any { it.type == DoorTypes.WITHER || it.type == DoorTypes.BLOOD } ?: false
 
             if (lastIdx == jdx) return@on
             lastIdx = jdx
