@@ -428,6 +428,7 @@ object Devonian : ClientModInitializer {
             MuteWitherbornSound,
             PartyFinderJoinAlert,
             HideDungeonChestMessage,
+            ChatSpamGui,
 
             // Debug
             CopyItem,
