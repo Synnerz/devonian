@@ -1,6 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.mapEnums.CheckmarkTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.DoorTypes
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
@@ -31,7 +32,7 @@ object InstaClearAlert : Feature(
                 (roomChecks[roomName] == null || EventBus.serverTicks() - roomChecks[roomName]!!.second < 5) &&
                 (previousCheck == CheckmarkTypes.NONE || previousCheck == CheckmarkTypes.UNEXPLORED) &&
                 (currentCheck == CheckmarkTypes.WHITE || currentCheck == CheckmarkTypes.GREEN) &&
-                room.doors.any { it.type == DoorTypes.WITHER || it.type == DoorTypes.BLOOD }
+                Dungeons.inBloodRush.value
             ) {
                 Alert.showWithSound(
                     "&e$roomName &cinsta cleared",
