@@ -1040,6 +1040,7 @@ object DungeonMap : HudFeature(
             }
         }
 
+        mapRenderer.uploadImage()
         mapRenderer.draw(ctx, 0f, 0f, (1.0 / minecraft.window.guiScale).toFloat())
         if (SETTING_MC_TEXT.get()) {
             mapRenderer.delegatedText.value.forEach {

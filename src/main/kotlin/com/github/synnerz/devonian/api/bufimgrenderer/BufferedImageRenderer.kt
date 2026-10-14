@@ -17,18 +17,22 @@ import java.util.concurrent.Future
 
 abstract class BufferedImageRenderer<T>(val name: String) {
     protected val uploader = BufferedImageUploader(name)
-    protected val dirtyImage = atomic<BufferedImage?>(null)
+    protected val dirtyImage = atomic<Pair<BufferedImage, UpdateParam<T>>?>(null)
     protected val bimgProvider: BufferedImageFactory = BufferedImageFactory()
     protected var running = false
-    protected var waiting: Triple<Int, Int, T>? = null
+    protected var waiting: UpdateParam<T>? = null
     protected var lastFuture: Future<*>? = null
     protected val mcid = Identifier.fromNamespaceAndPath("devonian", "buffered_image/${name.lowercase()}")
     protected var valid = true
     protected var old = false
+    var lastRenderParam: UpdateParam<T>? = null
+        private set
 
     init {
         uploader.register(mcid)
     }
+
+    data class UpdateParam<T>(val w: Int, val h: Int, val param: T)
 
     protected abstract fun drawImage(img: BufferedImage, param: T): BufferedImage
 
@@ -38,7 +42,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
 
     fun update(w: Int, h: Int, param: T) {
         if (running) {
-            waiting = Triple(w, h, param)
+            waiting = UpdateParam(w, h, param)
             return
         }
         running = true
@@ -46,7 +50,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         lastFuture = pool.submit {
             try {
                 val img = createImage(w, h)
-                dirtyImage.value = drawImage(img, param)
+                dirtyImage.value = drawImage(img, param) to UpdateParam(w, h, param)
             } catch (e: Exception) {
                 println("error trying to render BufferedImage in $name")
                 e.printStackTrace()
@@ -54,14 +58,15 @@ abstract class BufferedImageRenderer<T>(val name: String) {
             running = false
             val w = waiting ?: return@submit
             waiting = null
-            update(w.first, w.second, w.third)
+            update(w.w, w.h, w.param)
         }
     }
 
-    protected fun uploadImage() {
-        val bimg = dirtyImage.getAndSet(null)
-        if (bimg != null && !old) {
-            uploader.upload(bimg)
+    fun uploadImage() {
+        val draw = dirtyImage.getAndSet(null)
+        if (draw != null && !old) {
+            uploader.upload(draw.first)
+            lastRenderParam = draw.second
             valid = true
         }
     }
@@ -70,23 +75,37 @@ abstract class BufferedImageRenderer<T>(val name: String) {
         valid = false
         old = true
         lastFuture?.cancel(true)
+        lastRenderParam = null
     }
 
     fun draw(ctx: GuiGraphicsExtractor, x: Float, y: Float, scale: Float = 1f) {
-        uploadImage()
         draw(ctx, x, y, uploader.w * scale, uploader.h * scale)
     }
 
-    fun drawStretched(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float) {
-        uploadImage()
-        draw(ctx, x, y, w, h)
+    fun draw(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float) {
+        drawImpl(ctx, x, y, w, h, 0f, 0f, 1f, 1f, -1)
     }
 
-    protected fun draw(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float) {
-        draw(ctx, x, y, w, h, 0f, 0f, 1f, 1f)
+    fun draw(
+        ctx: GuiGraphicsExtractor,
+        x: Float, y: Float,
+        u0: Float, v0: Float,
+        u1: Float, v1: Float,
+        color: Int = -1,
+        scale: Float = 1f,
+    ) {
+        drawImpl(
+            ctx,
+            x, y,
+            uploader.w * scale * (u1 - u0),
+            uploader.h * scale * (v1 - v0),
+            u0, v0,
+            u1, v1,
+            color,
+        )
     }
 
-    protected fun draw(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float, u0: Float, v0: Float, u1: Float, v1: Float) {
+    protected fun drawImpl(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float, u0: Float, v0: Float, u1: Float, v1: Float, color: Int) {
         if (Devonian.minecraft.gui.hud.isHidden) return
         if (!uploader.hasImg) return
         if (!valid) return
@@ -107,7 +126,7 @@ abstract class BufferedImageRenderer<T>(val name: String) {
                 y + h,
                 u0, v0,
                 u1, v1,
-                0xFFFFFFFF.toInt(),
+                color,
                 ctx.scissorStack.peek()
             )
         )
