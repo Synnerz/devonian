@@ -50,28 +50,27 @@ open class StylizedTextHud(
         fontsDirty = true
     }
 
-    var fontSize = BASE_FONT_SIZE
+    protected var fontSize = BASE_FONT_SIZE
         private set
-    var lineWidth = 0f
-        protected set
-    var fontAscent = 0f
-        private set
-    var fontDescent = 0f
-        private set
+    protected var lineSpacingInternal = 1f
+    protected var lineWidth = 0f
+    protected var fontAscent = 0f
+    protected var fontDescent = 0f
     var renderScale = 1.0
         private set
     var hasObfuText = false
         private set
 
-    var lastRenderParams = TextRenderParams(align, shadow, backdrop, fontSize)
+    protected var lastRenderParams = TextRenderParams(align, shadow, backdrop, fontSize, fontSize * lineSpacingInternal)
         private set
 
-    override fun getWidth(): Double = lineWidth * renderScale
+    override fun getWidth(): Double = renderer.getRenderMetrics().width * renderScale
 
-    override fun getLineHeight(): Double = fontSize * renderScale
+    override fun getLineHeight(): Double = renderer.getRenderMetrics().fontSize * renderScale
 
     override fun getHeight(): Double =
-        if (lines.isEmpty()) 0.0 else (lines.size - 1) * getLineHeight() + (fontAscent + fontDescent) * renderScale
+        if (lines.isEmpty()) 0.0
+        else lines.size * getLineHeight() + renderer.getRenderMetrics().descent * renderScale
 
     override fun getBounds(): BoundingBox = anchor.transform(
         BoundingBox(
@@ -88,12 +87,12 @@ open class StylizedTextHud(
             fontsDirty = false
             markText()
             fontSize = renderSize
-            renderer.onFontUpdate()
+            renderer.onFontUpdate(fontSize)
         }
 
         renderScale = 1.0 / window.guiScale
 
-        val currentParams = TextRenderParams(align, shadow, backdrop, fontSize)
+        val currentParams = TextRenderParams(align, shadow, backdrop, fontSize, fontSize * lineSpacingInternal)
         if (currentParams != lastRenderParams) markImage()
         if (currentParams.shadow != lastRenderParams.shadow) markText()
         lastRenderParams = currentParams
@@ -130,7 +129,12 @@ open class StylizedTextHud(
         if (lines.isNotEmpty()) {
             if (imageDirty) {
                 imageDirty = false
-                renderer.onUpdateImage()
+                val metrics = TextRenderMetrics(
+                    lineWidth,
+                    fontAscent, fontDescent,
+                    fontSize,
+                )
+                renderer.onUpdateImage(lastRenderParams, metrics)
             }
             renderText(ctx)
         }
@@ -181,12 +185,6 @@ open class StylizedTextHud(
         }
     }
 
-    override fun removeLine(i: Int): ITextHud = apply {
-        if (i !in lines.indices) return@apply
-        lines.removeAt(i)
-        markImage()
-    }
-
     private var storedLines = emptyList<String>()
     override fun storeLines(): ITextHud = apply {
         storedLines = lines.map { it.str }
@@ -221,7 +219,19 @@ open class StylizedTextHud(
         val shadow: Shadow,
         val backdrop: Backdrop,
         val fontSize: Float,
+        val lineSpacing: Float,
     )
+
+    open class TextRenderMetrics(
+        width: Float,
+        ascent: Float,
+        descent: Float,
+        val fontSize: Float,
+    ) : FontMetrics(width, ascent, descent) {
+        companion object {
+            val EMPTY = TextRenderMetrics(0f, 0f, 0f, 0f)
+        }
+    }
 
     enum class Anchor {
         NW, NE,

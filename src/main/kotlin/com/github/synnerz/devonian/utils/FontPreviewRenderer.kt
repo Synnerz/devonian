@@ -32,7 +32,7 @@ object FontPreviewRenderer : BufferedImageRenderer<FontPreviewRenderer.FontPrevi
     fun draw(ctx: GuiGraphicsExtractor, font: Font, x: Float, y: Float) {
         val data = currentRenderData.value?.get(font.name) ?: return
         uploadImage()
-        draw(ctx, x, y, data.w, data.h, data.u0, data.v0, data.u1, data.v1)
+        drawImpl(ctx, x, y, data.w, data.h, data.u0, data.v0, data.u1, data.v1, -1)
     }
 
     override fun createImage(w: Int, h: Int): BufferedImage {
@@ -95,6 +95,7 @@ object FontPreviewRenderer : BufferedImageRenderer<FontPreviewRenderer.FontPrevi
                 param.shadow,
                 StylizedTextHud.Backdrop.None,
                 size,
+                size,
             )
             val text = TextRendererImpl.drawImage(
                 factory.createJava(w, h),
@@ -104,6 +105,7 @@ object FontPreviewRenderer : BufferedImageRenderer<FontPreviewRenderer.FontPrevi
                     line.width,
                     line.ascent,
                     line.descent,
+                    size,
                 )
             )
 

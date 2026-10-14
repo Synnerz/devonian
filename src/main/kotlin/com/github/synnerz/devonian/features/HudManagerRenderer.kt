@@ -14,8 +14,8 @@ object HudManagerRenderer : TextHudFeature(
     subcategory = "Mod",
     isInternal = true,
 ) {
-    override fun getEditText(): List<String> = listOf("Change HUD Style").let {
-        if (isEnabled()) listOf(it[0], "Hint: /dv font <name>")
+    override fun getEditText(): List<String> = listOf("Toggle to Change HUD Style").let {
+        if (isEnabled()) it + listOf("Hint: /dv font <name>")
         else it
     }
 
