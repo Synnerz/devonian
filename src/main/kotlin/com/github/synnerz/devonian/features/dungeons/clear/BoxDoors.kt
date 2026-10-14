@@ -106,6 +106,25 @@ object BoxDoors : Feature(
         "Adds an outline to blood room whenever it's opened",
         "Outline Opened Blood",
     )
+    private val SETTING_DOOR_TRACER = addSwitch(
+        "doorTracer",
+        false,
+        "Shows a tracer towards the wither/blood door",
+        "Door Tracer"
+    )
+    private val SETTING_DOOR_TRACER_WIDTH = addSlider(
+        "doorTracerWidth",
+        2.0,
+        0.0, 10.0,
+        "",
+        "Door Tracer Width"
+    )
+    private val SETTING_DOOR_TRACER_ALWAYS = addSwitch(
+        "doorTracerAlways",
+        false,
+        "Shows the tracer towards the door regardless of having the key",
+        "Door Tracer Always"
+    )
 
     private val EMPTY_COLOR = Color(0, 0, 0, 0)
     private var witherKeys = 0
@@ -151,7 +170,7 @@ object BoxDoors : Feature(
             DungeonScanner.doors.forEach {
                 if (it == null) return@forEach
                 if (it.wasBlood && SETTING_OUTLINE_OPENED_BLOOD.get() && bloodOpened) {
-                    drawDoor(it.comp, SETTING_DOOR_KEY_WIRE_COLOR.getColor(), EMPTY_COLOR)
+                    drawDoor(it.comp, SETTING_DOOR_KEY_WIRE_COLOR.getColor(), EMPTY_COLOR, true)
                     return@forEach
                 }
 
@@ -182,7 +201,7 @@ object BoxDoors : Feature(
                     colorFill = SETTING_DOOR_LOCKED_FILL_COLOR.getColor()
                 }
 
-                drawDoor(it.comp, colorWire, colorFill)
+                drawDoor(it.comp, colorWire, colorFill, false, hasKey)
             }
 
             if (SETTING_RENDER_NORMAL_DOORS.get()) {
@@ -205,14 +224,21 @@ object BoxDoors : Feature(
                     drawDoor(
                         it.comp,
                         SETTING_DOOR_NORMAL_WIRE_COLOR.getColor(),
-                        SETTING_DOOR_NORMAL_FILL_COLOR.getColor()
+                        SETTING_DOOR_NORMAL_FILL_COLOR.getColor(),
+                        true
                     )
                 }
             }
         }
     }
 
-    private fun drawDoor(comp: WorldComponentPosition, wire: Color, fill: Color) {
+    private fun drawDoor(
+        comp: WorldComponentPosition,
+        wire: Color,
+        fill: Color,
+        normal: Boolean,
+        hasKey: Boolean = false
+    ) {
         Render3DImmediate.renderWireframeBox(
             comp.wx + 0.5, 69.0, comp.wz + 0.5,
             3.0, 4.0,
@@ -227,6 +253,19 @@ object BoxDoors : Feature(
             fill,
             SETTING_DOOR_FILL_PHASE.get(),
             centered = true,
+        )
+        if (normal) return
+
+        val room = DungeonScanner.currentRoom ?: return
+        if (
+            !SETTING_DOOR_TRACER.get() ||
+            (!SETTING_DOOR_TRACER_ALWAYS.get() && !hasKey) ||
+            !room.doors.any { it.type == DoorTypes.WITHER || it.type == DoorTypes.BLOOD }
+        ) return
+        Render3DImmediate.renderTracer(
+            comp.wx + 0.5, 71.0, comp.wz + 0.5,
+            wire,
+            lineWidth = SETTING_DOOR_TRACER_WIDTH.get()
         )
     }
 
