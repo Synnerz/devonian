@@ -5,7 +5,6 @@ import com.github.synnerz.devonian.GuiTextRenderStateAccessor
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.*
 import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.Companion.BASE_FONT_SIZE
 import com.github.synnerz.devonian.utils.FixedIdentityMap
-import com.github.synnerz.devonian.utils.StringUtils.clearCodes
 import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 import com.github.synnerz.devonian.utils.render.states.QuadRenderState
 import net.minecraft.client.gui.GuiGraphicsExtractor
@@ -193,13 +192,18 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
     companion object {
         private val cache = FixedIdentityMap<Component, Component>(128)
 
+        private val replaceColorsRegex = "[§&][0-9a-fr]".toRegex(RegexOption.IGNORE_CASE)
+
         private fun cloneBlack(c: Component): Component {
             return cache.getOrPut(c) {
                 val comp = MutableComponent.create(
                     PlainTextContents.create(
                         buildString {
                             c.contents.visit {
-                                append(it.clearCodes())
+                                append(replaceColorsRegex.replace(it) {
+                                    if (it.value.endsWith('r')) "§r§0"
+                                    else "§" + it.value.last()
+                                })
                                 Optional.empty<Any>()
                             }
                         }
