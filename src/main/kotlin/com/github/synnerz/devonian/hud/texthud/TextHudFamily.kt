@@ -19,7 +19,6 @@ class TextHudFamily(name: String, data: DataProvider) : StylizedTextHud(name, da
     override fun addLines(s: List<String>) = throw UnsupportedOperationException("operate on children directly")
     override fun setLine(s: String) = throw UnsupportedOperationException("operate on children directly")
     override fun setLines(s: List<String>) = throw UnsupportedOperationException("operate on children directly")
-    override fun removeLine(i: Int) = throw UnsupportedOperationException("operate on children directly")
     override fun storeLines(): ITextHud = apply {
         children.forEach { it.storeLines() }
     }

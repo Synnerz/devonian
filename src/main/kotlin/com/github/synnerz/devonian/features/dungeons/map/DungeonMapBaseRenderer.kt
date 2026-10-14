@@ -558,17 +558,20 @@ class DungeonMapBaseRenderer :
                         val img = bimgProvider.createJava(w, h)
 
                         TextRendererImpl.drawImage(
-                            img, TextRenderer.RenderParams(
+                            img,
+                            TextRenderer.RenderParams(
                                 StylizedTextHud.TextRenderParams(
                                 StylizedTextHud.Align.Center,
                                 options.stringShadow,
                                 StylizedTextHud.Backdrop.None,
+                                fontSizeF,
                                 fontSizeF,
                             ),
                             lines,
                             width,
                             lines.maxOfOrNull { it.descent } ?: 0f,
                             lines.maxOfOrNull { it.ascent } ?: 0f,
+                            fontSize.toFloat(),
                             true,
                         ))
 

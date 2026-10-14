@@ -47,14 +47,14 @@ object TextRendererImpl {
                 0,
                 0,
                 (param.width + 0.5f).toInt(),
-                (param.lines.size * rp.fontSize + (param.lines.getOrNull(0)?.descent ?: 0f) + 0.5f).toInt()
+                (param.lines.size * rp.lineSpacing + (param.lines.getOrNull(0)?.descent ?: 0f) + 0.5f).toInt()
             )
         }
 
         g.paint = Color(-1)
         val empty = AffineTransform.getTranslateInstance(0.0, 0.0)
         param.lines.forEachIndexed { i, line ->
-            val y = i * rp.fontSize
+            val y = i * rp.lineSpacing
             val x = when (rp.align) {
                 StylizedTextHud.Align.Left -> 0f
                 StylizedTextHud.Align.Right -> param.width - line.width
@@ -68,7 +68,7 @@ object TextRendererImpl {
                     x.toInt(),
                     (y + line.ascent - rp.fontSize).toInt(),
                     ceil(line.width).toInt(),
-                    ceil(rp.fontSize + line.descent).toInt()
+                    ceil(line.ascent + line.descent).toInt()
                 )
             }
 

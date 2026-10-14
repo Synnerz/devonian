@@ -14,7 +14,6 @@ interface ITextHud {
     fun addLines(s: List<String>): ITextHud
     fun setLine(s: String): ITextHud
     fun setLines(s: List<String>): ITextHud
-    fun removeLine(i: Int): ITextHud
     fun storeLines(): ITextHud
     fun resetLines(): ITextHud
 }

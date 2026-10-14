@@ -28,10 +28,10 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
         parent.markFont()
     }
 
-    override fun onFontUpdate() {
-        fontMain = fontMainBase.deriveFont(Font.PLAIN, parent.fontSize)
-        fontMono = Font(Font.MONOSPACED, Font.PLAIN, (parent.fontSize + 0.5f).toInt())
-        fontBack = Font(Font.SANS_SERIF, Font.PLAIN, (parent.fontSize + 0.5f).toInt())
+    override fun onFontUpdate(fontSize: Float) {
+        fontMain = fontMainBase.deriveFont(Font.PLAIN, fontSize)
+        fontMono = Font(Font.MONOSPACED, Font.PLAIN, (fontSize + 0.5f).toInt())
+        fontBack = Font(Font.SANS_SERIF, Font.PLAIN, (fontSize + 0.5f).toInt())
     }
 
     private var cachedGraphics: Graphics2D? = null
@@ -67,10 +67,12 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
     private var maxW = 0
     private var maxH = 0
     private var age = 0
-    override fun onUpdateImage() {
-        val params = parent.lastRenderParams
-        val actualW = ceil(parent.lineWidth).toInt()
-        val actualH = ceil(params.fontSize * (parent.lines.size + 1) + params.shadow.getSizeIncrease(params.fontSize)).toInt()
+    private var metrics = StylizedTextHud.TextRenderMetrics.EMPTY
+    override fun onUpdateImage(params: StylizedTextHud.TextRenderParams, metrics: StylizedTextHud.TextRenderMetrics) {
+        this.metrics = metrics
+
+        val actualW = ceil(metrics.width).toInt()
+        val actualH = ceil(params.lineSpacing * (parent.lines.size + 1) + params.shadow.getSizeIncrease(params.fontSize)).toInt()
         val scaleW = MathUtils.ceilPow2(actualW, 1)
         val scaleH = MathUtils.ceilPow2(actualH, 2)
         if (age > 0 && scaleW <= maxW && scaleH <= maxH) {
@@ -86,16 +88,39 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
             TextRenderer.RenderParams(
                 params,
                 parent.lines.map { it.data as StringParser.LayoutLineData },
-                parent.lineWidth,
-                parent.fontAscent,
-                parent.fontDescent,
+                metrics.width,
+                metrics.ascent,
+                metrics.descent,
+                metrics.fontSize,
             )
         )
     }
 
+    override fun getRenderMetrics(): StylizedTextHud.TextRenderMetrics = renderer.lastRenderParam?.param ?: metrics
+
     override fun renderText(ctx: GuiGraphicsExtractor) {
+        renderer.uploadImage()
         val pos = parent.getBounds()
         renderer.draw(ctx, pos.x.toFloat(), pos.y.toFloat(), parent.renderScale.toFloat())
+    }
+
+    override fun renderLine(ctx: GuiGraphicsExtractor, line: Int, color: Int) {
+        renderer.uploadImage()
+        val (_, h, params) = renderer.lastRenderParam ?: return
+
+        val pos = parent.getBounds()
+        val v0 = line * params.renderParams.lineSpacing / h
+        val v1 = v0 + (params.ascent + params.descent) / h
+
+        renderer.draw(
+            ctx,
+            pos.x.toFloat(),
+            (pos.y + line * params.renderParams.fontSize * parent.renderScale).toFloat(),
+            0f, v0,
+            1f, v1,
+            color,
+            parent.renderScale.toFloat(),
+        )
     }
 
     override fun dispose() {

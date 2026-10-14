@@ -102,7 +102,6 @@ abstract class TextHudFeature(
     override fun addLines(s: List<String>) = apply { if (!isEditing) hud.addLines(s) }
     override fun setLine(s: String) = apply { if (!isEditing) hud.setLine(s) }
     override fun setLines(s: List<String>) = apply { if (!isEditing) hud.setLines(s) }
-    override fun removeLine(i: Int) = apply { if (!isEditing) hud.removeLine(i) }
     override fun storeLines(): ITextHud = apply { hud.storeLines() }
     override fun resetLines(): ITextHud = apply { hud.resetLines() }
 

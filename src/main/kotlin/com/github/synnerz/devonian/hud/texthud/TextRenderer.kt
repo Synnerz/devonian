@@ -13,10 +13,12 @@ class TextRenderer(name: String) : BufferedImageRenderer<TextRenderer.RenderPara
         width: Float,
         ascent: Float,
         descent: Float,
+        fontSize: Float,
         val noAAHint: Boolean = false,
-    ) : StylizedTextHud.FontMetrics(
+    ) : StylizedTextHud.TextRenderMetrics(
         width,
         ascent,
         descent,
+        fontSize,
     )
 }
