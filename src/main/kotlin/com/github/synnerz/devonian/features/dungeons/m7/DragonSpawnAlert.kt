@@ -32,7 +32,7 @@ object DragonSpawnAlert : Feature(
     )
 
     override fun initialize() {
-        on<M7Events.ActiveDragonChanged> { event ->
+        on<M7Events.DragonParticles> { event ->
             val drag = event.dragon.type
 
             Alert.show(
