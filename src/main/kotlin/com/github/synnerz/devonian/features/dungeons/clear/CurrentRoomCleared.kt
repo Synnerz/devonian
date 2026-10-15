@@ -30,7 +30,7 @@ object CurrentRoomCleared : Feature(
         "onlyKey",
         false,
         "",
-        "Only Show For Blood Rush",
+        "Only In Blood Rush",
     )
     private val SETTING_ALERT_TIME = addDecimalSlider(
         "alertTime",
@@ -51,6 +51,12 @@ object CurrentRoomCleared : Feature(
         "Displays an alert whenever the current room is green checked (only triggers whenever the room has already been white check marked)",
         "Secrets Done"
     )
+    private val SETTING_NOT_IN_BR = addSwitch(
+        "notOnlyKey",
+        true,
+        "Stops the title from showing if you are currently in a Blood Rush room",
+        "Not In Blood Rush"
+    )
 
     private var lastRoom: DungeonRoom? = null
     private var wasCleared = false
@@ -61,7 +67,10 @@ object CurrentRoomCleared : Feature(
             val isCleared = room.checkmark === CheckmarkTypes.WHITE || room.checkmark === CheckmarkTypes.GREEN
             val shouldTrigger = if (SETTING_NO_BLOOD_ALERT.get()) room.type !== RoomTypes.BLOOD else true
             if (lastRoom === room && !wasCleared && isCleared && room.type !== RoomTypes.FAIRY && shouldTrigger) {
-                if (!SETTING_ONLY_KEY.get() || Dungeons.inBloodRush.value) {
+                if (
+                    (!SETTING_ONLY_KEY.get() || Dungeons.inBloodRush.value) &&
+                    (!SETTING_NOT_IN_BR.get() || !Dungeons.inBloodRush.value)
+                ) {
                     Alert.show("&aRoom Cleared!", (SETTING_ALERT_TIME.get() * 1000.0).toInt())
                 }
             }
@@ -80,6 +89,7 @@ object CurrentRoomCleared : Feature(
             val room = event.room
             if (room != currentRoom) return@on
             if (room.totalSecrets < 1) return@on
+            if (Dungeons.inBloodRush.value && SETTING_NOT_IN_BR.get()) return@on
 
             Alert.show("&bSecrets Done!", (SETTING_ALERT_TIME.get() * 1000.0).toInt())
         }
