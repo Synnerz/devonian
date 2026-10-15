@@ -233,7 +233,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
                             c.contents.visit {
                                 append(replaceColorsRegex.replace(it) {
                                     if (it.value.endsWith('r')) "§r§0"
-                                    else "§" + it.value.last()
+                                    else "§0"
                                 })
                                 Optional.empty<Any>()
                             }
