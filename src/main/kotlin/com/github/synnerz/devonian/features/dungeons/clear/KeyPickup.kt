@@ -117,6 +117,12 @@ object KeyPickup : Feature(
         "KeyPickup Role Name",
         subcategory = "Alerts"
     )
+    private val SETTING_ONLY_IN_BR = addSwitch(
+        "onlyInBr",
+        true,
+        "Only displays the title if you're inside a blood rush room",
+        "Only In BloodRush"
+    )
 
     private val pickupSound = SoundEvents.VAULT_OPEN_SHUTTER
 
@@ -157,6 +163,8 @@ object KeyPickup : Feature(
 
                 else -> null
             } ?: return@on
+
+            if (SETTING_ONLY_IN_BR.get() && !Dungeons.inBloodRush.value) return@on
 
             if (SETTING_KEY_PICKUP_SOUND.get())
                 minecraft.player?.playSound(pickupSound, 2f, 1f)
