@@ -6,6 +6,11 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils
+import net.minecraft.core.component.DataComponents
+import net.minecraft.world.entity.EntityTypes
+import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.item.Items
+import java.util.UUID
 
 object GoldorFrenzyTimer : TextHudFeature(
     "goldorFrenzyTimer",
@@ -26,11 +31,19 @@ object GoldorFrenzyTimer : TextHudFeature(
         "",
         "Show Cumulative Time",
     )
+    private val SETTING_USE_ALTERNATIVE_SCANNER = addSwitch(
+        "useAlternativeScanner",
+        false,
+        "Uses an alternative scanner for storm dying, which might be inaccurate",
+        "Alternative Scanner"
+    )
 
+    private val BUNK_UUID = UUID.fromString("f8e5fbc7-af95-3faa-93ab-1604bdd7e3cb")
     private var preGoldor = false
     private var inGoldor = false
     private var until = 0
     private var preGoldorTicks = 0
+    private var crushes = 0
 
     override fun initialize() {
         on<ChatEvent> { event ->
@@ -42,6 +55,7 @@ object GoldorFrenzyTimer : TextHudFeature(
                     preGoldorTicks = 0
                 }
                 "[BOSS] Storm: I should have known that I stood no chance." -> {
+                    if (preGoldor && SETTING_USE_ALTERNATIVE_SCANNER.get()) return@on
                     preGoldor = true
                     preGoldorTicks = 100
                 }
@@ -76,6 +90,27 @@ object GoldorFrenzyTimer : TextHudFeature(
             )
         }
 
+        on<EntityEquipmentEvent> { event ->
+            if (event.type != EntityTypes.ARMOR_STAND) return@on
+            if (event.slots.size != 1) return@on
+            val entry = event.slots.firstOrNull() ?: return@on
+            if (entry.first !== EquipmentSlot.HEAD) return@on
+
+            val item = entry.second ?: return@on
+            if (item.item !== Items.PLAYER_HEAD) return@on
+
+            val profile = item.get(DataComponents.PROFILE) ?: return@on
+            val id = profile.partialProfile().id ?: return@on
+
+            if (id != BUNK_UUID) return@on
+
+            crushes++
+            if (crushes != 2) return@on
+
+            preGoldor = true
+            preGoldorTicks = 100
+        }.setEnabled(SETTING_USE_ALTERNATIVE_SCANNER.state)
+
         on<RenderOverlayEvent> { event ->
             if (preGoldor || inGoldor) draw(event.ctx)
         }
@@ -88,5 +123,6 @@ object GoldorFrenzyTimer : TextHudFeature(
         preGoldor = false
         until = 0
         preGoldorTicks = 0
+        crushes = 0
     }
 }
