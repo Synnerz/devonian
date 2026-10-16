@@ -40,6 +40,7 @@ import com.github.synnerz.devonian.features.dungeons.pf.*
 import com.github.synnerz.devonian.features.dungeons.solvers.*
 import com.github.synnerz.devonian.features.end.*
 import com.github.synnerz.devonian.features.garden.*
+import com.github.synnerz.devonian.features.kuudra.AnkyTickTimer
 import com.github.synnerz.devonian.features.kuudra.CratePriority
 import com.github.synnerz.devonian.features.kuudra.CratesWaypoints
 import com.github.synnerz.devonian.features.misc.*
@@ -429,6 +430,7 @@ object Devonian : ClientModInitializer {
             PartyFinderJoinAlert,
             HideDungeonChestMessage,
             ChatSpamGui,
+            AnkyTickTimer,
 
             // Debug
             CopyItem,
