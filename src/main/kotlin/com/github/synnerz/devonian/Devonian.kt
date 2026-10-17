@@ -431,6 +431,7 @@ object Devonian : ClientModInitializer {
             HideDungeonChestMessage,
             ChatSpamGui,
             AnkyTickTimer,
+            BazaarCancelOrder,
 
             // Debug
             CopyItem,
