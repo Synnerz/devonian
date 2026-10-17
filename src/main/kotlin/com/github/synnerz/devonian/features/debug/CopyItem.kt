@@ -13,6 +13,8 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
+import org.lwjgl.sdl.SDLClipboard
+import org.lwjgl.system.MemoryUtil
 
 object CopyItem : Feature(
     "copyItem",
@@ -57,7 +59,7 @@ object CopyItem : Feature(
                     items.add(o.json)
                 }
                 obj.set("items", items)
-                minecraft.keyboardHandler.clipboard = obj.toString()
+                clipboard(obj.toString())
                 ChatUtils.sendMessage(
                     Component.literal("§aCopied ")
                         .append(screen.title.colorCodes())
@@ -80,5 +82,22 @@ object CopyItem : Feature(
                     .append(Component.literal("§r§a to clipboard."))
             )
         }
+    }
+
+    private fun clipboard(string: String) {
+        // mojang is like garbage so if you try to copy large amount of data
+        // it will OOM
+        val encoded = MemoryUtil.memUTF8(string)
+
+        val res = runCatching catch@{
+            if (SDLClipboard.SDL_SetClipboardText(encoded)) return@catch
+            println("Devonian\$CopyItem failed to set clipboard data")
+        }
+        res.onFailure {
+            println("Devonian\$CopyItem error")
+            it.printStackTrace()
+        }
+
+        MemoryUtil.memFree(encoded)
     }
 }
