@@ -109,11 +109,13 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     override fun removed() {
         selectedCategory?.hideColorPickers()
         background.hide()
+        background.focused = false
         opened = false
     }
 
     override fun added() {
         background.unhide()
+        background.focused = true
         opened = true
     }
 }
