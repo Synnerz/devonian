@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.kuudra
 
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
-import com.github.synnerz.devonian.api.events.kuudra.KuudraEvents
+import com.github.synnerz.devonian.api.kuudra.KuudraEvents
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
