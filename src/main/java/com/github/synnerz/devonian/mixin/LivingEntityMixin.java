@@ -37,16 +37,6 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Inject(
-        method = "updateSwingTime",
-        at = @At("HEAD")
-    )
-    private void devonian$itemAnimations1(CallbackInfo ci) {
-        LivingEntity that = (LivingEntity) (Object) this;
-        if (!(that instanceof LocalPlayer)) return;
-        ItemAnimations.INSTANCE.onUpdateSwingTime();
-    }
-
-    @Inject(
         method = "swing(Lnet/minecraft/world/InteractionHand;Z)V",
         at = @At("HEAD")
     )

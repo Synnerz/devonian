@@ -94,6 +94,7 @@
     "GLFWMixin",
     "ItemCooldownsMixin",
     "ItemStackMixin",
+    "PlayerMixin",
     "StringDecomposerMixin",
     "accessor.AbstractArrowAccessor",
     "accessor.ClientboundEntityEventPacketAccessor",
