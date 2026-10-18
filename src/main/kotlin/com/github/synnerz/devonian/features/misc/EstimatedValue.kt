@@ -44,11 +44,14 @@ object EstimatedValue : TextHudFeature(
         "FIFTH_MASTER_STAR"
     )
     // TODO: probably limit this cache
-    private val itemCache = WeakHashMap<ItemStack, ItemStatData>()
-    private var lastItem: ItemStack? = null
+    private val itemCache = object : LinkedHashMap<String, ItemStatData>() {
+        override fun removeEldestEntry(eldest: Map.Entry<String?, ItemStatData?>?): Boolean {
+            return size > 10
+        }
+    }
+    private var lastItem: String? = null
 
     data class ItemStatData(
-        val name: String, // formatted custom name component
         val unlockedGemstones: List<String> = listOf(), // gems
         val enchantments: List<String> = listOf(), // enchantments
         val ability_scrolls: List<String> = listOf(), // ability_scroll
@@ -167,7 +170,7 @@ object EstimatedValue : TextHudFeature(
             return price
         }
 
-        fun format(): List<String> {
+        fun format(name: String): List<String> {
             return buildList {
                 val total = totalPrice()
                 if (total < 0) return emptyList()
@@ -225,9 +228,10 @@ object EstimatedValue : TextHudFeature(
         on<TooltipRenderEvent> { event ->
             val itemStack = event.item ?: return@on
             val extraAttributes = ItemUtils.extraAttributes(itemStack) ?: return@on
+            val uuid = extraAttributes.getString("uuid").getOrNull() ?: return@on
             val sbId = extraAttributes.getString("id").getOrNull() ?: return@on
-            lastItem = itemStack
-            val data = itemCache.getOrPut(itemStack) {
+            lastItem = uuid
+            val data = itemCache.getOrPut(uuid) {
                 val enchantments = extraAttributes.getCompound("enchantments").getOrNull()
                 var ultimateEnchant: String? = null
                 val enchantIds: List<String>? = if (enchantments == null) null else buildList {
@@ -249,7 +253,6 @@ object EstimatedValue : TextHudFeature(
                 val abilityScrolls = extraAttributes.getList("ability_scroll").getOrNull()
                 val enrichment = extraAttributes.getString("talisman_enrichment").getOrNull()?.uppercase()
                 return@getOrPut ItemStatData(
-                    itemStack.customName?.colorCodes() ?: itemStack.itemName.string,
                     enchantments = enchantIds ?: emptyList(),
                     skyblockId = sbId,
                     hpbs = hpbs ?: 0,
@@ -278,13 +281,13 @@ object EstimatedValue : TextHudFeature(
                     FormattedCharSequence.forward(shortNum(data.totalPrice()), Style.EMPTY.withColor(ChatFormatting.GREEN)),
                 )))
 
-            setLines(data.format())
+            setLines(data.format(itemStack.hoverName.colorCodes()))
         }
 
         on<RenderOverlayEvent> {
             if (SETTING_ONLY_LORE.get() || lastItem == null) return@on
             val cursorItem = minecraft.gui.screen()?.let { ScreenUtils.cursorStack(it) } ?: return@on
-            if (cursorItem != lastItem) {
+            if (ItemUtils.uuid(cursorItem) != lastItem) {
                 lastItem = null
                 invalidateLines()
                 return@on
