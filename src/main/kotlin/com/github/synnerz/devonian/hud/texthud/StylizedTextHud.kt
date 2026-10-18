@@ -33,7 +33,8 @@ open class StylizedTextHud(
             field = value
         }
 
-    val lines = mutableListOf<Line>()
+    var lines = mutableListOf<Line>()
+        private set
 
     private var hasText = false
     private var imageDirty = false
@@ -206,6 +207,7 @@ open class StylizedTextHud(
     override fun invalidateLines(): ITextHud = apply {
         hasText = false
         renderer.invalidate()
+        lines = mutableListOf()
     }
 
     open class LineData(
