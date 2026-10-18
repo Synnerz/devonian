@@ -227,64 +227,48 @@ object EstimatedValue : TextHudFeature(
             val extraAttributes = ItemUtils.extraAttributes(itemStack) ?: return@on
             val sbId = extraAttributes.getString("id").getOrNull() ?: return@on
             lastItem = itemStack
-            val cacheData = itemCache[itemStack]
-            if (cacheData != null) {
-                val total = cacheData.totalPrice()
-                if (total < 0) return@on
-
-                if (SETTING_SHOW_LORE.get()) {
-                    event.lore.add(ClientTooltipComponent.create(FormattedCharSequence.composite(
-                        FormattedCharSequence.forward("Price Est", Style.EMPTY.withColor(ChatFormatting.AQUA)),
-                        FormattedCharSequence.forward(": ", Style.EMPTY.withColor(ChatFormatting.WHITE)),
-                        FormattedCharSequence.forward(shortNum(total), Style.EMPTY.withColor(ChatFormatting.GREEN)),
-                    )))
-                }
-
-                clearLines()
-                addLines(cacheData.format())
-                return@on
-            }
-            val enchantments = extraAttributes.getCompound("enchantments").getOrNull()
-            var ultimateEnchant: String? = null
-            val enchantIds: List<String>? = if (enchantments == null) null else buildList {
-                enchantments.forEach { name, tag ->
-                    val level = tag.asInt().getOrNull() ?: return@forEach
-                    if (name.contains("ultimate", ignoreCase = true)) {
-                        ultimateEnchant = "ENCHANTMENT_${name.uppercase()}_${level}"
-                        return@forEach
+            val data = itemCache.getOrPut(itemStack) {
+                val enchantments = extraAttributes.getCompound("enchantments").getOrNull()
+                var ultimateEnchant: String? = null
+                val enchantIds: List<String>? = if (enchantments == null) null else buildList {
+                    enchantments.forEach { name, tag ->
+                        val level = tag.asInt().getOrNull() ?: return@forEach
+                        if (name.contains("ultimate", ignoreCase = true)) {
+                            ultimateEnchant = "ENCHANTMENT_${name.uppercase()}_${level}"
+                            return@forEach
+                        }
+                        add("ENCHANTMENT_${name.uppercase()}_${level}")
                     }
-                    add("ENCHANTMENT_${name.uppercase()}_${level}")
                 }
+                val artOfWar = extraAttributes.getInt("art_of_war_count").getOrNull()
+                val artOfPeace = extraAttributes.getInt("artOfPeaceApplied").getOrNull()
+                val hpbs = extraAttributes.getInt("hot_potato_count").getOrNull()
+                val stars = extraAttributes.getInt("upgrade_level").getOrNull()
+                    ?: extraAttributes.getInt("dungeon_item_level").getOrNull()
+                val recomb = extraAttributes.getInt("rarity_upgrades").getOrNull()
+                val abilityScrolls = extraAttributes.getList("ability_scroll").getOrNull()
+                val enrichment = extraAttributes.getString("talisman_enrichment").getOrNull()?.uppercase()
+                return@getOrPut ItemStatData(
+                    itemStack.customName?.colorCodes() ?: itemStack.itemName.string,
+                    enchantments = enchantIds ?: emptyList(),
+                    skyblockId = sbId,
+                    hpbs = hpbs ?: 0,
+                    artOfPeace = artOfPeace != null,
+                    stars = stars ?: 0,
+                    recomb = recomb != null,
+                    artOfWar = artOfWar != null,
+                    ultimateEnchant = ultimateEnchant,
+                    // lore is more accurate than nbt ):
+                    isDungeonItem = (ItemUtils.lore(itemStack) ?: emptyList()).any { it.contains(" DUNGEON ") },
+                    ability_scrolls = abilityScrolls?.map { it.asString().getOrNull() ?: "" } ?: emptyList(),
+                    enrichment = enrichment,
+                    drillEngine = extraAttributes.getString("drill_part_engine").getOrNull()?.uppercase(),
+                    drillFuelTank = extraAttributes.getString("drill_part_fuel_tank").getOrNull()?.uppercase(),
+                    drillModule = extraAttributes.getString("drill_part_upgrade_module").getOrNull()?.uppercase(),
+                    drillCoating = extraAttributes.getInt("divan_powder_coating").isPresent,
+                )
             }
-            val artOfWar = extraAttributes.getInt("art_of_war_count").getOrNull()
-            val artOfPeace = extraAttributes.getInt("artOfPeaceApplied").getOrNull()
-            val hpbs = extraAttributes.getInt("hot_potato_count").getOrNull()
-            val stars = extraAttributes.getInt("upgrade_level").getOrNull()
-                ?: extraAttributes.getInt("dungeon_item_level").getOrNull()
-            val recomb = extraAttributes.getInt("rarity_upgrades").getOrNull()
-            val abilityScrolls = extraAttributes.getList("ability_scroll").getOrNull()
-            val enrichment = extraAttributes.getString("talisman_enrichment").getOrNull()?.uppercase()
-            val data = ItemStatData(
-                itemStack.customName?.colorCodes() ?: itemStack.itemName.string,
-                enchantments = enchantIds ?: emptyList(),
-                skyblockId = sbId,
-                hpbs = hpbs ?: 0,
-                artOfPeace = artOfPeace != null,
-                stars = stars ?: 0,
-                recomb = recomb != null,
-                artOfWar = artOfWar != null,
-                ultimateEnchant = ultimateEnchant,
-                // lore is more accurate than nbt ):
-                isDungeonItem = (ItemUtils.lore(itemStack) ?: emptyList()).any { it.contains(" DUNGEON ") },
-                ability_scrolls = abilityScrolls?.map { it.asString().getOrNull() ?: "" } ?: emptyList(),
-                enrichment = enrichment,
-                drillEngine = extraAttributes.getString("drill_part_engine").getOrNull()?.uppercase(),
-                drillFuelTank = extraAttributes.getString("drill_part_fuel_tank").getOrNull()?.uppercase(),
-                drillModule = extraAttributes.getString("drill_part_upgrade_module").getOrNull()?.uppercase(),
-                drillCoating = extraAttributes.getInt("divan_powder_coating").isPresent,
-            )
 
-            itemCache[itemStack] = data
             if (data.totalPrice() < 0) return@on
 
             if (SETTING_SHOW_LORE.get())
@@ -294,8 +278,7 @@ object EstimatedValue : TextHudFeature(
                     FormattedCharSequence.forward(shortNum(data.totalPrice()), Style.EMPTY.withColor(ChatFormatting.GREEN)),
                 )))
 
-            clearLines()
-            addLines(data.format())
+            setLines(data.format())
         }
 
         on<RenderOverlayEvent> {
@@ -303,7 +286,7 @@ object EstimatedValue : TextHudFeature(
             val cursorItem = minecraft.gui.screen()?.let { ScreenUtils.cursorStack(it) } ?: return@on
             if (cursorItem != lastItem) {
                 lastItem = null
-                clearLines()
+                invalidateLines()
                 return@on
             }
             draw(it.ctx)

@@ -13,4 +13,5 @@ abstract class IStylizedTextHudRenderer(val name: String) {
     abstract fun renderText(ctx: GuiGraphicsExtractor)
     abstract fun renderLine(ctx: GuiGraphicsExtractor, line: Int, color: Int)
     open fun dispose() {}
+    open fun invalidate() {}
 }

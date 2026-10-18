@@ -48,7 +48,6 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
 
             x = window.guiScaledWidth * 0.5
             y = window.guiScaledHeight * 0.5
-            clearLines()
             setLines(lines)
             needRescale = true
 

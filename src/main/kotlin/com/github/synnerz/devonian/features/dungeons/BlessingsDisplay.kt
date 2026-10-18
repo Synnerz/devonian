@@ -28,7 +28,7 @@ object BlessingsDisplay : TextHudFeature(
     private val blessingRegex = "^Blessing of (\\w+) ([IVX]+)$".toRegex()
     private val blessings = linkedMapOf<String, Int>()
 
-    private fun clear() {
+    private fun resetBlessings() {
         blessings.clear()
         blessings["Power"] = 0
         blessings["Time"] = 0
@@ -38,7 +38,7 @@ object BlessingsDisplay : TextHudFeature(
     }
 
     init {
-        clear()
+        resetBlessings()
     }
 
     private fun format(values: SequencedMap<String, Int>): List<String> {
@@ -80,7 +80,8 @@ object BlessingsDisplay : TextHudFeature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        clear()
+        resetBlessings()
+        invalidateLines()
     }
 
     override fun getEditText(): List<String> = format(

@@ -45,7 +45,7 @@ object VisitorProfitDisplay : TextHudFeature(
         }
 
         on<GardenEvents.VisitorClose> {
-            clearLines()
+            invalidateLines()
         }
 
         on<PostRenderGuiEvent> {
@@ -54,7 +54,7 @@ object VisitorProfitDisplay : TextHudFeature(
     }
 
     override fun onWorldChange(event: WorldChangeEvent) {
-        clearLines()
+        invalidateLines()
     }
 
     override fun getEditText(): List<String> = buildList {

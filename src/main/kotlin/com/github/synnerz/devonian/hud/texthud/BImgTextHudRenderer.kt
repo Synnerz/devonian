@@ -129,7 +129,7 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
         renderer.dispose()
     }
 
-    fun invalidate() {
+    override fun invalidate() {
         renderer.invalidate()
     }
 

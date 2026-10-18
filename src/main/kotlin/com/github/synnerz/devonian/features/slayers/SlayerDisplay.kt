@@ -75,7 +75,6 @@ object SlayerDisplay : TextHudFeature(
                 false
             }
 
-            clearLines()
             setLines(display)
         }
 
@@ -87,7 +86,7 @@ object SlayerDisplay : TextHudFeature(
     override fun onWorldChange(event: WorldChangeEvent) {
         bossList.clear()
         hasBossQuest.value = false
-        clearLines()
+        invalidateLines()
     }
 
     override fun getEditText(): List<String> = listOf(

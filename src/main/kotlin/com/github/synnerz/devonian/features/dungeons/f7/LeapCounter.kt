@@ -84,7 +84,7 @@ object LeapCounter : TextHudFeature(
 
             if (pos == null || pos.triggered) {
                 leapedPlayers.clear()
-                clearLines()
+                invalidateLines()
                 return@on
             }
 
@@ -101,7 +101,7 @@ object LeapCounter : TextHudFeature(
                 leapedPlayers.add(v)
             }
             if (leapedPlayers.isEmpty()) {
-                clearLines()
+                invalidateLines()
                 return@on
             }
 
