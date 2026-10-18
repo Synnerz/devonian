@@ -104,6 +104,7 @@ abstract class TextHudFeature(
     override fun setLines(s: List<String>) = apply { if (!isEditing) hud.setLines(s) }
     override fun storeLines(): ITextHud = apply { hud.storeLines() }
     override fun resetLines(): ITextHud = apply { hud.resetLines() }
+    override fun invalidateLines(): ITextHud = apply { hud.invalidateLines() }
 
     override fun onKeyPress(keyCode: Int) {
         super.onKeyPress(keyCode)

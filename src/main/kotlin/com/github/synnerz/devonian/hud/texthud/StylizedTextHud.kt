@@ -35,6 +35,7 @@ open class StylizedTextHud(
 
     val lines = mutableListOf<Line>()
 
+    private var hasText = false
     private var imageDirty = false
     private var fontsDirty = true
 
@@ -125,6 +126,7 @@ open class StylizedTextHud(
     }
 
     override fun draw(ctx: GuiGraphicsExtractor) {
+        if (!hasText) return
         update()
         if (lines.isNotEmpty()) {
             if (imageDirty) {
@@ -146,16 +148,20 @@ open class StylizedTextHud(
 
     override fun clearLines(): ITextHud = apply {
         lines.clear()
+        hasText = false
     }
 
     override fun addLine(s: String): ITextHud = apply {
         lines.add(Line(s))
         markImage()
+        hasText = true
     }
 
     override fun addLines(s: List<String>): ITextHud = apply {
+        if (s.isEmpty()) return@apply
         s.forEach { lines.add(Line(it)) }
         markImage()
+        hasText = true
     }
 
     override fun setLine(s: String): ITextHud = apply {
@@ -163,6 +169,7 @@ open class StylizedTextHud(
         lines.clear()
         lines.add(Line(s))
         markImage()
+        hasText = true
     }
 
     override fun setLines(s: List<String>): ITextHud = apply {
@@ -181,6 +188,7 @@ open class StylizedTextHud(
                     else lines.add(l)
                     markImage()
                 }
+                hasText = true
             }
         }
     }
@@ -193,6 +201,11 @@ open class StylizedTextHud(
     override fun resetLines(): ITextHud = apply {
         setLines(storedLines)
         storedLines = emptyList()
+    }
+
+    override fun invalidateLines(): ITextHud = apply {
+        hasText = false
+        renderer.invalidate()
     }
 
     open class LineData(

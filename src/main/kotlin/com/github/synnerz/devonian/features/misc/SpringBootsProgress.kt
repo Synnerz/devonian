@@ -48,7 +48,7 @@ object SpringBootsProgress : TextHudFeature(
             val itemStack = player.getItemBySlot(EquipmentSlot.FEET)
             val sbId = ItemUtils.skyblockId(itemStack)
             if (sbId != "SPRING_BOOTS") {
-                clearLines()
+                invalidateLines()
                 return@on
             }
             val format = if (progress >= SETTING_MAX_PROGRESS.get().roundToInt()) "&a" else if (progress > 5) "&e" else "&c"
@@ -63,7 +63,7 @@ object SpringBootsProgress : TextHudFeature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         progress = 0
-        clearLines()
+        invalidateLines()
     }
 
     override fun getEditText(): List<String> = listOf("&a100%")

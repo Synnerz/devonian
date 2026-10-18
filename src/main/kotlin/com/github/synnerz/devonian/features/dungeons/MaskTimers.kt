@@ -159,7 +159,7 @@ abstract class ImmunityTimer(val formattedName: String, itemName: String, config
 
     override fun onWorldChange(event: WorldChangeEvent) {
         lastProc = -1
-        hud.clearLines()
+        invalidateLines()
     }
 }
 

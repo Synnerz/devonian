@@ -240,6 +240,6 @@ object SafariUniqueTracker : TextHudFeature(
         messageSent = false
         biomesDone.clear()
         delegatedMobTypes.clear()
-        clearLines()
+        invalidateLines()
     }
 }
