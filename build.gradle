@@ -112,4 +112,15 @@ publishing {
 
 loom {
     accessWidenerPath = file("src/main/resources/devonian.accesswidener")
+	runs {
+		client {
+			if (project.hasProperty("mcArgs")) {
+				jvmArguments.addAll(
+					project.property("mcArgs")
+						.toString()
+						.split(" ")
+				)
+			}
+		}
+	}
 }
