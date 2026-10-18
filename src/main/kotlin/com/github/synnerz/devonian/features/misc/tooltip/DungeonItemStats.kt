@@ -28,22 +28,27 @@ object DungeonItemStats : Feature(
             val data = ItemUtils.extraAttributes(item) ?: return@on
 
             val boost = data.getInt("baseStatBoostPercentage").getOrNull() ?: return@on
-            val floor = data.getInt("item_tier").getOrNull() ?: return@on
+            val floor = data.getInt("item_tier").getOrNull()
 
             val formatted = FormattedCharSequence.composite(
-                FormattedCharSequence.forward("Item Quality: ", Style.EMPTY.withColor(ChatFormatting.GRAY)),
-                FormattedCharSequence.forward(
-                    when (SETTING_STYLE.get()) {
-                        0 -> "$boost/50"
-                        1 -> "$boost%"
-                        2 -> "${boost * 2}%"
-                        else -> return@on
-                    },
-                    Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)
-                ),
-                FormattedCharSequence.forward(" (Floor ", Style.EMPTY.withColor(ChatFormatting.GRAY)),
-                FormattedCharSequence.forward(floor.toString(), Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)),
-                FormattedCharSequence.forward(")", Style.EMPTY.withColor(ChatFormatting.GRAY)),
+                buildList {
+                    add(FormattedCharSequence.forward("Item Quality: ", Style.EMPTY.withColor(ChatFormatting.GRAY)))
+                    add(
+                        FormattedCharSequence.forward(
+                            when (SETTING_STYLE.get()) {
+                                0 -> "$boost/50"
+                                1 -> "$boost%"
+                                2 -> "${boost * 2}%"
+                                else -> return@on
+                            },
+                            Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)
+                        )
+                    )
+                    if (floor == null) return@buildList
+                    add(FormattedCharSequence.forward(" (Floor ", Style.EMPTY.withColor(ChatFormatting.GRAY)))
+                    add(FormattedCharSequence.forward(floor.toString(), Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)))
+                    add(FormattedCharSequence.forward(")", Style.EMPTY.withColor(ChatFormatting.GRAY)))
+                }
             )
             if (event.lore.isEmpty()) return@on
 
