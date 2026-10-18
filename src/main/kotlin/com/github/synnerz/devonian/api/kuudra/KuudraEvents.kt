@@ -1,4 +1,4 @@
-package com.github.synnerz.devonian.api.events.kuudra
+package com.github.synnerz.devonian.api.kuudra
 
 import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.*
