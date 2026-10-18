@@ -67,8 +67,18 @@ public abstract class AbstractContainerScreenMixin {
                 Player player = Devonian.INSTANCE.getMinecraft().player;
                 if (player == null) break;
                 Inventory inv = player.getInventory();
-                Optional<Slot> other = menu.slots.stream().filter(v -> v.container == inv && v.getContainerSlot() == buttonNum).findAny();
+                Optional<Slot> other = menu.slots
+                    .stream()
+                    .filter(v -> v.container == inv && v.getContainerSlot() == buttonNum)
+                    .findAny();
                 if (other.isPresent()) event = new SwapItemEvent(slot, other.get(), that);
+                else if (buttonNum == Inventory.SLOT_OFFHAND) {
+                    other = player.inventoryMenu.slots
+                        .stream()
+                        .filter(v -> v.getContainerSlot() == buttonNum)
+                        .findAny();
+                    if (other.isPresent()) event = new SwapItemEvent(slot, other.get(), that);
+                }
                 break;
             }
             case QUICK_CRAFT:
