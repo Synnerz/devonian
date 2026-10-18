@@ -23,6 +23,13 @@ object CopyItem : Feature(
     subcategory = "Utils",
     searchTags = setOf("nbt", "debug"),
 ) {
+    private val SETTING_INCLUDE_INVENTORY = addSwitch(
+        "includeInventory",
+        true,
+        "",
+        "Include Inventory",
+    )
+
     override fun initialize() {
         on<GuiKeyDownEvent> { event ->
             if (event.key != InputConstants.KEY_C) return@on
@@ -49,7 +56,9 @@ object CopyItem : Feature(
                 )
                 obj.set("id", screen.menu.containerId)
                 val items = JsonArray()
-                screen.menu.slots.forEachIndexed { idx, slot ->
+                val playerInv = minecraft.player?.inventory
+                screen.menu.slots.forEach { slot ->
+                    if (!SETTING_INCLUDE_INVENTORY.get() && slot.container === playerInv) return@forEach
                     val o = JsonDataObject()
                     o.set("index", slot.index)
                     o.set("containerSlot", slot.containerSlot)
