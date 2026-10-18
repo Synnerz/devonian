@@ -39,5 +39,6 @@ enum class FloorType(
 
     companion object {
         fun from(name: String): FloorType = entries.find { it.shortName == name } ?: None
+        fun from(num: Int, isMM: Boolean) = entries.getOrElse(num + 1 + (if (isMM) 7 else 0)) { None }
     }
 }
