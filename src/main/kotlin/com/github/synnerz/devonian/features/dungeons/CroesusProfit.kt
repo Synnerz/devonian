@@ -48,7 +48,10 @@ object CroesusProfit : TextHudFeature(
         }
 
         on<CroesusListener.LoadedRunChests> { event ->
-            chests = event.chests.sortedByDescending { it.chest.totalProfit(!SETTING_USE_ESSENCE_PROFIT.get()) }
+            val c = event.chests.sortedByDescending { it.chest.totalProfit(!SETTING_USE_ESSENCE_PROFIT.get()) }
+            chests = c
+            mostProfitable = c.getOrNull(0)?.slot ?: -1
+            secondMostProfitable = c.getOrNull(1)?.slot ?: -1
             updateLines.value = true
             inChest = true
         }
