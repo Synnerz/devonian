@@ -15,6 +15,7 @@ class TextRenderer(name: String) : BufferedImageRenderer<TextRenderer.RenderPara
         descent: Float,
         fontSize: Float,
         val noAAHint: Boolean = false,
+        val ids: List<Int> = List(lines.size) { it }
     ) : StylizedTextHud.TextRenderMetrics(
         width,
         ascent,

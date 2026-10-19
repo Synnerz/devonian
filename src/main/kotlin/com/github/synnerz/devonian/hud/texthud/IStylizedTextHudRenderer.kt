@@ -10,8 +10,9 @@ abstract class IStylizedTextHudRenderer(val name: String) {
     open fun updateCleanup() {}
     open fun onUpdateImage(params: StylizedTextHud.TextRenderParams, metrics: StylizedTextHud.TextRenderMetrics) {}
     abstract fun getRenderMetrics(): StylizedTextHud.TextRenderMetrics
+    abstract fun getRenderedLines(): Int
     abstract fun renderText(ctx: GuiGraphicsExtractor)
-    abstract fun renderLine(ctx: GuiGraphicsExtractor, line: Int, color: Int)
+    abstract fun renderLine(ctx: GuiGraphicsExtractor, id: Int, pos: Int, color: Int)
     open fun dispose() {}
     open fun invalidate() {}
 }

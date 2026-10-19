@@ -92,11 +92,14 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
                 metrics.ascent,
                 metrics.descent,
                 metrics.fontSize,
+                ids = parent.lines.map { it.id },
             )
         )
     }
 
     override fun getRenderMetrics(): StylizedTextHud.TextRenderMetrics = renderer.lastRenderParam?.param ?: metrics
+
+    override fun getRenderedLines(): Int = renderer.lastRenderParam?.param?.lines?.size ?: parent.lines.size
 
     override fun renderText(ctx: GuiGraphicsExtractor) {
         renderer.uploadImage()
@@ -104,18 +107,21 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
         renderer.draw(ctx, pos.x.toFloat(), pos.y.toFloat(), parent.renderScale.toFloat())
     }
 
-    override fun renderLine(ctx: GuiGraphicsExtractor, line: Int, color: Int) {
+    override fun renderLine(ctx: GuiGraphicsExtractor, id: Int, pos: Int, color: Int) {
         renderer.uploadImage()
         val (_, h, params) = renderer.lastRenderParam ?: return
 
-        val pos = parent.getBounds()
-        val v0 = line * params.renderParams.lineSpacing / h
+        val ty = params.ids.indexOf(id)
+        if (ty < 0) return
+
+        val bounds = parent.getBounds()
+        val v0 = ty * params.renderParams.lineSpacing / h
         val v1 = v0 + (params.ascent + params.descent) / h
 
         renderer.draw(
             ctx,
-            pos.x.toFloat(),
-            (pos.y + line * params.renderParams.fontSize * parent.renderScale).toFloat(),
+            bounds.x.toFloat(),
+            (bounds.y + pos * params.renderParams.fontSize * parent.renderScale).toFloat(),
             0f, v0,
             1f, v1,
             color,
