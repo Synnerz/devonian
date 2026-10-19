@@ -63,19 +63,19 @@ object HighlightTeammates : Feature(
     private val SETTING_DISPLAY_ROLE_NAME = addSwitch(
         "displayRoleName",
         false,
-        "Displays a custom name tag that has the name colored as the players' dungeon class",
+        "Changes the players' name tag to <RoleColor><playerName>",
         "Display Role Name"
     )
     private val SETTING_DISPLAY_ROLE_TITLE = addSwitch(
         "displayRoleTitle",
         true,
-        "Adds the role title to Display Role Name (ex: [A] for arch)",
+        "Adds the role title to Display Role Name (ex: \"[A]\" for archer)",
         "Display Role Title"
     )
     private val SETTING_DISPLAY_CUSTOM_TAG = addSwitch(
         "displayCustomTag",
         false,
-        "Uses a custom string renderer instead of mc's vanilla nametag one",
+        "Replaces the vanilla name tag with a custom scaled name tag (if you go far away from the player it scales the name up)",
         "Display Custom Tag"
     )
 
