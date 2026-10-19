@@ -2,6 +2,7 @@ package com.github.synnerz.devonian.hud.texthud
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.features.HudManagerRenderer
+import com.github.synnerz.devonian.hud.texthud.StylizedTextHud.TextRenderMetrics
 import com.github.synnerz.devonian.utils.BoundingBox
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import kotlin.math.max
@@ -107,7 +108,13 @@ open class StylizedTextHud(
 
         updateLines()
 
-        renderer.updateCleanup()
+        renderer.updateCleanup(
+            TextRenderMetrics(
+            lineWidth,
+            fontAscent, fontDescent,
+            fontSize,
+            )
+        )
     }
 
     protected open fun updateLines() {
@@ -132,12 +139,7 @@ open class StylizedTextHud(
         if (lines.isNotEmpty()) {
             if (imageDirty) {
                 imageDirty = false
-                val metrics = TextRenderMetrics(
-                    lineWidth,
-                    fontAscent, fontDescent,
-                    fontSize,
-                )
-                renderer.onUpdateImage(lastRenderParams, metrics)
+                renderer.onUpdateImage(lastRenderParams)
             }
             renderText(ctx)
         }
