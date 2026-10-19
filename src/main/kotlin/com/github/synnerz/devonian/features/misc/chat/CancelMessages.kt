@@ -124,7 +124,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
             field = value.coerceIn(0, components.size / 7)
             onUpdate()
         }
-    private val messagesList = mutableSetOf<MessageData>()
+    val messagesList = mutableSetOf<MessageData>()
     private var exactMatch = emptySet<String>()
     private var regexList = emptyList<Regex>()
 
