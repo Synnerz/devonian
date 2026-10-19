@@ -151,6 +151,10 @@ object HighlightTeammates : Feature(
 
             deferredTag.clear()
             deferred.clear()
-        }.setEnabled(SETTING_BOX.state.zip(SETTING_SELF.state) { a, b -> a || b == 2 })
+        }.setEnabled(
+            SETTING_BOX.state
+                .zip(SETTING_SELF.state) { a, b -> a || b == 2 }
+                .zip(SETTING_DISPLAY_CUSTOM_TAG.state, Boolean::or)
+        )
     }
 }
