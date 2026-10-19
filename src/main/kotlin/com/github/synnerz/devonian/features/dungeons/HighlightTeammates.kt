@@ -1,10 +1,12 @@
 package com.github.synnerz.devonian.features.dungeons
 
+import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.events.PostExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 import com.github.synnerz.devonian.utils.render.Render3DImmediate
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.entity.state.EntityRenderState
@@ -18,6 +20,12 @@ object HighlightTeammates : Feature(
     "catacombs",
     subcategory = "Highlights",
 ) {
+    private val SETTING_HIGHLIGHT = addSwitch(
+        "highlight",
+        true,
+        "Enables the highlight part of this feature (in case you only want the team name display)",
+        "Highlight"
+    )
     private val SETTING_BOX = addSwitch(
         "box",
         false,
@@ -52,8 +60,27 @@ object HighlightTeammates : Feature(
         "",
         "Teammate Box Line Width",
     )
+    private val SETTING_DISPLAY_ROLE_NAME = addSwitch(
+        "displayRoleName",
+        false,
+        "Displays a custom name tag that has the name colored as the players' dungeon class",
+        "Display Role Name"
+    )
+    private val SETTING_DISPLAY_ROLE_TITLE = addSwitch(
+        "displayRoleTitle",
+        true,
+        "Adds the role title to Display Role Name (ex: [A] for arch)",
+        "Display Role Title"
+    )
+    private val SETTING_DISPLAY_CUSTOM_TAG = addSwitch(
+        "displayCustomTag",
+        false,
+        "Uses a custom string renderer instead of mc's vanilla nametag one",
+        "Display Custom Tag"
+    )
 
     private val deferred = mutableListOf<Pair<EntityRenderState, Color>>()
+    private val deferredTag = mutableListOf<Pair<EntityRenderState, String>>()
 
     override fun initialize() {
         on<PostExtractRenderEntityEvent> { event ->
@@ -67,13 +94,31 @@ object HighlightTeammates : Feature(
                 else if (SETTING_BOX.get()) 2 else 1
             if (type == 0) return@on
 
+            if (SETTING_DISPLAY_ROLE_NAME.get()) {
+                // probably make a note that this will only work for selfPlayer
+                // if there's a valid option selected for [SETTING_SELF]
+                val str = buildString {
+                    append("${teammate.role.colorCode}${ent.gameProfile.name}")
+                    if (SETTING_DISPLAY_ROLE_TITLE.get())
+                        append(" &e[${teammate.role.singleLetter.uppercase()}]")
+                }
+
+                if (SETTING_DISPLAY_CUSTOM_TAG.get()) {
+                    state.nameTag = ChatUtils.literal("")
+                    deferredTag.add(state to str.replaceCodes())
+                }
+                else
+                    state.nameTag = ChatUtils.literal(str)
+            }
+
+            if (!SETTING_HIGHLIGHT.get()) return@on
             if (type == 2) {
                 deferred.add(state to teammate.role.color)
             } else state.outlineColor = teammate.role.colorRgb
         }
 
         on<RenderWorldEvent> {
-            deferred.forEach { (state, col) ->
+            if (SETTING_HIGHLIGHT.get()) deferred.forEach { (state, col) ->
                 Render3DImmediate.renderWireframeBox(
                     state.x, state.y, state.z,
                     state.boundingBoxWidth.toDouble(), state.boundingBoxHeight.toDouble(),
@@ -94,6 +139,17 @@ object HighlightTeammates : Feature(
                     centered = true,
                 )
             }
+
+            if (SETTING_DISPLAY_CUSTOM_TAG.get()) deferredTag.forEach { (state, name) ->
+                Render3DImmediate.renderString(
+                    name,
+                    state.x, state.y + 2.7, state.z,
+                    scale = 1.5f,
+                    phase = true,
+                )
+            }
+
+            deferredTag.clear()
             deferred.clear()
         }.setEnabled(SETTING_BOX.state.zip(SETTING_SELF.state) { a, b -> a || b == 2 })
     }
