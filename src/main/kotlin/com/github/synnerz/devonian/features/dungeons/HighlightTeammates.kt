@@ -15,6 +15,7 @@ object HighlightTeammates : Feature(
     "highlightTeammates",
     "",
     Categories.DUNGEONS,
+    "catacombs",
     subcategory = "Highlights",
 ) {
     private val SETTING_BOX = addSwitch(
