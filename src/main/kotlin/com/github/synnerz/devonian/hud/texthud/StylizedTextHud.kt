@@ -72,7 +72,7 @@ open class StylizedTextHud(
 
     override fun getHeight(): Double =
         if (lines.isEmpty()) 0.0
-        else lines.size * getLineHeight() + renderer.getRenderMetrics().descent * renderScale
+        else renderer.getRenderedLines() * getLineHeight() + renderer.getRenderMetrics().descent * renderScale
 
     override fun getBounds(): BoundingBox = anchor.transform(
         BoundingBox(
@@ -227,7 +227,11 @@ open class StylizedTextHud(
         val descent: Float,
     )
 
-    class Line(val str: String, var data: LineData? = null, var dirty: Boolean = true)
+    class Line(val str: String, var data: LineData? = null, var dirty: Boolean = true, val id: Int = counter++) {
+        companion object {
+            private var counter = 0
+        }
+    }
 
     data class TextRenderParams(
         val align: Align,

@@ -32,6 +32,10 @@ class OverflowTextHud(name: String, data: DataProvider) : StylizedTextHud(name, 
         else -> 1f - ((t - ttl + easeOut) / easeOut.toFloat()).pow(2)
     }
 
+    override fun getHeight(): Double =
+        if (lines.isEmpty()) 0.0
+        else lines.size * getLineHeight() + renderer.getRenderMetrics().descent * renderScale
+
     override fun clearLines(): ITextHud {
         lineInsertTimes.clear()
         return super.clearLines()
@@ -80,14 +84,14 @@ class OverflowTextHud(name: String, data: DataProvider) : StylizedTextHud(name, 
         val iter = lineInsertTimes.iterator()
         val actualX = x
         val t = System.currentTimeMillis()
-        for (i in lines.indices) {
+        for ((i, line) in lines.withIndex()) {
             val lineT = iter.next()
             val xo = getOffset(t - lineT)
             val a = getOpacity(t - lineT)
             val color = 0xFFFFFF or ((a * 255).toInt() shl 24)
 
             x += xo * getWidth()
-            renderer.renderLine(ctx, i, color)
+            renderer.renderLine(ctx, line.id, i, color)
             x = actualX
         }
     }

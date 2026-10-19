@@ -43,6 +43,8 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
 
     override fun getRenderMetrics(): TextRenderMetrics = metrics
 
+    override fun getRenderedLines(): Int = parent.lines.size
+
     private fun renderLineImpl(ctx: GuiGraphicsExtractor, mat: Matrix3x2f, font: Font, i: Int, line: Line, color: Int) {
         val params = this.params ?: return
         val data = line.data as CompLineData
@@ -193,7 +195,9 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
         ctx.pose().popMatrix()
     }
 
-    override fun renderLine(ctx: GuiGraphicsExtractor, line: Int, color: Int) {
+    override fun renderLine(ctx: GuiGraphicsExtractor, id: Int, pos: Int, color: Int) {
+        val line = parent.lines.find { it.id == id } ?: return
+
         val font = Devonian.minecraft.font
         val bounds = parent.getBounds()
         ctx.pose()
@@ -202,7 +206,7 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
             .scale(parent.scale)
         val mat = Matrix3x2f(ctx.pose())
 
-        renderLineImpl(ctx, mat, font, line, parent.lines[line], color)
+        renderLineImpl(ctx, mat, font, pos, line, color)
 
         ctx.pose().popMatrix()
     }
