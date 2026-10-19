@@ -34,11 +34,14 @@ class MCTextHudRenderer(name: String) : IStylizedTextHudRenderer(name) {
         )
     }
 
-    private var params: TextRenderParams? = null
     private var metrics = TextRenderMetrics.EMPTY
-    override fun onUpdateImage(params: TextRenderParams, metrics: TextRenderMetrics) {
-        this.params = params
+    override fun updateCleanup(metrics: TextRenderMetrics) {
         this.metrics = metrics
+    }
+
+    private var params: TextRenderParams? = null
+    override fun onUpdateImage(params: TextRenderParams) {
+        this.params = params
     }
 
     override fun getRenderMetrics(): TextRenderMetrics = metrics

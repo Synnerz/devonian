@@ -48,6 +48,7 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
 
             x = window.guiScaledWidth * 0.5
             y = window.guiScaledHeight * 0.5
+            invalidateLines()
             setLines(lines)
             needRescale = true
 
@@ -74,7 +75,6 @@ object Alert : StylizedTextHud("internal_devonian_alert") {
         val f = getBounds().fitInside(bb).first.toFloat()
         if (f != 1f) {
             scale = min(5f, scale * f)
-            (renderer as? BImgTextHudRenderer)?.invalidate()
             super.update()
         }
 

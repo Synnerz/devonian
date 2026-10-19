@@ -7,8 +7,8 @@ abstract class IStylizedTextHudRenderer(val name: String) {
     open fun onFontUpdate(fontSize: Float) {}
     open fun onUpdate() {}
     abstract fun onUpdateLine(str: String, params: StylizedTextHud.TextRenderParams): StylizedTextHud.LineData
-    open fun updateCleanup() {}
-    open fun onUpdateImage(params: StylizedTextHud.TextRenderParams, metrics: StylizedTextHud.TextRenderMetrics) {}
+    open fun updateCleanup(metrics: StylizedTextHud.TextRenderMetrics) {}
+    open fun onUpdateImage(params: StylizedTextHud.TextRenderParams) {}
     abstract fun getRenderMetrics(): StylizedTextHud.TextRenderMetrics
     abstract fun getRenderedLines(): Int
     abstract fun renderText(ctx: GuiGraphicsExtractor)

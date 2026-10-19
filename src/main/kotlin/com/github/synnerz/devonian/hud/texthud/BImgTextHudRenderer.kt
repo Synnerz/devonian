@@ -57,7 +57,9 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
         )
     }
 
-    override fun updateCleanup() {
+    private var metrics = StylizedTextHud.TextRenderMetrics.EMPTY
+    override fun updateCleanup(metrics: StylizedTextHud.TextRenderMetrics) {
+        this.metrics = metrics
         cachedGraphics?.dispose()
         cachedGraphics = null
 
@@ -67,10 +69,7 @@ class BImgTextHudRenderer(name: String) : IStylizedTextHudRenderer(name), FontLi
     private var maxW = 0
     private var maxH = 0
     private var age = 0
-    private var metrics = StylizedTextHud.TextRenderMetrics.EMPTY
-    override fun onUpdateImage(params: StylizedTextHud.TextRenderParams, metrics: StylizedTextHud.TextRenderMetrics) {
-        this.metrics = metrics
-
+    override fun onUpdateImage(params: StylizedTextHud.TextRenderParams) {
         val actualW = ceil(metrics.width).toInt()
         val actualH = ceil(params.lineSpacing * (parent.lines.size + 1) + params.shadow.getSizeIncrease(params.fontSize)).toInt()
         val scaleW = MathUtils.ceilPow2(actualW, 1)
