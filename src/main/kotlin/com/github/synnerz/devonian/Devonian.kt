@@ -500,6 +500,7 @@ object Devonian : ClientModInitializer {
         DevonianCommand.command.subcommand("sim") { _, args ->
             val msg = args.joinToString(" ") { it.toString() }
             ChatEvent(msg, Component.literal(msg)).post()
+            ChatUtils.sendMessage("&aSimulating message &b\"$msg\"", true)
             return@subcommand 1
         }.greedyString("message")
 
