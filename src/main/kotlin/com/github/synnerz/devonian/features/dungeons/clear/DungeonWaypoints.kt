@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
+import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.Stages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
@@ -112,6 +113,18 @@ object DungeonWaypoints : Feature(
         "The color of the highlight filled for lever waypoints",
         "Lever Filled"
     )
+    private val SETTING_PRINCE_OUTLINE = addColorPicker(
+        "princeOutline",
+        Color(255, 255, 255, 255).rgb,
+        "The color of the highlight outline for prince waypoints",
+        "Prince Outline"
+    )
+    private val SETTING_PRINCE_FILLED = addColorPicker(
+        "princeFilled",
+        Color(255, 255, 255, 80).rgb,
+        "The color of the highlight filled for prince waypoints",
+        "Prince Filled"
+    )
     val waypointsData = Gson().fromJson(
         this::class.java.getResourceAsStream("/assets/devonian/dungeons/DungeonWaypoints.json")
             ?.bufferedReader()
@@ -140,6 +153,7 @@ object DungeonWaypoints : Feature(
         BAT("bat"),
         REDSTONE("redstone"),
         LEVER("lever"),
+        PRINCE("prince"),
         UNKNOWN("unknown");
 
         companion object {
@@ -268,6 +282,9 @@ object DungeonWaypoints : Feature(
 
             val waypoints = getWaypoints(id) ?: return@on
             for (data in waypoints) {
+                // TODO: maybe make this check a setting instead
+                if (data.key == WaypointType.PRINCE && Dungeons.princeKilled.value) continue
+
                 val outlineColor = when (data.key) {
                     WaypointType.CHEST -> SETTING_CHEST_OUTLINE.getColor()
                     WaypointType.ITEM -> SETTING_ITEM_OUTLINE.getColor()
@@ -275,6 +292,7 @@ object DungeonWaypoints : Feature(
                     WaypointType.BAT -> SETTING_BAT_OUTLINE.getColor()
                     WaypointType.REDSTONE -> SETTING_REDSTONE_OUTLINE.getColor()
                     WaypointType.LEVER -> SETTING_LEVER_OUTLINE.getColor()
+                    WaypointType.PRINCE -> SETTING_PRINCE_OUTLINE.getColor()
                     WaypointType.UNKNOWN -> SETTING_REDSTONE_OUTLINE.getColor()
                 }
                 val filledColor = when (data.key) {
@@ -284,6 +302,7 @@ object DungeonWaypoints : Feature(
                     WaypointType.BAT -> SETTING_BAT_FILLED.getColor()
                     WaypointType.REDSTONE -> SETTING_REDSTONE_FILLED.getColor()
                     WaypointType.LEVER -> SETTING_LEVER_FILLED.getColor()
+                    WaypointType.PRINCE -> SETTING_PRINCE_FILLED.getColor()
                     WaypointType.UNKNOWN -> Color.YELLOW
                 }
                 data.value.forEach { pos ->
