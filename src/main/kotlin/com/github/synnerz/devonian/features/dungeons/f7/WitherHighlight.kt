@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.f7
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.PostExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.config.Categories
@@ -19,7 +19,7 @@ object WitherHighlight : Feature(
     subcategory = "Highlight",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.isActiveState, Stages.WitherKing.isActiveState.map(Boolean::not))
+        return super.createRequirements() + listOf(DungeonStages.F7.isActiveState, DungeonStages.WitherKing.isActiveState.map(Boolean::not))
     }
 
     private val SETTING_BOX = addSwitch(

@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
@@ -16,7 +16,7 @@ object WatcherSplits : SplitsFeature(
     searchTags = setOf("dungeons", "timer"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
+        return super.createRequirements() + listOf(DungeonStages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
     }
 
     private val SETTING_SHOW_IN_BOSS = addSwitch(
@@ -29,7 +29,7 @@ object WatcherSplits : SplitsFeature(
     override fun getMaxName(): String = "Watcher Dialogue"
 
     override fun getSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> =
-        Stages.WatcherSplit.getSplits(style, force)
+        DungeonStages.WatcherSplit.getSplits(style, force)
 
     override fun getChatSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> =
         listOf(super.getChatSplits(style, force).joinToString(" &f| "))
@@ -41,7 +41,7 @@ object WatcherSplits : SplitsFeature(
     override fun initialize() {
         super.initialize()
 
-        Stages.WatcherSplit.feature = this
+        DungeonStages.WatcherSplit.feature = this
 
         on<NameChangeEvent> { event ->
             if (!event.name.contains(" The Watcher")) return@on
@@ -50,28 +50,28 @@ object WatcherSplits : SplitsFeature(
 
         on<ClientThreadServerTickEvent> {
             if (dialogTicks != -1) return@on
-            val stage = Stages.WatcherDialog
+            val stage = DungeonStages.WatcherDialog
             if (!stage.hasFinished()) return@on
 
             dialogTicks = EventBus.serverTicks()
         }
 
         on<ClientThreadServerTickEvent> {
-            if (Stages.WatcherClear.hasFinished() && !sent) {
+            if (DungeonStages.WatcherClear.hasFinished() && !sent) {
                 sendMessageAll()
                 sent = true
                 return@on
             }
 
-            if (Stages.WatcherDialog.isActive() && !Stages.WatcherMove.isActive()) {
-                Stages.WatcherMove.start()
+            if (DungeonStages.WatcherDialog.isActive() && !DungeonStages.WatcherMove.isActive()) {
+                DungeonStages.WatcherMove.start()
             }
-            if (Stages.WatcherMove.hasStarted() && Stages.WatcherClear.hasFinished()) {
-                Stages.WatcherMove.stop()
+            if (DungeonStages.WatcherMove.hasStarted() && DungeonStages.WatcherClear.hasFinished()) {
+                DungeonStages.WatcherMove.stop()
                 return@on
             }
             if (entityId == -1) return@on
-            if (!Stages.WatcherDialog.hasFinished() || Stages.WatcherMove.hasFinished() || dialogTicks == -1) return@on
+            if (!DungeonStages.WatcherDialog.hasFinished() || DungeonStages.WatcherMove.hasFinished() || dialogTicks == -1) return@on
             if (EventBus.serverTicks() - dialogTicks < 45) return@on
 
             val entity = minecraft.level?.getEntity(entityId - 1) ?: return@on
@@ -80,7 +80,7 @@ object WatcherSplits : SplitsFeature(
                 entity.yo == entity.y &&
                 entity.zo == entity.z
             ) return@on
-            Stages.WatcherMove.stop()
+            DungeonStages.WatcherMove.stop()
         }
     }
 
@@ -88,6 +88,6 @@ object WatcherSplits : SplitsFeature(
         entityId = -1
         dialogTicks = -1
         sent = false
-        Stages.WatcherMove.reset()
+        DungeonStages.WatcherMove.reset()
     }
 }

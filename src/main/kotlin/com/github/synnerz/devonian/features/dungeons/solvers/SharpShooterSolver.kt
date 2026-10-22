@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -25,7 +25,7 @@ object SharpShooterSolver : Feature(
     subcategory = "Solvers",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Terminals.isActiveState)
     }
 
     private val SETTING_SHOW_ALERT = addSwitch(

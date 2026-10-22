@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.f7
 
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
@@ -17,7 +17,7 @@ object TerminalBreakdown : Feature(
     subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.F7.isActiveState)
     }
 
     private data class TermData(val name: String, var terms: Int = 0, var levers: Int = 0, var devs: Int = 0)

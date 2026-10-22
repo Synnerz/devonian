@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.devonian.GuiTextRenderStateAccessor
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.ScreenUtils
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -37,7 +37,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.inventory.Slot
-import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import org.joml.Matrix3x2f
@@ -56,7 +55,7 @@ object TerminalSolvers : Feature(
     subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Terminals.isActiveState)
     }
 
     private val SETTING_MIDDLE_CLICK = addSwitch(

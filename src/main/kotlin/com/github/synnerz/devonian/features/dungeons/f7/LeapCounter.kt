@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.f7
 
 import com.github.synnerz.devonian.api.dungeon.DungeonPlayer
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
@@ -21,7 +21,7 @@ object LeapCounter : TextHudFeature(
     subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.F7.isActiveState)
     }
 
     private val SETTING_SHOW_ALERT = addSwitch(

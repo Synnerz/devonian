@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.f7
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -18,7 +18,7 @@ object PurplePadTimer : TextHudFeature(
     subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Storm.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Storm.isActiveState)
     }
 
     private val stormRegex = "^\\[BOSS] Storm: (ENERGY HEED MY CALL!|THUNDER LET ME BE YOUR CATALYST!)$".toRegex()

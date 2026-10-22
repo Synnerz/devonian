@@ -29,7 +29,7 @@ object KeyPickup : Feature(
     subcategories = listOf("Alerts"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Clear.isActiveState)
     }
 
     private val SETTING_KEY_WIRE_COLOR = addColorPicker(

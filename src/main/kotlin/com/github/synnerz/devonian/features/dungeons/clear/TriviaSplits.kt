@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.api.splits.TimeUnit
@@ -18,7 +18,7 @@ object TriviaSplits : SplitsFeature(
 ) {
     // TODO: make actual "progress" hud
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
+        return super.createRequirements() + listOf(DungeonStages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
     }
 
     private val SETTING_SHOW_IN_BOSS = addSwitch(
@@ -32,7 +32,7 @@ object TriviaSplits : SplitsFeature(
     override fun getMaxName(): String = "Q3"
 
     override fun getSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> =
-        Stages.QuizSplits.getSplits(style, force)
+        DungeonStages.QuizSplits.getSplits(style, force)
 
     override fun getChatSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> =
         listOf(super.getChatSplits(style, force).joinToString(" &f| "))
@@ -40,10 +40,10 @@ object TriviaSplits : SplitsFeature(
     override fun initialize() {
         super.initialize()
 
-        Stages.QuizSplits.feature = this
+        DungeonStages.QuizSplits.feature = this
 
         on<ChatEvent> { event ->
-            Stages.QuizSplits.onChat(event.message)
+            DungeonStages.QuizSplits.onChat(event.message)
             if (event.matches("^\\[STATUE] Oruo the Omniscient: \\w+ answered the final question correctly!$".toRegex()) == null) return@on
             if (sent) return@on
 
@@ -54,6 +54,6 @@ object TriviaSplits : SplitsFeature(
 
     override fun onWorldChange(event: WorldChangeEvent) {
         sent = false
-        Stages.QuizSplits.reset()
+        DungeonStages.QuizSplits.reset()
     }
 }

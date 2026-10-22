@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -20,7 +20,7 @@ object LividSolver : Feature(
     subcategory = "Solvers",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F5.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.F5.isActiveState)
     }
 
     private val SETTING_BOX_COLOR = addColorPicker(

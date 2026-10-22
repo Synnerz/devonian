@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.api.dungeon.ComponentPosition
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.dungeon.WorldPosition
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.*
@@ -44,7 +44,7 @@ object CampHelper : Feature(
     searchTags = setOf("blood"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.WatcherClear.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.WatcherClear.isActiveState)
     }
 
     private val SETTING_SHOW_TIMER = addSwitch(
@@ -151,7 +151,7 @@ object CampHelper : Feature(
                 delta.xa,
                 delta.ya,
                 delta.za,
-                if (Stages.WatcherDialog.hasFinished()) 40 else 80,
+                if (DungeonStages.WatcherDialog.hasFinished()) 40 else 80,
             )
         }
 

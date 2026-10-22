@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -19,7 +19,7 @@ object SpiritKillCounter : TextHudFeature(
     searchTags = setOf("f4", "m4"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F4.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.F4.isActiveState)
     }
 
     private var kills = 0

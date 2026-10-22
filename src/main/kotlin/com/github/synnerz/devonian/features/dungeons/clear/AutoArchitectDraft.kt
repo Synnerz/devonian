@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.ChatUtils
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.ChatEvent
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
@@ -18,7 +18,7 @@ object AutoArchitectDraft : Feature(
     searchTags = setOf("fail", "puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Clear.isActiveState)
     }
 
     // PUZZLE FAIL! DocilElm lost Tic Tac Toe! Yikes!

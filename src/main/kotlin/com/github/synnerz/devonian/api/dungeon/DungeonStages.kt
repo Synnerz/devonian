@@ -9,7 +9,7 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.features.dungeons.BossSplits
 import com.github.synnerz.devonian.features.dungeons.clear.RunSplits
 
-object Stages {
+object DungeonStages {
     val Root: SequentialSplitStage
 
     val Clear: SplitStage
@@ -317,13 +317,13 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
             if (type == "device") {
                 when (section) {
                     1 -> {
-                        if (!Stages.S4.deviceDone) Stages.S4.deviceDone = true
-                        else if (!Stages.S2.deviceDone) Stages.S2.deviceDone = true
+                        if (!DungeonStages.S4.deviceDone) DungeonStages.S4.deviceDone = true
+                        else if (!DungeonStages.S2.deviceDone) DungeonStages.S2.deviceDone = true
                         // else Stages.S3.deviceDone = true
                     }
 
                     2 -> {
-                        if (!Stages.S4.deviceDone) Stages.S4.deviceDone = true
+                        if (!DungeonStages.S4.deviceDone) DungeonStages.S4.deviceDone = true
                         // else Stages.S3.deviceDone = true
                     }
 
@@ -335,7 +335,7 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
             if (!deviceDone) {
                 when (section) {
                     2 -> {
-                        if (Stages.S4.deviceDone) Stages.S4.deviceDone = false
+                        if (DungeonStages.S4.deviceDone) DungeonStages.S4.deviceDone = false
                         // else Stages.S3.deviceDone = false
                     }
                 }
@@ -344,8 +344,8 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
         } else if (index == 1) {
             if (type == "device") {
                 if (section == 1) {
-                    if (!Stages.S4.deviceDone) Stages.S4.deviceDone = true
-                    else if (!Stages.S2.deviceDone) Stages.S2.deviceDone = true
+                    if (!DungeonStages.S4.deviceDone) DungeonStages.S4.deviceDone = true
+                    else if (!DungeonStages.S2.deviceDone) DungeonStages.S2.deviceDone = true
 
                     return
                 }
@@ -353,7 +353,7 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
                 if (deviceDone) {
                     when (section) {
                         2 -> {
-                            if (!Stages.S4.deviceDone) Stages.S4.deviceDone = true
+                            if (!DungeonStages.S4.deviceDone) DungeonStages.S4.deviceDone = true
                             // else if (!Stages.S3.deviceDone) Stages.S3.deviceDone = true
                         }
                     }
@@ -366,7 +366,7 @@ class TerminalSection(val terms: Int, val section: Int) : SplitStage() {
             "terminal" -> termsDone++
             "lever" -> leversDone++
             "device" -> {
-                if (deviceDone && section == 2) Stages.S4.deviceDone = true
+                if (deviceDone && section == 2) DungeonStages.S4.deviceDone = true
                 deviceDone = true
             }
         }

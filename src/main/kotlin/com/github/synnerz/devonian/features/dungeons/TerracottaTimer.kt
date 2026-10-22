@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.BlockUpdateEvent
 import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
@@ -24,7 +24,7 @@ object TerracottaTimer : Feature(
     subcategory = "QOL"
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Terracottas.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Terracottas.isActiveState)
     }
 
     private val terracottasPos = mutableListOf<TerraBlock>()

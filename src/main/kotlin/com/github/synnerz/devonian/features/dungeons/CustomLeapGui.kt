@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.api.ScreenUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.DungeonPlayer
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Categories
@@ -32,7 +32,7 @@ object CustomLeapGui : Feature(
     subcategory = "QOL",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Root.isActiveState)
     }
 
     private const val KEY_NAME = "customleap"

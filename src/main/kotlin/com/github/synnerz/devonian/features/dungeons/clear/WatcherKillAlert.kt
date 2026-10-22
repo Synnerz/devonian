@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.ClientThreadServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -21,7 +21,7 @@ object WatcherKillAlert : Feature(
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(
-            Stages.WatcherDialog.hasStartedState,
+            DungeonStages.WatcherDialog.hasStartedState,
             Dungeons.selfClass
                 .zip(SETTING_ONLY_MAGE.state) { c, s -> !s || c == DungeonClass.Mage }
                 .zip(Dungeons.currentRoom) { b, r -> b || r?.type == RoomTypes.BLOOD }
@@ -44,7 +44,7 @@ object WatcherKillAlert : Feature(
 
     override fun initialize() {
         on<ClientThreadServerTickEvent> {
-            val stage = Stages.WatcherDialog
+            val stage = DungeonStages.WatcherDialog
             if (stage.hasStarted() && !assigned) {
                 val seconds = if (Dungeons.floor.floorNum == 7) 20.5 else 20.0
                 assigned = true

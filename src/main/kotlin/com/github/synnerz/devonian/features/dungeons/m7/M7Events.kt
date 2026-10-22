@@ -2,9 +2,8 @@ package com.github.synnerz.devonian.features.dungeons.m7
 
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
@@ -107,7 +106,7 @@ object M7Events {
                     }
                 }
             }
-        }.setEnabled(Stages.WitherKing.isActiveState)
+        }.setEnabled(DungeonStages.WitherKing.isActiveState)
 
         EventBus.on<TickEvent> {
             val first = queuedDrags.firstOrNull()
@@ -127,7 +126,7 @@ object M7Events {
             queuedDrags.firstOrNull()?.let {
                 if (first !== it) ActiveDragonChanged(it).post()
             }
-        }.setEnabled(Stages.WitherKing.isActiveState)
+        }.setEnabled(DungeonStages.WitherKing.isActiveState)
 
         EventBus.on<WorldChangeEvent> {
             cooldown.clear()

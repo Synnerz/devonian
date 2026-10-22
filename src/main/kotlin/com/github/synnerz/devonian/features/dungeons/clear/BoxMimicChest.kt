@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -22,7 +22,7 @@ object BoxMimicChest : Feature(
     subcategory = "Highlights",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Clear.isActiveState)
     }
 
     private val SETTING_COLOR = addColorPicker(

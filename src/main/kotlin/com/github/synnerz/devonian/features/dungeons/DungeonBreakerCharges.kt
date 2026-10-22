@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons
 
 import com.github.synnerz.devonian.api.ItemUtils
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -19,7 +19,7 @@ object DungeonBreakerCharges : TextHudFeature(
     subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Root.isActiveState)
     }
 
     var colorCode = "&6"

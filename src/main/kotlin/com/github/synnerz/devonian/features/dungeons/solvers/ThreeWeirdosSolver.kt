@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.solvers
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.WorldUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonEvent
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -26,7 +26,7 @@ object ThreeWeirdosSolver : Feature(
     searchTags = setOf("3w", "puzzle"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Clear.isActiveState)
     }
 
     private val npcRegex = "^\\[NPC] (\\w+): (.*)".toRegex()

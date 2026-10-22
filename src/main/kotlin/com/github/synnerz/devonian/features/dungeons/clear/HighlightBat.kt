@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -18,7 +18,7 @@ object HighlightBat : Feature(
     searchTags = setOf("secrets"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Clear.isActiveState)
     }
 
     private val SETTING_COLOR = addColorPicker(

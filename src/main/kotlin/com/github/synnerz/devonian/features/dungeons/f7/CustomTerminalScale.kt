@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.f7
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.GuiScaleEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -15,7 +15,7 @@ object CustomTerminalScale : Feature(
     subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Terminals.isActiveState)
     }
 
     private val SETTING_TERMINAL_SCALE = addSlider(

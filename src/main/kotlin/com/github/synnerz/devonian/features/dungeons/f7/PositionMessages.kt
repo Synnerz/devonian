@@ -4,7 +4,7 @@ import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -22,7 +22,7 @@ object PositionMessages : Feature(
     "catacombs",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.StormLightning.hasFinishedState)
+        return super.createRequirements() + listOf(DungeonStages.StormLightning.hasFinishedState)
     }
 
     private val SETTING_RENDER_HIGHLIGHT = addSwitch(

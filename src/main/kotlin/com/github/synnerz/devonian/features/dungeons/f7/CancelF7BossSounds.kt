@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.f7
 
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.SoundPlayEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -16,7 +16,7 @@ object CancelF7BossSounds : Feature(
     searchTags = setOf("mute", "quiet"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.hasStartedState)
+        return super.createRequirements() + listOf(DungeonStages.F7.hasStartedState)
     }
 
     private val SETTING_CANCEL_ABOVE_CAP = addSwitch(

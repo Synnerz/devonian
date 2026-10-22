@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TabUpdateEvent
 import com.github.synnerz.devonian.api.events.TickEvent
@@ -20,7 +20,7 @@ object PuzzlesDisplay : TextHudFeature(
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(
-            Stages.Clear.hasFinishedState.map(Boolean::not),
+            DungeonStages.Clear.hasFinishedState.map(Boolean::not),
             Dungeons.started.zip(SETTING_SHOW_CLEAR.state) { a, b -> !a || b }
         )
     }

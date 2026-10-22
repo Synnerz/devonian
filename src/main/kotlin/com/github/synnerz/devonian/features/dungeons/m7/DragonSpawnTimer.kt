@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.m7
 
 import com.github.synnerz.devonian.api.Scheduler
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -17,7 +17,7 @@ object DragonSpawnTimer : TextHudFeature(
     subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.WitherKing.isActiveState)
     }
 
     private val SETTING_HUD = addSwitch(

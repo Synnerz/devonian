@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
 import com.github.synnerz.devonian.api.WorldUtils
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -26,7 +26,7 @@ object SimonSaysSolver : Feature(
     subcategory = "Solvers",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.S1.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.S1.isActiveState)
     }
 
     private val SETTING_BLOCK_INCORRECT = addSelection(

@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -15,7 +15,7 @@ object FireFreezeTimer : TextHudFeature(
     searchTags = setOf("professor", "f3", "m3"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F3.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.F3.isActiveState)
     }
 
     private var startedAt = -1
