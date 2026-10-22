@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.f7
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.dungeon.TerminalSection
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
@@ -16,7 +16,7 @@ object TerminalDisplay : TextHudFeature(
     subcategory = "HUD"
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Terminals.isActiveState)
     }
 
     private val SETTING_SIMPLE = addSwitch(
@@ -34,7 +34,7 @@ object TerminalDisplay : TextHudFeature(
 
     override fun initialize() {
         on<TickEvent> {
-            val cur = Stages.Terminals.activeChild as TerminalSection
+            val cur = DungeonStages.Terminals.activeChild as TerminalSection
             if (SETTING_SIMPLE.get()) {
                 val color = if (cur.gateDestroyed) "&a" else "&c"
                 setLine("${color}${cur.termsDone + cur.leversDone + (if (cur.deviceDone) 1 else 0)}/${cur.terms + 3}")

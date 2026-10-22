@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.m7
 import com.github.synnerz.devonian.api.ChatUtils
 import com.github.synnerz.devonian.api.dungeon.DungeonClass
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.api.events.ServerTickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
@@ -25,7 +25,7 @@ object DragonHitCount : Feature(
     searchTags = setOf("arrow"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.WitherKing.isActiveState)
     }
 
     private var currType: M7Dragon? = null

@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.config.Categories
@@ -16,7 +16,7 @@ object CurrentRoomName : TextHudFeature(
     subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.hasFinishedState.map(Boolean::not))
+        return super.createRequirements() + listOf(DungeonStages.Clear.hasFinishedState.map(Boolean::not))
     }
 
     override fun initialize() {

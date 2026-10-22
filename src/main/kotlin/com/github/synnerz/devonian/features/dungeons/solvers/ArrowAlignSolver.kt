@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.solvers
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -35,7 +35,7 @@ object ArrowAlignSolver : Feature(
     )
 
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.isActiveState, Stages.S3.hasFinishedState.map(Boolean::not))
+        return super.createRequirements() + listOf(DungeonStages.F7.isActiveState, DungeonStages.S3.hasFinishedState.map(Boolean::not))
     }
 
     private fun shouldBlockClicks(): Boolean {

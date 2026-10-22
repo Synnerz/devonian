@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -30,7 +30,7 @@ object BoxIcedMobs : Feature(
     searchTags = setOf("spray"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Root.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Root.isActiveState)
     }
 
     private val SETTING_WIRE_COLOR = addColorPicker(

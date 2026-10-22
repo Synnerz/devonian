@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.clear
 
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.dungeon.mapEnums.RoomTypes
 import com.github.synnerz.devonian.api.events.RenderWorldEvent
 import com.github.synnerz.devonian.api.events.TickEvent
@@ -24,7 +24,7 @@ object ColorPortal : Feature(
     searchTags = setOf("score"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.PortalEnter.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.PortalEnter.isActiveState)
     }
 
     private val SETTING_COMP_COLOR = addColorPicker(

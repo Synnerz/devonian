@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.m7
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -15,7 +15,7 @@ object RecolorDragons : Feature(
     subcategory = "Highlight",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.WitherKing.isActiveState)
     }
 
     val COLORS = M7Dragon.entries.map { (it.color.rgb and (0x00FFFFFF)) or (0xFF000000.toInt()) }.toIntArray()

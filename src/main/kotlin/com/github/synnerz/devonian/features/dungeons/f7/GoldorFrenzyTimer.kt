@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.f7
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -21,7 +21,7 @@ object GoldorFrenzyTimer : TextHudFeature(
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(
-            Stages.F7.isActiveState, Stages.Terminals.hasFinishedState.map(
+            DungeonStages.F7.isActiveState, DungeonStages.Terminals.hasFinishedState.map(
             Boolean::not))
     }
 
@@ -84,7 +84,7 @@ object GoldorFrenzyTimer : TextHudFeature(
             setLine(
                 "%s%.2f".format(
                     StringUtils.colorForNumber(until, 60),
-                    if (SETTING_SHOW_TOTAL.get()) (EventBus.serverTicks() - Stages.Terminals.startTime.tick) * 0.05
+                    if (SETTING_SHOW_TOTAL.get()) (EventBus.serverTicks() - DungeonStages.Terminals.startTime.tick) * 0.05
                     else until * 0.05
                 )
             )

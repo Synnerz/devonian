@@ -3,7 +3,7 @@ package com.github.synnerz.devonian.features.dungeons.m7
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.PacketReceivedEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -21,7 +21,7 @@ object HideWitherKing : Feature(
     "catacombs",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })
+        return super.createRequirements() + listOf(DungeonStages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })
     }
 
     override fun initialize() {

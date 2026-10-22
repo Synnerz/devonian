@@ -2,7 +2,7 @@ package com.github.synnerz.devonian.features.dungeons.m7
 
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.api.dungeon.FloorType
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
@@ -16,7 +16,7 @@ object RelicTimer : TextHudFeature(
     subcategory = "HUD",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })
+        return super.createRequirements() + listOf(DungeonStages.F7.isActiveState, Dungeons.floorState.map { it == FloorType.M7 })
     }
 
     private const val SPAWN_TICKS = 45

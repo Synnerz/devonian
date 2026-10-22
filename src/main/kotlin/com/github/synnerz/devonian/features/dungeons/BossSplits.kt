@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.SplitsFeature
@@ -15,31 +15,31 @@ object BossSplits : SplitsFeature(
     searchTags = setOf("timer"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Boss.hasStartedState)
+        return super.createRequirements() + listOf(DungeonStages.Boss.hasStartedState)
     }
 
     override fun getMaxName(): String = "Second Phase"
 
     override fun getSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> =
-        Stages.Boss.getSplits(style, force) +
-        Stages.Root.getThisSplit(style, force)
+        DungeonStages.Boss.getSplits(style, force) +
+        DungeonStages.Root.getThisSplit(style, force)
 
     override fun initialize() {
         super.initialize()
 
-        Stages.Boss.feature = this
+        DungeonStages.Boss.feature = this
     }
 
-    val floors = arrayOf(Stages.F1, Stages.F2, Stages.F3, Stages.F4, Stages.F5, Stages.F6, Stages.F7)
+    val floors = arrayOf(DungeonStages.F1, DungeonStages.F2, DungeonStages.F3, DungeonStages.F4, DungeonStages.F5, DungeonStages.F6, DungeonStages.F7)
     override fun getEditText(): List<String> {
         if (editTime.isEmpty()) editTime = TimeUnit.now()
 
         val i = ((System.currentTimeMillis() / 1000L) % 7L).toInt()
-        val old = Stages.BossFloor.chosenChild
+        val old = DungeonStages.BossFloor.chosenChild
 
-        Stages.BossFloor.chosenChild = floors[i]
+        DungeonStages.BossFloor.chosenChild = floors[i]
         val txt = getSplits(editTime)
-        Stages.BossFloor.chosenChild = old
+        DungeonStages.BossFloor.chosenChild = old
 
         return txt
     }

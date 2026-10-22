@@ -399,7 +399,7 @@ object Dungeons {
         }.setEnabled(Location.stateInArea("catacombs"))
 
         EventBus.on<ChatEvent> { event ->
-            Stages.Root.onChat(event.message)
+            DungeonStages.Root.onChat(event.message)
 
             if (event.message == "[NPC] Mort: Here, I found this map when I first entered the dungeon.") {
                 started.value = true
@@ -525,7 +525,7 @@ object Dungeons {
             attemptGuessState.value = true
             started.value = true
             needReset = true
-            Stages.Clear.start()
+            DungeonStages.Clear.start()
             Location.changeArea("catacombs")
         }
 
@@ -534,18 +534,18 @@ object Dungeons {
             bloodCleared.value = event.boss != DungeonBoss.Watcher
             if (event.boss != DungeonBoss.Watcher) attemptGuessState.value = false
             when (event.boss) {
-                DungeonBoss.Watcher -> Stages.WatcherClear.start()
-                DungeonBoss.Bonzo -> Stages.F1.start()
-                DungeonBoss.Scarf -> Stages.F2.start()
-                DungeonBoss.Professor -> Stages.F3.start()
-                DungeonBoss.Thorn -> Stages.F4.start()
-                DungeonBoss.Livid -> Stages.F5.start()
-                DungeonBoss.Sadan -> Stages.F6.start()
-                DungeonBoss.Maxor -> Stages.Maxor.start()
-                DungeonBoss.Storm -> Stages.Storm.start()
-                DungeonBoss.Goldor -> Stages.Goldor.start()
-                DungeonBoss.Necron -> Stages.Necron.start()
-                DungeonBoss.WitherKing -> Stages.WitherKing.start()
+                DungeonBoss.Watcher -> DungeonStages.WatcherClear.start()
+                DungeonBoss.Bonzo -> DungeonStages.F1.start()
+                DungeonBoss.Scarf -> DungeonStages.F2.start()
+                DungeonBoss.Professor -> DungeonStages.F3.start()
+                DungeonBoss.Thorn -> DungeonStages.F4.start()
+                DungeonBoss.Livid -> DungeonStages.F5.start()
+                DungeonBoss.Sadan -> DungeonStages.F6.start()
+                DungeonBoss.Maxor -> DungeonStages.Maxor.start()
+                DungeonBoss.Storm -> DungeonStages.Storm.start()
+                DungeonBoss.Goldor -> DungeonStages.Goldor.start()
+                DungeonBoss.Necron -> DungeonStages.Necron.start()
+                DungeonBoss.WitherKing -> DungeonStages.WitherKing.start()
             }
         }.setEnabled(attemptGuessState)
     }
@@ -573,7 +573,7 @@ object Dungeons {
         worldId++
 
         floor = FloorType.None
-        Stages.Root.reset()
+        DungeonStages.Root.reset()
 
         clearedPercent.value = 0
         timeElapsed.value = 0

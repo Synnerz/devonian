@@ -1,7 +1,7 @@
 package com.github.synnerz.devonian.features.dungeons.f7
 
 import com.github.synnerz.devonian.api.ScreenUtils
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.GuiKeyDownEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -17,7 +17,7 @@ object MelodyKeys : Feature(
     subcategory = "Terminals",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Terminals.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.Terminals.isActiveState)
     }
 
     private val keybindList = listOf(

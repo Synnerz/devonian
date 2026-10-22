@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.clear
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.splits.TimeUnit
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.SplitsFeature
@@ -15,7 +15,7 @@ object RunSplits : SplitsFeature(
     searchTags = setOf("dungeons", "timer"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
+        return super.createRequirements() + listOf(DungeonStages.Clear.isActiveState.zip(SETTING_SHOW_IN_BOSS.state, Boolean::or))
     }
     private val SETTING_SHOW_IN_BOSS = addSwitch(
         "showInBoss",
@@ -27,11 +27,11 @@ object RunSplits : SplitsFeature(
     override fun getMaxName(): String = "Portal Enter"
 
     override fun getSplits(style: TimeUnit.Style, force: TimeUnit?): List<String> =
-        Stages.Clear.getSplits(style, force)
+        DungeonStages.Clear.getSplits(style, force)
 
     override fun initialize() {
         super.initialize()
 
-        Stages.Clear.feature = this
+        DungeonStages.Clear.feature = this
     }
 }

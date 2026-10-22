@@ -6,7 +6,7 @@ import com.github.synnerz.devonian.api.dungeon.DungeonEvent
 import com.github.synnerz.devonian.api.dungeon.DungeonRoom
 import com.github.synnerz.devonian.api.dungeon.DungeonScanner
 import com.github.synnerz.devonian.api.dungeon.Dungeons
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
@@ -25,7 +25,7 @@ object DungeonWaypoints : Feature(
     searchTags = setOf("secrets"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.Clear.hasFinishedState.map(Boolean::not))
+        return super.createRequirements() + listOf(DungeonStages.Clear.hasFinishedState.map(Boolean::not))
     }
 
     private val SETTING_DISPLAY_TEXT = addSwitch(
@@ -160,7 +160,7 @@ object DungeonWaypoints : Feature(
             fun from(key: String) = entries.find { it.key == key } ?: UNKNOWN
         }
     }
-    
+
     data class IntTriple(val x: Int, val y: Int, val z: Int)
 
     data class WaypointsDataJSON(val name: String, val waypoints: Map<String, List<List<Int>>>, val roomID: Int)

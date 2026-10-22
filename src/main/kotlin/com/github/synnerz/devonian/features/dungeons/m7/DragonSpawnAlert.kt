@@ -1,6 +1,6 @@
 package com.github.synnerz.devonian.features.dungeons.m7
 
-import com.github.synnerz.devonian.api.dungeon.Stages
+import com.github.synnerz.devonian.api.dungeon.DungeonStages
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.hud.texthud.Alert
@@ -14,7 +14,7 @@ object DragonSpawnAlert : Feature(
     searchTags = setOf("priority", "dragprio"),
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
-        return super.createRequirements() + listOf(Stages.WitherKing.isActiveState)
+        return super.createRequirements() + listOf(DungeonStages.WitherKing.isActiveState)
     }
 
     private val SETTING_ALERT_TIME = addSlider(
