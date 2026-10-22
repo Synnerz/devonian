@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
 import net.minecraft.network.chat.Component
+import java.awt.Color
 
 object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     private val background = UIRect(0.0, 0.0, 100.0, 100.0)
@@ -30,7 +31,11 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
             }
         )
     }
-    private val leftPanelScroll = UIScrollable(0.0, 12.0, 100.0, 79.0, parent = leftPanel)
+    private val leftPanelScroll = UIScrollable(0.0, 12.0, 100.0, 79.0, parent = leftPanel).apply {
+        drawScrollbar = true
+        scrollBgColor = Color(35, 35, 35, 255)
+        scrollFgColor = Color(70, 70, 70, 255)
+    }
     private val rightPanel = UIRect(21.0, 1.0, 78.5, 98.0, parent = main).apply {
         setColor(ColorPalette.SECONDARY_COLOR)
     }
@@ -109,13 +114,11 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     override fun removed() {
         selectedCategory?.hideColorPickers()
         background.hide()
-        background.focused = false
         opened = false
     }
 
     override fun added() {
         background.unhide()
-        background.focused = true
         opened = true
     }
 }

@@ -9,6 +9,7 @@ import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIScrollable
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.constraints.UIFlexWrapConstraint
+import java.awt.Color
 
 class Category(
     val category: Categories,
@@ -57,7 +58,12 @@ class Category(
                     textScale = 2f / w.scaleFactor
                 }
             }
-            subcategoriesRect[name] = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel).apply { hide() } to text
+            subcategoriesRect[name] = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel).apply {
+                hide()
+                drawScrollbar = true
+                scrollBgColor = Color(35, 35, 35, 255)
+                scrollFgColor = Color(70, 70, 70, 255)
+            } to text
             subcategoryPanel.addChild(
                 UIRect(subCatMargins + (subCatWidth + subCatGap) * jdx, 2.5, subCatWidth, 95.0).apply {
                     addChild(text)
