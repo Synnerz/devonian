@@ -89,6 +89,13 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
         hide()
     }
 
+    override fun triggerSwitch(configName: String, state: Boolean) {
+        super.triggerSwitch(configName, state)
+
+        if (ConfigGui.selectedCategory != null || previousText.isEmpty()) return
+        onSearch(previousText)
+    }
+
     private fun onSearch(str: String) {
         val subConfigHits = Config.features.associateWith {
             it.subconfigs.associateWith {
@@ -118,6 +125,8 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
                 featHits[data.parent]!! > 0 ||
                 subConfigHits[data.parent]!![data]!! > 0
             }
+            if (data.internalHide) return@forEach
+
             if (show) {
                 val i = idx++
                 val y = 1.0 + i * 17.0

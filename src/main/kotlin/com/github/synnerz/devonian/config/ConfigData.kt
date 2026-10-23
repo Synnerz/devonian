@@ -15,6 +15,7 @@ open class ConfigData<T>(
     val subcategory: String = "General",
     searchTags: Set<String> = emptySet(),
     val isHidden: Boolean = false,
+    var internalHide: Boolean = false,
 ) {
     val description = description ?: ""
     val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
