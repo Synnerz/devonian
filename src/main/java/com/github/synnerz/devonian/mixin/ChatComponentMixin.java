@@ -132,7 +132,7 @@ public abstract class ChatComponentMixin implements ChatComponentAccessor2 {
         at = @At(value = "INVOKE", target = "Ljava/util/List;get(I)Ljava/lang/Object;")
     )
     private <E> E devonian$trimmedIteratorGet(List<GuiMessage.Line> instance, int i, Operation<GuiMessage.Line> original) {
-        if (i < 0) return (E) original.call(instance, i);
+        if (i < 0 || trimmedIter == null) return (E) original.call(instance, i);
 
         while (i > trimmedIter.previousIndex()) trimmedIter.next();
         while (i < trimmedIter.previousIndex()) trimmedIter.previous();
