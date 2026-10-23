@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.config.ui.talium
 
+import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.config.ConfigType
 import com.github.synnerz.devonian.utils.StringUtils
@@ -15,6 +16,7 @@ abstract class SharedCategory(displayName: String) {
 
     protected val colorComponents = mutableListOf<UIColorPicker>()
     protected val switchComponents = mutableListOf<UISwitch>()
+    protected val configComponents = mutableListOf<Pair<String, UIElement>>()
 
     protected val categoryTitle = UIText(4.0, 35.0, 100.0, 100.0, displayName, false).apply {
         setColor(ColorPalette.TEXT_COLOR)
@@ -41,8 +43,60 @@ abstract class SharedCategory(displayName: String) {
                     ConfigType.SELECTION -> createSelection(data as ConfigData.Selection)
                     ConfigType.COLORPICKER -> createColorPicker(data as ConfigData.ColorPicker, container)
                     ConfigType.TIMESLIDER -> createTimeSlider(data as ConfigData.TimeSlider<Double>, container)
+                }.also {
+                    configComponents.add((data.configName ?: "_internal_${configComponents.size}") to it)
                 }
             )
+        }
+    }
+
+    private fun repositionBase(comp: UIElement, yOffset: Double) {
+        // this functionality breaks animations
+        val base = comp.parent ?: return
+        val root = base.parent ?: return
+        val baseIdx = root.children.indexOf(base)
+        if (baseIdx == -1) return
+
+        for (idx in baseIdx until root.children.size) {
+            val baseComp = root.children.getOrNull(idx) ?: continue
+            if (baseComp._x == 1.0 && baseComp._width == 98.0 && baseComp._height == 15.0) {
+                baseComp._y += yOffset
+                baseComp.markDirty()
+            }
+        }
+
+        root.parent?.markDirty()
+    }
+
+    open fun triggerSwitch(configName: String, state: Boolean) {
+        // TODO: buttons don't get removed (obviously)
+        configComponents.forEach { (name, configComp) ->
+            if (configComp == this || !name.startsWith(configName)) return@forEach
+            val comp = configComp.parent ?: return@forEach
+            var data: ConfigData<*>? = null
+
+            Config.features.forEach {
+                val d = it.subconfigs.find { d -> d.configName == name } ?: return@forEach
+                if (data != null) return@forEach
+
+                data = d
+            }
+
+            data ?: return@forEach
+
+            if (state) {
+                if (!comp.hidden) return@forEach
+                data.internalHide = false
+                comp.unhide()
+                repositionBase(comp, 17.0)
+                return@forEach
+            }
+
+            if (comp.hidden) return@forEach
+
+            data.internalHide = true
+            comp.hide()
+            repositionBase(comp, -17.0)
         }
     }
 
@@ -50,6 +104,7 @@ abstract class SharedCategory(displayName: String) {
         val container = UIBase(1.0, 0.0, 98.0, 15.0, parent)
 
         if (offset != 0.0) {
+            // TODO: remove this whenever the sub config is hidden
             UIText(
                 0.0, 0.0,
                 offset, 100.0,
@@ -127,7 +182,13 @@ abstract class SharedCategory(displayName: String) {
                 configData.set(state)
             }
 
-            configData.onChange { state = configData.get() }
+            configData.onChange {
+                state = configData.get()
+
+                if (configData.parent != null || configData.configName == null) return@onChange
+
+                triggerSwitch(configData.configName, state)
+            }
 
             switchComponents.add(this)
         }
