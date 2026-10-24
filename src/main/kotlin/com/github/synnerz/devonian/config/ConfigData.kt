@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.config
 
+import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import java.awt.Color
@@ -15,7 +16,6 @@ open class ConfigData<T>(
     val subcategory: String = "General",
     searchTags: Set<String> = emptySet(),
     val isHidden: Boolean = false,
-    var internalHide: Boolean = false,
 ) {
     val description = description ?: ""
     val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
@@ -42,6 +42,9 @@ open class ConfigData<T>(
         state.value = newVal
         onChangeHook.forEach { it(newVal) }
     }
+
+    open fun shouldExist() = !isHidden || Devonian.isDev
+    open fun shouldShow() = parent?.get() ?: true
 
     init {
         if (configName != null) {

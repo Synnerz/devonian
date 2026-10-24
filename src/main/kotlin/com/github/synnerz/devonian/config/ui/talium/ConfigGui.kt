@@ -5,9 +5,15 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.hud.HudManager
+import com.github.synnerz.talium.components.UIBase
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIScrollable
 import com.github.synnerz.talium.components.UIText
+import com.github.synnerz.talium.events.UIClickEvent
+import com.github.synnerz.talium.events.UIDragEvent
+import com.github.synnerz.talium.events.UIFocusEvent
+import com.github.synnerz.talium.events.UIMouseEvent
+import com.github.synnerz.talium.events.UIScrollEvent
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
@@ -16,7 +22,58 @@ import net.minecraft.network.chat.Component
 import java.awt.Color
 
 object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
-    private val background = UIRect(0.0, 0.0, 100.0, 100.0)
+    private val background = object : UIRect(0.0, 0.0, 100.0, 100.0) {
+        private fun handleMouseEvent(event: UIMouseEvent, orig: (UIBase) -> Unit) {
+            val modal = currentModal ?: return
+            if (modal.hidden) return
+
+            if (modal.inBounds(event)) {
+                modifyChildMouseEvent(event)
+                onPreChildPropagate(event)
+                preChildPropagate?.let { it(event) }
+
+                orig(modal)
+
+                onPostChildPropagation(event)
+                postChildPropagate?.let { it(event) }
+                resetChildMouseEvent(event)
+            }
+
+            event.stopPropagation()
+        }
+
+        override fun onMouseScroll(event: UIScrollEvent): UIBase = apply {
+            handleMouseEvent(event) { it.propagateMouseScroll(event) }
+        }
+
+        override fun onMouseClick(event: UIClickEvent): UIBase = apply {
+            handleMouseEvent(event) { it.propagateMouseClick(event) }
+        }
+
+        override fun onMouseRelease(event: UIClickEvent): UIBase = apply {
+            handleMouseEvent(event) { it.propagateMouseRelease(event) }
+        }
+
+        override fun onMouseEnter(event: UIMouseEvent): UIBase = apply {
+            handleMouseEvent(event) { it.propagateMouseEnter(event) }
+        }
+
+        override fun onMouseLeave(event: UIMouseEvent): UIBase = apply {
+            handleMouseEvent(event) { it.propagateMouseLeave(event) }
+        }
+
+        override fun onMouseHover(event: UIMouseEvent): UIBase = apply {
+            handleMouseEvent(event) { it.propagateMouseHover(event) }
+        }
+
+        override fun onMouseDrag(event: UIDragEvent): UIBase = apply {
+            handleMouseEvent(event) { it.propagateMouseDrag(event) }
+        }
+
+        override fun onFocus(event: UIFocusEvent): UIBase = apply {
+            handleMouseEvent(event) { it.propagateFocus(event) }
+        }
+    }
     private val main = UIRect(17.5, 17.5, 65.0, 65.0, parent = background).apply {
         setColor(ColorPalette.PRIMARY_COLOR)
     }
@@ -58,6 +115,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         }
     }
 
+    private var currentModal: UIBase? = null
     lateinit var categories: List<Category>
     var selectedCategory: Category? = null
     lateinit var searchCategory: SearchCategory
@@ -70,10 +128,6 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         searchCategory = SearchCategory(rightPanel)
         selectedCategory = categories.first()
         selectedCategory?.unhide()
-        background.onMouseScroll {
-            if (selectedCategory?.canTrigger() == false)
-                selectedCategory?.hideColorPickers()
-        }
 
         DevonianCommand.onRun {
             Scheduler.scheduleTask {
@@ -87,6 +141,11 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
             }
             return@subcommand 1
         }
+    }
+
+    fun requestModal(ui: UIBase?) {
+        currentModal = ui
+        ui?.unhide()
     }
 
     override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
@@ -112,7 +171,8 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     }
 
     override fun removed() {
-        selectedCategory?.hideColorPickers()
+        currentModal?.hide()
+        currentModal = null
         background.hide()
         opened = false
     }
