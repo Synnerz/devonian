@@ -7,16 +7,12 @@ import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.effects.OutlineEffect
 import com.github.synnerz.talium.events.UIClickEvent
-import com.github.synnerz.talium.events.UIFocusEvent
-import com.github.synnerz.talium.events.UIKeyType
 
 abstract class SharedCategory(displayName: String) {
     protected val NORMAL_TEXT_SCALE = 2.5f
     protected val DESCRIPTION_TEXT_SCALE = 1.8f
 
-    protected val colorComponents = mutableListOf<UIColorPicker>()
     protected val switchComponents = mutableListOf<UISwitch>()
-    protected val configComponents = mutableListOf<Pair<String, UIElement>>()
 
     protected val categoryTitle = UIText(4.0, 35.0, 100.0, 100.0, displayName, false).apply {
         setColor(ColorPalette.TEXT_COLOR)
@@ -43,68 +39,25 @@ abstract class SharedCategory(displayName: String) {
                     ConfigType.SELECTION -> createSelection(data as ConfigData.Selection)
                     ConfigType.COLORPICKER -> createColorPicker(data as ConfigData.ColorPicker, container)
                     ConfigType.TIMESLIDER -> createTimeSlider(data as ConfigData.TimeSlider<Double>, container)
-                }.also {
-                    configComponents.add((data.configName ?: "_internal_${configComponents.size}") to it)
                 }
             )
         }
     }
 
-    private fun repositionBase(comp: UIElement, yOffset: Double) {
-        // this functionality breaks animations
-        val base = comp.parent ?: return
-        val root = base.parent ?: return
-        val baseIdx = root.children.indexOf(base)
-        if (baseIdx == -1) return
-
-        for (idx in baseIdx until root.children.size) {
-            val baseComp = root.children.getOrNull(idx) ?: continue
-            if (baseComp._x == 1.0 && baseComp._width == 98.0 && baseComp._height == 15.0) {
-                baseComp._y += yOffset
-                baseComp.markDirty()
-            }
-        }
-
-        root.parent?.markDirty()
-    }
-
-    open fun triggerSwitch(configName: String, state: Boolean) {
-        // TODO: buttons don't get removed (obviously)
-        configComponents.forEach { (name, configComp) ->
-            if (configComp == this || !name.startsWith(configName)) return@forEach
-            val comp = configComp.parent ?: return@forEach
-            var data: ConfigData<*>? = null
-
-            Config.features.forEach {
-                val d = it.subconfigs.find { d -> d.configName == name } ?: return@forEach
-                if (data != null) return@forEach
-
-                data = d
-            }
-
-            data ?: return@forEach
-
-            if (state) {
-                if (!comp.hidden) return@forEach
-                data.internalHide = false
-                comp.unhide()
-                repositionBase(comp, 17.0)
-                return@forEach
-            }
-
-            if (comp.hidden) return@forEach
-
-            data.internalHide = true
-            comp.hide()
-            repositionBase(comp, -17.0)
+    private var configLoaded = false
+    init {
+        Config.onAfterLoad {
+            configLoaded = true
+            rebuildComps()
         }
     }
+
+    protected abstract fun rebuildComps()
 
     protected fun createBase(offset: Double, parent: UIElement): UIPair {
         val container = UIBase(1.0, 0.0, 98.0, 15.0, parent)
 
         if (offset != 0.0) {
-            // TODO: remove this whenever the sub config is hidden
             UIText(
                 0.0, 0.0,
                 offset, 100.0,
@@ -122,7 +75,7 @@ abstract class SharedCategory(displayName: String) {
 
         return UIPair(
             container,
-            UIRect(offset, 0.0, 100.0 - offset, 100.0, parent = container).apply {
+            UIRect(offset, 0.0, 95.0 - offset, 100.0, parent = container).apply {
                 addEffects(outlineEffect)
                 onMouseEnter {
                     outlineEffect.color = ColorPalette.OUTLINE2_COLOR
@@ -162,7 +115,6 @@ abstract class SharedCategory(displayName: String) {
             }
         })
         onMouseRelease {
-            if (!canTrigger()) return@onMouseRelease
             configData.onClick()
         }
     }
@@ -170,24 +122,24 @@ abstract class SharedCategory(displayName: String) {
     protected fun createSwitch(configData: ConfigData.Switch, parent: UIElement? = null): UISwitch {
         return object : UISwitch(80.0, 25.0, 15.0, 50.0, configData.get(), parent = parent) {
             override fun onMouseRelease(event: UIClickEvent) = apply {
-                if (!canTrigger()) return@apply
                 super.onMouseRelease(event)
+                configData.set(state)
             }
         }.apply {
             setColor(ColorPalette.TERTIARY_COLOR)
             knob = UIKnobSwitch(85.0)
             knob.enabledColor = ColorPalette.ENABLED_COLOR
             knob.disabledColor = ColorPalette.DISABLED_COLOR
-            onMouseRelease {
-                configData.set(state)
+
+            if (configData.parent == null) {
+                configData.onChange {
+                    if (!configLoaded) return@onChange
+                    rebuildComps()
+                }
             }
 
             configData.onChange {
                 state = configData.get()
-
-                if (configData.parent != null || configData.configName == null) return@onChange
-
-                triggerSwitch(configData.configName, state)
             }
 
             switchComponents.add(this)
@@ -200,13 +152,11 @@ abstract class SharedCategory(displayName: String) {
     ): UISlider =
         object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
             override fun setCurrentX(x: Double) {
-                if (!canTrigger()) return
                 super.setCurrentX(x)
                 configData.set(this.value)
             }
 
             override fun setCurrentValue(value: Double) {
-                if (!canTrigger()) return
                 super.setCurrentValue(value)
                 configData.set(this.value)
             }
@@ -227,13 +177,11 @@ abstract class SharedCategory(displayName: String) {
             }
 
             override fun setCurrentX(x: Double) {
-                if (!canTrigger()) return
                 super.setCurrentX(x)
                 configData.set(this.value)
             }
 
             override fun setCurrentValue(value: Double) {
-                if (!canTrigger()) return
                 super.setCurrentValue(value)
                 configData.set(this.value)
             }
@@ -250,13 +198,11 @@ abstract class SharedCategory(displayName: String) {
     ): UIDecimalSlider = object :
         UIDecimalSlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
         override fun setCurrentX(x: Double) {
-            if (!canTrigger()) return
             super.setCurrentX(x)
             configData.set(getCurrentValue())
         }
 
         override fun setCurrentValue(value: Double) {
-            if (!canTrigger()) return
             super.setCurrentValue(value)
             configData.set(getCurrentValue())
         }
@@ -275,19 +221,6 @@ abstract class SharedCategory(displayName: String) {
             onResize { _, w ->
                 textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
             }
-        }
-
-        override fun onFocus(event: UIFocusEvent) = apply {
-            if (!canTrigger()) {
-                focused = false
-                return@apply
-            }
-            super.onFocus(event)
-        }
-
-        override fun onKeyType(event: UIKeyType) = apply {
-            if (!canTrigger()) return@apply
-            super.onKeyType(event)
         }
     }.apply {
         setColor(ColorPalette.TERTIARY_COLOR)
@@ -311,7 +244,6 @@ abstract class SharedCategory(displayName: String) {
             }
 
             override fun setOption(idx: Int) {
-                if (!canTrigger()) return
                 super.setOption(idx)
                 configData.set(value)
             }
@@ -328,41 +260,31 @@ abstract class SharedCategory(displayName: String) {
         parent: UIElement? = null
     ): UIColorPicker = object : UIColorPicker(80.0, 25.0, 15.0, 50.0, configData.get(), parent) {
         init {
-            colorComponents.add(this)
             floatingChild.onUnfocus {
                 if (!arrowToggle || isMainClicked) return@onUnfocus
                 hideDropdown()
             }
         }
 
-        override fun setValue(hue: Double) {
-            super.setValue(hue)
-            configData.set(value)
+        override fun hideDropdown() {
+            super.hideDropdown()
+            ConfigGui.requestModal(null)
         }
 
         override fun unhideDropdown() {
-            if (!canTrigger()) return
-            hideColorPickers()
             super.unhideDropdown()
+            ConfigGui.requestModal(floatingChild)
+        }
+
+        override fun setValue(hue: Double) {
+            super.setValue(hue)
+            configData.set(value)
         }
     }.apply {
         setColor(ColorPalette.TERTIARY_COLOR)
         configData.onChange {
             setRgb(configData.get())
         }
-    }
-
-    // shit workaround to prevent the player from opening
-    // other things while changing the color of the
-    // color gradient
-    fun canTrigger(): Boolean {
-        return !colorComponents.any { it.arrowToggle }
-    }
-
-    fun hideColorPickers() {
-        for (comp in colorComponents)
-            if (comp.arrowToggle)
-                comp.hideDropdown()
     }
 
     open fun hide() {

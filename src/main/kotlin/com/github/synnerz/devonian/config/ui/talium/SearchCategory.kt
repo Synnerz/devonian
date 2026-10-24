@@ -1,13 +1,13 @@
 package com.github.synnerz.devonian.config.ui.talium
 
-import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.talium.components.*
 import kotlin.math.max
 
 class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
-    private val components = mutableListOf<Pair<ConfigData<*>, UIElement>>()
+    private val components: List<Pair<ConfigData<*>, UIElement>>
+    private var currSort: List<Int> = emptyList()
     private var previousText = ""
     private var oldCategory: Category? = null
     private val categoryTitleBg = UIRect(0.0, 0.0, 100.0, 8.0, parent = rightPanel).apply {
@@ -31,7 +31,6 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
                 // Hide
                 if (text.isEmpty()) {
                     if (previousText.isNotEmpty()) {
-                        hideColorPickers()
                         this@SearchCategory.hide()
 
                         // if (ConfigGui.selectedCategory == null)
@@ -72,11 +71,12 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
             }
         }
 
+        val comps = mutableListOf<Pair<ConfigData<*>, UIElement>>()
         fun buildComp(data: ConfigData<*>) {
-            if (data.isHidden && !Devonian.isDev) return
+            if (!data.shouldExist()) return
 
             val elem = createComp(data, contentContainer)
-            components.add(data to elem.container)
+            comps.add(data to elem.container)
         }
 
         Config.features.forEach {
@@ -85,15 +85,9 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
                 buildComp(it)
             }
         }
+        components = comps
 
         hide()
-    }
-
-    override fun triggerSwitch(configName: String, state: Boolean) {
-        super.triggerSwitch(configName, state)
-
-        if (ConfigGui.selectedCategory != null || previousText.isEmpty()) return
-        onSearch(previousText)
     }
 
     private fun onSearch(str: String) {
@@ -114,32 +108,56 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
             key to (maxHits * 1000 - hitCount[maxHits]++)
         }
 
-        var idx = 0
-        components.sortedBy {
-            -1000 * featOrdering[if (it.first is ConfigData.FeatureSwitch) it.first else it.first.parent]!! +
-            (if (it.first is ConfigData.FeatureSwitch) 0 else 500 - (subConfigHits[it.first.parent]?.get(it.first) ?: 0))
-        }.forEach { (data, comp) ->
-            val show = if (data is ConfigData.FeatureSwitch) {
+        currSort = components.withIndex().sortedBy { (_, p) ->
+            val (data) = p
+            -1000 * featOrdering[data as? ConfigData.FeatureSwitch ?: data.parent]!! +
+            (if (data is ConfigData.FeatureSwitch) 0 else 500 - (subConfigHits[data.parent]?.get(data) ?: 0))
+        }.filter { (_, p) ->
+            val (data) = p
+            if (data is ConfigData.FeatureSwitch) {
                 featMaxHits[data]!! > 0
             } else {
                 featHits[data.parent]!! > 0 ||
                 subConfigHits[data.parent]!![data]!! > 0
             }
-            if (data.internalHide) return@forEach
+        }.map { it.index }
 
-            if (show) {
-                val i = idx++
-                val y = 1.0 + i * 17.0
-                comp._y = y
-                comp.markDirty()
-                comp.unhide()
-                comp.checkUpdate()
-            } else comp.hide()
+        rebuildComps()
+
+        contentContainer.yOffset = 0.0
+        contentContainer.updateScrollY(0.0)
+
+        categoryTitle.text = "Searching \"$str\""
+    }
+
+    override fun rebuildComps() {
+        val visible = BooleanArray(components.size)
+        var idx = 0
+        currSort.forEach {
+            val (data, comp) = components[it]
+            if (!data.shouldShow()) return@forEach
+
+            visible[it] = true
+
+            val i = idx++
+            val y = 1.0 + i * 17.0
+            comp.unhide()
+            comp._y = y
+            comp.markDirty()
+            comp.checkUpdate()
+        }
+
+        visible.forEachIndexed { i, v ->
+            if (v) return@forEachIndexed
+            components[i].second.hide()
+            components[i].second._y = 0.0
+            components[i].second.markDirty()
+            components[i].second.checkUpdate()
         }
 
         contentContainer.updateScrollY(0.0)
-        contentContainer.yOffset = 0.0
-        categoryTitle.text = "Searching \"$str\""
+        contentContainer.markDirty()
+        contentContainer.checkUpdate()
     }
 
     private fun matchesConfig(config: ConfigData<*>, str: String): Int {
@@ -157,6 +175,7 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
     override fun hide() {
         super.hide()
         components.forEach { it.second.hide() }
+        currSort = emptyList()
         categoryTitleBg.hide()
         categoryTitle.text = "Searching..."
         previousText = ""
