@@ -20,8 +20,11 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import java.awt.Color
 import java.util.*
+import java.util.concurrent.Future
 import kotlin.math.abs
 import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 
 object IceFillSolver : Feature(
     "iceFillSolver",
@@ -97,7 +100,6 @@ object IceFillSolver : Feature(
             if (state.block == Blocks.PACKED_ICE) {
                 if (it.removeBlock(iceRoom!!, pos.x, pos.z)) return Pair(true, it)
             } else if (state.isAir) {
-                it.reset(iceRoom!!)
                 return Pair(false, it)
             }
         }
@@ -123,15 +125,16 @@ object IceFillSolver : Feature(
             if (!inIce) return@on
             when (val packet = event.packet) {
                 is ClientboundBlockUpdatePacket -> {
-                    Scheduler.scheduleTask {
+                    Scheduler.scheduleAfterPacket {
                         onBlock(packet.pos, packet.blockState)?.let {
+                            if (!it.first) it.second.reset(iceRoom!!)
                             it.second.solve(iceRoom!!, !SETTING_ALLOW_WALL_START.get(), it.first)
                         }
                     }
                 }
 
                 is ClientboundSectionBlocksUpdatePacket -> {
-                    Scheduler.scheduleTask {
+                    Scheduler.scheduleAfterPacket {
                         val update = linkedMapOf<IcePlatform, Boolean>()
                         packet.runUpdates { pos, state ->
                             onBlock(pos, state)?.let {
@@ -139,6 +142,7 @@ object IceFillSolver : Feature(
                             }
                         }
                         update.forEach {
+                            if (!it.value) it.key.reset(iceRoom!!)
                             it.key.solve(iceRoom!!, !SETTING_ALLOW_WALL_START.get(), it.value)
                         }
                     }
@@ -191,6 +195,38 @@ object IceFillSolver : Feature(
                     endBatch()
                 }
             }
+
+            /*
+            Render3DImmediate.renderLines(true) {
+                platforms.forEach {
+                    val sol = it.solution ?: return@forEach
+
+                    var prevC: IcePlatform.Direction? = null
+                    var prev: SolutionCoord? = null
+                    sol.forEach { pos ->
+                        val l = prev
+                        prev = pos
+
+                        if (pos.c == prevC) return@forEach
+                        prevC = pos.c
+
+                        if (l == null) return@forEach
+
+                        submit(
+                            l.x + 0.5,
+                            l.y + 1.11,
+                            l.z + 0.5,
+                            l.x + pos.c.dx * 0.5 + 0.5,
+                            l.y + 1.11,
+                            l.z + pos.c.dz * 0.5 + 0.5,
+                            Color.RED,
+                            Color.RED,
+                            SETTING_LINE_WIDTH.get(),
+                        )
+                    }
+                }
+            }
+            */
         }
     }
 
@@ -201,6 +237,7 @@ object IceFillSolver : Feature(
 }
 
 data class Coord(val x: Int, val y: Int, val z: Int)
+data class SolutionCoord(val x: Int, val y: Int, val z: Int, val c: IcePlatform.Direction)
 
 class IcePlatform(
     val end: Coord,
@@ -208,53 +245,120 @@ class IcePlatform(
     val corner1: Coord,
     val corner2: Coord,
 ) {
-    private val maxId = (corner2.x - corner1.x + 1) * (corner2.z - corner1.z + 1)
-    private val blocks = arrayOfNulls<CompWorld>(maxId + 1)
-    private var mutableBlocks = blocks.copyOf()
-    var solution: Deque<Coord>? = null
+    private val scanSize = corner2.x - corner1.x + 1
+    private val scanCount = corner2.z - corner1.z + 1 + 1
+    private val gridSize = scanSize * scanCount
 
-    init {
-        if (maxId > 63) throw IllegalArgumentException("long bitset :(")
+    private val leftColMask = run {
+        var m = -1L
+        for (i in 0 until 64 step scanSize) {
+            m = m and (1L shl i).inv()
+        }
+        return@run m
+    }
+    private val rightColMask = run {
+        var m = -1L
+        for (i in scanSize - 1 until 64 step scanSize) {
+            m = m and (1L shl i).inv()
+        }
+        return@run m
     }
 
-    private fun idAt(x: Int, z: Int) =
-        if (z == end.z) maxId
-        else (x - corner1.x) + (corner2.x - corner1.x + 1) * (z - corner1.z)
+    private val endId = idAt(end.x, end.z)
+    private val blocks = arrayOfNulls<CompWorld>(gridSize)
+    private var mutableBlocks = blocks.copyOf()
+    private var solutionFuture: Future<*>? = null
+    var solution: Deque<SolutionCoord>? = null
+
+    init {
+        if (gridSize > 63) throw IllegalArgumentException("long bitset :(")
+    }
+
+    private fun idAt(cx: Int, cz: Int) =
+        (cz - corner1.z) * scanSize +
+        cx - corner1.x
 
     private fun parityOf(x: Int, z: Int) = (x + z) and 1
 
-    private val directions = listOf(
-        Pair(-1, 0),
-        Pair(+1, 0),
-        Pair(0, -1),
-        Pair(0, +1),
-    )
+    private fun contains(x: Int, z: Int): Boolean {
+        return x == end.x && z == end.z ||
+        (x in corner1.x .. corner2.x && z in corner1.z .. corner2.z)
+    }
+
+    private fun isWall(x: Int, z: Int): Boolean {
+        if (contains(x, z)) return blocks[idAt(x, z)] == null
+        if (contains(x + 1, z)) return true
+        if (contains(x - 1, z)) return true
+        if (contains(x, z + 1)) return x != start.x
+        if (contains(x, z - 1)) return true
+        return false
+    }
 
     fun rescan(room: DungeonRoom, endOnStart: Boolean) {
         blocks.fill(null)
-        blocks[maxId] = CompWorld(
+        val hasBlock = BooleanArray(blocks.size)
+
+        blocks[endId] = CompWorld(
+            endId,
+            1L shl endId,
             end,
             room.fromComp(end.x, end.z)!!,
             parityOf(end.x, end.z),
-            arrayOf(idAt(end.x, end.z - 1)),
+            IntArray(5) {
+                Direction.entries[it].let {
+                    if (it == Direction.NegZ) idAt(end.x + it.dx, end.z + it.dz)
+                    else -1
+                }
+            },
+            BooleanArray(5),
         )
+        hasBlock[endId] = true
 
         val y = end.y
         for (cx in corner1.x .. corner2.x) {
             for (cz in corner1.z .. corner2.z) {
                 val (x, z) = room.fromComp(cx, cz)!!
                 val bs = WorldUtils.getBlockState(x, y + 1, z)!!
-                if (bs.isAir) blocks[idAt(cx, cz)] = CompWorld(
+                if (bs.isAir) hasBlock[idAt(cx, cz)] = true
+            }
+        }
+        for (cx in corner1.x .. corner2.x) {
+            for (cz in corner1.z .. corner2.z) {
+                val (x, z) = room.fromComp(cx, cz)!!
+                val id = idAt(cx, cz)
+                if (hasBlock[id]) blocks[id] = CompWorld(
+                    id,
+                    1L shl id,
                     Coord(cx, y, cz),
                     Pair(x, z),
                     parityOf(cx, cz),
-                    directions.filter {
-                        contains(cx + it.first, cz + it.second)
-                    }.map {
-                        idAt(cx + it.first, cz + it.second)
-                    }.toTypedArray()
+                    IntArray(5) {
+                        if (it == 4) return@IntArray -1
+                        val dir = Direction.entries[it]
+                        val x = cx + dir.dx
+                        val z = cz + dir.dz
+                        val id = idAt(x, z)
+                        if (contains(x, z) && hasBlock[id]) id
+                        else -1
+                    },
+                    BooleanArray(5) {
+                        if (it == 4) return@BooleanArray true
+                        Direction.entries[it].let {
+                            isWall(cx + it.dx, cz + it.dz)
+                        }
+                    },
                 )
             }
+        }
+
+        blocks.forEach { block ->
+            if (block == null) return@forEach
+            for (i in 0 until 4) {
+                block.walls[i] = Direction.entries[i].let {
+                    isWall(block.comp.x + it.dx, block.comp.z + it.dz)
+                }
+            }
+            block.walls[4] = true
         }
 
         reset(room)
@@ -273,11 +377,6 @@ class IcePlatform(
         }
 
         solution = null
-    }
-
-    private fun contains(x: Int, z: Int): Boolean {
-        return x == end.x && z == end.z ||
-        (x in corner1.x .. corner2.x && z in corner1.z .. corner2.z)
     }
 
     fun contains(room: DungeonRoom, x: Int, y: Int, z: Int): Boolean {
@@ -309,9 +408,11 @@ class IcePlatform(
     }
 
     fun solve(room: DungeonRoom, endOnStart: Boolean, checkPlayer: Boolean) {
+        val thisBlocks = mutableBlocks.copyOf()
+
         var total = 0
         var odd = 0
-        mutableBlocks.forEach {
+        thisBlocks.forEach {
             if (it == null) return@forEach
             total++
             odd += it.parity
@@ -323,7 +424,7 @@ class IcePlatform(
         }
         if (abs(odd - even) >= 2) return
 
-        val first = Devonian.minecraft.player?.let {
+        val src = Devonian.minecraft.player?.let {
             if (!checkPlayer) return@let null
             // ether sets height to +.05
             if (it.y - (end.y + 1) !in 0.0 .. 0.1) return@let null
@@ -333,86 +434,338 @@ class IcePlatform(
             if (!contains(x, z)) return@let null
             val id = idAt(x, z)
             val b = blocks[id] ?: return@let null
-            if (mutableBlocks[id] == null) {
+            if (thisBlocks[id] == null) {
                 total++
                 odd += b.parity
                 even += b.parity xor 1
                 if (abs(odd - even) >= 2) return
+                thisBlocks[id] = b
             }
             b
         } ?: listOf(
-            if (endOnStart) mutableBlocks[idAt(start.x, start.z)] else null,
-            mutableBlocks[maxId],
-            if (endOnStart) null else mutableBlocks[idAt(start.x, start.z)],
-            *mutableBlocks,
-        ).first {
-            if (it == null) return@first false
-            if (even == odd) return@first true
-            return@first (odd > even) == (it.parity == 1)
-        } ?: return
+            if (endOnStart) thisBlocks[idAt(start.x, start.z)] else null,
+        ).firstOrNull {
+            if (it == null) return@firstOrNull false
+            if (even == odd) return@firstOrNull true
+            return@firstOrNull (odd > even) == (it.parity == 1)
+        }
 
-        var minCost = 5318008
-        var best: LinkedList<Coord>? = null
+        solutionFuture?.cancel(true)
+        solutionFuture = Scheduler.schedulePool.submit {
+            val best = if (src == null) thisBlocks.fold(null) { acc, block ->
+                if (Thread.interrupted()) return@submit
+                if (block == null) return@fold acc
+                if (even != odd && (odd < even) == (block.parity == 1)) return@fold acc
+                val sol = findPath(thisBlocks, total, block) ?: return@fold acc
+                if (acc == null || sol.cost.last() < acc.cost.last()) sol
+                else acc
+            }
+            else findPath(thisBlocks, total, src)
 
-        val visitedHist = LongArray(maxId + 2)
-        val route = arrayOfNulls<Destination>(total)
-        val queue = ArrayDeque<Destination>()
+            if (best == null) return@submit
+            if (Thread.interrupted()) return@submit
 
-        queue.add(Destination(first, -1, 0, 0, 1L shl idAt(first.comp.x, first.comp.z)))
+            solution = best.path.mapTo(LinkedList()) {
+                val (x, z) = blocks[it.id]!!.world
+                SolutionCoord(x, end.y, z, Direction.entries[it.oc])
+            }
+        }
+    }
+
+    // bitboard flood
+    private fun isConnected(unvisited: Long): Boolean {
+        var flood = unvisited.takeLowestOneBit()
+        var prev: Long
+        do {
+            prev = flood
+            flood = flood or
+                ((flood shl 1) and leftColMask) or
+                ((flood shr 1) and rightColMask) or
+                (flood shl scanSize) or
+                (flood shr scanSize)
+            flood = flood and unvisited
+        } while (flood != prev)
+        return flood == unvisited
+    }
+
+    private fun degreeOf(mask: Long, unvisited: Long): Int {
+        return (
+            unvisited and
+            (
+                ((mask shl 1) and leftColMask) or
+                ((mask shr 1) and rightColMask) or
+                (mask shl scanSize) or
+                (mask shr scanSize)
+            )
+        ).countOneBits()
+    }
+
+    private fun findPath(thisBlocks: Array<CompWorld?>, len: Int, src: CompWorld): Solution? {
+        val unvisited = run {
+            var m = 0L
+            thisBlocks.forEachIndexed { i, v ->
+                if (v != null) m = m or (1L shl i)
+            }
+            return@run m
+        }
+
+        val fastSol = findPathFast(thisBlocks, len, src) ?: return null
+        val minCost = fastSol.cost
+        var best: Solution? = null
+
+        val visitedHist = LongArray(len)
+        val route = arrayOfNulls<State>(len)
+        val queue = ArrayDeque<State>()
+
+        queue.add(State(src.id, 4, 4, if (src.comp == start) State.BEGIN_ON_START_INCENTIVE else 0))
 
         var ops = 0
-        val start = System.currentTimeMillis()
+        // val startTime = System.currentTimeMillis()
         while (queue.isNotEmpty()) {
-            if (ops++ > 100_000) {
-                if (System.currentTimeMillis() - start > 1_000L) break
-                ops = 0
-            }
+            if (++ops == 100_000) break
 
-            val d = queue.removeLast()
+            val node = queue.removeLast()
 
-            var pathLen = d.size
-            if (d.cost + total - pathLen > minCost) continue
+            var pathLen = node.length
+            if (node.totalCost - node.heur(len) >= minCost[pathLen]) continue
+            val curr = thisBlocks[node.id] ?: continue
 
-            route[pathLen++] = d
-            val visited = visitedHist[d.size] or d.mask
-            visitedHist[pathLen] = visited
+            minCost[pathLen] = min(minCost[pathLen], node.totalCost)
+            route[pathLen] = node
+            val visited = visitedHist[pathLen] or curr.mask
 
-            if (pathLen == total) {
-                if (d.cost < minCost) {
-                    minCost = d.cost
-                    best = route.mapTo(LinkedList()) {
-                        Coord(it!!.data.world.first, it.data.comp.y, it.data.world.second)
-                    }
+            if (++pathLen == len) {
+                if (node.totalCost == minCost[pathLen - 1]) {
+                    best = Solution(minCost, route.copyOf(pathLen).requireNoNulls())
                 }
                 continue
             }
 
-            d.data.neighbors.forEach {
-                val data = mutableBlocks[it] ?: return@forEach
+            visitedHist[pathLen] = visited
+            val wall = curr.walls[node.od]
 
-                val mask = 1L shl it
+            Direction.nextD[node.oc].forEach { d ->
+                val id = curr.neighbors[d]
+                if (id < 0) return@forEach
+
+                val mask = 1L shl id
                 if (visited and mask != 0L) return@forEach
 
-                val dx = data.comp.x - d.data.comp.x
-                val dz = data.comp.z - d.data.comp.z
-                val dir = dx + dz * 100
+                val v = unvisited and (visited or mask).inv()
+                if (!isConnected(v)) return@forEach
+
+                Direction.nextC[node.oc].forEach { c ->
+                    val cost = node.cost(d, c, wall)
+
+                    queue.add(
+                        State(
+                            id,
+                            if (d != node.od && d == c && node.od != 4) 4 else d,
+                            c,
+                            node.totalCost + cost,
+                            pathLen,
+                            node,
+                        )
+                    )
+                }
+
+                if (node.od == 4) return@forEach
+                if (d == node.od) return@forEach
+                val cost = node.cost(d, d, wall)
 
                 queue.add(
-                    Destination(
-                        data,
-                        dir,
+                    State(
+                        id,
+                        4,
+                        d,
+                        node.totalCost + cost,
                         pathLen,
-                        d.cost + (if (dir == d.dir) 0 else 1),
-                        mask,
+                        node,
+                    )
+                )
+            }
+        }
+        // ChatUtils.sendMessage("calced solution in ${System.currentTimeMillis() - startTime}ms and ${StringUtils.addCommas(ops)} ops with ${minCost.last()}")
+
+        return best ?: fastSol
+    }
+
+    private fun findPathFast(thisBlocks: Array<CompWorld?>, len: Int, src: CompWorld): Solution? {
+        val unvisited = run {
+            var m = 0L
+            thisBlocks.forEachIndexed { i, v ->
+                if (v != null) m = m or (1L shl i)
+            }
+            return@run m
+        }
+
+        val minCost = IntArray(len) { Int.MAX_VALUE }
+
+        val visitedHist = LongArray(len)
+        val route = arrayOfNulls<State>(len)
+        val queue = ArrayDeque<State>()
+
+        queue.add(State(src.id, 4, 4, if (src.comp == start) State.BEGIN_ON_START_INCENTIVE else 0))
+
+        var ops = 0
+        // val startTime = System.currentTimeMillis()
+        while (queue.isNotEmpty()) {
+            if (++ops == 10_000) break
+
+            val node = queue.removeLast()
+
+            var pathLen = node.length
+
+            val curr = thisBlocks[node.id] ?: continue
+
+            minCost[pathLen] = min(minCost[pathLen], node.totalCost)
+            route[pathLen] = node
+            val visited = visitedHist[pathLen] or curr.mask
+
+            if (++pathLen == len) {
+                // ChatUtils.sendMessage("calced fast solution in ${System.currentTimeMillis() - startTime}ms and ${StringUtils.addCommas(ops)} ops with ${node.totalCost}")
+                return Solution(minCost, route.requireNoNulls())
+            }
+
+            visitedHist[pathLen] = visited
+            val wall = curr.walls[node.od]
+
+            Direction.nextD[node.od].forEach { d ->
+                val id = curr.neighbors[d]
+                if (id < 0) return@forEach
+
+                val mask = 1L shl id
+                if (visited and mask != 0L) return@forEach
+
+                val v = unvisited and (visited or mask).inv()
+                if (!isConnected(v)) return@forEach
+
+                val c = if (pathLen == 1) d else node.oc
+                val cost = node.cost(d, c, wall)
+
+                queue.add(
+                    State(
+                        id,
+                        if (d != node.od && d == c && node.od != 4) 4 else d,
+                        c,
+                        node.totalCost + cost,
+                        pathLen,
+                        node,
                     )
                 )
             }
         }
 
-        solution = best
+        return null
     }
 
-    class Destination(val data: CompWorld, val dir: Int, val size: Int, val cost: Int, val mask: Long)
+    data class State(
+        val id: Int,
+        val od: Int,
+        val oc: Int,
+        val totalCost: Int,
+        val length: Int,
+        val moveCost: Int,
+        val cameraCost: Int,
+    ) {
+        constructor(
+            id: Int,
+            od: Int,
+            oc: Int,
+            totalCost: Int = 0,
+            length: Int = 0,
+            prev: State? = null,
+        ) : this(
+            id,
+            od, oc,
+            totalCost, length,
+            prev?.nextMoveCost(od) ?: 0,
+            prev?.nextCameraCost(od, oc) ?: 0,
+        )
 
-    class CompWorld(val comp: Coord, val world: Pair<Int, Int>, val parity: Int, val neighbors: Array<Int>)
+        fun cost(d: Int, c: Int, wall: Boolean): Int {
+            return moveCost +
+                (
+                    if (od == 4) 0
+                    else if (d == od) 0
+                    else if (d == c) CAMERA_TP_COST
+                    else TURN_COST + (if (wall) 0 else NOT_WALL_TURN_PENALTY)
+                ) +
+                (if (c == oc) 0 else cameraCost) +
+                (
+                    if (d == c xor 2) BACKWARDS_MOVEMENT_PENALTY
+                    else if (d != c) SIDE_MOVEMENT_PENALTY
+                    else 0
+                )
+        }
+
+        fun heur(totalLen: Int): Int {
+            return 10
+        }
+
+        fun nextMoveCost(d: Int) =
+            if (d == od) max(0, moveCost - MOVEMENT_COST_REDUCTION)
+            else if (d != 4) min(INITIAL_MOVEMENT_COST, moveCost + TURN_MOVEMENT_PENALTY)
+            else INITIAL_MOVEMENT_COST
+
+        fun nextCameraCost(d: Int, c: Int) =
+            if (d == 4) INITIAL_CHANGE_CAMERA_COST
+            else if (c == oc) max(0, cameraCost - CHANGE_CAMERA_COST_REDUCTION)
+            else INITIAL_CHANGE_CAMERA_COST
+
+        companion object {
+            const val BEGIN_ON_START_INCENTIVE = -20
+            const val INITIAL_MOVEMENT_COST = 4
+            const val MOVEMENT_COST_REDUCTION = 1
+            const val TURN_MOVEMENT_PENALTY = 1
+            const val BACKWARDS_MOVEMENT_PENALTY = 5
+            const val SIDE_MOVEMENT_PENALTY = 1
+            const val TURN_COST = 5
+            const val CAMERA_TP_COST = 3
+            const val INITIAL_CHANGE_CAMERA_COST = 15
+            const val CHANGE_CAMERA_COST_REDUCTION = 3
+            const val NOT_WALL_TURN_PENALTY = 100
+        }
+    }
+
+    enum class Direction(val dx: Int, val dz: Int) {
+        PosX(1, 0),
+        PosZ(0, 1),
+        NegX(-1, 0),
+        NegZ(0, -1),
+        Empty(0, 0);
+
+        operator fun component1() = dx
+        operator fun component2() = dz
+
+        companion object {
+            @JvmField
+            val nextD = arrayOf(
+                intArrayOf(0, 2, 1, 3),
+                intArrayOf(1, 3, 0, 2),
+                intArrayOf(2, 0, 3, 1),
+                intArrayOf(3, 1, 2, 0),
+                intArrayOf(0, 1, 2, 3),
+            )
+            @JvmField
+            val nextC = arrayOf(
+                intArrayOf(0),
+                intArrayOf(1),
+                intArrayOf(2),
+                intArrayOf(3),
+                intArrayOf(0, 1, 2, 3),
+            )
+        }
+    }
+
+    class CompWorld(
+        val id: Int, val mask: Long,
+        val comp: Coord,
+        val world: Pair<Int, Int>,
+        val parity: Int,
+        val neighbors: IntArray,
+        val walls: BooleanArray,
+    )
+
+    class Solution(val cost: IntArray, val path: Array<State>)
 }
