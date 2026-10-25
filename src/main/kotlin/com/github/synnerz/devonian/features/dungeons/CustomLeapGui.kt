@@ -16,6 +16,7 @@ import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIText
 import com.github.synnerz.talium.effects.OutlineEffect
+import com.github.synnerz.talium.events.UIFocusEvent
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import net.minecraft.network.protocol.game.ClientboundContainerClosePacket
@@ -160,13 +161,13 @@ object CustomLeapGui : Feature(
                 if (!validTitle(packet.title.string)) {
                     Scheduler.scheduleTask { resetChildren() }
                     containerId = -1
-                    background.focused = false
+                    background.unfocus()
                     return@on
                 }
                 if (containerId != -1) Scheduler.scheduleTask { resetChildren() }
                 containerId = packet.containerId
                 inHaunt = packet.title.string == "Teleport to Player"
-                background.focused = true
+                background.propagateFocus(UIFocusEvent(0.0, 0.0, true, background))
                 return@on
             }
         }
@@ -366,7 +367,7 @@ object CustomLeapGui : Feature(
 
     private fun resetChildren() {
         background.clearChildren()
-        background.focused = false
+        background.unfocus()
     }
 
     private fun validTitle(title: String): Boolean = title == CONTAINER_NAME || title == "Teleport to Player"
