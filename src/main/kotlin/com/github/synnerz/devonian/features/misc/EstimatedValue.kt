@@ -258,7 +258,7 @@ object EstimatedValue : TextHudFeature(
                     hpbs = hpbs ?: 0,
                     artOfPeace = artOfPeace != null,
                     stars = stars ?: 0,
-                    recomb = recomb != null,
+                    recomb = recomb != null && recomb > 0,
                     artOfWar = artOfWar != null,
                     ultimateEnchant = ultimateEnchant,
                     // lore is more accurate than nbt ):
