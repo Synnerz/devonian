@@ -7,6 +7,7 @@ import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.effects.OutlineEffect
 import com.github.synnerz.talium.events.UIClickEvent
+import kotlin.math.ceil
 
 abstract class SharedCategory(displayName: String) {
     protected val NORMAL_TEXT_SCALE = 2.5f
@@ -152,11 +153,13 @@ abstract class SharedCategory(displayName: String) {
     ): UISlider =
         object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
             override fun setCurrentX(x: Double) {
+                this.value = ceil(this.value).toInt() + 0.0
                 super.setCurrentX(x)
                 configData.set(this.value)
             }
 
             override fun setCurrentValue(value: Double) {
+                this.value = ceil(this.value).toInt() + 0.0
                 super.setCurrentValue(value)
                 configData.set(this.value)
             }
