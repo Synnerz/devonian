@@ -71,7 +71,23 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         }
 
         override fun onFocus(event: UIFocusEvent): UIBase = apply {
-            handleMouseEvent(event) { it.propagateFocus(event) }
+            val modal = currentModal ?: return@apply
+            if (modal.hidden) return@apply
+
+            val cause = event.cause
+            if (cause == null || modal.inBounds(cause)) {
+                if (cause != null) modifyChildMouseEvent(cause)
+                onPreChildPropagate(event)
+                preChildPropagate?.let { it(event) }
+
+                modal.propagateFocus(event)
+
+                onPostChildPropagation(event)
+                postChildPropagate?.let { it(event) }
+                if (cause != null) resetChildMouseEvent(cause)
+            }
+
+            event.stopPropagation()
         }
     }
     private val main = UIRect(17.5, 17.5, 65.0, 65.0, parent = background).apply {
