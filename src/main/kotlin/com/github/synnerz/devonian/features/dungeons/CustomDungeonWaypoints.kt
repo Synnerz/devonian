@@ -162,8 +162,7 @@ object CustomDungeonWaypoints : Feature(
         BLOCK,
         ETHERWARP,
         TEXT,
-        MINE,
-        SUPERBOOM;
+        MINE;
 
         companion object {
             fun byName(name: String) =
@@ -259,7 +258,6 @@ object CustomDungeonWaypoints : Feature(
                     WaypointType.ETHERWARP -> Color(0, 255, 255, 255)
                     WaypointType.TEXT -> Color(0, 0, 0, 0)
                     WaypointType.MINE -> Color(230, 250, 50, 255)
-                    WaypointType.SUPERBOOM -> Color(255, 0, 0, 255)
                 }
 
                 if (it.type != WaypointType.TEXT) {
