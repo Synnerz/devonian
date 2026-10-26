@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.TextColor
+import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.max
@@ -316,17 +317,28 @@ object StringUtils {
 
     // 677.9M -> 677_900_000
     private val nonNumReg = "[^\\d.]".toRegex()
-    fun parseShortenedNumber(str: String): Int {
+    fun parseShortenedNumber(str: String): Int = tryParseShortenedNumber(str)?.toInt() ?: 0
+    fun tryParseShortenedNumber(str: String): Double? {
         val factor = when (str.lastOrNull()) {
-            null -> return 0
-            'K' -> 1_000
-            'M' -> 1_000_000
-            'B' -> 1_000_000_000
-            else -> 1
+            null -> return null
+
+            'k',
+            'K',
+                -> 1_000.0
+
+            'm',
+            'M',
+                -> 1_000_000.0
+
+            'b',
+            'B',
+                -> 1_000_000_000.0
+
+            else -> 1.0
         }
         val raw = str.replace(nonNumReg, "")
-        val base = raw.toDoubleOrNull() ?: return 0
-        return (base * factor).toInt()
+        val base = raw.toDoubleOrNull() ?: return null
+        return base * factor
     }
 
     // 1h 54m 21s -> 6861
@@ -344,22 +356,23 @@ object StringUtils {
     }
 
     // uses as few sig figs as possible
-    private val digitChars = Array(10) { '0' + it }
-    private val placePrefix = arrayOf(
+    private val placePostfix = arrayOf(
         "",
         "", "", "",
         "k", "k", "k",
         "M", "M", "M",
-        "B",
+        "B", "B", "B",
+        "T", "T", "T",
     )
-    fun formatShortest(num: Int, maxDigits: Int = 10): String {
-        if (num < 0) return '-' + formatShortest(-num, maxDigits)
-        if (num == 0) return "0"
+    fun formatShortest(num: Int, maxDigits: Int = 10): String = formatShortest(num.toLong(), maxDigits)
+    fun formatShortest(num: Long, maxDigits: Int = 10): String {
+        if (num < 0L) return '-' + formatShortest(-num, maxDigits)
+        if (num == 0L) return "0"
 
         val digits = mutableListOf<Int>()
         var num = num
         while (num > 0) {
-            digits.add(num % 10)
+            digits.add((num % 10L).toInt())
             num /= 10
         }
         digits.reverse()
@@ -368,16 +381,68 @@ object StringUtils {
             ((digits.size - 1) % 3) + 1,
             min(
                 maxDigits,
-                digits.indexOf(0).let { if (it == -1) digits.size else it }
+                digits.indexOfLast { it != 0 } + 1,
             )
         )
 
         return buildString {
             for (i in 0 until count) {
                 if (i == 1 && digits.size > 3) append('.')
-                append(digitChars[digits[i]])
+                append('0' + digits[i])
             }
-            append(placePrefix[digits.size])
+            if (digits.size < placePostfix.size) append(placePostfix[digits.size])
+            else {
+                append("e+")
+                append(digits.size - 1)
+            }
+        }
+    }
+    fun formatShortest(num: Double, maxDigits: Int = 10): String {
+        when {
+            num < 0.0 -> return '-' + formatShortest(-num, maxDigits)
+            num == 0.0 -> return "0"
+            num.isNaN() -> return "NaN"
+            num == Double.POSITIVE_INFINITY -> return "Infinity"
+            num > Long.MAX_VALUE -> return "%.${maxDigits - 1}e".format(num)
+            num < 0.001 -> return "%.${maxDigits - 1}e".format(num)
+        }
+
+        val whole = num.toLong()
+        val fract = num - whole
+
+        if (fract == 0.0) return formatShortest(whole, maxDigits)
+
+        val digits = BigDecimal(num).stripTrailingZeros().toPlainString()
+        val wholeCount = digits.indexOf('.')
+        if (wholeCount < 0) return formatShortest(whole, maxDigits)
+
+        val count = max(
+            ((wholeCount - 1) % 3) + 1,
+            min(
+                maxDigits,
+                wholeCount,
+            )
+        )
+        val fractCount = min(
+            maxDigits - count,
+            digits.length - 1 - count,
+        )
+
+        return buildString {
+            val emitEarlyPeriod = wholeCount > 3
+            for (i in 0 until count) {
+                if (i == 1 && emitEarlyPeriod) append('.')
+                append(digits[i])
+            }
+            if (!emitEarlyPeriod) append('.')
+            for (i in 0 until fractCount) {
+                append(digits[i + count + 1])
+            }
+            if (wholeCount < placePostfix.size) append(placePostfix[wholeCount])
+            else {
+                append("e+")
+                append(wholeCount - 1)
+            }
         }
     }
 
