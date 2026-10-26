@@ -14,6 +14,11 @@ public class PlayerMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;updateSwingTime()V")
     )
     private void devonian$itemAnimations(Player instance, Operation<Void> original) {
+        if (!ItemAnimations.INSTANCE.isEnabled()) {
+            original.call(instance);
+            return;
+        }
+
         ItemAnimations.INSTANCE.onUpdateSwingTime();
     }
 }
