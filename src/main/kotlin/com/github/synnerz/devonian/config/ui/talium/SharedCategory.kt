@@ -152,12 +152,6 @@ abstract class SharedCategory(displayName: String) {
         parent: UIElement? = null
     ): UISlider =
         object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
-            override fun setCurrentX(x: Double) {
-                this.value = ceil(this.value).toInt() + 0.0
-                super.setCurrentX(x)
-                configData.set(this.value)
-            }
-
             override fun setCurrentValue(value: Double) {
                 this.value = ceil(this.value).toInt() + 0.0
                 super.setCurrentValue(value)
@@ -179,11 +173,6 @@ abstract class SharedCategory(displayName: String) {
                 return StringUtils.formatSeconds(value.toLong())
             }
 
-            override fun setCurrentX(x: Double) {
-                super.setCurrentX(x)
-                configData.set(this.value)
-            }
-
             override fun setCurrentValue(value: Double) {
                 super.setCurrentValue(value)
                 configData.set(this.value)
@@ -200,11 +189,6 @@ abstract class SharedCategory(displayName: String) {
         parent: UIElement? = null
     ): UIDecimalSlider = object :
         UIDecimalSlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
-        override fun setCurrentX(x: Double) {
-            super.setCurrentX(x)
-            configData.set(getCurrentValue())
-        }
-
         override fun setCurrentValue(value: Double) {
             super.setCurrentValue(value)
             configData.set(getCurrentValue())
