@@ -183,14 +183,14 @@ object CommandAliases : Screen(Component.literal("Devonian.CommandAliases")) {
         }
         val aliasInput = UITextInput(1.0, 0.0, 38.0, 100.0, alias, parent = parentBg).apply {
             setColor(Color(35, 35, 35, 255))
-            onLostFocus {
+            onUnfocus {
                 data.alias = text.replace("/", "")
                 updateCache()
             }
         }
         val commandInput = UITextInput(40.0, 0.0, 38.0, 100.0, command, parent = parentBg).apply {
             setColor(Color(35, 35, 35, 255))
-            onLostFocus {
+            onUnfocus {
                 data.command = text.replace("/", "")
                 updateCache()
             }

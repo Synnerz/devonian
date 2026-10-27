@@ -277,7 +277,7 @@ object CancelMessages : Screen(Component.literal("Devonian.CancelMessages")) {
         val cancelMsg = UITextInput(0.0, 0.0, 77.0, 100.0, message, parent = parentBg).apply {
             xConstraint = UIFlexWrapConstraint(2.0)
             setColor(Color(35, 35, 35, 255))
-            onLostFocus {
+            onUnfocus {
                 data.message = text
                 data.checkRegex()
                 updateCache()

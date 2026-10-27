@@ -215,8 +215,13 @@ abstract class SharedCategory(displayName: String) {
     protected fun createDecimalSlider(
         configData: ConfigData.DecimalSlider,
         parent: UIElement? = null
-    ): UIDecimalSlider = object :
-        UIDecimalSlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
+    ): UIDecimalSlider = object : UIDecimalSlider(
+        80.0, 25.0,
+        15.0, 50.0,
+        configData.get(),
+        configData.min, configData.max,
+        parent = parent,
+    ) {
         override fun setCurrentValue(value: Double) {
             super.setCurrentValue(value)
             configData.set(this.value)
@@ -224,7 +229,7 @@ abstract class SharedCategory(displayName: String) {
     }.apply {
         setColor(ColorPalette.TERTIARY_COLOR)
         configData.onChange {
-            value = configData.get() * 100
+            value = configData.get()
         }
     }
 

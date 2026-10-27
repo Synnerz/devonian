@@ -6,14 +6,11 @@ import com.github.synnerz.devonian.commands.DevonianCommand
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.talium.components.UIBase
+import com.github.synnerz.talium.components.UIElement
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIScrollable
 import com.github.synnerz.talium.components.UIText
-import com.github.synnerz.talium.events.UIClickEvent
-import com.github.synnerz.talium.events.UIDragEvent
-import com.github.synnerz.talium.events.UIFocusEvent
-import com.github.synnerz.talium.events.UIMouseEvent
-import com.github.synnerz.talium.events.UIScrollEvent
+import com.github.synnerz.talium.events.UIEvent
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
@@ -23,71 +20,11 @@ import java.awt.Color
 
 object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
     private val background = object : UIRect(0.0, 0.0, 100.0, 100.0) {
-        private fun handleMouseEvent(event: UIMouseEvent, orig: (UIBase) -> Unit) {
-            val modal = currentModal ?: return
-            if (modal.hidden) return
+        override fun onPreChildPropagate(event: UIEvent, child: UIElement): Boolean {
+            val modal = currentModal
+            if (modal?.hidden != false) return super.onPreChildPropagate(event, child)
 
-            if (modal.inBounds(event)) {
-                modifyChildMouseEvent(event)
-                onPreChildPropagate(event)
-                preChildPropagate?.let { it(event) }
-
-                orig(modal)
-
-                onPostChildPropagation(event)
-                postChildPropagate?.let { it(event) }
-                resetChildMouseEvent(event)
-            }
-
-            event.stopPropagation()
-        }
-
-        override fun onMouseScroll(event: UIScrollEvent): UIBase = apply {
-            handleMouseEvent(event) { it.propagateMouseScroll(event) }
-        }
-
-        override fun onMouseClick(event: UIClickEvent): UIBase = apply {
-            handleMouseEvent(event) { it.propagateMouseClick(event) }
-        }
-
-        override fun onMouseRelease(event: UIClickEvent): UIBase = apply {
-            handleMouseEvent(event) { it.propagateMouseRelease(event) }
-        }
-
-        override fun onMouseEnter(event: UIMouseEvent): UIBase = apply {
-            handleMouseEvent(event) { it.propagateMouseEnter(event) }
-        }
-
-        override fun onMouseLeave(event: UIMouseEvent): UIBase = apply {
-            handleMouseEvent(event) { it.propagateMouseLeave(event) }
-        }
-
-        override fun onMouseHover(event: UIMouseEvent): UIBase = apply {
-            handleMouseEvent(event) { it.propagateMouseHover(event) }
-        }
-
-        override fun onMouseDrag(event: UIDragEvent): UIBase = apply {
-            handleMouseEvent(event) { it.propagateMouseDrag(event) }
-        }
-
-        override fun onFocus(event: UIFocusEvent): UIBase = apply {
-            val modal = currentModal ?: return@apply
-            if (modal.hidden) return@apply
-
-            val cause = event.cause
-            if (cause == null || modal.inBounds(cause)) {
-                if (cause != null) modifyChildMouseEvent(cause)
-                onPreChildPropagate(event)
-                preChildPropagate?.let { it(event) }
-
-                modal.propagateFocus(event)
-
-                onPostChildPropagation(event)
-                postChildPropagate?.let { it(event) }
-                if (cause != null) resetChildMouseEvent(cause)
-            }
-
-            event.stopPropagation()
+            return child === modal
         }
     }
     private val main = UIRect(17.5, 17.5, 65.0, 65.0, parent = background).apply {
