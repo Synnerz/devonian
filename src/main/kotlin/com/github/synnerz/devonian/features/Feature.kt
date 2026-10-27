@@ -146,7 +146,7 @@ open class Feature @JvmOverloads constructor(
         searchTags: Set<String> = emptySet(),
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
-    ): ConfigData.Slider<Double> {
+    ): ConfigData.Slider {
         return ConfigData.Slider(
             "${this.configName}$$configName",
             value,
@@ -173,7 +173,7 @@ open class Feature @JvmOverloads constructor(
         searchTags: Set<String> = emptySet(),
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
-    ): ConfigData.DecimalSlider<Double> {
+    ): ConfigData.DecimalSlider {
         return ConfigData.DecimalSlider(
             "${this.configName}$$configName",
             value,
@@ -193,15 +193,42 @@ open class Feature @JvmOverloads constructor(
     @JvmOverloads
     fun addTimeSlider(
         configName: String,
-        value: Double,
-        min: Double, max: Double,
+        value: Int,
+        min: Int, max: Int,
         description: String? = null,
         displayName: String? = null,
         searchTags: Set<String> = emptySet(),
         subcategory: String = this.subcategory,
         isHidden: Boolean = this.isHidden,
-    ): ConfigData.TimeSlider<Double> {
+    ): ConfigData.TimeSlider {
         return ConfigData.TimeSlider(
+            "${this.configName}$$configName",
+            value,
+            configSwitch,
+            min, max,
+            description,
+            displayName,
+            subcategory,
+            searchTags,
+            isHidden,
+        ).also {
+            Config.registerCategory(it, category, subcategory)
+            configSwitch.subconfigs.add(it)
+        }
+    }
+
+    @JvmOverloads
+    fun addIntSlider(
+        configName: String,
+        value: Int,
+        min: Int, max: Int,
+        description: String? = null,
+        displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
+        subcategory: String = this.subcategory,
+        isHidden: Boolean = this.isHidden,
+    ): ConfigData.IntSlider {
+        return ConfigData.IntSlider(
             "${this.configName}$$configName",
             value,
             configSwitch,

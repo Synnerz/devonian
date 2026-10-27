@@ -10,4 +10,5 @@ enum class ConfigType {
     TEXTINPUT,
     SELECTION,
     TIMESLIDER,
+    INTSLIDER,
 }

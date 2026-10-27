@@ -7,7 +7,7 @@ import com.github.synnerz.devonian.utils.StringUtils
 import com.github.synnerz.talium.components.*
 import com.github.synnerz.talium.effects.OutlineEffect
 import com.github.synnerz.talium.events.UIClickEvent
-import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 abstract class SharedCategory(displayName: String) {
     protected val NORMAL_TEXT_SCALE = 2.5f
@@ -33,13 +33,14 @@ abstract class SharedCategory(displayName: String) {
             content.addChild(
                 when (data.type) {
                     ConfigType.SWITCH -> createSwitch(data as ConfigData.Switch)
-                    ConfigType.SLIDER -> createSlider(data as ConfigData.Slider<Double>)
-                    ConfigType.DECIMALSLIDER -> createDecimalSlider(data as ConfigData.DecimalSlider<Double>)
+                    ConfigType.SLIDER -> createSlider(data as ConfigData.Slider)
+                    ConfigType.DECIMALSLIDER -> createDecimalSlider(data as ConfigData.DecimalSlider)
                     ConfigType.BUTTON -> createButton(data as ConfigData.Button)
                     ConfigType.TEXTINPUT -> createTextInput(data as ConfigData.TextInput)
                     ConfigType.SELECTION -> createSelection(data as ConfigData.Selection)
                     ConfigType.COLORPICKER -> createColorPicker(data as ConfigData.ColorPicker, container)
-                    ConfigType.TIMESLIDER -> createTimeSlider(data as ConfigData.TimeSlider<Double>, container)
+                    ConfigType.TIMESLIDER -> createTimeSlider(data as ConfigData.TimeSlider, container)
+                    ConfigType.INTSLIDER -> createIntSlider(data as ConfigData.IntSlider, container)
                 }
             )
         }
@@ -148,12 +149,11 @@ abstract class SharedCategory(displayName: String) {
     }
 
     protected fun createSlider(
-        configData: ConfigData.Slider<Double>,
+        configData: ConfigData.Slider,
         parent: UIElement? = null
     ): UISlider =
         object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
             override fun setCurrentValue(value: Double) {
-                this.value = ceil(this.value).toInt() + 0.0
                 super.setCurrentValue(value)
                 configData.set(this.value)
             }
@@ -165,33 +165,61 @@ abstract class SharedCategory(displayName: String) {
         }
 
     protected fun createTimeSlider(
-        configData: ConfigData.TimeSlider<Double>,
+        configData: ConfigData.TimeSlider,
         parent: UIElement? = null
     ): UISlider =
-        object : UISlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
+        object : UISlider(
+            80.0, 25.0, 15.0, 50.0,
+            configData.get().toDouble(),
+            configData.min.toDouble(), configData.max.toDouble(),
+            parent = parent,
+        ) {
             override fun getDisplayValue(): String {
                 return StringUtils.formatSeconds(value.toLong())
             }
 
             override fun setCurrentValue(value: Double) {
                 super.setCurrentValue(value)
-                configData.set(this.value)
+                configData.set(this.value.roundToInt())
             }
         }.apply {
+            valueStep = 1.0
             setColor(ColorPalette.TERTIARY_COLOR)
             configData.onChange {
-                value = configData.get()
+                value = configData.get().toDouble()
+            }
+        }
+
+    protected fun createIntSlider(
+        configData: ConfigData.IntSlider,
+        parent: UIElement? = null
+    ): UISlider =
+        object : UISlider(
+            80.0, 25.0, 15.0, 50.0,
+            configData.get().toDouble(),
+            configData.min.toDouble(), configData.max.toDouble(),
+            parent = parent,
+        ) {
+            override fun setCurrentValue(value: Double) {
+                super.setCurrentValue(value)
+                configData.set(this.value.roundToInt())
+            }
+        }.apply {
+            valueStep = 1.0
+            setColor(ColorPalette.TERTIARY_COLOR)
+            configData.onChange {
+                value = configData.get().toDouble()
             }
         }
 
     protected fun createDecimalSlider(
-        configData: ConfigData.DecimalSlider<Double>,
+        configData: ConfigData.DecimalSlider,
         parent: UIElement? = null
     ): UIDecimalSlider = object :
         UIDecimalSlider(80.0, 25.0, 15.0, 50.0, configData.get(), configData.min, configData.max, parent = parent) {
         override fun setCurrentValue(value: Double) {
             super.setCurrentValue(value)
-            configData.set(getCurrentValue())
+            configData.set(this.value)
         }
     }.apply {
         setColor(ColorPalette.TERTIARY_COLOR)
