@@ -187,7 +187,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         }
         val input = UITextInput(1.0, 0.0, 53.0, 100.0, command, parent = bindRect).apply {
             setColor(Color(35, 35, 35, 255))
-            onLostFocus {
+            onUnfocus {
                 data.command = text
                 updateCache()
                 rebuildCache()
@@ -195,7 +195,7 @@ object KeyShortcuts : Screen(Component.literal("Devonian.KeyShortcuts")) {
         }
         val keybind = UIKeyBind(55.0, 0.0, 23.0, 100.0, bind, parent = bindRect).apply {
             setColor(Color(35, 35, 35, 255))
-            onLostFocus {
+            onUnfocus {
                 // TODO: add check for hotbar and movement keybinds so the player
                 //  cannot accidentally bind one of these
                 data.bind = this.bind

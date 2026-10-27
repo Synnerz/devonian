@@ -301,7 +301,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         val criteriaInput = UITextInput(0.0, 0.0, 38.0, 100.0, criteria, parent = parentBg).apply {
             xConstraint = UIFlexWrapConstraint(2.0)
             setColor(Color(35, 35, 35, 255))
-            onLostFocus {
+            onUnfocus {
                 data.criteria = text
                 data.checkRegex()
                 rebuildCache()
@@ -311,7 +311,7 @@ object TitleMessages : Screen(Component.literal("Devonian.TitleMessages")) {
         val messageInput = UITextInput(0.0, 0.0, 38.0, 100.0, message, parent = parentBg).apply {
             xConstraint = UIFlexWrapConstraint(2.0)
             setColor(Color(35, 35, 35, 255))
-            onLostFocus {
+            onUnfocus {
                 data.message = text
                 rebuildCache()
                 updateCache()
