@@ -27,8 +27,8 @@ object AutoKick : Feature(
     )
     private val SETTING_MINIMUM_PB = addTimeSlider(
         "minimumPB",
-        120.0,
-        0.0, 1000.0,
+        120,
+        0, 1000,
         "Minimum Personal Best required",
         "Personal Best"
     )
@@ -160,8 +160,8 @@ object AutoKick : Feature(
                 if (!SETTING_DYNAMIC_TIME.get()) break
                 val ( _, mm, ss ) = partyBuilderNoteTimeRegex.find(line)?.groupValues ?: continue
                 val seconds = ((mm.toIntOrNull() ?: 0) * 60) + (ss.toIntOrNull() ?: 0)
-                if (seconds == 0 || seconds.toDouble() == SETTING_MINIMUM_PB.get()) break
-                SETTING_MINIMUM_PB.set(seconds.toDouble())
+                if (seconds == 0 || seconds == SETTING_MINIMUM_PB.get()) break
+                SETTING_MINIMUM_PB.set(seconds)
                 ChatUtils.sendMessage("&bAutoKick set minimum pb to &6${StringUtils.formatSeconds(seconds.toLong())}", true)
                 break
             }
