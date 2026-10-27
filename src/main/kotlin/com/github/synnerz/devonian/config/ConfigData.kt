@@ -107,9 +107,9 @@ open class ConfigData<T>(
         val subconfigs = mutableListOf<ConfigData<*>>()
     }
 
-    class Slider<T : Number>(
+    class Slider(
         configName: String,
-        value: T,
+        value: Double,
         parent: FeatureSwitch?,
         val min: Double,
         val max: Double,
@@ -118,7 +118,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
-    ) : ConfigData<T>(
+    ) : ConfigData<Double>(
         configName,
         ConfigType.SLIDER,
         value,
@@ -130,9 +130,9 @@ open class ConfigData<T>(
         isHidden
     )
 
-    class DecimalSlider<T : Number>(
+    class DecimalSlider(
         configName: String,
-        value: T,
+        value: Double,
         parent: FeatureSwitch?,
         val min: Double,
         val max: Double,
@@ -141,7 +141,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
-    ) : ConfigData<T>(
+    ) : ConfigData<Double>(
         configName,
         ConfigType.DECIMALSLIDER,
         value,
@@ -153,20 +153,43 @@ open class ConfigData<T>(
         isHidden,
     )
 
-    class TimeSlider<T : Number>(
+    class TimeSlider(
         configName: String,
-        value: T,
+        value: Int,
         parent: FeatureSwitch?,
-        val min: Double,
-        val max: Double,
+        val min: Int,
+        val max: Int,
         description: String? = null,
         displayName: String? = null,
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
-    ) : ConfigData<T>(
+    ) : ConfigData<Int>(
         configName,
         ConfigType.TIMESLIDER,
+        value,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        searchTags,
+        isHidden
+    )
+
+    class IntSlider(
+        configName: String,
+        value: Int,
+        parent: FeatureSwitch?,
+        val min: Int,
+        val max: Int,
+        description: String? = null,
+        displayName: String? = null,
+        subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
+        isHidden: Boolean = false,
+    ) : ConfigData<Int>(
+        configName,
+        ConfigType.INTSLIDER,
         value,
         parent,
         description,
