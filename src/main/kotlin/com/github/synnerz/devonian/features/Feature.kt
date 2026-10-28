@@ -344,6 +344,29 @@ open class Feature @JvmOverloads constructor(
         }
     }
 
+    fun addKeybind(
+        configName: String,
+        value: Int,
+        description: String? = null,
+        displayName: String? = null,
+        searchTags: Set<String> = emptySet(),
+        subcategory: String = this.subcategory,
+        isHidden: Boolean = this.isHidden,
+    ): ConfigData.Keybind
+        = ConfigData.Keybind(
+            "${this.configName}$$configName",
+            value,
+            configSwitch,
+            description,
+            displayName,
+            subcategory,
+            searchTags,
+            isHidden,
+        ).also {
+            Config.registerCategory(it, category, subcategory)
+            configSwitch.subconfigs.add(it)
+        }
+
     fun displayChat() {
         if (displayed) deleteChat()
         ChatUtils.sendMessageWithId(

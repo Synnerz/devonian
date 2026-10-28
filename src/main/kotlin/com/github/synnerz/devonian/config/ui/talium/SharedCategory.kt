@@ -41,6 +41,7 @@ abstract class SharedCategory(displayName: String) {
                     ConfigType.COLORPICKER -> createColorPicker(data as ConfigData.ColorPicker, container)
                     ConfigType.TIMESLIDER -> createTimeSlider(data as ConfigData.TimeSlider, container)
                     ConfigType.INTSLIDER -> createIntSlider(data as ConfigData.IntSlider, container)
+                    ConfigType.KEYBIND -> createKeybind(data as ConfigData.Keybind, container)
                 }
             )
         }
@@ -304,6 +305,22 @@ abstract class SharedCategory(displayName: String) {
         setColor(ColorPalette.TERTIARY_COLOR)
         configData.onChange {
             setRgb(configData.get())
+        }
+    }
+
+    protected fun createKeybind(
+        configData: ConfigData.Keybind,
+        parent: UIElement? = null
+    ): UIKeybind = object : UIKeybind(80.0, 25.0, 15.0, 50.0, parent = parent) {
+        override fun setBind(keycode: Int) {
+            super.setBind(keycode)
+            configData.set(keycode)
+        }
+    }.apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
+        configData.onChange {
+            keycode = configData.get()
+            updateKeyName()
         }
     }
 
