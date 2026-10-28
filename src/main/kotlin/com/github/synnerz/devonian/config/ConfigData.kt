@@ -294,6 +294,33 @@ open class ConfigData<T>(
         }
     }
 
+    class Keybind(
+        configName: String,
+        value: Int,
+        parent: FeatureSwitch?,
+        description: String? = null,
+        displayName: String? = null,
+        subcategory: String = "General",
+        searchTags: Set<String> = emptySet(),
+        isHidden: Boolean = false,
+    ) : ConfigData<Int>(
+        configName,
+        ConfigType.KEYBIND,
+        value,
+        parent,
+        description,
+        displayName,
+        subcategory,
+        searchTags,
+        isHidden,
+    ) {
+        fun onKeyPress(key: Int): Boolean
+            = if (value < -1) false else key == value
+
+        fun onMousePress(key: Int): Boolean
+            = if (value > -1) false else key == value
+    }
+
     companion object {
         val searchSplitReg = "[ /]".toRegex()
         val searchStripReg = "[^a-z0-9]".toRegex(RegexOption.IGNORE_CASE)

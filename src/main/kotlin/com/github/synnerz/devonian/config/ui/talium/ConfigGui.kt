@@ -116,6 +116,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
 
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
         background.handleKeyInput(keyEvent.key, keyEvent.scancode)
+        if (keyEvent.isEscape && background.unfocusKeybinds()) return false
         return super.keyPressed(keyEvent)
     }
 
