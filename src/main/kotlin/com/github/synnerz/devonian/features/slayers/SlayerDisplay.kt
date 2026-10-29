@@ -1,5 +1,6 @@
 package com.github.synnerz.devonian.features.slayers
 
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.events.NameChangeEvent
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
@@ -8,6 +9,7 @@ import com.github.synnerz.devonian.api.events.TickEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
+import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils.colorCodes
 import kotlinx.atomicfu.atomic
 import net.minecraft.world.entity.LivingEntity
@@ -17,7 +19,11 @@ object SlayerDisplay : TextHudFeature(
     "Displays a hud with your current slayer boss' stats",
     Categories.SLAYERS,
 ) {
-    private val slayerRegex = "^Spawned by: (\\w+)$".toRegex()
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Location.stateInSkyblock)
+    }
+
+    private val slayerRegex = "^(\\w{1,16})'s SLAYER BOSS$".toRegex()
     private val questStartedRegex = "^Slay the boss!$".toRegex()
     private val questCompletedRegex = "^Boss slain!$".toRegex()
     private val bossList = mutableListOf<SlayerBossData>()
@@ -91,7 +97,7 @@ object SlayerDisplay : TextHudFeature(
 
     override fun getEditText(): List<String> = listOf(
         "&c02:59",
-        "&eSpawned by: &b${minecraft.player?.name?.string ?: ""}",
-        "&c☠ &bVoidgloom Seraph IV &e64.2M&c❤"
+        "&b${minecraft.player?.name?.string ?: ""} &4SLAYER BOSS",
+        "&8[&7Lv655&8] &5Voidgloom Seraph IV &f100 Hits",
     )
 }
