@@ -60,7 +60,7 @@ object CustomLeapGui : Feature(
     private val SETTING_USE_ON_CLICK = addSwitch(
         "useOnClick",
         true,
-        "Uses onClick listener instead of onRelease. some people prefer onRelease because it can be faster but it takes a while to get used to it",
+        "Uses onDown listener instead of onRelease. some people prefer onDown because it can be faster but it takes a while to get used to it",
         "CustomLeap On Click"
     )
     private const val CONTAINER_NAME = "Spirit Leap"
@@ -420,9 +420,9 @@ object CustomLeapGui : Feature(
                     remove()
                 }
             }
-            onMouseClick { event ->
-                if (!SETTING_USE_ON_CLICK.get()) return@onMouseClick
-                if (event.button !in 0..1 || data.player.isDead) return@onMouseClick
+            onMouseDown { event ->
+                if (!SETTING_USE_ON_CLICK.get()) return@onMouseDown
+                if (event.button !in 0..1 || data.player.isDead) return@onMouseDown
 
                 ScreenUtils.click(data.slot)
                 Scheduler.scheduleTask {

@@ -282,7 +282,7 @@ abstract class SharedCategory(displayName: String) {
     ): UIColorPicker = object : UIColorPicker(80.0, 25.0, 15.0, 50.0, configData.get(), parent) {
         init {
             floatingChild.onUnfocus {
-                if (!arrowToggle || isMainClicked) return@onUnfocus
+                if (!arrowToggle) return@onUnfocus
                 hideDropdown()
             }
         }
