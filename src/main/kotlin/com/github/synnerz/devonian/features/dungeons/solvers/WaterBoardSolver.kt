@@ -37,6 +37,12 @@ object WaterBoardSolver : Feature(
         "Choose the waterboard solutions mode.",
         "WaterBoardSolver Mode"
     )
+    private val SETTING_UNFLICKED_START_WARNING = addSwitch(
+        "unflickedStartWarning",
+        true,
+        "Adds a warning to the start lever if there are unflicked 'Click Now!' levers.",
+        "Unflicked Levers Warning",
+    )
 
     @Suppress("unchecked_cast")
     private val solutionsData = (Gson().fromJson(
@@ -282,7 +288,14 @@ object WaterBoardSolver : Feature(
                 val remaining =
                     if (openedWaterAt == -1) entry.time
                     else entry.time - (EventBus.serverTicks() - openedWaterAt)
-                val title = if (remaining <= 0) "§aClick Now!" else "§e${"%.2fs".format(remaining * 0.05)}"
+                val title = if (remaining <= 0) {
+                    if (
+                        SETTING_UNFLICKED_START_WARNING.get() &&
+                        entry.lever == Lever.Water &&
+                        i > 0
+                    ) "§6$i Lever Left"
+                    else "§aClick Now!"
+                } else "§e${"%.2fs".format(remaining * 0.05)}"
 
                 val x = entry.x + 0.5
                 val y = entry.y + 0.5 + yo
