@@ -16,40 +16,41 @@ class SearchCategory(rightPanel: UIBase) : SharedCategory("Searching...") {
     }
     private val contentContainer = UIScrollable(0.0, 9.0, 100.0, 81.0, parent = rightPanel)
 
-    init {
-        UITextInput(23.75, 92.0, 52.5, 8.0, parent = rightPanel).apply {
-            setColor(ColorPalette.TERTIARY_COLOR)
+    val searchbar = UITextInput(23.75, 92.0, 52.5, 8.0, parent = rightPanel).apply {
+        setColor(ColorPalette.TERTIARY_COLOR)
 
-            onCharType {
-                // Unhide
-                if (previousText.isEmpty() && text.isNotEmpty()) {
-                    oldCategory = ConfigGui.selectedCategory
-                    oldCategory?.hide()
-                    ConfigGui.selectedCategory = null
-                    this@SearchCategory.unhide()
-                }
-                // Hide
-                if (text.isEmpty()) {
-                    if (previousText.isNotEmpty()) {
-                        this@SearchCategory.hide()
-
-                        // if (ConfigGui.selectedCategory == null)
-                        //     oldCategory?.unhide()
-
-                        oldCategory = null
-                        previousText = ""
-                    }
-                    return@onCharType
-                }
-                if (previousText != text)
-                    onSearch(text)
-                previousText = text
+        onCharType {
+            // Unhide
+            if (previousText.isEmpty() && text.isNotEmpty()) {
+                oldCategory = ConfigGui.selectedCategory
+                oldCategory?.hide()
+                ConfigGui.selectedCategory = null
+                this@SearchCategory.unhide()
             }
+            // Hide
+            if (text.isEmpty()) {
+                if (previousText.isNotEmpty()) {
+                    this@SearchCategory.hide()
 
-            onResize { _, w ->
-                textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
+                    // if (ConfigGui.selectedCategory == null)
+                    //     oldCategory?.unhide()
+
+                    oldCategory = null
+                    previousText = ""
+                }
+                return@onCharType
             }
+            if (previousText != text)
+                onSearch(text)
+            previousText = text
         }
+
+        onResize { _, w ->
+            textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
+        }
+    }
+
+    init {
         UIRect(72.25, 92.0, 4.0, 8.0, parent = rightPanel).apply {
             setColor(ColorPalette.TERTIARY_COLOR)
             addChild(UIText(0.0, 0.0, 100.0, 100.0, "\uD83D\uDD0E", true).apply {

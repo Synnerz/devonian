@@ -85,12 +85,17 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         DevonianCommand.onRun {
             Scheduler.scheduleTask {
                 Devonian.minecraft.setScreenAndShow(this)
+                background.focus()
+                searchCategory.searchbar.focus()
             }
             return@onRun 1
         }
         DevonianCommand.command.subcommand("configui") { _, args ->
             Scheduler.scheduleTask {
                 Devonian.minecraft.setScreenAndShow(this)
+                background.focus()
+                searchCategory.searchbar.focus()
+
             }
             return@subcommand 1
         }
