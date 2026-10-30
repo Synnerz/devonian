@@ -31,7 +31,7 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         "showHudFeatureMoveButton",
         true,
         null,
-        "Whether to show the move hud button under every text hud feature.",
+        "Whether to show the move hud button under every hud feature.",
     )
 
     private var mouseDown = false
