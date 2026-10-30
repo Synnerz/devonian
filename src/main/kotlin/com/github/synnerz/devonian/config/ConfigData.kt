@@ -16,6 +16,7 @@ open class ConfigData<T>(
     val subcategory: String = "General",
     searchTags: Set<String> = emptySet(),
     val isHidden: Boolean = false,
+    val grouping: NoParentGroup? = null,
 ) {
     val description = description ?: ""
     val displayName = displayName ?: configName?.camelCaseToSentence() ?: "Unnamed Button"
@@ -65,6 +66,22 @@ open class ConfigData<T>(
         onChangeHook.add(cb)
     }
 
+    // used as a parent for a config when it should appear with other configs in insertion order rather than a-z sorting
+    class NoParentGroup(
+        sortName: String,
+        subcategory: String = "General",
+    ) : ConfigData<Unit>(
+        null,
+        ConfigType.BLANK,
+        Unit,
+        null,
+        subcategory = subcategory,
+        displayName = sortName,
+    ) {
+        override fun shouldExist(): Boolean = false
+        override fun shouldShow(): Boolean = false
+    }
+
     open class Switch(
         configName: String,
         value: Boolean,
@@ -74,6 +91,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<Boolean>(
         configName,
         ConfigType.SWITCH,
@@ -84,6 +102,7 @@ open class ConfigData<T>(
         subcategory,
         searchTags,
         isHidden,
+        grouping,
     )
 
     class FeatureSwitch(
@@ -118,6 +137,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<Double>(
         configName,
         ConfigType.SLIDER,
@@ -127,7 +147,8 @@ open class ConfigData<T>(
         displayName,
         subcategory,
         searchTags,
-        isHidden
+        isHidden,
+        grouping,
     )
 
     class DecimalSlider(
@@ -141,6 +162,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<Double>(
         configName,
         ConfigType.DECIMALSLIDER,
@@ -151,6 +173,7 @@ open class ConfigData<T>(
         subcategory,
         searchTags,
         isHidden,
+        grouping,
     )
 
     class TimeSlider(
@@ -164,6 +187,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<Int>(
         configName,
         ConfigType.TIMESLIDER,
@@ -173,7 +197,8 @@ open class ConfigData<T>(
         displayName,
         subcategory,
         searchTags,
-        isHidden
+        isHidden,
+        grouping,
     )
 
     class IntSlider(
@@ -187,6 +212,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<Int>(
         configName,
         ConfigType.INTSLIDER,
@@ -196,10 +222,11 @@ open class ConfigData<T>(
         displayName,
         subcategory,
         searchTags,
-        isHidden
+        isHidden,
+        grouping,
     )
 
-    class Button(
+    open class Button(
         val onClick: () -> Unit,
         val btnTitle: String = "Click!",
         parent: FeatureSwitch?,
@@ -208,6 +235,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<Unit>(
         null,
         ConfigType.BUTTON,
@@ -217,7 +245,8 @@ open class ConfigData<T>(
         displayName,
         subcategory,
         searchTags,
-        isHidden
+        isHidden,
+        grouping,
     )
 
     class TextInput(
@@ -229,6 +258,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<String>(
         configName,
         ConfigType.TEXTINPUT,
@@ -239,6 +269,7 @@ open class ConfigData<T>(
         subcategory,
         searchTags,
         isHidden,
+        grouping,
     )
 
     class Selection(
@@ -251,6 +282,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<Int>(
         configName,
         ConfigType.SELECTION,
@@ -261,6 +293,7 @@ open class ConfigData<T>(
         subcategory,
         searchTags,
         isHidden,
+        grouping,
     ) {
         fun getCurrent(): String = options[get()]
     }
@@ -274,6 +307,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<Int>(
         configName,
         ConfigType.COLORPICKER,
@@ -284,6 +318,7 @@ open class ConfigData<T>(
         subcategory,
         searchTags,
         isHidden,
+        grouping,
     ) {
         private var color = Color(value, true)
         fun getColor(): Color = color
@@ -303,6 +338,7 @@ open class ConfigData<T>(
         subcategory: String = "General",
         searchTags: Set<String> = emptySet(),
         isHidden: Boolean = false,
+        grouping: NoParentGroup? = null,
     ) : ConfigData<Int>(
         configName,
         ConfigType.KEYBIND,
@@ -313,6 +349,7 @@ open class ConfigData<T>(
         subcategory,
         searchTags,
         isHidden,
+        grouping,
     ) {
         fun onKeyPress(key: Int): Boolean
             = if (value < -1) false else key == value
