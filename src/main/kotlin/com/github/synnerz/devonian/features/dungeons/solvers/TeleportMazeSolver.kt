@@ -29,37 +29,37 @@ object TeleportMazeSolver : Feature(
 
     private val endFramePositions = listOf(
         // Y is always 69
-        CompPad(4, 6, 5, 7),
-        CompPad(4, 12, 5, 11),
-        CompPad(4, 14, 5, 15),
-        CompPad(4, 20, 5, 19),
-        CompPad(4, 22, 5, 23),
-        CompPad(4, 28, 5, 27),
-        CompPad(10, 6, 9, 7),
-        CompPad(10, 12, 9, 11),
-        CompPad(10, 14, 9, 15),
-        CompPad(10, 20, 9, 19),
-        CompPad(10, 22, 9, 23),
-        CompPad(10, 28, 9, 27),
-        CompPad(12, 22, 13, 23),
-        CompPad(12, 28, 13, 27),
-        CompPad(18, 22, 17, 23),
-        CompPad(18, 28, 17, 27),
-        CompPad(20, 6, 21, 7),
-        CompPad(20, 12, 21, 11),
-        CompPad(20, 14, 21, 15),
-        CompPad(20, 20, 21, 19),
-        CompPad(20, 22, 21, 23),
-        CompPad(20, 28, 21, 27),
-        CompPad(26, 6, 25, 7),
-        CompPad(26, 12, 25, 11),
-        CompPad(26, 14, 25, 15),
-        CompPad(26, 20, 25, 19),
-        CompPad(26, 22, 25, 23),
-        CompPad(26, 28, 25, 27),
+        CompPad(12, 28, 13, 27, idx = 0), // cell 1
+        CompPad(12, 22, 13, 23, idx = 1), // cell 1
+        CompPad(18, 22, 17, 23, idx = 2), // cell 1
+        CompPad(18, 28, 17, 27, idx = 3), // cell 1
+        CompPad(4, 28, 5, 27, idx = 0), // cell 2
+        CompPad(4, 22, 5, 23, idx = 1), // cell 2
+        CompPad(10, 22, 9, 23, idx = 2), // cell 2
+        CompPad(10, 28, 9, 27, idx = 3), // cell 2
+        CompPad(20, 28, 21, 27, idx = 0), // cell 3
+        CompPad(20, 22, 21, 23, idx = 1), // cell 3
+        CompPad(26, 22, 25, 23, idx = 2), // cell 3
+        CompPad(26, 28, 25, 27, idx = 3), // cell 3
+        CompPad(20, 20, 21, 19, idx = 0), // cell 4
+        CompPad(20, 14, 21, 15, idx = 1), // cell 4
+        CompPad(26, 14, 25, 15, idx = 2), // cell 4
+        CompPad(26, 20, 25, 19, idx = 3), // cell 4
+        CompPad(10, 14, 9, 15, idx = 0), // cell 5
+        CompPad(10, 20, 9, 19, idx = 1), // cell 5
+        CompPad(4, 20, 5, 19, idx = 2), // cell 5
+        CompPad(4, 14, 5, 15, idx = 3), // cell 5
+        CompPad(20, 12, 21, 11, idx = 0), // cell 6
+        CompPad(20, 6, 21, 7, idx = 1), // cell 6
+        CompPad(26, 6, 25, 7, idx = 2), // cell 6
+        CompPad(26, 12, 25, 11, idx = 3), // cell 6
+        CompPad(10, 6, 9, 7, idx = 0), // cell 7
+        CompPad(10, 12, 9, 11, idx = 1), // cell 7
+        CompPad(4, 12, 5, 11, idx = 2), // cell 7
+        CompPad(4, 6, 5, 7, idx = 3), // cell 7
 
-        CompPad(15, 12, 14, 11, special = true),
-        CompPad(15, 14, 16, 15, special = true, isEnd = true),
+        CompPad(15, 12, 14, 11, special = true, idx = -1),
+        CompPad(15, 14, 16, 15, special = true, isEnd = true, idx = -1),
     )
     private var inMaze = false
     private var enteredAt = -1
@@ -72,6 +72,7 @@ object TeleportMazeSolver : Feature(
         val tz: Int,
         val special: Boolean = false,
         val isEnd: Boolean = false,
+        val idx: Int, // pad location
     )
     private data class Pad(
         val x: Int,
@@ -80,6 +81,7 @@ object TeleportMazeSolver : Feature(
         val tz: Int,
         val special: Boolean,
         val isEnd: Boolean,
+        val idx: Int, // pad location
     ) {
         var visited = false
         var correct = false
@@ -101,7 +103,7 @@ object TeleportMazeSolver : Feature(
                 val (x, z) = room.fromComp(comp.cx, comp.cz) ?: continue
                 val (tx, tz) = room.fromComp(comp.tx, comp.tz) ?: continue
 
-                pads.add(Pad(x, z, tx, tz, comp.special, comp.isEnd))
+                pads.add(Pad(x, z, tx, tz, comp.special, comp.isEnd, idx = comp.idx))
             }
         }
 
