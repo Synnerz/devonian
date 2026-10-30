@@ -173,9 +173,9 @@ object CratePriority : Feature(
                 true,
             )
 
-            Render2D.drawStringNW(
+            Render2D.drawMultilineString(
                 it.ctx,
-                availableSpots.joinToString("\n"),
+                availableSpots,
                 100, 10,
             )
 
