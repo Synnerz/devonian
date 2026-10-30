@@ -56,7 +56,7 @@ abstract class SharedCategory(displayName: String) {
         }
     }
 
-    protected abstract fun rebuildComps()
+    abstract fun rebuildComps()
 
     protected fun createBase(offset: Double, parent: UIElement): UIPair {
         val container = UIBase(1.0, 0.0, 98.0, 15.0, parent)

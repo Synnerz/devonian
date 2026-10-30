@@ -63,7 +63,7 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
         onMouseRelease {
             if (it.button != 1) return@onMouseRelease
             Scheduler.scheduleTask(1) {
-                Devonian.minecraft.setScreenAndShow(HudManager)
+                HudManager.show()
             }
         }
     }
@@ -98,6 +98,12 @@ object ConfigGui : Screen(Component.literal("Devonian.ConfigGui")) {
 
             }
             return@subcommand 1
+        }
+
+        HudManager.showMoveHudFeatureButton.onChange {
+             categories.forEach {
+                 it.rebuildComps()
+             }
         }
     }
 

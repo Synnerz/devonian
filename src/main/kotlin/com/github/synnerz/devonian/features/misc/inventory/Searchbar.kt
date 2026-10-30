@@ -4,6 +4,7 @@ import com.github.synnerz.devonian.api.ItemUtils
 import com.github.synnerz.devonian.api.SkyblockPrices
 import com.github.synnerz.devonian.api.events.*
 import com.github.synnerz.devonian.hud.HudFeature
+import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.BinaryOperators
 import com.github.synnerz.devonian.utils.BoundingBox
@@ -232,8 +233,8 @@ object Searchbar : HudFeature(
         uiContainer.setDirty()
     }
 
-    override fun onMouseDrag(dx: Double, dy: Double) {
-        super.onMouseDrag(dx, dy)
+    override fun onMouseDrag(pos: HudManager.HudPosition) {
+        super.onMouseDrag(pos)
         resetGuiLocation()
     }
 

@@ -5,6 +5,7 @@ import com.github.synnerz.devonian.api.events.EventBus
 import com.github.synnerz.devonian.api.events.RenderOverlayEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.config.NullableHudData
 import com.github.synnerz.devonian.features.Feature
 import com.github.synnerz.devonian.features.HudManagerGrid
@@ -62,6 +63,13 @@ abstract class HudFeature(
         EventBus.once<RenderOverlayEvent> {
             if (!fromConfig) setDefaultValues()
         }
+
+        if (!isInternal) {
+            ConfigData.EditHudButton(this).let {
+                Config.registerCategory(it, category, subcategory)
+                configSwitch.subconfigs.add(it)
+            }
+        }
     }
 
     open fun load() {
@@ -101,13 +109,13 @@ abstract class HudFeature(
         scale = (scale + delta).coerceAtLeast(0.1f)
     }
 
-    open fun onMouseDrag(dx: Double, dy: Double) {
+    open fun onMouseDrag(pos: HudManager.HudPosition) {
         if (HudManagerGrid.isEnabled()) {
-            x = coerceX(snapGrid(HudManager.startDragX + HudManager.cumDragX))
-            y = coerceY(snapGrid(HudManager.startDragY + HudManager.cumDragY))
+            x = coerceX(snapGrid(pos.startDragX + pos.cumDragX))
+            y = coerceY(snapGrid(pos.startDragY + pos.cumDragY))
         } else {
-            x = coerceX(x + dx)
-            y = coerceY(y + dy)
+            x = coerceX(pos.startDragX + pos.cumDragX)
+            y = coerceY(pos.startDragY + pos.cumDragY)
         }
     }
 

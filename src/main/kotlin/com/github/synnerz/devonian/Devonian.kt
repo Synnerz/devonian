@@ -469,10 +469,10 @@ object Devonian : ClientModInitializer {
         TitleMessages.initialize()
         RefillGFSCommands.initialize()
         SoundDebugger.initialize()
-        ConfigGui.initialize()
         HudManager.initialize()
         LogSearch.initialize()
         WorldUtils.initialize()
+        ConfigGui.initialize()
         Config.onAfterLoad {
             featureInstances.forEach { feature ->
                 Config.getConfig<Boolean>(feature.configName)?.let {

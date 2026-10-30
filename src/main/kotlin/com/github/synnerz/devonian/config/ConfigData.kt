@@ -1,6 +1,8 @@
 package com.github.synnerz.devonian.config
 
 import com.github.synnerz.devonian.Devonian
+import com.github.synnerz.devonian.hud.HudFeature
+import com.github.synnerz.devonian.hud.HudManager
 import com.github.synnerz.devonian.utils.BasicState
 import com.github.synnerz.devonian.utils.StringUtils.camelCaseToSentence
 import java.awt.Color
@@ -248,6 +250,19 @@ open class ConfigData<T>(
         isHidden,
         grouping,
     )
+
+    class EditHudButton(val hud: HudFeature) : Button(
+        { HudManager.show(hud) },
+        "Edit",
+        hud.configSwitch,
+        null,
+        "Edit ${hud.displayName} Location",
+        hud.subcategory,
+        setOf("move"),
+        hud.isHidden,
+    ) {
+        override fun shouldShow(): Boolean = super.shouldShow() && HudManager.showMoveHudFeatureButton.value
+    }
 
     class TextInput(
         configName: String,
