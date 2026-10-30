@@ -255,10 +255,10 @@ open class ConfigData<T>(
         { HudManager.show(hud) },
         "Edit",
         hud.configSwitch,
-        null,
-        "Edit ${hud.displayName} Location",
+        hud.displayName,
+        "Edit Hud",
         hud.subcategory,
-        setOf("move"),
+        setOf("move", hud.displayName),
         hud.isHidden,
     ) {
         override fun shouldShow(): Boolean = super.shouldShow() && HudManager.showMoveHudFeatureButton.value
