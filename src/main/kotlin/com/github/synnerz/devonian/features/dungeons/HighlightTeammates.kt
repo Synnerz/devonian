@@ -78,6 +78,12 @@ object HighlightTeammates : Feature(
         "Replaces the vanilla name tag with a custom scaled name tag (if you go far away from the player it scales the name up)",
         "Display Custom Tag"
     )
+    private val SETTING_DISPLAY_CUSTOM_BG = addColorPicker(
+        "displayCustomTagColor",
+        Color(0, 0, 0, 0).rgb,
+        "Background color for Custom Tag (NOTE: uses mc's text bg opacity and does not work if disable nametag bg)",
+        "Display Custom Tag Background"
+    )
 
     private val deferred = mutableListOf<Pair<EntityRenderState, Color>>()
     private val deferredTag = mutableListOf<Pair<EntityRenderState, String>>()
@@ -145,6 +151,7 @@ object HighlightTeammates : Feature(
                     name,
                     state.x, state.y + 2.7, state.z,
                     scale = 1.5f,
+                    backgroundBox = SETTING_DISPLAY_CUSTOM_BG.getColor(),
                     phase = true,
                 )
             }
