@@ -76,10 +76,12 @@ object PartyCommands : Feature(
                 when (val first = messages.first()) {
                     "!w", "!warp" -> if (Party.isLeader) ChatUtils.command("p warp")
                     "!allinv" -> if (canTrigger(name)) ChatUtils.command("p settings allinvite")
-                    "!pt",
+                    "!pt"
+                        -> if (canTrigger(name)) ChatUtils.command("p transfer ${if (second != null && second.length in 1..16) second else name}")
                     "!ptme"
                         -> if (canTrigger(name)) ChatUtils.command("p transfer $name")
                     "!inv" -> if (canTrigger(name) && second != null && second.length in 1..16) ChatUtils.command("p $second")
+                    "!k",
                     "!kick" -> if (canTrigger(name) && second != null && second.length in 1..16) ChatUtils.command("p kick $second")
                     "!coords" -> {
                         val pos = Devonian.minecraft.player ?: return@scheduleTask
