@@ -63,11 +63,12 @@ data class DungeonPlayer(
     }
 }
 
+private val classColorGroup = ConfigData.NoParentGroup("Class Colors", "Dungeon Colors")
 enum class DungeonClass(
     val shortName: String,
     val singleLetter: Char,
-    initialColorCode: String,
-    initialColor: Color,
+    private val initialColorCode: String,
+    private val initialColor: Color,
 ) {
     Archer("Arch", 'a', "&c", Color(255, 85, 85, 255)),
     Berserk("Bers", 'b', "&6", Color(255, 170, 0, 255)),
@@ -84,9 +85,8 @@ enum class DungeonClass(
         "Color of anything related to the $name class.",
         "$name Color",
         "Dungeon Colors",
-    ).also {
-        Config.registerCategory(it, Categories.GLOBAL, "Dungeon Colors")
-    }
+        grouping = classColorGroup,
+    )
 
     val color: Color
         get() = colorSetting.getColor()
@@ -102,8 +102,8 @@ enum class DungeonClass(
         "Color code for anything related to the $name class. Use & instead of the section symbol.",
         "$name Color Code",
         "Dungeon Colors",
+        grouping = classColorGroup,
     ).also {
-        Config.registerCategory(it, Categories.GLOBAL, "Dungeon Colors")
         it.onChange {
             cachedColorCode = it.replaceCodes()
         }
@@ -130,6 +130,44 @@ enum class DungeonClass(
             "h" -> Healer
             "t" -> Tank
             else -> Unknown
+        }
+
+        init {
+            entries.forEach {
+                Config.registerCategory(it.colorSetting, Categories.GLOBAL, "Dungeon Colors")
+            }
+            Config.registerCategory(
+                ConfigData.Button(
+                    {
+                        entries.forEach {
+                            it.colorSetting.set(it.initialColor.rgb)
+                        }
+                    },
+                    displayName = "Reset Dungeon Class Colors",
+                    parent = null,
+                    grouping = classColorGroup,
+                ),
+                Categories.GLOBAL,
+                "Dungeon Colors",
+            )
+
+            entries.forEach {
+                Config.registerCategory(it.colorCodeSetting, Categories.GLOBAL, "Dungeon Colors")
+            }
+            Config.registerCategory(
+                ConfigData.Button(
+                    {
+                        entries.forEach {
+                            it.colorCodeSetting.set(it.initialColorCode)
+                        }
+                    },
+                    displayName = "Reset Dungeon Class Color Codes",
+                    parent = null,
+                    grouping = classColorGroup,
+                ),
+                Categories.GLOBAL,
+                "Dungeon Colors",
+            )
         }
     }
 }
