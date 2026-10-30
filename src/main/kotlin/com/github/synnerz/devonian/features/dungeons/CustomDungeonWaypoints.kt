@@ -509,7 +509,8 @@ object CustomDungeonWaypoints : Feature(
             }
 
             "import" -> {
-                return importWaypoints(args.getOrNull(1) as? String?)
+                val import = args.getOrNull(1) as? String
+                return importWaypoints(if (import != null && import.isEmpty()) null else import)
             }
 
             "export" -> {
