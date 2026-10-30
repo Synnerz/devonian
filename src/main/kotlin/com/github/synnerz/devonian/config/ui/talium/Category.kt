@@ -4,7 +4,6 @@ import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
 import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.talium.components.UIBase
-import com.github.synnerz.talium.components.UIElement
 import com.github.synnerz.talium.components.UIRect
 import com.github.synnerz.talium.components.UIScrollable
 import com.github.synnerz.talium.components.UIText
@@ -96,11 +95,11 @@ class Category(
             )
 
             val comps = list.sortedBy {
-                if (it is ConfigData.Button)
-                    it.parent?.configName?.trim()?.lowercase()
-                        ?: it.displayName.trim().lowercase()
-                else
-                    it.configName?.trim()?.lowercase()
+                (
+                    it.parent?.displayName ?:
+                    it.grouping?.displayName ?:
+                    it.displayName
+                ).trim().lowercase()
             }.mapNotNull { data ->
                 if (!data.shouldExist()) return@mapNotNull null
 

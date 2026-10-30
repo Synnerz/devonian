@@ -42,6 +42,7 @@ abstract class SharedCategory(displayName: String) {
                     ConfigType.TIMESLIDER -> createTimeSlider(data as ConfigData.TimeSlider, container)
                     ConfigType.INTSLIDER -> createIntSlider(data as ConfigData.IntSlider, container)
                     ConfigType.KEYBIND -> createKeybind(data as ConfigData.Keybind, container)
+                    ConfigType.BLANK -> throw IllegalStateException()
                 }
             )
         }

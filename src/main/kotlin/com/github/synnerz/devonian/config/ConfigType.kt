@@ -12,4 +12,5 @@ enum class ConfigType {
     TIMESLIDER,
     INTSLIDER,
     KEYBIND,
+    BLANK,
 }
