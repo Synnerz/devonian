@@ -3,7 +3,9 @@ package com.github.synnerz.devonian.hud
 import com.github.synnerz.devonian.Devonian
 import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.commands.DevonianCommand
+import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.config.Config
+import com.github.synnerz.devonian.config.ConfigData
 import com.github.synnerz.devonian.features.HudManagerGrid
 import com.github.synnerz.devonian.utils.render.Render2D
 import com.mojang.blaze3d.platform.InputConstants
@@ -17,11 +19,21 @@ import java.awt.Color
 import kotlin.math.min
 
 object HudManager : Screen(Component.literal("Devonian.HudManager")) {
-    private val selectedList = mutableListOf<HudPosition>()
-    var selectedHud: HudFeature? = null
+    val selectedHuds = linkedMapOf<HudFeature, HudPosition?>()
+    var hoveredHud: HudFeature? = null
+    private var hoveredPos: HudPosition? = null
+    var allShownHuds = emptyList<HudFeature>()
         private set
     val huds = mutableListOf<HudFeature>()
     var isEditing = false
+        private set
+
+    val showMoveHudFeatureButton = ConfigData.Switch(
+        "showHudFeatureMoveButton",
+        true,
+        null,
+        "Whether to show the move hud button under every text hud feature.",
+    )
 
     private var mouseDown = false
     private var lastMouseX = 0.0
@@ -29,26 +41,32 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
 
     val gridSize: Double
         get() = 5.0 * HudManagerGrid.scale
-    var cumDragX = 0.0
-    var cumDragY = 0.0
-    var startDragX = 0.0
-    var startDragY = 0.0
 
     data class HudPosition(
-        val hud: HudFeature,
+        val startDragX: Double,
+        val startDragY: Double,
         var cumDragX: Double = 0.0,
         var cumDragY: Double = 0.0,
-        var startDragX: Double = 0.0,
-        var startDragY: Double = 0.0,
     )
 
+    fun show(feat: HudFeature) {
+        show(listOf(feat))
+    }
+
+    fun show(feats: List<HudFeature> = huds) {
+        allShownHuds = (feats.toSet() + huds.filter { it.isInternal }).toList()
+        Devonian.minecraft.setScreenAndShow(this)
+    }
+
     fun initialize() {
-        DevonianCommand.command.subcommand("huds") { _, args ->
+        DevonianCommand.command.subcommand("huds") { _, _ ->
             Scheduler.scheduleTask(1) {
-                Devonian.minecraft.setScreenAndShow(this)
+                show()
             }
             return@subcommand 1
         }
+
+        Config.registerCategory(showMoveHudFeatureButton, Categories.GLOBAL, "Mod")
 
         Config.onAfterLoad {
             huds.forEach { it.load() }
@@ -68,22 +86,25 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     }
 
     override fun removed() {
-        selectedList.clear()
-        selectedHud = null
+        selectedHuds.clear()
+        hoveredHud = null
+        hoveredPos = null
+        allShownHuds = emptyList()
         isEditing = false
         mouseDown = false
     }
 
-    private fun updateSelected() {
+    private fun updateHovered() {
         if (mouseDown) return
-        selectedHud = huds.filter { it.isVisibleEdit() && it.inBounds(lastMouseX, lastMouseY) }
+        hoveredHud = allShownHuds
+            .filter { it.isVisibleEdit() && it.inBounds(lastMouseX, lastMouseY) }
             .minByOrNull { it.getBounds().let { min(it.w, it.h) } + (if (it.isEnabled()) 0 else 1000000) }
     }
 
     override fun mouseMoved(mouseX: Double, mouseY: Double) {
         lastMouseX = mouseX
         lastMouseY = mouseY
-        updateSelected()
+        updateHovered()
         super.mouseMoved(mouseX, mouseY)
     }
 
@@ -94,33 +115,30 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
             InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_LEFT_CONTROL) &&
             mouseButtonEvent.buttonInfo().button() == 0
         ) {
-            val visibleHuds = huds.filter { it.isVisibleEdit() && it.inBounds(lastMouseX, lastMouseY) }
-            selectedList.removeIf { visibleHuds.contains(it.hud) }
-            selectedList.addAll(visibleHuds.map { HudPosition(
-                it,
-                0.0,
-                0.0,
-                it.x,
-                it.y,
-            ).also { it.hud.onMouseClick(mouseButtonEvent.x, mouseButtonEvent.y, mouseButtonEvent.button()) } })
+            allShownHuds
+                .filter { it.isVisibleEdit() && it.inBounds(lastMouseX, lastMouseY) }
+                .forEach {
+                    selectedHuds[it] = null
+                    it.onMouseClick(mouseButtonEvent.x, mouseButtonEvent.y, mouseButtonEvent.button())
+                }
+            selectedHuds.entries.forEach {
+                it.setValue(HudPosition(it.key.x, it.key.y))
+            }
         } else {
-            selectedList.clear()
-            selectedHud?.onMouseClick(mouseButtonEvent.x, mouseButtonEvent.y, mouseButtonEvent.button())
+            selectedHuds.clear()
+            hoveredHud?.let {
+                hoveredPos = HudPosition(it.x, it.y)
+                it.onMouseClick(mouseButtonEvent.x, mouseButtonEvent.y, mouseButtonEvent.button())
+            }
         }
-        cumDragX = 0.0
-        cumDragY = 0.0
-        startDragX = selectedHud?.x ?: 0.0
-        startDragY = selectedHud?.y ?: 0.0
 
         return false
     }
 
     override fun mouseReleased(mouseButtonEvent: MouseButtonEvent): Boolean {
         mouseDown = false
-        cumDragX = 0.0
-        cumDragY = 0.0
-        startDragX = 0.0
-        startDragY = 0.0
+        hoveredPos = null
+        selectedHuds.entries.forEach { it.setValue(null) }
 
         return false
     }
@@ -129,16 +147,20 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         if (mouseButtonEvent.button() != 0) return false
 
         // updateSelected()
-        cumDragX += d
-        cumDragY += e
-        if (selectedList.isNotEmpty())
-            selectedList.forEach {
-                it.cumDragX += d
-                it.cumDragY += e
-                it.hud.onMouseDrag(d, e)
+        if (selectedHuds.isEmpty()) {
+            hoveredPos?.let { pos ->
+                pos.cumDragX += d
+                pos.cumDragY += e
+                hoveredHud?.onMouseDrag(pos)
             }
-        else
-            selectedHud?.onMouseDrag(d, e)
+        } else {
+            selectedHuds.forEach { (hud, pos) ->
+                if (pos == null) return@forEach
+                pos.cumDragX += d
+                pos.cumDragY += e
+                hud.onMouseDrag(pos)
+            }
+        }
 
         return false
     }
@@ -150,12 +172,13 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
         verticalAmount: Double
     ): Boolean {
         // updateSelected()
-        if (selectedList.isNotEmpty())
-            selectedList.forEach {
-                it.hud.onMouseScroll(verticalAmount)
+        if (selectedHuds.isEmpty()) {
+            hoveredHud?.onMouseScroll(verticalAmount)
+        } else {
+            selectedHuds.forEach {
+                it.key.onMouseScroll(verticalAmount)
             }
-        else
-            selectedHud?.onMouseScroll(verticalAmount)
+        }
 
         return false
     }
@@ -163,23 +186,24 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
     override fun keyPressed(keyEvent: KeyEvent): Boolean {
         if (keyEvent.key == GLFW.GLFW_KEY_ESCAPE) return super.keyPressed(keyEvent)
 
-        if (selectedList.isNotEmpty())
-            selectedList.forEach {
-                it.hud.onKeyPress(keyEvent.key)
-            }
-        else if (selectedHud != null) {
-            selectedHud?.onKeyPress(keyEvent.key)
+        if (selectedHuds.isEmpty()) {
+            hoveredHud?.onKeyPress(keyEvent.key)
             // updateSelected()
+        } else {
+            selectedHuds.forEach {
+                it.key.onKeyPress(keyEvent.key)
+            }
         }
 
         return false
     }
 
     override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
-        for (hud in huds) {
+        for (hud in allShownHuds) {
             if (hud.isEnabled()) continue
             if (hud.isInternal) continue
-            if (hud.isVisibleEdit()) hud.sampleDraw(graphics, mouseX, mouseY, hud == selectedHud)
+            if (!hud.isVisibleEdit()) continue
+            hud.sampleDraw(graphics, mouseX, mouseY, hud == hoveredHud || hud in selectedHuds)
         }
 
         val window = minecraft.window
@@ -232,9 +256,10 @@ object HudManager : Screen(Component.literal("Devonian.HudManager")) {
             1f / window.guiScale,
         )
 
-        for (hud in huds) {
+        for (hud in allShownHuds) {
             if (!hud.isEnabled() && !hud.isInternal) continue
-            if (hud.isVisibleEdit()) hud.sampleDraw(graphics, mouseX, mouseY, hud == selectedHud)
+            if (!hud.isVisibleEdit()) continue
+            hud.sampleDraw(graphics, mouseX, mouseY, hud == hoveredHud || hud in selectedHuds)
         }
     }
 
