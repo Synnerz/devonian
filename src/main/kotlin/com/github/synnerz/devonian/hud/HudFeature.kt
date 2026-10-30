@@ -145,12 +145,13 @@ abstract class HudFeature(
         val bounds = getBounds()
 
         if (!isInternal && !isEnabled()) {
-            ctx.fill(
-                bounds.x.toInt(),
-                bounds.y.toInt(),
-                (bounds.x + bounds.w).toInt(),
-                (bounds.y + bounds.h).toInt(),
-                Color.RED.let { Color(it.red, it.green, it.blue, 80) }.rgb
+            Render2D.drawRect(
+                ctx,
+                bounds.x.toFloat(),
+                bounds.y.toFloat(),
+                bounds.w.toFloat(),
+                bounds.h.toFloat(),
+                Color.RED.let { Color(it.red, it.green, it.blue, 80) }
             )
             val msg = "&4Disabled"
             val msgBounds = BoundingBox(0.0, 0.0, msg.width().toDouble(), msg.height().toDouble())
@@ -171,13 +172,14 @@ abstract class HudFeature(
             )
         }
 
-        ctx.outline(
-            bounds.x.toInt(),
-            bounds.y.toInt(),
-            ceil(bounds.w).toInt(),
-            ceil(bounds.h).toInt(),
-            if (selected) Color.WHITE.rgb
-            else Color.GRAY.rgb
+        Render2D.drawWireRect(
+            ctx,
+            bounds.x.toFloat(),
+            bounds.y.toFloat(),
+            ceil(bounds.w).toFloat(),
+            ceil(bounds.h).toFloat(),
+            if (selected) Color.WHITE
+            else Color.GRAY
         )
 
         if (dirty) onDirty()

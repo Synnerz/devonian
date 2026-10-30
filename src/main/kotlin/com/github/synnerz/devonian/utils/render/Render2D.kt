@@ -18,11 +18,12 @@ object Render2D {
     val textRenderer = Devonian.minecraft.font
     val window get() = Devonian.minecraft.window
     val mouse = Devonian.minecraft.mouseHandler
-    val scale get() =
-        if (InventoryScale.isEnabled() && Devonian.minecraft.gui.screen() != null)
-            InventoryScale.getScale()
-        else
-            Devonian.minecraft.window.guiScale
+    val scale
+        get() =
+            if (InventoryScale.isEnabled() && Devonian.minecraft.gui.screen() != null)
+                InventoryScale.getScale()
+            else
+                Devonian.minecraft.window.guiScale
     val screenWidth get() = window.width
     val screenHeight get() = window.height
     val scaledWidth get() = window.guiScaledWidth
@@ -32,11 +33,22 @@ object Render2D {
 
     @JvmOverloads
     fun drawString(ctx: GuiGraphicsExtractor, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
+        drawString(ctx, str, x.toFloat(), y.toFloat(), scale, shadow)
+    }
+
+    @JvmOverloads
+    fun drawString(
+        ctx: GuiGraphicsExtractor,
+        str: String,
+        x: Float,
+        y: Float,
+        scale: Float = 1f,
+        shadow: Boolean = true
+    ) {
         val matrices = ctx.pose()
         matrices.pushMatrix()
-        matrices.translate(x.toFloat(), y.toFloat())
+        matrices.translate(x, y)
         if (scale != 1f) matrices.scale(scale, scale)
-
         ctx.text(
             textRenderer,
             str.replace(formattingRegex, "${ChatFormatting.PREFIX_CODE}"),
@@ -50,9 +62,28 @@ object Render2D {
     }
 
     @JvmOverloads
-    fun drawStringNW(ctx: GuiGraphicsExtractor, str: String, x: Int, y: Int, scale: Float = 1f, shadow: Boolean = true) {
+    fun drawMultilineString(
+        ctx: GuiGraphicsExtractor,
+        lines: Iterable<String>,
+        x: Int,
+        y: Int,
+        scale: Float = 1f,
+        shadow: Boolean = true
+    ) {
+        drawMultilineString(ctx, lines, x.toFloat(), y.toFloat(), scale, shadow)
+    }
+
+    @JvmOverloads
+    fun drawMultilineString(
+        ctx: GuiGraphicsExtractor,
+        lines: Iterable<String>,
+        x: Float,
+        y: Float,
+        scale: Float = 1f,
+        shadow: Boolean = true
+    ) {
         var yy = y
-        str.split("\n").forEach {
+        lines.forEach {
             drawString(ctx, it, x, yy, scale, shadow)
             yy += 10
         }
@@ -63,24 +94,76 @@ object Render2D {
         ctx.fill(RenderPipelines.GUI, x, y, x + width, y + height, color.rgb)
     }
 
-    fun drawWireRect(ctx: GuiGraphicsExtractor, x: Int, y: Int, w: Int, h: Int, c: Color, lw: Int = 1) {
-        val rgb = c.rgb
-        ctx.fill(x, y, x + w, y + lw, rgb)
-        ctx.fill(x, y + lw, x + lw, y + h, rgb)
-        ctx.fill(x + w - lw, y + lw, x + w, y + h, rgb)
-        ctx.fill(x + lw, y + h - lw, x + w - lw, y + h, rgb)
+    @JvmOverloads
+    fun drawRect(
+        ctx: GuiGraphicsExtractor,
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+        color: Color = Color.WHITE
+    ) {
+        ctx.guiRenderState.addGuiElement(
+            QuadRenderState(
+                RenderPipelines.GUI,
+                ctx.pose(),
+                x, y,
+                x + width, y + height,
+                color.rgb,
+                ctx.scissorStack.peek(),
+            )
+        )
     }
 
+    @JvmOverloads
+    fun drawWireRect(ctx: GuiGraphicsExtractor, x: Int, y: Int, w: Int, h: Int, c: Color, lw: Int = 1) {
+        drawRect(ctx, x, y, w, lw, c)
+        drawRect(ctx, x, y + lw, lw, h - lw, c)
+        drawRect(ctx, x + w - lw, y + lw, lw, h - lw, c)
+        drawRect(ctx, x + lw, y + h - lw, w - lw - lw, lw, c)
+    }
+
+    @JvmOverloads
+    fun drawWireRect(ctx: GuiGraphicsExtractor, x: Float, y: Float, w: Float, h: Float, c: Color, lw: Float = 1f) {
+        drawRect(ctx, x, y, w, lw, c)
+        drawRect(ctx, x, y + lw, lw, h - lw, c)
+        drawRect(ctx, x + w - lw, y + lw, lw, h - lw, c)
+        drawRect(ctx, x + lw, y + h - lw, w - lw - lw, lw, c)
+    }
+
+    @JvmOverloads
     fun drawCircle(ctx: GuiGraphicsExtractor, cx: Int, cy: Int, radius: Int, color: Color = Color.WHITE) {
         var x = 0
         var y = radius
         var d = 3 - 2 * radius
 
         while (x <= y) {
-            ctx.horizontalLine(cx - x, cx + x, cy + y, color.rgb)
-            ctx.horizontalLine(cx - x, cx + x, cy - y, color.rgb)
-            ctx.horizontalLine(cx - y, cx + y, cy + x, color.rgb)
-            ctx.horizontalLine(cx - y, cx + y, cy - x, color.rgb)
+            drawRect(ctx, cx - x, cy + y, 2 * x, 1, color)
+            drawRect(ctx, cx - x, cy - y, 2 * x, 1, color)
+            drawRect(ctx, cx - y, cy + x, 2 * y, 1, color)
+            drawRect(ctx, cx - y, cy - x, 2 * y, 1, color)
+
+            if (d < 0) {
+                d += 4 * x + 6
+            } else {
+                d += 4 * (x - y) + 10
+                y--
+            }
+            x++
+        }
+    }
+
+    @JvmOverloads
+    fun drawCircle(ctx: GuiGraphicsExtractor, cx: Float, cy: Float, radius: Float, color: Color = Color.WHITE) {
+        var x = 0f
+        var y = radius
+        var d = 3 - 2 * radius
+
+        while (x <= y) {
+            drawRect(ctx, cx - x, cy + y, 2 * x, 1f, color)
+            drawRect(ctx, cx - x, cy - y, 2 * x, 1f, color)
+            drawRect(ctx, cx - y, cy + x, 2 * y, 1f, color)
+            drawRect(ctx, cx - y, cy - x, 2 * y, 1f, color)
 
             if (d < 0) {
                 d += 4 * x + 6
