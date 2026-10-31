@@ -13,6 +13,7 @@ object CustomTerminalScale : Feature(
     Categories.F7,
     "catacombs",
     subcategory = "Terminals",
+    displayName = "Terminal Scale",
 ) {
     override fun createRequirements(): List<BasicState<Boolean>?> {
         return super.createRequirements() + listOf(DungeonStages.Terminals.isActiveState)
