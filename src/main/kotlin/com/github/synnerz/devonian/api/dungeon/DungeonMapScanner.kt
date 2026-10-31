@@ -213,8 +213,10 @@ object DungeonMapScanner {
                     room.clientExplored = !canUpdate
                 } else {
                     room.explored = nstate
-                    if (nstate)
+                    if (nstate && room.roomID != null && !Dungeons.foundRoomsAdded.contains(room.roomID!!)) {
                         Dungeons.totalRoomSecrets.value += room.totalSecrets
+                        Dungeons.foundRoomsAdded.add(room.roomID!!)
+                    }
                 }
             }
 

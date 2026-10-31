@@ -184,7 +184,10 @@ object DungeonScanner {
             currentRoom = room
             if (room != null) {
                 if (!room.clientExplored && !room.explored) {
-                    Dungeons.totalRoomSecrets.value += room.totalSecrets
+                    if (room.roomID != null && !Dungeons.foundRoomsAdded.contains(room.roomID!!)) {
+                        Dungeons.totalRoomSecrets.value += room.totalSecrets
+                        Dungeons.foundRoomsAdded.add(room.roomID!!)
+                    }
                     room.clientExplored = true
                     room.explored = true
                     room.lastClient = EventBus.serverTicks(true) + 10
