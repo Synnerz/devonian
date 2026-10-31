@@ -16,8 +16,15 @@ object ProtectValuableItems : Feature(
         "threshold",
         100.0,
         50.0, 1000.0,
-        "The price threshold DO NOTE the value here is multiplied by a thousand so lowest is 50k",
+        "The price threshold DO NOTE the value here is multiplied by Price Threshold Multiplier",
         "Price Threshold"
+    )
+    private val SETTING_THRESHOLD_MULTIPLIER = addSlider(
+        "thresholdMultiplier",
+        1.0,
+        1.0, 1000.0,
+        "The price threshold multiplier this itself is multiplied by a thousand so default is 1k",
+        "Price Threshold Multiplier"
     )
 
     override fun initialize() {
@@ -26,7 +33,7 @@ object ProtectValuableItems : Feature(
             val itemStack = event.item
             val sbId = ItemUtils.skyblockId(itemStack) ?: return@on
             val price = SkyblockPrices.buyPrice(sbId)
-            if (price < SETTING_THRESHOLD.get() * 1000f) return@on
+            if (price < SETTING_THRESHOLD.get() * (SETTING_THRESHOLD_MULTIPLIER.get() * 1000f)) return@on
             if (InputConstants.isKeyDown(minecraft.window, GLFW.GLFW_KEY_RIGHT_SHIFT)) return@on
 
             event.cancel("ValuableItems")
