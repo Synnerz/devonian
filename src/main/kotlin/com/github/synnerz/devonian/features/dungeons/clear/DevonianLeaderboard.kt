@@ -140,7 +140,7 @@ object DevonianLeaderboard : Feature(
         }.setEnabled(Location.stateInArea("dungeon hub"))
 
         on<MouseReleaseEvent> { event ->
-            if (event.button != 1) return@on
+            if (event.button != 3) return@on
             val player = minecraft.player ?: return@on
             if (player.y !in 119.0..126.0) return@on
             val dist = abs(player.x - -27.5) + abs(player.z - -28.5)
@@ -155,7 +155,7 @@ object DevonianLeaderboard : Feature(
         }.setEnabled(Location.stateInArea("dungeon hub"))
 
         on<MouseReleaseEvent> { event ->
-            if (event.button != 1) return@on
+            if (event.button != 3) return@on
             val room = DungeonScanner.currentRoom ?: return@on
             if (room.roomID != 12) return@on
             val ( x, z ) = room.fromComp(25, 8) ?: return@on
