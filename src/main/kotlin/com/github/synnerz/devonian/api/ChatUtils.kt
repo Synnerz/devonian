@@ -212,12 +212,22 @@ object ChatUtils {
 
     fun refreshChat() {
         needRefresh++
-        if (needRefresh == 1) doRefresh()
+        if (needRefresh == 1) runCatching {
+            doRefresh()
+        }.onFailure {
+            println("Devonian\$ChatUtils#refreshChat")
+            it.printStackTrace()
+        }
     }
 
     fun initialize() {
         EventBus.on<TickEvent> {
-            if (needRefresh > 1) doRefresh()
+            if (needRefresh > 1) runCatching {
+                doRefresh()
+            }.onFailure {
+                println("Devonian\$ChatUtils#onTick")
+                it.printStackTrace()
+            }
             needRefresh = 0
         }
     }
