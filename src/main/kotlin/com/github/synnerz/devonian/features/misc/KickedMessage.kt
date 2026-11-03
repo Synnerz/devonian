@@ -20,7 +20,7 @@ object KickedMessage : TextHudFeature(
         "Sends a message to the party chat whenever being kicked",
         "Send Message",
     )
-    private val kickedMessageRegex = "^You were kicked while joining that server!$".toRegex()
+    private val kickedMessageRegex = "^(?:You were kicked while joining that server!|A kick occurred in your connection, so you were put in the SkyBlock lobby!)$".toRegex()
     private var triggeredAt = 0L
 
     override fun initialize() {
@@ -29,7 +29,7 @@ object KickedMessage : TextHudFeature(
 
             triggeredAt = System.currentTimeMillis() + 60_000
 
-            if (!SETTING_SEND_MESSAGE.get()) return@on
+            if (!SETTING_SEND_MESSAGE.get() || triggeredAt > 0L) return@on
             ChatUtils.command("pc kicked")
         }
 
