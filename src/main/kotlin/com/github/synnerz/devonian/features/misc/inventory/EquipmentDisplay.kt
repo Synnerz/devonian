@@ -42,7 +42,7 @@ object EquipmentDisplay : Feature(
     private val SETTING_COMMAND_MODE = addSelection(
         "commandMode",
         0,
-        listOf("stats", "equipment", "split"),
+        listOf("stats", "equipment", "split", "split reversed"),
         "The command to be used whenever clicking the display (if \"split\" is selected half will run /stats the other half will run /eq)",
         "Command Mode"
     )
@@ -182,6 +182,10 @@ object EquipmentDisplay : Feature(
 
                 if (SETTING_COMMAND_MODE.get() == 2) {
                     ChatUtils.command(if (idx >= 2) "stats" else "eq")
+                    return@on
+                }
+                if (SETTING_COMMAND_MODE.get() == 3) {
+                    ChatUtils.command(if (idx >= 2) "eq" else "stats")
                     return@on
                 }
 
