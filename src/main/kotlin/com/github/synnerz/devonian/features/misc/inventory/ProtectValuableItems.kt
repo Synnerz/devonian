@@ -8,7 +8,7 @@ import org.lwjgl.glfw.GLFW
 
 object ProtectValuableItems : Feature(
     "protectValuableItems",
-    "Protects items above a threshold from being sellable/droppable (holding LSHIFT overrides this)",
+    "Protects items above a threshold from being sellable/droppable (holding RSHIFT overrides this)",
     subcategory = "Inventory",
     searchTags = setOf("prevent"),
 ) {
