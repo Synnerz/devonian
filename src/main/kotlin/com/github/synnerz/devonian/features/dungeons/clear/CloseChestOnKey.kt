@@ -31,7 +31,7 @@ object CloseChestOnKey : Feature(
             if (event.screen !is AbstractContainerScreen<*>) return@on
 
             val container = event.screen
-            if (container.title.string != "Chest") return@on
+            if (container.title.string != "Chest" && container.title.string != "Large Chest") return@on
             val containerId = container.menu.containerId
 
             keybinds.forEach {
