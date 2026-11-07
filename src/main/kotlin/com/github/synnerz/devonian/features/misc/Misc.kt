@@ -186,7 +186,8 @@ object AutoCopyScreenshot : Feature(
 object FixCrimsonIsleFog : Feature(
     "fixCrimsonIsleFog",
     "Fixes the \"fog\" of crimson isles by removing night vision client side",
-    Categories.VANILLA_TWEAKS,
+    Categories.MISC,
+    subcategory = "Tweaks",
 ) {
     fun shouldFix(): Boolean = isEnabled() && Location.area == "crimson isle"
 }
