@@ -12,7 +12,7 @@ object WarpCooldown : TextHudFeature(
     Categories.DUNGEONS,
     subcategory = "HUD"
 ) {
-    private val floorStartRegex = "^-+\\n(?:\\[[^ *]+] )?\\w{1,16} entered (?:MM )?The Catacombs, Floor [VI]+!\\n-+$".toRegex()
+    private val floorStartRegex = "^-+\\n(?:\\[[^ *]+] )?\\w{1,16} entered (?:MM )?The Catacombs, (?:Floor [VI]+|Entrance)!\\n-+$".toRegex()
     private var started = -1L
 
     override fun initialize() {
