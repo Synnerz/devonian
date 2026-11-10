@@ -116,6 +116,10 @@ object DevonianCommand {
             actionbarMessages.clear()
         }
 
+        BaseCommand("f0") {
+            ChatUtils.command("joindungeon catacombs_entrance")
+            1
+        }
         catacombsFloors.forEachIndexed { idx, cmd ->
             BaseCommand("f${idx + 1}") {
                 ChatUtils.command("joindungeon $cmd")
