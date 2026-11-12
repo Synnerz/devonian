@@ -8,6 +8,7 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton
+import net.minecraft.world.entity.player.Player
 
 object NoDeathAnimation : Feature(
     "noDeathAnimation",
@@ -27,7 +28,7 @@ object NoDeathAnimation : Feature(
     private val deadTags = mutableSetOf<Int>()
 
     private fun shouldHide(entity: LivingEntity): Boolean {
-        if (entity is EnderDragon) return false
+        if (entity is EnderDragon || entity is Player) return false
         if (SETTING_HIDE_DEAD_NAMETAGS.get() && entity is ArmorStand && deadTags.contains(entity.id)) return true
 
         if (entity.isAlive && entity.health > 0f) return false
