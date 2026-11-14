@@ -12,13 +12,14 @@ import com.github.synnerz.devonian.hud.texthud.StylizedTextHud
 import com.github.synnerz.devonian.hud.texthud.TextHudFamily
 import com.github.synnerz.devonian.hud.texthud.TextHudFeature
 import com.github.synnerz.devonian.utils.DebugLogger
+import com.github.synnerz.devonian.utils.StringUtils.replaceCodes
 import com.google.gson.JsonArray
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 object SpotifyDisplay : TextHudFeature(
     "spotifyDisplay",
-    "shows current song playing, only Windows with Spotify app",
+    "shows current song playing, Windows with Spotify app and Linux with Spotify + playerctl package",
 ) {
     override var dirty = false
     private val SETTING_HIDE_NOT_OPEN = addSwitch(
@@ -59,6 +60,12 @@ object SpotifyDisplay : TextHudFeature(
         "",
         "Marquee Scroll Speed",
     )
+    private val SETTING_MEDIA_PLAYER = addTextInput(
+        "mediaPlayer",
+        "spotify",
+        "&4LINUX ONLY&r name of the media player it will scan for (default \"spotify\")".replaceCodes(),
+        "Media Player",
+    )
     private val SETTING_LOGGER = ConfigData.Switch(
         "${configName}\$logger",
         false,
@@ -90,7 +97,9 @@ object SpotifyDisplay : TextHudFeature(
     }
 
     private val isWindows = System.getProperty("os.name").startsWith("Windows")
-    
+    private val isLinux = System.getProperty("os.name").startsWith("Linux")
+    private val linuxSongRegex = " status: (Paused|Playing) artist: (.*), title: (.*)$".toRegex()
+
     private val specialNames = mapOf(
         "Spotify Free" to "&cPaused",
         "Spotify Premium" to "&cPaused",
@@ -102,12 +111,12 @@ object SpotifyDisplay : TextHudFeature(
     fun setDisplay(song: String, artist: String) {
         prefixHud.setLine(SETTING_PREFIX.get())
         marqueeHud.setLine(
-            if (isWindows)
+            if (isWindows || isLinux)
                 specialNames[song] ?:
                 SETTING_FORMAT.get()
                     .replace("%SONG%", song)
                     .replace("%ARTIST%", artist)
-            else "&cNot on Windows"
+            else "&cNot on Windows/Linux"
         )
         marqueeHud.maxLen = SETTING_MAX_SONG_LENGTH.get()
         marqueeHud.alternate = SETTING_ALTERNATE_SCROLLING.get()
@@ -196,6 +205,50 @@ object SpotifyDisplay : TextHudFeature(
                 }
 
                 logger.offer(obj)
+            }, 0L, 2L, TimeUnit.SECONDS)
+        }
+        if (isLinux) {
+            Scheduler.schedulePool.scheduleWithFixedDelay({
+                if (!isEnabled()) return@scheduleWithFixedDelay
+                if (isEditing) return@scheduleWithFixedDelay
+
+                val mediaPlayer = SETTING_MEDIA_PLAYER.get()
+                val proc = ProcessBuilder(
+                    "bash",
+                    "-c",
+                    // force this into one line with echo (can't separate the cmd)
+                    "echo $(" +
+                        // some distros require you to install the "which" command package
+                        // "command -v" _should_ be everywhere though
+                        "command -v playerctl" +
+                        "&& playerctl -p $mediaPlayer status -f \"status: {{ status }}\"" +
+                        "&& playerctl -p $mediaPlayer metadata -f \"artist: {{ artist }}, title: {{ title }}\"" +
+                    ")"
+                ).start().also { proc ->
+                    val scanner = Scanner(proc.inputStream, Charsets.UTF_8)
+                    if (!scanner.hasNextLine()) return@also
+                    val line = scanner.nextLine()
+                    val match = linuxSongRegex.find(line)?.groupValues ?: return@also
+
+                    val ( _, status, artistName, songName ) = match
+                    if (status == "Paused") {
+                        artist = ""
+                        song = "&cPaused"
+                        open = true
+
+                        return@scheduleWithFixedDelay
+                    }
+
+                    artist = artistName
+                    song = songName
+                    open = true
+
+                    return@scheduleWithFixedDelay
+                }
+
+                song = "&cNot Opened &7(is playerctl installed?)"
+                open = false
+                proc.waitFor(2L, TimeUnit.SECONDS)
             }, 0L, 2L, TimeUnit.SECONDS)
         }
 
