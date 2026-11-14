@@ -203,7 +203,7 @@ object BoxStarMob : Feature(
 
                 val pos = ent.getPosition(minecraft.deltaTracker.getGameTimeDeltaPartialTick(false))
                 val height = when {
-                    data.isFel && ent.isInvisible -> 0.8
+                    data.isFel && (ent.isInvisible || ent.xo == ent.x && ent.zo == ent.z) -> 0.8
                     !SETTING_SHOW_FULL_SHADOW.get() && ent.isInvisible -> 0.8
                     else -> data.height
                 }
