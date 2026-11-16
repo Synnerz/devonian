@@ -1,14 +1,15 @@
 package com.github.synnerz.devonian.features.misc.hiders
 
+import com.github.synnerz.devonian.api.Location
 import com.github.synnerz.devonian.api.events.PreExtractRenderEntityEvent
 import com.github.synnerz.devonian.api.events.WorldChangeEvent
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import com.github.synnerz.devonian.utils.BasicState
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton
-import net.minecraft.world.entity.player.Player
 
 object NoDeathAnimation : Feature(
     "noDeathAnimation",
@@ -16,6 +17,10 @@ object NoDeathAnimation : Feature(
     Categories.VANILLA_TWEAKS,
     subcategory = "Hider",
 ) {
+    override fun createRequirements(): List<BasicState<Boolean>?> {
+        return super.createRequirements() + listOf(Location.stateInSkyblock)
+    }
+
     private val SETTING_HIDE_DEAD_NAMETAGS = addSwitch(
         "hideTags",
         false,
@@ -28,7 +33,7 @@ object NoDeathAnimation : Feature(
     private val deadTags = mutableSetOf<Int>()
 
     private fun shouldHide(entity: LivingEntity): Boolean {
-        if (entity is EnderDragon || entity is Player) return false
+        if (entity is EnderDragon) return false
         if (SETTING_HIDE_DEAD_NAMETAGS.get() && entity is ArmorStand && deadTags.contains(entity.id)) return true
 
         if (entity.isAlive && entity.health > 0f) return false
