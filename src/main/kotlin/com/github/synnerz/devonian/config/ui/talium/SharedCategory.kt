@@ -263,11 +263,37 @@ abstract class SharedCategory(displayName: String) {
                 centerText.onResize { _, w ->
                     centerText.textScale = DESCRIPTION_TEXT_SCALE / w.scaleFactor
                 }
+
+                when (value) {
+                    0 -> {
+                        leftArrow.hide()
+                    }
+                    options.lastIndex -> {
+                        rightArrow.hide()
+                    }
+                    else -> {
+                        leftArrow.unhide()
+                        rightArrow.unhide()
+                    }
+                }
             }
 
             override fun setOption(idx: Int) {
                 super.setOption(idx)
                 configData.set(value)
+
+                when (value) {
+                    0 -> {
+                        leftArrow.hide()
+                    }
+                    options.lastIndex -> {
+                        rightArrow.hide()
+                    }
+                    else -> {
+                        leftArrow.unhide()
+                        rightArrow.unhide()
+                    }
+                }
             }
         }.apply {
             setColor(ColorPalette.TERTIARY_COLOR)
