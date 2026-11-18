@@ -27,6 +27,12 @@ object HidePlayers : Feature(
         "Works in kuudra specifically phase 5",
         "In Kuudra",
     )
+    private val SETTING_EVERYWHERE = addSwitch(
+        "workEverywhere",
+        false,
+        "Works outside of dungeons and kuudra",
+        "Work Everywhere",
+    )
     private var stunned = false
 
     override fun initialize() {
@@ -39,7 +45,12 @@ object HidePlayers : Feature(
             if (entity.distanceToSqr(player) > SETTING_CANCEL_RADIUS.get()) return@on
 
             event.cancel()
-        }.setEnabled(Location.stateArea.map { it == "catacombs" || it == "kuudra" })
+        }.setEnabled(
+            Location.stateArea
+                .map { it == "catacombs" || it == "kuudra" }
+                .zip(SETTING_EVERYWHERE.state, Boolean::or)
+                .zip(Location.stateInSkyblock, Boolean::and)
+        )
 
         on<KuudraEvents.FuelPhaseLeave> {
             stunned = true
