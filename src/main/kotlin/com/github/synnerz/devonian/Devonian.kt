@@ -433,6 +433,7 @@ object Devonian : ClientModInitializer {
             AnkyTickTimer,
             BazaarCancelOrder,
             HideChatTags,
+            MuteRareDungeonDrops,
 
             // Debug
             CopyItem,
