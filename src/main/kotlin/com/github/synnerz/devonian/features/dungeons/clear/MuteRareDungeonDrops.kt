@@ -21,6 +21,12 @@ object MuteRareDungeonDrops : Feature(
         return super.createRequirements() + listOf(DungeonStages.Clear.isActiveState)
     }
 
+    private val SETTING_EXCEPT_SPRAY = addSwitch(
+        "exceptSpray",
+        true,
+        "does NOT cancel ice spray sound drops",
+        "Except Ice Spray"
+    )
     private val rareDropRegex = "^RARE DROP! ([\\w ]+) \\(\\+\\d+. Magic Find\\)$".toRegex()
     private val validPlingPitch = listOf(
         0.5873016f,
@@ -42,7 +48,8 @@ object MuteRareDungeonDrops : Feature(
             if (packet !is ClientboundSystemChatPacket) return@on
             if (packet.overlay) return@on
             val msg = packet.content.string
-            if (!rareDropRegex.matches(msg)) return@on
+            val ( _, itemDrop ) = rareDropRegex.matchEntire(msg)?.groupValues ?: return@on
+            if (SETTING_EXCEPT_SPRAY.get() && itemDrop.contains("ice spray", ignoreCase = true)) return@on
 
             hasMessage.value = true
         }
