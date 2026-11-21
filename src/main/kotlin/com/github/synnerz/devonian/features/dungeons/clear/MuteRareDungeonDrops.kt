@@ -27,6 +27,12 @@ object MuteRareDungeonDrops : Feature(
         "does NOT cancel ice spray sound drops",
         "Except Ice Spray"
     )
+    private val SETTING_EXCEPT_SKELETON_CHESTPLATE = addSwitch(
+        "exceptSkeletonChestplate",
+        true,
+        "does NOT cancel skeleton master chestplate sound drops",
+        "Except Skeleton Master Chestplate",
+    )
     private val rareDropRegex = "^RARE DROP! ([\\w ]+) \\(\\+\\d+. Magic Find\\)$".toRegex()
     private val validPlingPitch = listOf(
         0.5873016f,
@@ -49,7 +55,14 @@ object MuteRareDungeonDrops : Feature(
             if (packet.overlay) return@on
             val msg = packet.content.string
             val ( _, itemDrop ) = rareDropRegex.matchEntire(msg)?.groupValues ?: return@on
-            if (SETTING_EXCEPT_SPRAY.get() && itemDrop.contains("ice spray", ignoreCase = true)) return@on
+            if (
+                SETTING_EXCEPT_SPRAY.get() &&
+                itemDrop.contains("ice spray", ignoreCase = true)
+            ) return@on
+            if (
+                SETTING_EXCEPT_SKELETON_CHESTPLATE.get() &&
+                itemDrop.contains("skeleton master chestplate", ignoreCase = true)
+            ) return@on
 
             hasMessage.value = true
         }
