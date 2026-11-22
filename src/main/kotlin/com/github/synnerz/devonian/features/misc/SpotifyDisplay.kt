@@ -101,11 +101,15 @@ object SpotifyDisplay : TextHudFeature(
     private val linuxSongRegex = " status: (Paused|Playing) artist: (.*), title: (.*)$".toRegex()
 
     private val specialNames = mapOf(
+        // windows
         "Spotify Free" to "&cPaused",
         "Spotify Premium" to "&cPaused",
         "AngleHiddenWindow" to "&cPaused",
         "Spotify" to "&aAdvertisement",
-        "NOT OPENED" to "&cNot Opened"
+        "NOT OPENED" to "&cNot Opened",
+        // linux
+        "PAUSED" to "&cPaused",
+        "NOTOR" to "&cNot Opened &7(is playerctl installed?)",
     )
 
     fun setDisplay(song: String, artist: String) {
@@ -233,7 +237,7 @@ object SpotifyDisplay : TextHudFeature(
                     val ( _, status, artistName, songName ) = match
                     if (status == "Paused") {
                         artist = ""
-                        song = "&cPaused"
+                        song = "PAUSED"
                         open = true
 
                         return@scheduleWithFixedDelay
@@ -246,7 +250,7 @@ object SpotifyDisplay : TextHudFeature(
                     return@scheduleWithFixedDelay
                 }
 
-                song = "&cNot Opened &7(is playerctl installed?)"
+                song = "NOTOR"
                 open = false
                 proc.waitFor(2L, TimeUnit.SECONDS)
             }, 0L, 2L, TimeUnit.SECONDS)
