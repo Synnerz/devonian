@@ -362,7 +362,12 @@ object Searchbar : HudFeature(
             val sbId = ItemUtils.skyblockId(item)
             val itemValue = (sbId?.let { SkyblockPrices.buyPrice(it) } ?: -1f).toDouble()
 
-            val itemName = item.hoverName.string
+            val _itemName = item.hoverName.string
+            val itemName =
+                if (_itemName == "Enchanted Book")
+                    ItemUtils.lore(item)?.getOrNull(2) ?: _itemName
+                else
+                    _itemName
             val nameMatches = s.search(itemName.lowercase()).map { it.pattern }.toSet()
 
             if (matchesText(exp, nameMatches, itemValue)) return@map MatchType.NAME
