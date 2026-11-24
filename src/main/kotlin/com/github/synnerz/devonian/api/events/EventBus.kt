@@ -248,6 +248,14 @@ object EventBus {
                         else ServerContainerSetSlotEvent(packet.containerId, packet.stateId, packet.item, packet.slot)
                     if (event.post()) event.cancel()
                 }
+
+                is ClientboundSystemChatPacket -> {
+                    if (packet.overlay) return@on
+
+                    if (!PacketChatEvent(packet.content.string, packet.content).post()) return@on
+
+                    event.cancel()
+                }
             }
         }
 

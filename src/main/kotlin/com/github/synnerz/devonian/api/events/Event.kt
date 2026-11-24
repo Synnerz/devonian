@@ -238,6 +238,7 @@ abstract class InternalModifyMessageEvent(override val message: String, val text
 
 open class ChatEvent(message: String, text: Component) : InternalMessageEvent(message, text)
 open class ModifyChatEvent(message: String, text: Component) : InternalModifyMessageEvent(message, text)
+@Threaded open class PacketChatEvent(message: String, text: Component) : InternalMessageEvent(message, text)
 
 open class ActionbarEvent(message: String, text: Component) : InternalMessageEvent(message, text)
 open class ModifyActionbarEvent(message: String, text: Component) : InternalModifyMessageEvent(message, text)
