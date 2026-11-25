@@ -305,8 +305,8 @@
       "loreName": "Looting",
       "nbtName": "looting_new",
       "abbreviation": "Loot",
-      "goodLevel": 3,
-      "maxLevel": 5
+      "goodLevel": 5,
+      "maxLevel": 7
     },
     {
       "loreName": "Luck",
