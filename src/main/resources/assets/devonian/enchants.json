@@ -302,6 +302,13 @@
       "maxLevel": 5
     },
     {
+      "loreName": "Looting",
+      "nbtName": "looting_new",
+      "abbreviation": "Loot",
+      "goodLevel": 3,
+      "maxLevel": 5
+    },
+    {
       "loreName": "Luck",
       "nbtName": "luck",
       "abbreviation": "Luck",
@@ -738,7 +745,7 @@
     {
       "loreName": "Transylvanian",
       "nbtName": "transylvanian",
-      "abbreviation": "Trans",
+      "abbreviation": "Tra",
       "goodLevel": 3,
       "maxLevel": 5
     },
