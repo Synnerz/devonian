@@ -138,8 +138,8 @@ object ActionbarParser : Feature(
             "",
         ),
         Defense(
-            "\uE008",
             null,
+            listOf("\uE008 |||", "\uE008", "Defense"),
             object : TextHudFeature(
                 "customDefenseHud",
                 "$desc Allows you to move the defense that appears in the actionbar (above your hotbar).",
