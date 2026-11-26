@@ -32,7 +32,7 @@ object OpenEditor {
             val editProc = ProcessBuilder(
                 if (isWindows) listOf("cmd.exe", "/s", "/c", "start", "/B", "/WAIT", "\"\"", "\"$tmpPath\"")
                 else if (isMac) listOf("open", "\"$tmpPath\"")
-                else listOf("xdg-open", "\"$tmpPath\"")
+                else listOf("xdg-open", "$tmpPath")
             ).start()
             editProc.waitFor()
 
