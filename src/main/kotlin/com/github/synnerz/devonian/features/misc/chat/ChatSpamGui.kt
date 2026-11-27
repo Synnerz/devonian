@@ -35,7 +35,7 @@ object ChatSpamGui : TextHudFeature(
                 isModifying = false
             }
         },
-        description = "Will open up a new window.",
+        description = "Will open up a new notepad-like window, on saving and closing this window it will register the changes.",
         displayName = "Edit Message List",
     )
     private val SETTING_IMPORT = addButton(

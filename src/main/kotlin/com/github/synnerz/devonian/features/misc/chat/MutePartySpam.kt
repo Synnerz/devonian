@@ -36,7 +36,7 @@ object MutePartySpam : Feature(
                 isEditing = false
             }
         },
-        description = "Will open up a new window.",
+        description = "Will open up a new notepad-like window, on saving and closing this window it will register the changes.",
         displayName = "Edit Mute List",
     )
     private val SETTING_DETECT_LEAP = addSwitch(
